@@ -79,6 +79,7 @@ const AUTO_SELECT_TYPES: ReadonlySet<string> = new Set([
     'automation-firestore',
     'automation-elevenlabs',
     'automation-cloudflare',
+    'automation-cloudzero',
     'automation-google-analytics',
     'automation-google-ads',
     'automation-google-business-profile',

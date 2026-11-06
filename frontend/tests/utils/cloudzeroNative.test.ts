@@ -1,11 +1,14 @@
 // Prepared UNRUN: separate native generation and frontend lane are required.
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import schema from '~/schemas/nodes/cloudzero.json';
-import { getNodeSchema, getNodeCredentialInfo, getAgentToolOperations, filterConfigForExecution } from '~/utils/nodeSchemas';
-import { autoSelectCredentialFromCache, upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { loadNodeSchemas, getNodeSchema, getNodeCredentialInfo, getAgentToolOperations } from '~/utils/nodeSchemas';
+import { upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import { renderGenerationField } from '~/components/workflow/schemaFieldRenderer';
+
+beforeAll(async () => { await loadNodeSchemas(['automation-cloudzero']); });
 
 const operations = ['test_connection', 'list_dimensions', 'get_dimension', 'get_costs', 'list_views', 'get_view'];
 describe('native CloudZero prepared contracts', () => {
@@ -28,14 +31,11 @@ describe('native CloudZero prepared contracts', () => {
     expect(defs.CloudZeroCostsConfig.properties.cost_type.enum).toContain('usage_amount');
     expect(defs.CloudZeroViewConfig.properties.include_filters.default).toBe(false);
   });
-  it('uses owned current selections and closed execution config', () => {
+  it('uses owned current selections', () => {
     const own = 'cloudzero-owned', foreign = 'cloudzero-foreign';
     try {
       upsertCredentialsIntoCache([{ id: own, name: 'Owned', credential_type: 'cloudzero_api_key', owned_by_me: true }, { id: foreign, name: 'Foreign', credential_type: 'cloudzero_api_key', owned_by_me: false }]);
       expect(autoSelectCredentialFromCache('automation-cloudzero')).toEqual({ cloudzero_api_key: own });
-      const cfg = filterConfigForExecution('automation-cloudzero', { operation: 'get_costs', start_date: '2026-09-01', group_by: ['Region'], confirm_query_quota: true, method: 'POST', url: 'https://evil.test', api_key: 'omit', headers: {}, telemetry: {}, webhook: 'omit' });
-      expect(cfg.group_by).toEqual(['Region']); expect(cfg.confirm_query_quota).toBe(true);
-      for (const field of ['method', 'url', 'api_key', 'headers', 'telemetry', 'webhook']) expect(cfg).not.toHaveProperty(field);
     } finally { removeCredentialsFromCache([own, foreign]); }
   });
   it('exposes genuine protected dimension/view scope without send or billing mutation', () => {

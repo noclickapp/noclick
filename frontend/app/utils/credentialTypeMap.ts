@@ -28,8 +28,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'Nylas Access Token': 'nylas_access_token',
     // Agent credentials
     'AgentCredentials': 'agent_api_key',
-
-    // CloudZero existing API key
     'CloudZeroAPIKeyCredential': 'cloudzero_api_key',
 
     // Telegram

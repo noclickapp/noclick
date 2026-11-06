@@ -372,7 +372,7 @@
   "required": [
     "config"
   ],
-  "title": "CloudZero Node Configuration",
+  "title": "Cloudzero Node Configuration",
   "type": "object",
   "x-edit-examples": [
     "Read monthly costs grouped by current dimensions",

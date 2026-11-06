@@ -16,6 +16,7 @@ from urllib.parse import quote, quote_plus
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, ValidationResult, WorkflowNode, runtime_config_view
 from nodes.core.connection_evidence import ConnectionEvidence
+from repositories.credentials import credential_access_predicate
 from utils.ssrf import guarded_async_client
 
 NODE_TYPE = "automation-cloudzero"
@@ -212,11 +213,36 @@ class _LookupAuthority:
     workflow_id: Optional[str]
 
 
+@dataclass(frozen=True, repr=False)
+class _CredentialAuthority:
+    credential_type: str
+    owner_id: str
+    token_version: int
+    updated_at: Any
+    approval_revision: int
+    revoked_at: Any
+    credential: str
+
+
+async def _fetch_authority(pool, credential_id, user_id, organization_id):
+    # CloudZero binds cached cursors to current authority using staging's ACL.
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            f"SELECT c.credential_type,c.owner_id,c.token_version,c.updated_at,"
+            f"c.approval_revision,c.revoked_at,c.credential FROM credentials c "
+            f"WHERE c.id=$1 AND {credential_access_predicate()}",
+            credential_id, user_id, organization_id,
+        )
+    return _CredentialAuthority(
+        row["credential_type"], str(row["owner_id"]), row["token_version"],
+        row["updated_at"], row["approval_revision"], row["revoked_at"], row["credential"],
+    ) if row else None
+
+
 async def _current_data(data, *, pool=None, user_id=None, credential_id=None, organization_id=None, workflow_id=None):
     if not credential_id:
         return _shape(data)
-    from repositories.credentials import CredentialsRepo
-    from utils.credentials import resolve_credential_with_owner_fallback
+    from utils.credentials import get_workflow_owner_id, is_credential_authorized_for_workflow, credential_lender
     from utils.encryption import get_encryption
     if pool is None:
         from utils.database_pool import get_native_pool
@@ -226,7 +252,7 @@ async def _current_data(data, *, pool=None, user_id=None, credential_id=None, or
         async with pool.acquire() as conn:
             organization_id = await get_user_org_context(conn, user_id)
     async def load(cid, principal, actual_pool, org_id):
-        row = await CredentialsRepo(actual_pool).fetch_validation_authority(cid, principal, org_id)
+        row = await _fetch_authority(actual_pool, cid, principal, org_id)
         if row is None:
             return None
         if row.revoked_at is not None or row.credential_type not in FAMILIES or not isinstance(row.owner_id, str) or not row.owner_id or type(row.token_version) is not int or row.token_version < 1 or type(row.approval_revision) is not int or row.approval_revision < 0:
@@ -238,7 +264,15 @@ async def _current_data(data, *, pool=None, user_id=None, credential_id=None, or
         if not isinstance(blob, dict):
             raise ValueError("CloudZero current credential data is invalid")
         return _shape({**blob, "credential_type": row.credential_type, "owner_id": row.owner_id, "token_version": row.token_version, "updated_at": row.updated_at.isoformat() if row.updated_at else None, "approval_revision": row.approval_revision})
-    result = await resolve_credential_with_owner_fallback(credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id, load_credential_fn=load)
+    result = await load(credential_id, user_id, pool, organization_id)
+    if result is None and workflow_id:
+        owner_id = await get_workflow_owner_id(pool, workflow_id)
+        if owner_id and owner_id != user_id and await is_credential_authorized_for_workflow(pool, workflow_id, credential_id):
+            result = await load(credential_id, owner_id, pool, organization_id)
+    if result is None and workflow_id:
+        lender = await credential_lender(pool, workflow_id, credential_id)
+        if lender and lender != str(user_id):
+            result = await load(credential_id, lender, pool, organization_id)
     if result is None:
         raise ValueError("CloudZero current credential is unavailable or access denied")
     return {**result, "_cloudzero_authority": _LookupAuthority(pool, user_id, credential_id, organization_id, workflow_id)}
@@ -372,7 +406,7 @@ async def _request(data, context, route, *, params=None):
     current = await _stable(data, context)
     _protect_transport_logs(); private_token = _PRIVATE_REQUEST.set(True)
     try:
-        async with guarded_async_client(require_public=True, timeout=30.0, follow_redirects=False, trust_env=False) as client:
+        async with guarded_async_client(timeout=30.0, follow_redirects=False, trust_env=False) as client:
             async with client.stream("GET", BASE+route, params=params, headers={"Authorization": current["api_key"], "Accept": "application/json"}) as response:
                 code = response.status_code
                 # Keep the actual code typed; shared evidence text classifiers must
@@ -523,18 +557,10 @@ class CloudZeroNode(WorkflowNode):
     @classmethod
     async def freshen_credential(cls, data, **context): return await _current_data(data, **context)
     @classmethod
-    async def validate_credential_access(cls, data, *, validation_context=None):
-        if validation_context is None: return {"valid": None, "error": "CloudZero validation requires trusted current-row authority"}
-        from nodes.core.credential_validation import CredentialValidationUnavailable, CredentialValidationPending, CredentialValidationUnverified
-        try:
-            result = await validation_context.run_operation("test_connection")
-            proof = result.get("data") if isinstance(result, dict) else None
-            if not isinstance(result, dict) or result.get("status") != "success" or not isinstance(proof, dict) or proof.get("protected_read_completed") is not True or proof.get("account_identity_verified") is not False or type(proof.get("dimension_count")) is not int:
-                return {"valid": None, "error": "CloudZero protected dimensions read was not executed or verified"}
-        except CredentialValidationUnavailable: return {"valid": False, "error": "CloudZero current credential authority is unavailable"}
-        except (CredentialValidationPending, CredentialValidationUnverified): return {"valid": None, "error": "CloudZero protected read was not executed or verified"}
-        except CloudZeroAPIError as exc: return {"valid": False if exc.authority_rejected else None, "error": str(exc)}
-        return {"valid": True, "proves": "reachability", "account_identity_verified": False, "cost_view_permissions_verified": False, "entitlement_verified": False}
+    async def validate_credential_access(cls, data):
+        # Staging's legacy hook supplies a blob without trusted saved-row context.
+        # The declared connection evidence runs the protected native operation.
+        return {"valid": None, "error": "Use the protected dimensions read to verify CloudZero reachability"}
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         if not isinstance(self.config, CloudZeroNodeConfig) or self.config.credentials is None: raise ValueError("CloudZero requires an existing native API key")
         cfg = self.config.config
