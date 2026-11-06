@@ -52,6 +52,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-canva', 'CanvaNode'],
     ['automation-discord', 'DiscordNode'],
     ['automation-dropbox', 'DropboxNode'],
+    ['automation-dropcontact', 'DropcontactNode'],
     ['automation-google-calendar', 'GoogleCalendarNode'],
     ['automation-google-tasks', 'GoogleTasksNode'],
     ['automation-google-contacts', 'GoogleContactsNode'],

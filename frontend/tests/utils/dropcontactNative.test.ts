@@ -1,11 +1,16 @@
-// Prepared UNRUN: native generation and a separate frontend lane are required.
-import { describe, expect, it } from 'vitest';
-import schema from '~/schemas/nodes/dropcontact.json';
-import { getNodeSchema, getNodeCredentialInfo, getAgentToolOperations, filterConfigForExecution } from '~/utils/nodeSchemas';
-import { autoSelectCredentialFromCache, upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+// Exercise Dropcontact's generated schema, credential selection and editor controls.
+import { beforeAll, describe, expect, it } from 'vitest';
+import { loadNodeSchemas, getNodeSchema, getNodeCredentialInfo, getAgentToolOperations } from '~/utils/nodeSchemas';
+import { upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import { renderGenerationField } from '~/components/workflow/schemaFieldRenderer';
+let schema: Record<string, any>;
+beforeAll(async () => {
+  await loadNodeSchemas(['automation-dropcontact']);
+  schema = getNodeSchema('automation-dropcontact')!;
+});
 const operations = ['test_connection', 'get_credits', 'enrich_contact', 'enrich_batch', 'get_status', 'get_results'];
 describe('native Dropcontact prepared contracts', () => {
   it('discovers native family, six closed operations and honest editor controls', () => {
@@ -19,6 +24,8 @@ describe('native Dropcontact prepared contracts', () => {
     expect(defs.DropcontactAccessTokenCredential['x-credential-instructions']).toContain('X-Access-Token');
     expect(defs.DropcontactAccessTokenCredential).not.toHaveProperty('x-oauth-provider');
     expect(defs.DropcontactEnrichBatchConfig.properties.contacts_json['ui:widget']).toBe('textarea');
+    expect(defs.DropcontactEnrichBatchConfig.additionalProperties).toBe(false);
+    for (const key of ['custom_callback_url', 'forceResults', 'url', 'access_token']) expect(defs.DropcontactEnrichBatchConfig.properties).not.toHaveProperty(key);
     expect(defs.DropcontactEnrichContactConfig.properties.custom_fields_json['ui:widget']).toBe('textarea');
     expect(defs.DropcontactEnrichContactConfig.properties.language.enum).toEqual(['en', 'fr']);
     expect(defs.DropcontactEnrichContactConfig.properties.confirm_existing_credits.default).toBe(false);
@@ -27,14 +34,11 @@ describe('native Dropcontact prepared contracts', () => {
     expect(defs.DropcontactGetResultsConfig.properties.include_custom_fields.default).toBe(false);
     expect(defs.DropcontactGetResultsConfig.properties.expected_contact_count.anyOf).toEqual(expect.arrayContaining([expect.objectContaining({ type: 'integer', maximum: 250 })]));
   });
-  it('selects current owned credentials and strips callbacks/forceResults/hosts', () => {
+  it('selects current owned Dropcontact credentials', () => {
     const own = 'dropcontact-owned', foreign = 'dropcontact-foreign';
     try {
       upsertCredentialsIntoCache([{ id: own, name: 'Owned', credential_type: 'dropcontact_access_token', owned_by_me: true }, { id: foreign, name: 'Foreign', credential_type: 'dropcontact_access_token', owned_by_me: false }]);
       expect(autoSelectCredentialFromCache('automation-dropcontact')).toEqual({ dropcontact_access_token: own });
-      const cfg = filterConfigForExecution('automation-dropcontact', { operation: 'enrich_batch', contacts_json: '[{"full_name":"Owned","company":"Owned"}]', confirm_existing_credits: true, custom_callback_url: 'https://evil.test', forceResults: true, url: 'https://evil.test', access_token: 'omit', language: 'fr' });
-      expect(cfg.contacts_json).toBe('[{"full_name":"Owned","company":"Owned"}]'); expect(cfg.language).toBe('fr');
-      for (const key of ['custom_callback_url', 'forceResults', 'url', 'access_token']) expect(cfg).not.toHaveProperty(key);
     } finally { removeCredentialsFromCache([own, foreign]); }
   });
   it('retains exact protected request scope without inventing history or polling', () => {

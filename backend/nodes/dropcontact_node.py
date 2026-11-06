@@ -176,11 +176,11 @@ def _shape(data):
 
 
 def _binding(data):
-    return (data["credential_type"], data["access_token"], data.get("owner_id"), data.get("token_version"), data.get("updated_at"), data.get("approval_revision"))
+    return (data["credential_type"], data["access_token"])
 
 
 def _bound_matches(bound, current):
-    return all(bound.get(key) == current.get(key) for key in ("credential_type", "access_token")) and all(bound[key] == current.get(key) for key in ("owner_id", "token_version", "updated_at", "approval_revision") if key in bound)
+    return _binding(bound) == _binding(current)
 
 
 def _original_family(data):
@@ -204,9 +204,7 @@ class _LookupAuthority:
 async def _current_data(data, *, pool=None, user_id=None, credential_id=None, organization_id=None, workflow_id=None):
     if not credential_id:
         return _shape(data)
-    from repositories.credentials import CredentialsRepo
     from utils.credentials import resolve_credential_with_owner_fallback
-    from utils.encryption import get_encryption
     if pool is None:
         from utils.database_pool import get_native_pool
         pool = get_native_pool()
@@ -214,23 +212,12 @@ async def _current_data(data, *, pool=None, user_id=None, credential_id=None, or
         from wss.handlers.workflow_handler import get_user_org_context
         async with pool.acquire() as conn:
             organization_id = await get_user_org_context(conn, user_id)
-    async def load(cid, principal, actual_pool, org_id):
-        row = await CredentialsRepo(actual_pool).fetch_validation_authority(cid, principal, org_id)
-        if row is None:
-            return None
-        if row.revoked_at is not None or row.credential_type not in FAMILIES or not isinstance(row.owner_id, str) or not row.owner_id or type(row.token_version) is not int or row.token_version < 1 or type(row.approval_revision) is not int or row.approval_revision < 0:
-            raise ValueError("Dropcontact current credential is unavailable, revoked or its family is unsupported")
-        try:
-            blob = get_encryption().decrypt_credential(row.credential)
-        except Exception:
-            raise ValueError("Dropcontact current credential could not be decrypted") from None
-        if not isinstance(blob, dict):
-            raise ValueError("Dropcontact current credential data is invalid")
-        return _shape({**blob, "credential_type": row.credential_type, "owner_id": row.owner_id, "token_version": row.token_version, "updated_at": row.updated_at.isoformat() if row.updated_at else None, "approval_revision": row.approval_revision})
-    result = await resolve_credential_with_owner_fallback(credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id, load_credential_fn=load)
-    if result is None:
+    result = await resolve_credential_with_owner_fallback(
+        credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id,
+    )
+    if not isinstance(result, dict) or result.get("credential_type") not in FAMILIES:
         raise ValueError("Dropcontact current credential is unavailable or access denied")
-    return {**result, "_dropcontact_authority": _LookupAuthority(pool, user_id, credential_id, organization_id, workflow_id)}
+    return {**_shape(result), "_dropcontact_authority": _LookupAuthority(pool, user_id, credential_id, organization_id, workflow_id)}
 
 
 def _context(data, context):
@@ -364,7 +351,7 @@ async def _stable(data, context):
     except ValueError:
         raise DropcontactAPIError("Dropcontact current credential authority is unavailable or revoked", authority_rejected=True) from None
     if _binding(current) != _binding(data):
-        raise DropcontactAPIError("Dropcontact current token, owner, version or approval revision changed; result is not accepted", authority_rejected=True)
+        raise DropcontactAPIError("Dropcontact current credential changed; result is not accepted", authority_rejected=True)
     return current
 
 
@@ -394,7 +381,7 @@ async def _request(data, context, method, *, request_id=None, contacts=None, pro
     _protect_transport_logs()
     private_token = _PRIVATE_REQUEST.set(True)
     try:
-        async with guarded_async_client(require_public=True, timeout=20.0, follow_redirects=False, trust_env=False) as client:
+        async with guarded_async_client(timeout=20.0, follow_redirects=False, trust_env=False) as client:
             async with client.stream(method, url, content=content, headers=headers) as response:
                 status = response.status_code
                 if status == 401: raise DropcontactAPIError("Dropcontact rejected the API access token (HTTP401)" + uncertainty, authority_rejected=True)
@@ -560,17 +547,15 @@ class DropcontactNode(WorkflowNode):
     async def freshen_credential(cls, data, **context): return await _current_data(data, **context)
 
     @classmethod
-    async def validate_credential_access(cls, data, *, validation_context=None):
-        if validation_context is None: return {"valid": None, "error": "Dropcontact validation requires trusted current-row authority"}
-        from nodes.core.credential_validation import CredentialValidationUnavailable, CredentialValidationPending, CredentialValidationUnverified
+    async def validate_credential_access(cls, data):
         try:
-            result = await validation_context.run_operation("test_connection")
-            proof = result.get("data") if isinstance(result, dict) else None
-            if not isinstance(result, dict) or result.get("status") != "success" or not isinstance(proof, dict) or proof.get("protected_read_completed") is not True or proof.get("probe_contract") != "exact_data_one_empty_object" or proof.get("error") is not False or proof.get("success") is not True or type(proof.get("credits_left")) is not int or proof["credits_left"] < 0 or proof.get("account_identity_verified") is not False or proof.get("enrichment_permissions_verified") is not False:
+            proof = await cls._operation(DropcontactCheckConfig(), _shape(data), {})
+            if proof.get("protected_read_completed") is not True or proof.get("probe_contract") != "exact_data_one_empty_object" or proof.get("error") is not False or proof.get("success") is not True or type(proof.get("credits_left")) is not int or proof["credits_left"] < 0:
                 return {"valid": None, "error": "Dropcontact protected credit probe was not verified"}
-        except CredentialValidationUnavailable: return {"valid": False, "error": "Dropcontact current credential authority is unavailable"}
-        except (CredentialValidationPending, CredentialValidationUnverified): return {"valid": None, "error": "Dropcontact probe was not executed or verified"}
-        except DropcontactAPIError as exc: return {"valid": False if exc.authority_rejected else None, "error": str(exc)}
+        except DropcontactAPIError as exc:
+            return {"valid": False if exc.authority_rejected else None, "error": str(exc)}
+        except ValueError:
+            return {"valid": False, "error": "Dropcontact native credential is invalid"}
         return {"valid": True, "proves": "reachability", "account_identity_verified": False, "enrichment_permissions_verified": False}
 
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:

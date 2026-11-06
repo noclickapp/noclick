@@ -44,6 +44,7 @@ from nodes.canva_node import CanvaNode
 from nodes.cron_trigger_node import CronTriggerNode
 from nodes.discord_node import DiscordNode
 from nodes.dropbox_node import DropboxNode
+from nodes.dropcontact_node import DropcontactNode
 from nodes.dummy_node import DummyNode
 from nodes.google_calendar_node import GoogleCalendarNode
 from nodes.google_tasks_node import GoogleTasksNode
@@ -260,6 +261,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-canva': CanvaNode,
     'automation-discord': DiscordNode,
     'automation-dropbox': DropboxNode,
+    'automation-dropcontact': DropcontactNode,
     'automation-hackernews': HackerNewsNode,
     'automation-hubspot': HubSpotNode,
     'automation-instagram': InstagramNode,

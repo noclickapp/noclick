@@ -39,9 +39,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'AgentCredentials': 'agent_api_key',
     'CloudZeroAPIKeyCredential': 'cloudzero_api_key',
 
-    // Dropcontact existing access token
-    'DropcontactAccessTokenCredential': 'dropcontact_access_token',
-
     // Telegram
     'TelegramBotTokenCredential': 'telegram_bot_token',
 
