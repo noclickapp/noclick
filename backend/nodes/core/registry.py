@@ -10,6 +10,7 @@ from typing import Dict, Optional, Type, Any
 from nodes.adapty_node import AdaptyNode
 from nodes.sematext_node import SematextNode
 from nodes.core.base import WorkflowNode
+from nodes.fountain_node import FountainNode
 from nodes.porkbun_node import PorkbunNode
 from nodes.predictleads_node import PredictLeadsNode
 from nodes.telegram_node import TelegramNode
