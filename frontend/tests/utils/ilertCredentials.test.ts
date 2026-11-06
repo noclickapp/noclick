@@ -1,9 +1,11 @@
 // ilert's native credential and resource schema use the current frontend consumers.
 // These source fixtures await native generation and a separate frontend test grant.
 import { describe, expect, it } from 'vitest';
-import { NODE_SCHEMAS, filterConfigForExecution, isTriggerSource } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, filterConfigForExecution, isTriggerSource, loadNodeSchemas } from '~/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
+
+await loadNodeSchemas(['automation-ilert']);
 
 describe('ilert user REST key metadata', () => {
     it('requires the existing key and verified actor with explicit optional team context', () => {

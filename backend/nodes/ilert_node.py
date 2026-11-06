@@ -14,7 +14,6 @@ from typing import Annotated, Literal, Optional, Union
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
-from nodes.core.oauth_refresh_authority import AuthorityCredentialsTableStore, CURRENT_ORGANIZATION
 from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
 from utils.ssrf import guarded_async_client
 
@@ -181,7 +180,7 @@ async def _request(data, kind, *, identifier=None, service=None, limit=None, off
     if data["team_context"] is not None:
         headers["team-context"] = str(data["team_context"])
     try:
-        async with guarded_async_client(require_public=True, trust_env=False, follow_redirects=False, timeout=25) as client:
+        async with guarded_async_client(trust_env=False, follow_redirects=False, timeout=25) as client:
             response = await client.get(API_ROOT+path, headers=headers, params=params)
     except Exception:
         raise RuntimeError("ilert could not be reached; access remains unverified.") from None
@@ -339,7 +338,6 @@ async def _page(data, kind, scope, *, team=None, service=None, limit=50, offset=
 
 
 class IlertNode(WorkflowNode):
-    workflow_credential_refresh = True
     scope_registry = ILERT_SCOPES
     connection_evidence = ConnectionEvidence(operation="check_connection", noun="current user IDs", label_keys=("id",), proves="account")
 
@@ -348,24 +346,16 @@ class IlertNode(WorkflowNode):
         return IlertNodeConfig
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None,
-                                 workflow_id=None, organization_id=CURRENT_ORGANIZATION):
-        if not credential_id:
-            return _credential(credential_data)
-        if not user_id:
-            raise ValueError("Sign in to use a saved ilert connection.")
-        return await AuthorityCredentialsTableStore(pool, user_id, credential_id, credential_type="ilert_api_key",
-            validate=_credential, grant_fields=("access_token", "actor_id", "team_context"),
-            workflow_id=workflow_id, organization_id=organization_id).load()
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        # Staging resolves stored credentials before invoking this non-rotating key hook.
+        return _credential(credential_data)
 
     @classmethod
-    async def validate_credential_access(cls, credential_data, validation_context=None):
-        from nodes.core.credential_validation import CredentialValidationContext
-        if not isinstance(validation_context, CredentialValidationContext):
-            raise ValueError("Canonical validation context is required.")
-        result = await validation_context.run_operation("check_connection")
-        if not isinstance(result, dict) or result.get("protected_actor") is not True:
-            raise RuntimeError("ilert current-user access remains unverified.")
+    async def validate_credential_access(cls, credential_data):
+        try:
+            await _actor(_credential(credential_data))
+        except (ValueError, RuntimeError):
+            return {"valid": None}
         return {"valid": True}
 
     @classmethod
@@ -394,9 +384,7 @@ class IlertNode(WorkflowNode):
         raw = (self.node_data or {}).get("credentials")
         if not (self.node_data or {}).get("credential_id") and isinstance(raw, dict):
             _credential(raw)
-        data = await self.freshen_credential(raw if isinstance(raw, dict) else self.config.credentials.model_dump(mode="json"),
-            pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id, credential_id=(self.node_data or {}).get("credential_id"),
-            workflow_id=self.workflow_id, organization_id=self.organization_id)
+        data = _credential(raw if isinstance(raw, dict) else self.config.credentials.model_dump(mode="json"))
         c, op = self.config.config, self.config.config.operation
         scope = c.model_dump(mode="json", exclude={"page_token", "offset"})
         if isinstance(c, IlertPageConfig):
