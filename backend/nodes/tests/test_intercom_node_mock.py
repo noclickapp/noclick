@@ -631,6 +631,35 @@ class TestIntercomDynamicOptionsMock:
         assert result["options"][0]["label"] == "Sam"
 
     @pytest.mark.asyncio
+    async def test_search_contact_options_uses_contains_operator(self, credentials):
+        requests = []
+
+        def transport(request):
+            requests.append(request)
+            return httpx.Response(200, json={"data": []})
+
+        client = httpx.AsyncClient(transport=httpx.MockTransport(transport))
+        with patch("nodes.intercom_node.httpx.AsyncClient", return_value=client):
+            result = await IntercomNode.load_field_options(
+                "contact_id", credential_data=credentials.model_dump(), search="joe@example.com"
+            )
+
+        assert result["options"] == []
+        assert len(requests) == 1
+        assert requests[0].method == "POST"
+        assert requests[0].url.path == "/contacts/search"
+        assert json.loads(requests[0].content) == {
+            "query": {
+                "operator": "OR",
+                "value": [
+                    {"field": "email", "operator": "~", "value": "joe@example.com"},
+                    {"field": "name", "operator": "~", "value": "joe@example.com"},
+                ],
+            },
+            "pagination": {"per_page": 20},
+        }
+
+    @pytest.mark.asyncio
     async def test_load_tag_options(self):
         with patch(
             "nodes.intercom_node._intercom_request",

@@ -1713,8 +1713,8 @@ class IntercomNode(WorkflowNode):
                     "query": {
                         "operator": "OR",
                         "value": [
-                            {"field": "email", "operator": "CONTAINS", "value": search},
-                            {"field": "name", "operator": "CONTAINS", "value": search},
+                            {"field": "email", "operator": "~", "value": search},
+                            {"field": "name", "operator": "~", "value": search},
                         ],
                     },
                     "pagination": {"per_page": 20},
