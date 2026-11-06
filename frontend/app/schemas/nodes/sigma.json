@@ -407,8 +407,7 @@
       },
       "required": [
         "name",
-        "connection_type",
-        "details"
+        "connection_type"
       ],
       "title": "SigmaCreateConnectionConfig",
       "type": "object"

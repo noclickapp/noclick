@@ -611,7 +611,7 @@ class SigmaCreateConnectionConfig(BaseModel):
         description="Warehouse type (e.g. snowflake, bigQuery, redshift, postgres)",
     )
     details: Dict[str, Any] = Field(
-        ...,
+        default_factory=dict,
         title="Connection Details",
         description="Warehouse connection settings, such as host and database for PostgreSQL. The selected Type is sent as details.type.",
         json_schema_extra={"ui:widget": "json"},

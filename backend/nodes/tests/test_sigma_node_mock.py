@@ -822,6 +822,13 @@ class TestSigmaTriggerExecuteMock:
     "config, method, path, body, response_body",
     [
         (
+            # Saved before connection details were exposed in the config model.
+            {"operation": "create_connection", "name": "Snowflake", "connection_type": "snowflake"},
+            "POST", "/v2/connections",
+            {"name": "Snowflake", "details": {"type": "snowflake"}},
+            {"connectionId": "string"},
+        ),
+        (
             SigmaCreateConnectionConfig(
                 name="string", connection_type="postgres",
                 details={"host": "string", "database": "string"},
@@ -856,13 +863,14 @@ async def test_sigma_connection_and_grant_requests(
 ):
     """Exercise the real serializer and HTTP path against Sigma's wire contract."""
     requests = []
+    node_config = SigmaNodeConfig(config=config, credentials=credentials)
 
     def respond(request):
         requests.append(request)
-        return httpx.Response(201 if config.operation == "create_connection" else 200, json=response_body)
+        return httpx.Response(201 if node_config.config.operation == "create_connection" else 200, json=response_body)
 
     client = httpx.AsyncClient(transport=httpx.MockTransport(respond))
-    node = create_sigma_node(SigmaNodeConfig(config=config, credentials=credentials))
+    node = create_sigma_node(node_config)
     with patch("nodes.sigma_node._sigma_get_token", return_value="mock_token"), patch(
         "nodes.sigma_node.httpx.AsyncClient", return_value=client
     ):
