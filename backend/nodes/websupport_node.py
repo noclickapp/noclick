@@ -14,7 +14,6 @@ from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
-from nodes.core.oauth_refresh_authority import AuthorityCredentialsTableStore, CURRENT_ORGANIZATION
 from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
 from utils.ssrf import guarded_async_client
 
@@ -95,7 +94,7 @@ async def _request(data, kind):
     WEBSUPPORT_SCOPES.enforce_credential_type(kind, data["credential_type"])
     path = ROUTES[kind].replace("{service}", quote(data["service_id"], safe=""))
     try:
-        async with guarded_async_client(require_public=True, trust_env=False, follow_redirects=False, timeout=25) as client:
+        async with guarded_async_client(trust_env=False, follow_redirects=False, timeout=25) as client:
             response = await client.get(ROOT+path, headers=_headers(data, path))
     except Exception:
         raise RuntimeError("Websupport could not be reached; signed-request access remains unverified.") from None
@@ -173,26 +172,16 @@ class WebsupportVerificationDenied(RuntimeError):
     pass
 
 class WebsupportNode(WorkflowNode):
-    workflow_credential_refresh = True
     scope_registry = WEBSUPPORT_SCOPES
     connection_evidence = ConnectionEvidence(operation="check_connection", noun="DNS zone metadata", label_keys=("lastCheck", "dnssecSigning"), proves="reachability")
     @classmethod
     def get_config_model(cls):
         return WebsupportNodeConfig
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=CURRENT_ORGANIZATION):
-        if not credential_id:
-            return _credential(credential_data)
-        if not user_id:
-            raise ValueError("Sign in to use a saved Websupport connection.")
-        return await AuthorityCredentialsTableStore(pool, user_id, credential_id, credential_type="websupport_api_key",
-            validate=_credential, grant_fields=("api_key", "api_secret", "service_id"), workflow_id=workflow_id, organization_id=organization_id).load()
-    @classmethod
-    async def validate_credential_access(cls, credential_data, validation_context=None):
-        from nodes.core.credential_validation import CredentialValidationContext
-        if not isinstance(validation_context, CredentialValidationContext):
-            raise ValueError("Canonical validation context is required.")
-        result = await validation_context.run_operation("check_connection")
+    async def validate_credential_access(cls, credential_data):
+        from nodes.core.run_op import run_node_operation
+        result = await run_node_operation(node_type="automation-websupport", operation="check_connection",
+            arguments={}, credential_data=_credential(credential_data), user_id="")
         if not isinstance(result, dict) or result.get("verified") is not True or result.get("protected_zone") is not True:
             raise RuntimeError("Websupport signed service access remains unverified.")
         return {"valid": True}
@@ -212,11 +201,7 @@ class WebsupportNode(WorkflowNode):
         if not isinstance(self.config, WebsupportNodeConfig) or not self.config.credentials:
             raise ValueError("Websupport configuration and an existing bound key/secret are required.")
         raw = (self.node_data or {}).get("credentials")
-        if not (self.node_data or {}).get("credential_id") and isinstance(raw, dict):
-            _credential(raw)
-        data = await self.freshen_credential(raw if isinstance(raw, dict) else self.config.credentials.model_dump(mode="json"),
-            pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id, credential_id=(self.node_data or {}).get("credential_id"),
-            workflow_id=self.workflow_id, organization_id=self.organization_id)
+        data = _credential(raw if isinstance(raw, dict) else self.config.credentials.model_dump(mode="json"))
         c, op = self.config.config, self.config.config.operation
         proof = "Protected saved-service DNS metadata reachability; no actor, tenant ownership or service/domain identity equivalence is inferred."
         if op == "check_connection":

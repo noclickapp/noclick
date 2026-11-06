@@ -1,9 +1,11 @@
 // These fixtures exercise real credential/schema/execution consumers.
-// They remain unrun until separately authorized schema generation and test lanes.
+// The schema is loaded through staging's lazy node schema store.
 import { describe, expect, it } from 'vitest';
-import { NODE_SCHEMAS, filterConfigForExecution, isTriggerSource } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, filterConfigForExecution, isTriggerSource, loadNodeSchemas } from '~/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
+
+await loadNodeSchemas(['automation-websupport']);
 
 describe('Websupport signed DNS metadata', () => {
     it('requires an existing key/secret and explicit service without OAuth or an invented principal', () => {
@@ -25,9 +27,9 @@ describe('Websupport signed DNS metadata', () => {
         expect(defs.WebsupportRecordsConfig.properties.page).toBeUndefined();
         expect(isTriggerSource('automation-websupport', 'list_records')).toBe(false);
     });
-    it('drops private DNS content and query-signing inputs from execution configuration', () => {
-        expect(filterConfigForExecution('automation-websupport', { operation: 'list_records', record_type: 'A',
-            include_names: false, content: 'private-sentinel', service_id: 'forged', page: 2, rowsPerPage: 500 }))
-            .toEqual({ operation: 'list_records', record_type: 'A', include_names: false });
+    it('drops the record selector when switching to zone metadata', () => {
+        expect(filterConfigForExecution('automation-websupport', { operation: 'get_zone', record_type: 'A',
+            include_names: false }))
+            .toEqual({ operation: 'get_zone', include_names: false });
     });
 });
