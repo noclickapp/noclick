@@ -13,7 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr, field_
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from repositories.docspell_credentials import fetch_snapshot
-from utils.ssrf import guarded_async_client, normalize_https_origin
+from utils.ssrf import allow_private_hosts, guarded_async_client, normalize_https_origin
 
 TYPE = "docspell_auth_token"
 MAX_BYTES = 2 * 1024 * 1024
@@ -186,7 +186,9 @@ async def request(value, resource, *, folder_id=None, reader=None):
     status = None
     try:
         try:
-            async with guarded_async_client(timeout=12, follow_redirects=False, trust_env=False, require_public=True) as client:
+            if allow_private_hosts():
+                raise ValueError("Docspell requires public-host enforcement")
+            async with guarded_async_client(timeout=12, follow_redirects=False, trust_env=False) as client:
                 async with client.stream("GET", value.instance_origin + "/api/v1" + endpoint, headers=headers) as response:
                     status = response.status_code
                     if status != 200 or response.headers.get("content-type", "").split(";", 1)[0].strip().lower() != "application/json":

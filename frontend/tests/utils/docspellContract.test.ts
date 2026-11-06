@@ -1,15 +1,16 @@
-// UNRUN actual generated schema/editor registration fixtures for Docspell.
+// Generated schema and editor registration contracts for Docspell.
 import { describe, expect, it } from 'vitest';
 import schema from '../../app/schemas/nodes/docspell.json';
-import { NODE_SCHEMAS } from '../../app/utils/nodeSchemas';
+import { NODE_SCHEMAS, loadNodeSchemas } from '../../app/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '../../app/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '../../app/utils/credentialLabels';
-import { AVAILABLE_NODES } from '../../app/components/workflow/nodes/nodeRegistry';
+import { NODE_DEFINITION_FILES } from '../../app/components/workflow/nodes/nodeDefinitions';
 
 describe('Docspell metadata contracts', () => {
-    it('registers the user-token form and exactly three closed reads', () => {
+    it('registers the user-token form and exactly three closed reads', async () => {
+        await loadNodeSchemas(['automation-docspell']);
         expect(NODE_SCHEMAS['automation-docspell']).toBe(schema);
-        expect(AVAILABLE_NODES.filter(n => n.type === 'automation-docspell')).toHaveLength(1);
+        expect(NODE_DEFINITION_FILES.filter(([type]) => type === 'automation-docspell')).toEqual([['automation-docspell', 'DocspellNode']]);
         expect(CREDENTIAL_TYPE_MAP.DocspellAuthTokenCredential).toBe('docspell_auth_token');
         expect(humanizeCredentialLabel('DocspellAuthToken')).toBe('Docspell Auth Token');
         const native = schema as any;

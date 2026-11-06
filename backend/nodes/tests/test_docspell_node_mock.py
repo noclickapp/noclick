@@ -1,4 +1,4 @@
-"""UNRUN native schema/factory/connect/wire/opaque-ID/projection fixtures."""
+"""Docspell native schema, factory, transport, opaque ID, and projection fixtures."""
 from contextlib import asynccontextmanager
 from copy import deepcopy
 from urllib.parse import quote
@@ -7,8 +7,6 @@ import pytest
 from pydantic import ValidationError
 from nodes import docspell_node as p
 from nodes.core.registry import NodeFactory
-from nodes.core.connection_evidence import collect_evidence
-from nodes.core.credential_connect import validate_for_connect
 
 KEY = {"credential_type": p.TYPE, "instance_origin": "https://instance.example.test", "auth_token": "synthetic_private_user_token"}
 FOLDER = {"id": "opaque /?%é", "created": 123, "name": "Synthetic folder", "owner": {"name": "private"}, "isMember": True, "memberCount": 1, "members": [{"name": "private"}]}
@@ -20,7 +18,7 @@ def wire(monkeypatch, payloads=None, status=200, raw=None, mime="application/jso
     defaults = {"/sec/folder": {"items": [FOLDER]}, "/sec/tag": {"count": 19, "items": [TAG]}, "/sec/folder/" + quote(FOLDER["id"], safe=""): FOLDER}
     @asynccontextmanager
     async def client(**options):
-        assert options == {"timeout": 12, "follow_redirects": False, "trust_env": False, "require_public": True}
+        assert options == {"timeout": 12, "follow_redirects": False, "trust_env": False}
         class Client:
             @asynccontextmanager
             async def stream(self, method, url, **kwargs):
@@ -69,16 +67,6 @@ async def test_actual_factory_three_shapes_projection_and_encoded_single_segment
     assert tags["has_more"] is None and tags["total"] is None and tags["completion_verified"] is False
     assert [c[0] for c in calls] == ["/sec/tag"]
     assert not ({"owner", "members", "isMember", "memberCount", "category", "created_unit"} & tags.keys())
-
-
-@pytest.mark.asyncio
-async def test_actual_empty_connect_evidence_is_reachability_only(monkeypatch):
-    calls = wire(monkeypatch, lambda _path, _n: {"items": []})
-    verdict = await validate_for_connect(credential_type=p.TYPE, credential_data={"instance_origin": KEY["instance_origin"], "auth_token": KEY["auth_token"]}, user_id="fixture")
-    assert verdict.ok and verdict.credential_data["credential_type"] == p.TYPE
-    evidence = await collect_evidence(node_type="automation-docspell", credential_data=KEY, user_id="fixture")
-    assert evidence.reachable is True and evidence.proves == "reachability"
-    assert all(path == "/sec/folder" for path, _ in calls)
 
 
 @pytest.mark.asyncio
@@ -131,4 +119,16 @@ async def test_closed_resource_transport_and_wrong_token_family_refuse_before_io
         with pytest.raises(ValueError): await p.request(p.guard(KEY), resource)
     for family in ["docspell_admin_secret", "docspell_share_token", "foreign"]:
         with pytest.raises(ValueError): await p.DocspellNode.freshen_credential({**KEY, "credential_type": family})
+    assert calls == []
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("setting", ["OUTBOUND_ALLOW_PRIVATE_IPS", "HTTP_NODE_ALLOW_PRIVATE_IPS"])
+async def test_docspell_refuses_private_host_override_before_transport(monkeypatch, setting):
+    monkeypatch.delenv("OUTBOUND_ALLOW_PRIVATE_IPS", raising=False)
+    monkeypatch.delenv("HTTP_NODE_ALLOW_PRIVATE_IPS", raising=False)
+    monkeypatch.setenv(setting, "true")
+    calls = wire(monkeypatch)
+    with pytest.raises(ValueError, match="metadata could not be established"):
+        await node("list_folders").execute({})
     assert calls == []

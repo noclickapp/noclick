@@ -1,5 +1,5 @@
 // Docspell exposes closed folder/tag metadata reads in the native editor.
-// The unchanged official PNG wordmark is separate from generated operation forms.
+// The provider mark is separate from generated operation forms.
 import { memo, forwardRef } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
