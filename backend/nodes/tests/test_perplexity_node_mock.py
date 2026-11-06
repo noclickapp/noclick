@@ -14,7 +14,7 @@ Exercises every operation with mocked HTTP responses (no live API calls):
 """
 
 import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
 from nodes.perplexity_node import (
     PerplexityNode,
@@ -70,10 +70,7 @@ def create_mock_client(status_code=200, json_data=None):
     mock_response = create_mock_response(status_code, json_data)
     mock_client = Mock()
 
-    async def async_request(*args, **kwargs):
-        return mock_response
-
-    mock_client.request = async_request
+    mock_client.request = AsyncMock(return_value=mock_response)
 
     async def aenter(self):
         return mock_client
@@ -108,6 +105,10 @@ class TestPerplexityChatMock:
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "chat_completion"
+        mock_client.request.assert_awaited_once()
+        request = mock_client.request.call_args.kwargs
+        assert request["method"] == "POST"
+        assert request["url"] == "https://api.perplexity.ai/v1/sonar"
         assert result["data"]["citations"] == ["https://example.com/a"]
 
     @pytest.mark.asyncio
@@ -124,6 +125,14 @@ class TestPerplexityChatMock:
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "create_async_completion"
+        mock_client.request.assert_awaited_once()
+        request = mock_client.request.call_args.kwargs
+        assert request["method"] == "POST"
+        assert request["url"] == "https://api.perplexity.ai/v1/async/sonar"
+        assert request["json"]["request"]["model"] == "sonar-deep-research"
+        assert request["json"]["request"]["messages"] == [
+            {"role": "user", "content": "Write a deep report"}
+        ]
         assert result["data"]["request_id"] == "req_1"
 
     @pytest.mark.asyncio
@@ -138,6 +147,10 @@ class TestPerplexityChatMock:
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "list_async_completions"
+        mock_client.request.assert_awaited_once()
+        request = mock_client.request.call_args.kwargs
+        assert request["method"] == "GET"
+        assert request["url"] == "https://api.perplexity.ai/v1/async/sonar"
 
     @pytest.mark.asyncio
     async def test_get_async_completion(self, api_key_credentials):
@@ -151,6 +164,10 @@ class TestPerplexityChatMock:
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "get_async_completion"
+        mock_client.request.assert_awaited_once()
+        request = mock_client.request.call_args.kwargs
+        assert request["method"] == "GET"
+        assert request["url"] == "https://api.perplexity.ai/v1/async/sonar/req_1"
         assert result["data"]["status"] == "COMPLETED"
 
     @pytest.mark.asyncio
@@ -165,6 +182,11 @@ class TestPerplexityChatMock:
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "academic_search"
+        mock_client.request.assert_awaited_once()
+        request = mock_client.request.call_args.kwargs
+        assert request["method"] == "POST"
+        assert request["url"] == "https://api.perplexity.ai/v1/sonar"
+        assert request["json"]["search_mode"] == "academic"
 
     @pytest.mark.asyncio
     async def test_sec_search(self, api_key_credentials):
@@ -178,6 +200,11 @@ class TestPerplexityChatMock:
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "sec_search"
+        mock_client.request.assert_awaited_once()
+        request = mock_client.request.call_args.kwargs
+        assert request["method"] == "POST"
+        assert request["url"] == "https://api.perplexity.ai/v1/sonar"
+        assert request["json"]["search_mode"] == "sec"
 
     @pytest.mark.asyncio
     async def test_structured_output(self, api_key_credentials):
@@ -195,6 +222,10 @@ class TestPerplexityChatMock:
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "structured_output"
+        mock_client.request.assert_awaited_once()
+        request = mock_client.request.call_args.kwargs
+        assert request["method"] == "POST"
+        assert request["url"] == "https://api.perplexity.ai/v1/sonar"
 
     @pytest.mark.asyncio
     async def test_structured_output_invalid_schema(self, api_key_credentials):
