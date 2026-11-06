@@ -7,6 +7,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 from fastapi import HTTPException
+from pydantic import ValidationError
 import pytest
 from nodes.tests.test_qonversion_node_mock import native,ensure_native_db_pool,USER,CID,FAMILY,BLOB,NOW,PRODUCT
 
@@ -75,8 +76,12 @@ async def test_actual_connect_exact_product_reachability_has_no_principal_label(
 @pytest.mark.parametrize('tag',['slack_oauth','',None])
 async def test_actual_connect_bad_family_before_persistence(native,surfaces,kind,tag):
     if kind=='provide':
-        with pytest.raises(HTTPException) as failure:await connect(surfaces,kind,{**BLOB,'credential_type':tag})
-        assert failure.value.status_code==400
+        if tag is None:
+            with pytest.raises(ValidationError) as failure:await connect(surfaces,kind,{**BLOB,'credential_type':tag})
+            assert failure.value.errors()[0]['loc']==('credential_data','credential_type')
+        else:
+            with pytest.raises(HTTPException) as failure:await connect(surfaces,kind,{**BLOB,'credential_type':tag})
+            assert failure.value.status_code==400
     else:
         result=await connect(surfaces,kind,{**BLOB,'credential_type':tag})
         assert result['success'] is False and 'credential_type' in result['field_errors']

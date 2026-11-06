@@ -259,10 +259,11 @@ async def test_actual_native_picker_uses_complete_scoped_page_or_refuses_partial
 @pytest.mark.parametrize('status',['pending_approval','rejected'])
 async def test_actual_admission_prevents_execute_and_picker_provider_calls(native,status):
     from nodes.core.run_op import run_node_lookup
-    native.approval={'status':status,'message':'Fixture owner decision required'}
+    native.approval={'id':CID,'status':'pending' if status=='pending_approval' else status}
     assert (await native.run('list_products',saved=True))['status']==status
     result=await run_node_lookup(node_type='automation-qonversion',field_name='product_id',user_id=USER,pool=native.pool,organization_id=None,credential_id=CID)
     assert result['status']==status and native.requests==[] and native.constructors==[]
+    assert result['approval_id']==CID and result['executed'] is False
 
 
 @pytest.mark.parametrize('payload,headers',[(b'not JSON',{'Content-Type':'application/json'}),(b'{}',{'Content-Type':'text/html'}),(b'x'*2_000_001,{'Content-Type':'application/json'})])
