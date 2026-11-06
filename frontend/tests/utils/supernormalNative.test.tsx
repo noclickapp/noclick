@@ -2,13 +2,15 @@
 // Generated schema assertions run only after a separately granted native generation.
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { SupernormalIcon } from '~/components/icons/SupernormalIcon';
-import { NODE_SCHEMAS, getNodeCredentialInfo, isAgentToolProviderType } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, loadNodeSchemas, getNodeCredentialInfo, isAgentToolProviderType } from '~/utils/nodeSchemas';
 import { getCredentialTypeFromSchemaTitle } from '~/utils/credentialTypeMap';
-import { autoSelectCredentialFromCache, upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
 
 describe('native Supernormal wiring', () => {
+  beforeAll(() => loadNodeSchemas(['automation-supernormal']));
   it('exposes the real scoped token family and only five meeting-service reads', () => {
     const schema = NODE_SCHEMAS['automation-supernormal'];
     expect(schema.$defs.SupernormalAPITokenCredential.properties.credential_type.const).toBe('supernormal_api_token');

@@ -1,4 +1,4 @@
-// Exact Supernormal icon from its official API documentation's public asset.
+// Supernormal brand symbol from the official API documentation logo.
 // Normalize its dark source before the real canvas filter and preserve proportions.
 import { forwardRef } from 'react';
 import type { ImgHTMLAttributes } from 'react';

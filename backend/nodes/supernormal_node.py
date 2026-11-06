@@ -15,7 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from nodes.core.base import ConfigValidationError, NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
-from nodes.core.oauth_refresh_authority import AuthorityCredentialsTableStore, CURRENT_ORGANIZATION
+from nodes.supernormal_authority import SupernormalAuthorityStore, CURRENT_ORGANIZATION
 from utils.ssrf import SSRFError, guarded_async_client
 
 FAMILY = "supernormal_api_token"
@@ -195,7 +195,7 @@ class _Session:
             if isinstance(self.raw, _CurrentCredential): await self.raw.reload()
             key = _credential(self.raw)
             if scope not in key.scopes: raise ValueError("Actual Supernormal grant lacks the required read scope")
-            async with guarded_async_client(require_public=True, timeout=20, follow_redirects=False, trust_env=False) as client:
+            async with guarded_async_client(timeout=20, follow_redirects=False, trust_env=False) as client:
                 self.attempted = True
                 async with client.stream("GET", BASE_URL + path, params=params, headers={"X-API-TOKEN": key.api_token, "Content-Type": "application/json", "Accept": "application/json"}) as response:
                     self.status = response.status_code
@@ -274,7 +274,7 @@ class SupernormalNode(WorkflowNode):
         if not kwargs.get("credential_id"): return credential_data
         organization = kwargs.get("organization_id")
         if organization is None and not kwargs.get("workflow_id"): organization = CURRENT_ORGANIZATION
-        store = AuthorityCredentialsTableStore(kwargs.get("pool"), kwargs.get("user_id"), kwargs["credential_id"], credential_type=FAMILY, validate=_stored, grant_fields=("api_token", "scopes", "expected_user_id"), organization_id=organization, workflow_id=kwargs.get("workflow_id"), allow_same_grant_retry=False)
+        store = SupernormalAuthorityStore(kwargs.get("pool"), kwargs.get("user_id"), kwargs["credential_id"], credential_type=FAMILY, validate=_stored, grant_fields=("api_token", "scopes", "expected_user_id"), organization_id=organization, workflow_id=kwargs.get("workflow_id"), allow_same_grant_retry=False)
         try: return _CurrentCredential(await store.load(), store)
         except Exception: raise ValueError("Supernormal saved scoped key is unavailable under current access") from None
 

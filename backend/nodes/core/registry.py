@@ -79,6 +79,7 @@ from nodes.semrush_node import SemrushNode
 from nodes.serverless_function_node import ServerlessFunctionNode
 from nodes.shopify_node import ShopifyNode
 from nodes.slack_node import SlackNode
+from nodes.supernormal_node import SupernormalNode
 from nodes.supabase_node import SupabaseNode
 from nodes.tool_node import ToolNode
 from nodes.mcp_server_node import MCPServerNode
@@ -416,6 +417,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-table': TableNode,
     'automation-typeform': TypeformNode,
     'automation-123formbuilder': FormBuilder123Node,
+    'automation-supernormal': SupernormalNode,
     'automation-supabase': SupabaseNode,
     'automation-twilio': TwilioNode,
     'automation-twitter': TwitterNode,

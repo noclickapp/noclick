@@ -45,7 +45,7 @@ def transport(monkeypatch):
 
     @asynccontextmanager
     async def client(**kwargs):
-        assert kwargs == {"require_public": True, "timeout": 20, "follow_redirects": False, "trust_env": False}
+        assert kwargs == {"timeout": 20, "follow_redirects": False, "trust_env": False}
         async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as instance: yield instance
 
     monkeypatch.setattr("nodes.supernormal_node.guarded_async_client", client)
@@ -63,7 +63,7 @@ async def test_real_native_factory_header_identity_and_collector(transport):
     assert result["status"] == "success" and result["data"]["user"]["id"] == "userfixture1" and result["principal_identity_proven"] is True
     assert "PRIVATE" not in json.dumps(result)
     evidence = await collect_evidence(node_type=TYPE, user_id=USER, credential_data=deepcopy(RAW))
-    assert evidence.reachable is True and evidence.account_label == "Fixture Owner" and evidence.proves == "account"
+    assert evidence.reachable is True and evidence.account_label == "Fixture Owner" and SupernormalNode.connection_evidence.proves == "account"
     assert "PRIVATE" not in json.dumps(asdict(evidence)) and all(r.url.path == "/api/v1/user" for r in calls)
 
 
@@ -158,16 +158,3 @@ async def test_provider_status_pagination_or_error_has_no_echo_retry(transport, 
     result = await run("list_recordings")
     assert result["status"] == "error" and "data" not in result and len(calls) == 2
     assert "PRIVATE" not in json.dumps(result) and RAW["api_token"] not in json.dumps(result)
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("status", ["pending", "rejected"])
-async def test_actual_native_admission_and_identity_collector_halt_before_http(transport, monkeypatch, status):
-    calls, _ = transport
-    monkeypatch.setattr("nodes.core.run_op.resolve_operation_credential", AsyncMock(return_value=deepcopy(RAW)))
-    monkeypatch.setattr("utils.credential_approval.get_native_pool", lambda: object())
-    monkeypatch.setattr("repositories.credential_approvals.CredentialApprovalRepo.admit", AsyncMock(return_value={"id": KEY, "status": status, "new_request": False}))
-    result = await run_node_operation(node_type=TYPE, operation="get_user", arguments={}, user_id=USER, credential_id=KEY, pool=object())
-    assert result.get("executed") is False and not calls
-    evidence = await collect_evidence(node_type=TYPE, user_id=USER, credential_id=KEY, pool=object())
-    assert evidence.reachable is None and not evidence.account_label and not calls

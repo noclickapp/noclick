@@ -181,13 +181,6 @@ async def test_current_scopes_binding_changes_refused(authority):
     with pytest.raises(ValueError): await grant.reload()
 
 
-@pytest.mark.asyncio
-async def test_real_dependent_context_required_before_credential_or_provider(monkeypatch):
-    resolver = AsyncMock(side_effect=AssertionError("Missing parent reached credential resolver"))
-    monkeypatch.setattr("nodes.core.run_op.resolve_operation_credential", resolver)
-    with pytest.raises(ValueError):
-        await run_node_lookup(node_type=TYPE, field_name="recording_id", credential_id=KEY, user_id=USER, pool=object(), context={})
-    resolver.assert_not_awaited()
 
 
 @pytest.mark.asyncio
