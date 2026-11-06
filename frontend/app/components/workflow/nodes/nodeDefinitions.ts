@@ -191,6 +191,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-hex', 'HexNode'],
     ['automation-clickhouse', 'ClickHouseNode'],
     ['automation-fellow', 'FellowNode'],
+    ['automation-stream-chat', 'StreamChatNode'],
     ['automation-fathom', 'FathomNode'],
     ['automation-sigma', 'SigmaNode'],
     ['automation-openstatus', 'OpenStatusNode'],

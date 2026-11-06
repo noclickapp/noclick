@@ -1,10 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import schema from '~/schemas/nodes/stream-chat.json';
 import meta from '~/schemas/nodeMeta.json';
-import { NODE_SCHEMAS, getAgentToolOperations } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, getAgentToolOperations, loadNodeSchemas } from '~/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import { StreamChatNode } from '~/components/workflow/nodes/StreamChatNode';
@@ -15,6 +15,7 @@ const expected = ['get_channel', 'get_channel_type', 'get_message', 'get_or_crea
 const defs = schema.$defs as Record<string, any>;
 
 describe('native Stream Chat source and generated UI', () => {
+    beforeAll(() => loadNodeSchemas(['automation-stream-chat']));
     it('exposes only the 13 native operations with no trigger or client token action', () => {
         expect(NODE_SCHEMAS['automation-stream-chat']).toBe(schema);
         expect(meta.types['automation-stream-chat']).toEqual({ agentToolProvider: true });

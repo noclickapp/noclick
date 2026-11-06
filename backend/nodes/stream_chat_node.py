@@ -20,10 +20,48 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
-from nodes.core.credential_validation import (
-    CredentialValidationPending, CredentialValidationUnavailable,
-)
-from nodes.core.oauth_refresh_authority import AuthorityCredentialsTableStore, CURRENT_ORGANIZATION
+
+CURRENT_ORGANIZATION = object()
+
+
+class StreamChatCredentialUnavailable(ValueError):
+    pass
+
+
+class _StoredCredential:
+    """Recheck staging's resolver and the saved row around each provider call."""
+
+    def __init__(self, pool, user_id, credential_id, *, organization_id, workflow_id):
+        self.pool, self.user_id, self.credential_id = pool, user_id, credential_id
+        self.organization_id, self.workflow_id = organization_id, workflow_id
+        self.current = None
+
+    async def load(self):
+        from utils.credentials import resolve_credential_with_owner_fallback
+        from utils.database_pool import get_native_pool
+        from wss.handlers.workflow_handler import get_user_org_context
+
+        if self.pool is None:
+            self.pool = get_native_pool()
+        async with self.pool.acquire() as conn:
+            org = await get_user_org_context(conn, self.user_id)
+        if self.organization_id is not CURRENT_ORGANIZATION and org != self.organization_id:
+            raise ValueError("Stream Chat credential access context changed.")
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow(
+                "SELECT owner_id, credential_type, token_version, updated_at, revoked_at "
+                "FROM credentials WHERE id = $1", self.credential_id,
+            )
+        if (not row or row["revoked_at"] is not None or row["credential_type"] != FAMILY
+                or type(row["token_version"]) is not int or row["token_version"] < 1):
+            raise ValueError("Stream Chat saved credential is unavailable.")
+        data = await resolve_credential_with_owner_fallback(
+            self.credential_id, self.user_id, self.pool, org_id=org, workflow_id=self.workflow_id,
+        )
+        shaped = _shape(data)
+        self.current = (org, *(row[k] for k in ("owner_id", "credential_type", "token_version", "updated_at")))
+        return {**shaped, "token_version": row["token_version"],
+                "updated_at": row["updated_at"].isoformat() if row["updated_at"] else None}
 
 NODE = "automation-stream-chat"
 FAMILY = "stream_chat_server_key"
@@ -213,7 +251,7 @@ class GetMessageConfig(_Message):
 class ListMessageHistoryConfig(_Message):
     operation: Literal["list_message_history"] = Field("list_message_history", title="List Message History Metadata")
     limit: int = Field(25, ge=1, le=100, strict=True)
-    page_token: Optional[str] = Field(None, max_length=8192, title="Next Page Token", description="Use only a token returned for this credential, channel, message and page size.")
+    page_token: Optional[str] = Field("", max_length=8192, title="Next Page Token", description="Use only a token returned for this credential, channel, message and page size.")
 
 
 StreamChatOperation = Annotated[Union[ListUsersConfig, GetUserConfig, UpsertUserConfig,
@@ -333,7 +371,7 @@ class _Client:
                     or any(data.get(k) != v for k, v in self.stamps.items())):
                 raise ValueError("changed")
         except Exception:
-            raise CredentialValidationUnavailable("Stream Chat credential authority changed; reconnect or retry.") from None
+            raise StreamChatCredentialUnavailable("Stream Chat credential authority changed; reconnect or retry.") from None
 
     def _server_jwt(self):
         header, claims = _b64(b'{"alg":"HS256","typ":"JWT"}'), _b64(b'{"server":true}')
@@ -557,8 +595,6 @@ class _Client:
 
 class StreamChatNode(WorkflowNode):
     agent_tool_provider = True
-    # Opt into trusted workflow/org context for load-only authority checks.
-    workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="list_channel_types", noun="channel types", proves="reachability")
 
     @classmethod
@@ -572,27 +608,22 @@ class StreamChatNode(WorkflowNode):
         if not credential_id:
             return shaped
         if not user_id:
-            raise CredentialValidationUnavailable("Stream Chat credential caller is unavailable.")
+            raise StreamChatCredentialUnavailable("Stream Chat credential caller is unavailable.")
         try:
-            store = AuthorityCredentialsTableStore(pool, user_id, credential_id, credential_type=FAMILY,
-                validate=_shape, organization_id=organization_id, workflow_id=workflow_id)
+            store = _StoredCredential(pool, user_id, credential_id,
+                organization_id=organization_id, workflow_id=workflow_id)
             current = await store.load()
             if shaped != _shape(current) or any(k in credential_data and credential_data[k] != current.get(k) for k in ("token_version", "updated_at")):
                 raise ValueError("changed")
             return _LoadedCredential(current, store)
         except Exception:
-            raise CredentialValidationUnavailable("Stream Chat credential is unavailable or its current authority changed.") from None
+            raise StreamChatCredentialUnavailable("Stream Chat credential is unavailable or its current authority changed.") from None
 
     @classmethod
-    async def validate_credential_access(cls, credential_data, *, validation_context=None):
-        if validation_context is None:
-            raise CredentialValidationUnavailable("Stream Chat validation requires current credential authority.")
+    async def validate_credential_access(cls, credential_data):
         try:
-            result = await validation_context.run_operation("list_channel_types")
-            await validation_context.accept(result)
+            await _Client(credential_data).run(ListChannelTypesConfig())
             return {"valid": True, "identity_verified": False}
-        except (CredentialValidationPending, CredentialValidationUnavailable):
-            raise
         except StreamChatAccessDenied as exc:
             return {"valid": False, "message": str(exc)}
         except Exception:
