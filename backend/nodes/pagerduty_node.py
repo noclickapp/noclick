@@ -7720,7 +7720,6 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     async def _create_extension(self, c: PagerDutyCreateExtensionConfig, api_key, from_email) -> Dict[str, Any]:
         extension: Dict[str, Any] = {
-            "type": "extension",
             "name": c.name,
             "extension_schema": _ref(c.extension_schema_id, "extension_schema_reference"),
             "extension_objects": [
@@ -7740,7 +7739,7 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         )
 
     async def _update_extension(self, c: PagerDutyUpdateExtensionConfig, api_key, from_email) -> Dict[str, Any]:
-        extension: Dict[str, Any] = {"type": "extension"}
+        extension: Dict[str, Any] = {}
         if c.name:
             extension["name"] = c.name
         if c.endpoint_url:
@@ -7797,7 +7796,7 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         if c.description:
             orchestration["description"] = c.description
         if c.team_id:
-            orchestration["team"] = _ref(c.team_id, "team_reference")
+            orchestration["team"] = {"id": c.team_id}
         return await _pagerduty_request(
             api_key, "POST", "/event_orchestrations",
             json_body={"orchestration": orchestration},
@@ -8083,7 +8082,7 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return await _pagerduty_request(api_key, "GET", f"/incident_workflows/{c.incident_workflow_id}", action_name="get_incident_workflow")
 
     async def _create_incident_workflow(self, c: PagerDutyCreateIncidentWorkflowConfig, api_key, from_email) -> Dict[str, Any]:
-        workflow = {"type": "incident_workflow", "name": c.name}
+        workflow = {"name": c.name}
         if c.description:
             workflow["description"] = c.description
         if c.steps_json:
@@ -8094,7 +8093,7 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return await _pagerduty_request(api_key, "POST", "/incident_workflows", json_body={"incident_workflow": workflow}, from_email=from_email, action_name="create_incident_workflow")
 
     async def _update_incident_workflow(self, c: PagerDutyUpdateIncidentWorkflowConfig, api_key, from_email) -> Dict[str, Any]:
-        workflow = {"type": "incident_workflow"}
+        workflow = {}
         if c.name:
             workflow["name"] = c.name
         if c.description:
@@ -8423,7 +8422,7 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return await _pagerduty_request(api_key, "GET", "/incidents/custom_fields", action_name="list_custom_fields")
 
     async def _create_custom_field(self, c: PagerDutyCreateCustomFieldConfig, api_key, from_email) -> Dict[str, Any]:
-        field = {"type": "field", "name": c.name, "display_name": c.display_name, "data_type": c.data_type, "field_type": c.field_type}
+        field = {"name": c.name, "display_name": c.display_name, "data_type": c.data_type, "field_type": c.field_type}
         if c.description: field["description"] = c.description
         if c.default_value: field["default_value"] = c.default_value
         if c.enabled: field["enabled"] = c.enabled == "true"
@@ -8433,7 +8432,7 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return await _pagerduty_request(api_key, "GET", f"/incidents/custom_fields/{c.field_id}", action_name="get_custom_field")
 
     async def _update_custom_field(self, c: PagerDutyUpdateCustomFieldConfig, api_key, from_email) -> Dict[str, Any]:
-        field = {"type": "field"}
+        field = {}
         if c.display_name: field["display_name"] = c.display_name
         if c.description: field["description"] = c.description
         if c.default_value: field["default_value"] = c.default_value
@@ -8467,7 +8466,7 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         }
 
     async def _update_field_option(self, c: PagerDutyUpdateFieldOptionConfig, api_key, from_email) -> Dict[str, Any]:
-        body = {"field_option": {"id": c.field_option_id, "type": "field_option", "data": {"data_type": "string", "value": c.value}}}
+        body = {"field_option": {"data": {"data_type": "string", "value": c.value}}}
         return await _pagerduty_request(api_key, "PUT", f"/incidents/custom_fields/{c.field_id}/field_options/{c.field_option_id}", json_body=body, from_email=from_email, action_name="update_field_option")
 
     async def _delete_field_option(self, c: PagerDutyDeleteFieldOptionConfig, api_key, from_email) -> Dict[str, Any]:

@@ -1485,6 +1485,46 @@ def test_retired_response_plays_are_not_offered(operation):
         {"service": {"type": "service", "name": "My Web App", "escalation_policy": {"id": "PWIP6CQ", "type": "escalation_policy_reference"}}},
     ),
     (
+        PagerDutyCreateEventOrchestrationConfig(name="New Orchestration", team_id="PXD0WR8"),
+        "/event_orchestrations",
+        {"orchestration": {"name": "New Orchestration", "team": {"id": "PXD0WR8"}}},
+    ),
+    (
+        PagerDutyCreateIncidentWorkflowConfig(name="Example Incident Workflow"),
+        "/incident_workflows",
+        {"incident_workflow": {"name": "Example Incident Workflow"}},
+    ),
+    (
+        PagerDutyUpdateIncidentWorkflowConfig(incident_workflow_id="PT4KHRS", name="Example Incident Workflow"),
+        "/incident_workflows/PT4KHRS",
+        {"incident_workflow": {"name": "Example Incident Workflow"}},
+    ),
+    (
+        PagerDutyCreateExtensionConfig(name="My Webhook", extension_schema_id="PJFWPEP", service_ids="PIJ90N7"),
+        "/extensions",
+        {"extension": {"name": "My Webhook", "extension_schema": {"id": "PJFWPEP", "type": "extension_schema_reference"}, "extension_objects": [{"id": "PIJ90N7", "type": "service_reference"}]}},
+    ),
+    (
+        PagerDutyUpdateExtensionConfig(extension_id="PT4KHRS", name="My Webhook"),
+        "/extensions/PT4KHRS",
+        {"extension": {"name": "My Webhook"}},
+    ),
+    (
+        PagerDutyCreateCustomFieldConfig(name="environment", display_name="Environment", data_type="string", field_type="single_value", enabled=None),
+        "/incidents/custom_fields",
+        {"field": {"name": "environment", "display_name": "Environment", "data_type": "string", "field_type": "single_value"}},
+    ),
+    (
+        PagerDutyUpdateCustomFieldConfig(field_id="PT4KHRS", display_name="Environment", enabled=None),
+        "/incidents/custom_fields/PT4KHRS",
+        {"field": {"display_name": "Environment"}},
+    ),
+    (
+        PagerDutyUpdateFieldOptionConfig(field_id="PT4KHRS", field_option_id="PQ9K7I8", value="prod"),
+        "/incidents/custom_fields/PT4KHRS/field_options/PQ9K7I8",
+        {"field_option": {"data": {"data_type": "string", "value": "prod"}}},
+    ),
+    (
         PagerDutyUpdateServiceEventRuleConfig(
             service_id="PQL78HM", rule_id="7123bdd1-74e8-4aa7-aa38-4a9ebe123456",
             actions='{"suppress": {"value": true}}',
@@ -1526,7 +1566,7 @@ async def test_provider_request_bodies(config, path, body, api_key_credentials):
     assert result["status"] == "success", result
     assert len(requests) == 1
     assert requests[0].url.path == path
-    assert requests[0].method == ("POST" if config.operation == "invoke_automation_action" else "PUT")
+    assert requests[0].method == ("POST" if config.operation.startswith("create_") or config.operation == "invoke_automation_action" else "PUT")
     assert json.loads(requests[0].content) == body
 
 
