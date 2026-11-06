@@ -814,7 +814,7 @@ class FellowNode(ExternalWebhookTriggerMixin, WorkflowNode):
         )
         if result.get("status") != "success":
             raise ValueError(f"Fellow webhook registration failed: {result.get('error')}")
-        data = result.get("data") or {}
+        data = (result.get("data") or {}).get("webhook") or {}
         if not isinstance(data, dict):
             data = {}
         external_id = data.get("id")
@@ -970,10 +970,17 @@ class FellowNode(ExternalWebhookTriggerMixin, WorkflowNode):
             include["transcript"] = True
         if c.include_ai_notes == "true":
             include["ai_notes"] = True
+        filters = {
+            key: value
+            for key, value in {
+                "event_guid": c.event_guid,
+                "channel_id": c.channel_id,
+                "title": c.title,
+            }.items()
+            if value is not None
+        }
         body: Dict[str, Any] = {
-            "event_guid": c.event_guid,
-            "channel_id": c.channel_id,
-            "title": c.title,
+            "filters": filters or None,
             "include": include or None,
             "pagination": _pagination(c.cursor, c.page_size),
         }
@@ -1004,10 +1011,17 @@ class FellowNode(ExternalWebhookTriggerMixin, WorkflowNode):
             include["event_attendees"] = True
         if c.include_content_markdown == "true":
             include["content_markdown"] = True
+        filters = {
+            key: value
+            for key, value in {
+                "event_guid": c.event_guid,
+                "channel_id": c.channel_id,
+                "title": c.title,
+            }.items()
+            if value is not None
+        }
         body: Dict[str, Any] = {
-            "event_guid": c.event_guid,
-            "channel_id": c.channel_id,
-            "title": c.title,
+            "filters": filters or None,
             "include": include or None,
             "pagination": _pagination(c.cursor, c.page_size),
         }
@@ -1031,7 +1045,7 @@ class FellowNode(ExternalWebhookTriggerMixin, WorkflowNode):
         self, c: FellowListActionItemsConfig, subdomain: str, api_key: str
     ) -> Dict[str, Any]:
         body: Dict[str, Any] = {
-            "scope": c.scope or None,
+            "filters": {"scope": c.scope} if c.scope else None,
             "pagination": _pagination(c.cursor, c.page_size),
         }
         return await _fellow_request(

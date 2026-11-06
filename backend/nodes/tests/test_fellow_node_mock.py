@@ -17,8 +17,10 @@ import hashlib
 import hmac
 import json
 
-import pytest
 from unittest.mock import Mock, patch
+
+import httpx
+import pytest
 
 from nodes.fellow_node import (
     FELLOW_TRIGGER_EVENTS,
@@ -407,7 +409,7 @@ class TestFellowTriggerMock:
     async def test_register_external_webhook_ai_note_generated(self):
         with patch(
             "nodes.fellow_node._fellow_request",
-            return_value={"status": "success", "data": {"id": "wh_1", "secret": "whsec_dGVzdA=="}},
+            return_value={"status": "success", "data": {"webhook": {"id": "wh_1", "secret": "whsec_dGVzdA=="}}},
         ) as mock_req:
             extra = await FellowNode._register_external_webhook(
                 webhook_url="https://abc.hooks.example.test",
@@ -424,7 +426,7 @@ class TestFellowTriggerMock:
     async def test_register_external_webhook_ai_note_shared(self):
         with patch(
             "nodes.fellow_node._fellow_request",
-            return_value={"status": "success", "data": {"id": "wh_2", "secret": "whsec_dGVzdA=="}},
+            return_value={"status": "success", "data": {"webhook": {"id": "wh_2", "secret": "whsec_dGVzdA=="}}},
         ) as mock_req:
             await FellowNode._register_external_webhook(
                 webhook_url="https://abc.hooks.example.test",
@@ -439,7 +441,7 @@ class TestFellowTriggerMock:
     async def test_register_external_webhook_action_item_assigned(self):
         with patch(
             "nodes.fellow_node._fellow_request",
-            return_value={"status": "success", "data": {"id": "wh_3", "secret": "whsec_dGVzdA=="}},
+            return_value={"status": "success", "data": {"webhook": {"id": "wh_3", "secret": "whsec_dGVzdA=="}}},
         ) as mock_req:
             await FellowNode._register_external_webhook(
                 webhook_url="https://abc.hooks.example.test",
@@ -454,7 +456,7 @@ class TestFellowTriggerMock:
     async def test_register_external_webhook_action_item_completed(self):
         with patch(
             "nodes.fellow_node._fellow_request",
-            return_value={"status": "success", "data": {"id": "wh_4", "secret": "whsec_dGVzdA=="}},
+            return_value={"status": "success", "data": {"webhook": {"id": "wh_4", "secret": "whsec_dGVzdA=="}}},
         ) as mock_req:
             await FellowNode._register_external_webhook(
                 webhook_url="https://abc.hooks.example.test",
@@ -470,7 +472,7 @@ class TestFellowTriggerMock:
         """Catch-all trigger registers all 4 events."""
         with patch(
             "nodes.fellow_node._fellow_request",
-            return_value={"status": "success", "data": {"id": "wh_all", "secret": "whsec_dGVzdA=="}},
+            return_value={"status": "success", "data": {"webhook": {"id": "wh_all", "secret": "whsec_dGVzdA=="}}},
         ) as mock_req:
             await FellowNode._register_external_webhook(
                 webhook_url="https://abc.hooks.example.test",
@@ -487,7 +489,7 @@ class TestFellowTriggerMock:
         """Registration must raise if Fellow returns no id or no secret."""
         with patch(
             "nodes.fellow_node._fellow_request",
-            return_value={"status": "success", "data": {"id": None, "secret": None}},
+            return_value={"status": "success", "data": {"webhook": {"id": None, "secret": None}}},
         ):
             with pytest.raises(ValueError, match="incomplete data"):
                 await FellowNode._register_external_webhook(
@@ -607,3 +609,68 @@ class TestFellowErrorHandlingMock:
         node = create_fellow_node(config)
         with pytest.raises(ValueError, match="Credentials are required"):
             await node.execute({})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "operation_config, endpoint, expected_filters, expected_include",
+    [
+        (
+            FellowListRecordingsConfig(
+                event_guid="event-1", channel_id="channel-1", title="standup",
+                include_transcript="true", include_ai_notes="true", page_size="10",
+            ),
+            "recordings",
+            {"event_guid": "event-1", "channel_id": "channel-1", "title": "standup"},
+            {"transcript": True, "ai_notes": True},
+        ),
+        (
+            FellowListNotesConfig(
+                event_guid="event-1", channel_id="channel-1", title="standup",
+                include_attendees="true", include_content_markdown="true", page_size="10",
+            ),
+            "notes",
+            {"event_guid": "event-1", "channel_id": "channel-1", "title": "standup"},
+            {"event_attendees": True, "content_markdown": True},
+        ),
+        (
+            FellowListActionItemsConfig(scope="assigned_to_me", page_size="10"),
+            "action_items", {"scope": "assigned_to_me"}, None,
+        ),
+        (
+            FellowListRecordingsConfig(title="standup", page_size="10"),
+            "recordings", {"title": "standup"}, None,
+        ),
+        (FellowListNotesConfig(page_size="10"), "notes", None, None),
+        (FellowListActionItemsConfig(page_size="10"), "action_items", None, None),
+    ],
+)
+async def test_list_request_filters(
+    api_key_credentials, operation_config, endpoint, expected_filters, expected_include,
+):
+    # Fellow's Get*Request schemas put filtering fields under `filters`.
+    requests = []
+
+    def transport(request):
+        requests.append(request)
+        return httpx.Response(200, json={})
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(transport))
+    node = create_fellow_node(FellowNodeConfig(
+        config=operation_config, credentials=api_key_credentials,
+    ))
+    with patch("nodes.fellow_node.httpx.AsyncClient", return_value=client):
+        result = await node.execute({})
+
+    assert result["status"] == "success"
+    assert len(requests) == 1
+    request = requests[0]
+    assert request.method == "POST"
+    assert str(request.url) == f"https://acme.fellow.app/api/v1/{endpoint}"
+    assert request.headers["X-API-KEY"] == api_key_credentials.api_key
+    expected = {"pagination": {"cursor": None, "page_size": 10}}
+    if expected_filters is not None:
+        expected["filters"] = expected_filters
+    if expected_include is not None:
+        expected["include"] = expected_include
+    assert json.loads(request.content) == expected
