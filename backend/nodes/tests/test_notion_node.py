@@ -690,3 +690,171 @@ class TestPerformance:
 if __name__ == "__main__":
     # Run tests with: NOTION_TOKEN=your_token pytest nodes/tests/test_notion_node.py -v
     pytest.main([__file__, "-v"])
+
+
+class TestFileUploadContract:
+    """Exercise the documented single-part protocol without Notion credentials."""
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("attach", [False, True])
+    async def test_single_part_upload(self, monkeypatch, attach):
+        import json
+        from contextlib import asynccontextmanager
+        import httpx
+        from nodes import notion_node
+
+        upload_id = "a3f9d3e2-1abc-42de-b904-badc0ffee000"
+        page_id = "b55c9c91-384d-452b-81db-d1ef79372b75"
+        requests = []
+        downloads = []
+        original_client = httpx.AsyncClient
+
+        def api(request):
+            requests.append(request)
+            assert request.headers["authorization"] == "Bearer fake-token"
+            assert request.headers["notion-version"] == "2025-09-03"
+            if request.url.path == "/v1/file_uploads":
+                assert request.method == "POST"
+                assert json.loads(request.content) == {
+                    "mode": "single_part",
+                    "filename": "document.pdf",
+                    "content_type": "application/pdf",
+                }
+                return httpx.Response(200, json={"id": upload_id, "status": "pending"})
+            if request.url.path.endswith("/send"):
+                assert request.url.path == f"/v1/file_uploads/{upload_id}/send"
+                assert request.method == "POST"
+                assert request.headers["content-type"].startswith(
+                    "multipart/form-data; boundary="
+                )
+                assert b'name="file"; filename="document.pdf"' in request.content
+                assert b"Content-Type: application/pdf" in request.content
+                assert b"%PDF-test-content" in request.content
+                return httpx.Response(200, json={"id": upload_id, "status": "uploaded"})
+            assert attach
+            assert request.method == "PATCH"
+            assert request.url.path == f"/v1/blocks/{page_id}/children"
+            assert json.loads(request.content) == {
+                "children": [
+                    {
+                        "object": "block",
+                        "type": "file",
+                        "file": {
+                            "type": "file_upload",
+                            "file_upload": {"id": upload_id},
+                        },
+                    }
+                ]
+            }
+            return httpx.Response(200, json={"object": "list", "results": []})
+
+        def download(request):
+            downloads.append(request)
+            assert str(request.url) == "https://example.com/document.pdf"
+            assert "authorization" not in request.headers
+            return httpx.Response(200, content=b"%PDF-test-content")
+
+        @asynccontextmanager
+        async def guarded(**kwargs):
+            async with original_client(
+                transport=httpx.MockTransport(download)
+            ) as client:
+                yield client
+
+        monkeypatch.setattr(notion_node, "guarded_async_client", guarded)
+        monkeypatch.setattr(
+            httpx,
+            "AsyncClient",
+            lambda **kw: original_client(**kw, transport=httpx.MockTransport(api)),
+        )
+        config = notion_node.NotionCreateFileUploadConfig(
+            filename="document.pdf",
+            content_type="application/pdf",
+            file_url="https://example.com/document.pdf",
+            parent_page_id=page_id if attach else None,
+        )
+        node = NotionNode(
+            node_id="test",
+            node_type="automation-notion",
+            node_data={},
+            config=NotionNodeConfig(
+                config=config,
+                credentials=NotionIntegrationTokenCredential(
+                    integration_token="fake-token"
+                ),
+            ),
+            sio=None,
+        )
+        result = await node.execute({})
+        assert result["status"] == "success"
+        assert result["data"] == {"id": upload_id, "status": "uploaded"}
+        assert len(downloads) == 1
+        assert len(requests) == (3 if attach else 2)
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        "failure", ["init", "download", "send", "attach", "missing_id", "none"]
+    )
+    async def test_upload_failures_and_initialize_only(self, monkeypatch, failure):
+        from unittest.mock import AsyncMock
+        from contextlib import asynccontextmanager
+        import httpx
+        from nodes import notion_node
+
+        config = notion_node.NotionCreateFileUploadConfig(
+            filename="document.pdf",
+            content_type="application/pdf",
+            file_url=None if failure == "none" else "https://example.com/document.pdf",
+            parent_page_id="b55c9c91-384d-452b-81db-d1ef79372b75",
+        )
+        node = NotionNode(
+            node_id="test",
+            node_type="automation-notion",
+            node_data={},
+            config=NotionNodeConfig(
+                config=config,
+                credentials=NotionIntegrationTokenCredential(
+                    integration_token="fake-token"
+                ),
+            ),
+            sio=None,
+        )
+        error = {"status": "error", "error": "provider failure", "status_code": 400}
+        success = {
+            "status": "success",
+            "data": {"id": "a3f9d3e2-1abc-42de-b904-badc0ffee000"},
+        }
+        responses = [
+            error
+            if failure == "init"
+            else (
+                {"status": "success", "data": {}}
+                if failure == "missing_id"
+                else success
+            ),
+            error if failure == "send" else success,
+            error if failure == "attach" else success,
+        ]
+        node._make_request = AsyncMock(side_effect=responses)
+        download = AsyncMock(
+            return_value=httpx.Response(
+                404 if failure == "download" else 200, content=b"file"
+            )
+        )
+
+        @asynccontextmanager
+        async def guarded(**kwargs):
+            from types import SimpleNamespace
+
+            yield SimpleNamespace(get=download)
+
+        monkeypatch.setattr(notion_node, "guarded_async_client", guarded)
+        result = await node.execute({})
+        assert result["status"] == ("success" if failure == "none" else "error")
+        assert node._make_request.await_count == {
+            "send": 2,
+            "attach": 3,
+        }.get(failure, 1)
+        assert download.await_count == (
+            0 if failure in {"init", "none", "missing_id"} else 1
+        )

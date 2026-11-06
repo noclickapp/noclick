@@ -2013,6 +2013,7 @@ class NotionNode(ScheduledPollTriggerMixin, WorkflowNode):
         json_body: Optional[Dict[str, Any]] = None,
         action_name: str = "request",
         api_version: Optional[str] = None,
+        files: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         """Make an HTTP request to the Notion API."""
         url = f"{NOTION_API_BASE}{endpoint}"
@@ -2024,6 +2025,10 @@ class NotionNode(ScheduledPollTriggerMixin, WorkflowNode):
             "Content-Type": "application/json",
             "Notion-Version": api_version or NOTION_API_VERSION,
         }
+
+        if files is not None:
+            # httpx supplies the multipart boundary when sending file contents.
+            headers.pop("Content-Type")
 
         # Clean params
         if params:
@@ -2039,6 +2044,7 @@ class NotionNode(ScheduledPollTriggerMixin, WorkflowNode):
                     headers=headers,
                     params=params,
                     json=json_body,
+                    files=files,
                 )
 
                 api_time = (time.time() - start_time) * 1000
@@ -2679,38 +2685,31 @@ class NotionNode(ScheduledPollTriggerMixin, WorkflowNode):
     async def _handle_create_file_upload(
         self, config: NotionCreateFileUploadConfig, credentials: NotionCredential
     ) -> Dict[str, Any]:
-        """Initiate a Notion file upload.
-
-        Creates a file upload object and, if a file_url is provided, downloads
-        the file and sends the bytes to Notion's upload endpoint, then confirms.
-        """
-        body: Dict[str, Any] = {
-            "filename": config.filename,
-            "content_type": config.content_type,
-        }
-        if config.parent_page_id:
-            body["parent"] = {"type": "page_id", "page_id": config.parent_page_id}
-
-        # Step 1: Create the upload object (requires API v2025-09-03+)
+        """Create a single-part upload, send its contents, and optionally attach it."""
         init_result = await self._make_request(
             method="POST",
-            endpoint="/files",
+            endpoint="/file_uploads",
             credentials=credentials,
-            json_body=body,
+            json_body={
+                "mode": "single_part",
+                "filename": config.filename,
+                "content_type": config.content_type,
+            },
             action_name="create_file_upload",
             api_version="2025-09-03",
         )
-        if init_result.get("status") == "error":
+        if init_result.get("status") == "error" or not config.file_url:
             return init_result
 
-        file_data = init_result.get("data", {})
-        upload_url = file_data.get("upload_url")
-        file_id = file_data.get("id")
+        file_id = init_result.get("data", {}).get("id")
+        if not file_id:
+            return {
+                "status": "error",
+                "action": "create_file_upload",
+                "error": "Notion did not return a file upload ID",
+                "status_code": 502,
+            }
 
-        if not config.file_url or not upload_url:
-            return init_result
-
-        # Step 2: Download the source file and PUT to Notion's upload URL
         try:
             async with guarded_async_client(timeout=60.0) as client:
                 dl = await client.get(config.file_url)
@@ -2722,19 +2721,6 @@ class NotionNode(ScheduledPollTriggerMixin, WorkflowNode):
                         "status_code": dl.status_code,
                     }
                 file_bytes = dl.content
-
-                up = await client.put(
-                    upload_url,
-                    content=file_bytes,
-                    headers={"Content-Type": config.content_type},
-                )
-                if up.status_code >= 400:
-                    return {
-                        "status": "error",
-                        "action": "create_file_upload",
-                        "error": f"Upload to Notion failed: {up.text}",
-                        "status_code": up.status_code,
-                    }
         except Exception as e:
             return {
                 "status": "error",
@@ -2743,16 +2729,42 @@ class NotionNode(ScheduledPollTriggerMixin, WorkflowNode):
                 "status_code": 500,
             }
 
-        # Step 3: Confirm the upload
-        confirm = await self._make_request(
-            method="PATCH",
-            endpoint=f"/files/{file_id}/confirm",
+        # Single-part uploads finish with send; complete is only for multi-part.
+        upload_result = await self._make_request(
+            method="POST",
+            endpoint=f"/file_uploads/{file_id}/send",
             credentials=credentials,
-            json_body={},
+            files={"file": (config.filename, file_bytes, config.content_type)},
             action_name="create_file_upload",
             api_version="2025-09-03",
         )
-        return confirm
+        if upload_result.get("status") == "error":
+            return upload_result
+
+        if config.parent_page_id:
+            attachment_result = await self._make_request(
+                method="PATCH",
+                endpoint=f"/blocks/{config.parent_page_id}/children",
+                credentials=credentials,
+                json_body={
+                    "children": [
+                        {
+                            "object": "block",
+                            "type": "file",
+                            "file": {
+                                "type": "file_upload",
+                                "file_upload": {"id": file_id},
+                            },
+                        }
+                    ]
+                },
+                action_name="create_file_upload",
+                api_version="2025-09-03",
+            )
+            if attachment_result.get("status") == "error":
+                return attachment_result
+
+        return upload_result
 
     async def _handle_get_async_task(
         self, config: NotionGetAsyncTaskConfig, credentials: NotionCredential
