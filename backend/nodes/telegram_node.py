@@ -3592,10 +3592,10 @@ class TelegramNode(ExternalWebhookTriggerMixin, WorkflowNode):
         if any(
             not isinstance(option, dict)
             or not isinstance(option.get("text"), str)
-            or not 1 <= len(option["text"]) <= 100
+            or not option["text"]
             for option in options
         ):
-            raise ValueError("Each poll option must have text with 1–100 characters")
+            raise ValueError("Each poll option must have nonempty text")
         payload: Dict[str, Any] = {
             "chat_id": chat_id,
             "question": config.question,

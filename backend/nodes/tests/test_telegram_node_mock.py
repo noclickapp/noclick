@@ -812,7 +812,9 @@ async def test_send_poll_preserves_option_objects(mock_client_class, credentials
     mock_client = AsyncMock()
     mock_client_class.return_value.__aenter__.return_value = mock_client
     mock_client.request.return_value = mock_ok({"message_id": 60})
-    options = [{"text": "Option A", "text_parse_mode": "HTML"}, {"text": "Option B"}]
+    # Telegram's custom emoji markup is longer than its displayed option text.
+    text = '<tg-emoji emoji-id="5368324170671202286">👍</tg-emoji>' * 2
+    options = [{"text": text, "text_parse_mode": "HTML"}, {"text": "Option B"}]
     node = create_node(
         TelegramSendPollConfig(chatId="123", question="Best color?", options=json.dumps(options))
     )
