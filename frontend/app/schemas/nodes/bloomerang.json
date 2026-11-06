@@ -160,6 +160,7 @@
         },
         "interaction_date": {
           "description": "YYYY-MM-DD calendar date",
+          "format": "date",
           "title": "Date",
           "type": "string"
         },
@@ -220,6 +221,7 @@
         },
         "note_date": {
           "description": "YYYY-MM-DD calendar date",
+          "format": "date",
           "title": "Date",
           "type": "string"
         },

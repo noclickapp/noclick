@@ -242,7 +242,7 @@ class GetInteraction(_Interaction):
 
 class CreateInteraction(_Constituent):
     operation: Literal["create_interaction"] = Field("create_interaction", title="Record Interaction Metadata", description="Creates an Other or InPerson CRM record without sending parameters. Provider automation effects are not established by the reference.", json_schema_extra={"ui:hidden": True})
-    interaction_date: str = Field(..., title="Date", description="YYYY-MM-DD calendar date")
+    interaction_date: str = Field(..., title="Date", description="YYYY-MM-DD calendar date", json_schema_extra={"format": "date"})
     channel: Literal["Other", "InPerson"] = Field("Other", title="Channel")
     purpose: Literal["Other", "VolunteerActivity", "SpecialEvent"] = Field("Other", title="Purpose")
     subject: str = Field(..., title="Subject", max_length=200)
@@ -278,7 +278,7 @@ class GetNote(_Note):
 
 class CreateNote(_Constituent):
     operation: Literal["create_note"] = Field("create_note", title="Create Constituent Note", json_schema_extra={"ui:hidden": True})
-    note_date: str = Field(..., title="Date", description="YYYY-MM-DD calendar date")
+    note_date: str = Field(..., title="Date", description="YYYY-MM-DD calendar date", json_schema_extra={"format": "date"})
     note: str = Field(..., title="Plain Note", max_length=10000, json_schema_extra={"ui:widget": "textarea"})
     _day = field_validator("note_date", mode="before")(_date)
     _note = field_validator("note")(_text)
