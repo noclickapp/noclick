@@ -770,9 +770,6 @@
         "on_new_file"
       ]
     },
-    "automation-openstatus": {
-      "agentToolProvider": true
-    },
     "automation-outlook": {
       "agentToolProvider": true,
       "triggerOperations": [

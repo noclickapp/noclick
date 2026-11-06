@@ -14,7 +14,7 @@ const WORD_CASING: Record<string, string> = {
   sso: 'SSO', ai: 'AI', whatsapp: 'WhatsApp', github: 'GitHub',
   gitlab: 'GitLab', hubspot: 'HubSpot', linkedin: 'LinkedIn',
   paypal: 'PayPal', tiktok: 'TikTok', youtube: 'YouTube', posthog: 'PostHog',
-  openai: 'OpenAI', openstatus: 'OpenStatus', clickup: 'ClickUp', pagerduty: 'PagerDuty',
+  openai: 'OpenAI', clickup: 'ClickUp', pagerduty: 'PagerDuty',
   bamboohr: 'BambooHR', quickbooks: 'QuickBooks', wordpress: 'WordPress',
   bigquery: 'BigQuery', sendgrid: 'SendGrid', mongodb: 'MongoDB',
   nocodb: 'NocoDB', onedrive: 'OneDrive', launchdarkly: 'LaunchDarkly', pit: 'PIT',
