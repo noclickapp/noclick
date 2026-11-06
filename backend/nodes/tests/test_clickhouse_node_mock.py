@@ -1262,4 +1262,6 @@ async def test_unknown_clickpipe_command_loads_but_is_not_sent(api_key_credentia
     assert result["status"] == "error"
     assert result["status_code"] == 400
     assert result["action"] == "update_clickpipe_state"
+    assert result["timing_ms"]["api_request"] == 0.0
+    assert "total" in result["timing_ms"]
     client.assert_not_called()

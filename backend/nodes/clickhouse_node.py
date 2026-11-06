@@ -2064,6 +2064,7 @@ class ClickHouseNode(WorkflowNode):
             return {
                 "status": "error", "action": "update_clickpipe_state", "status_code": 400,
                 "error": "ClickPipe command must be start, stop, resync, pause, or resume.",
+                "timing_ms": {"api_request": 0.0},
             }
         return await _clickhouse_request(
             key_id, key_secret, "PATCH",
