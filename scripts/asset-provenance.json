@@ -52,30 +52,6 @@
       "sha256": "83af3042c6aae855b746472980a8e7b68d8a6501bb554039cc84b40354563b20"
     },
     {
-      "path": "frontend/public/icons/ashby-brand-vector.svg",
-      "source": "https://www.ashbyhq.com (Ashby published brand artwork)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "4d056fcacc59b19b45e96c8d315a5f9b2c2976e9f4c5b558d01aa229f3697e50"
-    },
-    {
-      "path": "frontend/public/icons/ashby-brand.png",
-      "source": "https://www.ashbyhq.com (Ashby published brand artwork)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "86288a586b5ec2c1ad4945fc47a402afba70b48c798fe51ba399096a6504aec0"
-    },
-    {
-      "path": "frontend/public/icons/ashby-preferred-brand.svg",
-      "source": "https://www.ashbyhq.com (Ashby published brand artwork)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "cafe857be8a30f891baa46dac0badc5e8a21262eb3142da6a5b5b0f293d27852"
-    },
-    {
-      "path": "frontend/public/icons/ashby.svg",
-      "source": "https://github.com/noclickapp/noclick-cloud/commit/63b42b555f (integration-authored Ashby monogram)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "83af3042c6aae855b746472980a8e7b68d8a6501bb554039cc84b40354563b20"
-    },
-    {
       "path": "frontend/public/icons/affinity.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
