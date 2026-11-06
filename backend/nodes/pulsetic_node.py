@@ -64,7 +64,7 @@ class PulseticAPIKeyCredential(BaseModel):
     credential_type: Literal["pulsetic_api_key"] = Field(FAMILY, json_schema_extra={"ui:hidden": True})
     api_key: str = Field(..., description="Existing Pulsetic API key, sent as the raw Authorization header without Bearer. A read-only issued key supports GET; actual grants and entitlement are not inferred.", json_schema_extra={"ui:widget": "password"})
     model_config = ConfigDict(title="Pulsetic API Key", extra="ignore", json_schema_extra={
-        "x-credential-type": "api_key", "x-credential-url": "https://app.pulsetic.com/api",
+        "x-credential-type": "pulsetic_api_key", "x-credential-url": "https://app.pulsetic.com/api",
         "x-credential-instructions": "Supply an existing API key, preferably one issued read-only. NoClick does not issue keys or assume their grants. Confirm your account's API entitlement separately; public documentation places API access on Team and above.",
     })
 

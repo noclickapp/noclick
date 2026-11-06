@@ -448,7 +448,7 @@
       "title": "Pulsetic API Key",
       "type": "object",
       "x-credential-instructions": "Supply an existing API key, preferably one issued read-only. NoClick does not issue keys or assume their grants. Confirm your account's API entitlement separately; public documentation places API access on Team and above.",
-      "x-credential-type": "api_key",
+      "x-credential-type": "pulsetic_api_key",
       "x-credential-url": "https://app.pulsetic.com/api"
     }
   },
