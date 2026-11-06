@@ -15,7 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
-from nodes.core.oauth_refresh_authority import AuthorityCredentialsTableStore, CURRENT_ORGANIZATION
+from utils.credential_loader import load_credential
 from utils.ssrf import guarded_async_client
 
 ROOT = "https://api.adapty.io/api/v2/server-side-api/"
@@ -234,7 +234,7 @@ async def _request(data, method, path, kind, identifier, *, body=None, platform=
     if platform is not None:
         headers["adapty-platform"] = _header(platform)
     try:
-        async with guarded_async_client(require_public=True, trust_env=False, follow_redirects=False, timeout=25.0) as client:
+        async with guarded_async_client(trust_env=False, follow_redirects=False, timeout=25.0) as client:
             response = await client.request(method, ROOT + path, headers=headers, json=body)
     except Exception:
         raise RuntimeError("Adapty request could not complete; access remains unverified.") from None
@@ -304,25 +304,18 @@ class AdaptyNode(WorkflowNode):
         return AdaptyNodeConfig
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None,
-                                 workflow_id=None, organization_id=CURRENT_ORGANIZATION):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
         if not credential_id:
             return _credential(credential_data)
         if not user_id:
             raise ValueError("Sign in to use a saved Adapty connection.")
-        return await AuthorityCredentialsTableStore(pool, user_id, credential_id, credential_type="adapty_api_key",
-            validate=_credential, grant_fields=("secret_key", "app_id", "verification_profile_id"),
-            workflow_id=workflow_id, organization_id=organization_id).load()
+        current = await load_credential(pool, user_id, credential_id, raise_on_error=True)
+        return _credential(current)
 
     @classmethod
-    async def validate_credential_access(cls, credential_data, validation_context=None):
-        from nodes.core.credential_validation import CredentialValidationContext
-        if not isinstance(validation_context, CredentialValidationContext):
-            raise ValueError("Canonical validation context is required.")
+    async def validate_credential_access(cls, credential_data):
         data = _credential(credential_data)
-        result = await validation_context.run_operation("check_connection")
-        if not isinstance(result, dict) or result.get("profile_id") != data["verification_profile_id"] or result.get("app_id") != data["app_id"]:
-            raise RuntimeError("Adapty profile access remains unverified.")
+        await _request(data, "GET", "profile/", "profile_id", data["verification_profile_id"])
         return {"valid": True}
 
     @classmethod
@@ -361,7 +354,7 @@ class AdaptyNode(WorkflowNode):
         c = self.config.config
         data = await self.freshen_credential(self.config.credentials.model_dump(mode="json"),
             pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id,
-            credential_id=(self.node_data or {}).get("credential_id"), workflow_id=self.workflow_id, organization_id=self.organization_id)
+            credential_id=(self.node_data or {}).get("credential_id"))
         op = c.operation
         if op == "check_connection":
             profile, _ = await _request(data, "GET", "profile/", "profile_id", data["verification_profile_id"])

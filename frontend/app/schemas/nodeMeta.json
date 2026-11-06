@@ -7,6 +7,9 @@
     "automation-123formbuilder": {
       "agentToolProvider": true
     },
+    "automation-adapty": {
+      "agentToolProvider": true
+    },
     "automation-affinity": {
       "agentToolProvider": true
     },

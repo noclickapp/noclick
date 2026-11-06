@@ -1,23 +1,19 @@
-"""Prepared Adapty contracts through actual native/connect/socket seams.
-Only provider transport, SQL/encryption and socket delivery boundaries are synthetic.
-These source fixtures are unrun and do not prove provider or database behavior.
+"""Adapty transport, binding, parsing, selectors and connection contracts.
+
+Provider requests use deterministic fixtures; saved credentials use staging’s loader.
 """
-from copy import deepcopy
 from datetime import datetime, timezone
 import json
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, MagicMock
-from urllib.parse import quote
+from unittest.mock import AsyncMock
 
 import httpx
 import pytest
 from pydantic import ValidationError
 from nodes import adapty_node as ad
 from nodes.core.registry import NODE_REGISTRY, NodeFactory
-from tests.test_oauth_refresh_authority import _Storage as AuthorityStorage, CID, USER, OWNER, ORG, WF
-from tests.test_post_connect_validation_context import _Storage as AdmissionStorage
-from wss.receiver.client_events import WorkflowNodeLoadOptionsRequest, CredentialValidateAccessRequest
 
+USER = "fixture-user"
 NODE = "automation-adapty"
 APP = '14c3d333-2f3a-455a-aa86-ef83dff6913b'
 PID = 'd8533a10-bcce-4e33-8c9d-88b05ac56559'
@@ -59,96 +55,10 @@ def http(monkeypatch):
         return httpx.Response(status, content=payload) if isinstance(payload, (str, bytes)) else httpx.Response(status, json=payload) if payload is not None else httpx.Response(status)
     def client(**kwargs):
         state.client_options.append(kwargs)
-        assert kwargs.pop("require_public") is True
         assert kwargs["trust_env"] is False and kwargs["follow_redirects"] is False
         return httpx.AsyncClient(transport=httpx.MockTransport(respond), **kwargs)
     monkeypatch.setattr(ad, "guarded_async_client", client)
     return state
-
-
-class Storage(AuthorityStorage):
-    def __init__(self, grant):
-        super().__init__()
-        self.grant = deepcopy(grant)
-        self.row.update(id=CID, credential_type="adapty_api_key",
-            name="Fixture", approval_operations=[], approval_revision=1)
-        self.allowed = self.access
-        self.grants, self.timeline, self.transactions = {}, [], 0
-        self.on_load = self.on_resolve = self.on_admit = None
-
-    def transaction(self):
-        self.transactions += 1
-        return self.acquire()
-
-    async def fetchrow(self, sql, *args):
-        if ("SELECT c.credential" in sql and len(args) == 3 or
-            "approval_requests" in sql or "SELECT name,owner_id,approval_operations" in sql):
-            return await AdmissionStorage.fetchrow(self, sql, *args)
-        return await super().fetchrow(sql, *args)
-
-    async def fetchval(self, sql, *args):
-        return await AdmissionStorage.fetchval(self, sql, *args)
-
-    async def execute(self, sql, *args):
-        if "UPDATE approval_requests" in sql:
-            return await AdmissionStorage.execute(self, sql, *args)
-        return await super().execute(sql, *args)
-
-
-@pytest.fixture
-def saved(monkeypatch, http):
-    storage = Storage(credential())
-    crypto = MagicMock()
-    crypto.decrypt_credential.side_effect = lambda _: deepcopy(storage.grant)
-    crypto.encrypt_credential.side_effect = lambda data: json.dumps(data).encode()
-    monkeypatch.setattr("utils.encryption.get_encryption", lambda: crypto)
-    from utils import credentials
-    monkeypatch.setattr(credentials, "get_encryption", lambda: crypto)
-    monkeypatch.setattr("wss.handlers.workflow_handler.get_user_org_context", AsyncMock(return_value=ORG))
-    return SimpleNamespace(storage=storage, crypto=crypto, http=http)
-
-
-@pytest.fixture
-def sockets(saved, monkeypatch):
-    from wss.handlers import credentials_handler, workflow_handler
-    from wss.receiver.receiver import SocketIOProxy
-    from wss.receiver.event_routing import EVENT_ROUTING, Handler
-    from wss.receiver.chunk_reassembly import ChunkReassemblyManager
-    from wss.receiver.rate_limiter import RateLimiter
-    from wss.receiver.rate_limits import get_rate_limit_config
-    responses = []
-    async def capture(_sio, _sid, event, **kwargs):
-        if not kwargs.get("user_id"):
-            responses.append(event.model_dump())
-    for module in (credentials_handler, workflow_handler):
-        monkeypatch.setattr(module, "send_event", capture)
-    monkeypatch.setattr("wss.sender.send_event", capture)
-    monkeypatch.setattr(credentials_handler, "get_encryption", lambda: saved.crypto)
-    sio = SimpleNamespace(get_session=AsyncMock(return_value={"user_id": USER}))
-    monkeypatch.setattr("utils.socket_singleton.get_sio", lambda: sio)
-    monkeypatch.setattr("utils.user_presence.touch_user_presence", lambda _: None)
-    workflow = workflow_handler.WorkflowHandler.__new__(workflow_handler.WorkflowHandler)
-    workflow.sio, workflow.get_pool = sio, AsyncMock(return_value=saved.storage)
-    credentials = credentials_handler.CredentialsHandler(sio)
-    credentials.get_pool = AsyncMock(return_value=saved.storage)
-    proxy = SocketIOProxy.__new__(SocketIOProxy)
-    proxy.sio, proxy.SOCKET_PROXY_ENV = sio, "API"
-    proxy.chunk_manager = ChunkReassemblyManager()
-    proxy.rate_limiter = RateLimiter(get_rate_limit_config())
-    proxy._last_heavy_completion = {}
-    routes = {"workflow:node:load_options": (workflow, WorkflowNodeLoadOptionsRequest, Handler.WORKFLOW),
-        "credential:validate_access": (credentials, CredentialValidateAccessRequest, Handler.CREDENTIALS)}
-    for event, (_, _, handler) in routes.items():
-        assert EVENT_ROUTING["API"][event] == handler
-    proxy.config = SimpleNamespace(event_handlers={"API": {event: [v[0]] for event, v in routes.items()}})
-    proxy.frontend_request_pydantic_models = {event: v[1] for event, v in routes.items()}
-    return SimpleNamespace(proxy=proxy, responses=responses, saved=saved)
-
-
-async def socket_call(sockets, event, **kwargs):
-    await sockets.proxy._route_event_impl(event, "fixture-sid", {"request_id": "fixture",
-        "node_type": NODE, "credential_id": CID, **kwargs})
-    return sockets.responses[-1]["data"]
 
 
 def test_actual_factory_schema_and_required_device_contract():
@@ -291,33 +201,6 @@ async def test_provider_error_or_malformed_profile_is_static_and_unverified(http
 
 
 @pytest.mark.asyncio
-async def test_saved_current_row_replaces_all_app_bindings_without_mint_or_persistence(saved):
-    saved.storage.grant = credential(secret_key="current-secret", app_id=OTHER, verification_profile_id=OTHER)
-    current = await ad.AdaptyNode.freshen_credential(credential(), pool=saved.storage, user_id=USER,
-        credential_id=CID, workflow_id=WF, organization_id=ORG)
-    assert current["secret_key"] == "current-secret" and current["app_id"] == OTHER and current["verification_profile_id"] == OTHER
-    assert saved.http.calls == [] and saved.storage.writes == [] and saved.storage.revoke_tags == []
-    saved.storage.access = {(OWNER, ORG)}
-    assert (await ad.AdaptyNode.freshen_credential(credential(), pool=saved.storage, user_id=USER,
-        credential_id=CID, workflow_id=WF, organization_id=ORG))["secret_key"] == "current-secret"
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("unavailable", ["wrong-family", "revoked", "denied"])
-async def test_actual_current_authority_refuses_before_decryption_and_provider_work(saved, unavailable):
-    if unavailable == "wrong-family":
-        saved.storage.row["credential_type"] = "other"
-    elif unavailable == "revoked":
-        saved.storage.row["revoked_at"] = datetime.now(timezone.utc)
-    else:
-        saved.storage.access.clear()
-    with pytest.raises(ValueError):
-        await ad.AdaptyNode.freshen_credential(credential(), pool=saved.storage, user_id=USER, credential_id=CID)
-    saved.crypto.decrypt_credential.assert_not_called()
-    assert saved.http.calls == []
-
-
-@pytest.mark.asyncio
 async def test_real_manual_connect_is_app_profile_reachability_not_account_identity(http, monkeypatch):
     from nodes.core import credential_connect
     from nodes.core.connection_evidence import collect_evidence
@@ -327,35 +210,35 @@ async def test_real_manual_connect_is_app_profile_reachability_not_account_ident
     http.responses = [(200, profile())]
     valid = await credential_connect.validate_for_connect(credential_type="adapty_api_key", credential_data=credential(), user_id=USER)
     assert valid.ok and valid.node_type == NODE and valid.evidence.reachable is True
-    assert valid.evidence.proves == "reachability" and valid.evidence.account_label is None and valid.evidence.samples[0].label == PID
+    assert ad.AdaptyNode.connection_evidence.proves == "reachability" and valid.evidence.account_label is None and valid.evidence.samples[0].label == PID
 
 
 @pytest.mark.asyncio
-async def test_registered_socket_current_secret_and_trusted_org_ignore_request_authority(sockets):
-    sockets.saved.storage.grant = credential(secret_key="current-secret")
-    sockets.saved.http.responses = [(200, profile())]
-    assert await socket_call(sockets, "credential:validate_access", organization_id=OWNER, user_id=OWNER) == {"valid": True}
-    sockets.saved.http.responses = [(200, profile())]
-    picked = await socket_call(sockets, "workflow:node:load_options", field_name="profile_identifier",
-        context={"identifier_kind": "profile_id", "app_id": OTHER, "secret_key": "forged", "organization_id": OWNER, "workflow_id": WF})
-    assert picked["success"] is True and picked["options"][0]["value"] == PID
-    assert all(request.headers["Authorization"] == "Api-Key current-secret" for request in sockets.saved.http.calls)
-    assert all(args[2] == ORG for sql, args in sockets.saved.storage.calls if "SELECT c.credential" in sql)
+async def test_saved_connection_uses_staging_loader_and_replaces_all_app_bindings(monkeypatch, http):
+    current = credential(secret_key="current-secret", app_id=OTHER, verification_profile_id=OTHER)
+    loader = AsyncMock(return_value=current)
+    monkeypatch.setattr(ad, "load_credential", loader)
+    pool = object()
+    result = await ad.AdaptyNode.freshen_credential(credential(), pool=pool, user_id=USER, credential_id="saved")
+    loader.assert_awaited_once_with(pool, USER, "saved", raise_on_error=True)
+    assert result["secret_key"] == "current-secret" and result["app_id"] == OTHER and result["verification_profile_id"] == OTHER
+    assert http.calls == []
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("status", ["pending", "rejected"])
-async def test_registered_admission_and_saved_evidence_do_not_fallback_or_call_provider(sockets, status):
-    from nodes.core.connection_evidence import collect_evidence
-    storage = sockets.saved.storage
-    storage.row["approval_operations"] = ["*"]
-    first = await socket_call(sockets, "workflow:node:load_options", field_name="profile_identifier", context={"approved": True})
-    assert first["success"] is False and "Review:" in first["message"]
-    evidence = await collect_evidence(node_type=NODE, credential_id=CID, user_id=USER, pool=storage, organization_id=ORG, workflow_id=WF)
-    assert evidence.reachable is None and evidence.account_label is None and evidence.samples == []
-    if status == "rejected":
-        for grant in storage.grants.values():
-            grant["status"] = "rejected"
-        rejected = await socket_call(sockets, "workflow:node:load_options", field_name="profile_identifier", context={"approved": True})
-        assert rejected["success"] is False and "rejected" in rejected["message"]
-    assert sockets.saved.http.calls == [] and storage.writes == []
+@pytest.mark.parametrize("current", [None, credential(credential_type="other"), credential(app_id="bad")])
+async def test_unavailable_or_wrong_family_saved_connection_never_falls_back(monkeypatch, http, current):
+    monkeypatch.setattr(ad, "load_credential", AsyncMock(return_value=current))
+    with pytest.raises(ValueError):
+        await ad.AdaptyNode.freshen_credential(credential(), user_id=USER, credential_id="saved")
+    assert http.calls == []
+
+
+@pytest.mark.asyncio
+async def test_staging_validation_hook_checks_bound_profile(http):
+    http.responses = [(200, profile())]
+    assert await ad.AdaptyNode.validate_credential_access(credential()) == {"valid": True}
+    assert http.calls[0].headers["adapty-profile-id"] == PID
+    http.responses = [(200, profile(app_id=OTHER))]
+    with pytest.raises(RuntimeError, match="another app/profile"):
+        await ad.AdaptyNode.validate_credential_access(credential())

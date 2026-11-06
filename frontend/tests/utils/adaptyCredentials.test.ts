@@ -1,10 +1,19 @@
-// Prepared native schema/form contracts; frontend execution remains ungranted.
+// Adapty schema contracts keep the app-scoped connection and profile forms aligned.
+// Saved connection selection is checked against staging’s canvas credential helper.
 import { describe, expect, it } from 'vitest';
-import { NODE_SCHEMAS, filterConfigForExecution, isTriggerSource } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, filterConfigForExecution, isTriggerSource, loadNodeSchemas } from '~/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
+import { upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
+
+await loadNodeSchemas(['automation-adapty']);
 
 describe('Adapty app-scoped connection and profile forms', () => {
+    it('selects a saved app connection when adding an Adapty node', () => {
+        upsertCredentialsIntoCache([{ id: 'adapty-test-credential', name: 'Adapty test', credential_type: 'adapty_api_key', owned_by_me: true }]);
+        expect(autoSelectCredentialFromCache('automation-adapty')).toEqual({ adapty_api_key: 'adapty-test-credential' });
+    });
     it('requires an app secret and known profile without inventing OAuth or account identity', () => {
         const schema = NODE_SCHEMAS['automation-adapty'];
         const key = schema.$defs.AdaptyAPIKeyCredential;
