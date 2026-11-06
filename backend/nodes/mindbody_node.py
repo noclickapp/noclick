@@ -449,6 +449,7 @@ class MindbodyNode(WorkflowNode):
         _authority_shape(validation_context)
         result = await validation_context.run_operation("check_connection")
         await validation_context.accept(result)
+        return {"valid": True}
 
     async def _resolve_current_context(self, cid):
         if not self.user_id:
