@@ -21,7 +21,9 @@ from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator,
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret, is_placeholder, is_url_shaped
-from nodes.core.oauth_refresh_authority import AuthorityCredentialsTableStore, CURRENT_ORGANIZATION
+from uuid import UUID
+
+CURRENT_ORGANIZATION = object()
 from utils.ssrf import guarded_async_client
 
 NODE_TYPE = "automation-nylas"
@@ -306,13 +308,82 @@ def _same_submitted(submitted, current):
             raise ValueError("Nylas saved credential authority changed.")
 
 
-def _store(raw, *, pool, user_id, credential_id, organization_id=CURRENT_ORGANIZATION, workflow_id=None):
-    data = shape_credential(raw)
-    return AuthorityCredentialsTableStore(
-        pool, user_id, credential_id, credential_type=data["credential_type"],
-        validate=shape_credential, grant_fields=("region", "grant_id"),
-        organization_id=organization_id, workflow_id=workflow_id, allow_same_grant_retry=False,
-    )
+class _NylasAuthorityStore:
+    """Load-only Nylas authority; use staging's access and workflow grant policy."""
+
+    def __init__(self, raw, *, pool, user_id, credential_id,
+                 organization_id=CURRENT_ORGANIZATION, workflow_id=None):
+        self.pool = pool
+        self.user_id = str(UUID(str(user_id)))
+        self.credential_id = str(UUID(str(credential_id)))
+        self.credential_type = shape_credential(raw)["credential_type"]
+        self.organization_id = organization_id
+        self.workflow_id = str(UUID(str(workflow_id))) if workflow_id else None
+        self.current = None
+
+    async def _load_principal(self, principal_id, org):
+        from repositories.credentials import credential_access_predicate
+        from utils.encryption import get_encryption
+
+        async with self.pool.acquire() as conn:
+            row = await conn.fetchrow(f"""
+                SELECT c.credential, c.owner_id, c.credential_type, c.token_version,
+                       c.updated_at, c.revoked_at
+                FROM credentials c
+                WHERE c.id = $1::uuid AND {credential_access_predicate()}
+            """, self.credential_id, principal_id, org)
+        if row is None:
+            return None
+        version = row["token_version"]
+        if (row["revoked_at"] is not None or row["credential_type"] != self.credential_type
+                or type(version) is not int or version < 1):
+            raise ValueError("Nylas saved credential authority changed or is unavailable.")
+        try:
+            owner = str(UUID(str(row["owner_id"])))
+            data = get_encryption().decrypt_credential(row["credential"])
+            data["credential_type"] = row["credential_type"]
+            data = shape_credential(data)
+        except Exception:
+            raise ValueError("Nylas saved credential shape or binding is invalid.") from None
+        self.current = (self.credential_id, self.user_id, str(principal_id), org,
+                        self.workflow_id, owner, self.credential_type, version)
+        data["token_version"] = version
+        if row["updated_at"] is not None:
+            data["updated_at"] = row["updated_at"].isoformat()
+        return data
+
+    async def load(self):
+        from utils.credentials import (get_workflow_owner_id,
+            is_credential_authorized_for_workflow, credential_lender)
+        if self.pool is None:
+            from utils.database_pool import get_native_pool
+            self.pool = get_native_pool()
+        self.current = None
+        org = self.organization_id
+        if org is CURRENT_ORGANIZATION:
+            from repositories.organization import OrgRepo
+            async with self.pool.acquire() as conn:
+                org = await OrgRepo(self.pool).get_primary_org_id(conn, self.user_id)
+        data = await self._load_principal(self.user_id, org)
+        # Same runner, authorized workflow owner, then authorized lender order as
+        # staging's resolve_credential_with_owner_fallback. Rechecked per request.
+        if data is None and self.workflow_id:
+            owner = await get_workflow_owner_id(self.pool, self.workflow_id)
+            if (owner and owner != self.user_id and
+                    await is_credential_authorized_for_workflow(
+                        self.pool, self.workflow_id, self.credential_id)):
+                data = await self._load_principal(owner, org)
+        if data is None and self.workflow_id:
+            lender = await credential_lender(self.pool, self.workflow_id, self.credential_id)
+            if lender and lender != self.user_id:
+                data = await self._load_principal(lender, org)
+        if data is None:
+            raise ValueError("Nylas credential not found or current access denied.")
+        return data
+
+
+def _store(raw, **context):
+    return _NylasAuthorityStore(raw, **context)
 
 
 class NylasNotFound(ValueError):
@@ -439,7 +510,7 @@ class _Client:
     async def request(self, method, path="", *, params=None, body=None):
         await self.guard()
         try:
-            async with guarded_async_client(require_public=True, timeout=20, follow_redirects=False, trust_env=False) as client:
+            async with guarded_async_client(timeout=20, follow_redirects=False, trust_env=False) as client:
                 response = await client.request(method, self.base + path, params=params,
                                                 json=body, headers={"Authorization": "Bearer " + self.secret,
                                                 "Accept": "application/json", "Content-Type": "application/json"})
@@ -527,7 +598,7 @@ class _Client:
             params["source"] = "address_book"
         if calendar_id:
             params.update(calendar_id=calendar_id, start=start, end=end)
-        scope = hashlib.sha256(_canonical({"data": self.data, "authority": vars(self.authority) if self.authority else None,
+        scope = hashlib.sha256(_canonical({"data": self.data, "authority": self.authority,
                                           "kind": kind, "params": params, "search": search}).encode()).hexdigest()
         seen, cursor = [], None
         if token:
@@ -555,7 +626,6 @@ class _Client:
 
 
 class NylasNode(WorkflowNode):
-    workflow_credential_refresh = True  # Trusted context for load-only authority; no token mint.
     connection_evidence = ConnectionEvidence(operation="get_grant", noun="connected grant", proves="reachability", label_keys=("id",))
 
     @classmethod
@@ -570,6 +640,12 @@ class NylasNode(WorkflowNode):
             return credential_data
         store = _store(credential_data, pool=pool, user_id=user_id, credential_id=credential_id,
                        organization_id=organization_id, workflow_id=workflow_id)
+        if organization_id is CURRENT_ORGANIZATION and workflow_id is None:
+            # Staging's dropdown freshener receives no workflow context. Carry
+            # this private store until the loader receives trusted server context.
+            loaded = _LoadedCredential(credential_data)
+            loaded._pending_store = store
+            return loaded
         current = await store.load()
         _same_submitted(credential_data, current)
         if not isinstance(current.get("updated_at"), str) or not current["updated_at"]:
@@ -579,16 +655,9 @@ class NylasNode(WorkflowNode):
         return loaded
 
     @classmethod
-    async def validate_credential_access(cls, credential_data, *, validation_context=None):
-        from nodes.core.credential_validation import CredentialValidationPending, CredentialValidationUnavailable
+    async def validate_credential_access(cls, credential_data):
         try:
-            if validation_context:
-                result = await validation_context.run_operation("get_grant")
-                await validation_context.accept(result)
-            else:
-                await _Client(credential_data).grant()
-        except (CredentialValidationPending, CredentialValidationUnavailable):
-            raise
+            await _Client(credential_data).grant()
         except NylasDenied:
             return {"valid": False, "message": "Nylas refused access to the configured grant."}
         except Exception:
@@ -690,6 +759,18 @@ class NylasNode(WorkflowNode):
         kinds = {"message_id": "message", "thread_id": "thread", "folder_id": "folder", "calendar_id": "calendar", "event_id": "event", "contact_id": "contact", "draft_id": "draft"}
         if field_name not in kinds:
             return {"options": [], "next_page_token": None}
+        pending = getattr(credential_data, "_pending_store", None)
+        if pending is not None:
+            if context.get("_user_id") != pending.user_id:
+                raise ValueError("Nylas options require the current caller context.")
+            workflow_id = context.get("_workflow_id")
+            pending.workflow_id = str(UUID(str(workflow_id))) if workflow_id else None
+            current = await pending.load()
+            _same_submitted(credential_data, current)
+            if not isinstance(current.get("updated_at"), str) or not current["updated_at"]:
+                raise ValueError("Nylas current credential timestamp is unavailable.")
+            credential_data = _LoadedCredential(current)
+            credential_data._store = pending
         client = _Client(credential_data, getattr(credential_data, "_store", None))
         await client.guard()
         kind = kinds[field_name]
@@ -711,7 +792,7 @@ class NylasNode(WorkflowNode):
                 params["source"] = "address_book"
             if calendar_id:
                 params.update(calendar_id=calendar_id, start=start, end=end)
-            scope = hashlib.sha256(_canonical({"data": client.data, "authority": vars(client.authority) if client.authority else None,
+            scope = hashlib.sha256(_canonical({"data": client.data, "authority": client.authority,
                                               "kind": kind, "params": params, "search": search}).encode()).hexdigest()
             client.unseal(page_token, scope)
         grant = await client.grant()

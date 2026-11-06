@@ -3,14 +3,14 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import schema from '~/schemas/nodes/nylas.json';
-import { NODE_SCHEMAS, getNodeCredentialInfo } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, getNodeCredentialInfo, registerNodeSchemaFiles } from '~/utils/nodeSchemas';
 import { isAgentToolProviderType, isTriggerSource } from '~/utils/nodeMeta';
 import { getCredentialTypeFromSchemaTitle } from '~/utils/credentialTypeMap';
 import { getProviderConfigByCredentialType } from '~/utils/oauthProviders';
-import { collectCredentialAlternatives } from '~/utils/credentialSchemaAlternatives';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 
 const key = 'automation-nylas';
+registerNodeSchemaFiles({ './nylas.json': schema });
 const refs = (schema.properties.config as any).oneOf;
 const definitions = (schema as any).$defs;
 const operations = refs.map((ref: { $ref: string }) => definitions[ref.$ref.split('/').pop()!]);
@@ -29,7 +29,8 @@ describe('native Nylas v3 wiring', () => {
     });
 
     it('offers both exact issued credential families with honest manual UI', () => {
-        const alternatives = collectCredentialAlternatives(schema);
+        const alternatives = (schema.properties.credentials as any).anyOf
+            .filter((entry: any) => entry.$ref).map((entry: any) => definitions[entry.$ref.split('/').pop()!]);
         expect(alternatives).toHaveLength(2);
         expect(getNodeCredentialInfo(key)?.acceptedTypes).toEqual(['nylas_api_key', 'nylas_access_token']);
         expect(getCredentialTypeFromSchemaTitle('Nylas API Key')).toBe('nylas_api_key');
@@ -37,7 +38,7 @@ describe('native Nylas v3 wiring', () => {
         expect(humanizeCredentialLabel('NylasAPIKey')).toBe('Nylas API Key');
         expect(humanizeCredentialLabel('NylasAccessToken')).toBe('Nylas Access Token');
         for (const type of ['nylas_api_key', 'nylas_access_token']) {
-            expect(getProviderConfigByCredentialType(type)?.oauthProvider).toBe('');
+            expect(getProviderConfigByCredentialType(type)).toBeUndefined();
         }
         const credential = definitions.NylasAPIKeyCredential;
         expect(credential.properties.region.enum).toEqual(['us', 'eu']);

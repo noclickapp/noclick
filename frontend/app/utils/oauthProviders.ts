@@ -159,12 +159,6 @@ const KlaviyoProviderIcon: ComponentType<{ className?: string }> = ({
  * Keys are the values from x-oauth-provider in JSON schemas.
  */
 export const OAUTH_PROVIDER_CONFIG: Record<string, OAuthProviderConfig> = {
-    nylas: {
-        name: 'Nylas',
-        Icon: ({ className }) => createElement('img', { src: '/icons/nylas.svg', alt: '', className }),
-        oauthProvider: '', // Issued credentials; no native mint/refresh popup.
-        credentialTypes: ['nylas_api_key', 'nylas_access_token'],
-    },
     google: {
         name: 'Google',
         Icon: SiGoogle,

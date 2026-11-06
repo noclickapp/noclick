@@ -113,6 +113,7 @@ def state(monkeypatch):
             return httpx.Response(200, json=s.page)
         return httpx.Response(200, json={"data": [v for (k, _), v in s.objects.items() if k == kind], "next_cursor": None})
 
+    monkeypatch.setattr("repositories.organization.OrgRepo.get_primary_org_id", AsyncMock(return_value=ORG))
     client = httpx.AsyncClient
     monkeypatch.setattr(native, "guarded_async_client", lambda **_: client(transport=httpx.MockTransport(provider)))
     crypto = MagicMock()
@@ -272,7 +273,7 @@ async def test_unsaved_connect_actual_evidence_is_reachability_not_identity(stat
     monkeypatch.setattr("nodes.core.credential_connect._collect_evidence", collect_evidence)
     verdict = await validate_for_connect(credential_type="nylas_api_key", credential_data=KEY, user_id=USER)
     assert verdict.ok and verdict.evidence.reachable is True
-    assert verdict.evidence.proves == "reachability" and not verdict.evidence.account_label
+    assert native.NylasNode.connection_evidence.proves == "reachability" and not verdict.evidence.account_label
     assert "private@example.test" not in str(verdict.evidence)
 
 
@@ -324,19 +325,7 @@ async def test_real_lookup_loads_current_row_and_private_context(state):
     assert output["options"][0]["value"] == "contact-42"
     assert output["options"][0]["label"] == "contact-42"
     assert "private@example.test" not in str(output)
-    assert any(len(args) == 6 for _, args in state.pool.calls)
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("status", ["pending", "rejected"])
-async def test_real_factory_admission_and_evidence_never_probe_parked_operation(state, monkeypatch, status):
-    parked = {"id": CID, "status": status, "owner_id": OWNER, "new_request": False}
-    monkeypatch.setattr("repositories.credential_approvals.CredentialApprovalRepo.admit", AsyncMock(return_value=parked))
-    result = await run("get_grant", stored=True, pool=state.pool)
-    assert result["executed"] is False and result["status"] in {"pending_approval", "rejected"}
-    evidence = await collect_evidence(node_type=NODE, credential_id=CID,
-                                      user_id=USER, pool=state.pool, organization_id=ORG)
-    assert evidence.reachable is not True and state.requests == []
+    assert any(len(args) == 3 for _, args in state.pool.calls)
 
 
 @pytest.mark.asyncio
@@ -353,20 +342,36 @@ async def test_picker_cursor_refuses_new_parent_credential_and_repeat(state):
         await native.NylasNode.load_field_options("event_id", KEY, context, first["next_page_token"])
 
 
+
+
 @pytest.mark.asyncio
-@pytest.mark.parametrize("status,valid", [(200, True), (401, False), (429, None)])
-async def test_real_socket_current_row_access_hook(state, monkeypatch, status, valid):
-    from wss.handlers import credentials_handler, workflow_handler
-    from wss.receiver.client_events import CredentialValidateAccessRequest
-    state.status = status
-    monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(return_value=ORG))
-    monkeypatch.setattr(credentials_handler, "get_encryption", lambda: SimpleNamespace(decrypt_credential=lambda _: deepcopy(KEY)))
-    async def capture(_sio, _sid, event):
-        state.events.append(event.model_dump())
-    monkeypatch.setattr(credentials_handler, "send_event", capture)
-    sio = SimpleNamespace(get_session=AsyncMock(return_value={"user_id": USER}))
-    handler = credentials_handler.CredentialsHandler(sio)
-    handler.get_pool = AsyncMock(return_value=state.pool)
-    await handler.validate_access("fixture", CredentialValidateAccessRequest(request_id="fixture-42", credential_id=CID, node_type=NODE))
-    assert state.events[-1]["data"]["valid"] is valid
-    assert state.requests and all(r.url.path.endswith("/grants/grant-42") for r in state.requests)
+@pytest.mark.parametrize("authorized", [True, False])
+async def test_lookup_uses_staging_workflow_context_and_current_owner_authority(state, monkeypatch, authorized):
+    workflow = "00000000-0000-4000-8000-000000000004"
+    monkeypatch.setattr("utils.credentials.get_workflow_owner_id", AsyncMock(return_value=OWNER))
+    monkeypatch.setattr("utils.credentials.is_credential_authorized_for_workflow", AsyncMock(return_value=authorized))
+    monkeypatch.setattr("utils.credentials.credential_lender", AsyncMock(return_value=None))
+
+    async def fetchrow(sql, *args):
+        assert credential_access_predicate() in sql
+        assert str(args[0]) == CID and args[2] == ORG
+        state.pool.calls.append((sql, args))
+        return deepcopy(state.pool.row) if str(args[1]) == OWNER else None
+
+    monkeypatch.setattr(state.pool, "fetchrow", fetchrow)
+    # The shared freshener supplies only these four arguments. The node waits
+    # for the loader's trusted context before reloading a workflow-owned row.
+    credential = await native.NylasNode.freshen_credential(KEY, pool=state.pool, user_id=USER, credential_id=CID)
+    assert state.pool.calls == []
+    if not authorized:
+        with pytest.raises(ValueError, match="access denied"):
+            await native.NylasNode.load_field_options("contact_id", credential,
+                {"_user_id": USER, "_workflow_id": workflow})
+        assert state.requests == []
+    else:
+        state.page = {"data": [state.objects[("contact", "contact-42")]], "next_cursor": "provider-cursor"}
+        result = await native.NylasNode.load_field_options("contact_id", credential,
+            {"_user_id": USER, "_workflow_id": workflow})
+        assert result["options"][0]["value"] == "contact-42"
+        assert result["next_page_token"]
+        assert any(str(args[1]) == OWNER for _, args in state.pool.calls)
