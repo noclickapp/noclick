@@ -11,8 +11,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import httpx
 import pytest
-from pydantic import ValidationError
 from nodes import websupport_node as ad
+from nodes.core.base import ConfigValidationError
 from nodes.core.registry import NODE_REGISTRY, NodeFactory
 from tests.test_oauth_refresh_authority import _Storage as AuthorityStorage, CID, USER, OWNER, ORG, WF
 from tests.test_post_connect_validation_context import _Storage as AdmissionStorage
@@ -162,10 +162,10 @@ def test_actual_factory_schema_has_three_current_operations_and_bound_key_secret
     assert ops == {"check_connection", "get_zone", "list_records"}
     assert defs["WebsupportRecordsConfig"]["properties"]["record_type"]["x-dynamic-options"]["field"] == "record_type"
     for operation in ("list_services", "get_record", "update_record", "nic_update", "get_account"):
-        with pytest.raises(ValidationError):
+        with pytest.raises(ConfigValidationError):
             make_node(operation)
     for extra in ({"page": 2}, {"service_id": OTHER}, {"rowsPerPage": 500}, {"filters": {"content": "private-sentinel"}}):
-        with pytest.raises(ValidationError):
+        with pytest.raises(ConfigValidationError):
             make_node("list_records", **extra)
 
 
@@ -322,7 +322,7 @@ async def test_registered_socket_native_probe_picker_and_current_shared_org_bind
     sockets.saved.http.responses = [(200, zone()), (200, page(record()))]
     out = await socket_call(sockets, "workflow:node:load_options", field_name="record_type",
         context={"service_id": SERVICE, "api_secret": "forged", "_user_id": OWNER, "workflow_id": WF})
-    assert out["success"] is True and out["options"] == [{"value": "A", "label": "A"}]
+    assert out["success"] is True and out["options"] == [{"value": "A", "label": "A", "metadata": None}]
     assert all("/service/other-service/" in request.url.path for request in sockets.saved.http.calls if request.url.path != "/v2/check")
     assert all(args[2] == ORG for sql, args in sockets.saved.storage.calls if "SELECT c.credential" in sql)
 
