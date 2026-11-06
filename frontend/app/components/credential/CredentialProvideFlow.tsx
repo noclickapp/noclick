@@ -13,8 +13,9 @@ import { useEffect, useMemo, useState } from 'react';
 import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
 import { Loader2, Shield, Clock, X } from 'lucide-react';
 import { cn } from '~/lib/utils';
-import { getProviderConfig, getProviderConfigByCredentialType } from '~/utils/oauthProviders';
+import { getProviderConfig, getProviderConfigByCredentialType, oauthNeedsInAppSelection } from '~/utils/oauthProviders';
 import { getServiceForCredentialType } from '~/utils/credentialTypes';
+import { kindFromBackendMethod } from '~/lib/credentialMethodKind';
 import { ConnectApp } from './connect/ConnectApp';
 import {
   CredentialMethodConnect,
@@ -149,6 +150,12 @@ const PROBLEMS: Record<ProvideRequestProblem, string> = {
   unreachable: 'Failed to load credential request details.',
 };
 
+/** A sign-in only the app's own connect form can run: one that picks an account or project after the popup, or one
+ *  the request has no sign-in for (the provide page refuses the first and draws nothing for the second). */
+export function signsInOnlyInApp(method: ProvideCredentialMethod): boolean {
+  return kindFromBackendMethod(method) === 'oauth' && (!method.oauth_provider || oauthNeedsInAppSelection(method.oauth_provider));
+}
+
 /** The app a request is for, as the catalog names it ("Notion"), else its sign-in's provider, else its type. */
 export function appNameForCredentialType(credentialType: string): string {
   return getServiceForCredentialType(credentialType)?.label ?? getProviderConfigByCredentialType(credentialType)?.name ?? formatCredentialType(credentialType);
@@ -205,7 +212,10 @@ export function CredentialProvideFlow({
       </div>
     );
   }
-  const { methods } = request;
+  // A shared link offers only the ways in it can finish: Instagram's Facebook sign-in, which picks the account after
+  // its popup, only said it couldn't be used here (2026-11-06). With no other way in, it still says why.
+  const usable = request.methods.filter((method) => !signsInOnlyInApp(method));
+  const methods = usable.length ? usable : request.methods;
   if (!methods.length) return null;
 
   return (
@@ -218,22 +228,27 @@ export function CredentialProvideFlow({
         showResult={false}
         providerName={(method) => getProviderConfig(method.oauth_provider ?? undefined)?.name ?? app}
         renderMethod={(method, ctx) => (
-          <CredentialMethodConnect
-            method={method}
-            apiBase={apiBase}
-            token={token}
-            serviceName={app}
-            onProvided={onProvided}
-            howTo={ctx.howTo}
-            showSources={ctx.showSources}
-            note={ctx.note}
-          />
+          <>
+            <CredentialMethodConnect
+              method={method}
+              apiBase={apiBase}
+              token={token}
+              serviceName={app}
+              onProvided={onProvided}
+              howTo={ctx.howTo}
+              showSources={ctx.showSources}
+              note={ctx.note}
+            />
+            {/* Only what's typed in is sent: a sign-in sends nothing, and says so in its own line. */}
+            {kindFromBackendMethod(method) === 'api_key' && (
+              <p className="mt-2 flex items-center gap-2 text-[12.5px] leading-relaxed text-muted-foreground">
+                <Shield className="h-3.5 w-3.5 shrink-0" />
+                It’s encrypted as soon as you send it.
+              </p>
+            )}
+          </>
         )}
       />
-      <p className="flex items-center gap-2 text-[12.5px] leading-relaxed text-muted-foreground">
-        <Shield className="h-3.5 w-3.5 shrink-0" />
-        It’s encrypted as soon as you send it.
-      </p>
     </div>
   );
 }

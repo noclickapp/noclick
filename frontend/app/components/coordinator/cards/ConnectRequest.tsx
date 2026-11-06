@@ -3,21 +3,14 @@
 // seam, a sign-in is exchanged through the request, and the fulfilled request wakes the coordinator exactly as the
 // link does. Loaded on demand: it carries every provider's sign-in.
 import { useEffect, type ReactNode } from 'react';
-import { CredentialMethodConnect, type ProvideCredentialMethod } from '~/components/credential/CredentialMethodConnect';
-import { useCredentialRequest } from '~/components/credential/CredentialProvideFlow';
+import { CredentialMethodConnect } from '~/components/credential/CredentialMethodConnect';
+import { signsInOnlyInApp, useCredentialRequest } from '~/components/credential/CredentialProvideFlow';
 import { ConnectAccountCard, ConnectElsewhere, ConnectUnavailable } from '~/components/coordinator/inline/setup';
-import { kindFromBackendMethod } from '~/lib/credentialMethodKind';
 import { isLocalEdition } from '~/lib/edition';
 import { apiBaseUrl } from '~/lib/hostedDefaults';
 import { navigateToSettings, navigateToTab } from '~/lib/navigation';
 import type { CredentialTestConnectionResponse } from '~/types/socket-events.generated';
-import { getProviderConfigByCredentialType, oauthNeedsInAppSelection } from '~/utils/oauthProviders';
-
-/** A sign-in only the app's own connect form can run: one that picks an account or project after the popup, or one
- *  the request has no sign-in for (the provide page refuses the first and draws nothing for the second). */
-export function signsInOnlyInApp(method: ProvideCredentialMethod): boolean {
-    return kindFromBackendMethod(method) === 'oauth' && (!method.oauth_provider || oauthNeedsInAppSelection(method.oauth_provider));
-}
+import { getProviderConfigByCredentialType } from '~/utils/oauthProviders';
 
 // Where accounts are connected: the shell's Connections page, or Settings → Credentials in the open edition's tabs.
 const CONNECTIONS = isLocalEdition()

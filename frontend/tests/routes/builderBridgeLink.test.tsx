@@ -36,6 +36,16 @@ it('names the accounts a link asks to connect, and says why when the ask does', 
     expect(bridgeAsk(link(account('google_business_profile_oauth'), account('gmail_oauth'))).title).toBe('Connect Google Business Profile and Gmail');
 });
 
+it('names each account by its app, never the way it signs in', () => {
+    // A social automation's real ask (2026-11-06) read "Connect your Fal Api Key, Instagram Login and Facebook".
+    expect(bridgeAsk(link(account('fal_api_key'), account('instagram_login'), account('facebook_oauth'))).heading).toBe(
+        'Connect your Fal, Instagram and Facebook'
+    );
+    expect(bridgeAsk(link(account('whatsapp_qr'), account('posthog_personal_api_key'), account('bigquery_service_account'))).title).toBe(
+        'Connect WhatsApp, PostHog and BigQuery'
+    );
+});
+
 it('counts the questions otherwise, for the workflow they finish', () => {
     expect(bridgeAsk(link(question('tone'), question('hours')))).toEqual({
         title: 'Answer 2 questions for “Reviews agent”',

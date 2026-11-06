@@ -1,16 +1,28 @@
 // What a bridge link asks, in words: the page's heading and the title and description its link unfurls to, from the
 // questions the page shows its holder (GET /api/builder-bridge/{id}) and nothing more. One source, so the page, its
 // preview in a chat and the landing's drawing of that preview read the same.
+import { fixWordCasing } from '~/utils/credentialLabels';
 import type { BridgePayload } from './BuilderBridge';
 
-/** "google_sheets_oauth" → "Google Sheets": the raw credential_type slug is an internal id, never UI text. */
+// How a credential type says it signs in, after its app's name ("_login", "_personal_api_key", "_service_account"):
+// never part of what a person connects.
+const SIGN_IN_SUFFIX = new RegExp(
+  '_(?:(?:personal|project|developer|management|integration|bearer|bot|auth|page_access|system_user|firebase_id|access)_)?(?:api_)?(?:key|token)$' +
+    '|_(?:oauth2?(?:_client(?:_credentials)?)?|login|service_account|handle_password|application_password|basic_auth|account' +
+    '|connection_string|server_to_server|bot_install|script|pit|pat|qr|credentials?)$'
+);
+
+/** The app a credential type is for, as a person names it: "google_sheets_oauth" → "Google Sheets",
+ *  "instagram_login" → "Instagram", "whatsapp_qr" → "WhatsApp". The type is an internal id, never UI text. */
 export function credentialLabel(type?: string): string {
   if (!type) return 'account';
-  return type
-    .replace(/_oauth$/, '')
-    .split('_')
-    .map((w) => (w ? w.charAt(0).toUpperCase() + w.slice(1) : w))
-    .join(' ');
+  return fixWordCasing(
+    type
+      .replace(SIGN_IN_SUFFIX, '')
+      .split('_')
+      .map((w) => (w ? w.charAt(0).toUpperCase() + w.slice(1) : w))
+      .join(' ')
+  );
 }
 
 /** "A", "A and B", "A, B and C". */
