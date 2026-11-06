@@ -401,7 +401,11 @@ class FormBuilder123Node(WorkflowNode):
             except ValueError: return {"valid": False, "errors": ["Connect a native 123FormBuilder API v2 token"], "satisfied_set": None}
         return super().validate_config(config_data)
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=_ORG_OMITTED, require_owner=False, **kwargs):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        return await cls._freshen_saved_credential(credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
+
+    @classmethod
+    async def _freshen_saved_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=_ORG_OMITTED, require_owner=False):
         initial = credential(credential_data)
         if not credential_id:
             if "_123formbuilder_saved_authority_required" in credential_data: raise ValueError("123FormBuilder saved authority was lost; reload")
@@ -453,6 +457,6 @@ class FormBuilder123Node(WorkflowNode):
     async def execute(self, inputs):
         if not isinstance(self.config, FormBuilder123NodeConfig) or self.config.credentials is None: raise ValueError("Connect a native 123FormBuilder API v2 token")
         raw = (self.node_data or {}).get("credentials")
-        data = await self.freshen_credential(raw if raw is not None else self.config.credentials.model_dump(), pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id,
+        data = await self._freshen_saved_credential(raw if raw is not None else self.config.credentials.model_dump(), pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id,
             credential_id=(self.node_data or {}).get("credential_id"), workflow_id=self.workflow_id, organization_id=self.organization_id)
         return await records(data, self.config.config.model_dump())

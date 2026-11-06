@@ -77,7 +77,7 @@ async def test_canonical_current_row_refuses_before_decrypt_and_token_transport(
     elif bad == "version": storage.row["token_version"] = True
     elif bad == "timestamp": storage.row["updated_at"] = "invalid"
     else: storage.access.clear()
-    with pytest.raises(ValueError): await F.FormBuilder123Node.freshen_credential(AUTH, pool=storage, user_id=USER, credential_id=CID, organization_id=ORG)
+    with pytest.raises(ValueError): await F.FormBuilder123Node._freshen_saved_credential(AUTH, pool=storage, user_id=USER, credential_id=CID, organization_id=ORG)
     storage.crypto.decrypt_credential.assert_not_called(); assert world.calls == []
 
 
@@ -102,7 +102,7 @@ async def test_saved_read_or_write_cannot_accept_changed_authority_after_respons
 
 @pytest.mark.asyncio
 async def test_personal_org_none_current_context_and_marker_copy_are_distinct(storage, world):
-    bound = await F.FormBuilder123Node.freshen_credential(AUTH, pool=storage, user_id=USER, credential_id=CID, organization_id=None)
+    bound = await F.FormBuilder123Node._freshen_saved_credential(AUTH, pool=storage, user_id=USER, credential_id=CID, organization_id=None)
     assert bound.snapshot[0].organization_id is None and bound.snapshot[0].current_organization is False
     with pytest.raises(ValueError): await F.FormBuilder123Node.load_field_options("form_id", dict(bound))
     assert world.calls == []
