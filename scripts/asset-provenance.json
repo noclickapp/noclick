@@ -844,6 +844,12 @@
       "sha256": "1fc2ad79a30861fe490d7ebe914aafd61299758f647390ce138c1847599052f6"
     },
     {
+      "path": "frontend/public/icons/aprimo.svg",
+      "source": "https://developers.aprimo.com/img/AprimoLogo.svg (unmodified official Aprimo developer documentation logo)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "a405c6980cb61f0bd78fccb6721218083ebd8b557d22e13abea99573431a8d0c"
+    },
+    {
       "path": "frontend/public/icons/okta-brand.png",
       "source": "https://www.okta.com/newsroom/ → https://www.okta.com/sites/default/files/2026-09/logos-09-2026.zip → Logos & boileplates/Okta Logos/Okta Aura Stack/Okta_Aura Stack_Black_RGB.png",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",

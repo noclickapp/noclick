@@ -42,6 +42,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-github-rest', 'GithubRestNode'],
     ['automation-airtable', 'AirtableNode'],
     ['automation-nylas', 'NylasNode'],
+    ['automation-aprimo', 'AprimoNode'],
     ['automation-stripe', 'StripeNode'],
     ['automation-cliniko', 'ClinikoNode'],
     ['automation-apify', 'ApifyNode'],
