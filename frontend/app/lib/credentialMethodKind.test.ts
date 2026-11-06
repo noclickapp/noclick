@@ -16,6 +16,7 @@ const KNOWN_KINDS: CredentialMethodKind[] = ['api_key', 'oauth', 'agent_oauth', 
 // x-credential-type values we've consciously accounted for. Field-based ones
 // (e.g. Reddit's "script": client_id/secret/username/password) resolve to api_key.
 const KNOWN_DISCRIMINATORS = ['oauth', 'qr_scan', 'purchase', 'script'];
+KNOWN_DISCRIMINATORS.push('porkbun_api_key');
 
 const schemasDir = join(dirname(fileURLToPath(import.meta.url)), '../schemas/nodes');
 
