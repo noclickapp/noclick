@@ -8,6 +8,7 @@ and handles instantiation of nodes based on type.
 import logging
 from typing import Dict, Optional, Type, Any
 from nodes.adapty_node import AdaptyNode
+from nodes.sematext_node import SematextNode
 from nodes.core.base import WorkflowNode
 from nodes.porkbun_node import PorkbunNode
 from nodes.predictleads_node import PredictLeadsNode
@@ -215,6 +216,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     "automation-adapty": AdaptyNode,
     'automation-hetrixtools': HetrixToolsNode,
     'automation-acculynx': AccuLynxNode,
+    'automation-sematext': SematextNode,
     # Trigger nodes (entry points for workflows)
     'trigger-run': RunTriggerNode,
     'trigger-webhook': WebhookTriggerNode,

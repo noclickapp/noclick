@@ -23,6 +23,8 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'Mindbody Public API': 'mindbody_api_key',
     'PredictLeadsAPIKeyTokenCredential': 'predictleads_api_key_token',
     'PredictLeads API Key and Token': 'predictleads_api_key_token',
+    'SematextAccountAPIKeyCredential': 'sematext_account_api_key',
+    'Sematext Account API Key': 'sematext_account_api_key',
     'FormBuilder123TokenCredential': '123formbuilder_v2_token',
     'PorkbunCredential': 'porkbun_api_key',
     'HetrixToolsAPIKeyCredential': 'hetrixtools_api_key',

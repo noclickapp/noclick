@@ -1094,6 +1094,30 @@
       "source": "NoClick PredictLeads integration provenance record for https://docs.predictleads.com/vite/assets/predictleads-favicon-9dD7SpqR.svg",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "8e183b294bc5ee0b9a78e5b056a50fcad797ca348c0e8a13eece4040760be476"
+    },
+    {
+      "path": "frontend/public/icons/sematext.svg",
+      "source": "https://sematext.com/docs/images/logo.svg (original official documentation wordmark)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "1ee1306b364c7b5698d3402c1e66846111f0cd17d864aa7729ca030c895a2bec"
+    },
+    {
+      "path": "frontend/public/icons/sematext.provenance.json",
+      "source": "https://sematext.com/docs/images/logo.svg (source and hash record for the official wordmark)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "3a205a56d26b8fc9be8a80b830e5b9a39f2529832971718ec342f7c500bcf64d"
+    },
+    {
+      "path": "frontend/public/icons/sematext-brand-vector.svg",
+      "source": "https://sematext.com (provider artwork cropped to the Sematext symbol; sourced in commit 86a9a91d8b68d215accf4fc42e34038d5b984bab)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "f0991b920df3e900484cda22609311805d9d03daa73d16af26a568ee5844e26b"
+    },
+    {
+      "path": "frontend/public/icons/sematext-brand.png",
+      "source": "https://sematext.com (provider artwork cropped to the Sematext symbol; sourced in commit c418fb1a5)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "8b437d4bdc7b49a53ec1211528c129fd4d0d9577dd33409723b2187fb777dbd7"
     }
   ],
   "excludedSourceAssets": [
