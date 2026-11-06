@@ -210,6 +210,7 @@ logger = logging.getLogger(__name__)
 _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     "automation-adapty": AdaptyNode,
     'automation-hetrixtools': HetrixToolsNode,
+    'automation-acculynx': AccuLynxNode,
     # Trigger nodes (entry points for workflows)
     'trigger-run': RunTriggerNode,
     'trigger-webhook': WebhookTriggerNode,

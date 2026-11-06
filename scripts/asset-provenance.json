@@ -46,30 +46,6 @@
       "sha256": "54885f9c3b5df28aa980ebf557206dc6601730fda4b384ff9a2e9739aed149ea"
     },
     {
-      "path": "frontend/public/icons/ashby-brand-vector.svg",
-      "source": "https://www.ashbyhq.com (Ashby published brand artwork)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "4d056fcacc59b19b45e96c8d315a5f9b2c2976e9f4c5b558d01aa229f3697e50"
-    },
-    {
-      "path": "frontend/public/icons/ashby-brand.png",
-      "source": "https://www.ashbyhq.com (Ashby published brand artwork)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "86288a586b5ec2c1ad4945fc47a402afba70b48c798fe51ba399096a6504aec0"
-    },
-    {
-      "path": "frontend/public/icons/ashby-preferred-brand.svg",
-      "source": "https://www.ashbyhq.com (Ashby published brand artwork)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "cafe857be8a30f891baa46dac0badc5e8a21262eb3142da6a5b5b0f293d27852"
-    },
-    {
-      "path": "frontend/public/icons/ashby.svg",
-      "source": "https://github.com/noclickapp/noclick-cloud/commit/63b42b555f (integration-authored Ashby monogram)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "83af3042c6aae855b746472980a8e7b68d8a6501bb554039cc84b40354563b20"
-    },
-    {
       "path": "frontend/public/icons/affinity.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -1028,6 +1004,18 @@
       "source": "https://prod.gusto-assets.com/media/Gusto-brand-guidelines.pdf (official brand guidelines, page 4, links to https://www.dropbox.com/s/7su8t41u8q0sfo1/20190726_Gusto%20Logos.zip?dl=1; unmodified RGB_Web/Gusto logo_f45d48.svg)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "5a48f92a78e4c1871ba8b9251032342531546ea0188979ae32bd6750ea70a3ae"
+    },
+    {
+      "path": "frontend/public/icons/acculynx.svg",
+      "source": "https://acculynx.com/wp-content/uploads/2023/05/acculynx-logo-navy-orange-gray.svg (unmodified official wordmark)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "0436324eb341e48bb5e9e5e7819045f3fa18b92e7bd58e5bcd36f5e7cc0f261e"
+    },
+    {
+      "path": "frontend/public/icons/acculynx-preferred-brand.svg",
+      "source": "https://acculynx.com/wp-content/uploads/2023/05/acculynx-logo-navy-orange-gray.svg (brand symbol cropped from the official wordmark and placed on a white rounded background)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "36aa0f55bc9345e504fb2a5850c3679f4359b9f1815dcb8390ec0f10d2222078"
     }
   ],
   "excludedSourceAssets": [

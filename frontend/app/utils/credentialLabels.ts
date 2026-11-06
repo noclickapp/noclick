@@ -27,6 +27,7 @@ const WORD_CASING: Record<string, string> = {
 // every credential class title in the node schemas (2026-07-19).
 const COMPOUND_BRANDS = [
   'HetrixTools',
+  'AccuLynx',
   'WhatsApp', 'GitHub', 'GitLab', 'HubSpot', 'LinkedIn', 'PayPal', 'TikTok',
   'YouTube', 'PostHog', 'OpenAI', 'ClickUp', 'PagerDuty', 'BambooHR',
   'BigCommerce',
