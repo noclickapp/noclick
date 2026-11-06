@@ -4,6 +4,7 @@ Tests a representative sample of operations to ensure the node is working correc
 """
 
 import pytest
+import httpx
 import base64
 from pathlib import Path
 from unittest.mock import AsyncMock, patch, MagicMock
@@ -18,6 +19,7 @@ from nodes.word_node import (
     WordConvertToPDFConfig,
     WordCreateSharingLinkConfig,
     WordGetThumbnailConfig,
+    WordRestoreVersionConfig,
 )
 from utils.ssrf import SSRFError
 
@@ -270,3 +272,28 @@ async def test_server_thumbnail_url_is_ssrf_guarded():
     with patch.object(node, "_make_request", new=AsyncMock(return_value=response)):
         with pytest.raises(SSRFError, match="non-public address"):
             await node._get_thumbnail(node._config.config, "secret-bearer")
+
+
+@pytest.mark.asyncio
+async def test_restore_version_accepts_documented_no_content_response():
+    # Provider response: https://learn.microsoft.com/en-us/graph/api/
+    # driveitemversion-restoreversion?view=graph-rest-1.0
+    config = WordRestoreVersionConfig(document_id="doc123", version_id="2.0")
+    node = create_node_mock(config)
+    request = httpx.Request(
+        "POST",
+        "https://graph.microsoft.com/v1.0/me/drive/items/doc123/versions/2.0/restoreVersion",
+    )
+    response = httpx.Response(204, request=request)
+
+    with patch.object(
+        node, "_make_request", new=AsyncMock(return_value=response)
+    ) as send:
+        result = await node.execute({})
+
+    assert result == {
+        "status": "restored", "document_id": "doc123", "version_id": "2.0"
+    }
+    send.assert_awaited_once_with(
+        "POST", str(request.url), node._get_headers("mock_access_token_12345")
+    )

@@ -1707,8 +1707,13 @@ class WordNode(WorkflowNode):
         headers = self._get_headers(access_token)
         url = f"{self.GRAPH_API_BASE}/me/drive/items/{config.document_id}/versions/{config.version_id}/restoreVersion"
 
-        response = await self._make_request("POST", url, headers)
-        return response.json()
+        await self._make_request("POST", url, headers)
+        # Graph returns 204 No Content after restoring a version.
+        return {
+            "status": "restored",
+            "document_id": config.document_id,
+            "version_id": config.version_id,
+        }
 
     # ========================================================================
     # Advanced Operations
