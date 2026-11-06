@@ -2588,11 +2588,7 @@ class FirestoreNode(CronScheduleTriggerMixin, WorkflowNode):
             "structuredQuery": _parse_json(c.structured_query, "structured_query")
         }
         if c.partition_count:
-            body["partitionCount"] = (
-                int(c.partition_count)
-                if str(c.partition_count).isdigit()
-                else c.partition_count
-            )
+            body["partitionCount"] = c.partition_count
         return await _firestore_request(
             token,
             "POST",

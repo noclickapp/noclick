@@ -324,23 +324,25 @@ class TestFirestoreQueriesMock:
         assert result["action"] == "run_query"
 
     @pytest.mark.asyncio
-    async def test_partition_query(self, oauth_credentials):
+    @pytest.mark.parametrize("partition_count", ["4", "9007199254740993"])
+    async def test_partition_query(self, oauth_credentials, partition_count):
         config = FirestoreNodeConfig(
             config=FirestorePartitionQueryConfig(
                 project_id="proj",
                 structured_query='{"from": [{"collectionId": "users"}]}',
-                partition_count="4",
+                partition_count=partition_count,
             ),
             credentials=oauth_credentials,
         )
         node = create_firestore_node(config)
-        mock_client = create_mock_client(
+        mock_client, captured = create_capturing_mock_client(
             200, {"partitions": [{"values": []}, {"values": []}]}
         )
         with patch("nodes.firestore_node.httpx.AsyncClient", return_value=mock_client):
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "partition_query"
+        assert captured["kwargs"]["json"]["partitionCount"] == partition_count
 
     @pytest.mark.asyncio
     async def test_run_aggregation_query(self, oauth_credentials):
