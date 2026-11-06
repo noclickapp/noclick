@@ -580,6 +580,9 @@
         "on_batch_completed"
       ]
     },
+    "automation-gusto": {
+      "agentToolProvider": true
+    },
     "automation-hackernews": {
       "agentToolProvider": true
     },

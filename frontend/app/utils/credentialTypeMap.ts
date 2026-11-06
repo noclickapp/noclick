@@ -92,6 +92,10 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'Auth0 Token': 'auth0_token',
     'EtsyTokenCredential': 'etsy_token',
 
+    // Gusto
+    'GustoAccessTokenCredential': 'gusto_access_token',
+    'Gusto Access Token': 'gusto_access_token',
+
     // Apollo
     'ApolloAPIKeyCredential': 'apollo_api_key',
 
