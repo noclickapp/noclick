@@ -1950,6 +1950,7 @@ class SupabaseNode(WorkflowNode):
         json_body: Optional[Dict[str, Any]] = None,
         access_token: Optional[str] = None,
         action_name: str = "auth",
+        params: Optional[Dict[str, str]] = None,
     ) -> Dict[str, Any]:
         """Make a request to the Auth API."""
         auth_url = self._get_auth_url(credentials)
@@ -1970,7 +1971,7 @@ class SupabaseNode(WorkflowNode):
         async with guarded_async_client(timeout=30.0) as client:
             try:
                 response = await client.request(
-                    method=method, url=url, headers=headers, json=json_body
+                    method=method, url=url, headers=headers, json=json_body, params=params
                 )
 
                 api_time = (time.time() - start_time) * 1000
@@ -2044,8 +2045,6 @@ class SupabaseNode(WorkflowNode):
 
         if config.user_metadata:
             body["data"] = config.user_metadata
-        if config.email_redirect_to:
-            body["gotrue_meta_security"] = {"redirectTo": config.email_redirect_to}
 
         return await self._make_auth_request(
             endpoint="/signup",
@@ -2053,6 +2052,11 @@ class SupabaseNode(WorkflowNode):
             method="POST",
             json_body=body,
             action_name="sign_up_user",
+            params=(
+                {"redirect_to": config.email_redirect_to}
+                if config.email_redirect_to
+                else None
+            ),
         )
 
     async def _handle_auth_signin_password(
@@ -2079,15 +2083,17 @@ class SupabaseNode(WorkflowNode):
         """Send a magic link for passwordless signin."""
         body = {"email": config.email}
 
-        if config.email_redirect_to:
-            body["gotrue_meta_security"] = {"redirectTo": config.email_redirect_to}
-
         return await self._make_auth_request(
             endpoint="/otp",
             credentials=credentials,
             method="POST",
             json_body=body,
             action_name="send_magic_link_signin",
+            params=(
+                {"redirect_to": config.email_redirect_to}
+                if config.email_redirect_to
+                else None
+            ),
         )
 
     async def _handle_auth_signout(
@@ -2143,15 +2149,13 @@ class SupabaseNode(WorkflowNode):
         """Send password reset email."""
         body = {"email": config.email}
 
-        if config.redirect_to:
-            body["gotrue_meta_security"] = {"redirectTo": config.redirect_to}
-
         return await self._make_auth_request(
             endpoint="/recover",
             credentials=credentials,
             method="POST",
             json_body=body,
             action_name="send_password_reset_email",
+            params={"redirect_to": config.redirect_to} if config.redirect_to else None,
         )
 
     async def _handle_auth_verify_otp(

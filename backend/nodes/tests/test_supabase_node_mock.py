@@ -1170,3 +1170,61 @@ class TestEdgeFunctionsOperations:
 
         assert result["status"] == "success"
         assert result["data"]["result"] == "success"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("operation", "endpoint", "redirect_field"),
+    [
+        ("sign_up_user", "/signup", "email_redirect_to"),
+        ("send_magic_link_signin", "/otp", "email_redirect_to"),
+        ("send_password_reset_email", "/recover", "redirect_to"),
+    ],
+)
+@pytest.mark.parametrize("redirect", [None, "https://example.com/welcome?next=/home&source=email"])
+async def test_auth_email_redirect_query(operation, endpoint, redirect_field, redirect):
+    import json
+    import httpx
+
+    from nodes.supabase_node import (
+        SupabaseAuthSignUpConfig,
+        SupabaseAuthSignInMagicLinkConfig,
+        SupabaseAuthResetPasswordConfig,
+    )
+    from utils.ssrf import guarded_async_client
+
+    models = {
+        "sign_up_user": SupabaseAuthSignUpConfig,
+        "send_magic_link_signin": SupabaseAuthSignInMagicLinkConfig,
+        "send_password_reset_email": SupabaseAuthResetPasswordConfig,
+    }
+    config = {"email": "example@email.com", redirect_field: redirect}
+    if operation == "sign_up_user":
+        config.update(password="example-password", user_metadata={"first_name": "John"})
+    node = create_node(models[operation](**config))
+    requests = []
+
+    def respond(request):
+        requests.append(request)
+        return httpx.Response(200, json={})
+
+    def client(**kwargs):
+        return guarded_async_client(transport=httpx.MockTransport(respond), **kwargs)
+
+    with patch("nodes.supabase_node.guarded_async_client", client), patch(
+        "utils.ssrf._resolve_host_addresses", new_callable=AsyncMock, return_value=["93.184.216.34"]
+    ):
+        result = await node.execute({})
+
+    assert result["status"] == "success"
+    assert len(requests) == 1
+    request = requests[0]
+    assert request.method == "POST"
+    assert request.url.path == "/auth/v1" + endpoint
+    assert dict(request.url.params) == ({"redirect_to": redirect} if redirect else {})
+    body = json.loads(request.content)
+    assert body["email"] == "example@email.com"
+    assert "gotrue_meta_security" not in body
+    if operation == "sign_up_user":
+        assert body["password"] == "example-password"
+        assert body["data"] == {"first_name": "John"}
