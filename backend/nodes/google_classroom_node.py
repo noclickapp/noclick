@@ -11,7 +11,44 @@ from pydantic import BaseModel, ConfigDict, Discriminator, Field
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import require_credential_token
-from nodes.scopes.google import GOOGLE_CLASSROOM_SCOPES
+from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
+
+CLASSROOM = "https://www.googleapis.com/auth/classroom."
+
+GOOGLE_CLASSROOM_SCOPES = ScopeRegistry(
+    provider="google-classroom",
+    requirements={operation: ScopeRequirement(scopes=(scope,))
+                  for scope, operations in {
+        CLASSROOM + "courses.readonly": ("list_courses", "get_course"),
+        CLASSROOM + "courses": ("create_course", "update_course", "delete_course"),
+        CLASSROOM + "coursework.students.readonly": ("list_coursework", "get_coursework"),
+        CLASSROOM + "coursework.students": (
+            "create_coursework", "update_coursework", "delete_coursework",
+            "grade_submission", "return_submission",
+        ),
+        CLASSROOM + "announcements.readonly": ("list_announcements", "get_announcement"),
+        CLASSROOM + "announcements": (
+            "create_announcement", "update_announcement", "delete_announcement",
+        ),
+        CLASSROOM + "topics.readonly": ("list_topics", "get_topic"),
+        CLASSROOM + "topics": ("create_topic", "update_topic", "delete_topic"),
+        CLASSROOM + "rosters.readonly": (
+            "list_students", "get_student", "list_teachers", "get_teacher",
+            "list_invitations", "get_invitation",
+        ),
+        CLASSROOM + "rosters": (
+            "add_student", "remove_student", "add_teacher", "remove_teacher",
+            "create_invitation", "delete_invitation", "accept_invitation",
+        ),
+        CLASSROOM + "courseworkmaterials.readonly": ("list_materials", "get_material"),
+        CLASSROOM + "courseworkmaterials": (
+            "create_material", "update_material", "delete_material",
+        ),
+        CLASSROOM + "student-submissions.students.readonly": (
+            "list_submissions", "get_submission",
+        ),
+    }.items() for operation in operations},
+)
 
 API_BASE = "https://classroom.googleapis.com/v1"
 
@@ -62,8 +99,8 @@ OPERATION_DESCRIPTIONS = {
 
 
 class GoogleClassroomOAuthCredential(BaseModel):
-    credential_type: Literal["google_classroom_oauth"] = Field(
-        "google_classroom_oauth", json_schema_extra={"ui:hidden": True}
+    credential_type: Literal["google_oauth", "google_classroom_oauth"] = Field(
+        "google_oauth", json_schema_extra={"ui:hidden": True}
     )
     access_token: str
     refresh_token: str

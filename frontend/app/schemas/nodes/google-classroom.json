@@ -980,8 +980,11 @@
     "GoogleClassroomOAuthCredential": {
       "properties": {
         "credential_type": {
-          "const": "google_classroom_oauth",
-          "default": "google_classroom_oauth",
+          "default": "google_oauth",
+          "enum": [
+            "google_oauth",
+            "google_classroom_oauth"
+          ],
           "title": "Credential Type",
           "type": "string",
           "ui:hidden": true

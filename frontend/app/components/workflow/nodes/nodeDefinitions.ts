@@ -61,6 +61,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-google-contacts', 'GoogleContactsNode'],
     ['automation-google-docs', 'GoogleDocsNode'],
     ['automation-google-forms', 'GoogleFormsNode'],
+    ['automation-google-classroom', 'GoogleClassroomNode'],
     ['automation-google-slides', 'GoogleSlidesNode'],
     ['automation-google-analytics', 'GoogleAnalyticsNode'],
     ['automation-google-ads', 'GoogleAdsNode'],

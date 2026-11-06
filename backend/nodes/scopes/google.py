@@ -44,7 +44,6 @@ DOCUMENTS = "https://www.googleapis.com/auth/documents"
 DRIVE = "https://www.googleapis.com/auth/drive"
 FORMS_BODY = "https://www.googleapis.com/auth/forms.body"
 FORMS_RESPONSES_READONLY = "https://www.googleapis.com/auth/forms.responses.readonly"
-CLASSROOM = "https://www.googleapis.com/auth/classroom."
 PRESENTATIONS = "https://www.googleapis.com/auth/presentations"
 SPREADSHEETS = "https://www.googleapis.com/auth/spreadsheets"
 TASKS = "https://www.googleapis.com/auth/tasks"
@@ -353,41 +352,6 @@ GOOGLE_FORMS_SCOPES = ScopeRegistry(
             DRIVE: ("list_google_drive_forms",),
         }
     ),
-)
-
-
-GOOGLE_CLASSROOM_SCOPES = ScopeRegistry(
-    provider="google-classroom",
-    requirements=_table({
-        CLASSROOM + "courses.readonly": ("list_courses", "get_course"),
-        CLASSROOM + "courses": ("create_course", "update_course", "delete_course"),
-        CLASSROOM + "coursework.students.readonly": ("list_coursework", "get_coursework"),
-        CLASSROOM + "coursework.students": (
-            "create_coursework", "update_coursework", "delete_coursework",
-            "grade_submission", "return_submission",
-        ),
-        CLASSROOM + "announcements.readonly": ("list_announcements", "get_announcement"),
-        CLASSROOM + "announcements": (
-            "create_announcement", "update_announcement", "delete_announcement",
-        ),
-        CLASSROOM + "topics.readonly": ("list_topics", "get_topic"),
-        CLASSROOM + "topics": ("create_topic", "update_topic", "delete_topic"),
-        CLASSROOM + "rosters.readonly": (
-            "list_students", "get_student", "list_teachers", "get_teacher",
-            "list_invitations", "get_invitation",
-        ),
-        CLASSROOM + "rosters": (
-            "add_student", "remove_student", "add_teacher", "remove_teacher",
-            "create_invitation", "delete_invitation", "accept_invitation",
-        ),
-        CLASSROOM + "courseworkmaterials.readonly": ("list_materials", "get_material"),
-        CLASSROOM + "courseworkmaterials": (
-            "create_material", "update_material", "delete_material",
-        ),
-        CLASSROOM + "student-submissions.students.readonly": (
-            "list_submissions", "get_submission",
-        ),
-    }),
 )
 
 

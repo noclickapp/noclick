@@ -10,7 +10,6 @@ from nodes.google_classroom_node import (
     GoogleClassroomNode, GoogleClassroomNodeConfig,
     GoogleClassroomOAuthCredential, _request,
 )
-from wss.handlers.oauth.google_oauth_handler import GoogleOAuthHandler
 
 
 CREDS = GoogleClassroomOAuthCredential(
@@ -161,16 +160,21 @@ async def test_http_error_is_actionable_and_does_not_expose_token():
     assert "secret-token" not in str(error.value)
 
 
-def test_google_oauth_routes_classroom_scopes_to_the_classroom_credential():
-    scopes = [
-        "email", "https://www.googleapis.com/auth/classroom.courses.readonly",
-    ]
-    assert GoogleOAuthHandler._get_credential_type_from_scopes(None, scopes) == "google_classroom_oauth"
-
-
 def test_list_invitations_requires_a_course_filter():
     # Classroom rejects an unfiltered invitations.list request.
     with pytest.raises(ValidationError):
         GoogleClassroomNodeConfig(
             config={"operation": "list_invitations"}, credentials=CREDS,
         )
+
+
+@pytest.mark.parametrize("credential_type", ["google_oauth", "google_classroom_oauth"])
+def test_classroom_accepts_staging_and_existing_google_oauth_credentials(credential_type):
+    config = GoogleClassroomNodeConfig(
+        config={"operation": "list_courses"},
+        credentials={**CREDS.model_dump(), "credential_type": credential_type},
+    )
+    assert config.credentials.credential_type == credential_type
+    assert GoogleClassroomNode.scope_registry.require("list_courses").scopes == (
+        "https://www.googleapis.com/auth/classroom.courses.readonly",
+    )

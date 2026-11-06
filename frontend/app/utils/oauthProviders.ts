@@ -173,7 +173,6 @@ export const OAUTH_PROVIDER_CONFIG: Record<string, OAuthProviderConfig> = {
             'google_contacts_oauth',
             'google_docs_oauth',
             'google_forms_oauth',
-            'google_classroom_oauth',
             'google_slides_oauth',
             'google_analytics_oauth',
             'google_ads_oauth',
@@ -1001,7 +1000,7 @@ export const PROVIDER_ALIASES: Record<string, OAuthProviderConfig> = {
         name: 'Google Classroom',
         Icon: SiGoogle,
         oauthProvider: 'google',
-        credentialTypes: ['google_classroom_oauth'],
+        credentialTypes: ['google_oauth'],
         defaultScopes: [
             'https://www.googleapis.com/auth/classroom.courses.readonly',
             'https://www.googleapis.com/auth/classroom.courses',

@@ -3,7 +3,7 @@
 import { nc } from '~/lib/nc';
 
 export default async function () {
-    nc.ui.clickTab('Workflow');
+    nc.ui.clickTab('canvas');
     const id = 'nc-google-classroom-smoke';
     nc.nodes.delete(id);
     nc.assert.truthy(
@@ -13,7 +13,7 @@ export default async function () {
     try {
         await nc.wait.forElement(`[data-id="${id}"]`);
         const icon = document.querySelector<HTMLImageElement>(
-            `[data-id="${id}"] img[src="/icons/google-classroom.svg"]`,
+            `[data-id="${id}"] img[src="/icons/google-classroom-preferred-brand.svg"]`,
         );
         nc.assert.truthy(icon, 'canvas node should render the Classroom SVG');
         const node = nc.nodes.get(id) as { operation?: string } | null;
