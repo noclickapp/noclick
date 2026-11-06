@@ -1926,6 +1926,7 @@ class FindymailNode(ExternalWebhookTriggerMixin, WorkflowNode):
                 "exclusion_filter_list_ids": _optional_int_list(c.exclusion_filter_list_ids),
             },
         }
+        body["config"] = {key: value for key, value in body["config"].items() if value is not None}
         return await _findymail_request(
             api_key, "POST", "/api/intellimatch/search", json_body=body,
             action_name="intellimatch_search",
