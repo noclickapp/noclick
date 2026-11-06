@@ -70,6 +70,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-redis', 'RedisNode'],
     ['automation-salesforce', 'SalesforceNode'],
     ['automation-affinity', 'AffinityNode'],
+    ['automation-rippling', 'RipplingNode'],
     ['automation-ahrefs', 'AhrefsNode'],
     ['automation-botpress', 'BotpressNode'],
     ['automation-nocodb', 'NocoDBNode'],

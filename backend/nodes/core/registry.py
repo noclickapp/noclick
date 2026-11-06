@@ -84,6 +84,7 @@ from nodes.powerdns_node import PowerDNSNode
 from nodes.mailchimp_node import MailchimpNode
 from nodes.pipedrive_node import PipedriveNode
 from nodes.resend_node import ResendNode
+from nodes.rippling_node import RipplingNode
 from nodes.ahrefs_node import AhrefsNode
 from nodes.botpress_node import BotpressNode
 from nodes.phantombuster_node import PhantomBusterNode
@@ -241,6 +242,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-mailchimp': MailchimpNode,
     'automation-pipedrive': PipedriveNode,
     'automation-resend': ResendNode,
+    'automation-rippling': RipplingNode,
     'automation-ahrefs': AhrefsNode,
     'automation-botpress': BotpressNode,
     'automation-threads': ThreadsNode,
