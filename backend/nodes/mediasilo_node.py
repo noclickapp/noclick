@@ -247,7 +247,7 @@ class MediaSiloNode(WorkflowNode):
     def get_config_model(cls): return MediaSiloNodeConfig
     @classmethod
     def parse_config(cls, data):
-        _original_family(data); shaped = dict(data)
+        _original_family(data); _original_ids(data); shaped = dict(data)
         if data.get("credentials") is not None: shaped["credentials"] = _shape(data["credentials"])
         try: MediaSiloNodeConfig.model_validate(runtime_config_view(shaped, MediaSiloNodeConfig))
         except ValueError: raise ValueError("MediaSilo native configuration, resource scope or credential is invalid") from None
@@ -255,7 +255,7 @@ class MediaSiloNode(WorkflowNode):
     @classmethod
     def validate_config(cls, data):
         try:
-            _original_family(data); shaped = dict(data)
+            _original_family(data); _original_ids(data); shaped = dict(data)
             if data.get("credentials") is not None: shaped["credentials"] = _shape(data["credentials"])
             MediaSiloNodeConfig.model_validate(runtime_config_view(shaped, MediaSiloNodeConfig))
         except (ValueError, TypeError): return ValidationResult(valid=False, errors=["MediaSilo native configuration or credential family is invalid"], satisfied_set=None)
@@ -333,6 +333,15 @@ def _original_family(data):
     saved = data.get("credential_id") or data.get("credentialIds")
     if saved and not isinstance(creds, dict) or isinstance(creds, dict) and (creds.get("credential_type") is not None or saved) and creds.get("credential_type") not in FAMILIES:
         raise ValueError("MediaSilo saved credential family is missing or unsupported")
+
+
+def _original_ids(data):
+    # Check resource IDs before the shared runtime view coerces values to strings.
+    config = data.get("config")
+    if isinstance(config, dict):
+        for field in ("project_id", "folder_id"):
+            if field in config:
+                _id(config[field])
 
 
 @dataclass(frozen=True, repr=False)

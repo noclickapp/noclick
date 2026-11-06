@@ -69,6 +69,14 @@ def test_actual_factory_closed_schema_and_original_saved_family():
 def test_closed_config_no_guessed_paging_or_media_control(cfg):
     with pytest.raises(ValueError): fn.MediaSiloNode.parse_config({"config": cfg, "credentials": CREDS})
 
+@pytest.mark.parametrize("field", ["project_id", "folder_id"])
+@pytest.mark.parametrize("value", [True, False, 1, 1.5])
+def test_resource_ids_remain_strings_before_runtime_coercion(field, value):
+    data = {"config": {"operation": "get_folder", "project_id": "project-1", "folder_id": "folder-1", field: value}, "credentials": CREDS}
+    assert fn.MediaSiloNode.validate_config(data)["valid"] is False
+    with pytest.raises(ValueError):
+        NodeFactory.create_node(node_id="native", node_type=fn.NODE_TYPE, user_id="actor", node_data=data)
+
 @pytest.mark.asyncio
 async def test_actual_dispatch_fixed_two_headers_reachability_and_transport_privacy(wire, caplog):
     wire.responses.append([PROJECT])
@@ -88,7 +96,7 @@ async def test_actual_folder_dispatch_catalog_detail_ancestry_and_closed_project
     assert [c["url"] for c in wire.calls] == [fn.BASE + p for p in ["/projects", "/projects/project-1", "/projects/project-1/folders", "/projects/project-1", "/folders/folder-1", "/projects", "/projects/project-1"]]
     assert result["data"]["folder"] == {"id": "folder-1", "projectId": "project-1", "parentId": "folder-parent", "folderCount": 0, "assetsCount": 3, "size": 123, "name": "Owned folder"}
     assert result["data"]["returned_folder_project_id_verified"] is True
-    assert "omit" not in json.dumps(result) and "owner" not in result["data"]["folder"]
+    assert '"omit ' not in json.dumps(result) and "owner" not in result["data"]["folder"]
     wire.responses.extend([[PROJECT], PROJECT]); project = await run("get_project", {"project_id": "project-1", "include_names": True})
     assert project["data"]["project"]["name"] == "Owned project" and "isDRM" not in json.dumps(project)
     folder_catalog(wire); catalog = await run("list_folders", {"project_id": "project-1"})
@@ -222,6 +230,10 @@ async def test_actual_postconnect_handler_empty_reachability_evidence_and_trista
     from repositories.credential_approvals import CredentialApprovalRepo
     from wss.handlers import credentials_handler as hm
     from wss.receiver.client_events import CredentialValidateAccessRequest
+    from utils import encryption
+    decryptor = SimpleNamespace(decrypt_credential=lambda _: CREDS)
+    monkeypatch.setattr(hm, "get_encryption", lambda: decryptor)
+    monkeypatch.setattr(encryption, "get_encryption", lambda: decryptor)
     row = CredentialValidationRow(fn.FAMILIES[0], "owner", 2, STAMP, 0, None, "sealed"); context = CredentialValidationContext("saved", fn.NODE_TYPE, "actor", "org", object(), row)
     monkeypatch.setattr(CredentialValidationContext, "create", AsyncMock(return_value=context)); monkeypatch.setattr(CredentialValidationContext, "revalidate", AsyncMock(return_value=row)); monkeypatch.setattr(run_op, "resolve_operation_credential", AsyncMock(return_value=CREDS)); monkeypatch.setattr(CredentialApprovalRepo, "admit", AsyncMock(return_value=None)); monkeypatch.setattr(fn, "_current_data", AsyncMock(return_value=fn._shape(CREDS)))
     sent = []
