@@ -856,6 +856,30 @@
       "sha256": "6d61eb7a90ca76d212e13fbabf8127541a31932f800c53c88dc1be553388a82c"
     },
     {
+      "path": "frontend/public/icons/google-classroom-brand-vector.svg",
+      "source": "https://classroom.google.com (Google Classroom published brand artwork; integration commit 08985d928eee3db34dd5ac101a83ffe8656598e0)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "a382755557a6d3b6434ceacfb0f1a73b5429c68ea80e119e976daaabd4d4f210"
+    },
+    {
+      "path": "frontend/public/icons/google-classroom-brand.png",
+      "source": "https://workspace.google.com (Google published brand artwork; integration commit 28ce7827b833b9f2575a714760085990c50d07ad)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "e087977f66a2bac54eadfb6cb0d560f296805900e93ba69460e61dcc27d0f277"
+    },
+    {
+      "path": "frontend/public/icons/google-classroom-preferred-brand.svg",
+      "source": "https://logos.composio.dev/api/google_classroom (Google Classroom brand artwork)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "74f67f56af57f5fd3bf80105e2b2eeb471ebb41953d7ff131ef03166851584bf"
+    },
+    {
+      "path": "frontend/public/icons/google-classroom.svg",
+      "source": "https://github.com/noclickapp/noclick-cloud/commit/0322f61a4 (integration-authored Google Classroom mark)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "9837b69dd39af22bd5badefa2da8f8aaa8337727b5c74a1e4d5f7c44cebf720c"
+    },
+    {
       "path": "frontend/public/icons/porkbun-brand-vector.svg",
       "source": "https://porkbun.com/",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
