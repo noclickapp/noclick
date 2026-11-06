@@ -942,7 +942,8 @@ class TestIntercomArticlesMock:
         ),
         (
             IntercomSendMessageConfig(
-                contact_id="536e564f316c83104c000020", admin_id="394051", body="Hello there"
+                message_type="inapp", contact_id="536e564f316c83104c000020",
+                admin_id="394051", body="Hello there"
             ),
             "/messages",
             {

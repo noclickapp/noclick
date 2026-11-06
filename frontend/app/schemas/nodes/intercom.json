@@ -2165,10 +2165,10 @@
           "x-is-trigger": false
         },
         "message_type": {
-          "default": "in_app",
+          "default": "inapp",
           "description": "Whether to send an in-app or email message",
           "enum": [
-            "in_app",
+            "inapp",
             "email"
           ],
           "enumNames": [

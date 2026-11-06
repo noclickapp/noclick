@@ -1009,11 +1009,11 @@ class IntercomSendMessageConfig(BaseModel):
         title="Send Message",
     )
     message_type: str = Field(
-        "in_app",
+        "inapp",
         title="Message Type",
         description="Whether to send an in-app or email message",
         json_schema_extra={
-            "enum": ["in_app", "email"],
+            "enum": ["inapp", "email"],
             "enumNames": ["In-App", "Email"],
             "x-enum-searchable": True,
         },
