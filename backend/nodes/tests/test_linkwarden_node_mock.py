@@ -27,7 +27,7 @@ def wire(monkeypatch):
     state = {"calls": [], "responses": {}, "status": 200, "content": None, "headers": {"content-type": "application/json"}}
     @asynccontextmanager
     async def client(**options):
-        assert options == {"timeout": 12, "follow_redirects": False, "trust_env": False, "require_public": True}
+        assert options == {"timeout": 12, "follow_redirects": False, "trust_env": False}
         class Client:
             @asynccontextmanager
             async def stream(self, method, url, **kwargs):
@@ -73,7 +73,7 @@ async def test_actual_manual_connect_and_empty_catalog_are_reachability_not_iden
     wire["responses"]["/collections"] = {"response": []}
     verdict = await cc.validate_for_connect(credential_type=p.TYPE, credential_data={k: v for k, v in KEY.items() if k != "credential_type"}, user_id="fixture", probe=True)
     assert verdict.ok and verdict.credential_data == KEY
-    assert verdict.evidence.reachable is True and verdict.evidence.proves == "reachability"
+    assert verdict.evidence.reachable is True and p.LinkwardenNode.connection_evidence.proves == "reachability"
     assert verdict.evidence.account_label is None and verdict.evidence.answers_field is None
     assert wire["calls"] == ["/collections"]
 
@@ -160,4 +160,12 @@ async def test_local_body_cap_and_closed_route_no_query_or_deprecated_link_escap
     wire["calls"].clear()
     for endpoint in ("/links", "/collections/7/links", "/users/me", "/tags?cursor=1", "/collections/07", "/collections/0"):
         with pytest.raises(ValueError): await p.request(p.guard(KEY), endpoint)
+    assert wire["calls"] == []
+
+
+@pytest.mark.asyncio
+async def test_public_only_node_refuses_private_transport_opt_out(wire, monkeypatch):
+    monkeypatch.setenv("OUTBOUND_ALLOW_PRIVATE_IPS", "true")
+    with pytest.raises(ValueError, match="could not be established"):
+        await create("list_collections").execute({})
     assert wire["calls"] == []

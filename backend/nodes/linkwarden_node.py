@@ -14,7 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, field_
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from repositories.linkwarden_credentials import fetch_snapshot
-from utils.ssrf import guarded_async_client, normalize_https_origin
+from utils.ssrf import allow_private_hosts, guarded_async_client, normalize_https_origin
 
 TYPE = "linkwarden_access_token"
 MAX_BYTES = 2 * 1024 * 1024
@@ -186,7 +186,11 @@ async def request(value, endpoint, *, reader=None):
     headers = PrivateHeaders({"Authorization": "Bearer " + value.access_token, "Accept": "application/json", "Cache-Control": "no-store"})
     try:
         try:
-            async with guarded_async_client(timeout=12, follow_redirects=False, trust_env=False, require_public=True) as client:
+            # Staging's pinned transport guards public DNS/IPs unless explicitly
+            # disabled for a trusted install. This node requires the guard.
+            if allow_private_hosts():
+                raise ValueError("Linkwarden requires public-only outbound transport")
+            async with guarded_async_client(timeout=12, follow_redirects=False, trust_env=False) as client:
                 async with client.stream("GET", value.instance_origin + "/api/v1" + endpoint, headers=headers) as response:
                     if response.status_code != 200 or response.headers.get("content-type", "").split(";", 1)[0].strip().lower() != "application/json":
                         raise ValueError("Linkwarden metadata read refused or format unavailable")

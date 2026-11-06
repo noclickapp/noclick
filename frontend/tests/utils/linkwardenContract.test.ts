@@ -2,15 +2,16 @@
 // They verify the supplied-token form and three closed reads, without provider calls.
 import { describe, expect, it } from 'vitest';
 import schema from '../../app/schemas/nodes/linkwarden.json';
-import { NODE_SCHEMAS } from '../../app/utils/nodeSchemas';
+import { NODE_SCHEMAS, loadNodeSchemas } from '../../app/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '../../app/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '../../app/utils/credentialLabels';
-import { AVAILABLE_NODES } from '../../app/components/workflow/nodes/nodeRegistry';
+import { NODE_DEFINITION_FILES } from '../../app/components/workflow/nodes/nodeDefinitions';
 
 describe('Linkwarden scoped metadata', () => {
-    it('registers the existing Bearer credential and three closed reads', () => {
+    it('registers the existing Bearer credential and three closed reads', async () => {
+        await loadNodeSchemas(['automation-linkwarden']);
         expect(NODE_SCHEMAS['automation-linkwarden']).toBe(schema);
-        expect(AVAILABLE_NODES.filter(n => n.type === 'automation-linkwarden')).toHaveLength(1);
+        expect(NODE_DEFINITION_FILES.filter(([type]) => type === 'automation-linkwarden')).toEqual([['automation-linkwarden', 'LinkwardenNode']]);
         expect(CREDENTIAL_TYPE_MAP.LinkwardenAccessTokenCredential).toBe('linkwarden_access_token');
         expect(humanizeCredentialLabel('LinkwardenAccessToken')).toBe('Linkwarden Access Token');
         const native = schema as any;
