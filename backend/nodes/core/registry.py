@@ -91,6 +91,13 @@ from nodes.pipedrive_node import PipedriveNode
 from nodes.resend_node import ResendNode
 from nodes.rippling_node import RipplingNode
 from nodes.ahrefs_node import AhrefsNode
+from nodes.deel_node import DeelNode
+from nodes.invoiceninja_node import InvoiceNinjaNode
+from nodes.kajabi_node import KajabiNode
+from nodes.pdfco_node import PDFCoNode
+from nodes.personio_node import PersonioNode
+from nodes.quo_node import QuoNode
+from nodes.sumup_node import SumUpNode
 from nodes.auth0_node import Auth0Node
 from nodes.bigcommerce_node import BigCommerceNode
 from nodes.etsy_node import EtsyNode
@@ -266,6 +273,13 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-resend': ResendNode,
     'automation-rippling': RipplingNode,
     'automation-ahrefs': AhrefsNode,
+    'automation-deel': DeelNode,
+    'automation-invoiceninja': InvoiceNinjaNode,
+    'automation-kajabi': KajabiNode,
+    'automation-pdfco': PDFCoNode,
+    'automation-personio': PersonioNode,
+    'automation-quo': QuoNode,
+    'automation-sumup': SumUpNode,
     'automation-auth0': Auth0Node,
     'automation-bigcommerce': BigCommerceNode,
     'automation-etsy': EtsyNode,

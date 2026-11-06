@@ -89,6 +89,21 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
 
     // Ahrefs
     'AhrefsAPIKeyCredential': 'ahrefs_api_key',
+    'InvoiceNinjaAPITokenCredential': 'invoiceninja_api_token',
+
+    // Deel
+    'DeelAPITokenCredential': 'deel_api_token',
+
+    // Kajabi
+    'KajabiAccessTokenCredential': 'kajabi_access_token',
+    'PDFCoAPIKeyCredential': 'pdfco_api_key',
+
+    // Personio
+    'PersonioAccessTokenCredential': 'personio_access_token',
+    'QuoAPIKeyCredential': 'quo_api_key',
+
+    // SumUp
+    'SumUpAPIKeyCredential': 'sumup_api_key',
     'BigCommerceAPITokenCredential': 'bigcommerce_api_token',
 
     // Auth0
@@ -120,6 +135,16 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
 
     // SumUp
     'SumUpAPIKeyCredential': 'sumup_api_key',
+    'BigCommerceAPITokenCredential': 'bigcommerce_api_token',
+
+    // Auth0
+    'Auth0TokenCredential': 'auth0_token',
+    'Auth0 Token': 'auth0_token',
+    'EtsyTokenCredential': 'etsy_token',
+
+    // Gusto
+    'GustoAccessTokenCredential': 'gusto_access_token',
+    'Gusto Access Token': 'gusto_access_token',
     'OktaAPITokenCredential': 'okta_api_token',
     'RampAccessTokenCredential': 'ramp_access_token',
 
