@@ -226,6 +226,9 @@
     "automation-connecteam": {
       "agentToolProvider": true
     },
+    "automation-cyclr": {
+      "agentToolProvider": true
+    },
     "automation-databricks": {
       "agentToolProvider": true,
       "triggerOperations": [

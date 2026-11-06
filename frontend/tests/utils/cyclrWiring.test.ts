@@ -1,12 +1,13 @@
 // Covers the actual native Cyclr schema and credential consumers after generation.
 // These unrun fixtures do not establish real console or canvas access.
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { CyclrNode } from '~/components/workflow/nodes/CyclrNode';
-import { getNodeCredentialInfo, NODE_SCHEMAS } from '~/utils/nodeSchemas';
+import { getNodeCredentialInfo, loadNodeSchemas, NODE_SCHEMAS } from '~/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 
 describe('Cyclr native wiring', () => {
+  beforeAll(() => loadNodeSchemas([CyclrNode.type]));
   it('discovers supplied console OAuth and its required account binding', () => {
     expect(CyclrNode.type).toBe('automation-cyclr');
     expect(getNodeCredentialInfo(CyclrNode.type)?.acceptedTypes).toEqual(['cyclr_oauth_token']);

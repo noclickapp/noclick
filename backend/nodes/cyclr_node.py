@@ -474,14 +474,14 @@ class CyclrNode(WorkflowNode):
             raise ValueError("Cyclr caller organization changed; access must be revalidated")
         authority_user = user_id
         repo = CredentialsRepo(pool)
-        row = await repo.fetch_validation_authority(credential_id, authority_user, organization_id)
+        row = await repo.fetch_with_access(credential_id, authority_user, organization_id)
         fallback_owner = None
         if row is None and workflow_id:
             owner = await get_workflow_owner_id(pool, workflow_id)
             if owner and owner != user_id and await is_credential_authorized_for_workflow(pool, workflow_id, credential_id):
                 authority_user = fallback_owner = owner
-                row = await repo.fetch_validation_authority(credential_id, authority_user, organization_id)
-        if row is None or row.credential_type not in TYPES or row.revoked_at is not None:
+                row = await repo.fetch_with_access(credential_id, authority_user, organization_id)
+        if row is None or row.credential_type not in TYPES:
             raise ValueError("Current Cyclr authority is unavailable or has a different family")
         current = await resolve_credential_with_owner_fallback(credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id)
         if not current or current.get("credential_type") != row.credential_type:
@@ -493,22 +493,20 @@ class CyclrNode(WorkflowNode):
                     raise ValueError("Cyclr caller organization changed during metadata read")
             if fallback_owner and (await get_workflow_owner_id(pool, workflow_id) != fallback_owner or not await is_credential_authorized_for_workflow(pool, workflow_id, credential_id)):
                 raise ValueError("Cyclr workflow owner authorization changed during metadata read")
-            if await repo.fetch_validation_authority(credential_id, authority_user, organization_id) != row:
+            if await repo.fetch_with_access(credential_id, authority_user, organization_id) != row:
+                raise ValueError("Cyclr authority changed during resolution or metadata read")
+            latest = await resolve_credential_with_owner_fallback(credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id)
+            if not latest or credential_value(latest).model_dump() != fields:
                 raise ValueError("Cyclr authority changed during resolution or metadata read")
         await check()
         return _CurrentCredential(fields, check)
 
     @classmethod
-    async def validate_credential_access(cls, credential_data, *, validation_context=None):
+    async def validate_credential_access(cls, credential_data):
         try:
             credential_value(credential_data)
         except ValueError:
             return {"valid": False, "error": "Connect a typed Cyclr console OAuth token"}
-        if validation_context is not None:
-            from nodes.core.credential_validation import CredentialValidationContext
-            if not isinstance(validation_context, CredentialValidationContext):
-                raise ValueError("Stored Cyclr validation requires trusted current authority")
-            await validation_context.collect_evidence()
         return {"valid": True}
 
     @classmethod
@@ -518,7 +516,7 @@ class CyclrNode(WorkflowNode):
         if context is not None and not isinstance(context, dict):
             raise ValueError("Use native Cyclr picker context")
         context = context or {}
-        if any(key.startswith("_") and key != "_user_id" or key in {"access_token", "account_id", "region", "credentials", "credential_type", "field_scopes", "field_dependencies", "url", "headers"} for key in context):
+        if any(key.startswith("_") and key not in {"_user_id", "_workflow_id"} or key in {"access_token", "account_id", "region", "credentials", "credential_type", "field_scopes", "field_dependencies", "url", "headers"} for key in context):
             raise ValueError("Use the saved Cyclr region/account/token scope")
         if search is not None and (not isinstance(search, str) or len(search) > 200 or re.search(r"[\x00-\x1f\x7f]", search)):
             raise ValueError("Use bounded picker search text")
