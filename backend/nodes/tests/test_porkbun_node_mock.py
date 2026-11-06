@@ -244,6 +244,7 @@ async def test_bound_and_local_diagnostics_keep_unrelated_logs(transport, caplog
 
 @pytest.fixture
 def stored(monkeypatch):
+    monkeypatch.setattr(native.Authority, "current_organization", AsyncMock(return_value=None))
     state = {"accessible": True, "row": CredentialValidationRow(native.TYPE,USER,1,datetime(2026,10,1,tzinfo=timezone.utc),1,None,deepcopy(KEY))}
     async def fetch(pool, identifier, principal, organization_id=None):
         assert identifier == CID and principal == USER and organization_id is None
@@ -288,7 +289,7 @@ async def test_actual_saved_execute_discards_racing_row_authority(stored,transpo
 
 @pytest.mark.asyncio
 async def test_saved_scoped_record_picker_and_actor_refusal(stored,transport):
-    fresh=await native.PorkbunNode.freshen_credential(KEY,pool=object(),user_id=USER,credential_id=CID,organization_id=None)
+    fresh=await native.PorkbunNode.freshen_credential(KEY,pool=object(),user_id=USER,credential_id=CID)
     transport[1].extend([catalog(),detail(),records()])
     result=await native.PorkbunNode.load_field_options(field_name="record_id",credential_data=fresh,context={"_user_id":USER,"domain":"example.com"})
     assert result=={"options":[{"value":RECORD["id"],"label":"A record 123456789"}],"next_page_token":None}
@@ -301,7 +302,7 @@ async def test_saved_scoped_record_picker_and_actor_refusal(stored,transport):
 
 @pytest.mark.asyncio
 async def test_picker_refuses_oversized_observed_catalog(stored,transport):
-    fresh=await native.PorkbunNode.freshen_credential(KEY,pool=object(),user_id=USER,credential_id=CID,organization_id=None)
+    fresh=await native.PorkbunNode.freshen_credential(KEY,pool=object(),user_id=USER,credential_id=CID)
     transport[1].append(catalog([{**DOMAIN,"domain":f"domain{i}.com"} for i in range(101)]))
     with pytest.raises(native.OutcomeUnverified,match="picker bound"):
         await native.PorkbunNode.load_field_options(field_name="domain",credential_data=fresh,context={"_user_id":USER})

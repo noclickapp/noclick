@@ -482,18 +482,18 @@ class PorkbunNode(WorkflowNode):
         return PorkbunNodeConfig
 
     @classmethod
-    def parse_config(cls, data):
-        raw_guard(data)
-        return super().parse_config(data)
+    def parse_config(cls, config_data):
+        raw_guard(config_data)
+        return super().parse_config(config_data)
 
     @classmethod
-    def validate_config(cls, data):
-        raw_guard(data)
-        return super().validate_config(data)
+    def validate_config(cls, config_data):
+        raw_guard(config_data)
+        return super().validate_config(config_data)
 
     @classmethod
-    async def freshen_credential(cls, raw, *, pool=None, user_id=None, credential_id=None, organization_id=CURRENT_ORGANIZATION, workflow_id=None):
-        auth = await Authority.create(raw, pool=pool, user_id=user_id, credential_id=credential_id, organization_id=organization_id, workflow_id=workflow_id)
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        auth = await Authority.create(credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
         return {**auth.credential.model_dump(), AUTH_KEY: auth}
 
     @classmethod
