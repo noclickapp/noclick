@@ -148,18 +148,6 @@ class CredentialWithBlob:
 
 
 @dataclass(frozen=True)
-class CredentialValidationRow:
-    """Current access and authority for a post-connect probe; blob stays opaque."""
-    credential_type: Optional[str]
-    owner_id: str
-    token_version: int
-    updated_at: datetime
-    approval_revision: int
-    revoked_at: Optional[datetime]
-    credential: Any = field(repr=False)
-
-
-@dataclass(frozen=True)
 class CredentialRow:
     """Bare credential row (no blob) returned after update/fetch-fallback."""
     id: str
@@ -534,25 +522,6 @@ class CredentialsRepo:
             created_at=row['created_at'],
             updated_at=row['updated_at'],
         )
-
-    async def fetch_validation_authority(
-        self, credential_id: str, user_id: str, org_id: Optional[str],
-    ) -> Optional[CredentialValidationRow]:
-        """Use the canonical current ACL before decrypting or accepting a probe."""
-        async with self._pool.acquire() as conn:
-            row = await conn.fetchrow(
-                f"SELECT c.credential_type,c.owner_id,c.token_version,c.updated_at,"
-                f"c.approval_revision,c.revoked_at,c.credential FROM credentials c "
-                f"WHERE c.id=$1 AND {credential_access_predicate()}",
-                credential_id, user_id, org_id,
-            )
-        return CredentialValidationRow(
-            credential_type=row["credential_type"],
-            owner_id=str(row["owner_id"]) if isinstance(row["owner_id"], UUID) else row["owner_id"],
-            token_version=row["token_version"], updated_at=row["updated_at"],
-            approval_revision=row["approval_revision"], revoked_at=row["revoked_at"],
-            credential=row["credential"],
-        ) if row else None
 
     # ------------------------------------------------------------------
     # update_credential
