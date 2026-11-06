@@ -169,7 +169,7 @@ async def test_current_raw_canonical_row_stored_picker_actor_binding_and_no_forg
     pool = SimpleNamespace(acquire=lambda: PoolContext()); row = CredentialValidationRow(fn.FAMILIES[0], "owner", 2, STAMP, 1, None, "sealed")
     authority = AsyncMock(return_value=row); monkeypatch.setattr(fn, "_fetch_authority", authority)
     monkeypatch.setattr(encryption, "get_encryption", lambda: SimpleNamespace(decrypt_credential=lambda _: {**CREDS, "credential_type": "http_bearer", "owner_id": "forged"}))
-    fresh = await fn.MediaSiloNode.freshen_credential(CREDS, pool=pool, user_id="actor", credential_id="saved", organization_id="org", workflow_id="wf")
+    fresh = await fn.MediaSiloNode.freshen_credential(CREDS, pool=pool, user_id="actor", credential_id="saved")
     assert fresh["credential_type"] == fn.FAMILIES[0] and fresh["owner_id"] == "owner" and fresh["token_version"] == 2 and fresh["approval_revision"] == 1
     context = fn._context(fresh, {"_user_id": "actor", "_approval_pool": "forged", "_credential_id": "forged"})
     assert context["_approval_pool"] is pool and context["_credential_id"] == "saved"
@@ -183,10 +183,15 @@ async def test_current_raw_canonical_row_stored_picker_actor_binding_and_no_forg
 async def test_current_denial_before_decrypt_client(monkeypatch, wire, state):
     from repositories.credentials import CredentialsRepo
     from utils import encryption
+    from wss.handlers import workflow_handler
+    monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(return_value="org"))
     row = CredentialValidationRow(fn.FAMILIES[0], "owner", 2, STAMP, 1, None, "sealed")
+    class PoolContext:
+        async def __aenter__(self): return object()
+        async def __aexit__(self, *args): pass
     row = None if state == "missing" else replace(row, revoked_at=STAMP) if state == "revoked" else replace(row, credential_type="http_bearer")
     monkeypatch.setattr(fn, "_fetch_authority", AsyncMock(return_value=row)); monkeypatch.setattr(encryption, "get_encryption", lambda: (_ for _ in ()).throw(AssertionError("No decrypt")))
-    with pytest.raises(ValueError): await fn.MediaSiloNode.freshen_credential(CREDS, pool=object(), user_id="actor", credential_id="saved", organization_id="org")
+    with pytest.raises(ValueError): await fn.MediaSiloNode.freshen_credential(CREDS, pool=SimpleNamespace(acquire=lambda: PoolContext()), user_id="actor", credential_id="saved")
     assert wire.calls == []
 
 @pytest.mark.asyncio
@@ -236,7 +241,7 @@ async def test_actor_first_owner_fallback_requires_positive_workflow_grant(monke
     monkeypatch.setattr(encryption, "get_encryption", lambda: SimpleNamespace(decrypt_credential=lambda _: CREDS) if grant else (_ for _ in ()).throw(AssertionError("No decrypt")))
     monkeypatch.setattr(credentials, "credential_lender", AsyncMock(return_value=None))
     if grant:
-        fresh = await fn.MediaSiloNode.freshen_credential(CREDS, pool=object(), user_id="actor", credential_id="saved", organization_id="org", workflow_id="wf"); assert fresh["owner_id"] == "owner" and fresh["_mediasilo_authority"].user_id == "actor"
+        fresh = await fn._current_data(CREDS, pool=object(), user_id="actor", credential_id="saved", organization_id="org", workflow_id="wf"); assert fresh["owner_id"] == "owner" and fresh["_mediasilo_authority"].user_id == "actor"
     else:
-        with pytest.raises(ValueError, match="unavailable"): await fn.MediaSiloNode.freshen_credential(CREDS, pool=object(), user_id="actor", credential_id="saved", organization_id="org", workflow_id="wf")
+        with pytest.raises(ValueError, match="unavailable"): await fn._current_data(CREDS, pool=object(), user_id="actor", credential_id="saved", organization_id="org", workflow_id="wf")
     assert [call.args[2] for call in authority.call_args_list] == (["actor", "owner"] if grant else ["actor"]) and allowed.call_args.args[1:] == ("wf", "saved") and wire.calls == []
