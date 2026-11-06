@@ -524,20 +524,20 @@ class DropcontactNode(WorkflowNode):
     def get_config_model(cls): return DropcontactNodeConfig
 
     @classmethod
-    def parse_config(cls, data):
-        _original_family(data)
-        shaped = dict(data)
-        if data.get("credentials") is not None: shaped["credentials"] = _shape(data["credentials"])
+    def parse_config(cls, config_data):
+        _original_family(config_data)
+        shaped = dict(config_data)
+        if config_data.get("credentials") is not None: shaped["credentials"] = _shape(config_data["credentials"])
         try: DropcontactNodeConfig.model_validate(runtime_config_view(shaped, DropcontactNodeConfig))
         except ValueError: raise ValueError("Dropcontact native configuration, closed enrichment input or credential scope is invalid") from None
         return super().parse_config(shaped)
 
     @classmethod
-    def validate_config(cls, data):
+    def validate_config(cls, config_data):
         try:
-            _original_family(data)
-            shaped = dict(data)
-            if data.get("credentials") is not None: shaped["credentials"] = _shape(data["credentials"])
+            _original_family(config_data)
+            shaped = dict(config_data)
+            if config_data.get("credentials") is not None: shaped["credentials"] = _shape(config_data["credentials"])
             DropcontactNodeConfig.model_validate(runtime_config_view(shaped, DropcontactNodeConfig))
         except (ValueError, TypeError):
             return ValidationResult(valid=False, errors=["Dropcontact native configuration, contact payload or credential family is invalid"], satisfied_set=None)
