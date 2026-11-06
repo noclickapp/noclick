@@ -73,7 +73,7 @@ async def _output_of(monkeypatch, said, *, ended_by=None, handed_on=False):
     reply = [""]
 
     class Ended:
-        turn_ended_by, turn_handed_on = ended_by, handed_on
+        turn_ended_by, turn_handed_on, turn_only_read = ended_by, handed_on, None
         cleanup = AsyncMock()
 
         async def __call__(self, message):
