@@ -1128,6 +1128,9 @@
         "on_query_results"
       ]
     },
+    "automation-statuspage": {
+      "agentToolProvider": true
+    },
     "automation-stripe": {
       "agentToolProvider": true,
       "triggerOperations": [
