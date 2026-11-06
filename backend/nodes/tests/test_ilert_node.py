@@ -390,7 +390,8 @@ async def test_manual_connect_real_collector_uses_actor_not_supplied_identity(ht
     http.responses = [(200, actor())]
     result = await credential_connect.validate_for_connect(credential_type="ilert_api_key", credential_data=credential(), user_id=USER)
     assert result.ok and result.node_type == NODE and result.evidence.reachable is True
-    assert result.evidence.samples == [ACTOR] and result.evidence.proves == "account" and result.evidence.account_label is None
+    assert [asdict(sample) for sample in result.evidence.samples] == [{"label": ACTOR, "value": None}]
+    assert result.evidence.proves == "account" and result.evidence.account_label is None
     assert "private@example.invalid" not in json.dumps(asdict(result.evidence))
 
 
@@ -402,7 +403,7 @@ async def test_registered_socket_uses_current_actor_context_and_trusted_org(sock
     sockets.saved.http.responses = [(200, actor(id=99)), page(team())]
     out = await socket_call(sockets, "workflow:node:load_options", field_name="team_id",
         context={"access_token": "forged", "actor_id": ACTOR, "team_context": 99, "organization_id": OWNER, "workflow_id": WF})
-    assert out["success"] is True and out["options"] == [{"value": TEAM, "label": TEAM}]
+    assert out["success"] is True and out["options"] == [{"value": TEAM, "label": TEAM, "metadata": None}]
     assert all(req.headers["Authorization"] == "Bearer current-token" and req.headers["team-context"] == "-1" for req in sockets.saved.http.calls)
     assert all(args[2] == ORG for sql, args in sockets.saved.storage.calls if "SELECT c.credential" in sql)
 
