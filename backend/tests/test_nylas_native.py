@@ -182,6 +182,15 @@ async def test_original_raw_credential_shape_blocks_before_transport(state, chan
 
 
 @pytest.mark.asyncio
+async def test_parsed_credentials_work_without_raw_node_data(state):
+    config = native.NylasNodeConfig.model_validate({"config": {"operation": "get_grant"}, "credentials": KEY})
+    instance = native.NylasNode(node_id="fixture", node_type=NODE, node_data={}, config=config, sio=None)
+    output = await instance.execute({})
+    assert output["data"]["id"] == KEY["grant_id"]
+    assert state.requests[0].headers["Authorization"] == "Bearer " + KEY["api_key"]
+
+
+@pytest.mark.asyncio
 async def test_factory_original_type_cannot_be_retagged(state):
     instance = NodeFactory.create_node(node_id="fixture", node_type=NODE, node_data={
         "config": {"operation": "get_grant"}, "credentials": {**KEY, "credential_type": "foreign"},
@@ -261,7 +270,7 @@ async def test_delete_refuses_primary_or_shared_calendar_and_requires_actual_abs
 @pytest.mark.asyncio
 async def test_unsaved_connect_actual_evidence_is_reachability_not_identity(state, monkeypatch):
     monkeypatch.setattr("nodes.core.credential_connect._collect_evidence", collect_evidence)
-    verdict = await validate_for_connect("nylas_api_key", KEY, user_id=USER)
+    verdict = await validate_for_connect(credential_type="nylas_api_key", credential_data=KEY, user_id=USER)
     assert verdict.ok and verdict.evidence.reachable is True
     assert verdict.evidence.proves == "reachability" and not verdict.evidence.account_label
     assert "private@example.test" not in str(verdict.evidence)

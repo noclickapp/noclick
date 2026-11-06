@@ -596,7 +596,10 @@ class NylasNode(WorkflowNode):
         return {"valid": True, "message": "Configured Nylas grant is reachable; this does not prove application ownership or all operation permissions."}
 
     async def _client(self):
-        raw = self.node_data.get("credentials")
+        if "credentials" in self.node_data:
+            raw = self.node_data["credentials"]
+        else:
+            raw = self.config.credentials.model_dump() if self.config.credentials else None
         shape_credential(raw)  # Original stored family before base reconciliation.
         credential_id = self.node_data.get("credential_id")
         if credential_id:
