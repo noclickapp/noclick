@@ -77,6 +77,8 @@ async def _ld_request(
     json_body: Optional[Any] = None,
     content_type: str = "application/json",
     action_name: str = "request",
+    files: Optional[Dict[str, Any]] = None,
+    form_data: Optional[Dict[str, str]] = None,
 ) -> Dict[str, Any]:
     """Make an authenticated LaunchDarkly v2 request and return a structured result.
 
@@ -86,9 +88,10 @@ async def _ld_request(
     url = f"{_base_url(region)}{endpoint}"
     headers = {
         "Authorization": access_token,
-        "Content-Type": content_type,
         "LD-API-Version": LD_API_VERSION,
     }
+    if files is None:
+        headers["Content-Type"] = content_type
     if isinstance(json_body, dict):
         json_body = {k: v for k, v in json_body.items() if v is not None}
     if params:
@@ -97,8 +100,9 @@ async def _ld_request(
     start = time.time()
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
+            body_args = {"files": files, "data": form_data} if files is not None else {"json": json_body}
             response = await client.request(
-                method=method, url=url, headers=headers, params=params, json=json_body
+                method=method, url=url, headers=headers, params=params, **body_args
             )
             api_ms = round((time.time() - start) * 1000, 2)
             if response.status_code >= 400:
@@ -344,20 +348,25 @@ class LaunchDarklyUpdateBigSegmentContextTargetsConfig(BaseModel):
         description="Optional raw JSON merged into the request body for advanced fields")
 
 
-async def _update_big_segment_context_targets(c, token, region) -> Dict[str, Any]:
+def _big_segment_target_body(c) -> Dict[str, Any]:
     body: Dict[str, Any] = json.loads(c.body_json) if c.body_json else {}
-    body.update({
-        "included": _comma_list(c.included),
-        "excluded": _comma_list(c.excluded),
-        "includedContexts": None,
-    })
-    if _comma_list(c.included_remove):
-        body["includedRemove"] = _comma_list(c.included_remove)
-    if _comma_list(c.excluded_remove):
-        body["excludedRemove"] = _comma_list(c.excluded_remove)
+    for field in ("included", "excluded"):
+        additions = _comma_list(getattr(c, field))
+        removals = _comma_list(getattr(c, f"{field}_remove"))
+        if additions or removals:
+            updates = dict(body.get(field, {}))
+            if additions:
+                updates["add"] = additions
+            if removals:
+                updates["remove"] = removals
+            body[field] = updates
+    return body
+
+
+async def _update_big_segment_context_targets(c, token, region) -> Dict[str, Any]:
     return await _ld_request(token, region, "POST",
                              f"/segments/{c.project_key}/{c.environment_key}/{c.segment_key}/contexts",
-                             json_body=body, action_name="update_big_segment_context_targets")
+                             json_body=_big_segment_target_body(c), action_name="update_big_segment_context_targets")
 
 
 class LaunchDarklyGetSegmentContextMembershipConfig(BaseModel):
@@ -434,15 +443,22 @@ class LaunchDarklyCreateBigSegmentImportConfig(BaseModel):
     project_key: str = _project_key_field("The project key")
     environment_key: str = _environment_key_field()
     segment_key: str = _segment_key_field()
-    body_json: Optional[str] = Field(None, title="Import Body (JSON)",
-        description="Raw JSON body describing the import (mode, file reference, etc.)")
+    csv_content: str = Field(..., title="CSV Content", min_length=1,
+        description="CSV file contents containing the context keys to import")
+    mode: Literal["merge", "replace"] = Field("merge", title="Import Mode")
+    wait_on_approvals: bool = Field(False, title="Wait on Approvals",
+        description="Wait for approvals before processing the import")
 
 
 async def _create_big_segment_import(c, token, region) -> Dict[str, Any]:
-    body: Dict[str, Any] = json.loads(c.body_json) if c.body_json else {}
+    form_data = {"mode": c.mode}
+    if c.wait_on_approvals:
+        form_data["waitOnApprovals"] = "true"
     return await _ld_request(token, region, "POST",
                              f"/segments/{c.project_key}/{c.environment_key}/{c.segment_key}/imports",
-                             json_body=body, action_name="create_big_segment_import")
+                             files={"file": ("contexts.csv", c.csv_content.encode("utf-8"), "text/csv")},
+                             form_data=form_data,
+                             action_name="create_big_segment_import")
 
 
 class LaunchDarklyGetBigSegmentImportConfig(BaseModel):
@@ -491,18 +507,9 @@ class LaunchDarklyUpdateBigSegmentUserTargetsConfig(BaseModel):
 
 
 async def _update_big_segment_user_targets(c, token, region) -> Dict[str, Any]:
-    body: Dict[str, Any] = json.loads(c.body_json) if c.body_json else {}
-    body.update({
-        "included": _comma_list(c.included),
-        "excluded": _comma_list(c.excluded),
-    })
-    if _comma_list(c.included_remove):
-        body["includedRemove"] = _comma_list(c.included_remove)
-    if _comma_list(c.excluded_remove):
-        body["excludedRemove"] = _comma_list(c.excluded_remove)
     return await _ld_request(token, region, "POST",
                              f"/segments/{c.project_key}/{c.environment_key}/{c.segment_key}/users",
-                             json_body=body, action_name="update_big_segment_user_targets")
+                             json_body=_big_segment_target_body(c), action_name="update_big_segment_user_targets")
 
 
 class LaunchDarklyGetSegmentUserMembershipConfig(BaseModel):

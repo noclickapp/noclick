@@ -877,3 +877,95 @@ class TestLaunchDarklyOperationRegistry:
         # get_config_schema() must succeed over the whole 200+ op union.
         schema = LaunchDarklyNode.get_config_schema()
         assert isinstance(schema, dict) and schema
+
+
+class TestBigSegmentImports:
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("mode,wait_on_approvals", [("merge", False), ("replace", True)])
+    async def test_uploads_csv_as_multipart(self, token_credentials, monkeypatch, mode, wait_on_approvals):
+        from email.parser import BytesParser
+        from email.policy import default
+        import httpx
+        from nodes.launchdarkly_node import LaunchDarklyCreateBigSegmentImportConfig
+
+        csv_content = "user-key-123abc\nuser-key-456def\n"
+        requests = []
+
+        def transport(request):
+            requests.append(request)
+            assert request.method == "POST"
+            assert request.url.path == "/api/v2/segments/web/production/beta-users/imports"
+            assert request.headers["authorization"] == token_credentials.access_token
+            assert request.headers["ld-api-version"] == "20240415"
+            assert request.headers["content-type"].startswith("multipart/form-data; boundary=")
+            message = BytesParser(policy=default).parsebytes(
+                f"Content-Type: {request.headers['content-type']}\r\n\r\n".encode() + request.content
+            )
+            parts = {part.get_param("name", header="content-disposition"): part for part in message.iter_parts()}
+            assert set(parts) == ({"file", "mode", "waitOnApprovals"} if wait_on_approvals else {"file", "mode"})
+            assert parts["file"].get_filename() == "contexts.csv"
+            assert parts["file"].get_content_type() == "text/csv"
+            assert parts["file"].get_payload(decode=True) == csv_content.encode()
+            assert parts["mode"].get_payload(decode=True) == mode.encode()
+            if wait_on_approvals:
+                assert parts["waitOnApprovals"].get_payload(decode=True) == b"true"
+            return httpx.Response(204)
+
+        original_client = httpx.AsyncClient
+        monkeypatch.setattr("nodes.launchdarkly_node.httpx.AsyncClient", lambda **kwargs: original_client(
+            **kwargs, transport=httpx.MockTransport(transport), trust_env=False
+        ))
+        node = create_ld_node(LaunchDarklyNodeConfig(
+            config=LaunchDarklyCreateBigSegmentImportConfig(
+                project_key="web", environment_key="production", segment_key="beta-users",
+                csv_content=csv_content, mode=mode, wait_on_approvals=wait_on_approvals,
+            ), credentials=token_credentials,
+        ))
+        result = await node.execute({})
+        assert len(requests) == 1
+        assert result["status"] == "success"
+        assert result["status_code"] == 204
+        assert result["data"] == {"success": True}
+
+
+class TestBigSegmentTargets:
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("operation,endpoint", [
+        ("update_big_segment_context_targets", "contexts"),
+        ("update_big_segment_user_targets", "users"),
+    ])
+    @pytest.mark.parametrize("advanced_only", [False, True])
+    async def test_serializes_additions_and_removals(self, token_credentials, monkeypatch, operation, endpoint, advanced_only):
+        import json
+        import httpx
+
+        expected = {
+            "included": {"add": ["user-key-123abc"], "remove": ["user-key-456def"]},
+            "excluded": {"add": ["other-user"], "remove": ["former-user"]},
+        }
+        captured = []
+
+        def transport(request):
+            captured.append(request)
+            assert request.method == "POST"
+            assert request.url.path == f"/api/v2/segments/web/production/beta-users/{endpoint}"
+            assert json.loads(request.content) == expected
+            return httpx.Response(204)
+
+        original_client = httpx.AsyncClient
+        monkeypatch.setattr("nodes.launchdarkly_node.httpx.AsyncClient", lambda **kwargs: original_client(
+            **kwargs, transport=httpx.MockTransport(transport), trust_env=False
+        ))
+        fields = {"body_json": json.dumps(expected)} if advanced_only else {
+            "included": " user-key-123abc ", "included_remove": "user-key-456def",
+            "excluded": "other-user", "excluded_remove": " former-user ",
+        }
+        config = LaunchDarklyNodeConfig.model_validate({
+            "config": {"operation": operation, "project_key": "web", "environment_key": "production",
+                       "segment_key": "beta-users", **fields},
+            "credentials": token_credentials,
+        })
+        result = await create_ld_node(config).execute({})
+        assert len(captured) == 1
+        assert result["status"] == "success"
+        assert result["status_code"] == 204
