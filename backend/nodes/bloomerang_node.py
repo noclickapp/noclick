@@ -578,10 +578,10 @@ class BloomerangNode(WorkflowNode):
             raise ValueError("Bloomerang configuration or credential is invalid") from None
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=CURRENT_ORGANIZATION):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
         data = credential(credential_data)
         if credential_id:
-            return {**data, "_bloomerang_session": await Session.saved(data, pool=pool, user_id=user_id, credential_id=credential_id, organization_id=organization_id, workflow_id=workflow_id)}
+            return {**data, "_bloomerang_session": await Session.saved(data, pool=pool, user_id=user_id, credential_id=credential_id)}
         return data
 
     @classmethod
