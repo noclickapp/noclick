@@ -240,17 +240,17 @@ class KeilaNode(WorkflowNode):
     @classmethod
     def get_config_model(cls): return KeilaNodeConfig
     @classmethod
-    def parse_config(cls, data):
-        _original_family(data); shaped = dict(data)
-        if data.get("credentials") is not None: shaped["credentials"] = _shape(data["credentials"])
+    def parse_config(cls, config_data):
+        _original_family(config_data); shaped = dict(config_data)
+        if config_data.get("credentials") is not None: shaped["credentials"] = _shape(config_data["credentials"])
         try: KeilaNodeConfig.model_validate(runtime_config_view(shaped, KeilaNodeConfig))
         except ValueError: raise ValueError("Keila native configuration, resource scope or credential is invalid") from None
         return super().parse_config(shaped)
     @classmethod
-    def validate_config(cls, data):
+    def validate_config(cls, config_data):
         try:
-            _original_family(data); shaped = dict(data)
-            if data.get("credentials") is not None: shaped["credentials"] = _shape(data["credentials"])
+            _original_family(config_data); shaped = dict(config_data)
+            if config_data.get("credentials") is not None: shaped["credentials"] = _shape(config_data["credentials"])
             KeilaNodeConfig.model_validate(runtime_config_view(shaped, KeilaNodeConfig))
         except (ValueError, TypeError): return ValidationResult(valid=False, errors=["Keila native configuration or credential family is invalid"], satisfied_set=None)
         return super().validate_config(shaped)
