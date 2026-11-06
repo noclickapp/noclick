@@ -14,6 +14,10 @@ Exercises every operation with mocked HTTP responses (no live API calls):
 """
 
 import pytest
+import copy
+import hashlib
+import json
+from pathlib import Path
 from unittest.mock import AsyncMock, Mock, patch
 
 from nodes.perplexity_node import (
@@ -83,6 +87,12 @@ def create_mock_client(status_code=200, json_data=None):
     return mock_client
 
 
+# Exact provider-authored Response object, also used as a harness witness.
+AGENT_RESPONSE = json.loads(
+    (Path(__file__).parent / "fixtures/perplexity_agent_response.json").read_text()
+)["body"]
+
+
 CHAT_RESPONSE = {
     "id": "cmpl-1",
     "choices": [{"message": {"role": "assistant", "content": "The answer."}}],
@@ -112,63 +122,210 @@ class TestPerplexityChatMock:
         assert result["data"]["citations"] == ["https://example.com/a"]
 
     @pytest.mark.asyncio
-    async def test_create_async_completion(self, api_key_credentials):
-        config = PerplexityNodeConfig(
+    @pytest.mark.parametrize("model,effort", [
+        ("sonar", "fast"), ("sonar-pro", "fast"),
+        ("sonar-reasoning-pro", "low"), ("sonar-deep-research", "high"),
+        ("openai/gpt-5.6-sol", None),
+    ])
+    async def test_create_async_completion(self, api_key_credentials, model, effort):
+        node = create_perplexity_node(PerplexityNodeConfig(
             config=PerplexityCreateAsyncCompletionConfig(
-                model="sonar-deep-research", prompt="Write a deep report"
-            ),
-            credentials=api_key_credentials,
-        )
-        node = create_perplexity_node(config)
-        mock_client = create_mock_client(200, {"request_id": "req_1", "status": "CREATED"})
-        with patch("nodes.perplexity_node.httpx.AsyncClient", return_value=mock_client):
+                model=model, prompt="Write a deep report", system_prompt="Use sources"
+            ), credentials=api_key_credentials,
+        ))
+        node._load_node_state = AsyncMock(return_value={"unrelated": True})
+        node._save_node_state = AsyncMock()
+        client = create_mock_client(200, AGENT_RESPONSE)
+        with patch("nodes.perplexity_node.httpx.AsyncClient", return_value=client):
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "create_async_completion"
-        mock_client.request.assert_awaited_once()
-        request = mock_client.request.call_args.kwargs
+        client.request.assert_awaited_once()
+        request = client.request.call_args.kwargs
         assert request["method"] == "POST"
-        assert request["url"] == "https://api.perplexity.ai/v1/async/sonar"
-        assert request["json"]["request"]["model"] == "sonar-deep-research"
-        assert request["json"]["request"]["messages"] == [
-            {"role": "user", "content": "Write a deep report"}
-        ]
-        assert result["data"]["request_id"] == "req_1"
+        assert request["url"] == "https://api.perplexity.ai/v1/agent"
+        assert request["json"]["background"] is True
+        assert request["json"]["store"] is True
+        assert request["json"]["input"] == "Write a deep report"
+        assert request["json"]["instructions"] == "Use sources"
+        assert "request" not in request["json"]
+        if effort:
+            assert request["json"]["effort"] == effort
+            assert "model" not in request["json"]
+        else:
+            assert request["json"]["model"] == model
+            assert request["json"]["tools"] == [{"type": "web_search"}]
+            assert request["json"]["max_steps"] == 10
+        assert result["data"]["request_id"] == AGENT_RESPONSE["id"]
+        state = node._save_node_state.call_args.args[0]
+        key = hashlib.sha256(api_key_credentials.api_key.encode()).hexdigest()
+        assert state["perplexity_background_jobs"][key] == {AGENT_RESPONSE["id"]: model}
+        assert state["unrelated"] is True
+        assert api_key_credentials.api_key not in json.dumps(state)
 
     @pytest.mark.asyncio
     async def test_list_async_completions(self, api_key_credentials):
-        config = PerplexityNodeConfig(
-            config=PerplexityListAsyncCompletionsConfig(),
-            credentials=api_key_credentials,
-        )
-        node = create_perplexity_node(config)
-        mock_client = create_mock_client(200, {"requests": [{"request_id": "req_1"}]})
-        with patch("nodes.perplexity_node.httpx.AsyncClient", return_value=mock_client):
+        node = create_perplexity_node(PerplexityNodeConfig(
+            config=PerplexityListAsyncCompletionsConfig(), credentials=api_key_credentials,
+        ))
+        key = hashlib.sha256(api_key_credentials.api_key.encode()).hexdigest()
+        state = {"perplexity_background_jobs": {key: {AGENT_RESPONSE["id"]: "sonar-deep-research"}}}
+        pool = Mock(fetch=AsyncMock(return_value=[
+            {"state": json.dumps(state)}, {"state": state},
+            {"state": {"perplexity_background_jobs": {"another-key": {"private-id": "sonar"}}}},
+        ]))
+        client = create_mock_client(200, AGENT_RESPONSE)
+        with patch("utils.database_pool.get_native_pool", return_value=pool), patch(
+            "nodes.perplexity_node.httpx.AsyncClient", return_value=client
+        ):
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "list_async_completions"
-        mock_client.request.assert_awaited_once()
-        request = mock_client.request.call_args.kwargs
+        pool.fetch.assert_awaited_once_with(
+            "SELECT state FROM workflow_node_state WHERE workflow_id = $1", "test-workflow"
+        )
+        client.request.assert_awaited_once()
+        request = client.request.call_args.kwargs
         assert request["method"] == "GET"
-        assert request["url"] == "https://api.perplexity.ai/v1/async/sonar"
+        assert request["url"] == "https://api.perplexity.ai/v1/agent/" + AGENT_RESPONSE["id"]
+        assert result["data"]["scope"] == "workflow"
+        assert result["data"]["next_token"] is None
+        assert len(result["data"]["requests"]) == 1
+        assert result["data"]["requests"][0]["status"] == "COMPLETED"
 
     @pytest.mark.asyncio
-    async def test_get_async_completion(self, api_key_credentials):
-        config = PerplexityNodeConfig(
-            config=PerplexityGetAsyncCompletionConfig(request_id="req_1"),
+    @pytest.mark.parametrize("status,legacy_status", [
+        ("queued", "CREATED"), ("in_progress", "IN_PROGRESS"),
+        ("cancelling", "IN_PROGRESS"), ("completed", "COMPLETED"),
+        ("failed", "FAILED"), ("cancelled", "FAILED"), ("incomplete", "FAILED"),
+    ])
+    async def test_get_async_completion(self, api_key_credentials, status, legacy_status):
+        node = create_perplexity_node(PerplexityNodeConfig(
+            config=PerplexityGetAsyncCompletionConfig(request_id=AGENT_RESPONSE["id"]),
             credentials=api_key_credentials,
-        )
-        node = create_perplexity_node(config)
-        mock_client = create_mock_client(200, {"request_id": "req_1", "status": "COMPLETED"})
-        with patch("nodes.perplexity_node.httpx.AsyncClient", return_value=mock_client):
+        ))
+        node._update_node_state = AsyncMock()
+        # Vary the documented status enum to verify every lifecycle transition.
+        snapshot = copy.deepcopy(AGENT_RESPONSE)
+        snapshot["status"] = status
+        if status != "completed":
+            snapshot["output"] = []
+            snapshot.pop("completed_at", None)
+        if status == "in_progress":
+            snapshot["paused"] = {"reason": "token_limit"}
+        if status == "failed":
+            snapshot["error"] = {"message": "Run failed"}
+        client = create_mock_client(200, snapshot)
+        with patch("nodes.perplexity_node.httpx.AsyncClient", return_value=client):
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "get_async_completion"
-        mock_client.request.assert_awaited_once()
-        request = mock_client.request.call_args.kwargs
+        client.request.assert_awaited_once()
+        request = client.request.call_args.kwargs
         assert request["method"] == "GET"
-        assert request["url"] == "https://api.perplexity.ai/v1/async/sonar/req_1"
-        assert result["data"]["status"] == "COMPLETED"
+        assert request["url"] == "https://api.perplexity.ai/v1/agent/" + AGENT_RESPONSE["id"]
+        data = result["data"]
+        assert data["id"] == data["request_id"] == AGENT_RESPONSE["id"]
+        assert data["status"] == legacy_status
+        assert data["agent_status"] == status
+        assert data["agent_response"] == snapshot
+        assert data["started_at"] is None  # Don't invent missing timestamps.
+        assert data["completed_at"] == snapshot.get("completed_at")
+        assert data["failed_at"] is None
+        if status == "completed":
+            text = "".join(c["text"] for i in snapshot["output"] if i["type"] == "message"
+                           for c in i["content"] if c["type"] == "output_text")
+            assert data["response"]["choices"][0]["message"]["content"] == text
+            assert data["response"]["usage"]["prompt_tokens"] == snapshot["usage"]["input_tokens"]
+        else:
+            assert data["response"] is None
+        if status in ("failed", "cancelled", "incomplete"):
+            assert data["error_message"]
+
+    @pytest.mark.asyncio
+    async def test_listing_explicit_ids_without_workflow(self, api_key_credentials):
+        node = create_perplexity_node(PerplexityNodeConfig(
+            config=PerplexityListAsyncCompletionsConfig(request_ids=AGENT_RESPONSE["id"]),
+            credentials=api_key_credentials,
+        ))
+        node.workflow_id = None
+        client = create_mock_client(200, AGENT_RESPONSE)
+        with patch("nodes.perplexity_node.httpx.AsyncClient", return_value=client):
+            result = await node.execute({})
+        assert result["status"] == "success"
+        assert result["data"]["requests"][0]["request_id"] == AGENT_RESPONSE["id"]
+        assert result["data"]["scope"] == "provided_ids"
+        client.request.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_listing_does_not_hide_storage_failure(self, api_key_credentials):
+        node = create_perplexity_node(PerplexityNodeConfig(
+            config=PerplexityListAsyncCompletionsConfig(), credentials=api_key_credentials,
+        ))
+        pool = Mock(fetch=AsyncMock(side_effect=RuntimeError("DB unavailable")))
+        with patch("utils.database_pool.get_native_pool", return_value=pool):
+            with pytest.raises(RuntimeError, match="DB unavailable"):
+                await node.execute({})
+
+    @pytest.mark.asyncio
+    async def test_listing_does_not_hide_provider_failure(self, api_key_credentials):
+        node = create_perplexity_node(PerplexityNodeConfig(
+            config=PerplexityListAsyncCompletionsConfig(), credentials=api_key_credentials,
+        ))
+        key = hashlib.sha256(api_key_credentials.api_key.encode()).hexdigest()
+        pool = Mock(fetch=AsyncMock(return_value=[{"state": {
+            "perplexity_background_jobs": {key: {AGENT_RESPONSE["id"]: "sonar"}}
+        }}]))
+        client = create_mock_client(403, {"error": {"message": "Forbidden"}})
+        with patch("utils.database_pool.get_native_pool", return_value=pool), patch(
+            "nodes.perplexity_node.httpx.AsyncClient", return_value=client
+        ):
+            result = await node.execute({})
+        assert result["status"] == "error"
+        assert result["status_code"] == 403
+        assert "data" not in result
+
+    @pytest.mark.asyncio
+    async def test_empty_workflow_listing_is_explicitly_scoped(self, api_key_credentials):
+        node = create_perplexity_node(PerplexityNodeConfig(
+            config=PerplexityListAsyncCompletionsConfig(), credentials=api_key_credentials,
+        ))
+        pool = Mock(fetch=AsyncMock(return_value=[]))
+        with patch("utils.database_pool.get_native_pool", return_value=pool), patch(
+            "nodes.perplexity_node.httpx.AsyncClient"
+        ) as client:
+            result = await node.execute({})
+        assert result["data"] == {"requests": [], "next_token": None,
+                                  "scope": "workflow", "includes_historical_sonar_jobs": False}
+        client.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_tracking_failure_preserves_created_job(self, api_key_credentials):
+        node = create_perplexity_node(PerplexityNodeConfig(
+            config=PerplexityCreateAsyncCompletionConfig(prompt="Research"),
+            credentials=api_key_credentials,
+        ))
+        node._update_node_state = AsyncMock(side_effect=RuntimeError("DB unavailable"))
+        client = create_mock_client(200, AGENT_RESPONSE)
+        with patch("nodes.perplexity_node.httpx.AsyncClient", return_value=client):
+            result = await node.execute({})
+        assert result["status"] == "success"
+        assert result["data"]["request_id"] == AGENT_RESPONSE["id"]
+        assert result["tracking_error"]
+        client.request.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_historical_sonar_id_has_actionable_error(self, api_key_credentials):
+        node = create_perplexity_node(PerplexityNodeConfig(
+            config=PerplexityGetAsyncCompletionConfig(request_id="old/sonar?job"),
+            credentials=api_key_credentials,
+        ))
+        client = create_mock_client(404, {"error": {"message": "Unknown response"}})
+        with patch("nodes.perplexity_node.httpx.AsyncClient", return_value=client):
+            result = await node.execute({})
+        assert result["status"] == "error"
+        assert "Historical async Sonar jobs" in result["error"]
+        assert client.request.call_args.kwargs["url"].endswith("/old%2Fsonar%3Fjob")
 
     @pytest.mark.asyncio
     async def test_academic_search(self, api_key_credentials):

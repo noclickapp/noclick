@@ -16,11 +16,13 @@ API Base URL: https://api.perplexity.ai
 Documentation: https://docs.perplexity.ai
 """
 
+import hashlib
 import json
 import logging
 import os
 import time
 from decimal import Decimal
+from urllib.parse import quote
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
 from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
@@ -171,7 +173,7 @@ class PerplexityCreateAsyncCompletionConfig(BaseModel):
     model: str = Field(
         "sonar-deep-research",
         title="Model",
-        description="Model to use (deep-research models are best run async)",
+        description="Saved Sonar names map to Agent effort levels; custom Agent models are also accepted",
         json_schema_extra={
             "x-dynamic-options": {
                 "field_name": "model",
@@ -200,7 +202,12 @@ class PerplexityCreateAsyncCompletionConfig(BaseModel):
 
 
 class PerplexityListAsyncCompletionsConfig(BaseModel):
-    """List all async chat-completion jobs for the account."""
+    """List background jobs submitted or retrieved in this workflow with this key.
+
+    Perplexity retired async Sonar and provides no account-wide Agent listing.
+    Jobs are tracked durably in workflow state and refreshed by response id.
+    Historical Sonar jobs cannot be recovered through the Agent API.
+    """
 
     operation: Literal["list_async_completions"] = Field(
         "list_async_completions",
@@ -212,6 +219,11 @@ class PerplexityListAsyncCompletionsConfig(BaseModel):
             "x-display-name": "List Async Chat Completions",
         },
         title="List Async Chat Completions",
+    )
+    request_ids: Optional[str] = Field(
+        None, title="Additional Response IDs",
+        description="Optional comma-separated Agent response IDs to include. "
+                    "Without these, lists jobs tracked in this saved workflow, not the entire provider account.",
     )
 
 
@@ -230,7 +242,7 @@ class PerplexityGetAsyncCompletionConfig(BaseModel):
         title="Get Async Chat Completion",
     )
     request_id: str = Field(
-        ..., title="Request ID", description="The async job request_id to poll"
+        ..., title="Request ID", description="Agent response id (also returned as request_id). Historical async Sonar jobs cannot be retrieved"
     )
 
 
@@ -648,6 +660,55 @@ def _as_number(value: Optional[str]):
         return None
 
 
+def _background_compat(data: Dict[str, Any], model: Optional[str] = None) -> Dict[str, Any]:
+    """Adapt Agent snapshots to the saved async Sonar output contract.
+
+    Native fields are also retained in agent_response, including paused/error
+    details and the original status. Never invent provider timestamps.
+    """
+    statuses = {
+        "queued": "CREATED", "in_progress": "IN_PROGRESS", "cancelling": "IN_PROGRESS",
+        "completed": "COMPLETED", "failed": "FAILED",
+        "cancelled": "FAILED", "incomplete": "FAILED",
+    }
+    if not isinstance(data, dict) or not data.get("id") or data.get("status") not in statuses:
+        raise ValueError("Invalid Agent background response: expected id and known status")
+    text = "".join(
+        content.get("text", "")
+        for item in data.get("output", []) if item.get("type") == "message"
+        for content in item.get("content", []) if content.get("type") == "output_text"
+    )
+    search_results = [
+        result for item in data.get("output", []) if item.get("type") == "search_results"
+        for result in item.get("results", [])
+    ]
+    citations = list(dict.fromkeys(result["url"] for result in search_results if result.get("url")))
+    response = None
+    if data["status"] == "completed" or text:
+        usage = data.get("usage") or {}
+        response = {
+            "id": data["id"], "object": "chat.completion",
+            "created": data.get("created_at"), "model": model or data.get("model"),
+            "citations": citations, "search_results": search_results,
+            "images": None, "related_questions": None,
+            "choices": [{"index": 0, "message": {"role": "assistant", "content": text},
+                         "finish_reason": "stop" if data["status"] == "completed" else "length"}],
+            "usage": {**usage, "prompt_tokens": usage.get("input_tokens"),
+                      "completion_tokens": usage.get("output_tokens")},
+        }
+    error = data.get("error")
+    error_message = error.get("message") if isinstance(error, dict) else error
+    if data["status"] in ("cancelled", "incomplete") and not error_message:
+        error_message = "Agent response " + data["status"]
+    return {
+        **data, "request_id": data["id"], "model": model or data.get("model"),
+        "status": statuses[data["status"]], "agent_status": data["status"],
+        "started_at": data.get("started_at"), "completed_at": data.get("completed_at"),
+        "failed_at": data.get("failed_at"), "error_message": error_message,
+        "response": response, "agent_response": data,
+    }
+
+
 async def _perplexity_request(
     api_key: str,
     method: str,
@@ -932,32 +993,114 @@ class PerplexityNode(WorkflowNode):
     async def _create_async_completion(
         self, c: PerplexityCreateAsyncCompletionConfig, api_key: str
     ) -> Dict[str, Any]:
-        body = {
-            "request": {
-                "model": c.model,
-                "messages": _build_messages(c.prompt, c.system_prompt),
-            }
+        # Keep the saved Sonar model names; translate using the provider's
+        # migration table, rather than sending them as Agent model identifiers.
+        # https://docs.perplexity.ai/docs/agent-api/migrate-from-sonar/how-to
+        efforts = {
+            "sonar": "fast", "sonar-pro": "fast",
+            "sonar-reasoning-pro": "low", "sonar-deep-research": "high",
         }
-        return await _perplexity_request(
-            api_key, "POST", "/v1/async/sonar", json_body=body,
+        body = {
+            "input": c.prompt,
+            "instructions": c.system_prompt or None,
+            "background": True,
+            "store": True,
+        }
+        if c.model in efforts:
+            body["effort"] = efforts[c.model]
+        else:
+            body.update(model=c.model, tools=[{"type": "web_search"}], max_steps=10)
+        result = await _perplexity_request(
+            api_key, "POST", "/v1/agent", json_body=body,
             action_name="create_async_completion",
         )
+        return await self._adapt_background_result(result, api_key, c.model)
 
     async def _list_async_completions(
         self, c: PerplexityListAsyncCompletionsConfig, api_key: str
     ) -> Dict[str, Any]:
-        return await _perplexity_request(
-            api_key, "GET", "/v1/async/sonar",
-            action_name="list_async_completions",
-        )
+        # There is no documented Agent list endpoint. Never call the retired
+        # Sonar surface or pretend that an empty account listing was fetched.
+        explicit_ids = _comma_list(c.request_ids) or []
+        if not self.workflow_id and not explicit_ids:
+            return {
+                "status": "error", "action": c.operation,
+                "error": "Listing Agent background jobs requires a saved workflow or response IDs. "
+                         "Perplexity no longer provides account-wide async listings.",
+            }
+        from utils.database_pool import get_native_pool
+
+        rows = []
+        if self.workflow_id:
+            rows = await get_native_pool().fetch(
+                "SELECT state FROM workflow_node_state WHERE workflow_id = $1",
+                self.workflow_id,
+            )
+        key = hashlib.sha256(api_key.encode()).hexdigest()
+        jobs = dict.fromkeys(explicit_ids)
+        for row in rows:
+            state = row["state"] or {}
+            if isinstance(state, str):
+                state = json.loads(state)
+            jobs.update(state.get("perplexity_background_jobs", {}).get(key, {}))
+        requests = []
+        for request_id, model in jobs.items():
+            result = await _perplexity_request(
+                api_key, "GET", f"/v1/agent/{quote(request_id, safe='')}",
+                action_name=c.operation,
+            )
+            if result.get("status") != "success":
+                return result  # Do not silently omit a failed/unauthorized poll.
+            requests.append(_background_compat(result["data"], model))
+        requests.sort(key=lambda item: item.get("created_at") or 0, reverse=True)
+        return {
+            "status": "success", "action": c.operation, "status_code": 200,
+            "data": {"requests": requests, "next_token": None,
+                     "scope": ("workflow_and_provided_ids" if self.workflow_id and explicit_ids else
+                               "workflow" if self.workflow_id else "provided_ids"),
+                     "includes_historical_sonar_jobs": False},
+        }
 
     async def _get_async_completion(
         self, c: PerplexityGetAsyncCompletionConfig, api_key: str
     ) -> Dict[str, Any]:
-        return await _perplexity_request(
-            api_key, "GET", f"/v1/async/sonar/{c.request_id}",
+        result = await _perplexity_request(
+            api_key, "GET", f"/v1/agent/{quote(c.request_id, safe='')}",
             action_name="get_async_completion",
         )
+        if result.get("status_code") == 404:
+            result["error"] += (
+                " Agent can retrieve only stored Agent response IDs. Historical "
+                "async Sonar jobs are no longer supported by Perplexity."
+            )
+        return await self._adapt_background_result(result, api_key)
+
+    async def _adapt_background_result(
+        self, result: Dict[str, Any], api_key: str, model: Optional[str] = None
+    ) -> Dict[str, Any]:
+        if result.get("status") != "success":
+            return result
+        result["data"] = _background_compat(result["data"], model)
+        if self.workflow_id and self.node_id:
+            request_id = result["data"]["id"]
+            key = hashlib.sha256(api_key.encode()).hexdigest()
+
+            def remember(state):
+                catalog = state.setdefault("perplexity_background_jobs", {})
+                catalog.setdefault(key, {})[request_id] = model or result["data"]["model"]
+                return state, None
+
+            try:
+                await self._update_node_state(remember)
+            except Exception:
+                # A job has already been created. Preserve its id even if local
+                # tracking fails, so callers can poll without submitting twice.
+                logger.exception("[PerplexityNode] Could not track background response")
+                result["tracking_error"] = (
+                    "Could not persist this response in the workflow job list; "
+                    "save data.request_id and poll it with Get Async Chat Completion."
+                )
+        return result
 
     async def _search(self, c: PerplexitySearchConfig, api_key: str) -> Dict[str, Any]:
         body = {

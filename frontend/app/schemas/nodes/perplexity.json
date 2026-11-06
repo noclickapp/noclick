@@ -296,7 +296,7 @@
         },
         "model": {
           "default": "sonar-deep-research",
-          "description": "Model to use (deep-research models are best run async)",
+          "description": "Saved Sonar names map to Agent effort levels; custom Agent models are also accepted",
           "enum": [
             "sonar",
             "sonar-pro",
@@ -450,7 +450,7 @@
           "x-is-trigger": false
         },
         "request_id": {
-          "description": "The async job request_id to poll",
+          "description": "Agent response id (also returned as request_id). Historical async Sonar jobs cannot be retrieved",
           "title": "Request ID",
           "type": "string"
         }
@@ -462,7 +462,7 @@
       "type": "object"
     },
     "PerplexityListAsyncCompletionsConfig": {
-      "description": "List all async chat-completion jobs for the account.",
+      "description": "List background jobs submitted or retrieved in this workflow with this key.\n\nPerplexity retired async Sonar and provides no account-wide Agent listing.\nJobs are tracked durably in workflow state and refreshed by response id.\nHistorical Sonar jobs cannot be recovered through the Agent API.",
       "properties": {
         "operation": {
           "const": "list_async_completions",
@@ -473,6 +473,19 @@
           "x-category": "Chat",
           "x-display-name": "List Async Chat Completions",
           "x-is-trigger": false
+        },
+        "request_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comma-separated Agent response IDs to include. Without these, lists jobs tracked in this saved workflow, not the entire provider account.",
+          "title": "Additional Response IDs"
         }
       },
       "title": "PerplexityListAsyncCompletionsConfig",
