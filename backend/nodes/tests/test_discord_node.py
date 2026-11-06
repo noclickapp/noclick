@@ -1,7 +1,7 @@
 """
 Integration tests for Discord node.
 
-Tests the complete Discord node functionality including ALL 137 operations:
+Tests the complete Discord node functionality including all 136 API operations:
 - Message operations (11): send, edit, delete, pin, unpin, get messages, crosspost, bulk delete, etc
 - Reaction operations (5): create, delete, get, delete all, delete for emoji
 - Channel operations (7): get, create, modify, delete, typing, permissions, list
@@ -20,7 +20,7 @@ Tests the complete Discord node functionality including ALL 137 operations:
 - Voice (1): list regions
 - Poll (2): get answer voters, end poll
 - Soundboard (7): send, list default/guild sounds, get, create, modify, delete
-- Guild Templates (7): get, create from template, list, create, sync, modify, delete
+- Guild Templates (6): get, list, create, sync, modify, delete
 - Guild Onboarding (2): get, modify
 - DM/Group DM (2): create DM, create group DM
 - Application Commands (10): full CRUD for global and guild commands
@@ -44,7 +44,7 @@ import httpx
 
 from nodes.core.media_resolver import ResolvedMedia
 
-# Import the node and config classes - ALL 137 operations
+# Import the node and config classes
 from nodes.discord_node import (
     DiscordNode,
     DiscordNodeConfig,
@@ -173,7 +173,6 @@ from nodes.discord_node import (
     DiscordDeleteGuildSoundboardSoundConfig,
     # Guild Template Operations
     DiscordGetGuildTemplateConfig,
-    DiscordCreateGuildFromTemplateConfig,
     DiscordGetGuildTemplatesConfig,
     DiscordCreateGuildTemplateConfig,
     DiscordSyncGuildTemplateConfig,
@@ -489,12 +488,13 @@ class TestConfigParsing:
         config = DiscordGetGuildTemplateConfig(template_code="abc123")
         assert config.operation == "get_guild_template"
 
-    def test_create_guild_from_template_config(self):
-        """Test CreateGuildFromTemplate config parsing."""
-        config = DiscordCreateGuildFromTemplateConfig(
-            template_code="abc123", name="New Guild"
-        )
-        assert config.operation == "create_guild_from_template"
+    def test_retired_create_guild_from_template_is_rejected(self):
+        with pytest.raises(ValueError, match="union_tag_invalid"):
+            DiscordNodeConfig(
+                config={"operation": "create_guild_from_template",
+                        "template_code": "abc123", "name": "New Guild"},
+                credentials=DiscordBotTokenCredential(bot_token="mock_token_123"),
+            )
 
     def test_get_guild_templates_config(self):
         """Test GetGuildTemplates config parsing."""

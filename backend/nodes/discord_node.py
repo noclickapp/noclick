@@ -3260,39 +3260,6 @@ class DiscordGetGuildTemplateConfig(BaseModel):
     )
 
 
-class DiscordCreateGuildFromTemplateConfig(BaseModel):
-    """Create a new guild from a template"""
-
-    model_config = ConfigDict(populate_by_name=True)
-
-    operation: Literal["create_guild_from_template"] = Field(
-        default="create_guild_from_template",
-        json_schema_extra={
-            "ui:hidden": True,
-            "x-category": "Guild",
-            "x-is-trigger": False,
-            "x-display-name": "Create Guild from Template",
-            "x-keywords": [
-                "new server from template",
-                "clone server blueprint",
-                "spin up server template",
-                "build server from template",
-            ],
-        },
-        title="Create Guild from Template",
-    )
-    template_code: str = Field(
-        ..., title="Template Code", description="Guild template code"
-    )
-    name: str = Field(..., title="Guild Name", description="Name of the new guild")
-    icon: Optional[str] = Field(
-        default=None,
-        title="Guild Icon",
-        description="The guild icon to use — upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}).",
-        json_schema_extra={"ui:widget": "media_upload", "ui:accept": "image/*"},
-    )
-
-
 class DiscordGetGuildTemplatesConfig(BaseModel):
     """Get all templates for a guild"""
 
@@ -4546,7 +4513,6 @@ DiscordConfig = Annotated[
         DiscordDeleteGuildSoundboardSoundConfig,
         # Guild Template Operations
         DiscordGetGuildTemplateConfig,
-        DiscordCreateGuildFromTemplateConfig,
         DiscordGetGuildTemplatesConfig,
         DiscordCreateGuildTemplateConfig,
         DiscordSyncGuildTemplateConfig,
@@ -6015,8 +5981,6 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
             # Guild Template Operations
             elif isinstance(config, DiscordGetGuildTemplateConfig):
                 result = await self._get_guild_template(config, auth_header)
-            elif isinstance(config, DiscordCreateGuildFromTemplateConfig):
-                result = await self._create_guild_from_template(config, auth_header)
             elif isinstance(config, DiscordGetGuildTemplatesConfig):
                 result = await self._get_guild_templates(config, auth_header)
             elif isinstance(config, DiscordCreateGuildTemplateConfig):
@@ -7838,30 +7802,6 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
             "action": "get_guild_template",
             "template_code": config.template_code,
             "template": result,
-        }
-
-    async def _create_guild_from_template(
-        self, config: DiscordCreateGuildFromTemplateConfig, auth_header: str
-    ) -> Dict[str, Any]:
-        """Create a new guild from a template"""
-        payload = {"name": config.name}
-        if config.icon:
-            from nodes.core.media_resolver import resolve_media_input
-
-            resolved = await resolve_media_input(config.icon, default_mime="image/png")
-            payload["icon"] = f"data:{resolved.mime_type};base64,{resolved.base64}"
-
-        result = await self._make_request(
-            "POST",
-            f"/guilds/templates/{config.template_code}",
-            auth_header,
-            json_data=payload,
-        )
-
-        return {
-            "action": "create_guild_from_template",
-            "template_code": config.template_code,
-            "guild": result,
         }
 
     async def _get_guild_templates(
