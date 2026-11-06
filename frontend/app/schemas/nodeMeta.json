@@ -1212,6 +1212,9 @@
         "on_user_deleted"
       ]
     },
+    "automation-tavily": {
+      "agentToolProvider": true
+    },
     "automation-telegram": {
       "agentToolProvider": true,
       "triggerOperations": [

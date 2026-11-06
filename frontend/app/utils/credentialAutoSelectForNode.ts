@@ -22,6 +22,7 @@ const AUTO_SELECT_TYPES: ReadonlySet<string> = new Set([
     'automation-porkbun',
     'automation-hetrixtools',
     'automation-telegram',
+    'automation-tavily',
     'automation-google-sheets',
     'automation-google-drive',
     'automation-gmail',
