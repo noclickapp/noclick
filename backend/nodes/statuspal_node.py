@@ -409,22 +409,32 @@ class StatusPalNode(WorkflowNode):
     @classmethod
     def get_config_model(cls): return StatusPalNodeConfig
     @classmethod
-    def parse_config(cls, data):
-        _original_family(data); shaped = dict(data)
-        if data.get("credentials") is not None: shaped["credentials"] = _shape(data["credentials"])
+    def parse_config(cls, config_data):
+        _original_family(config_data); shaped = dict(config_data)
+        if config_data.get("credentials") is not None: shaped["credentials"] = _shape(config_data["credentials"])
         try: StatusPalNodeConfig.model_validate(runtime_config_view(shaped, StatusPalNodeConfig))
         except ValueError: raise ValueError("StatusPal native configuration, page scope or credential is invalid") from None
         return super().parse_config(shaped)
     @classmethod
-    def validate_config(cls, data):
+    def validate_config(cls, config_data):
         try:
-            _original_family(data); shaped = dict(data)
-            if data.get("credentials") is not None: shaped["credentials"] = _shape(data["credentials"])
+            _original_family(config_data); shaped = dict(config_data)
+            if config_data.get("credentials") is not None: shaped["credentials"] = _shape(config_data["credentials"])
             StatusPalNodeConfig.model_validate(runtime_config_view(shaped, StatusPalNodeConfig))
         except (ValueError, TypeError): return ValidationResult(valid=False, errors=["StatusPal native configuration or credential family is invalid"], satisfied_set=None)
         return super().validate_config(shaped)
     @classmethod
-    async def freshen_credential(cls, data, **context): return await _current_data(data, **context)
+    async def freshen_credential(
+        cls,
+        credential_data: Optional[Dict[str, Any]],
+        *,
+        pool=None,
+        user_id: Optional[str] = None,
+        credential_id: Optional[str] = None,
+    ) -> Optional[Dict[str, Any]]:
+        return await _current_data(
+            credential_data, pool=pool, user_id=user_id, credential_id=credential_id,
+        )
     @classmethod
     async def validate_credential_access(cls, data):
         try: _shape(data)

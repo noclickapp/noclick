@@ -169,7 +169,7 @@ async def test_current_raw_canonical_row_stored_picker_actor_binding_and_no_forg
     row = CredentialValidationRow(fn.FAMILIES[0], "owner", 2, STAMP, 1, None, "sealed")
     authority = AsyncMock(return_value=row); monkeypatch.setattr(CredentialsRepo, "fetch_validation_authority", authority)
     monkeypatch.setattr(encryption, "get_encryption", lambda: SimpleNamespace(decrypt_credential=lambda _: {**CREDS, "credential_type": "http_bearer", "owner_id": "forged"}))
-    fresh = await fn.StatusPalNode.freshen_credential(CREDS, pool=pool, user_id="actor", credential_id="saved", organization_id="org", workflow_id="wf")
+    fresh = await fn.StatusPalNode.freshen_credential(CREDS, pool=pool, user_id="actor", credential_id="saved")
     assert fresh["credential_type"] == fn.FAMILIES[0] and fresh["owner_id"] == "owner" and fresh["token_version"] == 2 and fresh["approval_revision"] == 1
     context = fn._context(fresh, {"_user_id": "actor", "_approval_pool": "forged", "_credential_id": "forged"})
     assert context["_approval_pool"] is pool and context["_credential_id"] == "saved"
@@ -186,7 +186,7 @@ async def test_current_denial_before_decrypt_client(monkeypatch, wire, state):
     row = CredentialValidationRow(fn.FAMILIES[0], "owner", 2, STAMP, 1, None, "sealed")
     row = None if state == "missing" else replace(row, revoked_at=STAMP) if state == "revoked" else replace(row, credential_type="http_bearer")
     monkeypatch.setattr(CredentialsRepo, "fetch_validation_authority", AsyncMock(return_value=row)); monkeypatch.setattr(encryption, "get_encryption", lambda: (_ for _ in ()).throw(AssertionError("No decrypt")))
-    with pytest.raises(ValueError): await fn.StatusPalNode.freshen_credential(CREDS, pool=object(), user_id="actor", credential_id="saved", organization_id="org")
+    with pytest.raises(ValueError): await fn._current_data(CREDS, pool=object(), user_id="actor", credential_id="saved", organization_id="org")
     assert wire.calls == []
 
 @pytest.mark.asyncio
@@ -237,9 +237,9 @@ async def test_actor_first_owner_fallback_requires_positive_workflow_grant(monke
     authority = AsyncMock(side_effect=[None, row] if grant else [None]); monkeypatch.setattr(CredentialsRepo, "fetch_validation_authority", authority); monkeypatch.setattr(credentials, "get_workflow_owner_id", AsyncMock(return_value="owner")); allowed = AsyncMock(return_value=grant); monkeypatch.setattr(credentials, "is_credential_authorized_for_workflow", allowed)
     monkeypatch.setattr(encryption, "get_encryption", lambda: SimpleNamespace(decrypt_credential=lambda _: CREDS) if grant else (_ for _ in ()).throw(AssertionError("No decrypt")))
     if grant:
-        fresh = await fn.StatusPalNode.freshen_credential(CREDS, pool=object(), user_id="actor", credential_id="saved", organization_id="org", workflow_id="wf"); assert fresh["owner_id"] == "owner" and fresh["_statuspal_authority"].user_id == "actor"
+        fresh = await fn._current_data(CREDS, pool=object(), user_id="actor", credential_id="saved", organization_id="org", workflow_id="wf"); assert fresh["owner_id"] == "owner" and fresh["_statuspal_authority"].user_id == "actor"
     else:
-        with pytest.raises(ValueError, match="unavailable"): await fn.StatusPalNode.freshen_credential(CREDS, pool=object(), user_id="actor", credential_id="saved", organization_id="org", workflow_id="wf")
+        with pytest.raises(ValueError, match="unavailable"): await fn._current_data(CREDS, pool=object(), user_id="actor", credential_id="saved", organization_id="org", workflow_id="wf")
     assert [call.args[1] for call in authority.call_args_list] == (["actor", "owner"] if grant else ["actor"]) and allowed.call_args.args[1:] == ("wf", "saved") and wire.calls == []
 
 @pytest.mark.asyncio
