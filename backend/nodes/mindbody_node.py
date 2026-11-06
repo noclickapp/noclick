@@ -408,17 +408,17 @@ class MindbodyNode(WorkflowNode):
         return MindbodyFullConfig
 
     @classmethod
-    def validate_config(cls, data):
+    def validate_config(cls, config_data):
         try:
-            _guard(data)
+            _guard(config_data)
         except ValueError as exc:
             return {"valid": False, "errors": [str(exc)], "satisfied_set": None}
-        return super().validate_config(_native_config_view(data))
+        return super().validate_config(_native_config_view(config_data))
 
     @classmethod
-    def parse_config(cls, data):
-        _guard(data)
-        return super().parse_config(_native_config_view(data))
+    def parse_config(cls, config_data):
+        _guard(config_data)
+        return super().parse_config(_native_config_view(config_data))
 
     @classmethod
     async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
