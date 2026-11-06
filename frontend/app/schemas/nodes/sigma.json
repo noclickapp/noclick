@@ -393,14 +393,22 @@
           "type": "string"
         },
         "connection_type": {
-          "description": "Warehouse type (e.g. snowflake, bigquery, redshift, postgres)",
+          "description": "Warehouse type (e.g. snowflake, bigQuery, redshift, postgres)",
           "title": "Type",
           "type": "string"
+        },
+        "details": {
+          "additionalProperties": true,
+          "description": "Warehouse connection settings, such as host and database for PostgreSQL. The selected Type is sent as details.type.",
+          "title": "Connection Details",
+          "type": "object",
+          "ui:widget": "json"
         }
       },
       "required": [
         "name",
-        "connection_type"
+        "connection_type",
+        "details"
       ],
       "title": "SigmaCreateConnectionConfig",
       "type": "object"

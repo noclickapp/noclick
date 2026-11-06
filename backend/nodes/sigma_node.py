@@ -608,7 +608,13 @@ class SigmaCreateConnectionConfig(BaseModel):
     connection_type: str = Field(
         ...,
         title="Type",
-        description="Warehouse type (e.g. snowflake, bigquery, redshift, postgres)",
+        description="Warehouse type (e.g. snowflake, bigQuery, redshift, postgres)",
+    )
+    details: Dict[str, Any] = Field(
+        ...,
+        title="Connection Details",
+        description="Warehouse connection settings, such as host and database for PostgreSQL. The selected Type is sent as details.type.",
+        json_schema_extra={"ui:widget": "json"},
     )
 
 
@@ -1635,12 +1641,13 @@ class SigmaNode(WorkflowNode):
     async def _create_connection(self, c: SigmaCreateConnectionConfig, base_url, token):
         return await _sigma_request(
             base_url, token, "POST", "/connections",
-            json_body={"name": c.name, "type": c.connection_type}, action_name="create_connection"
+            json_body={"name": c.name, "details": {**c.details, "type": c.connection_type}},
+            action_name="create_connection"
         )
 
     async def _test_connection(self, c: SigmaTestConnectionConfig, base_url, token):
         return await _sigma_request(
-            base_url, token, "POST", f"/connections/{c.connection_id}/test",
+            base_url, token, "GET", f"/connections/{c.connection_id}/test",
             action_name="test_connection"
         )
 
@@ -1678,9 +1685,10 @@ class SigmaNode(WorkflowNode):
         return await _sigma_request(
             base_url, token, "POST", f"/workspaces/{c.workspace_id}/grants",
             json_body={
-                "granteeId": c.grantee_id,
-                "granteeType": c.grantee_type,
-                "permission": c.permission,
+                "grants": [{
+                    "grantee": {f"{c.grantee_type}Id": c.grantee_id},
+                    "permission": c.permission,
+                }],
             },
             action_name="add_workspace_grant",
         )

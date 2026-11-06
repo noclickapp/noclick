@@ -15,6 +15,9 @@ The token exchange (`_sigma_get_token`) is patched so every test runs against
 a single mocked Bearer token.
 """
 
+import json
+
+import httpx
 import pytest
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
@@ -446,7 +449,10 @@ class TestSigmaConnectionsMock:
     async def test_create_connection(self, credentials):
         node = create_sigma_node(
             SigmaNodeConfig(
-                config=SigmaCreateConnectionConfig(name="Snowflake", connection_type="snowflake"),
+                config=SigmaCreateConnectionConfig(
+                    name="string", connection_type="postgres",
+                    details={"host": "string", "database": "string"},
+                ),
                 credentials=credentials,
             )
         )
@@ -462,7 +468,7 @@ class TestSigmaConnectionsMock:
                 config=SigmaTestConnectionConfig(connection_id="c_1"), credentials=credentials
             )
         )
-        result = await _run(node, 200, {"read": True, "write": True})
+        result = await _run(node, 200, {"read": "SUCCESS", "write": "DISABLED"})
         assert result["status"] == "success"
         assert result["action"] == "test_connection"
 
@@ -502,7 +508,7 @@ class TestSigmaWorkspacesMock:
                 credentials=credentials,
             )
         )
-        result = await _run(node, 200, {"granted": True})
+        result = await _run(node, 200, {})
         assert result["status"] == "success"
         assert result["action"] == "add_workspace_grant"
 
@@ -809,3 +815,67 @@ class TestSigmaTriggerExecuteMock:
         assert result["new_count"] == 0
         assert result["items"] == []
         assert node.trigger_produced_no_event(result) is True
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "config, method, path, body, response_body",
+    [
+        (
+            SigmaCreateConnectionConfig(
+                name="string", connection_type="postgres",
+                details={"host": "string", "database": "string"},
+            ),
+            "POST", "/v2/connections",
+            {"name": "string", "details": {
+                "type": "postgres", "host": "string", "database": "string",
+            }},
+            {"connectionId": "string"},
+        ),
+        (
+            SigmaTestConnectionConfig(connection_id="connectionId"),
+            "GET", "/v2/connections/connectionId/test", None,
+            {"read": "SUCCESS", "write": "DISABLED"},
+        ),
+        *[
+            (
+                SigmaAddWorkspaceGrantConfig(
+                    workspace_id="workspaceId", grantee_id="string",
+                    grantee_type=kind, permission="view",
+                ),
+                "POST", "/v2/workspaces/workspaceId/grants",
+                {"grants": [{"grantee": {f"{kind}Id": "string"}, "permission": "view"}]},
+                {},
+            )
+            for kind in ("member", "team")
+        ],
+    ],
+)
+async def test_sigma_connection_and_grant_requests(
+    credentials, config, method, path, body, response_body
+):
+    """Exercise the real serializer and HTTP path against Sigma's wire contract."""
+    requests = []
+
+    def respond(request):
+        requests.append(request)
+        return httpx.Response(201 if config.operation == "create_connection" else 200, json=response_body)
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(respond))
+    node = create_sigma_node(SigmaNodeConfig(config=config, credentials=credentials))
+    with patch("nodes.sigma_node._sigma_get_token", return_value="mock_token"), patch(
+        "nodes.sigma_node.httpx.AsyncClient", return_value=client
+    ):
+        result = await node.execute({})
+
+    assert result["status"] == "success"
+    assert result["data"] == response_body
+    assert len(requests) == 1
+    request = requests[0]
+    assert request.method == method
+    assert request.url.path == path
+    assert request.headers["Authorization"] == "Bearer mock_token"
+    if body is None:
+        assert request.content == b""
+    else:
+        assert json.loads(request.content) == body
