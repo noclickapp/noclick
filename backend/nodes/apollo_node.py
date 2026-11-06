@@ -1076,11 +1076,10 @@ class ApolloUpdateContactSequenceStatusConfig(BaseModel):
         ..., title="Sequence ID", description="ID of the sequence",
         json_schema_extra={"x-dynamic-options": {"field_name": "sequence_id", "placeholder": "Select sequence...", "searchable": True, "allow_custom": True}},
     )
-    status: str = Field(
+    status: Literal["finished", "stop", "remove"] = Field(
         ...,
         title="Status",
-        description="New status for the contact",
-        json_schema_extra={"enum": ["active", "paused", "finished", "bounced"]},
+        description="Mark the contact finished, stop progress, or remove it from the sequence",
     )
 
 
@@ -1463,16 +1462,13 @@ class ApolloCreateCustomFieldConfig(BaseModel):
         description="Type of entity this field applies to",
         json_schema_extra={"enum": ["contact", "account", "opportunity"]},
     )
-    widget_type: Optional[str] = Field(
+    widget_type: Optional[Literal["text", "textarea", "number", "date", "checkbox"]] = Field(
         "text",
         title="Widget Type",
         description="Input widget type for the field",
         json_schema_extra={
-            "enum": ["text", "textarea", "number", "date", "dropdown", "checkbox"]
+            "enum": ["text", "textarea", "number", "date", "checkbox"]
         },
-    )
-    options: Optional[List[str]] = Field(
-        None, title="Options", description="Options for dropdown fields"
     )
 
 
@@ -1968,7 +1964,7 @@ class ApolloNode(WorkflowNode):
             method="POST",
             endpoint="/people/match",
             credentials=credentials,
-            json_body=body,
+            params=body,
             action_name="enrich_single_person",
         )
 
@@ -1977,17 +1973,19 @@ class ApolloNode(WorkflowNode):
     ) -> Dict[str, Any]:
         """Enrich data for multiple people."""
         body: Dict[str, Any] = {"details": config.details}
+        params: Dict[str, Any] = {}
 
         if config.reveal_personal_emails:
-            body["reveal_personal_emails"] = config.reveal_personal_emails
+            params["reveal_personal_emails"] = config.reveal_personal_emails
         if config.reveal_phone_number:
-            body["reveal_phone_number"] = config.reveal_phone_number
+            params["reveal_phone_number"] = config.reveal_phone_number
 
         return await self._make_request(
             method="POST",
             endpoint="/people/bulk_match",
             credentials=credentials,
             json_body=body,
+            params=params,
             action_name="enrich_multiple_people",
         )
 
@@ -2013,7 +2011,7 @@ class ApolloNode(WorkflowNode):
             method="POST",
             endpoint="/organizations/bulk_enrich",
             credentials=credentials,
-            json_body={"domains": config.domains},
+            params={"domains[]": config.domains},
             action_name="enrich_multiple_organizations",
         )
 
@@ -2033,23 +2031,23 @@ class ApolloNode(WorkflowNode):
         if config.q_keywords:
             body["q_keywords"] = config.q_keywords
         if config.person_titles:
-            body["person_titles"] = config.person_titles
+            body["person_titles[]"] = config.person_titles
         if config.person_seniorities:
-            body["person_seniorities"] = config.person_seniorities
+            body["person_seniorities[]"] = config.person_seniorities
         if config.person_locations:
-            body["person_locations"] = config.person_locations
+            body["person_locations[]"] = config.person_locations
         if config.organization_domains:
-            body["organization_domains"] = config.organization_domains
+            body["q_organization_domains_list[]"] = config.organization_domains
         if config.organization_num_employees_ranges:
             body[
-                "organization_num_employees_ranges"
+                "organization_num_employees_ranges[]"
             ] = config.organization_num_employees_ranges
 
         return await self._make_request(
             method="POST",
             endpoint="/mixed_people/api_search",
             credentials=credentials,
-            json_body=body,
+            params=body,
             action_name="search_people_in_apollo",
         )
 
@@ -2063,19 +2061,19 @@ class ApolloNode(WorkflowNode):
         }
 
         if config.q_organization_keyword_tags:
-            body["q_organization_keyword_tags"] = config.q_organization_keyword_tags
+            body["q_organization_keyword_tags[]"] = config.q_organization_keyword_tags
         if config.organization_locations:
-            body["organization_locations"] = config.organization_locations
+            body["organization_locations[]"] = config.organization_locations
         if config.organization_num_employees_ranges:
             body[
-                "organization_num_employees_ranges"
+                "organization_num_employees_ranges[]"
             ] = config.organization_num_employees_ranges
 
         return await self._make_request(
             method="POST",
             endpoint="/mixed_companies/search",
             credentials=credentials,
-            json_body=body,
+            params=body,
             action_name="search_organizations_in_apollo",
         )
 
@@ -2303,11 +2301,11 @@ class ApolloNode(WorkflowNode):
         """Create a new deal."""
         body: Dict[str, Any] = {
             "name": config.name,
-            "deal_stage_id": config.deal_stage_id,
+            "opportunity_stage_id": config.deal_stage_id,
         }
 
         if config.amount is not None:
-            body["amount"] = config.amount
+            body["amount"] = str(config.amount)
         if config.closed_date:
             body["closed_date"] = config.closed_date
         if config.account_id:
@@ -2319,7 +2317,7 @@ class ApolloNode(WorkflowNode):
 
         return await self._make_request(
             method="POST",
-            endpoint="/deals",
+            endpoint="/opportunities",
             credentials=credentials,
             json_body=body,
             action_name="create_deal",
@@ -2331,7 +2329,7 @@ class ApolloNode(WorkflowNode):
         """List all deals."""
         return await self._make_request(
             method="GET",
-            endpoint="/deals",
+            endpoint="/opportunities/search",
             credentials=credentials,
             params={"page": config.page or 1, "per_page": config.per_page or 25},
             action_name="list_deals",
@@ -2343,7 +2341,7 @@ class ApolloNode(WorkflowNode):
         """View a single deal."""
         return await self._make_request(
             method="GET",
-            endpoint=f"/deals/{config.deal_id}",
+            endpoint=f"/opportunities/{config.deal_id}",
             credentials=credentials,
             action_name="get_deal_details",
         )
@@ -2357,9 +2355,9 @@ class ApolloNode(WorkflowNode):
         if config.name is not None:
             body["name"] = config.name
         if config.deal_stage_id is not None:
-            body["deal_stage_id"] = config.deal_stage_id
+            body["opportunity_stage_id"] = config.deal_stage_id
         if config.amount is not None:
-            body["amount"] = config.amount
+            body["amount"] = str(config.amount)
         if config.closed_date is not None:
             body["closed_date"] = config.closed_date
         if config.owner_id is not None:
@@ -2367,7 +2365,7 @@ class ApolloNode(WorkflowNode):
 
         return await self._make_request(
             method="PATCH",
-            endpoint=f"/deals/{config.deal_id}",
+            endpoint=f"/opportunities/{config.deal_id}",
             credentials=credentials,
             json_body=body,
             action_name="update_deal_details",
@@ -2401,7 +2399,7 @@ class ApolloNode(WorkflowNode):
             method="POST",
             endpoint="/emailer_campaigns/search",
             credentials=credentials,
-            json_body=body,
+            params=body,
             action_name="search_outreach_sequences",
         )
 
@@ -2409,7 +2407,10 @@ class ApolloNode(WorkflowNode):
         self, config: ApolloAddContactsToSequenceConfig, credentials: ApolloCredential
     ) -> Dict[str, Any]:
         """Add contacts to a sequence."""
-        body: Dict[str, Any] = {"contact_ids": config.contact_ids}
+        body: Dict[str, Any] = {
+            "contact_ids[]": config.contact_ids,
+            "emailer_campaign_id": config.sequence_id,
+        }
 
         if config.emailer_campaign_id:
             body["emailer_campaign_id"] = config.emailer_campaign_id
@@ -2422,7 +2423,7 @@ class ApolloNode(WorkflowNode):
             method="POST",
             endpoint=f"/emailer_campaigns/{config.sequence_id}/add_contact_ids",
             credentials=credentials,
-            json_body=body,
+            params=body,
             action_name="add_contacts_to_outreach_sequence",
         )
 
@@ -2434,12 +2435,12 @@ class ApolloNode(WorkflowNode):
         """Update a contact's status in a sequence."""
         return await self._make_request(
             method="POST",
-            endpoint="/emailer_campaigns/update_contact_status",
+            endpoint="/emailer_campaigns/remove_or_stop_contact_ids",
             credentials=credentials,
-            json_body={
-                "contact_id": config.contact_id,
-                "emailer_campaign_id": config.sequence_id,
-                "status": config.status,
+            params={
+                "contact_ids[]": [config.contact_id],
+                "emailer_campaign_ids[]": [config.sequence_id],
+                "mode": "mark_as_finished" if config.status == "finished" else config.status,
             },
             action_name="update_contact_sequence_status",
         )
@@ -2452,7 +2453,7 @@ class ApolloNode(WorkflowNode):
         self, config: ApolloCreateTaskConfig, credentials: ApolloCredential
     ) -> Dict[str, Any]:
         """Create a new task."""
-        body: Dict[str, Any] = {}
+        body: Dict[str, Any] = {"status": "scheduled"}
 
         if config.contact_id:
             body["contact_id"] = config.contact_id
@@ -2463,11 +2464,14 @@ class ApolloNode(WorkflowNode):
         if config.due_at:
             body["due_at"] = config.due_at
         if config.priority:
-            body["priority"] = config.priority
+            body["priority"] = "medium" if config.priority == "normal" else config.priority
         if config.note:
             body["note"] = config.note
         if config.type:
-            body["type"] = config.type
+            body["type"] = {
+                "email": "outreach_manual_email",
+                "linkedin_interact": "linkedin_step_interact_post",
+            }.get(config.type, config.type)
 
         return await self._make_request(
             method="POST",
@@ -2533,7 +2537,7 @@ class ApolloNode(WorkflowNode):
         """Get API usage statistics and rate limits."""
         return await self._make_request(
             method="POST",
-            endpoint="/auth/health",
+            endpoint="/usage_stats/api_usage_stats",
             credentials=credentials,
             json_body={},
             action_name="get_api_usage_and_limits",
@@ -2564,15 +2568,15 @@ class ApolloNode(WorkflowNode):
         }
 
         if config.organization_ids:
-            body["organization_ids"] = config.organization_ids
+            body["organization_ids[]"] = config.organization_ids
         if config.q_keywords:
             body["q_keywords"] = config.q_keywords
 
         return await self._make_request(
             method="POST",
-            endpoint="/organizations/search_news_articles",
+            endpoint="/news_articles/search",
             credentials=credentials,
-            json_body=body,
+            params=body,
             action_name="search_organization_news_articles",
         )
 
@@ -2586,7 +2590,7 @@ class ApolloNode(WorkflowNode):
         """Create multiple accounts at once."""
         return await self._make_request(
             method="POST",
-            endpoint="/accounts/bulk",
+            endpoint="/accounts/bulk_create",
             credentials=credentials,
             json_body={"accounts": config.accounts},
             action_name="create_multiple_accounts",
@@ -2600,7 +2604,7 @@ class ApolloNode(WorkflowNode):
             method="POST",
             endpoint="/accounts/bulk_update",
             credentials=credentials,
-            json_body={"accounts": config.accounts},
+            json_body={"account_attributes": config.accounts},
             action_name="update_multiple_accounts",
         )
 
@@ -2610,7 +2614,7 @@ class ApolloNode(WorkflowNode):
         """Update account stage for multiple accounts."""
         return await self._make_request(
             method="POST",
-            endpoint="/accounts/bulk_update_stages",
+            endpoint="/accounts/bulk_update",
             credentials=credentials,
             json_body={
                 "account_ids": config.account_ids,
@@ -2625,9 +2629,9 @@ class ApolloNode(WorkflowNode):
         """Update owner for multiple accounts."""
         return await self._make_request(
             method="POST",
-            endpoint="/accounts/bulk_update_owners",
+            endpoint="/accounts/update_owners",
             credentials=credentials,
-            json_body={"account_ids": config.account_ids, "owner_id": config.owner_id},
+            params={"account_ids[]": config.account_ids, "owner_id": config.owner_id},
             action_name="update_account_ownership",
         )
 
@@ -2645,7 +2649,7 @@ class ApolloNode(WorkflowNode):
 
         return await self._make_request(
             method="POST",
-            endpoint="/contacts/bulk",
+            endpoint="/contacts/bulk_create",
             credentials=credentials,
             json_body=body,
             action_name="create_multiple_contacts",
@@ -2659,7 +2663,7 @@ class ApolloNode(WorkflowNode):
             method="POST",
             endpoint="/contacts/bulk_update",
             credentials=credentials,
-            json_body={"contacts": config.contacts},
+            json_body={"contact_attributes": config.contacts},
             action_name="update_multiple_contacts",
         )
 
@@ -2669,10 +2673,10 @@ class ApolloNode(WorkflowNode):
         """Update contact stage for multiple contacts."""
         return await self._make_request(
             method="POST",
-            endpoint="/contacts/bulk_update_stages",
+            endpoint="/contacts/update_stages",
             credentials=credentials,
-            json_body={
-                "contact_ids": config.contact_ids,
+            params={
+                "contact_ids[]": config.contact_ids,
                 "contact_stage_id": config.contact_stage_id,
             },
             action_name="update_contact_stage_bulk",
@@ -2684,9 +2688,9 @@ class ApolloNode(WorkflowNode):
         """Update owner for multiple contacts."""
         return await self._make_request(
             method="POST",
-            endpoint="/contacts/bulk_update_owners",
+            endpoint="/contacts/update_owners",
             credentials=credentials,
-            json_body={"contact_ids": config.contact_ids, "owner_id": config.owner_id},
+            params={"contact_ids[]": config.contact_ids, "owner_id": config.owner_id},
             action_name="update_contact_ownership",
         )
 
@@ -2842,16 +2846,17 @@ class ApolloNode(WorkflowNode):
         self, config: ApolloCreateCustomFieldConfig, credentials: ApolloCredential
     ) -> Dict[str, Any]:
         """Create a custom field."""
-        body: Dict[str, Any] = {"name": config.name, "field_type": config.field_type}
-
-        if config.widget_type:
-            body["widget_type"] = config.widget_type
-        if config.options:
-            body["options"] = config.options
+        body: Dict[str, Any] = {
+            "label": config.name,
+            "modality": config.field_type,
+            "type": {"text": "string", "checkbox": "boolean"}.get(
+                config.widget_type or "text", config.widget_type or "text"
+            ),
+        }
 
         return await self._make_request(
             method="POST",
-            endpoint="/typed_custom_fields",
+            endpoint="/fields",
             credentials=credentials,
             json_body=body,
             action_name="create_custom_field",
