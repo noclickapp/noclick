@@ -9,6 +9,7 @@
 // Casings plain Title Case gets wrong — single-token acronyms and brands
 // (used on the snake_case path, where tokens arrive whole).
 const WORD_CASING: Record<string, string> = {
+  invoiceninja: 'Invoice Ninja',
   hetrixtools: 'HetrixTools',
   predictleads: 'PredictLeads',
   qr: 'QR', api: 'API', oauth: 'OAuth', pat: 'PAT', id: 'ID', url: 'URL',
