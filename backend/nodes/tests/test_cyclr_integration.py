@@ -16,7 +16,7 @@ from nodes import cyclr_node as node
 from nodes.core import credential_connect, connection_evidence, run_op
 from nodes.core.registry import NODE_REGISTRY, NodeFactory
 from repositories.credential_approvals import CredentialApprovalRepo
-from utils import encryption, ssrf
+from utils import credentials, encryption, ssrf
 from wss.handlers import workflow_handler
 
 CREDENTIAL = {"credential_type": node.TYPES[0], "access_token": "fixture-console-token", "region": "us", "account_id": "fixture-account"}
@@ -52,6 +52,7 @@ def seams(monkeypatch):
         return state["row"]
     pool = Pool(SimpleNamespace(fetchrow=AsyncMock(side_effect=read)))
     monkeypatch.setattr(encryption, "get_encryption", lambda: SimpleNamespace(decrypt_credential=lambda _: deepcopy(state["blob"])))
+    monkeypatch.setattr(credentials, "get_encryption", encryption.get_encryption)
     monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(side_effect=lambda *_: state["org"]))
     admission = AsyncMock(return_value=None)
     monkeypatch.setattr(CredentialApprovalRepo, "admit", admission)

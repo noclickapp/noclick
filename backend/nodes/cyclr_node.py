@@ -534,8 +534,10 @@ class CyclrNode(WorkflowNode):
         return {"options": filter_options_by_search(options, normalize_search(search)), "next_page_token": data["next_page_token"]}
 
     async def execute(self, inputs: dict[str, Any]):
-        self._require_raw(self.node_data or {})
         if not isinstance(self.config, CyclrNodeConfig) or self.config.credentials is None:
             raise ValueError("Connect a typed Cyclr console credential")
+        # Direct callers can supply the validated model without duplicating it
+        # in node_data; saved raw configurations still receive the same guards.
+        self._require_raw(self.node_data or self.config.model_dump())
         credential = await self.freshen_credential(self.config.credentials.model_dump(), pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id, credential_id=(self.node_data or {}).get("credential_id"), workflow_id=self.workflow_id, organization_id=self.organization_id)
         return {"status": "success", "action": self.config.config.operation, **await request_operation(credential, self.config.config)}

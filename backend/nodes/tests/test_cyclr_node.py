@@ -66,6 +66,14 @@ async def test_names_opt_in_keeps_other_private_fields_excluded(transport):
     assert "PRIVATE DESCRIPTION" not in str(result) and "PRIVATE AUTH" not in str(result)
 
 
+async def test_execute_prevalidated_config_without_duplicate_raw_data(transport):
+    config = node.CyclrNodeConfig.model_validate({"config": {"operation": "get_account"}, "credentials": CREDENTIAL})
+    instance = node.CyclrNode(node_id="cyclr", node_type="automation-cyclr", node_data={}, config=config)
+    result = await instance.execute({})
+    assert result["status"] == "success" and result["data"]["id"] == CREDENTIAL["account_id"]
+    assert len(transport[0]) == 1
+
+
 @pytest.mark.parametrize("kind,path,change,config", [
     ("account", "/v1.0/accounts/fixture-account", "other-account", node.ListCycles()),
     ("cycle", "/v1.0/Cycles/" + CYCLE_ID, OTHER_ID, node.ListCycleSteps(cycle_id=CYCLE_ID)),
