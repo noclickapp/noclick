@@ -11,8 +11,9 @@ from unittest.mock import AsyncMock, MagicMock
 
 import httpx
 import pytest
-from pydantic import ValidationError
 from nodes import xata_node as ad
+from nodes.core.base import ConfigValidationError
+from nodes.core.connection_evidence import EvidenceSample
 from nodes.core.registry import NODE_REGISTRY, NodeFactory
 from tests.test_oauth_refresh_authority import _Storage as AuthorityStorage, CID, USER, OWNER, ORG, WF
 from tests.test_post_connect_validation_context import _Storage as AdmissionStorage
@@ -178,7 +179,7 @@ def test_actual_factory_and_schema_have_eight_closed_read_operations():
     assert defs["XataGetBackupConfig"]["properties"]["project_id"]["x-dynamic-options"]["depends_on"] == "organization_id"
     operations = {v["properties"]["operation"]["const"] for v in defs.values() if "operation" in v.get("properties", {})}
     assert operations == {"check_connection", "list_organizations", "get_organization", "list_projects", "get_project", "list_branches", "list_backups", "get_backup"}
-    with pytest.raises(ValidationError):
+    with pytest.raises(ConfigValidationError, match="get_branch.*not a valid option"):
         make_node("get_branch")
     assert "branch" not in ad.ROUTES
 
@@ -311,7 +312,7 @@ async def test_actual_manual_connect_reports_catalog_reachability_without_identi
     http.responses = [catalog("organizations", organization())]
     result = await credential_connect.validate_for_connect(credential_type="xata_issued_oauth", credential_data=credential(), user_id=USER)
     assert result.ok and result.node_type == NODE and result.evidence.reachable is True
-    assert result.evidence.proves == "reachability" and result.evidence.samples == [OID] and result.evidence.account_label is None
+    assert result.evidence.proves == "reachability" and result.evidence.samples == [EvidenceSample(label=OID)] and result.evidence.account_label is None
     assert "private-sentinel" not in json.dumps(asdict(result.evidence))
 
 
@@ -323,7 +324,7 @@ async def test_registered_socket_uses_current_token_trusted_org_and_native_probe
     sockets.saved.http.responses = [catalog("organizations", organization())]
     out = await socket_call(sockets, "workflow:node:load_options", field_name="organization_id",
         context={"access_token": "forged", "_user_id": OWNER, "workflow_id": WF})
-    assert out["success"] is True and out["options"] == [{"value": OID, "label": OID}]
+    assert out["success"] is True and out["options"] == [{"value": OID, "label": OID, "metadata": None}]
     assert all(req.headers["Authorization"] == "Bearer current-token" for req in sockets.saved.http.calls)
     assert all(args[2] == ORG for sql, args in sockets.saved.storage.calls if "SELECT c.credential" in sql)
 
