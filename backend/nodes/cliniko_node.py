@@ -525,20 +525,26 @@ class ClinikoNode(WorkflowNode):
             raise ValueError("Use typed Cliniko fields; arbitrary API, medical or billing controls are unsupported")
 
     @classmethod
-    def parse_config(cls, raw):
-        cls._require_raw(raw)
-        return super().parse_config(raw)
+    def parse_config(cls, config_data):
+        cls._require_raw(config_data)
+        return super().parse_config(config_data)
 
     @classmethod
-    def validate_config(cls, raw):
+    def validate_config(cls, config_data):
         try:
-            cls._require_raw(raw)
+            cls._require_raw(config_data)
         except ValueError:
             return {"valid": False, "errors": ["Use native fields and a typed Cliniko user API key"], "satisfied_set": None}
-        return super().validate_config(raw)
+        return super().validate_config(config_data)
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=CURRENT_ORGANIZATION):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        return await cls._resolve_current_credential(
+            credential_data, pool=pool, user_id=user_id, credential_id=credential_id
+        )
+
+    @classmethod
+    async def _resolve_current_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=CURRENT_ORGANIZATION):
         if credential_id:
             if not user_id:
                 raise ValueError("Stored Cliniko credential requires an authorized caller")
@@ -608,5 +614,5 @@ class ClinikoNode(WorkflowNode):
     async def execute(self, inputs: dict[str, Any]):
         if not isinstance(self.config, ClinikoNodeConfig) or self.config.credentials is None:
             raise ValueError("Connect a typed Cliniko user API key")
-        credential = await self.freshen_credential(self.config.credentials.model_dump(), pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id, credential_id=(self.node_data or {}).get("credential_id"), workflow_id=self.workflow_id, organization_id=self.organization_id)
+        credential = await self._resolve_current_credential(self.config.credentials.model_dump(), pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id, credential_id=(self.node_data or {}).get("credential_id"), workflow_id=self.workflow_id, organization_id=self.organization_id)
         return {"status": "success", "action": self.config.config.operation, **await request_operation(credential, self.config.config)}

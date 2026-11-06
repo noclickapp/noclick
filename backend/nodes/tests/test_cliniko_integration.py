@@ -106,7 +106,7 @@ async def test_manual_shape_refuses_placeholder_url_or_header_before_io(seams, t
 async def test_current_wrong_family_refuses_stale_native_blob(seams, family):
     seams.row["credential_type"] = family
     with pytest.raises(ValueError, match="Current Cliniko authority"):
-        await node.ClinikoNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org")
+        await node.ClinikoNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool)
     assert seams.calls == []
 
 
@@ -129,19 +129,19 @@ async def test_saved_authority_loss_or_change_refuses_before_http(seams, conditi
             return seams.row
         seams.pool.conn.fetchrow.side_effect = read
     with pytest.raises(ValueError):
-        await node.ClinikoNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org")
+        await node.ClinikoNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool)
     assert seams.calls == []
 
 
 async def test_authoritative_saved_family_overrides_only_a_stale_blob_tag(seams):
     seams.state["blob"]["credential_type"] = "stale-blob-tag"
-    value = await node.ClinikoNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org")
+    value = await node.ClinikoNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool)
     assert value == CREDENTIAL and seams.calls == []
 
 
 async def test_current_saved_issued_key_and_shard_override_stale_caller_scope(seams):
     seams.state["blob"] = {**CREDENTIAL, "api_key": "fixture-rotated-key-us1", "shard": "us1"}
-    value = await node.ClinikoNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org")
+    value = await node.ClinikoNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool)
     assert value["api_key"] == "fixture-rotated-key-us1" and value["shard"] == "us1"
     assert node.base_url(node.credential_value(value)) == "https://api.us1.cliniko.com/v1"
     assert seams.calls == []
@@ -153,6 +153,17 @@ async def test_actual_lookup_preserves_admission_fingerprint_and_current_native_
     args = seams.admission.call_args.kwargs
     assert args["operation"] == "__lookup__" and args["arguments"] == {"field_name": "business_id", "context": None, "page_token": None, "search": None}
     assert len(seams.calls) == 1
+
+
+async def test_freshen_requires_current_caller_access_without_workflow_context(seams):
+    seams.pool.conn.fetchrow.return_value = None
+    seams.pool.conn.fetchrow.side_effect = None
+    with pytest.raises(ValueError, match="Current Cliniko authority"):
+        await node.ClinikoNode.freshen_credential(
+            CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool
+        )
+    workflow_handler.get_user_org_context.assert_awaited_once_with(seams.pool.conn, "fixture-user")
+    assert seams.calls == []
 
 
 @pytest.mark.parametrize("authorized", [False, True])
@@ -172,12 +183,12 @@ async def test_workflow_owner_fallback_keeps_real_acl_and_organization(seams, au
         return None
     seams.pool.conn.fetchrow.side_effect = read
     if authorized:
-        value = await node.ClinikoNode.freshen_credential({**CREDENTIAL, "api_key": "stale-fixture-key-uk2"}, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org", workflow_id=workflow)
+        value = await node.ClinikoNode._resolve_current_credential({**CREDENTIAL, "api_key": "stale-fixture-key-uk2"}, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org", workflow_id=workflow)
         assert value == CREDENTIAL
         assert len(owner_reads) == 3 and all(args[2] == "fixture-org" for args in owner_reads)
     else:
         with pytest.raises(ValueError, match="Current Cliniko authority"):
-            await node.ClinikoNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org", workflow_id=workflow)
+            await node.ClinikoNode._resolve_current_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org", workflow_id=workflow)
         assert owner_reads == []
     assert seams.calls == []
 
