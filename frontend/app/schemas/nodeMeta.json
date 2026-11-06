@@ -1075,6 +1075,12 @@
         "on_vendorcredit_void"
       ]
     },
+    "automation-quo": {
+      "agentToolProvider": true
+    },
+    "automation-ramp": {
+      "agentToolProvider": true
+    },
     "automation-ramp": {
       "agentToolProvider": true
     },

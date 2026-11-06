@@ -120,6 +120,13 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
 
     // SumUp
     'SumUpAPIKeyCredential': 'sumup_api_key',
+    'OktaAPITokenCredential': 'okta_api_token',
+    'RampAccessTokenCredential': 'ramp_access_token',
+
+    // RingCentral
+    'RingCentralAccessTokenCredential': 'ringcentral_access_token',
+    'StatuspageAPIKeyCredential': 'statuspage_api_key',
+    'Statuspage API Key': 'statuspage_api_key',
 
     // Apollo
     'ApolloAPIKeyCredential': 'apollo_api_key',

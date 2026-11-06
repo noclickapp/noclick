@@ -10,10 +10,10 @@
   "generatedMonograms": [],
   "reviewedCustomAssets": [
     {
-      "path": "frontend/public/icons/ringcentral.svg",
-      "source": "https://www.ringcentral.com/whyringcentral/pressimages.html → https://assets.ringcentral.com/us/brand-library/logos/ringcentral-logo.zip (SVG/RingCentral logo fullcolor.svg; unmodified)",
+      "path": "frontend/public/icons/deel.svg",
+      "source": "https://website-media.deel.com/logo_revamp_164ddaed0c.svg (unmodified official Deel logo published on https://www.deel.com/press/)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "2d5e096c5c3a2caaa2504f13e3b91680a98434a60416cdb433b45830b619a9d7"
+      "sha256": "a080552355dceee57dc107143aa3327cf437fb477597590d66e1607a6baba384"
     },
     {
       "path": "frontend/public/icons/ashby-brand-vector.svg",
@@ -38,12 +38,6 @@
       "source": "https://github.com/noclickapp/noclick-cloud/commit/63b42b555f (integration-authored Ashby monogram)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "83af3042c6aae855b746472980a8e7b68d8a6501bb554039cc84b40354563b20"
-    },
-    {
-      "path": "frontend/public/icons/openstatus.svg",
-      "source": "https://www.openstatus.dev/assets/landing/openstatus-logo.svg (unaltered vector linked by the official OpenStatus homepage)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "54885f9c3b5df28aa980ebf557206dc6601730fda4b384ff9a2e9739aed149ea"
     },
     {
       "path": "frontend/public/icons/affinity.svg",
@@ -658,12 +652,6 @@
       "sha256": "db6fe559fde944a7f0254d03ca7a640aecf3c4eff7276d8d6dedeb18c165b775"
     },
     {
-      "path": "frontend/public/icons/ramp.svg",
-      "source": "https://ramp.com/about-us (official press kit: https://assets.ramp.com/nextjs/ramp_september_2026_media_kit.zip; logos/ramp-logo-black.svg, unmodified)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "5b770d1951f8cb006dac3dd5597420cb079a6a6f2afa6c3687aa5060dc5b7106"
-    },
-    {
       "path": "frontend/public/icons/recurly.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -874,14 +862,68 @@
       "sha256": "1fc2ad79a30861fe490d7ebe914aafd61299758f647390ce138c1847599052f6"
     },
     {
+      "path": "frontend/public/icons/invoiceninja-brand.png",
+      "source": "https://invoiceninja.com/referrals-program/ (official Invoice Ninja brand artwork: https://invoiceninja.com/wp-content/uploads/2026/04/logo-small-1-300x300.png)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "329fa2d33d3b56fa83ecc685af847940b8a985fc248237c2cf31aa7ed81e7aec"
+    },
+    {
+      "path": "frontend/public/icons/kajabi.png",
+      "source": "https://partners.kajabi.com/get-started (Kajabi Branding & Logo Guide \u2192 Kajabi_Branding_Logos.zip \u2192 Color_Icon.png; unmodified official icon)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "e9de5f1c933ae4aeb28b762bad25a04eafc1e353ad422c610307db202f52fbb9"
+    },
+    {
+      "path": "frontend/public/icons/pdfco-brand.svg",
+      "source": "https://pdf.co/ (official PDF.co brand artwork: https://pdf.co/_next/static/immutable/media/main_logo.20-meh3u918j3.svg)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "6555ed6894bb214432fc17ed563f1ca0e6c6c965f51302330e5453bd084e020b"
+    },
+    {
+      "path": "frontend/public/icons/personio-brand.png",
+      "source": "https://files.readme.io/344ccf55e2da6ae08fc012392cc1b7d36c6f8806128c7cbbca6f44ffcc127cac-small-Personio_Wordmark_Black.png (unmodified Personio wordmark published at https://developer.personio.de/v1.0/reference/get_company-employees)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "d480073c704f4f37c349823757672c60b3b34855ba46fb6ebfbaa31f7c4b5eed"
+    },
+    {
+      "path": "frontend/public/icons/quo.svg",
+      "source": "https://www.quo.com/press (official brand logo: https://cdn.prod.website-files.com/6899ec2c2b29c1edf8c20f15/690cc288998d6ee0ff32c586_quo-logo.svg)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "6927d59ffca73356e09168a1778d4272bc508d7ca90727e47bfcfa8e847184a5"
+    },
+    {
+      "path": "frontend/public/icons/sumup.svg",
+      "source": "https://circuit.sumup.com/?path=/docs/brand-sumuplogo--docs (official SumUp brand page; unmodified logomark from https://raw.githubusercontent.com/sumup-oss/circuit-ui/main/packages/icons/web/v2/sum_up_logomark_32.svg)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "6607190e7c99513a13351e29df9d6547c8f31a6a9a97410482684af93f927f85"
+    },
+    {
+      "path": "frontend/public/icons/ringcentral.svg",
+      "source": "https://www.ringcentral.com/whyringcentral/pressimages.html \u2192 https://assets.ringcentral.com/us/brand-library/logos/ringcentral-logo.zip (SVG/RingCentral logo fullcolor.svg; unmodified)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "2d5e096c5c3a2caaa2504f13e3b91680a98434a60416cdb433b45830b619a9d7"
+    },
+    {
+      "path": "frontend/public/icons/openstatus.svg",
+      "source": "https://www.openstatus.dev/assets/landing/openstatus-logo.svg (unaltered vector linked by the official OpenStatus homepage)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "54885f9c3b5df28aa980ebf557206dc6601730fda4b384ff9a2e9739aed149ea"
+    },
+    {
+      "path": "frontend/public/icons/ramp.svg",
+      "source": "https://ramp.com/about-us (official press kit: https://assets.ramp.com/nextjs/ramp_september_2026_media_kit.zip; logos/ramp-logo-black.svg, unmodified)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "5b770d1951f8cb006dac3dd5597420cb079a6a6f2afa6c3687aa5060dc5b7106"
+    },
+    {
       "path": "frontend/public/icons/okta-brand.png",
-      "source": "https://www.okta.com/newsroom/ → https://www.okta.com/sites/default/files/2026-09/logos-09-2026.zip → Logos & boileplates/Okta Logos/Okta Aura Stack/Okta_Aura Stack_Black_RGB.png",
+      "source": "https://www.okta.com/newsroom/ \u2192 https://www.okta.com/sites/default/files/2026-09/logos-09-2026.zip \u2192 Logos & boileplates/Okta Logos/Okta Aura Stack/Okta_Aura Stack_Black_RGB.png",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "853fb0f369e38c6ef598d5c2de1a2b7c0649671604150924db936ade7deab38c"
     },
     {
       "path": "frontend/public/icons/rippling.svg",
-      "source": "https://www.rippling.com/company/newsroom — https://assets.ctfassets.net/k0itp0ir7ty4/3E4spjZts7XCMtyaT2mHHj/20a9ea4e44ec7d760f6e108c1cc0fafb/Rippling-Logos.zip (Full/SVG/Rippling Logo black.svg; unmodified)",
+      "source": "https://www.rippling.com/company/newsroom \u2014 https://assets.ctfassets.net/k0itp0ir7ty4/3E4spjZts7XCMtyaT2mHHj/20a9ea4e44ec7d760f6e108c1cc0fafb/Rippling-Logos.zip (Full/SVG/Rippling Logo black.svg; unmodified)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "e7b0a052281be8b93a2c660a62f23e5594367b9087bc86a25c790384e1c587d8"
     },
