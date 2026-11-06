@@ -188,6 +188,7 @@ class TestPerplexityChatMock:
         request = client.request.call_args.kwargs
         assert request["method"] == "GET"
         assert request["url"] == "https://api.perplexity.ai/v1/agent/" + AGENT_RESPONSE["id"]
+        assert result["timing_ms"]["api_request"] >= 0
         assert result["data"]["scope"] == "workflow"
         assert result["data"]["next_token"] is None
         assert len(result["data"]["requests"]) == 1
@@ -297,6 +298,7 @@ class TestPerplexityChatMock:
             result = await node.execute({})
         assert result["data"] == {"requests": [], "next_token": None,
                                   "scope": "workflow", "includes_historical_sonar_jobs": False}
+        assert result["timing_ms"]["api_request"] == 0
         client.assert_not_called()
 
     @pytest.mark.asyncio

@@ -1044,6 +1044,7 @@ class PerplexityNode(WorkflowNode):
                 state = json.loads(state)
             jobs.update(state.get("perplexity_background_jobs", {}).get(key, {}))
         requests = []
+        api_ms = 0.0
         for request_id, model in jobs.items():
             result = await _perplexity_request(
                 api_key, "GET", f"/v1/agent/{quote(request_id, safe='')}",
@@ -1051,10 +1052,12 @@ class PerplexityNode(WorkflowNode):
             )
             if result.get("status") != "success":
                 return result  # Do not silently omit a failed/unauthorized poll.
+            api_ms += result.get("timing_ms", {}).get("api_request", 0)
             requests.append(_background_compat(result["data"], model))
         requests.sort(key=lambda item: item.get("created_at") or 0, reverse=True)
         return {
             "status": "success", "action": c.operation, "status_code": 200,
+            "timing_ms": {"api_request": round(api_ms, 2)},
             "data": {"requests": requests, "next_token": None,
                      "scope": ("workflow_and_provided_ids" if self.workflow_id and explicit_ids else
                                "workflow" if self.workflow_id else "provided_ids"),
