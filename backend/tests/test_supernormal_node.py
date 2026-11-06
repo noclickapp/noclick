@@ -166,7 +166,7 @@ async def test_actual_native_admission_and_identity_collector_halt_before_http(t
     calls, _ = transport
     monkeypatch.setattr("nodes.core.run_op.resolve_operation_credential", AsyncMock(return_value=deepcopy(RAW)))
     monkeypatch.setattr("utils.credential_approval.get_native_pool", lambda: object())
-    monkeypatch.setattr("repositories.credential_approvals.CredentialApprovalRepo.admit", AsyncMock(return_value={"status": status, "new_request": False}))
+    monkeypatch.setattr("repositories.credential_approvals.CredentialApprovalRepo.admit", AsyncMock(return_value={"id": KEY, "status": status, "new_request": False}))
     result = await run_node_operation(node_type=TYPE, operation="get_user", arguments={}, user_id=USER, credential_id=KEY, pool=object())
     assert result.get("executed") is False and not calls
     evidence = await collect_evidence(node_type=TYPE, user_id=USER, credential_id=KEY, pool=object())
