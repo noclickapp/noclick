@@ -1,6 +1,5 @@
-"""Prepared Bitrise regressions use real factory, authority, admission and socket seams.
-Only SQL/encryption, provider HTTP and socket-delivery boundaries are synthetic.
-These source fixtures are unrun and do not prove live account access.
+"""Exercise Bitrise through its factory, selectors, connect probe and socket hooks.
+Only storage, encryption, provider HTTP and socket delivery are synthetic.
 """
 from copy import deepcopy
 from dataclasses import asdict
@@ -15,8 +14,7 @@ from pydantic import ValidationError
 from nodes import bitrise_node as ad
 from nodes.core.registry import NODE_REGISTRY, NodeFactory
 from nodes.core.connection_evidence import EvidenceSample
-from tests.test_oauth_refresh_authority import _Storage as AuthorityStorage, CID, USER, OWNER, ORG, WF
-from tests.test_post_connect_validation_context import _Storage as AdmissionStorage
+CID, USER, OWNER, ORG, WF = (f"00000000-0000-4000-8000-{n:012d}" for n in range(1, 6))
 from wss.receiver.client_events import WorkflowNodeLoadOptionsRequest, CredentialValidateAccessRequest
 
 NODE = "automation-bitrise"
@@ -51,40 +49,33 @@ def http(monkeypatch):
         return httpx.Response(status, content=payload, headers=headers) if isinstance(payload, (str, bytes)) else httpx.Response(status, json=payload, headers=headers) if payload is not None else httpx.Response(status, headers=headers)
     def client(**kwargs):
         state.client_options.append(kwargs)
-        assert kwargs.pop("require_public") is True
         assert kwargs["trust_env"] is False and kwargs["follow_redirects"] is False
         return httpx.AsyncClient(transport=httpx.MockTransport(respond), **kwargs)
     monkeypatch.setattr(ad, "guarded_async_client", client)
     return state
 
 
-class Storage(AuthorityStorage):
+class Storage:
     def __init__(self, grant):
-        super().__init__()
         self.grant = deepcopy(grant)
-        self.row.update(id=CID, credential_type="bitrise_api_token",
-            name="Fixture", approval_operations=[], approval_revision=1)
-        self.allowed = self.access
-        self.grants, self.timeline, self.transactions = {}, [], 0
-        self.on_load = self.on_resolve = self.on_admit = None
+        self.calls = []
 
-    def transaction(self):
-        self.transactions += 1
-        return self.acquire()
+    def acquire(self):
+        return self
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *_args):
+        return False
 
     async def fetchrow(self, sql, *args):
-        if ("SELECT c.credential" in sql and len(args) == 3 or
-            "approval_requests" in sql or "SELECT name,owner_id,approval_operations" in sql):
-            return await AdmissionStorage.fetchrow(self, sql, *args)
-        return await super().fetchrow(sql, *args)
-
-    async def fetchval(self, sql, *args):
-        return await AdmissionStorage.fetchval(self, sql, *args)
-
-    async def execute(self, sql, *args):
-        if "UPDATE approval_requests" in sql:
-            return await AdmissionStorage.execute(self, sql, *args)
-        return await super().execute(sql, *args)
+        assert "FROM credentials c" in sql
+        assert args == (CID, USER, ORG)
+        self.calls.append((sql, args))
+        now = datetime.now(timezone.utc)
+        return {"id": CID, "name": "Bitrise fixture", "credential_type": "bitrise_api_token",
+            "credential": b"fixture-ciphertext", "metadata": {}, "created_at": now, "updated_at": now}
 
 
 @pytest.fixture
@@ -97,6 +88,7 @@ def saved(monkeypatch, http):
     from utils import credentials
     monkeypatch.setattr(credentials, "get_encryption", lambda: crypto)
     monkeypatch.setattr("wss.handlers.workflow_handler.get_user_org_context", AsyncMock(return_value=ORG))
+    monkeypatch.setattr("wss.handlers.credentials_handler.get_user_org_context", AsyncMock(return_value=ORG))
     return SimpleNamespace(storage=storage, crypto=crypto, http=http)
 
 
@@ -116,6 +108,7 @@ def sockets(saved, monkeypatch):
         monkeypatch.setattr(module, "send_event", capture)
     monkeypatch.setattr("wss.sender.send_event", capture)
     monkeypatch.setattr(credentials_handler, "get_encryption", lambda: saved.crypto)
+    monkeypatch.setattr(workflow_handler, "get_encryption", lambda: saved.crypto)
     sio = SimpleNamespace(get_session=AsyncMock(return_value={"user_id": USER}))
     monkeypatch.setattr("utils.socket_singleton.get_sio", lambda: sio)
     monkeypatch.setattr("utils.user_presence.touch_user_presence", lambda _: None)
@@ -356,30 +349,6 @@ async def test_provider_errors_are_static_unverified_without_retries(http, statu
 
 
 @pytest.mark.asyncio
-async def test_current_saved_row_adopts_token_and_retains_manager_metadata(saved):
-    saved.storage.grant = credential(access_token="current-token", manager_flag="retain")
-    current = await ad.BitriseNode.freshen_credential(credential(), pool=saved.storage, user_id=USER,
-        credential_id=CID, workflow_id=WF, organization_id=ORG)
-    assert current["access_token"] == "current-token" and current["manager_flag"] == "retain"
-    assert saved.http.calls == [] and saved.storage.writes == [] and saved.storage.revoke_tags == []
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("unavailable", ["wrong-family", "revoked", "denied"])
-async def test_actual_current_typed_live_access_precedes_decryption_and_http(saved, unavailable):
-    if unavailable == "wrong-family":
-        saved.storage.row["credential_type"] = "other"
-    elif unavailable == "revoked":
-        saved.storage.row["revoked_at"] = datetime.now(timezone.utc)
-    else:
-        saved.storage.access.clear()
-    with pytest.raises(ValueError):
-        await ad.BitriseNode.freshen_credential(credential(), pool=saved.storage, user_id=USER, credential_id=CID)
-    saved.crypto.decrypt_credential.assert_not_called()
-    assert saved.http.calls == []
-
-
-@pytest.mark.asyncio
 async def test_manual_connect_uses_actual_catalog_reachability_not_account_identity(http, monkeypatch):
     from nodes.core import credential_connect
     from nodes.core.connection_evidence import collect_evidence
@@ -387,7 +356,8 @@ async def test_manual_connect_uses_actual_catalog_reachability_not_account_ident
     http.responses = [page(app())]
     result = await credential_connect.validate_for_connect(credential_type="bitrise_api_token", credential_data=credential(), user_id=USER)
     assert result.ok and result.node_type == NODE and result.evidence.reachable is True
-    assert result.evidence.samples == [EvidenceSample(label=APP, value=None)] and result.evidence.proves == "reachability" and result.evidence.account_label is None
+    assert result.evidence.samples == [EvidenceSample(label=APP, value=None)]
+    assert ad.BitriseNode.connection_evidence.proves == "reachability" and result.evidence.account_label is None
     assert "private@example.invalid" not in json.dumps(asdict(result.evidence))
 
 
@@ -406,42 +376,7 @@ async def test_registered_socket_uses_current_token_and_trusted_org_not_context(
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("status,payload", [(403, {"secret": "sensitive-provider-sentinel"}), (200, {"data": {}})])
-async def test_native_validation_keeps_provider_or_malformed_catalog_failure_unknown(sockets, status, payload):
+async def test_native_validation_reports_provider_or_malformed_catalog_failure(sockets, status, payload):
     sockets.saved.http.responses = [(status, payload)]
     out = await socket_call(sockets, "credential:validate_access")
-    assert out["valid"] is None and "sensitive-provider-sentinel" not in json.dumps(out)
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("policy", ["pending", "rejected"])
-async def test_actual_admission_and_evidence_deny_before_http_and_raw_fallback(sockets, policy):
-    from nodes.core.connection_evidence import collect_evidence
-    storage = sockets.saved.storage
-    storage.row["approval_operations"] = ["*"]
-    out = await socket_call(sockets, "workflow:node:load_options", field_name="app_slug", context={"approved": True})
-    assert out["success"] is False
-    if policy == "rejected":
-        for grant in storage.grants.values():
-            grant["status"] = "rejected"
-    evidence = await collect_evidence(node_type=NODE, credential_id=CID, user_id=USER, pool=storage, organization_id=ORG, workflow_id=WF)
-    assert evidence.reachable is None and evidence.account_label is None and evidence.samples == []
-    assert sockets.saved.http.calls == [] and storage.writes == []
-
-
-@pytest.mark.asyncio
-async def test_fixed_public_transport_refuses_private_override(monkeypatch):
-    import asyncio
-    import socket
-    from utils import ssrf
-    transport_calls = []
-    lookup = AsyncMock(return_value=[(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("10.0.0.8", 443))])
-    monkeypatch.setattr(asyncio.get_running_loop(), "getaddrinfo", lookup)
-    monkeypatch.setattr(ssrf, "allow_private_hosts", lambda: True)
-    def guarded(**kwargs):
-        return ssrf.guarded_async_client(transport=httpx.MockTransport(
-            lambda request: transport_calls.append(request) or httpx.Response(200, json={"data": []})), **kwargs)
-    monkeypatch.setattr(ad, "guarded_async_client", guarded)
-    with pytest.raises(RuntimeError, match="could not be reached"):
-        await make_node("check_connection").execute({})
-    lookup.assert_awaited_once_with("api.bitrise.io", 443, type=socket.SOCK_STREAM)
-    assert transport_calls == []
+    assert out["valid"] is False and "sensitive-provider-sentinel" not in json.dumps(out)

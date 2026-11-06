@@ -1,11 +1,12 @@
 // Bitrise's native credential and resource schemas use the current frontend consumers.
-// These prepared cases await schema generation and a separate frontend runtime grant.
-import { describe, expect, it } from 'vitest';
-import { NODE_SCHEMAS, filterConfigForExecution, isTriggerSource } from '~/utils/nodeSchemas';
+// Loading the generated schema exercises the same lazy path as the editor.
+import { beforeAll, describe, expect, it } from 'vitest';
+import { NODE_SCHEMAS, loadNodeSchemas, filterConfigForExecution, isTriggerSource } from '~/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 
 describe('Bitrise raw Authorization token metadata', () => {
+    beforeAll(() => loadNodeSchemas(['automation-bitrise']));
     it('requires only the existing personal/workspace token without invented identity or OAuth', () => {
         const schema = NODE_SCHEMAS['automation-bitrise'];
         const cred = schema.$defs.BitriseAPITokenCredential;

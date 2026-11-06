@@ -183,8 +183,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Cloudflare
     'CloudflareAPITokenCredential': 'cloudflare_api_token',
     'CloudflareAPIKeyCredential': 'cloudflare_api_key',
-
-    // Bitrise personal or workspace token, sent as raw Authorization.
     'BitriseAPITokenCredential': 'bitrise_api_token',
 
     // HubSpot

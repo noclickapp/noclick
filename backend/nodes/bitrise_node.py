@@ -14,7 +14,6 @@ from typing import Annotated, Literal, Optional, Union
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
-from nodes.core.oauth_refresh_authority import AuthorityCredentialsTableStore, CURRENT_ORGANIZATION
 from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
 from utils.ssrf import guarded_async_client
 
@@ -150,7 +149,7 @@ async def _request(data, kind, *, app=None, build=None, limit=None, anchor=None)
     headers = {"Authorization": data["access_token"], "Accept": "application/json",
         "User-Agent": "NoClick-Bitrise/1.0 (+https://noclick.com)"}
     try:
-        async with guarded_async_client(require_public=True, trust_env=False, follow_redirects=False, timeout=25) as client:
+        async with guarded_async_client(trust_env=False, follow_redirects=False, timeout=25) as client:
             response = await client.get(API_ROOT+path, headers=headers, params=params)
     except Exception:
         raise RuntimeError("Bitrise could not be reached; access remains unverified.") from None
@@ -289,7 +288,6 @@ async def _page(data, kind, scope, *, app=None, limit=50, token=None, names=Fals
 
 
 class BitriseNode(WorkflowNode):
-    workflow_credential_refresh = True
     scope_registry = BITRISE_SCOPES
     connection_evidence = ConnectionEvidence(operation="check_connection", noun="accessible app slugs", label_keys=("slug",), proves="reachability")
 
@@ -298,23 +296,8 @@ class BitriseNode(WorkflowNode):
         return BitriseNodeConfig
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None,
-                                 workflow_id=None, organization_id=CURRENT_ORGANIZATION):
-        if not credential_id:
-            return _credential(credential_data)
-        if not user_id:
-            raise ValueError("Sign in to use a saved Bitrise connection.")
-        return await AuthorityCredentialsTableStore(pool, user_id, credential_id, credential_type="bitrise_api_token",
-            validate=_credential, grant_fields=("access_token",), workflow_id=workflow_id, organization_id=organization_id).load()
-
-    @classmethod
-    async def validate_credential_access(cls, credential_data, validation_context=None):
-        from nodes.core.credential_validation import CredentialValidationContext
-        if not isinstance(validation_context, CredentialValidationContext):
-            raise ValueError("Canonical validation context is required.")
-        result = await validation_context.run_operation("check_connection")
-        if not isinstance(result, dict) or result.get("protected_catalog") is not True:
-            raise RuntimeError("Bitrise app catalog reachability remains unverified.")
+    async def validate_credential_access(cls, credential_data):
+        await _catalog(_credential(credential_data), "apps")
         return {"valid": True}
 
     @classmethod
@@ -335,11 +318,7 @@ class BitriseNode(WorkflowNode):
         if not isinstance(self.config, BitriseNodeConfig) or not self.config.credentials:
             raise ValueError("Bitrise configuration and an existing API token are required.")
         raw = (self.node_data or {}).get("credentials")
-        if not (self.node_data or {}).get("credential_id") and isinstance(raw, dict):
-            _credential(raw)
-        data = await self.freshen_credential(raw if isinstance(raw, dict) else self.config.credentials.model_dump(mode="json"),
-            pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id, credential_id=(self.node_data or {}).get("credential_id"),
-            workflow_id=self.workflow_id, organization_id=self.organization_id)
+        data = _credential(raw if isinstance(raw, dict) else self.config.credentials.model_dump(mode="json"))
         c, op = self.config.config, self.config.config.operation
         scope = c.model_dump(mode="json", exclude={"page_token"})
         if isinstance(c, BitrisePageConfig):

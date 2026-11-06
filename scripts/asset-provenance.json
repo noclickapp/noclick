@@ -130,6 +130,12 @@
       "sha256": "972a6d91fd42f631e01a73c02d1a461e40b74de9e7e013e39f822e5eb0888552"
     },
     {
+      "path": "frontend/public/icons/bitrise.svg",
+      "source": "https://cdn.prod.website-files.com/5db35de024bb983af1b4e151/5e05f06777d741b88a37f65d_bitrise-icon.svg (Bitrise official website icon, https://bitrise.io)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "fddfa4897d8ea1ae1c2461cec117d6a5cde653cb9e4d33a6f5407b7b34360d1d"
+    },
+    {
       "path": "frontend/public/icons/box.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",

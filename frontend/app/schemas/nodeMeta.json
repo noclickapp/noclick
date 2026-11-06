@@ -110,6 +110,9 @@
         "on_query_results"
       ]
     },
+    "automation-bitrise": {
+      "agentToolProvider": true
+    },
     "automation-bluesky": {
       "agentToolProvider": true
     },

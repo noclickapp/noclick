@@ -89,6 +89,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-phone', 'PhoneNode'],
     ['automation-twitter', 'TwitterNode'],
     ['automation-cloudflare', 'CloudflareNode'],
+    ['automation-bitrise', 'BitriseNode'],
     ['automation-typeform', 'TypeformNode'],
     ['automation-123formbuilder', 'FormBuilder123Node'],
     ['automation-whatsapp', 'WhatsAppNode'],
