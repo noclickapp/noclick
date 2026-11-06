@@ -362,3 +362,91 @@ def test_actual_default_bearing_server_field_keeps_strict_runtime_id_refusal(ide
     with pytest.raises(ValueError) as error:
         native.PowerDNSCredential.model_validate({**KEY, "server_id": identifier})
     assert KEY["api_key"] not in str(error.value)
+
+
+# Exact examples from the provider, including the absent optional zone type:
+# https://docs.powerdns.com/authoritative/http-api/server.html#listing-all-servers
+# https://docs.powerdns.com/authoritative/http-api/zone.html#listing-all-zones
+# https://docs.powerdns.com/authoritative/http-api/zone.html#listing-a-zone
+DOCUMENTED_SERVERS = [{'autoprimaries_url': '/api/v1/servers/localhost/autoprimaries{/autoprimary}',
+  'config_url': '/api/v1/servers/localhost/config{/config_setting}',
+  'daemon_type': 'authoritative',
+  'id': 'localhost',
+  'type': 'Server',
+  'url': '/api/v1/servers/localhost',
+  'version': '4.6.1',
+  'zones_url': '/api/v1/servers/localhost/zones{/zone}'}]
+
+DOCUMENTED_ZONES = [{'account': '',
+  'dnssec': False,
+  'edited_serial': 2022040504,
+  'id': 'example.org.',
+  'kind': 'Native',
+  'last_check': 0,
+  'masters': [],
+  'name': 'example.org.',
+  'notified_serial': 0,
+  'serial': 2022040504,
+  'url': '/api/v1/servers/localhost/zones/example.org.'}]
+
+DOCUMENTED_ZONE_DETAIL = {'account': '',
+ 'api_rectify': False,
+ 'dnssec': False,
+ 'edited_serial': 2022040501,
+ 'id': 'example.org.',
+ 'kind': 'Native',
+ 'last_check': 0,
+ 'master_tsig_key_ids': [],
+ 'masters': [],
+ 'name': 'example.org.',
+ 'notified_serial': 0,
+ 'nsec3narrow': False,
+ 'nsec3param': '',
+ 'rrsets': [{'comments': [],
+             'name': 'example.org.',
+             'records': [{'content': 'a.misconfigured.dns.server.invalid. hostmaster.example.org. '
+                                     '2022040501 10800 3600 604800 3600',
+                          'disabled': False}],
+             'ttl': 3600,
+             'type': 'SOA'},
+            {'comments': [],
+             'name': 'example.org.',
+             'records': [{'content': 'ns1.example.org.', 'disabled': False},
+                         {'content': 'ns2.example.org.', 'disabled': False}],
+             'ttl': 3600,
+             'type': 'NS'}],
+ 'serial': 2022040501,
+ 'slave_tsig_key_ids': [],
+ 'soa_edit': '',
+ 'soa_edit_api': 'DEFAULT',
+ 'url': '/api/v1/servers/localhost/zones/example.org.'}
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", ["list_zones", "get_zone", "list_rrsets"])
+async def test_provider_zone_examples_without_optional_type(transport, operation):
+    responses = [DOCUMENTED_SERVERS, DOCUMENTED_ZONES]
+    args = {"include_names": True}
+    if operation != "list_zones":
+        responses.append(DOCUMENTED_ZONE_DETAIL)
+        args["zone_id"] = DOCUMENTED_ZONE_DETAIL["id"]
+    transport[1].extend(deepcopy(responses))
+    result = await node(operation, **args).execute({})
+    data = result["data"]
+    zone_metadata = data["items"][0] if operation == "list_zones" else data
+    assert result["status"] == "success"
+    assert zone_metadata["id"] == "example.org."
+    assert zone_metadata["kind"] == "Native"
+    assert "type" not in zone_metadata
+    assert "records" not in repr(data) and "content" not in repr(data)
+    if operation == "list_rrsets":
+        assert data["rrset_metadata"]["items"] == [
+            {"name": "example.org.", "type": "SOA", "ttl": 3600},
+            {"name": "example.org.", "type": "NS", "ttl": 3600},
+        ]
+    assert len(transport[0]) == len(responses)
+
+
+@pytest.mark.parametrize("marker", [None, "string", "Server", 1])
+def test_provider_optional_zone_type_still_rejects_invalid_marker(marker):
+    with pytest.raises(native.OutcomeUnverified):
+        native.zone({**DOCUMENTED_ZONE_DETAIL, "type": marker})

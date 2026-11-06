@@ -320,7 +320,9 @@ class Server(Response):
 
 
 class Zone(Response):
-    type: Literal["Zone"]
+    # Provider-authored zone catalog/detail examples omit this optional marker.
+    # zone() excludes unset fields, so an absent marker is never synthesized.
+    type: Literal["Zone"] = "Zone"
     kind: Literal["Native", "Master", "Slave", "Producer", "Consumer"]
     serial: Serial
     notified_serial: Optional[Serial] = None
