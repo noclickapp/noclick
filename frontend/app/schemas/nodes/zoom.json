@@ -57903,7 +57903,7 @@
         },
         "picture_json": {
           "default": "{}",
-          "description": "Multipart body payload. Provide the 'pic_file' field referencing the image content to upload (JPG/PNG/GIF, max 2MB).",
+          "description": "JSON object with 'pic_file' set to the local image file path (e.g. {\"pic_file\":\"profile.png\"}). Uploads JPG/JPEG/PNG, max 2MB.",
           "title": "Picture Body (JSON)",
           "type": "string",
           "ui:widget": "code_editor",

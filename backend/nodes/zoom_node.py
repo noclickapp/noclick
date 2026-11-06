@@ -28,6 +28,7 @@ import logging
 import time
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
 from uuid import UUID
+from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict, Discriminator, create_model
 import httpx
 
@@ -32222,16 +32223,33 @@ class ZoomUploadUserPictureConfig(BaseModel):
                          json_schema_extra=_dyn("user_id", "a user"))
     picture_json: str = Field(
         "{}", title="Picture Body (JSON)",
-        description="Multipart body payload. Provide the 'pic_file' field referencing "
-                    "the image content to upload (JPG/PNG/GIF, max 2MB).",
+        description="JSON object with 'pic_file' set to the local image file path "
+                    '(e.g. {"pic_file":"profile.png"}). Uploads JPG/JPEG/PNG, max 2MB.',
         json_schema_extra={"ui:widget": "code_editor", "x-code-language": "json"})
 
 
 async def _upload_user_picture(c, token) -> Dict[str, Any]:
     body = _parse_json_field(c.picture_json, "Picture Body (JSON)") or {}
+    file_path = body.get("pic_file") if isinstance(body, dict) else None
+    if not isinstance(file_path, str) or not file_path.strip():
+        raise ValueError("'pic_file' must be the local path of a JPG/JPEG/PNG image")
+    picture = Path(file_path)
+    content_type = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png"}.get(
+        picture.suffix.lower()
+    )
+    if content_type is None:
+        raise ValueError("Profile picture must be a JPG/JPEG/PNG image")
+    try:
+        with picture.open("rb") as image:
+            content = image.read(2 * 1024 * 1024 + 1)
+    except OSError as exc:
+        raise ValueError("Could not read profile picture file") from exc
+    if not content or len(content) > 2 * 1024 * 1024:
+        raise ValueError("Profile picture must be non-empty and no larger than 2MB")
     return await _zoom_request(
         token, "POST", f"/users/{c.user_id}/picture",
-        json_body=body, action_name="upload_user_picture")
+        files={"pic_file": (picture.name, content, content_type)},
+        action_name="upload_user_picture")
 
 
 class ZoomDeleteUserPictureConfig(BaseModel):
@@ -42776,13 +42794,16 @@ async def _zoom_request(
     params: Optional[Dict[str, Any]] = None,
     json_body: Optional[Dict[str, Any]] = None,
     action_name: str = "request",
+    files: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Make an authenticated Zoom v2 request and return a structured result."""
     url = f"{ZOOM_API_BASE}{endpoint}"
     headers = {
         "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json",
     }
+    # httpx supplies the multipart boundary when uploading files.
+    if files is None:
+        headers["Content-Type"] = "application/json"
     if json_body:
         json_body = {k: v for k, v in json_body.items() if v is not None}
     if params:
@@ -42791,8 +42812,9 @@ async def _zoom_request(
     start = time.time()
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
+            request_body = {"files": files} if files is not None else {"json": json_body}
             response = await client.request(
-                method=method, url=url, headers=headers, params=params, json=json_body
+                method=method, url=url, headers=headers, params=params, **request_body
             )
             api_ms = round((time.time() - start) * 1000, 2)
             if response.status_code >= 400:

@@ -755,14 +755,19 @@ def _build_min(model):
 
 @pytest.mark.parametrize("op", _ACTION_OPS)
 @pytest.mark.asyncio
-async def test_zoom_operation_dispatches(op):
+async def test_zoom_operation_dispatches(op, tmp_path):
     captured = {}
 
-    async def fake_request(token, method, endpoint, params=None, json_body=None, action_name="request"):
+    async def fake_request(token, method, endpoint, params=None, json_body=None, action_name="request", files=None):
         captured["endpoint"] = endpoint
         return {"status": "success", "action": action_name, "data": {}}
 
-    node = create_zoom_node(ZoomNodeConfig(config=_build_min(_MEMBERS[op]), credentials=_COV_CRED))
+    config = _build_min(_MEMBERS[op])
+    if op == "upload_user_picture":
+        picture = tmp_path / "profile.png"
+        picture.write_bytes(_PROFILE_PNG)
+        config.picture_json = json.dumps({"pic_file": str(picture)})
+    node = create_zoom_node(ZoomNodeConfig(config=config, credentials=_COV_CRED))
     with patch.object(_zmod, "_zoom_request", side_effect=fake_request):
         result = await node.execute({})
     assert result["status"] == "success", f"{op}: {result.get('error')}"
@@ -788,3 +793,87 @@ def test_zoom_full_coverage_op_count():
     consts = [op for op in _MEMBERS]
     assert len(consts) == len(set(consts))  # no duplicate discriminators
     assert len(_ACTION_OPS) > 1000
+
+
+# A one-pixel PNG used only by the node's unit tests.
+_PROFILE_PNG = bytes.fromhex(
+    "89504e470d0a1a0a0000000d4948445200000001000000010804000000b51c0c02"
+    "0000000b4944415478da6364f80f00010501012718e3660000000049454e44ae426082"
+)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("extension,content_type", [("png", "image/png"), ("jpg", "image/jpeg")])
+async def test_upload_user_picture_sends_multipart(tmp_path, extension, content_type):
+    from email.parser import BytesParser
+    from email.policy import default
+    import httpx
+
+    # JPEG marker bytes are sufficient here: the test checks transport, not image decoding.
+    content = _PROFILE_PNG if extension == "png" else b"\xff\xd8\xff\xd9"
+    picture = tmp_path / f"profile.{extension}"
+    picture.write_bytes(content)
+    captured = []
+
+    def transport(request):
+        captured.append(request)
+        return httpx.Response(201, json={})
+
+    original_client = httpx.AsyncClient
+
+    def client(*args, **kwargs):
+        return original_client(*args, transport=httpx.MockTransport(transport), **kwargs)
+
+    config = _zmod.ZoomUploadUserPictureConfig(
+        user_id="me", picture_json=json.dumps({"pic_file": str(picture)})
+    )
+    node = create_zoom_node(ZoomNodeConfig(config=config, credentials=_COV_CRED))
+    with patch.object(_zmod.httpx, "AsyncClient", client):
+        result = await node.execute({})
+
+    assert result["status"] == "success"
+    assert len(captured) == 1
+    request = captured[0]
+    assert request.method == "POST"
+    assert str(request.url) == "https://api.zoom.us/v2/users/me/picture"
+    assert request.headers["authorization"] == "Bearer tok"
+    assert request.headers["content-type"].startswith("multipart/form-data; boundary=")
+    message = BytesParser(policy=default).parsebytes(
+        f"Content-Type: {request.headers['content-type']}\r\n\r\n".encode() + request.content
+    )
+    parts = list(message.iter_parts())
+    assert len(parts) == 1
+    assert parts[0].get_param("name", header="content-disposition") == "pic_file"
+    assert parts[0].get_filename() == picture.name
+    assert parts[0].get_content_type() == content_type
+    assert parts[0].get_payload(decode=True) == content
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("picture_json", ["{}", "[]", '{"pic_file":null}', '{"pic_file":"profile.gif"}'])
+async def test_upload_user_picture_rejects_invalid_file_reference(picture_json):
+    node = create_zoom_node(ZoomNodeConfig(
+        config=_zmod.ZoomUploadUserPictureConfig(user_id="me", picture_json=picture_json),
+        credentials=_COV_CRED,
+    ))
+    with patch.object(_zmod, "_zoom_request") as request:
+        result = await node.execute({})
+    assert result["status"] == "error"
+    assert result["status_code"] == 400
+    request.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("size", [0, 2 * 1024 * 1024 + 1])
+async def test_upload_user_picture_rejects_invalid_size(tmp_path, size):
+    picture = tmp_path / "profile.png"
+    picture.write_bytes(b"x" * size)
+    node = create_zoom_node(ZoomNodeConfig(
+        config=_zmod.ZoomUploadUserPictureConfig(
+            user_id="me", picture_json=json.dumps({"pic_file": str(picture)})
+        ), credentials=_COV_CRED,
+    ))
+    with patch.object(_zmod, "_zoom_request") as request:
+        result = await node.execute({})
+    assert result["status_code"] == 400
+    request.assert_not_called()
