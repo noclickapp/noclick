@@ -544,7 +544,8 @@ class DropcontactNode(WorkflowNode):
         return super().validate_config(shaped)
 
     @classmethod
-    async def freshen_credential(cls, data, **context): return await _current_data(data, **context)
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        return await _current_data(credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
 
     @classmethod
     async def validate_credential_access(cls, data):

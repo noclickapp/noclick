@@ -206,17 +206,22 @@ async def test_saved_credential_reload_uses_staging_access_policy(monkeypatch):
     from utils import credentials
     loader = AsyncMock(return_value=CREDS)
     monkeypatch.setattr(credentials, "resolve_credential_with_owner_fallback", loader)
-    pool = object()
+    class Connection:
+        async def __aenter__(self): return self
+        async def __aexit__(self, *args): pass
+    pool = SimpleNamespace(acquire=lambda: Connection())
+    org_loader = AsyncMock(return_value="org")
+    monkeypatch.setattr("wss.handlers.workflow_handler.get_user_org_context", org_loader)
     current = await dn.DropcontactNode.freshen_credential(
-        CREDS, pool=pool, user_id="actor", credential_id="saved", organization_id="org", workflow_id="workflow",
+        CREDS, pool=pool, user_id="actor", credential_id="saved",
     )
-    loader.assert_awaited_once_with("saved", "actor", pool, org_id="org", workflow_id="workflow")
+    loader.assert_awaited_once_with("saved", "actor", pool, org_id="org", workflow_id=None)
     assert dn._binding(current) == dn._binding(CREDS)
     assert dn._context(current, {"_user_id": "actor"})["_credential_id"] == "saved"
     for value in (None, {**CREDS, "credential_type": "http_bearer"}):
         loader.return_value = value
         with pytest.raises(ValueError):
-            await dn.DropcontactNode.freshen_credential(CREDS, pool=pool, user_id="actor", credential_id="saved", organization_id="org")
+            await dn.DropcontactNode.freshen_credential(CREDS, pool=pool, user_id="actor", credential_id="saved")
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("status,valid", [(200, True), (401, False), (403, False), (429, None), (500, None)])
