@@ -21,7 +21,7 @@ from nodes.core.credential_validation import CredentialValidationUnavailable
 from nodes.core.registry import NODE_REGISTRY
 from nodes.core.run_op import run_node_lookup, run_node_operation
 from repositories.credentials import credential_access_predicate
-from test_post_connect_validation_context import (
+from tests.test_post_connect_validation_context import (
     CID, USER, ORG, OWNER, _Storage as ContextStorage, native as context_native, _validate,
 )
 
@@ -193,6 +193,30 @@ async def test_real_factory_dispatcher_catalog_and_wire_projection(api, op, args
 
 
 @pytest.mark.asyncio
+async def test_typed_config_credentials_reach_provider_without_raw_node_data(api):
+    config = StreamChatNodeConfig.model_validate({
+        "config": {"operation": "list_channel_types"}, "credentials": CREDENTIAL,
+    })
+    node = StreamChatNode(node_id="typed", node_type=NODE, node_data={}, config=config, sio=None)
+    result = await node.execute({})
+    assert result["status"] == "success"
+    assert result["data"]["items"] == [{"id": TYPE, "name": TYPE}]
+    assert [(r.method, r.url.path) for r in api.requests] == [("GET", "/channeltypes")]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("raw", [None, {**CREDENTIAL, "credential_type": "unrelated_provider"}])
+async def test_present_invalid_raw_credentials_cannot_use_valid_typed_credentials(api, raw):
+    config = StreamChatNodeConfig.model_validate({
+        "config": {"operation": "list_channel_types"}, "credentials": CREDENTIAL,
+    })
+    node = StreamChatNode(node_id="typed", node_type=NODE, node_data={"credentials": raw}, config=config, sio=None)
+    with pytest.raises(ValueError, match="Stream Chat Server Key"):
+        await node.execute({})
+    assert api.requests == []
+
+
+@pytest.mark.asyncio
 async def test_missing_read_does_not_create_and_missing_explicit_create_reads_back(api):
     api.absent = True
     with pytest.raises(ValueError, match="HTTP 404"):
@@ -240,8 +264,10 @@ async def test_actual_saved_row_picker_keeps_parent_and_missing_parent_refuses(a
 
 
 @pytest.mark.asyncio
-async def test_actual_connect_empty_reachability_and_malformed_is_unknown(api):
+async def test_actual_connect_empty_reachability_and_malformed_is_unknown(api, monkeypatch):
     from nodes.core.credential_connect import validate_for_connect
+    from nodes.core.connection_evidence import collect_evidence
+    monkeypatch.setattr("nodes.core.credential_connect._collect_evidence", collect_evidence)
     api.body = {**DURATION, "channel_types": {}}
     verdict = await validate_for_connect(credential_type=FAMILY, credential_data=CREDENTIAL, user_id=USER)
     assert verdict.ok and verdict.evidence.reachable is True
@@ -341,7 +367,7 @@ async def test_actual_current_httpx_trace_adapter_hides_query_and_jwt(api, monke
     from opentelemetry.sdk.trace.export import SimpleSpanProcessor
     from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
     from utils.outbound_trace_privacy import OutboundTraceProvider
-    from test_outbound_trace_privacy import RecordingSampler, StartObserver
+    from tests.test_outbound_trace_privacy import RecordingSampler, StartObserver
     sampler, observer, exporter = RecordingSampler(), StartObserver(), InMemorySpanExporter()
     provider = TracerProvider(sampler=sampler)
     provider.add_span_processor(observer); provider.add_span_processor(SimpleSpanProcessor(exporter))

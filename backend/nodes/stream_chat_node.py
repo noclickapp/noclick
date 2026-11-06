@@ -599,7 +599,8 @@ class StreamChatNode(WorkflowNode):
             return {"valid": None, "message": "Stream Chat access could not be verified; retry later."}
 
     async def execute(self, input_data):
-        raw = self.node_data.get("credentials")
+        raw = (self.node_data["credentials"] if "credentials" in self.node_data else
+               self.config.credentials.model_dump() if self.config.credentials is not None else None)
         data = await self.freshen_credential(raw, pool=self.node_data.get("_approval_pool"),
             user_id=self.user_id, credential_id=self.node_data.get("credential_id"),
             organization_id=self.organization_id, workflow_id=self.workflow_id)
