@@ -25,6 +25,7 @@ Webhooks/triggers: none. Ahrefs API v3 is request/response only, so this node
 ships no trigger.
 """
 
+from datetime import date as Date
 import logging
 import time
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
@@ -41,18 +42,18 @@ AHREFS_API_BASE = "https://api.ahrefs.com/v3"
 # Default field selections per endpoint family. Ahrefs requires an explicit
 # `select` on most data endpoints; these give a sensible default payload.
 DEFAULT_BACKLINKS_SELECT = "url_from,url_to,anchor,domain_rating_source,traffic,link_type,first_seen"
-DEFAULT_REFDOMAINS_SELECT = "domain,domain_rating,traffic_domain,refdomains,links_to_target"
-DEFAULT_ANCHORS_SELECT = "anchor,refdomains,backlinks"
-DEFAULT_ORGANIC_KEYWORDS_SELECT = "keyword,volume,keyword_difficulty,cpc,position,traffic,url"
-DEFAULT_ORGANIC_COMPETITORS_SELECT = "competitor_domain,common_keywords,keywords,traffic"
-DEFAULT_TOP_PAGES_SELECT = "url,traffic,value,keywords,top_keyword,top_keyword_volume"
-DEFAULT_PAID_PAGES_SELECT = "url,traffic,value,keywords,ads_count"
-DEFAULT_BEST_BY_LINKS_SELECT = "url,external_links,domain_rating,traffic,refdomains"
-DEFAULT_LINKED_DOMAINS_SELECT = "domain,domain_rating,links,dofollow_links"
-DEFAULT_METRICS_HISTORY_SELECT = "date,org_traffic,org_keywords,org_cost"
+DEFAULT_REFDOMAINS_SELECT = "domain,domain_rating,traffic_domain,dofollow_refdomains,links_to_target"
+DEFAULT_ANCHORS_SELECT = "anchor,refdomains,links_to_target"
+DEFAULT_ORGANIC_KEYWORDS_SELECT = "keyword,volume,keyword_difficulty,cpc,best_position,sum_traffic,best_position_url"
+DEFAULT_ORGANIC_COMPETITORS_SELECT = "competitor_domain,keywords_common,keywords_competitor,traffic"
+DEFAULT_TOP_PAGES_SELECT = "url,sum_traffic,value,keywords,top_keyword,top_keyword_volume"
+DEFAULT_PAID_PAGES_SELECT = "url,sum_traffic,value,keywords,ads_count"
+DEFAULT_BEST_BY_LINKS_SELECT = "url_to,links_to_target,url_rating_target,refdomains_target"
+DEFAULT_LINKED_DOMAINS_SELECT = "domain,domain_rating,links_from_target,dofollow_links"
+DEFAULT_METRICS_HISTORY_SELECT = "date,org_traffic,org_cost"
 DEFAULT_KE_OVERVIEW_SELECT = "keyword,volume,difficulty,cpc,clicks,traffic_potential"
 DEFAULT_SERP_SELECT = "position,url,title,domain_rating,traffic,backlinks,refdomains"
-DEFAULT_BATCH_SELECT = "target,domain_rating,org_traffic,refdomains,backlinks"
+DEFAULT_BATCH_SELECT = "url,domain_rating,org_traffic,refdomains,backlinks"
 
 
 # ============================================================================
@@ -126,7 +127,7 @@ def _country_field(default: Optional[str] = None) -> Any:
 
 
 class AhrefsSiteOverviewConfig(BaseModel):
-    """Domain/URL overview: DR, UR, backlinks, referring domains, traffic + value."""
+    """Domain/URL overview: DR, backlinks, referring domains, traffic and value."""
 
     operation: Literal["site_overview"] = Field(
         "site_overview",
@@ -151,6 +152,8 @@ class AhrefsSiteOverviewConfig(BaseModel):
         },
     )
 
+    date: Date = Field(..., title="Date", description="Snapshot date (YYYY-MM-DD)")
+
 
 class AhrefsDomainRatingConfig(BaseModel):
     """Domain Rating (DR) for a target."""
@@ -167,8 +170,8 @@ class AhrefsDomainRatingConfig(BaseModel):
         title="Domain Rating",
     )
     target: str = _target_field()
-    date: Optional[str] = Field(
-        None, title="Date", description="Snapshot date (YYYY-MM-DD). Defaults to latest."
+    date: Date = Field(
+        ..., title="Date", description="Snapshot date (YYYY-MM-DD)"
     )
 
 
@@ -293,6 +296,8 @@ class AhrefsOrganicKeywordsConfig(BaseModel):
         None, title="Order By", description="Sort expression, e.g. 'traffic:desc'"
     )
 
+    date: Date = Field(..., title="Date", description="Snapshot date (YYYY-MM-DD)")
+
 
 class AhrefsOrganicCompetitorsConfig(BaseModel):
     """Domains competing for the target's organic keywords."""
@@ -315,6 +320,8 @@ class AhrefsOrganicCompetitorsConfig(BaseModel):
     select: Optional[str] = Field(
         DEFAULT_ORGANIC_COMPETITORS_SELECT, title="Fields", description="Comma-separated fields to return"
     )
+
+    date: Date = Field(..., title="Date", description="Snapshot date (YYYY-MM-DD)")
 
 
 class AhrefsTopPagesConfig(BaseModel):
@@ -339,6 +346,8 @@ class AhrefsTopPagesConfig(BaseModel):
         DEFAULT_TOP_PAGES_SELECT, title="Fields", description="Comma-separated fields to return"
     )
 
+    date: Date = Field(..., title="Date", description="Snapshot date (YYYY-MM-DD)")
+
 
 class AhrefsPaidPagesConfig(BaseModel):
     """Pages of the target running paid (PPC) ads."""
@@ -361,6 +370,8 @@ class AhrefsPaidPagesConfig(BaseModel):
     select: Optional[str] = Field(
         DEFAULT_PAID_PAGES_SELECT, title="Fields", description="Comma-separated fields to return"
     )
+
+    date: Date = Field(..., title="Date", description="Snapshot date (YYYY-MM-DD)")
 
 
 class AhrefsBestByExternalLinksConfig(BaseModel):
@@ -518,6 +529,8 @@ class AhrefsMatchingTermsConfig(BaseModel):
     country: Optional[str] = _country_field("us")
     limit: Optional[str] = _limit_field()
 
+    select: str = Field("keyword,volume,difficulty", title="Fields", description="Comma-separated fields to return")
+
 
 class AhrefsRelatedTermsConfig(BaseModel):
     """Related keyword ideas ('also rank for')."""
@@ -539,6 +552,8 @@ class AhrefsRelatedTermsConfig(BaseModel):
     country: Optional[str] = _country_field("us")
     limit: Optional[str] = _limit_field()
 
+    select: str = Field("keyword,volume,difficulty", title="Fields", description="Comma-separated fields to return")
+
 
 class AhrefsSearchSuggestionsConfig(BaseModel):
     """Autocomplete-style keyword suggestions for a seed."""
@@ -559,12 +574,12 @@ class AhrefsSearchSuggestionsConfig(BaseModel):
     )
     country: Optional[str] = _country_field("us")
     limit: Optional[str] = _limit_field()
+    select: str = Field("keyword,volume,difficulty", title="Fields", description="Comma-separated fields to return")
 
 
 # ============================================================================
 # SERP / Batch operation configs
 # ============================================================================
-
 
 class AhrefsSerpOverviewConfig(BaseModel):
     """Top ~100 organic results for a keyword with per-position SEO metrics."""
@@ -698,6 +713,11 @@ class AhrefsRankTrackerOverviewConfig(BaseModel):
         },
     )
 
+    date: Date = Field(..., title="Date", description="Snapshot date (YYYY-MM-DD)")
+
+    select: str = Field("keyword,position,traffic", title="Fields", description="Comma-separated fields to return")
+    device: Literal["desktop", "mobile"] = Field("desktop", title="Device")
+
 
 class AhrefsListProjectsConfig(BaseModel):
     """List Rank Tracker projects in the workspace."""
@@ -780,6 +800,8 @@ class AhrefsAddCompetitorsConfig(BaseModel):
     competitors: str = Field(
         ..., title="Competitors", description="Competitor domains to add, comma-separated"
     )
+
+    mode: str = _mode_field()
 
 
 # ============================================================================
@@ -1100,10 +1122,30 @@ class AhrefsNode(WorkflowNode):
     # Site Explorer handlers
     # ------------------------------------------------------------------
     async def _site_overview(self, c: AhrefsSiteOverviewConfig, api_key: str) -> Dict[str, Any]:
-        params = {"target": c.target, "mode": c.mode, "protocol": c.protocol}
-        return await _ahrefs_request(
-            api_key, "GET", "/site-explorer/overview", params=params, action_name="site_overview"
-        )
+        params = {"target": c.target, "mode": c.mode, "protocol": c.protocol, "date": c.date}
+        combined: Dict[str, Any] = {}
+        timing = 0.0
+        for endpoint, request_params in (
+            ("/site-explorer/metrics", params),
+            ("/site-explorer/domain-rating", {"target": c.target, "date": c.date}),
+            ("/site-explorer/backlinks-stats", params),
+        ):
+            result = await _ahrefs_request(
+                api_key, "GET", endpoint, params=request_params, action_name="site_overview"
+            )
+            if result.get("status") != "success":
+                return result
+            data = result["data"]
+            if not isinstance(data, dict):
+                return {"status": "error", "action": "site_overview", "error": "Ahrefs returned an invalid overview response"}
+            for key, value in data.items():
+                if isinstance(value, dict) and isinstance(combined.get(key), dict):
+                    combined[key].update(value)
+                else:
+                    combined[key] = value
+            timing += result.get("timing_ms", {}).get("api_request", 0)
+        return {"status": "success", "action": "site_overview", "data": combined,
+                "status_code": 200, "timing_ms": {"api_request": timing}}
 
     async def _domain_rating(self, c: AhrefsDomainRatingConfig, api_key: str) -> Dict[str, Any]:
         params = {"target": c.target, "date": c.date}
@@ -1150,6 +1192,7 @@ class AhrefsNode(WorkflowNode):
     async def _organic_keywords(self, c: AhrefsOrganicKeywordsConfig, api_key: str) -> Dict[str, Any]:
         params = {
             "target": c.target,
+            "date": c.date,
             "mode": c.mode,
             "country": c.country,
             "limit": c.limit,
@@ -1163,6 +1206,7 @@ class AhrefsNode(WorkflowNode):
     async def _organic_competitors(self, c: AhrefsOrganicCompetitorsConfig, api_key: str) -> Dict[str, Any]:
         params = {
             "target": c.target,
+            "date": c.date,
             "mode": c.mode,
             "country": c.country,
             "limit": c.limit,
@@ -1175,6 +1219,7 @@ class AhrefsNode(WorkflowNode):
     async def _top_pages(self, c: AhrefsTopPagesConfig, api_key: str) -> Dict[str, Any]:
         params = {
             "target": c.target,
+            "date": c.date,
             "mode": c.mode,
             "country": c.country,
             "limit": c.limit,
@@ -1187,6 +1232,7 @@ class AhrefsNode(WorkflowNode):
     async def _paid_pages(self, c: AhrefsPaidPagesConfig, api_key: str) -> Dict[str, Any]:
         params = {
             "target": c.target,
+            "date": c.date,
             "mode": c.mode,
             "country": c.country,
             "limit": c.limit,
@@ -1199,13 +1245,13 @@ class AhrefsNode(WorkflowNode):
     async def _best_by_external_links(self, c: AhrefsBestByExternalLinksConfig, api_key: str) -> Dict[str, Any]:
         params = {"target": c.target, "mode": c.mode, "limit": c.limit, "select": c.select}
         return await _ahrefs_request(
-            api_key, "GET", "/site-explorer/best-by-external-links", params=params, action_name="best_by_external_links"
+            api_key, "GET", "/site-explorer/pages-by-backlinks", params=params, action_name="best_by_external_links"
         )
 
     async def _linked_domains(self, c: AhrefsLinkedDomainsConfig, api_key: str) -> Dict[str, Any]:
         params = {"target": c.target, "mode": c.mode, "limit": c.limit, "select": c.select}
         return await _ahrefs_request(
-            api_key, "GET", "/site-explorer/linked-domains", params=params, action_name="linked_domains"
+            api_key, "GET", "/site-explorer/linkeddomains", params=params, action_name="linked_domains"
         )
 
     async def _metrics_history(self, c: AhrefsMetricsHistoryConfig, api_key: str) -> Dict[str, Any]:
@@ -1251,6 +1297,7 @@ class AhrefsNode(WorkflowNode):
             "keywords": ",".join(_comma_list(c.keywords)),
             "country": c.country,
             "limit": c.limit,
+            "select": c.select,
         }
         return await _ahrefs_request(
             api_key, "GET", "/keywords-explorer/matching-terms", params=params, action_name="matching_terms"
@@ -1261,6 +1308,7 @@ class AhrefsNode(WorkflowNode):
             "keywords": ",".join(_comma_list(c.keywords)),
             "country": c.country,
             "limit": c.limit,
+            "select": c.select,
         }
         return await _ahrefs_request(
             api_key, "GET", "/keywords-explorer/related-terms", params=params, action_name="related_terms"
@@ -1271,6 +1319,7 @@ class AhrefsNode(WorkflowNode):
             "keywords": ",".join(_comma_list(c.keywords)),
             "country": c.country,
             "limit": c.limit,
+            "select": c.select,
         }
         return await _ahrefs_request(
             api_key, "GET", "/keywords-explorer/search-suggestions", params=params, action_name="search_suggestions"
@@ -1286,13 +1335,13 @@ class AhrefsNode(WorkflowNode):
         )
 
     async def _batch_analysis(self, c: AhrefsBatchAnalysisConfig, api_key: str) -> Dict[str, Any]:
-        params = {
-            "targets": ",".join(_comma_list(c.targets)),
-            "mode": c.mode,
-            "select": c.select,
+        body = {
+            "targets": [{"url": target, "mode": c.mode, "protocol": "both"}
+                        for target in _comma_list(c.targets)],
+            "select": _comma_list(c.select or DEFAULT_BATCH_SELECT),
         }
         return await _ahrefs_request(
-            api_key, "GET", "/batch-analysis/batch-analysis", params=params, action_name="batch_analysis"
+            api_key, "POST", "/batch-analysis/batch-analysis", json_body=body, action_name="batch_analysis"
         )
 
     # ------------------------------------------------------------------
@@ -1313,7 +1362,7 @@ class AhrefsNode(WorkflowNode):
     # Rank Tracker / Management handlers
     # ------------------------------------------------------------------
     async def _rank_tracker_overview(self, c: AhrefsRankTrackerOverviewConfig, api_key: str) -> Dict[str, Any]:
-        params = {"project_id": c.project_id}
+        params = {"project_id": c.project_id, "select": c.select, "device": c.device, "date": c.date}
         return await _ahrefs_request(
             api_key, "GET", "/rank-tracker/overview", params=params, action_name="rank_tracker_overview"
         )
@@ -1325,21 +1374,22 @@ class AhrefsNode(WorkflowNode):
 
     async def _add_keywords(self, c: AhrefsAddKeywordsConfig, api_key: str) -> Dict[str, Any]:
         body = {
-            "project_id": c.project_id,
-            "keywords": _comma_list(c.keywords),
-            "country": c.country,
+            "keywords": [{"keyword": keyword} for keyword in _comma_list(c.keywords)],
+            "locations": [{"country": c.country or "us"}],
         }
         return await _ahrefs_request(
-            api_key, "POST", "/management/add-keywords", json_body=body, action_name="add_keywords"
+            api_key, "PUT", "/management/project-keywords", params={"project_id": c.project_id},
+            json_body=body, action_name="add_keywords"
         )
 
     async def _add_competitors(self, c: AhrefsAddCompetitorsConfig, api_key: str) -> Dict[str, Any]:
         body = {
-            "project_id": c.project_id,
-            "competitors": _comma_list(c.competitors),
+            "competitors": [{"url": competitor, "mode": c.mode}
+                            for competitor in _comma_list(c.competitors)],
         }
         return await _ahrefs_request(
-            api_key, "POST", "/management/add-competitors", json_body=body, action_name="add_competitors"
+            api_key, "POST", "/management/project-competitors", params={"project_id": c.project_id},
+            json_body=body, action_name="add_competitors"
         )
 
     # ------------------------------------------------------------------

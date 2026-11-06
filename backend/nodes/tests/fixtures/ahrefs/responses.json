@@ -1,0 +1,114 @@
+{
+  "site-explorer/metrics": {
+    "source": "https://docs.ahrefs.com/en/api/reference/site-explorer/get-metrics",
+    "body": {
+      "metrics": {
+        "org_cost": 0,
+        "org_keywords": 0,
+        "org_keywords_1_3": 0,
+        "org_traffic": 0,
+        "paid_cost": 0,
+        "paid_keywords": 0,
+        "paid_pages": 0,
+        "paid_traffic": 0
+      }
+    }
+  },
+  "site-explorer/domain-rating": {
+    "source": "https://docs.ahrefs.com/en/api/reference/site-explorer/get-domain-rating",
+    "body": {
+      "domain_rating": {
+        "ahrefs_rank": 0,
+        "domain_rating": 0
+      }
+    }
+  },
+  "site-explorer/backlinks-stats": {
+    "source": "https://docs.ahrefs.com/en/api/reference/site-explorer/get-backlinks-stats",
+    "body": {
+      "metrics": {
+        "all_time": 0,
+        "all_time_refdomains": 0,
+        "live": 0,
+        "live_refdomains": 0
+      }
+    }
+  },
+  "batch-analysis/batch-analysis": {
+    "source": "https://docs.ahrefs.com/en/api/reference/batch-analysis/post-batch-analysis",
+    "body": {
+      "targets": [
+        {
+          "ahrefs_rank": 0,
+          "backlinks": 0,
+          "backlinks_dofollow": 0,
+          "backlinks_internal": 0,
+          "backlinks_nofollow": 0,
+          "backlinks_redirect": 0,
+          "domain_rating": 0,
+          "index": 0,
+          "ip": "string",
+          "linked_domains": 0,
+          "linked_domains_dofollow": 0,
+          "mode": "string",
+          "org_cost": 0,
+          "org_keywords": 0,
+          "org_keywords_1_3": 0,
+          "org_keywords_4_10": 0,
+          "org_keywords_11_20": 0,
+          "org_keywords_21_50": 0,
+          "org_keywords_51_plus": 0,
+          "org_traffic": 0,
+          "org_traffic_top_by_country": [
+            [
+              "string",
+              0
+            ]
+          ],
+          "outgoing_links": 0,
+          "outgoing_links_dofollow": 0,
+          "paid_ads": 0,
+          "paid_cost": 0,
+          "paid_keywords": 0,
+          "paid_traffic": 0,
+          "protocol": "string",
+          "refdomains": 0,
+          "refdomains_dofollow": 0,
+          "refdomains_nofollow": 0,
+          "refips": 0,
+          "refips_subnets": 0,
+          "url": "string",
+          "url_rating": 0
+        }
+      ]
+    }
+  },
+  "management/project-keywords": {
+    "source": "https://docs.ahrefs.com/en/api/reference/management/put-project-keywords",
+    "body": {
+      "keywords": [
+        {
+          "keyword": "string",
+          "language": "string",
+          "language_code": "string",
+          "location": "string",
+          "location_id": 0,
+          "tags": [
+            "string"
+          ]
+        }
+      ]
+    }
+  },
+  "management/project-competitors": {
+    "source": "https://docs.ahrefs.com/en/api/reference/management/post-project-competitors",
+    "body": {
+      "competitors": [
+        {
+          "mode": "string",
+          "url": "string"
+        }
+      ]
+    }
+  }
+}

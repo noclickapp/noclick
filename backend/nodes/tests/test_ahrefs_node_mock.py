@@ -17,6 +17,10 @@ Exercises every operation with mocked HTTP responses (no live API calls):
 - Dynamic options: project dropdowns
 """
 
+import json
+from pathlib import Path
+
+import httpx
 import pytest
 from unittest.mock import AsyncMock, Mock, patch
 
@@ -112,6 +116,123 @@ async def _run(config_obj, json_data, api_key_credentials, status_code=200):
         return await node.execute({})
 
 
+# These bodies are copied verbatim from the provider's reference pages; each
+# fixture records its source URL. Exercise the real HTTP serialization as well
+# as the parser, so a mock cannot hide an unsupported method or body shape.
+DOCUMENTED_RESPONSES = json.loads(
+    (Path(__file__).parent / "fixtures/ahrefs/responses.json").read_text()
+)
+
+
+async def _run_documented(config_obj, credentials):
+    requests = []
+
+    def transport(request):
+        requests.append(request)
+        path = request.url.path.removeprefix("/v3/")
+        return httpx.Response(200, json=DOCUMENTED_RESPONSES[path]["body"])
+
+    original_client = httpx.AsyncClient
+
+    def client(*args, **kwargs):
+        return original_client(transport=httpx.MockTransport(transport))
+
+    node = create_ahrefs_node(AhrefsNodeConfig(config=config_obj, credentials=credentials))
+    with patch("nodes.ahrefs_node.httpx.AsyncClient", side_effect=client):
+        result = await node.execute({})
+    assert result["status"] == "success"
+    return result, requests
+
+
+class TestAhrefsConformanceRegressions:
+    @pytest.mark.asyncio
+    async def test_overview_combines_documented_endpoints(self, api_key_credentials):
+        result, requests = await _run_documented(
+            AhrefsSiteOverviewConfig(target="ahrefs.com", date="2023-05-18"),
+            api_key_credentials,
+        )
+        assert [r.url.path for r in requests] == [
+            "/v3/site-explorer/metrics", "/v3/site-explorer/domain-rating",
+            "/v3/site-explorer/backlinks-stats",
+        ]
+        assert all(r.method == "GET" and r.url.params["date"] == "2023-05-18" for r in requests)
+        assert result["data"]["metrics"]["org_traffic"] == 0
+        assert result["data"]["metrics"]["live_refdomains"] == 0
+        assert result["data"]["domain_rating"]["domain_rating"] == 0
+
+    @pytest.mark.asyncio
+    async def test_batch_posts_target_objects_and_field_array(self, api_key_credentials):
+        _, requests = await _run_documented(
+            AhrefsBatchAnalysisConfig(targets="ahrefs.com, yep.com"), api_key_credentials,
+        )
+        request, = requests
+        assert request.method == "POST"
+        assert not request.url.query
+        body = json.loads(request.content)
+        assert body["targets"] == [
+            {"url": "ahrefs.com", "mode": "subdomains", "protocol": "both"},
+            {"url": "yep.com", "mode": "subdomains", "protocol": "both"},
+        ]
+        assert body["select"] == ["url", "domain_rating", "org_traffic", "refdomains", "backlinks"]
+
+    @pytest.mark.asyncio
+    async def test_keywords_put_uses_query_project_and_locations(self, api_key_credentials):
+        _, requests = await _run_documented(
+            AhrefsAddKeywordsConfig(project_id="123", keywords="ahrefs, yep", country="us"),
+            api_key_credentials,
+        )
+        request, = requests
+        assert request.method == "PUT"
+        assert request.url.path == "/v3/management/project-keywords"
+        assert request.url.params["project_id"] == "123"
+        assert json.loads(request.content) == {
+            "keywords": [{"keyword": "ahrefs"}, {"keyword": "yep"}],
+            "locations": [{"country": "us"}],
+        }
+
+    @pytest.mark.asyncio
+    async def test_competitors_post_uses_target_objects(self, api_key_credentials):
+        _, requests = await _run_documented(
+            AhrefsAddCompetitorsConfig(project_id="123", competitors="yep.com", mode="domain"),
+            api_key_credentials,
+        )
+        request, = requests
+        assert request.method == "POST"
+        assert request.url.path == "/v3/management/project-competitors"
+        assert request.url.params["project_id"] == "123"
+        assert json.loads(request.content) == {"competitors": [{"url": "yep.com", "mode": "domain"}]}
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("config", [
+        AhrefsOrganicKeywordsConfig(target="ahrefs.com", date="2023-05-18"),
+        AhrefsOrganicCompetitorsConfig(target="ahrefs.com", date="2023-05-18"),
+        AhrefsTopPagesConfig(target="ahrefs.com", date="2023-05-18"),
+        AhrefsPaidPagesConfig(target="ahrefs.com", date="2023-05-18"),
+        AhrefsMatchingTermsConfig(keywords="ahrefs"),
+        AhrefsRelatedTermsConfig(keywords="ahrefs"),
+        AhrefsSearchSuggestionsConfig(keywords="ahrefs"),
+        AhrefsRankTrackerOverviewConfig(project_id="123", date="2023-05-18"),
+        AhrefsBestByExternalLinksConfig(target="ahrefs.com"),
+        AhrefsLinkedDomainsConfig(target="ahrefs.com"),
+    ])
+    async def test_required_parameters_and_corrected_routes(self, config, api_key_credentials):
+        node = create_ahrefs_node(AhrefsNodeConfig(config=config, credentials=api_key_credentials))
+        with patch("nodes.ahrefs_node._ahrefs_request", new=AsyncMock(
+            return_value={"status": "success"},
+        )) as send:
+            await node.execute({})
+        request = send.await_args.kwargs
+        assert request["params"]["select"]
+        if hasattr(config, "date"):
+            assert str(request["params"]["date"]) == "2023-05-18"
+        if config.operation == "rank_tracker_overview":
+            assert request["params"]["device"] == "desktop"
+        if config.operation == "best_by_external_links":
+            assert send.await_args.args[2] == "/site-explorer/pages-by-backlinks"
+        if config.operation == "linked_domains":
+            assert send.await_args.args[2] == "/site-explorer/linkeddomains"
+
+
 # ============================================================================
 # Site Explorer
 # ============================================================================
@@ -121,7 +242,7 @@ class TestAhrefsSiteExplorerMock:
     @pytest.mark.asyncio
     async def test_site_overview(self, api_key_credentials):
         result = await _run(
-            AhrefsSiteOverviewConfig(target="ahrefs.com"),
+            AhrefsSiteOverviewConfig(date="2023-05-18", target="ahrefs.com"),
             {"metrics": {"domain_rating": 92, "backlinks": 100}},
             api_key_credentials,
         )
@@ -132,7 +253,7 @@ class TestAhrefsSiteExplorerMock:
     @pytest.mark.asyncio
     async def test_domain_rating(self, api_key_credentials):
         result = await _run(
-            AhrefsDomainRatingConfig(target="ahrefs.com"),
+            AhrefsDomainRatingConfig(date="2023-05-18", target="ahrefs.com"),
             {"domain_rating": {"domain_rating": 92}},
             api_key_credentials,
         )
@@ -183,7 +304,7 @@ class TestAhrefsSiteExplorerMock:
     @pytest.mark.asyncio
     async def test_organic_keywords(self, api_key_credentials):
         result = await _run(
-            AhrefsOrganicKeywordsConfig(target="ahrefs.com", country="us"),
+            AhrefsOrganicKeywordsConfig(date="2023-05-18", target="ahrefs.com", country="us"),
             {"keywords": [{"keyword": "seo", "volume": 1000}]},
             api_key_credentials,
         )
@@ -193,7 +314,7 @@ class TestAhrefsSiteExplorerMock:
     @pytest.mark.asyncio
     async def test_organic_competitors(self, api_key_credentials):
         result = await _run(
-            AhrefsOrganicCompetitorsConfig(target="ahrefs.com"),
+            AhrefsOrganicCompetitorsConfig(date="2023-05-18", target="ahrefs.com"),
             {"competitors": [{"competitor_domain": "semrush.com"}]},
             api_key_credentials,
         )
@@ -203,7 +324,7 @@ class TestAhrefsSiteExplorerMock:
     @pytest.mark.asyncio
     async def test_top_pages(self, api_key_credentials):
         result = await _run(
-            AhrefsTopPagesConfig(target="ahrefs.com"),
+            AhrefsTopPagesConfig(date="2023-05-18", target="ahrefs.com"),
             {"pages": [{"url": "ahrefs.com/blog"}]},
             api_key_credentials,
         )
@@ -213,7 +334,7 @@ class TestAhrefsSiteExplorerMock:
     @pytest.mark.asyncio
     async def test_paid_pages(self, api_key_credentials):
         result = await _run(
-            AhrefsPaidPagesConfig(target="ahrefs.com"),
+            AhrefsPaidPagesConfig(date="2023-05-18", target="ahrefs.com"),
             {"pages": [{"url": "ahrefs.com/pricing"}]},
             api_key_credentials,
         )
@@ -381,7 +502,7 @@ class TestAhrefsRankTrackerManagementMock:
     @pytest.mark.asyncio
     async def test_rank_tracker_overview(self, api_key_credentials):
         result = await _run(
-            AhrefsRankTrackerOverviewConfig(project_id="p1"),
+            AhrefsRankTrackerOverviewConfig(date="2023-05-18", project_id="p1"),
             {"overview": {"visibility": 45.2}},
             api_key_credentials,
         )
@@ -459,7 +580,7 @@ class TestAhrefsErrorHandlingMock:
     @pytest.mark.asyncio
     async def test_api_error(self, api_key_credentials):
         config = AhrefsNodeConfig(
-            config=AhrefsDomainRatingConfig(target="ahrefs.com"),
+            config=AhrefsDomainRatingConfig(date="2023-05-18", target="ahrefs.com"),
             credentials=api_key_credentials,
         )
         node = create_ahrefs_node(config)

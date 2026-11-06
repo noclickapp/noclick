@@ -55,6 +55,25 @@
           "description": "Competitor domains to add, comma-separated",
           "title": "Competitors",
           "type": "string"
+        },
+        "mode": {
+          "default": "subdomains",
+          "description": "How to interpret the target",
+          "enum": [
+            "exact",
+            "prefix",
+            "domain",
+            "subdomains"
+          ],
+          "enumNames": [
+            "Exact URL",
+            "Prefix (path)",
+            "Domain",
+            "Domain + subdomains"
+          ],
+          "title": "Mode",
+          "type": "string",
+          "x-enum-searchable": true
         }
       },
       "required": [
@@ -175,7 +194,7 @@
               "type": "null"
             }
           ],
-          "default": "anchor,refdomains,backlinks",
+          "default": "anchor,refdomains,links_to_target",
           "description": "Comma-separated fields to return",
           "title": "Fields"
         }
@@ -315,7 +334,7 @@
               "type": "null"
             }
           ],
-          "default": "target,domain_rating,org_traffic,refdomains,backlinks",
+          "default": "url,domain_rating,org_traffic,refdomains,backlinks",
           "description": "Comma-separated fields to return",
           "title": "Fields"
         }
@@ -385,7 +404,7 @@
               "type": "null"
             }
           ],
-          "default": "url,external_links,domain_rating,traffic,refdomains",
+          "default": "url_to,links_to_target,url_rating_target,refdomains_target",
           "description": "Comma-separated fields to return",
           "title": "Fields"
         }
@@ -502,21 +521,15 @@
           "type": "string"
         },
         "date": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Snapshot date (YYYY-MM-DD). Defaults to latest.",
-          "title": "Date"
+          "description": "Snapshot date (YYYY-MM-DD)",
+          "format": "date",
+          "title": "Date",
+          "type": "string"
         }
       },
       "required": [
-        "target"
+        "target",
+        "date"
       ],
       "title": "AhrefsDomainRatingConfig",
       "type": "object"
@@ -648,7 +661,7 @@
               "type": "null"
             }
           ],
-          "default": "domain,domain_rating,links,dofollow_links",
+          "default": "domain,domain_rating,links_from_target,dofollow_links",
           "description": "Comma-separated fields to return",
           "title": "Fields"
         }
@@ -719,6 +732,12 @@
           "default": "100",
           "description": "Maximum number of rows to return",
           "title": "Limit"
+        },
+        "select": {
+          "default": "keyword,volume,difficulty",
+          "description": "Comma-separated fields to return",
+          "title": "Fields",
+          "type": "string"
         }
       },
       "required": [
@@ -812,7 +831,7 @@
               "type": "null"
             }
           ],
-          "default": "date,org_traffic,org_keywords,org_cost",
+          "default": "date,org_traffic,org_cost",
           "description": "Comma-separated fields to return",
           "title": "Fields"
         }
@@ -895,13 +914,20 @@
               "type": "null"
             }
           ],
-          "default": "competitor_domain,common_keywords,keywords,traffic",
+          "default": "competitor_domain,keywords_common,keywords_competitor,traffic",
           "description": "Comma-separated fields to return",
           "title": "Fields"
+        },
+        "date": {
+          "description": "Snapshot date (YYYY-MM-DD)",
+          "format": "date",
+          "title": "Date",
+          "type": "string"
         }
       },
       "required": [
-        "target"
+        "target",
+        "date"
       ],
       "title": "AhrefsOrganicCompetitorsConfig",
       "type": "object"
@@ -978,7 +1004,7 @@
               "type": "null"
             }
           ],
-          "default": "keyword,volume,keyword_difficulty,cpc,position,traffic,url",
+          "default": "keyword,volume,keyword_difficulty,cpc,best_position,sum_traffic,best_position_url",
           "description": "Comma-separated fields to return",
           "title": "Fields"
         },
@@ -994,10 +1020,17 @@
           "default": null,
           "description": "Sort expression, e.g. 'traffic:desc'",
           "title": "Order By"
+        },
+        "date": {
+          "description": "Snapshot date (YYYY-MM-DD)",
+          "format": "date",
+          "title": "Date",
+          "type": "string"
         }
       },
       "required": [
-        "target"
+        "target",
+        "date"
       ],
       "title": "AhrefsOrganicKeywordsConfig",
       "type": "object"
@@ -1074,13 +1107,20 @@
               "type": "null"
             }
           ],
-          "default": "url,traffic,value,keywords,ads_count",
+          "default": "url,sum_traffic,value,keywords,ads_count",
           "description": "Comma-separated fields to return",
           "title": "Fields"
+        },
+        "date": {
+          "description": "Snapshot date (YYYY-MM-DD)",
+          "format": "date",
+          "title": "Date",
+          "type": "string"
         }
       },
       "required": [
-        "target"
+        "target",
+        "date"
       ],
       "title": "AhrefsPaidPagesConfig",
       "type": "object"
@@ -1110,10 +1150,32 @@
             "searchable": true,
             "auto_select_sole_option": true
           }
+        },
+        "date": {
+          "description": "Snapshot date (YYYY-MM-DD)",
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "select": {
+          "default": "keyword,position,traffic",
+          "description": "Comma-separated fields to return",
+          "title": "Fields",
+          "type": "string"
+        },
+        "device": {
+          "default": "desktop",
+          "enum": [
+            "desktop",
+            "mobile"
+          ],
+          "title": "Device",
+          "type": "string"
         }
       },
       "required": [
-        "project_id"
+        "project_id",
+        "date"
       ],
       "title": "AhrefsRankTrackerOverviewConfig",
       "type": "object"
@@ -1177,7 +1239,7 @@
               "type": "null"
             }
           ],
-          "default": "domain,domain_rating,traffic_domain,refdomains,links_to_target",
+          "default": "domain,domain_rating,traffic_domain,dofollow_refdomains,links_to_target",
           "description": "Comma-separated fields to return",
           "title": "Fields"
         },
@@ -1244,6 +1306,12 @@
           "default": "100",
           "description": "Maximum number of rows to return",
           "title": "Limit"
+        },
+        "select": {
+          "default": "keyword,volume,difficulty",
+          "description": "Comma-separated fields to return",
+          "title": "Fields",
+          "type": "string"
         }
       },
       "required": [
@@ -1295,6 +1363,12 @@
           "default": "100",
           "description": "Maximum number of rows to return",
           "title": "Limit"
+        },
+        "select": {
+          "default": "keyword,volume,difficulty",
+          "description": "Comma-separated fields to return",
+          "title": "Fields",
+          "type": "string"
         }
       },
       "required": [
@@ -1418,7 +1492,7 @@
       "type": "object"
     },
     "AhrefsSiteOverviewConfig": {
-      "description": "Domain/URL overview: DR, UR, backlinks, referring domains, traffic + value.",
+      "description": "Domain/URL overview: DR, backlinks, referring domains, traffic and value.",
       "properties": {
         "operation": {
           "const": "site_overview",
@@ -1472,10 +1546,17 @@
           ],
           "title": "Protocol",
           "x-enum-searchable": true
+        },
+        "date": {
+          "description": "Snapshot date (YYYY-MM-DD)",
+          "format": "date",
+          "title": "Date",
+          "type": "string"
         }
       },
       "required": [
-        "target"
+        "target",
+        "date"
       ],
       "title": "AhrefsSiteOverviewConfig",
       "type": "object"
@@ -1552,13 +1633,20 @@
               "type": "null"
             }
           ],
-          "default": "url,traffic,value,keywords,top_keyword,top_keyword_volume",
+          "default": "url,sum_traffic,value,keywords,top_keyword,top_keyword_volume",
           "description": "Comma-separated fields to return",
           "title": "Fields"
+        },
+        "date": {
+          "description": "Snapshot date (YYYY-MM-DD)",
+          "format": "date",
+          "title": "Date",
+          "type": "string"
         }
       },
       "required": [
-        "target"
+        "target",
+        "date"
       ],
       "title": "AhrefsTopPagesConfig",
       "type": "object"
