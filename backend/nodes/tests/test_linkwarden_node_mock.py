@@ -71,7 +71,7 @@ def test_origin_refuses_private_and_disguised_authority_without_token_disclosure
 async def test_actual_manual_connect_and_empty_catalog_are_reachability_not_identity(wire, monkeypatch):
     monkeypatch.setattr(cc, "_collect_evidence", evidence.collect_evidence)
     wire["responses"]["/collections"] = {"response": []}
-    verdict = await cc.validate_for_connect(credential_type="LinkwardenAccessToken", credential_data={k: v for k, v in KEY.items() if k != "credential_type"}, user_id="fixture", probe=True)
+    verdict = await cc.validate_for_connect(credential_type=p.TYPE, credential_data={k: v for k, v in KEY.items() if k != "credential_type"}, user_id="fixture", probe=True)
     assert verdict.ok and verdict.credential_data == KEY
     assert verdict.evidence.reachable is True and verdict.evidence.proves == "reachability"
     assert verdict.evidence.account_label is None and verdict.evidence.answers_field is None
@@ -131,7 +131,7 @@ async def test_output_cap_explicit_and_picker_refuses_silent_truncation_no_pagin
     assert result["count"] == 100 and result["truncated"] and result["completion_verified"] is False and result["total"] is None
     with pytest.raises(ValueError, match="local100"): await p.LinkwardenNode.load_field_options("collection_id", KEY)
     wire["responses"]["/collections"] = {"response": [COLLECTION]}
-    options = await p.LinkwardenNode.load_field_options("collection_id", KEY, search_query="7")
+    options = await p.LinkwardenNode.load_field_options("collection_id", KEY, search="7")
     assert options == {"options": [{"value": "7", "label": "Collection 7"}], "next_page_token": None}
     wire["calls"].clear()
     with pytest.raises(ValueError): await p.LinkwardenNode.load_field_options("collection_id", KEY, page_token="foreign")

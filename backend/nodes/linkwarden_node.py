@@ -261,12 +261,12 @@ class LinkwardenNode(WorkflowNode):
         return {**fresh.model_dump(), "_linkwarden_reader": reader}
 
     @classmethod
-    async def load_field_options(cls, field_name, credential_data, context=None, search_query=None, page_token=None):
+    async def load_field_options(cls, field_name, credential_data, context=None, search=None, page_token=None):
         value = guard(credential_data); reader = credential_data.get("_linkwarden_reader")
         if reader is not None and not isinstance(reader, Reader): raise ValueError("Invalid Linkwarden current-row reader")
         try:
             if field_name != "collection_id" or page_token is not None: raise ValueError("Linkwarden has one collection picker and no documented collection paging")
-            search = "" if search_query is None else search_query
+            search = "" if search is None else search
             if not isinstance(search, str) or len(search) > 256: raise ValueError("Supply a bounded local Linkwarden picker search")
             rows = catalog(await request(value, "/collections", reader=reader), "collection")
             if len(rows) > MAX_OUTPUT: raise ValueError("Linkwarden picker exceeds local100 output bound; no complete paging witness")

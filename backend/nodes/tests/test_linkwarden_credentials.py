@@ -38,7 +38,7 @@ class Context:
 
 class Storage:
     def __init__(self):
-        self.row = {"credential": b"synthetic-ciphertext", "credential_type": KEY["credential_type"], "owner_id": OWNER, "revoked_at": None, "token_version": 3}
+        self.row = {"credential": b"synthetic-ciphertext", "credential_type": KEY["credential_type"], "owner_id": OWNER, "revoked_at": None, "token_version": 3, "updated_at": None}
         self.policy = {"name": "Fixture Linkwarden application", "owner_id": OWNER, "approval_operations": [], "approval_revision": 1, "revoked_at": None}
         self.calls, self.allowed, self.approval = [], {(USER, ORG), (USER, None)}, None
     def acquire(self): return Context(self)
@@ -178,12 +178,13 @@ async def test_actual_locked_admission_stops_factory_dispatcher_and_collector(st
 
 
 @pytest.mark.asyncio
-async def test_actual_lookup_uses_trusted_org_not_request_context(storage, provider, monkeypatch):
+@pytest.mark.parametrize("search,expected", [("7", [{"value": "7", "label": "Collection 7"}]), ("missing", [])])
+async def test_actual_lookup_uses_trusted_org_not_request_context(storage, provider, monkeypatch, search, expected):
     store, _ = storage
     loader = AsyncMock(wraps=p.LinkwardenNode.freshen_credential)
     monkeypatch.setattr(p.LinkwardenNode, "freshen_credential", loader)
-    result = await run_node_lookup(node_type="automation-linkwarden", field_name="collection_id", credential_id=CID, user_id=USER, organization_id=ORG, pool=store, context={"organization_id": OWNER, "workflow_id": "forged"})
-    assert result["options"][0]["value"] == "7" and len(provider) == 1
+    result = await run_node_lookup(node_type="automation-linkwarden", field_name="collection_id", credential_id=CID, user_id=USER, organization_id=ORG, pool=store, search=search, context={"organization_id": OWNER, "workflow_id": "forged"})
+    assert result["options"] == expected and len(provider) == 1
     assert loader.await_args.kwargs["organization_id"] == ORG and loader.await_args.kwargs["workflow_id"] is None
 
 
@@ -224,7 +225,7 @@ async def test_actual_saved_factory_run_uses_current_row_and_locked_admission(st
 
 @pytest.mark.asyncio
 async def test_actual_agent_asset_scope_refuses_foreign_id_before_resolution(provider, monkeypatch):
-    _, configs = build_node_op_tools("automation-linkwarden", [{"operation": "get_collection", "field_scopes": {"collection_id": [7]}}], node_id="fixture", credential_id=CID)
+    _, configs = build_node_op_tools("automation-linkwarden", [{"operation": "get_collection", "field_scopes": {"collection_id": ["7"]}}], node_id="fixture", credential_id=CID)
     operation = next(info for info in configs.values() if info["tool_type"] == "node_op")
     resolved = AsyncMock()
     monkeypatch.setattr(run_op, "resolve_credential_with_owner_fallback", resolved)
