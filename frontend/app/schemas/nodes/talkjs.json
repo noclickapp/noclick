@@ -1028,7 +1028,7 @@
   "required": [
     "config"
   ],
-  "title": "TalkJS Node Configuration",
+  "title": "Talkjs Node Configuration",
   "type": "object",
   "x-edit-examples": [
     "List app conversation identifiers",

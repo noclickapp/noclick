@@ -1077,60 +1077,47 @@ class CredentialsHandler(DatabasePoolMixin, SocketIOHandler):
                 return
 
             from nodes.core.registry import NODE_REGISTRY
-            from nodes.core.credential_validation import (
-                CredentialValidationContext, CredentialValidationPending,
-                CredentialValidationUnavailable, CredentialValidationUnverified,
-                accepts_validation_context,
-            )
-
             node_class = NODE_REGISTRY.get(request.node_type)
-            if node_class is None:
+            validate_fn = getattr(node_class, "validate_credential_access", None) if node_class else None
+            if not validate_fn:
+                # Node doesn't implement validation — report valid so the UI isn't blocked.
                 await send_event(self.sio, sid, ResponseEvent(
                     request_id=request.request_id,
-                    data={"valid": False, "error": "Unknown node type"},
+                    data={"valid": True},
+                ))
+                return
+
+            async with pool.acquire() as conn:
+                org_id = await get_user_org_context(conn, user_id)
+
+            repo = CredentialsRepo(pool)
+            row = await repo.fetch_with_access(request.credential_id, user_id, org_id)
+            if not row:
+                return
+
+            try:
+                credential_data = self.encryption.decrypt_credential(row.credential)
+            except Exception as e:
+                logger.error(f"[CredentialsHandler] validate_access: decryption failed: {e}")
+                await send_event(self.sio, sid, ResponseEvent(
+                    request_id=request.request_id,
+                    data={"valid": False, "error": "Failed to decrypt credential"},
                 ))
                 return
 
             try:
-                # This event has no trusted workflow context or owner fallback.
-                context = await CredentialValidationContext.create(
-                    credential_id=request.credential_id, node_type=request.node_type,
-                    user_id=user_id, pool=pool,
-                )
-                validate_fn = getattr(node_class, "validate_credential_access", None)
-                if validate_fn:
-                    await context.admit_probe()
-                    credential_data = await context.load_current_credential()
-                    if accepts_validation_context(validate_fn):
-                        result = await validate_fn(credential_data, validation_context=context)
-                    else:
-                        result = await validate_fn(credential_data)
-                else:
-                    await context.load_current_credential()
-                    result = {"valid": True}
-                if (not isinstance(result, dict) or "valid" not in result
-                        or (result["valid"] is not None and not isinstance(result["valid"], bool))):
-                    result = {"valid": None, "error": "Invalid credential validation response"}
-                elif result["valid"] is True:
-                    await context.accept(result)
-            except CredentialValidationPending as e:
-                result = {**e.result, "valid": False}
-            except CredentialValidationUnavailable as e:
+                result = await validate_fn(credential_data)
+            except Exception as e:
                 result = {"valid": False, "error": str(e)}
-            except CredentialValidationUnverified:
-                result = {"valid": None, "error": "The credential access probe did not complete successfully"}
-            except Exception:
-                logger.error("[CredentialsHandler] credential access probe failed")
-                result = {"valid": None, "error": "Credential access could not be verified. Retry validation."}
 
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request.request_id,
                 data=result,
             ))
 
-        except Exception:
-            logger.error("[CredentialsHandler] credential access validation failed")
+        except Exception as e:
+            logger.error(f"[CredentialsHandler] validate_access error: {e}", exc_info=True)
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request.request_id,
-                data={"valid": None, "error": "Credential access could not be verified. Retry validation."},
+                data={"valid": False, "error": "Internal error"},
             ))

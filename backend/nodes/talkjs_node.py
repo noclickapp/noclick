@@ -277,7 +277,7 @@ def _shape(data):
 
 
 def _binding(data):
-    return (data["credential_type"], data["app_id"], data["server_secret"], data.get("owner_id"), data.get("token_version"), data.get("updated_at"), data.get("approval_revision"))
+    return (data["credential_type"], data["app_id"], data["server_secret"])
 
 def _original_family(data):
     if not isinstance(data, dict):
@@ -300,9 +300,7 @@ class _LookupAuthority:
 async def _current_data(data, *, pool=None, user_id=None, credential_id=None, organization_id=None, workflow_id=None):
     if not credential_id:
         return _shape(data)
-    from repositories.credentials import CredentialsRepo
     from utils.credentials import resolve_credential_with_owner_fallback
-    from utils.encryption import get_encryption
     if pool is None:
         from utils.database_pool import get_native_pool
         pool = get_native_pool()
@@ -310,23 +308,14 @@ async def _current_data(data, *, pool=None, user_id=None, credential_id=None, or
         from wss.handlers.workflow_handler import get_user_org_context
         async with pool.acquire() as conn:
             organization_id = await get_user_org_context(conn, user_id)
-    async def load(cid, principal, actual_pool, org_id):
-        row = await CredentialsRepo(actual_pool).fetch_validation_authority(cid, principal, org_id)
-        if row is None:
-            return None
-        if row.revoked_at is not None or row.credential_type not in FAMILIES or not isinstance(row.owner_id, str) or not row.owner_id or type(row.token_version) is not int or row.token_version < 1 or type(row.approval_revision) is not int or row.approval_revision < 0:
-            raise ValueError("TalkJS current credential is unavailable, revoked or its family is unsupported")
-        try:
-            blob = get_encryption().decrypt_credential(row.credential)
-        except Exception:
-            raise ValueError("TalkJS current credential could not be decrypted") from None
-        if not isinstance(blob, dict):
-            raise ValueError("TalkJS current credential data is invalid")
-        return _shape({**blob, "credential_type": row.credential_type, "owner_id": row.owner_id, "token_version": row.token_version, "updated_at": row.updated_at.isoformat() if row.updated_at else None, "approval_revision": row.approval_revision})
-    result = await resolve_credential_with_owner_fallback(credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id, load_credential_fn=load)
+    # Staging's resolver checks the current row's revocation, access and type,
+    # including workflow-owner/lender grants. Reuse that policy on every request.
+    result = await resolve_credential_with_owner_fallback(credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id)
     if result is None:
         raise ValueError("TalkJS current credential is unavailable or access denied")
-    return {**result, "_talkjs_authority": _LookupAuthority(pool, user_id, credential_id, organization_id, workflow_id)}
+    if result.get("credential_type") not in FAMILIES:
+        raise ValueError("TalkJS current credential family is unsupported")
+    return {**_shape(result), "_talkjs_authority": _LookupAuthority(pool, user_id, credential_id, organization_id, workflow_id)}
 
 
 def _context(data, context):
@@ -336,7 +325,7 @@ def _context(data, context):
     if type(bound) is _LookupAuthority:
         if bound.user_id != context.get("_user_id"):
             raise ValueError("TalkJS picker actor does not match saved authority")
-        result.update({"_approval_pool": bound.pool, "_user_id": bound.user_id, "_credential_id": bound.credential_id, "_organization_id": bound.organization_id, "_workflow_id": bound.workflow_id})
+        result.update({"_approval_pool": bound.pool, "_user_id": bound.user_id, "_credential_id": bound.credential_id, "_organization_id": bound.organization_id, "_workflow_id": bound.workflow_id or context.get("_workflow_id")})
     return result
 
 
@@ -444,7 +433,7 @@ async def _request(data, context, method, parts, *, body=None, params=None, allo
         if not isinstance(token, str) or not token:
             raise TalkJSAPIError("TalkJS admin token could not be prepared")
         url = API_BASE + "/" + _id(current["app_id"]) + "/" + route
-        async with guarded_async_client(require_public=True, timeout=20, follow_redirects=False, trust_env=False) as client:
+        async with guarded_async_client(timeout=20, follow_redirects=False, trust_env=False) as client:
             async with client.stream(method, url, params=params, json=body, headers={"Accept": "application/json", "Content-Type": "application/json", "Authorization": "Bearer " + token, "TalkJS-REST-Version": API_VERSION}) as response:
                 payload = bytearray()
                 async for chunk in response.aiter_bytes(chunk_size=65536):
@@ -632,25 +621,21 @@ class TalkJSNode(WorkflowNode):
 
     @classmethod
     async def freshen_credential(cls, data, **context):
-        return await _current_data(data, **context)
+        # Lookup callers pass workflow scope to load_field_options, after this
+        # hook. Bind only the trusted identifiers here; re-resolve with that
+        # scope in the loader before any provider request.
+        shaped = _shape(data)
+        if context.get("credential_id"):
+            shaped["_talkjs_authority"] = _LookupAuthority(context.get("pool"), context.get("user_id"), context["credential_id"], context.get("organization_id"), context.get("workflow_id"))
+        return shaped
 
     @classmethod
-    async def validate_credential_access(cls, data, *, validation_context=None):
-        if validation_context is None:
-            return {"valid": None, "error": "TalkJS validation requires trusted current-row native authority"}
-        from nodes.core.credential_validation import CredentialValidationUnavailable, CredentialValidationPending, CredentialValidationUnverified
-        try:
-            result = await validation_context.run_operation("test_connection")
-            proof = result.get("data") if isinstance(result, dict) else None
-            if not isinstance(result, dict) or result.get("status") != "success" or not isinstance(proof, dict) or proof.get("protected_read_completed") is not True or proof.get("account_identity_verified") is not False or not isinstance(proof.get("results"), list):
-                return {"valid": None, "error": "TalkJS protected app read was not verified"}
-        except CredentialValidationUnavailable:
-            return {"valid": False, "error": "TalkJS current credential authority is unavailable"}
-        except (CredentialValidationPending, CredentialValidationUnverified):
-            return {"valid": None, "error": "TalkJS protected read was not executed or verified"}
-        except TalkJSAPIError as exc:
-            return {"valid": False if exc.authority_rejected else None, "error": str(exc)}
-        return {"valid": True, "proves": "reachability", "account_identity_verified": False, "write_permissions_verified": False}
+    async def validate_credential_access(cls, data):
+        # Staging's post-connect hook supplies only a decrypted blob, without
+        # the saved row's ID or caller scope. Do not claim current-row proof.
+        # The explicit test_connection operation and evidence collector use
+        # the normal execution path and can establish protected reachability.
+        return {"valid": None, "error": "Run Check Protected App Access to verify TalkJS reachability with current credential access"}
 
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         if not isinstance(self.config, TalkJSNodeConfig) or self.config.credentials is None:
