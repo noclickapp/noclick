@@ -132,6 +132,26 @@ async def test_a_turn_that_has_said_nothing_still_says_its_line(builder_request_
     assert instance._turn_guard.handed_on is False
 
 
+async def test_a_turn_that_looked_and_handed_its_work_on_isnt_one_that_changed_nothing(builder_request_db, monkeypatch):
+    """A coding job's check-in reads where the job stands and waits on it again: the work is under way elsewhere, and
+    the turn after them was told nothing was started, and to make it now."""
+    from coder.openai_agent import progress
+
+    monkeypatch.setattr(progress, "_JUDGES", [lambda tool, args: True if tool == "look" else None])
+    monkeypatch.setattr(progress, "_OWN", [lambda tool: tool == "wake_me"])
+    stalled = {**WRAP_UP, "stalled": {"prompt": "Say what blocks you.", "line": "Stopped."}}
+    results = {"look": {"success": True, "status": "running"}, "wake_me": _wake(True)}
+
+    *_, instance = await _run(builder_request_db[0], monkeypatch, [(LINE, "look"), ("", "look"), ("", "wake_me")],
+                              results, wrap_up=stalled)
+    assert instance.turn_handed_on is True and instance.turn_only_read is None
+
+    *_, instance = await _run(builder_request_db[0], monkeypatch, [(LINE, "look"), ("", "look"), ("", "wake_me"),
+                                                                   ("All still running.", None)],
+                              {**results, "wake_me": _wake(False)}, wrap_up=stalled)
+    assert instance.turn_handed_on is False and instance.turn_only_read == 2
+
+
 HANDED_ON_WRAP_UP = {**WRAP_UP, "handed_on": {"prompt": "Say in one line what's under way."}}
 
 

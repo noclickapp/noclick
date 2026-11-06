@@ -169,15 +169,16 @@ class TurnLimits:
 class TurnSoFar:
     """How far a turn had gone before this run of it, when a platform runs on one another process started: its first
     run's start (``started_at``, epoch seconds), the ``steps`` and ``spent_usd`` it had used, its calls in a row that
-    only read (``quiet``), all such calls (``reads``) and whether any call may have changed something (``changed``).
-    A run seeded with it meets the turn's limits where the turn stands."""
+    only read (``quiet``), all such calls (``reads``) and whether any call may have changed something (``changed``:
+    None when unknown, as from a process that didn't keep it). A run seeded with it meets the turn's limits where the
+    turn stands."""
 
     started_at: float
     steps: int = 0
     spent_usd: float = 0.0
     quiet: int = 0
     reads: int = 0
-    changed: bool = False
+    changed: Optional[bool] = False
 
     @classmethod
     def of(cls, given: Optional[Mapping[str, Any]]) -> Optional["TurnSoFar"]:
@@ -186,7 +187,8 @@ class TurnSoFar:
             return None
         return cls(started_at=float(given["started_at"]), steps=int(given.get("steps") or 0),
                    spent_usd=float(given.get("usd") or 0.0), quiet=int(given.get("quiet") or 0),
-                   reads=int(given.get("reads") or 0), changed=bool(given.get("changed")))
+                   reads=int(given.get("reads") or 0),
+                   changed=None if given.get("changed") is None else bool(given["changed"]))
 
     def as_json(self) -> Dict[str, Any]:
         return {"started_at": self.started_at, "steps": self.steps, "usd": round(self.spent_usd, 6),
@@ -305,8 +307,11 @@ class TurnGuard(RunHooks):
     @property
     def only_read(self) -> Optional[int]:
         """How many calls the turn read with, when none of its calls can have changed anything for anyone; None when
-        one may have, or nothing counts them (no ``STALLED`` wrap-up)."""
-        return self.reads if self._ends_stalled and not self.changed else None
+        one may have, when that isn't known (a run of it before was in a process that didn't keep it), when a tool's
+        result handed its work on (it waits on work under way), or when nothing counts them (no ``STALLED`` wrap-up)."""
+        if not self._ends_stalled or self.changed is not False or self.handed_on:
+            return None
+        return self.reads
 
     def watch(self, result: Any) -> None:
         """The streamed run to stop once a guard trips; with a time limit, stopped by the clock as well, at once,
@@ -385,7 +390,8 @@ class TurnGuard(RunHooks):
             return None
         if not progress.only_reads(tool, arguments):
             self.quiet = 0
-            self.changed = self.changed or not progress.only_its_own(tool)
+            if not progress.only_its_own(tool):
+                self.changed = True
             return None
         self.reads += 1
         self.quiet += 1

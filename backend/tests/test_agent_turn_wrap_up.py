@@ -64,7 +64,8 @@ async def test_a_run_a_restart_handed_over_meets_its_limits_where_the_turn_stood
     """A platform running on a turn another process started says how far it had gone (``TURN_SO_FAR_KEY``)."""
     kwargs = await _created_with(monkeypatch, {TURN_SO_FAR_KEY: {"started_at": 1000.0, "steps": 37, "usd": 0.4,
                                                                  "quiet": 12}})
-    assert kwargs["so_far"] == TurnSoFar(started_at=1000.0, steps=37, spent_usd=0.4, quiet=12)
+    # A process that kept no word of whether the turn changed anything leaves it unknown.
+    assert kwargs["so_far"] == TurnSoFar(started_at=1000.0, steps=37, spent_usd=0.4, quiet=12, changed=None)
     assert (await _created_with(monkeypatch, {}))["so_far"] is None
 
 

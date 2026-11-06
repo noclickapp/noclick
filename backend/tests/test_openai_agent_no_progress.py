@@ -211,7 +211,8 @@ def test_how_far_a_turn_had_gone_keeps_whether_it_changed_anything():
     so_far = TurnSoFar(started_at=50_000.0, steps=2, quiet=1, reads=4, changed=True)
     assert TurnSoFar.of(so_far.as_json()) == so_far
     # What a deploy stopped before these fields were kept reads as nothing known.
-    assert TurnSoFar.of({"started_at": 50_000.0}) == TurnSoFar(started_at=50_000.0)
+    assert TurnSoFar.of({"started_at": 50_000.0}) == TurnSoFar(started_at=50_000.0, changed=None)
+    assert TurnSoFar.of(TurnSoFar(started_at=50_000.0, changed=None).as_json()).changed is None
 
 
 async def test_a_restarted_run_remembers_what_its_first_run_changed(builder_request_db, monkeypatch):
@@ -227,3 +228,8 @@ async def test_a_restarted_run_remembers_what_its_first_run_changed(builder_requ
                               so_far=TurnSoFar(started_at=50_000.0, reads=3),
                               answer_after=lambda model_input: len(_outputs(model_input)) == 2)
     assert agent.turn_only_read == 5
+    # Handed over by a process that kept no word of what its run changed: unknown, so nothing is claimed.
+    *_, agent, _ = await _run(pool, monkeypatch, wrap_up=STALLED, limits=TurnLimits(steps=20),
+                              so_far=TurnSoFar.of({"started_at": 50_000.0, "steps": 2, "quiet": 1}),
+                              answer_after=lambda model_input: len(_outputs(model_input)) == 2)
+    assert agent.turn_only_read is None
