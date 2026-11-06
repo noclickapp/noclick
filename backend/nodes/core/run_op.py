@@ -349,9 +349,6 @@ async def run_node_op_tool(
         if unconnected:
             return unconnected
         context = (arguments or {}).get("context")
-        scope_error = _check_lookup_context_scopes(context, info, field)
-        if scope_error:
-            return {"success": False, "error": scope_error}
         scopes = info.get("field_scopes") or {}
         scope_for_field = scopes.get(field) if isinstance(scopes, dict) else None
         return await run_node_lookup(

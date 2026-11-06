@@ -372,9 +372,6 @@
         "on_document_changed"
       ]
     },
-    "automation-fountain": {
-      "agentToolProvider": true
-    },
     "automation-freshsales": {
       "agentToolProvider": true,
       "triggerOperations": [
