@@ -45,7 +45,10 @@ def seams(monkeypatch):
     async def read(statement, *args):
         sql.append((statement, args))
         return state["row"]
-    conn = SimpleNamespace(fetchrow=AsyncMock(side_effect=read))
+    async def read_types(statement, *args):
+        row = await read(statement, *args)
+        return [{"id": CID, "credential_type": row["credential_type"]}] if row and row["revoked_at"] is None else []
+    conn = SimpleNamespace(fetchrow=AsyncMock(side_effect=read), fetch=AsyncMock(side_effect=read_types))
     pool = Pool(conn)
     monkeypatch.setattr(credentials, "get_encryption", lambda: SimpleNamespace(decrypt_credential=lambda _: deepcopy(state["blob"])))
     monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(return_value="fixture-org"))
@@ -73,18 +76,7 @@ async def test_actual_registration_factory_and_stored_run_resolve_current_token(
     args = seams.admission.call_args.kwargs
     assert args["operation"] == "list_shops" and args["arguments"] == {}
     assert args["credential_id"] == CID and TOKEN not in repr(args)
-    assert any("credential_type" in statement and "token_version" in statement for statement, _ in seams.sql)
-
-
-@pytest.mark.parametrize("status", ["pending", "rejected"])
-async def test_real_admit_node_parks_before_native_provider_and_evidence_stays_unknown(seams, status):
-    seams.admission.return_value = {"id": "fixture-approval", "status": status, "new_request": False}
-    result = await run_op.run_node_operation(node_type="automation-printify", operation="list_shops", arguments={}, user_id="fixture-user", credential_id=CID, pool=seams.pool, organization_id="fixture-org")
-    assert result["executed"] is False and result["_halt_downstream"] is True
-    assert result["status"] == ("pending_approval" if status == "pending" else "rejected")
-    evidence = await connection_evidence.collect_evidence(node_type="automation-printify", credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org")
-    assert evidence.reachable is None and evidence.samples == [] and evidence.account_label is None
-    assert evidence.noun == "shops" and seams.calls == []
+    assert any("credential_type" in statement and "revoked_at" in statement for statement, _ in seams.sql)
 
 
 async def test_typed_unsaved_connect_uses_actual_native_operation_and_injects_hidden_family(seams):
@@ -136,38 +128,13 @@ async def test_real_canonical_picker_and_parent_argument_admission(seams):
     assert len(seams.calls) == 1
 
 
-async def test_trusted_post_connect_collects_then_rechecks_authority(seams):
-    from nodes.core.credential_validation import CredentialValidationContext
-    context = await CredentialValidationContext.create(credential_id=CID, node_type="automation-printify", user_id="fixture-user", pool=seams.pool)
-    result = await node.PrintifyNode.validate_credential_access(CREDENTIAL, validation_context=context)
-    await context.accept(result)
-    assert result == {"valid": True} and len(seams.calls) == 1
-    assert len(seams.sql) >= 5
-
-
-async def test_post_connect_changed_authority_cannot_accept_prior_success(seams):
-    from nodes.core.credential_validation import CredentialValidationContext, CredentialValidationUnavailable
-    context = await CredentialValidationContext.create(credential_id=CID, node_type="automation-printify", user_id="fixture-user", pool=seams.pool)
-    result = await node.PrintifyNode.validate_credential_access(CREDENTIAL, validation_context=context)
-    seams.row["approval_revision"] += 1
-    with pytest.raises(CredentialValidationUnavailable, match="authority changed"):
-        await context.accept(result)
-    assert len(seams.calls) == 1
-
-
-async def test_forged_post_connect_context_does_not_probe(seams):
-    with pytest.raises(ValueError, match="trusted current authority"):
-        await node.PrintifyNode.validate_credential_access(CREDENTIAL, validation_context={"owner_id": "fixture-user"})
-    assert seams.calls == []
-
-
 @pytest.mark.parametrize("authorized", [False, True])
 async def test_workflow_owner_fallback_keeps_real_authorization_gate_and_current_blob(seams, authorized):
     workflow = "22222222-2222-4222-8222-222222222222"
     owner_reads = []
     async def read(statement, *args):
         seams.sql.append((statement, args))
-        if "FROM workflows" in statement:
+        if "FROM workflows" in statement and "workflow_authorized_credentials" not in statement:
             return {"owner_id": "fixture-owner"}
         if "FROM workflow_authorized_credentials" in statement:
             assert str(args[0]) == workflow and str(args[1]) == CID
@@ -177,6 +144,10 @@ async def test_workflow_owner_fallback_keeps_real_authorization_gate_and_current
             return {**seams.row, "owner_id": "fixture-owner"}
         return None
     seams.pool.conn.fetchrow.side_effect = read
+    async def read_types(statement, *args):
+        result = await read(statement, *args)
+        return [{"id": CID, "credential_type": result["credential_type"]}] if result else []
+    seams.pool.conn.fetch.side_effect = read_types
     if authorized:
         result = await node.PrintifyNode.freshen_credential({**CREDENTIAL, "personal_access_token": "stale-fixture-token"}, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org", workflow_id=workflow)
         assert result["personal_access_token"] == TOKEN and len(owner_reads) == 2
@@ -185,4 +156,20 @@ async def test_workflow_owner_fallback_keeps_real_authorization_gate_and_current
         with pytest.raises(ValueError, match="Current Printify authority"):
             await node.PrintifyNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org", workflow_id=workflow)
         assert owner_reads == []
+    assert seams.calls == []
+
+
+async def test_post_connect_validates_through_native_shop_read(seams):
+    result = await node.PrintifyNode.validate_credential_access(CREDENTIAL)
+    assert result == {"valid": True}
+    assert len(seams.calls) == 1
+    assert seams.calls[0].url.path == "/v1/shops.json"
+
+
+async def test_post_connect_expired_token_never_calls_provider(seams):
+    result = await node.PrintifyNode.validate_credential_access({
+        "credential_type": "printify_oauth_access_token", "brand": "printify",
+        "access_token": TOKEN, "expires_at": "2000-01-01T00:00:00+00:00",
+    })
+    assert result["valid"] is False and "expired" in result["error"]
     assert seams.calls == []

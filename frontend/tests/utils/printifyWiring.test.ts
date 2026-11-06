@@ -1,10 +1,11 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { PrintifyNode } from '~/components/workflow/nodes/PrintifyNode';
-import { getNodeCredentialInfo, NODE_SCHEMAS } from '~/utils/nodeSchemas';
+import { getNodeCredentialInfo, loadNodeSchemas, NODE_SCHEMAS } from '~/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 
 describe('Printify native credential and node wiring', () => {
+  beforeAll(() => loadNodeSchemas([PrintifyNode.type]));
   it('registers the exact provider node and both supplied credential families', () => {
     expect(PrintifyNode.type).toBe('automation-printify');
     expect(NODE_SCHEMAS[PrintifyNode.type]).toBeDefined();
@@ -14,8 +15,8 @@ describe('Printify native credential and node wiring', () => {
   });
 
   it('names the two manual token methods without inventing an OAuth popup', () => {
-    expect(humanizeCredentialLabel('PrintifyPATCredential')).toBe('Printify PAT');
-    expect(humanizeCredentialLabel('PrintifyOAuthAccessTokenCredential')).toBe('Printify OAuth Access Token');
+    expect(humanizeCredentialLabel('PrintifyPAT')).toBe('Printify PAT');
+    expect(humanizeCredentialLabel('PrintifyOAuthAccessToken')).toBe('Printify OAuth Access Token');
     const schema = NODE_SCHEMAS[PrintifyNode.type];
     expect(schema.$defs.PrintifyOAuthAccessTokenCredential['x-oauth-provider']).toBeUndefined();
     expect(schema.$defs.PrintifyOAuthAccessTokenCredential.required).toContain('expires_at');

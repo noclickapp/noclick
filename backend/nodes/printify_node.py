@@ -527,37 +527,41 @@ class PrintifyNode(WorkflowNode):
                 raise ValueError("Stored Printify credential requires an authorized caller")
             from utils.database_pool import get_native_pool
             from wss.handlers.workflow_handler import get_user_org_context
-            from repositories.credentials import CredentialsRepo
-            from utils.credentials import resolve_credential_with_owner_fallback, get_workflow_owner_id, is_credential_authorized_for_workflow
+            from utils.credentials import (
+                resolve_accessible_credential_types, resolve_credential_with_owner_fallback,
+                get_workflow_owner_id, is_credential_authorized_for_workflow, credential_lender,
+            )
             pool = pool if pool is not None else get_native_pool()
             if organization_id is CURRENT_ORGANIZATION:
                 async with pool.acquire() as conn:
                     organization_id = await get_user_org_context(conn, user_id)
-            row = await CredentialsRepo(pool).fetch_validation_authority(credential_id, user_id, organization_id)
-            if row is None and workflow_id:
+            types = await resolve_accessible_credential_types([credential_id], user_id, pool, organization_id)
+            if credential_id not in types and workflow_id:
                 owner = await get_workflow_owner_id(pool, workflow_id)
                 if owner and owner != user_id and await is_credential_authorized_for_workflow(pool, workflow_id, credential_id):
-                    row = await CredentialsRepo(pool).fetch_validation_authority(credential_id, owner, organization_id)
-            if row is None or row.credential_type not in TYPES or row.revoked_at is not None:
+                    types = await resolve_accessible_credential_types([credential_id], owner, pool, organization_id)
+                if credential_id not in types:
+                    lender = await credential_lender(pool, workflow_id, credential_id)
+                    if lender and lender != user_id:
+                        types = await resolve_accessible_credential_types([credential_id], lender, pool, organization_id)
+            current_type = types.get(credential_id)
+            if current_type not in TYPES:
                 raise ValueError("Current Printify authority is unavailable or has a different family")
             credential_data = await resolve_credential_with_owner_fallback(credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id)
-            if not credential_data or credential_data.get("credential_type") != row.credential_type:
+            if not credential_data or credential_data.get("credential_type") != current_type:
                 raise ValueError("Printify credential unavailable, revoked or access denied")
         credential = credential_value(credential_data, manual=not credential_id)
         token_of(credential)
         return credential.model_dump()
 
     @classmethod
-    async def validate_credential_access(cls, credential_data, *, validation_context=None):
+    async def validate_credential_access(cls, credential_data):
         try:
-            credential_value(credential_data)
-        except ValueError:
-            return {"valid": False, "error": "Connect a typed Printify token"}
-        if validation_context is not None:
-            from nodes.core.credential_validation import CredentialValidationContext
-            if not isinstance(validation_context, CredentialValidationContext):
-                raise ValueError("Stored Printify validation requires trusted current authority")
-            await validation_context.collect_evidence()
+            credential = credential_value(credential_data, manual=True)
+            token_of(credential)
+            await request_operation(credential, ListShops())
+        except (ValueError, httpx.HTTPError) as exc:
+            return {"valid": False, "error": str(exc)}
         return {"valid": True}
 
     @classmethod
