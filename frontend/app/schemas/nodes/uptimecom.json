@@ -628,7 +628,7 @@
   "required": [
     "config"
   ],
-  "title": "Uptime.com Node Configuration",
+  "title": "Uptimecom Node Configuration",
   "type": "object",
   "x-edit-examples": [
     "Read cached status for an approved monitoring check",

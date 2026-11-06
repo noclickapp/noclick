@@ -92,7 +92,7 @@ def wire(monkeypatch):
             if isinstance(value, BaseException): raise value
             return Response(*value) if isinstance(value, tuple) else Response(value, 200, "application/json")
     def client(**kwargs):
-        assert kwargs == {"require_public": True, "timeout": 30, "follow_redirects": False, "trust_env": False}
+        assert kwargs == {"timeout": 30, "follow_redirects": False, "trust_env": False}
         return Client()
     monkeypatch.setattr(p, "guarded_async_client", client)
     return state
@@ -126,7 +126,7 @@ async def test_real_connect_collector_only_accepts_protected_user_pk(wire, monke
     wire.queue = [me(), {}]
     checked = await cc.validate_for_connect(credential_type=p.FAMILY, credential_data=blob(), user_id=USER)
     assert checked.evidence.reachable is True and checked.evidence.account_label == "7"
-    assert checked.evidence.proves == "account" and PRIVATE not in str(checked)
+    assert p.UptimeComNode.connection_evidence.proves == "account" and PRIVATE not in str(checked)
     unknown = await cc.validate_for_connect(credential_type=p.FAMILY, credential_data=blob(), user_id=USER)
     assert unknown.evidence.reachable is None and not unknown.verified_metadata()
 

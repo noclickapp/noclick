@@ -1,18 +1,22 @@
 // Exercises Uptime.com's actual credential, selector and editor helpers.
-// These synthetic fixtures are unrun until a root frontend lane is granted.
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+// Schemas are loaded through staging's per-node loader before synchronous helpers run.
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
+// Agent-provider artwork is unrelated to uptimecom's native asset.
+vi.mock('@lobehub/icons', () => ({ Anthropic: () => null, MCP: () => null, OpenAI: () => null }));
+
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn() }));
-vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: vi.fn(), set: vi.fn(), clear: vi.fn() } }));
+vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: vi.fn(), set: vi.fn(), clear: vi.fn(), delete: vi.fn() } }));
 
 import { UptimeComNode } from '~/components/workflow/nodes/UptimeComNode';
-import { AVAILABLE_NODES } from '~/components/workflow/nodes/nodeRegistry';
-import { NODE_SCHEMAS, getAgentToolOperations, getNodeCredentialInfo } from '~/utils/nodeSchemas';
+import { NODE_DEFINITION_FILES } from '~/components/workflow/nodes/nodeDefinitions';
+import { NODE_SCHEMAS, getAgentToolOperations, getNodeCredentialInfo, loadNodeSchemas } from '~/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
-import { autoSelectCredentialFromCache, invalidateCredentialsCache, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
+import { invalidateCredentialsCache, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
 import { getProviderConfigByCredentialType } from '~/utils/oauthProviders';
 import { setNodeIconData } from '~/lib/nodeIconRegistry';
 import { getCredentialIcon } from '~/utils/credentialIcons';
@@ -21,11 +25,12 @@ const type = 'automation-uptimecom';
 const family = 'uptimecom_api_token';
 
 describe('native Uptime.com monitoring metadata', () => {
+    beforeAll(async () => { await loadNodeSchemas([type]); });
     beforeEach(() => invalidateCredentialsCache());
     it('registers the native editor and unaltered official wordmark', () => {
-        expect(AVAILABLE_NODES.filter(n => n.type === type)).toEqual([UptimeComNode]);
+        expect(NODE_DEFINITION_FILES.filter(([nodeType]) => nodeType === type)).toEqual([[type, 'UptimeComNode']]);
         const markup = renderToStaticMarkup(createElement(UptimeComNode.Icon));
-        expect(markup).toContain('/icons/uptimecom.svg');
+        expect(markup).toContain('/icons/uptimecom-brand-vector.svg');
         expect(markup).toContain('object-fit:contain');
         expect(UptimeComNode.iconColor).toBe('');
     });
@@ -64,7 +69,7 @@ describe('native Uptime.com monitoring metadata', () => {
         expect(NODE_SCHEMAS[type].$defs.GetCheckCurrentStatus).toBeUndefined();
     });
     it('uses the native asset for the saved credential icon', () => {
-        setNodeIconData({ [type]: { type, label: UptimeComNode.label, description: '', iconColor: '',
+        setNodeIconData({ [type]: { type, label: UptimeComNode.label, description: '', credentialKeys: [family], iconColor: '',
             iconHtml: '<img src="/icons/uptimecom.svg" />', dimensions: UptimeComNode.dimensions } });
         expect(getCredentialIcon(family).hasServiceIcon).toBe(true);
     });
