@@ -664,6 +664,9 @@
         "on_comment_added"
       ]
     },
+    "automation-kajabi": {
+      "agentToolProvider": true
+    },
     "automation-klaviyo": {
       "agentToolProvider": true,
       "triggerOperations": [

@@ -110,6 +110,9 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Deel
     'DeelAPITokenCredential': 'deel_api_token',
 
+    // Kajabi
+    'KajabiAccessTokenCredential': 'kajabi_access_token',
+
     // Apollo
     'ApolloAPIKeyCredential': 'apollo_api_key',
 
