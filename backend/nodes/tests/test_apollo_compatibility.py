@@ -58,7 +58,7 @@ async def test_saved_widget_and_options_keep_original_request(widget, options):
     request = node._make_request.call_args.kwargs
     assert request["endpoint"] == "/typed_custom_fields"
     expected = {"name": "Saved Field", "field_type": "contact", "widget_type": widget}
-    if options is not None:
+    if options:
         expected["options"] = options
     assert request["json_body"] == expected
 

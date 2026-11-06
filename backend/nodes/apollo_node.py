@@ -2896,7 +2896,7 @@ class ApolloNode(WorkflowNode):
             body: Dict[str, Any] = {"name": config.name, "field_type": config.field_type}
             if config.widget_type:
                 body["widget_type"] = config.widget_type
-            if config.options is not None:
+            if config.options:
                 body["options"] = config.options
             return await self._make_request(
                 method="POST",
