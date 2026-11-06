@@ -2,15 +2,17 @@
 // credential selector. Storage/socket boundaries are fixtures; no account or
 // provider calls are made by this source-only regression packet.
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import schema from '~/schemas/nodes/fountain.json';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
-import { getNodeCredentialInfo, filterConfigForExecution, NODE_SCHEMAS } from '~/utils/nodeSchemas';
+import { getNodeCredentialInfo, filterConfigForExecution, NODE_SCHEMAS, loadNodeSchemas } from '~/utils/nodeSchemas';
 import { serializeNodeForSave } from '~/lib/applyNodeUpdate';
 
 const boundary = vi.hoisted(() => ({ send: vi.fn(), get: vi.fn(), set: vi.fn(), delete: vi.fn() }));
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: boundary.send }));
 vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: boundary.get, set: boundary.set, delete: boundary.delete } }));
-const { autoSelectCredentialFromCache, invalidateCredentialsCache, removeCredentialsFromCache, upsertCredentialsIntoCache } = await import('~/utils/credentialAutoSelect');
+const { invalidateCredentialsCache, removeCredentialsFromCache, upsertCredentialsIntoCache } = await import('~/utils/credentialAutoSelect');
+await loadNodeSchemas(['automation-fountain']);
+const schema = NODE_SCHEMAS['automation-fountain'];
+const { autoSelectCredentialFromCache } = await import('~/utils/credentialAutoSelectForNode');
 const ids = ['fountain-owned', 'fountain-shared'];
 afterEach(() => { removeCredentialsFromCache(ids); invalidateCredentialsCache(); vi.clearAllMocks(); });
 
@@ -26,7 +28,7 @@ describe('Fountain native wiring', () => {
         expect(Object.keys(defs.ApplicantPatch.properties)).toEqual(['name', 'email', 'phone_number']);
         expect(defs.ApplicantCreate.additionalProperties).toBe(false);
         expect(JSON.stringify(defs.ApplicantCreate)).not.toContain('consent_sms');
-        expect(getNodeCredentialInfo('automation-fountain')?.label).toBe('Fountain Private Hire');
+        expect(getNodeCredentialInfo('automation-fountain')?.label).toBe('Fountain Account');
     });
     it('preserves actual saved metadata and an explicit false body value', () => {
         const node: any = { id: 'fountain-fixture', type: 'automation-fountain', position: { x: 1, y: 2 }, data: {

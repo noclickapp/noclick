@@ -96,7 +96,7 @@ async def request(credential: dict, method: str, path: str, *, params=None, body
             raise ValueError("Fountain request exceeds the native body limit.")
         headers["Content-Type"] = "application/json"
     try:
-        async with guarded_async_client(require_public=True, timeout=30.0,
+        async with guarded_async_client(timeout=30.0,
                                         follow_redirects=False, trust_env=False) as client:
             async with client.stream(method, url, headers=headers, params=params, content=payload) as response:
                 status = response.status_code

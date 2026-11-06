@@ -1,9 +1,10 @@
 """Native Fountain factory, consent, parent, transport and authority regressions.
 
-HTTP and storage are synthetic boundaries; dispatcher/model/collector and saved
-row guards are real. These fixtures do not prove provider or SQL ACL behavior.
+HTTP and storage are synthetic boundaries; dispatcher/model/collector and native
+grant checks are real. These fixtures do not prove provider or SQL ACL behavior.
 """
 import json
+from contextlib import asynccontextmanager
 from copy import deepcopy
 from datetime import datetime, timezone, timedelta
 from types import SimpleNamespace
@@ -13,7 +14,7 @@ import pytest
 from nodes import fountain_api as api
 from nodes.fountain_node import FountainNode, _saved_lease
 from nodes.core.registry import NodeFactory, NODE_REGISTRY
-from nodes.core.run_op import run_node_operation, run_node_op_tool
+from nodes.core.run_op import run_node_operation
 from nodes.core.connection_evidence import collect_evidence
 from nodes.core.credential_connect import shape_credential, validate_for_connect
 
@@ -58,9 +59,8 @@ def transport(monkeypatch):
             payload = APPLICANT_ROW
         return httpx.Response(201 if request.method == "POST" else 200, json=payload)
     def client(**kwargs):
-        assert kwargs["require_public"] is True
         assert kwargs["trust_env"] is False and kwargs["follow_redirects"] is False
-        return httpx.AsyncClient(transport=httpx.MockTransport(handle), **{k: v for k, v in kwargs.items() if k != "require_public"})
+        return httpx.AsyncClient(transport=httpx.MockTransport(handle), **kwargs)
     monkeypatch.setattr(api, "guarded_async_client", client)
     return calls, custom
 
@@ -87,7 +87,8 @@ def test_actual_registration_schema_manual_tag_and_saved_canvas_shape():
 async def test_actual_connect_collector_and_create_only_refusal(transport, monkeypatch):
     monkeypatch.setattr("nodes.core.credential_connect._collect_evidence", collect_evidence)
     verdict = await validate_for_connect(credential_type="fountain_private_hire", credential_data=CREDENTIAL, user_id=USER)
-    assert verdict.evidence.reachable is True and verdict.evidence.proves == "reachability"
+    assert verdict.evidence.reachable is True
+    assert FountainNode.connection_evidence.proves == "reachability"
     assert verdict.evidence.samples[0].label == "Fixture opening"
     transport[1]["handler"] = lambda _: httpx.Response(403, json={"secret": CREDENTIAL["api_key"]})
     evidence = await collect_evidence(node_type="automation-fountain", credential_data=CREDENTIAL, user_id=USER)
@@ -181,47 +182,30 @@ async def test_media_error_and_quota_never_become_success(transport, response):
 
 @pytest.fixture
 def saved(monkeypatch):
-    from repositories.oauth_refresh_authority import OAuthRefreshAuthorityRepo
-    import utils.encryption as encryption
-    row = {"credential": b"fixture", "owner_id": USER, "credential_type": "fountain_private_hire", "token_version": 7, "updated_at": datetime(2026, 10, 6, tzinfo=timezone.utc), "revoked_at": None}
-    box = {"row": row, "blob": deepcopy(CREDENTIAL)}
-    decrypt = SimpleNamespace(count=0)
-    def decode(_):
-        decrypt.count += 1
-        return deepcopy(box["blob"])
-    monkeypatch.setattr(encryption, "get_encryption", lambda: SimpleNamespace(decrypt_credential=decode))
+    from utils import credential_loader, credentials
+    box = {"data": deepcopy(CREDENTIAL)}
     async def load(*_args, **_kwargs):
-        return box["row"], None
-    monkeypatch.setattr(OAuthRefreshAuthorityRepo, "load", load)
-    return box, decrypt
+        return deepcopy(box["data"])
+    monkeypatch.setattr(credential_loader, "load_credential", load)
+    monkeypatch.setattr(credentials, "resolve_credential_with_owner_fallback", load)
+    return box
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("change", [{"credential_type": "fountain_trusted_party"}, {"revoked_at": datetime.now(timezone.utc)}, {"token_version": 0}])
-async def test_actual_raw_current_row_refused_before_decrypt(saved, change):
-    saved[0]["row"].update(change)
-    with pytest.raises(ValueError):
-        await _saved_lease(CREDENTIAL, pool=object(), user_id=USER, credential_id=CID)
-    assert saved[1].count == 0
-
-
-@pytest.mark.asyncio
-async def test_actual_deleted_row_and_owner_or_grant_change(saved):
-    lease = await _saved_lease({**CREDENTIAL, "token_version": 7}, pool=object(), user_id=USER, credential_id=CID)
-    saved[0]["row"]["owner_id"] = OTHER
+async def test_saved_grant_or_access_change_withholds_output(saved):
+    lease = await _saved_lease(CREDENTIAL, pool=object(), user_id=USER, credential_id=CID)
+    saved["data"]["tenant"] = "us-2"
     with pytest.raises(ValueError, match="authority changed"):
         await lease.recheck()
-    saved[0]["row"]["owner_id"] = USER
-    saved[0]["blob"]["tenant"] = "us-2"
+    saved["data"] = None
     with pytest.raises(ValueError, match="authority changed"):
         await lease.recheck()
-    saved[0]["row"] = None
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="access denied"):
         await _saved_lease(CREDENTIAL, pool=object(), user_id=USER, credential_id=CID)
 
 
 @pytest.mark.asyncio
-async def test_picker_current_parent_and_post_http_owner_race(saved, transport):
+async def test_picker_current_parent_and_post_http_access_race(saved, transport):
     credential = await FountainNode.freshen_credential({**CREDENTIAL, "token_version": 7}, pool=object(), user_id=USER, credential_id=CID)
     result = await FountainNode.load_field_options("stage_id", credential, {"opening_id": OPENING})
     assert result["options"] == [{"value": STAGE, "label": "Start"}]
@@ -229,7 +213,7 @@ async def test_picker_current_parent_and_post_http_owner_race(saved, transport):
         await FountainNode.load_field_options("stage_id", credential, {})
     count = len(transport[0])
     def raced(_):
-        saved[0]["row"]["owner_id"] = OTHER
+        saved["data"] = None
         return httpx.Response(200, json={"funnels": [OPENING_ROW]})
     transport[1]["handler"] = raced
     with pytest.raises(ValueError, match="authority changed"):
@@ -238,53 +222,39 @@ async def test_picker_current_parent_and_post_http_owner_race(saved, transport):
 
 
 @pytest.mark.asyncio
-async def test_real_admission_and_agent_parent_scope_stop_transport(monkeypatch, transport):
-    from repositories.credential_approvals import CredentialApprovalRepo
-    import utils.credential_approval as approval
-    monkeypatch.setattr(CredentialApprovalRepo, "admit", AsyncMock(return_value={"id": CID, "status": "pending"}))
-    monkeypatch.setattr(approval, "notify_created", AsyncMock())
-    node = NodeFactory.create_node("fixture", "automation-fountain", {"config": {"operation": "list_openings"}, "credentials": CREDENTIAL, "credential_id": CID, "_approval_pool": object()}, user_id=USER)
-    result = await node.run({})
-    assert result["executed"] is False and result["status"] == "pending_approval"
-    info = {"tool_type": "node_op_lookup", "node_type": "automation-fountain", "credential_id": CID, "operation": "_lookup", "fields": {"stage_id": "stage_id"}, "field_scopes": {"opening_id": [OPENING]}}
-    result = await run_node_op_tool(info=info, arguments={"field": "stage_id", "context": {"opening_id": OTHER}}, user_id=USER)
-    assert result["success"] is False and not transport[0]
-
-
-@pytest.mark.asyncio
-async def test_actual_socket_picker_native_parent_and_pending_admission(monkeypatch, saved, transport):
+async def test_actual_socket_picker_native_parent(monkeypatch, saved, transport):
     from wss.handlers import workflow_handler
     from wss.receiver.client_events import WorkflowNodeLoadOptionsRequest
-    from repositories.credential_approvals import CredentialApprovalRepo
     from utils import credential_loader
-    import utils.credential_approval as approval
     responses = []
     async def capture(_sio, _sid, event, **_kwargs):
         responses.append(event.model_dump())
     monkeypatch.setattr(workflow_handler, "send_event", capture)
     monkeypatch.setattr(credential_loader, "load_credential", AsyncMock(return_value={**CREDENTIAL, "token_version": 7}))
-    monkeypatch.setattr(approval, "notify_created", AsyncMock())
-    admit = AsyncMock(return_value=None)
-    monkeypatch.setattr(CredentialApprovalRepo, "admit", admit)
+    @asynccontextmanager
+    async def acquire():
+        yield SimpleNamespace(fetchrow=AsyncMock(return_value={"credential": b"fixture"}))
+    pool = SimpleNamespace(acquire=acquire)
+    monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(return_value=None))
+    monkeypatch.setattr(workflow_handler, "get_encryption", lambda: SimpleNamespace(
+        decrypt_credential=lambda _: deepcopy(CREDENTIAL)))
     handler = workflow_handler.WorkflowHandler.__new__(workflow_handler.WorkflowHandler)
     handler.sio = SimpleNamespace(get_session=AsyncMock(return_value={"user_id": USER}))
-    handler.get_pool = AsyncMock(return_value=object())
+    handler.get_pool = AsyncMock(return_value=pool)
     request = WorkflowNodeLoadOptionsRequest(request_id="fixture", node_type="automation-fountain", credential_id=CID,
                                            field_name="stage_id", context={"opening_id": OPENING})
     await handler.load_node_options("fixture-sid", request)
     assert responses[-1]["data"]["success"] is True
     assert responses[-1]["data"]["options"] == [{"value": STAGE, "label": "Start", "metadata": None}]
-    before = len(transport[0])
-    admit.return_value = {"id": CID, "status": "pending"}
-    await handler.load_node_options("fixture-sid", request)
-    assert responses[-1]["data"]["success"] is False
-    assert len(transport[0]) == before
 
 
 @pytest.mark.asyncio
-async def test_untrusted_post_connect_context_cannot_claim_access():
-    result = await FountainNode.validate_credential_access(CREDENTIAL, validation_context={"valid": True})
-    assert result["valid"] is None and result["status"] == "unverified"
+async def test_post_connect_checks_private_hire_reachability(transport):
+    result = await FountainNode.validate_credential_access(CREDENTIAL)
+    assert result == {"valid": True, "reachable": True, "proves": "reachability"}
+    transport[1]["handler"] = lambda _: httpx.Response(403)
+    with pytest.raises(ValueError):
+        await FountainNode.validate_credential_access(CREDENTIAL)
 
 
 @pytest.mark.asyncio

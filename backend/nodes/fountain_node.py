@@ -7,13 +7,11 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import Annotated, Literal, Union
+from typing import Annotated, Awaitable, Callable, Literal, Union
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, Field, TypeAdapter, field_validator, model_serializer, model_validator
 from nodes.core.base import NodeConfig, WorkflowNode, runtime_config_view
 from nodes.core.connection_evidence import ConnectionEvidence
-from nodes.core.credential_validation import CredentialValidationContext
-from nodes.core.oauth_refresh_authority import AuthorityCredentialsTableStore, CURRENT_ORGANIZATION
 from nodes import fountain_api as api
 
 
@@ -174,29 +172,36 @@ class FountainNodeConfig(NodeConfig[FountainConfig, FountainPrivateHireCredentia
 @dataclass
 class _Lease:
     data: dict
-    store: AuthorityCredentialsTableStore
-    authority: object
+    load: Callable[[], Awaitable[dict | None]]
 
     async def recheck(self):
-        current = await self.store.load()
-        if self.store.current != self.authority or credential_shape(current) != self.data:
+        current = await self.load()
+        if current is None or credential_shape(current) != self.data:
             raise ValueError("Fountain saved credential authority changed; output withheld.")
 
 
-async def _saved_lease(data, *, pool, user_id, credential_id, workflow_id=None, organization_id=CURRENT_ORGANIZATION):
+async def _saved_lease(data, *, pool, user_id, credential_id, workflow_id=None, organization_id=None):
     if not user_id or not credential_id:
         raise ValueError("Fountain saved lookup requires the authenticated user and credential ID.")
+    if pool is None:
+        from utils.database_pool import get_native_pool
+        pool = get_native_pool()
+
+    async def load():
+        if workflow_id:
+            from utils.credentials import resolve_credential_with_owner_fallback
+            return await resolve_credential_with_owner_fallback(
+                credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id)
+        from utils.credential_loader import load_credential
+        return await load_credential(pool, user_id, credential_id, raise_on_error=True)
+
+    current = await load()
+    if current is None:
+        raise ValueError("Fountain credential not found or current access denied.")
     shaped = credential_shape(data)
-    store = AuthorityCredentialsTableStore(pool, user_id, credential_id,
-            credential_type="fountain_private_hire", validate=credential_shape,
-            grant_fields=("tenant", "api_key"), workflow_id=workflow_id, organization_id=organization_id, allow_same_grant_retry=False)
-    current = await store.load()
     if shaped != credential_shape(current):
         raise ValueError("Fountain supplied credential differs from its current saved grant.")
-    supplied_version = data.get("token_version")
-    if supplied_version is not None and (type(supplied_version) is not int or supplied_version != current["token_version"]):
-        raise ValueError("Fountain saved credential version changed.")
-    return _Lease(credential_shape(current), store, store.current)
+    return _Lease(shaped, load)
 
 
 class FountainNode(WorkflowNode):
@@ -219,16 +224,14 @@ class FountainNode(WorkflowNode):
             raise ValueError("Fountain configuration is invalid; check the selected operation and required IDs.") from None
 
     @classmethod
-    async def validate_credential_access(cls, credential_data, *, validation_context=None, **_kwargs):
-        if not isinstance(validation_context, CredentialValidationContext):
-            return {"status": "unverified", "valid": None, "message": "Current saved credential context is required to verify Fountain access."}
-        evidence = await validation_context.collect_evidence()
-        return {"valid": True, "reachable": evidence.reachable, "proves": "reachability"}
+    async def validate_credential_access(cls, credential_data):
+        data = credential_shape(credential_data)
+        api.page(await api.request(data, "GET", "/funnels", params={"page": 1, "per_page": 1}),
+                 "funnels", "opening", limit=1)
+        return {"valid": True, "reachable": True, "proves": "reachability"}
 
     @classmethod
     async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
-        if not isinstance(credential_data, dict) or type(credential_data.get("token_version")) is not int or credential_data["token_version"] < 1:
-            raise ValueError("Fountain picker requires the authoritative saved credential version.")
         lease = await _saved_lease(credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
         return {**lease.data, "_fountain_lease": lease}
 
