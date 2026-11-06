@@ -775,6 +775,14 @@ class TestAhrefsDynamicOptionsMock:
 
 
 class TestAhrefsConnectionEvidence:
+    def test_probe_alias_is_declared_read_only_and_preserves_saved_operation(self):
+        probe = AhrefsNode.connection_evidence.identity_operation
+        assert probe == "get_limits_and_usage"
+        alias = AhrefsNodeConfig.model_validate({"config": {"operation": probe}})
+        assert alias.config.operation == probe
+        saved = AhrefsNodeConfig.model_validate({"config": {"operation": "limits_and_usage"}})
+        assert saved.config.operation == "limits_and_usage"
+
     @pytest.mark.asyncio
     async def test_authenticated_zero_unit_probe_accepts_key(self):
         from nodes.core.connection_evidence import collect_evidence

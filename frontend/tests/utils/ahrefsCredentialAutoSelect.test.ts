@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import {
-    autoSelectCredentialFromCache,
-    upsertCredentialsIntoCache,
-} from '~/utils/credentialAutoSelect';
+import { upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
+import { loadNodeSchemas } from '~/utils/nodeSchemas';
 
 describe('Ahrefs credential selection on canvas add', () => {
-    it('selects the saved Ahrefs API key from the node schema', () => {
+    it('selects the saved Ahrefs API key from the node schema', async () => {
+        await loadNodeSchemas(['automation-ahrefs']);
         upsertCredentialsIntoCache([{
             id: 'ahrefs-test-credential',
             name: 'Ahrefs test',

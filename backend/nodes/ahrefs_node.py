@@ -836,6 +836,22 @@ class AhrefsLimitsAndUsageConfig(BaseModel):
     )
 
 
+class AhrefsGetLimitsAndUsageConfig(AhrefsLimitsAndUsageConfig):
+    """Read-only probe alias; retain limits_and_usage for saved workflows."""
+
+    operation: Literal["get_limits_and_usage"] = Field(
+        "get_limits_and_usage",
+        json_schema_extra={
+            "const": "get_limits_and_usage",
+            "ui:hidden": True,
+            "x-category": "Subscription",
+            "x-is-trigger": False,
+            "x-display-name": "Get Limits & Usage",
+        },
+        title="Get Limits & Usage",
+    )
+
+
 class AhrefsCrawlerIpRangesConfig(BaseModel):
     """Ahrefs (AhrefsBot) crawler IP addresses / ranges (no units)."""
 
@@ -887,6 +903,7 @@ AhrefsConfig = Annotated[
         AhrefsAddKeywordsConfig,
         AhrefsAddCompetitorsConfig,
         AhrefsLimitsAndUsageConfig,
+        AhrefsGetLimitsAndUsageConfig,
         AhrefsCrawlerIpRangesConfig,
     ],
     Discriminator("operation"),
@@ -1009,7 +1026,7 @@ class AhrefsNode(WorkflowNode):
     # This authenticated, zero-unit endpoint proves a key is accepted. The
     # subscription name is not a unique workspace identity.
     connection_evidence = ConnectionEvidence(
-        identity_operation="limits_and_usage",
+        identity_operation="get_limits_and_usage",
         noun="Ahrefs account",
         identity_keys=("subscription",),
         proves="reachability",
@@ -1116,6 +1133,7 @@ class AhrefsNode(WorkflowNode):
             "add_keywords": self._add_keywords,
             "add_competitors": self._add_competitors,
             "limits_and_usage": self._limits_and_usage,
+            "get_limits_and_usage": self._limits_and_usage,
             "crawler_ip_ranges": self._crawler_ip_ranges,
         }
         handler = handlers.get(op.operation)

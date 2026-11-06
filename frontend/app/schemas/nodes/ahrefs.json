@@ -534,6 +534,23 @@
       "title": "AhrefsDomainRatingConfig",
       "type": "object"
     },
+    "AhrefsGetLimitsAndUsageConfig": {
+      "description": "Read-only probe alias; retain limits_and_usage for saved workflows.",
+      "properties": {
+        "operation": {
+          "const": "get_limits_and_usage",
+          "default": "get_limits_and_usage",
+          "title": "Get Limits & Usage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscription",
+          "x-display-name": "Get Limits & Usage",
+          "x-is-trigger": false
+        }
+      },
+      "title": "AhrefsGetLimitsAndUsageConfig",
+      "type": "object"
+    },
     "AhrefsKeywordsOverviewConfig": {
       "description": "Metrics for one or many keywords: volume, KD, CPC, clicks, traffic potential.",
       "properties": {
@@ -1769,6 +1786,7 @@
           "broken_backlinks": "#/$defs/AhrefsBrokenBacklinksConfig",
           "crawler_ip_ranges": "#/$defs/AhrefsCrawlerIpRangesConfig",
           "domain_rating": "#/$defs/AhrefsDomainRatingConfig",
+          "get_limits_and_usage": "#/$defs/AhrefsGetLimitsAndUsageConfig",
           "keywords_overview": "#/$defs/AhrefsKeywordsOverviewConfig",
           "limits_and_usage": "#/$defs/AhrefsLimitsAndUsageConfig",
           "linked_domains": "#/$defs/AhrefsLinkedDomainsConfig",
@@ -1876,6 +1894,9 @@
         },
         {
           "$ref": "#/$defs/AhrefsLimitsAndUsageConfig"
+        },
+        {
+          "$ref": "#/$defs/AhrefsGetLimitsAndUsageConfig"
         },
         {
           "$ref": "#/$defs/AhrefsCrawlerIpRangesConfig"

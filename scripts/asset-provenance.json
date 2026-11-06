@@ -16,6 +16,18 @@
       "sha256": "ed7feae1c7a85e7ec3e582e9f39ae78f0e2744298da77d708ebc984797bb0d40"
     },
     {
+      "path": "frontend/public/icons/ahrefs-brand.svg",
+      "source": "https://ahrefs.com (Ahrefs brand mark from the provider website)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "109324eecbafc9fdad6a3e7a665c3537aa74cc09de08df0ec2931a93e1e55559"
+    },
+    {
+      "path": "frontend/public/icons/ahrefs.svg",
+      "source": "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/ahrefs.svg (unmodified Ahrefs brand mark; byte-for-byte verified)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "c01708558ad4e085750f4af83f0c5e747e16c0a65d018e5b01bb7746ab6e3d65"
+    },
+    {
       "path": "frontend/public/icons/airtable.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
