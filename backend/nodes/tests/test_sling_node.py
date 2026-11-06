@@ -46,6 +46,35 @@ async def test_native_read_routes_project_private_fields(transport, config):
     assert "data" in result and all(request.method == "GET" for request in calls)
 
 
+async def test_execute_with_preparsed_config_and_empty_raw_data(transport):
+    calls, _ = transport
+    instance = node.SlingNode(
+        node_id="fixture", node_type="automation-sling", node_data={},
+        config=node.SlingNodeConfig.model_validate({
+            "config": {"operation": "get_organization"}, "credentials": CREDENTIAL,
+        }),
+    )
+    result = await instance.execute({})
+    assert result["status"] == "success"
+    assert result["data"]["requested_organization_id"] == "12"
+    assert result["data"]["name"] == ORG["name"]
+    assert len(calls) == 1 and calls[0].url.path == "/v1/organisations/12"
+
+
+async def test_execute_still_validates_supplied_raw_data(transport):
+    calls, _ = transport
+    instance = node.SlingNode(
+        node_id="fixture", node_type="automation-sling",
+        node_data={"config": {"operation": "get_organization", "url": "https://example.test"}, "credentials": CREDENTIAL},
+        config=node.SlingNodeConfig.model_validate({
+            "config": {"operation": "get_organization"}, "credentials": CREDENTIAL,
+        }),
+    )
+    with pytest.raises(ValueError, match="without request"):
+        await instance.execute({})
+    assert calls == []
+
+
 async def test_group_type_uses_only_documented_filter(transport):
     calls, _ = transport
     result = await node.request_operation(CREDENTIAL, node.ListGroups(group_type="location"))

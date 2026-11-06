@@ -15,7 +15,7 @@ from nodes import sling_node as node
 from nodes.core import credential_connect, connection_evidence, run_op
 from nodes.core.registry import NODE_REGISTRY, NodeFactory
 from repositories.credential_approvals import CredentialApprovalRepo
-from utils import encryption, ssrf
+from utils import credentials as credential_utils, ssrf
 from wss.handlers import workflow_handler
 
 CREDENTIAL = {"credential_type": node.TYPES[0], "token": "fixture-token", "organization_id": "12"}
@@ -44,7 +44,7 @@ def seams(monkeypatch):
         sql.append((statement, args))
         return state["row"]
     pool = Pool(SimpleNamespace(fetchrow=AsyncMock(side_effect=read)))
-    monkeypatch.setattr(encryption, "get_encryption", lambda: SimpleNamespace(decrypt_credential=lambda _: deepcopy(state["blob"])))
+    monkeypatch.setattr(credential_utils, "get_encryption", lambda: SimpleNamespace(decrypt_credential=lambda _: deepcopy(state["blob"])))
     monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(return_value="fixture-org"))
     admission = AsyncMock(return_value=None)
     monkeypatch.setattr(CredentialApprovalRepo, "admit", admission)
@@ -133,7 +133,8 @@ async def test_current_authority_loss_or_race_stops_before_io(seams, condition):
 async def test_current_token_and_organization_replace_stale_caller(seams):
     seams.state["blob"] = {**CREDENTIAL, "token": "rotated-token", "organization_id": "13"}
     result = await run_op.run_node_operation(node_type="automation-sling", operation="get_organization", arguments={}, user_id="fixture-user", credential_id=CID, pool=seams.pool, organization_id="fixture-org")
-    assert result["executed"] is True and seams.calls[0].url.path == "/v1/organisations/13"
+    assert result["status"] == "success" and result["data"]["requested_organization_id"] == "13"
+    assert seams.calls[0].url.path == "/v1/organisations/13"
     assert seams.calls[0].headers["Authorization"] == "rotated-token"
 
 
