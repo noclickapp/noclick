@@ -57,6 +57,7 @@ const AUTO_SELECT_TYPES: ReadonlySet<string> = new Set([
     'automation-statuspage',
     'automation-bloomerang',
     'automation-apollo',
+    'automation-exoscale',
     'automation-bluesky',
     'automation-botpress',
     'automation-canva',

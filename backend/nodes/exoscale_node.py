@@ -21,8 +21,8 @@ from opentelemetry.instrumentation.utils import suppress_http_instrumentation
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StrictBool, StrictInt, StrictStr, model_serializer
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
-from repositories.credentials import CredentialsRepo
-from utils.credentials import resolve_credential_with_owner_fallback
+from repositories.credentials import credential_access_predicate
+from utils import credentials as credential_utils
 from utils.encryption import get_encryption
 from utils.ssrf import guarded_async_client
 
@@ -135,6 +135,34 @@ class ExoscaleNodeConfig(NodeConfig[ExoscaleConfig, ExoscaleAPIKeyCredential]):
     model_config = ConfigDict(extra="ignore", hide_input_in_errors=True)
     node_type: Literal["automation-exoscale"] = "automation-exoscale"
 
+@dataclass(frozen=True)
+class ExoscaleCredentialRow:
+    """Exoscale's current authority snapshot, using staging's canonical ACL."""
+    credential_type: Optional[str]
+    owner_id: str
+    token_version: int
+    updated_at: datetime
+    approval_revision: int
+    revoked_at: Optional[datetime]
+    credential: Any = field(repr=False)
+
+
+async def fetch_exoscale_authority(pool, identifier, principal, organization_id):
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            f"SELECT c.credential_type,c.owner_id,c.token_version,c.updated_at,"
+            f"c.approval_revision,c.revoked_at,c.credential FROM credentials c "
+            f"WHERE c.id=$1 AND {credential_access_predicate()}",
+            identifier, principal, organization_id,
+        )
+    return ExoscaleCredentialRow(
+        credential_type=row["credential_type"], owner_id=str(row["owner_id"]),
+        token_version=row["token_version"], updated_at=row["updated_at"],
+        approval_revision=row["approval_revision"], revoked_at=row["revoked_at"],
+        credential=row["credential"],
+    ) if row else None
+
+
 @dataclass(eq=False)
 class Authority:
     credential: ExoscaleAPIKeyCredential = field(repr=False)
@@ -172,7 +200,7 @@ class Authority:
         selected = []
 
         async def loader(identifier, principal, pool, org_id):
-            row = await CredentialsRepo(pool).fetch_validation_authority(identifier, principal, org_id)
+            row = await fetch_exoscale_authority(pool, identifier, principal, org_id)
             if row is None:
                 return None
             if row.credential_type != TYPE or row.revoked_at is not None or type(row.token_version) is not int or row.token_version < 1:
@@ -181,7 +209,19 @@ class Authority:
             selected.append((principal, row, shaped))
             return shaped.model_dump()
 
-        result = await resolve_credential_with_owner_fallback(self.credential_id, self.user_id, self.pool, org_id=self.organization_id, workflow_id=self.workflow_id, load_credential_fn=loader)
+        # Staging's resolver has no custom-loader hook. Apply its trusted
+        # owner/lender checks here so this node can retain the original blob
+        # tag and compare the full authority snapshot around each request.
+        result = await loader(self.credential_id, self.user_id, self.pool, self.organization_id)
+        if not result and self.workflow_id:
+            owner = await credential_utils.get_workflow_owner_id(self.pool, self.workflow_id)
+            if (owner and owner != self.user_id and
+                    await credential_utils.is_credential_authorized_for_workflow(self.pool, self.workflow_id, self.credential_id)):
+                result = await loader(self.credential_id, owner, self.pool, self.organization_id)
+        if not result and self.workflow_id:
+            lender = await credential_utils.credential_lender(self.pool, self.workflow_id, self.credential_id)
+            if lender and lender != str(self.user_id):
+                result = await loader(self.credential_id, lender, self.pool, self.organization_id)
         if not result or not selected:
             raise ValueError(UNAVAILABLE)
         principal, row, shaped = selected[-1]
@@ -261,7 +301,7 @@ async def request(auth, route):
     private = _PRIVATE.set(True)
     try:
         with suppress_http_instrumentation():
-            async with guarded_async_client(require_public=True, timeout=30, follow_redirects=False, trust_env=False) as client:
+            async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
                 req = client.build_request("GET", APIS[auth.credential.zone] + "/" + route, headers={"Accept": "application/json"})
                 sign_request(req, auth.credential, int(time.time() + 10 * 60))
                 response = await client.send(req, stream=True)

@@ -48,6 +48,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-cliniko', 'ClinikoNode'],
     ['automation-apify', 'ApifyNode'],
     ['automation-apollo', 'ApolloNode'],
+    ['automation-exoscale', 'ExoscaleNode'],
     ['automation-bluesky', 'BlueSkyNode'],
     ['automation-canva', 'CanvaNode'],
     ['automation-discord', 'DiscordNode'],
