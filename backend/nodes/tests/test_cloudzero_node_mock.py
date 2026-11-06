@@ -227,6 +227,10 @@ async def test_actual_postconnect_factory_tristate_and_403_evidence_unknown(monk
     from repositories.credential_approvals import CredentialApprovalRepo
     from wss.handlers import credentials_handler as hm
     from wss.receiver.client_events import CredentialValidateAccessRequest
+    from utils import encryption
+    cipher = SimpleNamespace(decrypt_credential=lambda _: dict(CREDS))
+    monkeypatch.setattr(encryption, "get_encryption", lambda: cipher)
+    monkeypatch.setattr(hm, "get_encryption", lambda: cipher)
     row = CredentialValidationRow(cn.FAMILIES[0], "owner", 2, STAMP, 0, None, "sealed"); context = CredentialValidationContext("saved", cn.NODE_TYPE, "actor", "org", object(), row)
     monkeypatch.setattr(CredentialValidationContext, "create", AsyncMock(return_value=context)); monkeypatch.setattr(CredentialValidationContext, "revalidate", AsyncMock(return_value=row)); monkeypatch.setattr(run_op, "resolve_operation_credential", AsyncMock(return_value=CREDS)); monkeypatch.setattr(CredentialApprovalRepo, "admit", AsyncMock(return_value=None)); monkeypatch.setattr(cn, "_current_data", AsyncMock(return_value=cn._shape(CREDS)))
     sent = []
@@ -240,3 +244,63 @@ async def test_actual_postconnect_factory_tristate_and_403_evidence_unknown(monk
     assert evidence.reachable is None and (await cn.CloudZeroNode.validate_credential_access(CREDS))["valid"] is None
     for error,valid in [(CredentialValidationUnavailable("revoked"), False), (CredentialValidationUnverified("unknown"), None), (cn.CloudZeroAPIError("Scope status unknown", http_status=403), None)]:
         monkeypatch.setattr(CredentialValidationContext, "run_operation", AsyncMock(side_effect=error)); assert (await cn.CloudZeroNode.validate_credential_access(CREDS, validation_context=context))["valid"] is valid
+
+
+@pytest.mark.asyncio
+async def test_documented_cost_response_with_projected_counts_and_null_cursors(wire):
+    # Copied from billing_cost in the provider docs; the pinned spec incorrectly
+    # spells its nullable string type as JSON null instead of the string "null".
+    # https://docs.cloudzero.com/reference/getbillingcosts
+    body = {
+        "costs": [
+            {
+                "usage_date": "2023-10-02T00:00:00+00:00",
+                "cost": 1234.56,
+                "projected_row_count": 482,
+                "Region": "us-east-1"
+            },
+            {
+                "usage_date": "2023-10-02T00:00:00+00:00",
+                "cost": 567.89,
+                "projected_row_count": 105,
+                "Region": "us-west-1"
+            }
+        ],
+        "pagination": {
+            "page_count": 1,
+            "item_count": 2,
+            "total_count": 2,
+            "cursor": {
+                "next_cursor": None,
+                "previous_cursor": None,
+                "has_next": False,
+                "has_previous": False
+            }
+        },
+        "sorting": {
+            "available": {
+                "sort_keys": [
+                    "usage_date"
+                ],
+                "sort_orders": [
+                    "asc"
+                ]
+            },
+            "current": [
+                {
+                    "sort_key": "usage_date",
+                    "sort_order": "asc"
+                }
+            ]
+        },
+        "filtering": {
+            "available": [],
+            "current": {}
+        },
+        "total_count": 2
+    }
+    wire.responses.append(body)
+    result = await run("get_costs", {"start_date": "2023-10-26T14:27:46+00:00", "group_by": ["Region"], "include_projected_row_count": True, "confirm_query_quota": True})
+    assert result["data"]["costs"] == body["costs"]
+    assert result["data"]["pagination"]["observed_chain_count"] == 2
+    assert result["data"]["next_page_token"] is None
