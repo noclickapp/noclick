@@ -2,8 +2,8 @@
 Sentry (error-tracking / APM) automation node.
 
 Covers Sentry's public REST API (``/api/0/``): organizations, projects, teams,
-issues, events, releases + deploys, members, issue-alert rules, metric-alert
-rules, crons/monitors, dashboards, Discover queries, and service hooks — plus a
+issues, events, releases + deploys, members, crons/monitors, dashboards,
+Discover queries, and service hooks — plus a
 push trigger backed by Sentry **service hooks** (project webhooks) for
 ``event.created`` (On Error) and ``event.alert`` (On Alert). Service hooks are
 the ONLY REST-registerable per-URL webhook Sentry offers, so those two events are
@@ -163,16 +163,12 @@ _CREATES_RESOURCE: Dict[str, tuple] = {
     "create_team": ("sentry_team", "data.slug"),
     "create_monitor": ("sentry_monitor", "data.slug"),
     "create_dashboard": ("sentry_dashboard", "data.id"),
-    "create_metric_alert": ("sentry_metric_alert", "data.id"),
-    "create_issue_alert": ("sentry_issue_alert", "data.id"),
 }
 _FIELD_RESOURCE_TYPE: Dict[str, str] = {
     "project_slug": "sentry_project",
     "team_slug": "sentry_team",
     "monitor_slug": "sentry_monitor",
     "dashboard_id": "sentry_dashboard",
-    "alert_rule_id": "sentry_metric_alert",
-    "rule_id": "sentry_issue_alert",
 }
 
 
@@ -439,64 +435,6 @@ class SentryRemoveMemberConfig(BaseModel):
     member_id: str = Field(..., title="Member", json_schema_extra=_dyn("member_id", "Select a member…", "Or paste a member id"))
 
 
-# ---- Issue alert rules ----
-class SentryListIssueAlertsConfig(BaseModel):
-    operation: Literal["list_issue_alerts"] = _op("list_issue_alerts", "Alerts", "List Issue Alert Rules", ["rules"])
-    project_slug: str = _project()
-
-
-class SentryCreateIssueAlertConfig(BaseModel):
-    operation: Literal["create_issue_alert"] = _op("create_issue_alert", "Alerts", "Create Issue Alert Rule")
-    project_slug: str = _project()
-    body_json: str = Field(..., title="Rule (JSON)", description='Alert rule definition, e.g. {"name":"…","conditions":[…],"actions":[…],"frequency":30}', json_schema_extra={"ui:widget": "textarea"})
-
-
-class SentryGetIssueAlertConfig(BaseModel):
-    operation: Literal["get_issue_alert"] = _op("get_issue_alert", "Alerts", "Get Issue Alert Rule")
-    project_slug: str = _project()
-    rule_id: str = Field(..., title="Rule", json_schema_extra=_dyn("rule_id", "Select a rule…", "Or paste a rule id", depends_on="project_slug"))
-
-
-class SentryUpdateIssueAlertConfig(BaseModel):
-    operation: Literal["update_issue_alert"] = _op("update_issue_alert", "Alerts", "Update Issue Alert Rule")
-    project_slug: str = _project()
-    rule_id: str = Field(..., title="Rule", json_schema_extra=_dyn("rule_id", "Select a rule…", "Or paste a rule id", depends_on="project_slug"))
-    body_json: str = Field(..., title="Rule (JSON)", description="The FULL updated rule — Sentry replaces it wholesale, so include name, conditions, and actions (a rule with no action is rejected)", json_schema_extra={"ui:widget": "textarea"})
-
-
-class SentryDeleteIssueAlertConfig(BaseModel):
-    operation: Literal["delete_issue_alert"] = _op("delete_issue_alert", "Alerts", "Delete Issue Alert Rule")
-    project_slug: str = _project()
-    rule_id: str = Field(..., title="Rule", json_schema_extra=_dyn("rule_id", "Select a rule…", "Or paste a rule id", depends_on="project_slug"))
-
-
-# ---- Metric alert rules ----
-class SentryListMetricAlertsConfig(BaseModel):
-    operation: Literal["list_metric_alerts"] = _op("list_metric_alerts", "Alerts", "List Metric Alert Rules")
-    limit: Optional[str] = _limit()
-
-
-class SentryCreateMetricAlertConfig(BaseModel):
-    operation: Literal["create_metric_alert"] = _op("create_metric_alert", "Alerts", "Create Metric Alert Rule")
-    body_json: str = Field(..., title="Rule (JSON)", description='Metric alert definition (name, aggregate, timeWindow, triggers, projects, …)', json_schema_extra={"ui:widget": "textarea"})
-
-
-class SentryGetMetricAlertConfig(BaseModel):
-    operation: Literal["get_metric_alert"] = _op("get_metric_alert", "Alerts", "Get Metric Alert Rule")
-    alert_rule_id: str = Field(..., title="Metric Alert Rule", json_schema_extra=_dyn("alert_rule_id", "Select a metric alert…", "Or paste an alert rule id"))
-
-
-class SentryUpdateMetricAlertConfig(BaseModel):
-    operation: Literal["update_metric_alert"] = _op("update_metric_alert", "Alerts", "Update Metric Alert Rule")
-    alert_rule_id: str = Field(..., title="Metric Alert Rule", json_schema_extra=_dyn("alert_rule_id", "Select a metric alert…", "Or paste an alert rule id"))
-    body_json: str = Field(..., title="Fields (JSON)", json_schema_extra={"ui:widget": "textarea"})
-
-
-class SentryDeleteMetricAlertConfig(BaseModel):
-    operation: Literal["delete_metric_alert"] = _op("delete_metric_alert", "Alerts", "Delete Metric Alert Rule")
-    alert_rule_id: str = Field(..., title="Metric Alert Rule", json_schema_extra=_dyn("alert_rule_id", "Select a metric alert…", "Or paste an alert rule id"))
-
-
 # ---- Monitors (crons) ----
 class SentryListMonitorsConfig(BaseModel):
     operation: Literal["list_monitors"] = _op("list_monitors", "Crons", "List Monitors", ["cron", "scheduled jobs"])
@@ -560,8 +498,8 @@ class SentryDiscoverConfig(BaseModel):
     project_slug: Optional[str] = _project(required=False)
     environment: Optional[str] = Field(None, title="Environment", description="Filter to an environment (optional)",
                                        json_schema_extra=_dyn("environment", "Select an environment…", "Or paste an environment name"))
-    dataset: Optional[str] = Field(None, title="Dataset", json_schema_extra={
-        "enum": ["", "errors", "transactions", "spans", "logs"], "x-enum-searchable": True})
+    dataset: str = Field("errors", title="Dataset", description="The event dataset to query (defaults to errors)", json_schema_extra={
+        "enum": ["errors", "logs", "profile_functions", "spans", "tracemetrics", "uptime_results"], "x-enum-searchable": True})
     limit: Optional[str] = _limit()
 
 
@@ -655,8 +593,6 @@ _ACTION_CONFIGS = (
     SentryListReleasesConfig, SentryCreateReleaseConfig, SentryGetReleaseConfig, SentryUpdateReleaseConfig,
     SentryDeleteReleaseConfig, SentryListDeploysConfig, SentryCreateDeployConfig,
     SentryListMembersConfig, SentryInviteMemberConfig, SentryGetMemberConfig, SentryUpdateMemberConfig, SentryRemoveMemberConfig,
-    SentryListIssueAlertsConfig, SentryCreateIssueAlertConfig, SentryGetIssueAlertConfig, SentryUpdateIssueAlertConfig, SentryDeleteIssueAlertConfig,
-    SentryListMetricAlertsConfig, SentryCreateMetricAlertConfig, SentryGetMetricAlertConfig, SentryUpdateMetricAlertConfig, SentryDeleteMetricAlertConfig,
     SentryListMonitorsConfig, SentryCreateMonitorConfig, SentryGetMonitorConfig, SentryUpdateMonitorConfig, SentryDeleteMonitorConfig, SentryListCheckinsConfig,
     SentryListDashboardsConfig, SentryCreateDashboardConfig, SentryGetDashboardConfig, SentryDeleteDashboardConfig,
     SentryDiscoverConfig, SentryEventsStatsConfig, SentrySessionsConfig,
@@ -779,14 +715,12 @@ _DYNAMIC_ORG_FIELDS: Dict[str, tuple] = {
     "release_version": ("releases", "version", ("shortVersion", "version")),
     "member_id": ("members", "id", ("email", "name")),
     "monitor_slug": ("monitors", "slug", ("name", "slug")),
-    "alert_rule_id": ("alert-rules", "id", ("name",)),
     "dashboard_id": ("dashboards", "id", ("title",)),
     "environment": ("environments", "name", ("name",)),
 }
 
 # Project-scoped dropdowns (need a project_slug from the sibling field via context).
 _DYNAMIC_PROJECT_FIELDS: Dict[str, tuple] = {
-    "rule_id": ("rules", "id", ("name",)),
     "hook_id": ("hooks", "id", ("url",)),
 }
 
@@ -1184,38 +1118,6 @@ class SentryNode(ExternalWebhookTriggerMixin, WorkflowNode):
     async def _remove_member(self, c, cred):
         return await _rest_request(cred, "DELETE", _org_path(cred, f"members/{c.member_id}") + "/", action_name="remove_member")
 
-    # ---- Issue alert rules ----
-    async def _list_issue_alerts(self, c, cred):
-        return await _rest_request(cred, "GET", _proj_path(cred, c.project_slug, "rules") + "/", action_name="list_issue_alerts")
-
-    async def _create_issue_alert(self, c, cred):
-        return await _rest_request(cred, "POST", _proj_path(cred, c.project_slug, "rules") + "/", json_body=_parse_json(c.body_json, "Rule"), action_name="create_issue_alert")
-
-    async def _get_issue_alert(self, c, cred):
-        return await _rest_request(cred, "GET", _proj_path(cred, c.project_slug, f"rules/{c.rule_id}") + "/", action_name="get_issue_alert")
-
-    async def _update_issue_alert(self, c, cred):
-        return await _rest_request(cred, "PUT", _proj_path(cred, c.project_slug, f"rules/{c.rule_id}") + "/", json_body=_parse_json(c.body_json, "Fields"), action_name="update_issue_alert")
-
-    async def _delete_issue_alert(self, c, cred):
-        return await _rest_request(cred, "DELETE", _proj_path(cred, c.project_slug, f"rules/{c.rule_id}") + "/", action_name="delete_issue_alert")
-
-    # ---- Metric alert rules ----
-    async def _list_metric_alerts(self, c, cred):
-        return await _rest_request(cred, "GET", _org_path(cred, "alert-rules") + "/", params={"per_page": c.limit}, action_name="list_metric_alerts")
-
-    async def _create_metric_alert(self, c, cred):
-        return await _rest_request(cred, "POST", _org_path(cred, "alert-rules") + "/", json_body=_parse_json(c.body_json, "Rule"), action_name="create_metric_alert")
-
-    async def _get_metric_alert(self, c, cred):
-        return await _rest_request(cred, "GET", _org_path(cred, f"alert-rules/{c.alert_rule_id}") + "/", action_name="get_metric_alert")
-
-    async def _update_metric_alert(self, c, cred):
-        return await _rest_request(cred, "PUT", _org_path(cred, f"alert-rules/{c.alert_rule_id}") + "/", json_body=_parse_json(c.body_json, "Fields"), action_name="update_metric_alert")
-
-    async def _delete_metric_alert(self, c, cred):
-        return await _rest_request(cred, "DELETE", _org_path(cred, f"alert-rules/{c.alert_rule_id}") + "/", action_name="delete_metric_alert")
-
     # ---- Monitors ----
     async def _list_monitors(self, c, cred):
         return await _rest_request(cred, "GET", _org_path(cred, "monitors") + "/", params={"per_page": c.limit}, action_name="list_monitors")
@@ -1301,10 +1203,6 @@ class SentryNode(ExternalWebhookTriggerMixin, WorkflowNode):
         "list_deploys": _list_deploys, "create_deploy": _create_deploy,
         "list_members": _list_members, "invite_member": _invite_member, "get_member": _get_member,
         "update_member": _update_member, "remove_member": _remove_member,
-        "list_issue_alerts": _list_issue_alerts, "create_issue_alert": _create_issue_alert, "get_issue_alert": _get_issue_alert,
-        "update_issue_alert": _update_issue_alert, "delete_issue_alert": _delete_issue_alert,
-        "list_metric_alerts": _list_metric_alerts, "create_metric_alert": _create_metric_alert, "get_metric_alert": _get_metric_alert,
-        "update_metric_alert": _update_metric_alert, "delete_metric_alert": _delete_metric_alert,
         "list_monitors": _list_monitors, "create_monitor": _create_monitor, "get_monitor": _get_monitor,
         "update_monitor": _update_monitor, "delete_monitor": _delete_monitor, "list_checkins": _list_checkins,
         "list_dashboards": _list_dashboards, "create_dashboard": _create_dashboard, "get_dashboard": _get_dashboard,

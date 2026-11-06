@@ -11,6 +11,7 @@ dropdowns (org-scoped + project-scoped), and the service-hook trigger lifecycle
 import hashlib
 import hmac
 import pytest
+from pydantic import ValidationError
 from unittest.mock import Mock, patch
 
 from nodes.sentry_node import (
@@ -191,20 +192,12 @@ async def test_dropdown_organizations_not_org_scoped():
 
 
 @pytest.mark.asyncio
-async def test_dropdown_rule_id_depends_on_project():
-    calls = []
-
-    async def fake(cred_, method, path, params=None, json_body=None, action_name="request"):
-        calls.append(path)
-        return {"status": "success", "data": [{"id": "77", "name": "High error rate"}], "next_cursor": None}
-
-    with patch("nodes.sentry_node._rest_request", side_effect=fake):
-        # No project in context → no options, no call.
-        empty = await SentryNode.load_field_options("rule_id", cred().model_dump(), context={})
-        assert empty == {"options": []}
-        res = await SentryNode.load_field_options("rule_id", cred().model_dump(), context={"project_slug": "web"})
-    assert "/api/0/projects/acme/web/rules/" in calls
-    assert res["options"] == [{"label": "High error rate", "value": "77"}]
+@pytest.mark.parametrize("field", ["rule_id", "alert_rule_id"])
+async def test_retired_alert_dropdowns_make_no_request(field):
+    with patch("nodes.sentry_node._rest_request") as request:
+        res = await SentryNode.load_field_options(field, cred().model_dump(), context={"project_slug": "web"})
+    assert res == {"options": []}
+    request.assert_not_called()
 
 
 @pytest.mark.asyncio
@@ -313,3 +306,27 @@ async def test_trigger_passthrough_in_execute():
     assert result["status"] == "success"
     assert result["action"] == "on_error"
     assert result["data"] == payload
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("dataset", [None, "logs", "spans", "profile_functions", "tracemetrics", "uptime_results"])
+async def test_discover_sends_required_dataset(dataset):
+    cfg = {"operation": "query_discover", "field": "count()"}
+    if dataset is not None:
+        cfg["dataset"] = dataset
+    parsed = SentryNode.parse_config({"config": cfg})
+    _, cap = await run_rest(parsed.config)
+    assert cap["path"] == "/api/0/organizations/acme/events/"
+    assert cap["params"]["dataset"] == (dataset or "errors")
+    assert cap["params"]["field"] == ["count()"]
+
+
+@pytest.mark.parametrize("operation", [
+    "list_issue_alerts", "create_issue_alert", "get_issue_alert", "update_issue_alert", "delete_issue_alert",
+    "list_metric_alerts", "create_metric_alert", "get_metric_alert", "update_metric_alert", "delete_metric_alert",
+])
+def test_retired_alert_operations_are_not_offered(operation):
+    # Sentry removed these URLs; see getsentry/sentry's test_project_rules.py.
+    with pytest.raises(ValidationError, match="union_tag_invalid"):
+        SentryNodeConfig.model_validate({"config": {"operation": operation}})
+    assert operation not in SentryNode._HANDLERS
