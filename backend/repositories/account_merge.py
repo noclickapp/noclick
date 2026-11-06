@@ -213,6 +213,10 @@ async def merge_accounts(conn, *, source: str, target: str) -> MergeResult:
         "AND t.parent_folder_id IS NULL AND t.name = s.name "
         "AND t.organization_id IS NOT DISTINCT FROM (CASE WHEN s.organization_id = $3::uuid THEN $4::uuid ELSE s.organization_id END))",
         source, target, s_org, t_org)
+    await conn.execute(
+        "UPDATE account_node_output_schemas t SET delivered = true FROM account_node_output_schemas s "
+        "WHERE t.user_id = $2::uuid AND s.user_id = $1::uuid AND s.schema_hash = t.schema_hash "
+        "AND s.delivered AND NOT t.delivered", *args)
     for table, key in (("template_votes", "template_id"), ("skill_user_mutes", "skill_id"),
                        ("account_node_output_schemas", "schema_hash")):
         await conn.execute(

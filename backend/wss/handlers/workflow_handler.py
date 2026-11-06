@@ -2595,11 +2595,11 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
     async def get_node_output_schema(self, sid: str, request: NodeOutputSchemaRequest) -> None:
         """
         Get the expected output schema and curated suggested references for a
-        node type and operation, from what the caller's own account has seen.
+        node type and operation, from what the caller and its workspaces' members have seen.
 
         ``suggested_refs`` is ``null`` while the LLM curation hasn't produced
         a valid result yet — the frontend treats that as a loading state.
-        ``schema`` is ``null`` if the account has never seen an execution.
+        ``schema`` is ``null`` if none of them has seen an execution.
         """
         try:
             session = await self.sio.get_session(sid)

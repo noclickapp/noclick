@@ -92,20 +92,23 @@ async def test_a_merge_moves_the_work_keeps_the_history_and_retires_the_phone_ac
         "INSERT INTO conversations (conversation_id, user_id, events, metadata) VALUES ($1, $2::uuid, $3, $4)",
         f"coordinator:{target}", target, [{"role": "user", "message": "hi from the web"}],
         {"sdk_history": [{"role": "user", "content": "hi from the web"}]})
-    for user_id, schema_hash, seen in ((source, "both", 1), (source, "its", 1), (target, "both", 5)):
+    for user_id, schema_hash, seen, delivered in ((source, "both", 1, True), (source, "its", 1, False),
+                                                 (target, "both", 5, False)):
         await pool.execute(
             "INSERT INTO account_node_output_schemas (user_id, schema_hash, node_type, node_operation, output_schema, "
-            "occurrence_count) VALUES ($1::uuid, $2, 'automation-exa', 'search', '{}', $3)", user_id, schema_hash, seen)
+            "occurrence_count, delivered) VALUES ($1::uuid, $2, 'automation-exa', 'search', '{}', $3, $4)",
+            user_id, schema_hash, seen, delivered)
 
     async with pool.acquire() as conn:
         async with conn.transaction():
             result = await merge_accounts(conn, source=source, target=target)
     assert result.moved["workflows.owner_id"] == 1 and result.moved["user_phones.user_id"] == 1
 
-    # Its output shapes come along; one both accounts hold stays the target's.
-    shapes = await pool.fetch("SELECT schema_hash, occurrence_count FROM account_node_output_schemas "
+    # Its output shapes come along; one both accounts hold stays the target's, delivered if either's was.
+    shapes = await pool.fetch("SELECT schema_hash, occurrence_count, delivered FROM account_node_output_schemas "
                               "WHERE user_id = $1::uuid", target)
-    assert {r["schema_hash"]: r["occurrence_count"] for r in shapes} == {"both": 5, "its": 1}
+    assert {r["schema_hash"]: (r["occurrence_count"], r["delivered"]) for r in shapes} == {
+        "both": (5, True), "its": (1, False)}
 
     row = await pool.fetchrow("SELECT owner_id, organization_id FROM workflows WHERE id = $1::uuid", workflow)
     assert (str(row["owner_id"]), str(row["organization_id"])) == (target, t_org)

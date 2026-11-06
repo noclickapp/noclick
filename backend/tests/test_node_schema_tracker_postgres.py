@@ -131,6 +131,38 @@ async def test_an_account_keeps_its_own_shapes_and_reads_no_others(pool):
     assert (await get_own_schema_with_suggestions(a, *ACTION))["schema"] == {"found": "integer"}
 
 
+async def test_a_workspaces_members_read_the_shapes_its_workflows_taught(pool):
+    """A run records under its workflow's owner, so a teammate opening that workflow reads the owner's shapes."""
+    owner, owners_workflow = await _account(pool)
+    teammate, teammates_workflow = await _account(pool)
+    outsider, outsiders_workflow = await _account(pool)
+    org = str(uuid.uuid4())
+    await pool.execute("INSERT INTO organizations (id, name, slug) VALUES ($1::uuid, 'Team', $2)", org, f"team-{org[:8]}")
+    for member in (owner, teammate):
+        await pool.execute("INSERT INTO organization_members (organization_id, user_id, role) "
+                           "VALUES ($1::uuid, $2::uuid, 'member')", org, member)
+    await track_node_schema(*ACTION, CUSTOM, workflow_id=owners_workflow)
+
+    assert (await get_own_schema_with_suggestions(teammate, *ACTION))["schema"] == extract_schema(CUSTOM)
+    assert await get_own_schema_with_suggestions(outsider, *ACTION) is None
+
+    # What the workspace saw most, counted across its members, leads; an outsider's runs count for nothing.
+    for workflow_id, output, times in ((owners_workflow, {"found": 1}, 2), (teammates_workflow, CUSTOM, 2),
+                                       (outsiders_workflow, {"found": 1}, 5)):
+        for _ in range(times):
+            await track_node_schema(*ACTION, output, workflow_id=workflow_id)
+    for member in (owner, teammate):
+        assert (await get_own_schema_with_suggestions(member, *ACTION))["schema"] == extract_schema(CUSTOM)
+
+
+async def test_an_accounts_record_failing_still_fills_the_pooled_row(pool):
+    _, a_workflow = await _account(pool)
+    with patch.object(node_output_schemas, "record", AsyncMock(side_effect=RuntimeError("no such table"))):
+        await track_node_schema(*ACTION, CUSTOM, workflow_id=a_workflow)
+    assert await pool.fetchval("SELECT sample_output_clipped IS NOT NULL FROM workflow_node_output_schemas "
+                               "WHERE schema_hash = $1", compute_schema_hash(*ACTION, extract_schema(CUSTOM)))
+
+
 async def test_an_own_shape_carries_the_references_curated_for_it(pool):
     a, a_workflow = await _account(pool)
     await track_node_schema(*ACTION, CUSTOM, workflow_id=a_workflow)

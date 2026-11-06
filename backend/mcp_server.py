@@ -3070,7 +3070,7 @@ class NoClickMCPServer(DatabasePoolMixin):
             node_operations = {}
             for nt in added_node_types:
                 ops = get_operations_for_node_type(nt)
-                # Build operations list with per-operation output schemas this account has seen
+                # Build operations list with per-operation output schemas this account and its workspaces have seen
                 ops_list = []
                 for op in ops:
                     op_entry: Dict[str, Any] = _op_to_dict(op)  # I4: +display_name/category
@@ -3134,8 +3134,8 @@ class NoClickMCPServer(DatabasePoolMixin):
                         if output is not None and isinstance(output, dict):
                             paths = extract_output_paths(output)
                         else:
-                            # I3: no live output — fall back to the shape this account has
-                            # seen, so a pipeline not run yet still gets ready-made references.
+                            # I3: no live output — fall back to the shape this account and its
+                            # workspaces have seen, so a pipeline not run yet still gets ready-made references.
                             from utils.node_schema_tracker import get_own_schema_with_suggestions
                             own = await get_own_schema_with_suggestions(
                                 user_id, up_type, self._get_current_operation(n) or "default")

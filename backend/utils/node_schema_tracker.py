@@ -462,10 +462,13 @@ async def track_node_schema(
             safe_config, "delivery" if delivered else "run",
         )
         if workflow_id:
-            await node_output_schemas.record(
-                pool, workflow_id=workflow_id, node_type=node_type, node_operation=node_operation,
-                schema=schema, schema_hash=schema_hash, delivered=delivered,
-            )
+            try:
+                await node_output_schemas.record(
+                    pool, workflow_id=workflow_id, node_type=node_type, node_operation=node_operation,
+                    schema=schema, schema_hash=schema_hash, delivered=delivered,
+                )
+            except Exception as e:  # the account's record never stops the pooled row's fill below
+                logger.warning(f"[SchemaTracker] Failed to record {node_type}:{node_operation} for its account: {e}")
         row = rows[0] if rows else None
         need_refs = row is None or row["suggested_refs"] is None
         need_sample = row is None or row["sample_output_clipped"] is None
@@ -593,7 +596,8 @@ async def get_own_schema_with_suggestions(
     node_type: str,
     node_operation: str,
 ) -> Optional[Dict[str, Any]]:
-    """As ``get_schema_with_suggestions``, of what this account has seen alone: ``None`` until it has."""
+    """As ``get_schema_with_suggestions``, of what this account and its workspaces' members have seen alone:
+    ``None`` until one of them has."""
     try:
         row = await node_output_schemas.most_seen(get_native_pool(), user_id, node_type, node_operation)
         return row and {"schema": row["output_schema"], "suggested_refs": row["suggested_refs"]}

@@ -21,13 +21,23 @@ async def record(pool, *, workflow_id: str, node_type: str, node_operation: str,
 
 
 async def most_seen(pool, user_id: str, node_type: str, node_operation: str) -> Optional[Dict[str, Any]]:
-    """The shape the account has seen most of this (type, operation), with the references curated for that shape."""
+    """The shape seen most of this (type, operation) by the account or anyone in a workspace with it, whose
+    workflows it can open (each run records under its workflow's owner), with the references curated for it."""
     row = await pool.fetchrow(
-        """SELECT own.output_schema, pooled.suggested_refs
-           FROM account_node_output_schemas own
-           LEFT JOIN workflow_node_output_schemas pooled ON pooled.schema_hash = own.schema_hash
-           WHERE own.user_id = $1::uuid AND own.node_type = $2 AND own.node_operation = $3
-           ORDER BY own.occurrence_count DESC, own.schema_hash LIMIT 1""",
+        """WITH people AS (
+               SELECT $1::uuid AS user_id
+               UNION
+               SELECT theirs.user_id FROM organization_members mine
+               JOIN organization_members theirs ON theirs.organization_id = mine.organization_id
+               WHERE mine.user_id = $1::uuid),
+           seen AS (
+               SELECT own.schema_hash, (array_agg(own.output_schema))[1] AS output_schema,
+                      sum(own.occurrence_count) AS n
+               FROM account_node_output_schemas own JOIN people USING (user_id)
+               WHERE own.node_type = $2 AND own.node_operation = $3
+               GROUP BY own.schema_hash ORDER BY n DESC, own.schema_hash LIMIT 1)
+           SELECT seen.output_schema, pooled.suggested_refs FROM seen
+           LEFT JOIN workflow_node_output_schemas pooled ON pooled.schema_hash = seen.schema_hash""",
         user_id, node_type, node_operation)
     return dict(row) if row else None
 
