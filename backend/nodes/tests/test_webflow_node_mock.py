@@ -20,6 +20,7 @@ Exercises every operation with mocked HTTP responses (no live API calls):
 
 import hashlib
 import hmac
+import json
 
 import pytest
 from unittest.mock import Mock, patch
@@ -71,6 +72,7 @@ from nodes.webflow_node import (
     WebflowUpdatePageMetadataConfig,
     WebflowListComponentsConfig,
     WebflowUpdateComponentContentConfig,
+    WebflowUpdateComponentPropertiesConfig,
     WebflowDeleteCollectionConfig,
     WebflowUpdateCollectionFieldConfig,
     WebflowDeleteCollectionFieldConfig,
@@ -236,7 +238,7 @@ class TestWebflowPagesMock:
     async def test_update_page_content(self, api_token_credentials):
         node, mock_client = run_op(
             WebflowUpdatePageContentConfig(
-                page_id="p1", nodes_json='[{"nodeId":"n1","text":"Hello"}]'
+                page_id="p1", locale_id="l1", nodes_json='[{"nodeId":"n1","text":"Hello"}]'
             ),
             api_token_credentials,
             200,
@@ -897,15 +899,17 @@ class TestWebflowOAuthCredential:
 # ============================================================================
 
 
-async def _capture(config_obj, credentials):
+async def _capture(config_obj, credentials, response_body=None):
     """Run an op with a capturing client; return the captured method + url."""
     cap = {}
-    resp = create_mock_response(200, {"ok": True})
+    resp = create_mock_response(200, {"ok": True} if response_body is None else response_body)
     client = Mock()
 
     async def async_request(*args, **kwargs):
         cap["method"] = kwargs.get("method")
         cap["url"] = kwargs.get("url")
+        cap["params"] = kwargs.get("params")
+        cap["json"] = kwargs.get("json")
         return resp
 
     client.request = async_request
@@ -933,7 +937,7 @@ class TestWebflowExpandedCoverage:
             (WebflowGetPageMetadataConfig(page_id="p1"), "GET", "/pages/p1"),
             (WebflowUpdatePageMetadataConfig(page_id="p1", metadata_json='{"title":"T"}'), "PUT", "/pages/p1"),
             (WebflowListComponentsConfig(site_id=SID), "GET", f"/sites/{SID}/components"),
-            (WebflowUpdateComponentContentConfig(site_id=SID, component_id="cm1", nodes_json='[]'), "PATCH", f"/sites/{SID}/components/cm1/dom"),
+            (WebflowUpdateComponentContentConfig(site_id=SID, component_id="cm1", nodes_json='[]'), "POST", f"/sites/{SID}/components/cm1/dom"),
             (WebflowDeleteCollectionConfig(collection_id=CID), "DELETE", f"/collections/{CID}"),
             (WebflowUpdateCollectionFieldConfig(collection_id=CID, field_id="f1", display_name="X"), "PATCH", f"/collections/{CID}/fields/f1"),
             (WebflowDeleteCollectionFieldConfig(collection_id=CID, field_id="f1"), "DELETE", f"/collections/{CID}/fields/f1"),
@@ -941,7 +945,7 @@ class TestWebflowExpandedCoverage:
             (WebflowGetLiveItemConfig(collection_id=CID, item_id=IID), "GET", f"/collections/{CID}/items/{IID}/live"),
             (WebflowUpdateLiveItemConfig(collection_id=CID, item_id=IID, field_data_json='{"name":"N"}'), "PATCH", f"/collections/{CID}/items/{IID}/live"),
             (WebflowDeleteLiveItemConfig(collection_id=CID, item_id=IID), "DELETE", f"/collections/{CID}/items/{IID}/live"),
-            (WebflowCreateBulkItemsConfig(collection_id=CID, items_json='[]'), "POST", f"/collections/{CID}/items/bulk"),
+            (WebflowCreateBulkItemsConfig(collection_id=CID, items_json='[]'), "POST", f"/collections/{CID}/items"),
             (WebflowGetProductConfig(site_id=SID, product_id="pr1"), "GET", f"/sites/{SID}/products/pr1"),
             (WebflowUpdateProductConfig(site_id=SID, product_id="pr1", product_field_data_json='{"name":"N"}'), "PATCH", f"/sites/{SID}/products/pr1"),
             (WebflowCreateSkusConfig(site_id=SID, product_id="pr1", skus_json='[]'), "POST", f"/sites/{SID}/products/pr1/skus"),
@@ -974,3 +978,57 @@ class TestWebflowExpandedCoverage:
             cap = await _capture(op, api_token_credentials)
             assert cap["method"] == method, f"{op.operation}: method {cap['method']} != {method}"
             assert cap["url"].endswith(suffix), f"{op.operation}: url {cap['url']} !~ {suffix}"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "config, path, body",
+    [
+        (
+            WebflowUpdatePageContentConfig(
+                page_id="p1", locale_id="locale1",
+                nodes_json='[{"nodeId":"n1","text":"<h1>Hello</h1>"}]',
+            ),
+            "/pages/p1/dom",
+            {"nodes": [{"nodeId": "n1", "text": "<h1>Hello</h1>"}]},
+        ),
+        (
+            WebflowUpdateComponentContentConfig(
+                site_id="s1", component_id="cm1", locale_id="locale1",
+                nodes_json='[{"nodeId":"n1","text":"<h1>Hello</h1>"}]',
+            ),
+            "/sites/s1/components/cm1/dom",
+            {"nodes": [{"nodeId": "n1", "text": "<h1>Hello</h1>"}]},
+        ),
+        (
+            WebflowUpdateComponentPropertiesConfig(
+                site_id="s1", component_id="cm1", locale_id="locale1",
+                properties_json='[{"propertyId":"prop1","text":"Hello"}]',
+            ),
+            "/sites/s1/components/cm1/properties",
+            {"properties": [{"propertyId": "prop1", "text": "Hello"}]},
+        ),
+    ],
+)
+async def test_localized_updates_send_post_with_locale(config, path, body, api_token_credentials):
+    cap = await _capture(config, api_token_credentials, {"errors": []})
+    assert cap["method"] == "POST"
+    assert cap["url"] == "https://api.webflow.com/v2" + path
+    assert cap["params"] == {"localeId": "locale1"}
+    assert cap["json"] == body
+
+
+@pytest.mark.asyncio
+async def test_bulk_items_use_the_items_array_endpoint(api_token_credentials):
+    items = [
+        {"fieldData": {"name": "First", "slug": "first"}, "isDraft": True},
+        {"fieldData": {"name": "Second", "slug": "second"}, "cmsLocaleId": "locale1"},
+    ]
+    cap = await _capture(
+        WebflowCreateBulkItemsConfig(collection_id="c1", items_json=json.dumps(items)),
+        api_token_credentials,
+        {"items": []},
+    )
+    assert cap["method"] == "POST"
+    assert cap["url"] == "https://api.webflow.com/v2/collections/c1/items"
+    assert cap["json"] == {"items": items}

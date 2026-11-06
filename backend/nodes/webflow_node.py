@@ -360,6 +360,7 @@ class WebflowUpdatePageContentConfig(BaseModel):
         title="Update Page Content",
     )
     page_id: str = Field(..., title="Page ID", description="The page to update DOM content on")
+    locale_id: str = Field(..., title="Locale ID", description="The secondary locale to update")
     nodes_json: str = Field(
         ...,
         title="DOM Nodes (JSON)",
@@ -1082,6 +1083,7 @@ class WebflowUpdateComponentContentConfig(BaseModel):
     operation: Literal["update_component_content"] = _op("update_component_content", "Components", "Update Component Content")
     site_id: str = _site_id_field()
     component_id: str = Field(..., title="Component ID", description="The component ID")
+    locale_id: Optional[str] = Field(None, title="Locale ID", description="The secondary locale to update")
     nodes_json: str = _json_field("DOM Nodes (JSON)", 'JSON array of node updates')
 
 
@@ -1097,6 +1099,7 @@ class WebflowUpdateComponentPropertiesConfig(BaseModel):
     operation: Literal["update_component_properties"] = _op("update_component_properties", "Components", "Update Component Properties")
     site_id: str = _site_id_field()
     component_id: str = Field(..., title="Component ID", description="The component ID")
+    locale_id: Optional[str] = Field(None, title="Locale ID", description="The secondary locale to update")
     properties_json: str = _json_field("Properties (JSON)", 'JSON array of property overrides')
 
 
@@ -1157,7 +1160,7 @@ class WebflowDeleteLiveItemConfig(BaseModel):
 
 
 class WebflowCreateBulkItemsConfig(BaseModel):
-    """Create multiple CMS items at once (up to 100, multi-locale)."""
+    """Create multiple CMS items at once (up to 100, with per-item locales)."""
     operation: Literal["create_bulk_items"] = _op("create_bulk_items", "CMS Items", "Create Items (Bulk)")
     collection_id: str = _collection_id_field()
     items_json: str = _json_field("Items (JSON)", 'JSON array of item objects with fieldData')
@@ -2047,6 +2050,7 @@ class WebflowNode(ExternalWebhookTriggerMixin, WorkflowNode):
             t,
             "POST",
             f"/pages/{c.page_id}/dom",
+            params={"localeId": c.locale_id},
             json_body={"nodes": nodes},
             action_name="update_page_content",
         )
@@ -2330,14 +2334,14 @@ class WebflowNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     async def _update_component_content(self, c: WebflowUpdateComponentContentConfig, t: str) -> Dict[str, Any]:
         nodes = _parse_json_obj(c.nodes_json, "DOM Nodes")
-        return await _webflow_request(t, "PATCH", f"/sites/{c.site_id}/components/{c.component_id}/dom", json_body={"nodes": nodes}, action_name="update_component_content")
+        return await _webflow_request(t, "POST", f"/sites/{c.site_id}/components/{c.component_id}/dom", params={"localeId": c.locale_id}, json_body={"nodes": nodes}, action_name="update_component_content")
 
     async def _get_component_properties(self, c: WebflowGetComponentPropertiesConfig, t: str) -> Dict[str, Any]:
         return await _webflow_request(t, "GET", f"/sites/{c.site_id}/components/{c.component_id}/properties", action_name="get_component_properties")
 
     async def _update_component_properties(self, c: WebflowUpdateComponentPropertiesConfig, t: str) -> Dict[str, Any]:
         props = _parse_json_obj(c.properties_json, "Properties")
-        return await _webflow_request(t, "PATCH", f"/sites/{c.site_id}/components/{c.component_id}/properties", json_body={"properties": props}, action_name="update_component_properties")
+        return await _webflow_request(t, "POST", f"/sites/{c.site_id}/components/{c.component_id}/properties", params={"localeId": c.locale_id}, json_body={"properties": props}, action_name="update_component_properties")
 
     # ------------------------------------------------------------------
     # Handlers — Collections / Fields (extra)
@@ -2376,7 +2380,7 @@ class WebflowNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     async def _create_bulk_items(self, c: WebflowCreateBulkItemsConfig, t: str) -> Dict[str, Any]:
         items = _parse_json_obj(c.items_json, "Items")
-        return await _webflow_request(t, "POST", f"/collections/{c.collection_id}/items/bulk", json_body={"items": items}, action_name="create_bulk_items")
+        return await _webflow_request(t, "POST", f"/collections/{c.collection_id}/items", json_body={"items": items}, action_name="create_bulk_items")
 
     # ------------------------------------------------------------------
     # Handlers — Ecommerce (extra)

@@ -1059,7 +1059,7 @@
       "type": "object"
     },
     "WebflowCreateBulkItemsConfig": {
-      "description": "Create multiple CMS items at once (up to 100, multi-locale).",
+      "description": "Create multiple CMS items at once (up to 100, with per-item locales).",
       "properties": {
         "operation": {
           "const": "create_bulk_items",
@@ -4833,6 +4833,19 @@
           "title": "Component ID",
           "type": "string"
         },
+        "locale_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The secondary locale to update",
+          "title": "Locale ID"
+        },
         "nodes_json": {
           "description": "JSON array of node updates",
           "title": "DOM Nodes (JSON)",
@@ -4878,6 +4891,19 @@
           "description": "The component ID",
           "title": "Component ID",
           "type": "string"
+        },
+        "locale_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The secondary locale to update",
+          "title": "Locale ID"
         },
         "properties_json": {
           "description": "JSON array of property overrides",
@@ -5080,6 +5106,11 @@
           "title": "Page ID",
           "type": "string"
         },
+        "locale_id": {
+          "description": "The secondary locale to update",
+          "title": "Locale ID",
+          "type": "string"
+        },
         "nodes_json": {
           "description": "JSON array of DOM node updates, e.g. [{\"nodeId\":\"...\",\"text\":\"New text\"}]",
           "title": "DOM Nodes (JSON)",
@@ -5089,6 +5120,7 @@
       },
       "required": [
         "page_id",
+        "locale_id",
         "nodes_json"
       ],
       "title": "WebflowUpdatePageContentConfig",
