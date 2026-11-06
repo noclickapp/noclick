@@ -223,13 +223,19 @@ async def test_actual_operation_and_stored_picker_admission_before_header_wire(m
 
 @pytest.mark.asyncio
 async def test_actual_postconnect_handler_empty_reachability_evidence_and_tristate(monkeypatch, wire):
+    from cryptography.fernet import Fernet
+    from utils import encryption
     from nodes.core import run_op
     from nodes.core.credential_validation import CredentialValidationContext, CredentialValidationUnavailable, CredentialValidationUnverified
     from nodes.core.connection_evidence import collect_evidence
     from repositories.credential_approvals import CredentialApprovalRepo
     from wss.handlers import credentials_handler as hm
     from wss.receiver.client_events import CredentialValidateAccessRequest
-    row = CredentialValidationRow(fn.FAMILIES[0], "owner", 2, STAMP, 0, None, "sealed"); context = CredentialValidationContext("saved", fn.NODE_TYPE, "actor", "org", object(), row)
+    monkeypatch.setenv("CREDENTIALS_ENCRYPTION_KEY", Fernet.generate_key().decode())
+    cipher = encryption.CredentialEncryption()
+    monkeypatch.setattr(encryption, "get_encryption", lambda: cipher)
+    monkeypatch.setattr(hm, "get_encryption", lambda: cipher)
+    row = CredentialValidationRow(fn.FAMILIES[0], "owner", 2, STAMP, 0, None, cipher.encrypt_credential(CREDS)); context = CredentialValidationContext("saved", fn.NODE_TYPE, "actor", "org", object(), row)
     monkeypatch.setattr(CredentialValidationContext, "create", AsyncMock(return_value=context)); monkeypatch.setattr(CredentialValidationContext, "revalidate", AsyncMock(return_value=row)); monkeypatch.setattr(run_op, "resolve_operation_credential", AsyncMock(return_value=CREDS)); monkeypatch.setattr(CredentialApprovalRepo, "admit", AsyncMock(return_value=None)); monkeypatch.setattr(fn, "_current_data", AsyncMock(return_value=fn._shape(CREDS)))
     sent = []
     async def capture(_sio, sid, response): sent.append(response.model_dump()["data"])
