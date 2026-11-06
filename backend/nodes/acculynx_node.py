@@ -399,11 +399,11 @@ class AccuLynxNode(WorkflowNode):
         return AccuLynxNodeConfig
 
     @classmethod
-    def parse_config(cls, data):
-        credential = data.get("credentials")
+    def parse_config(cls, config_data):
+        credential = config_data.get("credentials")
         if isinstance(credential, dict) and credential.get("credential_type") not in (None, FAMILY):
             raise ValueError("Use current AccuLynx API-key credentials")
-        return super().parse_config(data)
+        return super().parse_config(config_data)
 
     @classmethod
     async def validate_credential_access(cls, credential_data):

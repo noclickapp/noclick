@@ -50,6 +50,12 @@ def node(operation, credential=None, **fields):
         node_data={"config": {"operation": operation, **fields}, "credentials": deepcopy(credential or KEY)})
 
 
+def test_parse_config_accepts_base_hook_keyword():
+    config = s.AccuLynxNode.parse_config(config_data={"config": {"operation": "get_company_settings"}, "credentials": deepcopy(KEY)})
+    assert config.config.operation == "get_company_settings"
+    assert config.credentials.company_id == COMPANY
+
+
 def collection(items, start=0, size=25, count=None):
     return {"items": items, "count": len(items) + start if count is None else count, "pageSize": size, "pageStartIndex": start}
 
