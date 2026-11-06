@@ -51,7 +51,7 @@ def parent_of(value):
 
 
 class BytescaleSecretAPIKeyCredential(BaseModel):
-    model_config = ConfigDict(extra="forbid", hide_input_in_errors=True, title="Bytescale Secret API Key", json_schema_extra={"x-credential-url": "https://www.bytescale.com/docs/auth/api-keys"})
+    model_config = ConfigDict(extra="forbid", hide_input_in_errors=True, title="Bytescale Secret API Key", json_schema_extra={"x-credential-type": TYPE, "x-credential-url": "https://www.bytescale.com/docs/auth/api-keys"})
     credential_type: Literal["bytescale_secret_api_key"] = Field(TYPE, json_schema_extra={"ui:hidden": True})
     api_key: str = Field(..., min_length=8, max_length=8192, repr=False, title="Secret API Key", description="Supplied secret_* management key. Public upload/download keys and JWTs are separate auth families. Sent only as Bearer Authorization to api.bytescale.com; no exchange or renewal.", json_schema_extra={"ui:widget": "password"})
     account_id: str = Field(..., pattern=r"^[A-Za-z0-9]{7}$", title="Account ID", description="Exact seven-character account ID from Bytescale settings. Resource visibility does not prove ownership.")
@@ -312,7 +312,11 @@ class BytescaleNode(WorkflowNode):
         return BytescaleNodeConfig
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=None, **_kwargs):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        return await cls._freshen_for_context(credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
+
+    @classmethod
+    async def _freshen_for_context(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=None):
         value = guard(credential_data)
         if not credential_id:
             return value.model_dump()
@@ -409,7 +413,7 @@ class BytescaleNode(WorkflowNode):
     async def execute(self, inputs):
         cfg = self.config.config
         raw = self.node_data.get("credentials") or (self.config.credentials.model_dump() if self.config.credentials is not None else None)
-        data = await self.freshen_credential(raw, credential_id=self.node_data.get("credential_id"), user_id=self.user_id, workflow_id=self.workflow_id, organization_id=self.organization_id, pool=self.node_data.get("_approval_pool"))
+        data = await self._freshen_for_context(raw, credential_id=self.node_data.get("credential_id"), user_id=self.user_id, workflow_id=self.workflow_id, organization_id=self.organization_id, pool=self.node_data.get("_approval_pool"))
         value, reader = guard(data), reader_from(data)
         folder = cfg.folder_path or value.folder_paths[0]
         try:

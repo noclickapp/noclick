@@ -42,6 +42,7 @@
       ],
       "title": "Bytescale Secret API Key",
       "type": "object",
+      "x-credential-type": "bytescale_secret_api_key",
       "x-credential-url": "https://www.bytescale.com/docs/auth/api-keys"
     },
     "GetFileDetails": {

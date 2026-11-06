@@ -153,14 +153,14 @@ async def test_trusted_workflow_owner_fallback_is_current_and_revocable(storage,
     owner, allowed = AsyncMock(return_value=OWNER), AsyncMock(return_value=True)
     monkeypatch.setattr(credentials, "get_workflow_owner_id", owner)
     monkeypatch.setattr(credentials, "is_credential_authorized_for_workflow", allowed)
-    fresh = await p.BytescaleNode.freshen_credential(KEY, pool=store, user_id=USER, credential_id=CID, organization_id=ORG, workflow_id=WORKFLOW)
+    fresh = await p.BytescaleNode._freshen_for_context(KEY, pool=store, user_id=USER, credential_id=CID, organization_id=ORG, workflow_id=WORKFLOW)
     owner.assert_awaited_once_with(store, WORKFLOW)
     allowed.assert_awaited_once_with(store, WORKFLOW, CID)
     sql, args = store.calls[-1]
     assert "workflow_authorized_credentials" in sql and "w.owner_id = $2" in sql and args == (CID, OWNER, ORG, WORKFLOW)
     allowed.return_value = False
     with pytest.raises(ValueError): await fresh["_bytescale_reader"].read()
-    with pytest.raises(ValueError): await p.BytescaleNode.freshen_credential(KEY, pool=store, user_id=USER, credential_id=CID, organization_id=ORG)
+    with pytest.raises(ValueError): await p.BytescaleNode._freshen_for_context(KEY, pool=store, user_id=USER, credential_id=CID, organization_id=ORG)
 
 
 

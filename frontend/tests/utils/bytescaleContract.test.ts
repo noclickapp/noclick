@@ -20,6 +20,7 @@ describe('Bytescale native management metadata', () => {
         expect(credential.properties.account_id.pattern).toBe('^[A-Za-z0-9]{7}$');
         expect(credential.properties.folder_paths.maxItems).toBe(20);
         expect(credential['x-oauth-provider']).toBeUndefined();
+        expect(credential['x-credential-type']).toBe('bytescale_secret_api_key');
         const refs = native.properties.config.oneOf ?? native.properties.config.anyOf;
         const definitions = refs.map((ref: any) => native.$defs[ref.$ref.split('/').pop()]);
         expect(definitions.map((d: any) => d.properties.operation.const).sort()).toEqual([
