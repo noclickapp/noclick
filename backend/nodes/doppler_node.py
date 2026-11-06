@@ -243,7 +243,8 @@ class DopplerNode(WorkflowNode):
         if isinstance(cfg, GetProject):
             return await self._request(token, "GET", "/projects/project", params={"project": cfg.project}, action=op)
         if isinstance(cfg, CreateProject):
-            return await self._request(token, "POST", "/projects", body={"name": cfg.name, "description": cfg.description}, action=op)
+            return await self._request(token, "POST", "/projects",
+                                       body=cfg.model_dump(exclude={"operation"}, exclude_none=True), action=op)
         if isinstance(cfg, ListEnvironments):
             return await self._request(token, "GET", "/environments", params={"project": cfg.project}, action=op)
         if isinstance(cfg, CreateEnvironment):

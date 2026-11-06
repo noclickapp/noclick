@@ -28,6 +28,7 @@ def make_node(operation):
     (ListProjects(page=2, per_page=5), "GET", "/v3/projects", {"page": "2", "per_page": "5"}, None),
     (GetProject(project="app"), "GET", "/v3/projects/project", {"project": "app"}, None),
     (CreateProject(name="app", description="App"), "POST", "/v3/projects", {}, {"name": "app", "description": "App"}),
+    (CreateProject(name="PROJECT_NAME"), "POST", "/v3/projects", {}, {"name": "PROJECT_NAME"}),
     (ListEnvironments(project="app"), "GET", "/v3/environments", {"project": "app"}, None),
     (CreateEnvironment(project="app", name="Production", slug="prd"), "POST", "/v3/environments", {"project": "app"}, {"name": "Production", "slug": "prd", "personal_configs": False}),
     (ListConfigs(project="app"), "GET", "/v3/configs", {"project": "app", "page": "1", "per_page": "20"}, None),
