@@ -508,6 +508,10 @@ class AhrefsVolumeByCountryConfig(BaseModel):
     )
     keyword: str = Field(..., title="Keyword", description="The keyword to look up")
 
+    countries: Optional[str] = Field(
+        None, title="Countries", description="Comma-separated two-letter country codes. Leave blank for all countries."
+    )
+
 
 class AhrefsMatchingTermsConfig(BaseModel):
     """Keyword ideas containing/related to a seed keyword."""
@@ -599,6 +603,13 @@ class AhrefsSerpOverviewConfig(BaseModel):
     country: Optional[str] = _country_field("us")
     select: Optional[str] = Field(
         DEFAULT_SERP_SELECT, title="Fields", description="Comma-separated fields to return"
+    )
+
+    comparison_countries: Optional[str] = Field(
+        None, title="Comparison Countries", description="Additional two-letter country codes, comma-separated."
+    )
+    type: Optional[str] = Field(
+        None, title="SERP Types", description="Comma-separated SERP feature types, such as organic. Leave blank for all types."
     )
 
 
@@ -1287,7 +1298,7 @@ class AhrefsNode(WorkflowNode):
         )
 
     async def _volume_by_country(self, c: AhrefsVolumeByCountryConfig, api_key: str) -> Dict[str, Any]:
-        params = {"keyword": c.keyword}
+        params = {"keyword": c.keyword, "countries": ",".join(_comma_list(c.countries))}
         return await _ahrefs_request(
             api_key, "GET", "/keywords-explorer/volume-by-country", params=params, action_name="volume_by_country"
         )
@@ -1329,7 +1340,11 @@ class AhrefsNode(WorkflowNode):
     # SERP / Batch handlers
     # ------------------------------------------------------------------
     async def _serp_overview(self, c: AhrefsSerpOverviewConfig, api_key: str) -> Dict[str, Any]:
-        params = {"keyword": c.keyword, "country": c.country, "select": c.select}
+        params = {
+            "keyword": c.keyword, "country": c.country, "select": c.select,
+            "comparison_countries": ",".join(_comma_list(c.comparison_countries)),
+            "type": ",".join(_comma_list(c.type)),
+        }
         return await _ahrefs_request(
             api_key, "GET", "/serp-overview/serp-overview", params=params, action_name="serp_overview"
         )

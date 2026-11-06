@@ -110,5 +110,58 @@
         }
       ]
     }
+  },
+  "keywords-explorer/volume-by-country": {
+    "source": "https://docs.ahrefs.com/en/api/reference/keywords-explorer/get-volume-by-country",
+    "body": {
+      "countries": [
+        {
+          "country": "string",
+          "cpc": 0,
+          "difficulty": 0,
+          "growth_rate_12m": 0,
+          "has_serp": true,
+          "top_keyword": "string",
+          "top_page": "string",
+          "top_page_title": "string",
+          "traffic_potential": 0,
+          "volume": 0,
+          "volume_monthly_history": [
+            {
+              "date": "string",
+              "volume": 0
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "serp-overview/serp-overview": {
+    "source": "https://docs.ahrefs.com/en/api/reference/serp-overview/get-serp-overview",
+    "body": {
+      "positions": [
+        {
+          "ahrefs_rank": 0,
+          "backlinks": 0,
+          "country": "AD",
+          "domain_rating": 0,
+          "keywords": 0,
+          "page_type": "string",
+          "position": 0,
+          "refdomains": 0,
+          "title": "string",
+          "top_keyword": "string",
+          "top_keyword_volume": 0,
+          "traffic": 0,
+          "type": [
+            "paid_top"
+          ],
+          "update_date": "string",
+          "url": "string",
+          "url_rating": 0,
+          "value": 0
+        }
+      ]
+    }
   }
 }

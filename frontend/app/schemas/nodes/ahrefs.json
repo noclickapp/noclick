@@ -1420,6 +1420,32 @@
           "default": "position,url,title,domain_rating,traffic,backlinks,refdomains",
           "description": "Comma-separated fields to return",
           "title": "Fields"
+        },
+        "comparison_countries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional two-letter country codes, comma-separated.",
+          "title": "Comparison Countries"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated SERP feature types, such as organic. Leave blank for all types.",
+          "title": "SERP Types"
         }
       },
       "required": [
@@ -1668,6 +1694,19 @@
           "description": "The keyword to look up",
           "title": "Keyword",
           "type": "string"
+        },
+        "countries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated two-letter country codes. Leave blank for all countries.",
+          "title": "Countries"
         }
       },
       "required": [

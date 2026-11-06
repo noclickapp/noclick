@@ -146,6 +146,36 @@ async def _run_documented(config_obj, credentials):
 
 class TestAhrefsConformanceRegressions:
     @pytest.mark.asyncio
+    @pytest.mark.parametrize("value", [None, "", " \t ", "ad"])
+    async def test_volume_country_filter_omits_blank_values(self, value, api_key_credentials):
+        _, requests = await _run_documented(
+            AhrefsVolumeByCountryConfig(keyword="ahrefs", countries=value), api_key_credentials,
+        )
+        request, = requests
+        if value == "ad":
+            assert request.url.params["countries"] == "ad"
+        else:
+            assert "countries" not in request.url.params
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("value", [None, "", " \t ", "ae"])
+    async def test_serp_filters_omit_blank_values(self, value, api_key_credentials):
+        serp_type = "organic" if value == "ae" else value
+        _, requests = await _run_documented(
+            AhrefsSerpOverviewConfig(
+                keyword="ahrefs", country="ad", select="country,position",
+                comparison_countries=value, type=serp_type,
+            ), api_key_credentials,
+        )
+        request, = requests
+        if value == "ae":
+            assert request.url.params["comparison_countries"] == "ae"
+            assert request.url.params["type"] == "organic"
+        else:
+            assert "comparison_countries" not in request.url.params
+            assert "type" not in request.url.params
+
+    @pytest.mark.asyncio
     async def test_overview_combines_documented_endpoints(self, api_key_credentials):
         result, requests = await _run_documented(
             AhrefsSiteOverviewConfig(target="ahrefs.com", date="2023-05-18"),
