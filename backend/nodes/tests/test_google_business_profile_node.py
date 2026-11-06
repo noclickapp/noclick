@@ -183,12 +183,48 @@ class TestLocationAttributes:
 
     @pytest.mark.asyncio
     async def test_update_attributes(self, creds):
-        attrs_json = '[{"name":"attributes/has_wifi","valueType":"BOOL","values":[true]}]'
-        node = make_node(GBPUpdateLocationAttributesConfig(location_id=LOCATION_ID, attributes=attrs_json), creds)
+        # Google's Manage Attributes guide uses these names and values.
+        # https://developers.google.com/my-business/content/attributes
+        attributes = [
+            {"name": "has_no_contact_delivery", "values": [True]},
+            {"name": "pay_credit_card_types_accepted", "repeatedEnumValue": {"setValues": ["american_express", "visa"]}},
+        ]
+        node = make_node(GBPUpdateLocationAttributesConfig(location_id=LOCATION_ID, attributes=json.dumps(attributes)), creds)
         with patch_token(), patch("httpx.AsyncClient") as m:
-            m.return_value.__aenter__.return_value.patch = AsyncMock(return_value=_resp({"name": f"{LOCATION_ID}/attributes"}))
+            request = AsyncMock(return_value=_resp({"name": f"{LOCATION_ID}/attributes"}))
+            m.return_value.__aenter__.return_value.patch = request
             result = await node.execute({})
         assert result["status"] == "updated"
+        assert request.call_args.args == (
+            f"https://mybusinessbusinessinformation.googleapis.com/v1/{LOCATION_ID}/attributes",
+        )
+        assert request.call_args.kwargs["params"] == {
+            "attributeMask": "has_no_contact_delivery,pay_credit_card_types_accepted",
+        }
+        assert request.call_args.kwargs["json"] == {
+            "name": f"{LOCATION_ID}/attributes", "attributes": attributes,
+        }
+
+    @pytest.mark.asyncio
+    async def test_update_prefixed_attribute_name(self, creds):
+        attributes = [{"name": "attributes/has_wheelchair_accessible_entrance", "valueType": "BOOL", "values": [True]}]
+        node = make_node(GBPUpdateLocationAttributesConfig(location_id=LOCATION_ID, attributes=json.dumps(attributes)), creds)
+        with patch_token(), patch("httpx.AsyncClient") as m:
+            request = AsyncMock(return_value=_resp({}))
+            m.return_value.__aenter__.return_value.patch = request
+            await node.execute({})
+        assert request.call_args.kwargs["params"] == {
+            "attributeMask": "attributes/has_wheelchair_accessible_entrance",
+        }
+
+    @pytest.mark.parametrize("attributes", ["[]", "{}", "null", '[{"values":[true]}]', '[{"name":" "}]', '[{"name":1}]', '["has_wifi"]'])
+    @pytest.mark.asyncio
+    async def test_attributes_require_names_before_request(self, creds, attributes):
+        node = make_node(GBPUpdateLocationAttributesConfig(location_id=LOCATION_ID, attributes=attributes), creds)
+        with patch_token(), patch("httpx.AsyncClient") as m:
+            with pytest.raises(ValueError, match="non-empty JSON array"):
+                await node.execute({})
+            m.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_invalid_json_attributes_raises(self, creds):

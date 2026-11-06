@@ -1376,12 +1376,20 @@ class GoogleBusinessProfileNode(WorkflowNode):
     async def _update_location_attributes(self, config: GBPUpdateLocationAttributesConfig, headers: Dict) -> Dict:
         loc = _norm_location(config.location_id)
         attributes = _parse_json_field(config.attributes, "attributes")
+        if not isinstance(attributes, list) or not attributes or any(
+            not isinstance(attribute, dict)
+            or not isinstance(attribute.get("name"), str)
+            or not attribute["name"].strip()
+            for attribute in attributes
+        ):
+            raise ValueError("'attributes' must be a non-empty JSON array of objects with attribute names")
+        attribute_mask = ",".join(attribute["name"] for attribute in attributes)
         body = {"name": f"{loc}/attributes", "attributes": attributes}
         async with httpx.AsyncClient() as client:
             resp = await client.patch(
                 f"{GBP_BUSINESS_INFO_API}/{loc}/attributes",
                 headers={**headers, "Content-Type": "application/json"},
-                params={"updateMask": "attributes"},
+                params={"attributeMask": attribute_mask},
                 json=body,
                 timeout=30,
             )
