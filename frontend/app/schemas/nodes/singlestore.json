@@ -476,7 +476,6 @@
       "title": "SingleStore Management API",
       "type": "object",
       "x-credential-instructions": "Use an issued hex-encoded Management API key for one organization and that organization's ID. The API key's existing permissions and expiration apply. No OAuth application, key minting or refresh is performed.",
-      "x-credential-type": "api_key",
       "x-credential-url": "https://docs.singlestore.com/cloud/reference/management-api/"
     }
   },

@@ -7,6 +7,7 @@ vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn() }));
 vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: vi.fn(), set: vi.fn(), delete: vi.fn() } }));
 import { SingleStoreNode } from '~/components/workflow/nodes/SingleStoreNode';
 import { NODE_SCHEMAS, loadNodeSchemas, getAgentToolOperations, getNodeCredentialInfo, filterConfigForExecution, isAgentToolProviderType } from '~/utils/nodeSchemas';
+import { kindFromCredentialType } from '~/lib/credentialMethodKind';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
@@ -32,6 +33,8 @@ describe('SingleStore native schema and wiring', () => {
         expect(credential.required).toEqual(expect.arrayContaining(['api_key', 'organization_id']));
         expect(credential.properties.api_key['ui:widget']).toBe('password');
         expect(credential['x-oauth-provider']).toBeUndefined();
+        expect(credential['x-credential-type']).toBeUndefined();
+        expect(kindFromCredentialType(credential['x-credential-type'])).toBe('api_key');
         expect(credential.properties.endpoint).toBeUndefined();
         expect(credential.properties.password).toBeUndefined();
     });

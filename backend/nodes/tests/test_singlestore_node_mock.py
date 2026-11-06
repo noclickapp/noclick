@@ -418,3 +418,18 @@ async def test_actual_dependent_socket_picker_and_selected_operation(stored, pro
 async def test_node_post_connect_access(provider, status, timeout, expected):
     provider.status, provider.timeout = status, timeout
     assert (await native.SingleStoreNode.validate_credential_access(CREDS))["valid"] is expected
+
+@pytest.mark.asyncio
+async def test_freshen_credential_matches_base_hook_and_binds_picker_authority(stored):
+    import inspect
+    from nodes.core.base import WorkflowNode
+
+    actual = inspect.signature(native.SingleStoreNode.freshen_credential).parameters
+    expected = inspect.signature(WorkflowNode.freshen_credential).parameters
+    assert list(actual) == list(expected)
+    assert [(p.kind, p.default) for p in actual.values()] == [(p.kind, p.default) for p in expected.values()]
+    assert await native.SingleStoreNode.freshen_credential(CREDS) == CREDS
+    bound = await native.SingleStoreNode.freshen_credential(
+        CREDS, pool=stored.storage, user_id=USER, credential_id=CID,
+    )
+    assert (bound.pool, bound.user_id, bound.credential_id, bound.workflow_id) == (stored.storage, USER, CID, None)

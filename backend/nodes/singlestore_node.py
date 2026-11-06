@@ -52,7 +52,7 @@ def _path(value, *, folder=False, root=False):
 
 class SingleStoreManagementCredential(BaseModel):
     model_config = ConfigDict(extra="ignore", hide_input_in_errors=True,
-        json_schema_extra={"title": "SingleStore Management API", "x-credential-type": "api_key",
+        json_schema_extra={"title": "SingleStore Management API",
             "x-credential-url": "https://docs.singlestore.com/cloud/reference/management-api/",
             "x-credential-instructions": "Use an issued hex-encoded Management API key for one organization and that organization's ID. The API key's existing permissions and expiration apply. No OAuth application, key minting or refresh is performed."})
     credential_type: Literal["singlestore_management_api_key"] = Field("singlestore_management_api_key", json_schema_extra={"ui:hidden": True})
@@ -498,9 +498,9 @@ class SingleStoreNode(WorkflowNode):
         return super().parse_config(config_data)
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=None):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
         if credential_id:
-            return _BoundCredential(credential_id=credential_id, user_id=user_id, pool=pool, workflow_id=workflow_id)
+            return _BoundCredential(credential_id=credential_id, user_id=user_id, pool=pool)
         return _credential(credential_data).model_dump()
 
     @classmethod
