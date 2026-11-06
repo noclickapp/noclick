@@ -626,12 +626,16 @@ async def collect_evidence(
                 # probed as typed.
                 from nodes.core.oauth_audit import caller_path_scope
 
+                refresh_context = {}
+                if getattr(node_cls, "workflow_credential_refresh", False):
+                    refresh_context = {"workflow_id": workflow_id, "organization_id": organization_id}
                 with caller_path_scope("connection_evidence"):
                     loaded = await node_cls.freshen_credential(
                         loaded,
                         pool=pool,
                         user_id=user_id,
                         credential_id=credential_id,
+                        **refresh_context,
                     )
             payload = await node_cls.load_field_options(
                 field_name=spec.field, credential_data=loaded

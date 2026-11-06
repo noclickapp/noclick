@@ -1,8 +1,8 @@
 """Unrun native API v2 parse/execute/transport fixtures; all values synthetic."""
 from copy import deepcopy
 from contextlib import asynccontextmanager
-import json
 import logging
+from urllib.parse import parse_qsl
 import httpx
 import pytest
 from pydantic import TypeAdapter
@@ -38,7 +38,11 @@ class World:
         assert request.url.host in {"api.123formbuilder.com", "eu-api.123formbuilder.com"} and request.url.scheme == "https"
         assert "Authorization" not in request.headers and request.headers["Accept"] == "application/json"
         path, method = request.url.path, request.method
-        body = json.loads(request.content) if request.content else {}
+        body = dict(parse_qsl(request.content.decode(), strict_parsing=True)) if request.content else {}
+        if method != "GET":
+            assert request.headers["Content-Type"] == "application/x-www-form-urlencoded"
+        for key in {"group_id", "parent_id", "active"} & body.keys():
+            body[key] = int(body[key])
         if method == "POST" or method == "PUT" and path.startswith("/v2/groups/"):
             assert body.pop("JWT") == AUTH["token"] and "JWT" not in request.url.params
         else: assert request.url.params["JWT"] == AUTH["token"] and "JWT" not in body
@@ -56,7 +60,6 @@ class World:
             elif path.startswith("/v2/groups/"): result = {"data": self.groups[path.split("/")[-1]], "status_code": 200}
             else: raise AssertionError("Undocumented route used")
         elif method == "POST":
-            assert request.headers["Content-Type"] == "application/json"
             status = 201
             if path == "/v2/forms":
                 assert set(body) == {"name", "group_id", "active"} and body["active"] == 3

@@ -252,7 +252,7 @@ async def request(data, method, path, *, params=None, body=None, status=200, tok
     route = "/v2"+path
     if not re.fullmatch(r"/v2/(forms|groups|users)(/[1-9][0-9]*)?(/(fields|submissions|forms))?(/[1-9][0-9]*)?", route): raise ValueError("Unsupported native 123FormBuilder route")
     query, payload = dict(params or {}), dict(body or {})
-    # The vendor spec declares JSON; its body fields are labeled formData.
+    # Swagger formData parameters use form encoding; responses are JSON.
     (payload if token_in_body else query)["JWT"] = shaped["token"]
     async def exact(req):
         assert_exact_url_origin(str(req.url), origin)
@@ -262,7 +262,7 @@ async def request(data, method, path, *, params=None, body=None, status=200, tok
     _install_privacy()
     try:
         async with guarded_async_client(timeout=20, trust_env=False, follow_redirects=False, require_public=True, event_hooks={"request": [exact]}) as client:
-            async with client.stream(method, origin+route, params=query, json=payload if method != "GET" else None, headers={"Accept": "application/json"}) as response:
+            async with client.stream(method, origin+route, params=query, data=payload if method != "GET" else None, headers={"Accept": "application/json"}) as response:
                 if response.status_code != status: raise FormBuilder123HTTPError(response.status_code)
                 async for part in response.aiter_bytes():
                     content.extend(part)
