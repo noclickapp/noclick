@@ -153,7 +153,7 @@ async def _request(data, context, route):
     current = await _stable(data, context); _protect_transport_logs(); privacy = _PRIVATE_REQUEST.set(True)
     try:
         try:
-            async with guarded_async_client(require_public=True, timeout=20.0, follow_redirects=False, trust_env=False) as client:
+            async with guarded_async_client(timeout=20.0, follow_redirects=False, trust_env=False) as client:
                 async with client.stream("GET", current["instance_origin"] + "/api/v1" + route, headers={"Authorization": "Bearer " + current["api_key"], "Content-Type": "application/json", "Accept": "application/json"}) as response:
                     status = response.status_code
                     if status == 403: raise KeilaAPIError("Keila protected read was refused; credential, role, plan or resource cause remains unverified", http_status=403)
@@ -255,18 +255,13 @@ class KeilaNode(WorkflowNode):
         except (ValueError, TypeError): return ValidationResult(valid=False, errors=["Keila native configuration or credential family is invalid"], satisfied_set=None)
         return super().validate_config(shaped)
     @classmethod
-    async def freshen_credential(cls, data, **context): return await _current_data(data, **context)
-    @classmethod
-    async def validate_credential_access(cls, data, *, validation_context=None):
-        if validation_context is None: return {"valid": None, "error": "Keila validation requires trusted current-row authority"}
-        from nodes.core.credential_validation import CredentialValidationUnavailable, CredentialValidationPending, CredentialValidationUnverified
-        try:
-            result = await validation_context.run_operation("test_connection"); proof = result.get("data") if isinstance(result, dict) else None
-            if not isinstance(result, dict) or result.get("status") != "success" or not isinstance(proof, dict) or proof.get("protected_read_completed") is not True or proof.get("account_identity_verified") is not False: return {"valid": None, "error": "Keila protected catalog read was not executed or verified"}
-        except CredentialValidationUnavailable: return {"valid": False, "error": "Keila current credential authority is unavailable"}
-        except (CredentialValidationPending, CredentialValidationUnverified): return {"valid": None, "error": "Keila protected catalog read was not executed or verified"}
-        except KeilaAPIError as exc: return {"valid": False if exc.authority_rejected else None, "error": str(exc)}
-        return {"valid": True, "proves": "reachability", "account_identity_verified": False, "user_identity_verified": False, "project_identity_verified": False, "ownership_verified": False, "all_permissions_verified": False, "entitlement_verified": False}
+    async def freshen_credential(cls, data, **context):
+        # Staging supplies the workflow at the loader, after this refresh hook.
+        if context.get("credential_id") and "workflow_id" not in context and "organization_id" not in context:
+            return {**_shape(data), "_keila_authority": _LookupAuthority(
+                context.get("pool"), context.get("user_id"), context["credential_id"], None, None,
+            )}
+        return await _current_data(data, **context)
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         if not isinstance(self.config, KeilaNodeConfig) or self.config.credentials is None: raise ValueError("Keila requires an existing key and fixed instance origin")
         node_data = self.node_data or {}; raw = node_data.get("credentials"); data = _shape(raw if isinstance(raw, dict) else self.config.credentials.model_dump())
@@ -297,6 +292,16 @@ class KeilaNode(WorkflowNode):
         if search not in (None, "") and (not isinstance(search, str) or not re.fullmatch(ID_PATTERN, search)): raise ValueError("Keila picker searches bounded opaque ID text only")
         context = _context(credential_data, context or {}); data = await _current_data(credential_data, **_authority(context))
         if context.get("_credential_id") and not _bound_matches(credential_data, data): raise KeilaAPIError("Keila picker saved-row key/origin binding changed", authority_rejected=True)
+        if context.get("_credential_id"):
+            from utils.credential_approval import admit_lookup
+            pending = await admit_lookup(
+                credential_id=context["_credential_id"], user_id=context["_user_id"],
+                node_type=NODE_TYPE, arguments={"field_name": field_name, "search": search, "page_token": page_token},
+                pool=context.get("_approval_pool"), organization_id=context.get("_organization_id"),
+                workflow_id=context.get("_workflow_id"),
+            )
+            if pending:
+                raise KeilaAPIError("Keila catalog lookup is awaiting approval or was rejected; no protected read was executed")
         rows, page, _ = await _catalog(data, context, "campaigns" if field_name == "campaign_id" else "templates")
         if page["locally_truncated"] or page.get("more_pages_by_metadata") is True: raise KeilaAPIError("Keila picker is bounded to the default page and current catalog has additional rows/pages; query continuation is undocumented")
         await _stable(data, context)
@@ -335,9 +340,12 @@ class _LookupAuthority:
 async def _current_data(data, *, pool=None, user_id=None, credential_id=None, organization_id=None, workflow_id=None):
     if not credential_id:
         return _shape(data)
-    from repositories.credentials import CredentialsRepo
-    from utils.credentials import resolve_credential_with_owner_fallback
-    from utils.encryption import get_encryption
+    from repositories.credential_approvals import CredentialApprovalRepo
+    from utils.credential_loader import load_credential
+    from utils.credentials import (
+        resolve_credential_with_owner_fallback, get_workflow_owner_id,
+        is_credential_authorized_for_workflow, credential_lender,
+    )
     if pool is None:
         from utils.database_pool import get_native_pool
         pool = get_native_pool()
@@ -345,23 +353,37 @@ async def _current_data(data, *, pool=None, user_id=None, credential_id=None, or
         from wss.handlers.workflow_handler import get_user_org_context
         async with pool.acquire() as conn:
             organization_id = await get_user_org_context(conn, user_id)
-    async def load(cid, principal, actual_pool, org_id):
-        row = await CredentialsRepo(actual_pool).fetch_validation_authority(cid, principal, org_id)
-        if row is None:
-            return None
-        if row.revoked_at is not None or row.credential_type not in FAMILIES or not isinstance(row.owner_id, str) or not row.owner_id or type(row.token_version) is not int or row.token_version < 1 or type(row.approval_revision) is not int or row.approval_revision < 0:
-            raise ValueError("Keila current credential is unavailable, revoked or its family is unsupported")
-        try:
-            blob = get_encryption().decrypt_credential(row.credential)
-        except Exception:
-            raise ValueError("Keila current credential could not be decrypted") from None
-        if not isinstance(blob, dict):
-            raise ValueError("Keila current credential data is invalid")
-        return _shape({**blob, "credential_type": row.credential_type, "owner_id": row.owner_id, "token_version": row.token_version, "updated_at": row.updated_at.isoformat() if row.updated_at else None, "approval_revision": row.approval_revision})
-    result = await resolve_credential_with_owner_fallback(credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id, load_credential_fn=load)
-    if result is None:
+    resolved = await resolve_credential_with_owner_fallback(
+        credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id,
+    )
+    if resolved is None:
         raise ValueError("Keila current credential is unavailable or access denied")
-    return {**result, "_keila_authority": _LookupAuthority(pool, user_id, credential_id, organization_id, workflow_id)}
+    resolved = _shape(resolved)
+    principal = user_id
+    repo = CredentialApprovalRepo(pool)
+    try:
+        policy = await repo.policy(credential_id, principal, organization_id)
+    except PermissionError:
+        if not workflow_id:
+            raise ValueError("Keila current credential authority is unavailable") from None
+        owner = await get_workflow_owner_id(pool, workflow_id)
+        if owner and owner != user_id and await is_credential_authorized_for_workflow(pool, workflow_id, credential_id):
+            principal = owner
+        else:
+            principal = await credential_lender(pool, workflow_id, credential_id)
+        if not principal:
+            raise ValueError("Keila current credential authority is unavailable") from None
+        policy = await repo.policy(credential_id, principal, organization_id)
+    if policy["credential_type"] not in FAMILIES:
+        raise ValueError("Keila current credential family is unsupported")
+    current = await load_credential(pool, principal, credential_id, raise_on_error=True)
+    if current is None:
+        raise ValueError("Keila current credential is unavailable or revoked")
+    current = _shape(current)
+    if not _bound_matches(resolved, current):
+        raise ValueError("Keila current credential binding changed while loading")
+    current.update(owner_id=str(policy["owner_id"]), approval_revision=policy["approval_revision"])
+    return {**current, "_keila_authority": _LookupAuthority(pool, user_id, credential_id, organization_id, workflow_id)}
 
 
 def _context(data, context):
@@ -371,7 +393,7 @@ def _context(data, context):
     if type(bound) is _LookupAuthority:
         if bound.user_id != context.get("_user_id"):
             raise ValueError("Keila picker actor does not match saved authority")
-        result.update({"_approval_pool": bound.pool, "_user_id": bound.user_id, "_credential_id": bound.credential_id, "_organization_id": bound.organization_id, "_workflow_id": bound.workflow_id})
+        result.update({"_approval_pool": bound.pool, "_user_id": bound.user_id, "_credential_id": bound.credential_id, "_organization_id": bound.organization_id, "_workflow_id": bound.workflow_id or context.get("_workflow_id")})
     return result
 
 

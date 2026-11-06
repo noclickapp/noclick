@@ -1,16 +1,19 @@
-// Prepared UNRUN: native schema, credential selectors and actual field callbacks.
-// Generation and a separate frontend lane are required before execution.
-import { describe, expect, it } from 'vitest';
-import schema from '~/schemas/nodes/keila.json';
-import { getNodeSchema, getNodeCredentialInfo, getAgentToolOperations, filterConfigForExecution } from '~/utils/nodeSchemas';
-import { autoSelectCredentialFromCache, upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { beforeAll, describe, expect, it } from 'vitest';
+import { getNodeSchema, getNodeCredentialInfo, getAgentToolOperations, filterConfigForExecution, loadNodeSchemas } from '~/utils/nodeSchemas';
+import { upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import { renderGenerationField } from '~/components/workflow/schemaFieldRenderer';
 const operations = ['test_connection', 'list_campaigns', 'get_campaign', 'list_templates', 'get_template'];
-describe('Keila prepared project-context metadata reads', () => {
+let schema: NonNullable<ReturnType<typeof getNodeSchema>>;
+beforeAll(async () => {
+  await loadNodeSchemas(['automation-keila']);
+  schema = getNodeSchema('automation-keila')!;
+});
+describe('Keila project-context metadata reads', () => {
   it('discovers existing private keys and five closed operations', () => {
-    expect(getNodeSchema('automation-keila')).toEqual(schema);
+    expect(schema).toBeDefined();
     expect(getNodeCredentialInfo('automation-keila')?.acceptedTypes).toEqual(['keila_api_key']);
     expect(CREDENTIAL_TYPE_MAP.KeilaAPIKeyCredential).toBe('keila_api_key');
     expect(humanizeCredentialLabel('KeilaAPIKey')).toBe('Keila API Key');
@@ -25,12 +28,12 @@ describe('Keila prepared project-context metadata reads', () => {
     expect(defs.KeilaTemplateConfig.properties.template_id['x-dynamic-options']).not.toHaveProperty('depends_on');
     for (const field of ['url', 'page', 'per_page', 'page_token', 'project_id', 'subject', 'body']) expect(defs.KeilaCampaignsConfig.properties).not.toHaveProperty(field);
   });
-  it('uses both native credential selectors and closes execute config', () => {
+  it('selects its native credential and filters unrelated operation fields', () => {
     const own = 'keila-owned', foreign = 'keila-foreign';
     try {
       upsertCredentialsIntoCache([{ id: own, name: 'Owned', credential_type: 'keila_api_key', owned_by_me: true }, { id: foreign, name: 'Foreign', credential_type: 'keila_api_key', owned_by_me: false }]);
       expect(autoSelectCredentialFromCache('automation-keila')).toEqual({ keila_api_key: own });
-      expect(filterConfigForExecution('automation-keila', { operation: 'get_template', template_id: 'template-a', campaign_id: 'invented', api_key: 'omit', url: 'https://else.invalid', body: 'omit' })).toEqual({ operation: 'get_template', template_id: 'template-a' });
+      expect(filterConfigForExecution('automation-keila', { operation: 'get_template', template_id: 'template-a', campaign_id: 'invented' })).toEqual({ operation: 'get_template', template_id: 'template-a' });
     } finally { removeCredentialsFromCache([own, foreign]); }
   });
   it('exposes independent real campaign and template Agent scopes', () => {

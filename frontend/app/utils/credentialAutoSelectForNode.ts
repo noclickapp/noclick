@@ -100,6 +100,7 @@ const AUTO_SELECT_TYPES: ReadonlySet<string> = new Set([
     'automation-google-business-profile',
     'automation-google-search-console',
     'automation-connecteam',
+    'automation-keila',
     'agent',
 ]);
 
