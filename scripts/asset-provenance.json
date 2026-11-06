@@ -866,6 +866,12 @@
       "source": "https://www.nylas.com/ (provider-published brand artwork, cropped to the mark)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "4c3c0e4ecb6ac496dc8a40f9897539f1ab56c3863afffade0208222c51980d6a"
+    },
+    {
+      "path": "frontend/public/icons/openstatus.svg",
+      "source": "https://www.openstatus.dev/assets/landing/openstatus-logo.svg (unaltered vector linked by the official OpenStatus homepage)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "54885f9c3b5df28aa980ebf557206dc6601730fda4b384ff9a2e9739aed149ea"
     }
   ],
   "excludedSourceAssets": [
