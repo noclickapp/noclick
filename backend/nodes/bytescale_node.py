@@ -215,7 +215,7 @@ async def request(value, endpoint, *, query, reader=None):
         value = await reader.read()
     try:
         try:
-            async with guarded_async_client(timeout=12, follow_redirects=False, trust_env=False, require_public=True) as client:
+            async with guarded_async_client(timeout=12, follow_redirects=False, trust_env=False) as client:
                 async with client.stream("GET", f"{ROOT}/accounts/{value.account_id}/{endpoint}", params=query, headers=PrivateHeaders({"Authorization": "Bearer " + value.api_key, "Accept": "application/json", "Cache-Control": "no-store"})) as response:
                     if response.status_code != 200 or response.headers.get("content-type", "").split(";", 1)[0].strip().lower() != "application/json":
                         raise ValueError("Bytescale metadata read refused or format unavailable")

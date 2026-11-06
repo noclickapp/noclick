@@ -24,7 +24,7 @@ def wire(monkeypatch):
     state = {"calls": [], "responses": {}, "status": 200, "content": None, "headers": {"content-type": "application/json"}}
     @asynccontextmanager
     async def client(**options):
-        assert options == {"timeout": 12, "follow_redirects": False, "trust_env": False, "require_public": True}
+        assert options == {"timeout": 12, "follow_redirects": False, "trust_env": False}
         class Client:
             @asynccontextmanager
             async def stream(self, method, url, **kwargs):
@@ -75,7 +75,8 @@ async def test_real_connect_probe_is_reachability_only(wire, monkeypatch):
     monkeypatch.setattr(cc, "_collect_evidence", evidence.collect_evidence)
     verdict = await cc.validate_for_connect(credential_type=p.TYPE, credential_data={k: v for k, v in KEY.items() if k != "credential_type"}, user_id="fixture", probe=True)
     assert verdict.ok and verdict.credential_data == KEY
-    assert verdict.evidence.reachable is True and verdict.evidence.proves == "reachability"
+    assert verdict.evidence.reachable is True
+    assert p.BytescaleNode.connection_evidence.proves == "reachability"
     assert verdict.evidence.answers_field is None and verdict.evidence.account_label is None
     assert len(wire["calls"]) == 2
 

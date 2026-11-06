@@ -1,16 +1,17 @@
-// UNRUN native registration and credential/schema contract fixtures.
+// Native registration and credential/schema contract fixtures.
 // They exercise current maps and generated metadata without provider calls.
 import { describe, expect, it } from 'vitest';
 import schema from '../../app/schemas/nodes/bytescale.json';
-import { NODE_SCHEMAS } from '../../app/utils/nodeSchemas';
+import { NODE_SCHEMAS, loadNodeSchemas } from '../../app/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '../../app/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '../../app/utils/credentialLabels';
-import { AVAILABLE_NODES } from '../../app/components/workflow/nodes/nodeRegistry';
+import { NODE_DEFINITION_FILES } from '../../app/components/workflow/nodes/nodeDefinitions';
 
 describe('Bytescale native management metadata', () => {
-    it('registers the secret management family and one native editor node', () => {
+    it('registers the secret management family and one native editor node', async () => {
+        await loadNodeSchemas(['automation-bytescale']);
         expect(NODE_SCHEMAS['automation-bytescale']).toBe(schema);
-        expect(AVAILABLE_NODES.filter(node => node.type === 'automation-bytescale')).toHaveLength(1);
+        expect(NODE_DEFINITION_FILES.filter(([type]) => type === 'automation-bytescale')).toEqual([['automation-bytescale', 'BytescaleNode']]);
         expect(CREDENTIAL_TYPE_MAP.BytescaleSecretAPIKeyCredential).toBe('bytescale_secret_api_key');
         expect(humanizeCredentialLabel('BytescaleSecretAPIKey')).toBe('Bytescale Secret API Key');
         const native = schema as any;
