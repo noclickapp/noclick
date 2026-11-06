@@ -88,6 +88,10 @@ from nodes.pipedrive_node import PipedriveNode
 from nodes.resend_node import ResendNode
 from nodes.rippling_node import RipplingNode
 from nodes.ahrefs_node import AhrefsNode
+from nodes.auth0_node import Auth0Node
+from nodes.bigcommerce_node import BigCommerceNode
+from nodes.etsy_node import EtsyNode
+from nodes.gusto_node import GustoNode
 from nodes.botpress_node import BotpressNode
 from nodes.okta_node import OktaNode
 from nodes.ramp_node import RampNode
@@ -203,6 +207,7 @@ logger = logging.getLogger(__name__)
 
 # Registry mapping node types to their implementation classes
 _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
+    "automation-adapty": AdaptyNode,
     'automation-hetrixtools': HetrixToolsNode,
     # Trigger nodes (entry points for workflows)
     'trigger-run': RunTriggerNode,
@@ -251,6 +256,10 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-resend': ResendNode,
     'automation-rippling': RipplingNode,
     'automation-ahrefs': AhrefsNode,
+    'automation-auth0': Auth0Node,
+    'automation-bigcommerce': BigCommerceNode,
+    'automation-etsy': EtsyNode,
+    'automation-gusto': GustoNode,
     'automation-botpress': BotpressNode,
     'automation-okta': OktaNode,
     'automation-ramp': RampNode,

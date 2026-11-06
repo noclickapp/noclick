@@ -14,6 +14,7 @@
  * Example: 'GoogleSheetsOAuthCredential' -> 'google_sheets_oauth'
  */
 export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
+    'AdaptyAPIKeyCredential': 'adapty_api_key',
     'BotpressPATCredential': 'botpress_pat',
     'RipplingAPITokenCredential': 'rippling_api_token',
     'Rippling API Token': 'rippling_api_token',
@@ -80,22 +81,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Ahrefs
     'AhrefsAPIKeyCredential': 'ahrefs_api_key',
     'BigCommerceAPITokenCredential': 'bigcommerce_api_token',
-
-    // Auth0
-    'Auth0TokenCredential': 'auth0_token',
-    'Auth0 Token': 'auth0_token',
-    'EtsyTokenCredential': 'etsy_token',
-
-    // Gusto
-    'GustoAccessTokenCredential': 'gusto_access_token',
-    'Gusto Access Token': 'gusto_access_token',
-    'OktaAPITokenCredential': 'okta_api_token',
-    'RampAccessTokenCredential': 'ramp_access_token',
-
-    // RingCentral
-    'RingCentralAccessTokenCredential': 'ringcentral_access_token',
-    'StatuspageAPIKeyCredential': 'statuspage_api_key',
-    'Statuspage API Key': 'statuspage_api_key',
 
     // Auth0
     'Auth0TokenCredential': 'auth0_token',
