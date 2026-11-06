@@ -59,9 +59,17 @@
           }
         },
         "service_id": {
-          "description": "The service that owns the ClickPipe",
-          "title": "Service ID",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The service that owns the ClickPipe. For saved steps without this field, list across services, use the only service for creation, or locate an existing pipe. Set explicitly if service resolution is ambiguous.",
+          "title": "Service ID"
         },
         "definition": {
           "description": "JSON object describing the ClickPipe (name, source, destination, etc.)",
@@ -72,7 +80,6 @@
       },
       "required": [
         "organization_id",
-        "service_id",
         "definition"
       ],
       "title": "ClickHouseCreateClickPipeConfig",
@@ -314,9 +321,17 @@
           }
         },
         "service_id": {
-          "description": "The service that owns the ClickPipe",
-          "title": "Service ID",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The service that owns the ClickPipe. For saved steps without this field, list across services, use the only service for creation, or locate an existing pipe. Set explicitly if service resolution is ambiguous.",
+          "title": "Service ID"
         },
         "clickpipe_id": {
           "description": "The ClickPipe to delete",
@@ -326,7 +341,6 @@
       },
       "required": [
         "organization_id",
-        "service_id",
         "clickpipe_id"
       ],
       "title": "ClickHouseDeleteClickPipeConfig",
@@ -598,9 +612,17 @@
           }
         },
         "service_id": {
-          "description": "The service that owns the ClickPipe",
-          "title": "Service ID",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The service that owns the ClickPipe. For saved steps without this field, list across services, use the only service for creation, or locate an existing pipe. Set explicitly if service resolution is ambiguous.",
+          "title": "Service ID"
         },
         "clickpipe_id": {
           "description": "The ClickPipe to retrieve",
@@ -610,7 +632,6 @@
       },
       "required": [
         "organization_id",
-        "service_id",
         "clickpipe_id"
       ],
       "title": "ClickHouseGetClickPipeConfig",
@@ -1050,14 +1071,21 @@
           }
         },
         "service_id": {
-          "description": "The service that owns the ClickPipe",
-          "title": "Service ID",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The service that owns the ClickPipe. For saved steps without this field, list across services, use the only service for creation, or locate an existing pipe. Set explicitly if service resolution is ambiguous.",
+          "title": "Service ID"
         }
       },
       "required": [
-        "organization_id",
-        "service_id"
+        "organization_id"
       ],
       "title": "ClickHouseListClickPipesConfig",
       "type": "object"
@@ -1607,9 +1635,17 @@
           }
         },
         "service_id": {
-          "description": "The service that owns the ClickPipe",
-          "title": "Service ID",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The service that owns the ClickPipe. For saved steps without this field, list across services, use the only service for creation, or locate an existing pipe. Set explicitly if service resolution is ambiguous.",
+          "title": "Service ID"
         },
         "clickpipe_id": {
           "description": "The ClickPipe to change state",
@@ -1618,16 +1654,20 @@
         },
         "command": {
           "default": "start",
-          "description": "State change to apply",
+          "description": "State change to apply. Saved pause/resume values remain supported as aliases for stop/start.",
           "enum": [
             "start",
             "stop",
-            "resync"
+            "resync",
+            "pause",
+            "resume"
           ],
           "enumNames": [
             "Start",
             "Stop",
-            "Resync"
+            "Resync",
+            "Pause (legacy: Stop)",
+            "Resume (legacy: Start)"
           ],
           "title": "Command",
           "type": "string",
@@ -1636,7 +1676,6 @@
       },
       "required": [
         "organization_id",
-        "service_id",
         "clickpipe_id"
       ],
       "title": "ClickHouseUpdateClickPipeStateConfig",

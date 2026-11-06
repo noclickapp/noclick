@@ -765,7 +765,7 @@ class ClickHouseListClickPipesConfig(BaseModel):
             }
         },
     )
-    service_id: str = Field(..., title="Service ID", description="The service that owns the ClickPipe")
+    service_id: Optional[str] = Field(None, title="Service ID", description="The service that owns the ClickPipe. For saved steps without this field, list across services, use the only service for creation, or locate an existing pipe. Set explicitly if service resolution is ambiguous.")
 
 
 class ClickHouseCreateClickPipeConfig(BaseModel):
@@ -796,7 +796,7 @@ class ClickHouseCreateClickPipeConfig(BaseModel):
             }
         },
     )
-    service_id: str = Field(..., title="Service ID", description="The service that owns the ClickPipe")
+    service_id: Optional[str] = Field(None, title="Service ID", description="The service that owns the ClickPipe. For saved steps without this field, list across services, use the only service for creation, or locate an existing pipe. Set explicitly if service resolution is ambiguous.")
     definition: str = Field(
         ...,
         title="ClickPipe Definition (JSON)",
@@ -833,15 +833,15 @@ class ClickHouseUpdateClickPipeStateConfig(BaseModel):
             }
         },
     )
-    service_id: str = Field(..., title="Service ID", description="The service that owns the ClickPipe")
+    service_id: Optional[str] = Field(None, title="Service ID", description="The service that owns the ClickPipe. For saved steps without this field, list across services, use the only service for creation, or locate an existing pipe. Set explicitly if service resolution is ambiguous.")
     clickpipe_id: str = Field(..., title="ClickPipe ID", description="The ClickPipe to change state")
-    command: Literal["start", "stop", "resync"] = Field(
+    command: str = Field(
         "start",
         title="Command",
-        description="State change to apply",
+        description="State change to apply. Saved pause/resume values remain supported as aliases for stop/start.",
         json_schema_extra={
-            "enum": ["start", "stop", "resync"],
-            "enumNames": ["Start", "Stop", "Resync"],
+            "enum": ["start", "stop", "resync", "pause", "resume"],
+            "enumNames": ["Start", "Stop", "Resync", "Pause (legacy: Stop)", "Resume (legacy: Start)"],
             "x-enum-searchable": True,
         },
     )
@@ -852,7 +852,7 @@ class ClickHouseGetClickPipeConfig(BaseModel):
 
     operation: Literal["get_clickpipe"] = Field("get_clickpipe", json_schema_extra={"const": "get_clickpipe", "ui:hidden": True, "x-category": "ClickPipes", "x-is-trigger": False, "x-display-name": "Get ClickPipe"}, title="Get ClickPipe")
     organization_id: str = Field(..., title="Organization", description="The organization the ClickPipe belongs to", json_schema_extra={"x-dynamic-options": {"field_name": "organization_id", "placeholder": "Select an organization...", "searchable": True, "allow_custom": True, "custom_placeholder": "Or paste organization ID"}})
-    service_id: str = Field(..., title="Service ID", description="The service that owns the ClickPipe")
+    service_id: Optional[str] = Field(None, title="Service ID", description="The service that owns the ClickPipe. For saved steps without this field, list across services, use the only service for creation, or locate an existing pipe. Set explicitly if service resolution is ambiguous.")
     clickpipe_id: str = Field(..., title="ClickPipe ID", description="The ClickPipe to retrieve")
 
 
@@ -861,7 +861,7 @@ class ClickHouseDeleteClickPipeConfig(BaseModel):
 
     operation: Literal["delete_clickpipe"] = Field("delete_clickpipe", json_schema_extra={"const": "delete_clickpipe", "ui:hidden": True, "x-category": "ClickPipes", "x-is-trigger": False, "x-display-name": "Delete ClickPipe"}, title="Delete ClickPipe")
     organization_id: str = Field(..., title="Organization", description="The organization the ClickPipe belongs to", json_schema_extra={"x-dynamic-options": {"field_name": "organization_id", "placeholder": "Select an organization...", "searchable": True, "allow_custom": True, "custom_placeholder": "Or paste organization ID"}})
-    service_id: str = Field(..., title="Service ID", description="The service that owns the ClickPipe")
+    service_id: Optional[str] = Field(None, title="Service ID", description="The service that owns the ClickPipe. For saved steps without this field, list across services, use the only service for creation, or locate an existing pipe. Set explicitly if service resolution is ambiguous.")
     clickpipe_id: str = Field(..., title="ClickPipe ID", description="The ClickPipe to delete")
 
 
@@ -1700,7 +1700,13 @@ class ClickHouseNode(WorkflowNode):
         if not handler:
             raise ValueError(f"Unknown operation: {op.operation}")
 
-        result = await handler(op, key_id, key_secret)
+        if op.operation in {
+            "list_clickpipes", "create_clickpipe", "update_clickpipe_state",
+            "get_clickpipe", "delete_clickpipe",
+        } and not op.service_id:
+            result = await self._execute_legacy_clickpipe(op, handler, key_id, key_secret)
+        else:
+            result = await handler(op, key_id, key_secret)
         result["timing_ms"] = {
             **result.get("timing_ms", {}),
             "total": round((time.time() - start_time) * 1000, 2),
@@ -1976,6 +1982,57 @@ class ClickHouseNode(WorkflowNode):
     # ------------------------------------------------------------------
     # Handlers — ClickPipes
     # ------------------------------------------------------------------
+    async def _execute_legacy_clickpipe(self, c, handler, key_id, key_secret) -> Dict[str, Any]:
+        """Resolve old organization-scoped configs without guessing a write target.
+
+        Saving an explicit service_id pins the step and avoids discovery on later runs.
+        Discovery is read-only; a pipe mutation runs only after its owner is unique.
+        """
+        services = await self._list_services(c, key_id, key_secret)
+        if services.get("status") != "success":
+            return {**services, "action": c.operation}
+        service_ids = list(dict.fromkeys(
+            str(item["id"]) for item in (services.get("data") or [])
+            if isinstance(item, dict) and item.get("id")
+        ))
+        if c.operation != "list_clickpipes" and len(service_ids) == 1:
+            return await handler(c.model_copy(update={"service_id": service_ids[0]}), key_id, key_secret)
+
+        matches = []
+        items = []
+        api_ms = services.get("timing_ms", {}).get("api_request", 0)
+        if c.operation != "create_clickpipe":
+            for service_id in service_ids:
+                pipes = await self._list_clickpipes(
+                    ClickHouseListClickPipesConfig(organization_id=c.organization_id, service_id=service_id),
+                    key_id, key_secret,
+                )
+                if pipes.get("status") != "success":
+                    return {**pipes, "action": c.operation}
+                api_ms += pipes.get("timing_ms", {}).get("api_request", 0)
+                data = pipes.get("data") or []
+                items.extend(data)
+                if c.operation != "list_clickpipes" and any(
+                    isinstance(pipe, dict) and str(pipe.get("id")) == c.clickpipe_id for pipe in data
+                ):
+                    matches.append(service_id)
+        if c.operation == "list_clickpipes":
+            return {
+                "status": "success", "action": c.operation, "data": items,
+                "status_code": 200, "timing_ms": {"api_request": round(api_ms, 2)},
+            }
+        if len(matches) == 1:
+            return await handler(c.model_copy(update={"service_id": matches[0]}), key_id, key_secret)
+        return {
+            "status": "error", "action": c.operation, "status_code": 400,
+            "error": (
+                "This saved ClickPipe step has no service_id and its service could not be resolved uniquely. "
+                "Edit the step and set Service ID (service_id) to the service that owns or will receive the pipe. "
+                f"Organization services: {', '.join(service_ids) or 'none'}."
+            ),
+            "timing_ms": {"api_request": round(api_ms, 2)},
+        }
+
     async def _list_clickpipes(self, c: ClickHouseListClickPipesConfig, key_id, key_secret) -> Dict[str, Any]:
         return await _clickhouse_request(
             key_id, key_secret, "GET",
@@ -2002,10 +2059,16 @@ class ClickHouseNode(WorkflowNode):
         )
 
     async def _update_clickpipe_state(self, c: ClickHouseUpdateClickPipeStateConfig, key_id, key_secret) -> Dict[str, Any]:
+        command = {"pause": "stop", "resume": "start"}.get(c.command, c.command)
+        if command not in {"start", "stop", "resync"}:
+            return {
+                "status": "error", "action": "update_clickpipe_state", "status_code": 400,
+                "error": "ClickPipe command must be start, stop, resync, pause, or resume.",
+            }
         return await _clickhouse_request(
             key_id, key_secret, "PATCH",
             f"/organizations/{c.organization_id}/services/{c.service_id}/clickpipes/{c.clickpipe_id}/state",
-            json_body={"command": c.command}, action_name="update_clickpipe_state",
+            json_body={"command": command}, action_name="update_clickpipe_state",
         )
 
     async def _get_clickpipe(self, c: ClickHouseGetClickPipeConfig, key_id, key_secret) -> Dict[str, Any]:

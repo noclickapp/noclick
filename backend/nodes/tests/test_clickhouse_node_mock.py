@@ -1105,11 +1105,161 @@ async def test_query_endpoint_default_roles_and_empty_keys(api_key_credentials):
     assert capture["json"] == {"roles": ["sql_console_read_only"], "openApiKeys": []}
 
 
-@pytest.mark.parametrize("command", ["pause", "resume"])
-def test_clickpipe_rejects_unsupported_commands(command):
-    from pydantic import ValidationError
-
-    with pytest.raises(ValidationError):
-        ClickHouseUpdateClickPipeStateConfig(
+@pytest.mark.asyncio
+@pytest.mark.parametrize("command,wire_command", [("pause", "stop"), ("resume", "start"), ("resync", "resync")])
+async def test_clickpipe_legacy_command_aliases(command, wire_command, api_key_credentials):
+    config = ClickHouseNodeConfig(
+        config=ClickHouseUpdateClickPipeStateConfig(
             organization_id=ORG_ID, service_id=SERVICE_ID, clickpipe_id="cp-1", command=command,
-        )
+        ), credentials=api_key_credentials,
+    )
+    capture = {}
+    with patch("nodes.clickhouse_node.httpx.AsyncClient", return_value=create_mock_client(200, _envelope({}), capture=capture)):
+        result = await create_clickhouse_node(config).execute({})
+    assert result["status"] == "success"
+    assert capture["json"] == {"command": wire_command}
+    assert config.config.command == command
+
+
+LEGACY_CLICKPIPE_CONFIGS = [
+    {"operation": "list_clickpipes"},
+    {"operation": "create_clickpipe", "definition": '{"name":"pipe","source":{"postgres":{}},"destination":{"database":"default"}}'},
+    {"operation": "get_clickpipe", "clickpipe_id": "cp-1"},
+    {"operation": "delete_clickpipe", "clickpipe_id": "cp-1"},
+    {"operation": "update_clickpipe_state", "clickpipe_id": "cp-1", "command": "pause"},
+    {"operation": "update_clickpipe_state", "clickpipe_id": "cp-1", "command": "resume"},
+]
+
+
+def legacy_clickpipe_transport(requests, *, multiple=False, duplicate=False, deny_discovery=False):
+    import httpx
+
+    def respond(request):
+        requests.append(request)
+        if request.url.path.endswith("/services"):
+            services = [{"id": SERVICE_ID}]
+            if multiple:
+                services.append({"id": "other-service"})
+            return httpx.Response(200, json=_envelope(services))
+        if request.method == "GET" and request.url.path.endswith("/clickpipes"):
+            other = "/other-service/" in request.url.path
+            if other and deny_discovery:
+                return httpx.Response(403, json={"error": "Forbidden"})
+            return httpx.Response(200, json=_envelope(
+                [{"id": "cp-1"}] if not other or duplicate else [{"id": "cp-2"}]
+            ))
+        return httpx.Response(200, json=_envelope({"id": "cp-1"}))
+    return httpx.MockTransport(respond)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("saved", LEGACY_CLICKPIPE_CONFIGS, ids=lambda c: c["operation"] + c.get("command", ""))
+async def test_saved_clickpipe_configs_load_and_resolve_single_service(saved, api_key_credentials):
+    import httpx
+
+    config = ClickHouseNodeConfig.model_validate({
+        "config": {**saved, "organization_id": ORG_ID},
+        "credentials": api_key_credentials.model_dump(),
+    })
+    assert config.config.service_id is None
+    requests = []
+    transport = legacy_clickpipe_transport(requests)
+    client_class = httpx.AsyncClient
+    with patch("nodes.clickhouse_node.httpx.AsyncClient", side_effect=lambda **kwargs: client_class(transport=transport)):
+        result = await create_clickhouse_node(config).execute({})
+    assert result["status"] == "success"
+    assert result["action"] == saved["operation"]
+    assert {"data", "status_code", "timing_ms"} <= result.keys()
+    assert requests[0].url.path == f"/v1/organizations/{ORG_ID}/services"
+    assert requests[-1].url.path.startswith(f"/v1/organizations/{ORG_ID}/services/{SERVICE_ID}/clickpipes")
+    assert config.config.service_id is None  # Resolve per execution; do not rewrite saved config.
+    if saved["operation"] == "update_clickpipe_state":
+        import json
+        assert json.loads(requests[-1].content)["command"] == {"pause": "stop", "resume": "start"}[saved["command"]]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("saved", [c for c in LEGACY_CLICKPIPE_CONFIGS if c["operation"] != "create_clickpipe"])
+async def test_saved_clickpipe_configs_discover_owner_across_services(saved, api_key_credentials):
+    import httpx
+
+    config = ClickHouseNodeConfig.model_validate({"config": {**saved, "organization_id": ORG_ID}, "credentials": api_key_credentials})
+    requests = []
+    transport = legacy_clickpipe_transport(requests, multiple=True)
+    client_class = httpx.AsyncClient
+    with patch("nodes.clickhouse_node.httpx.AsyncClient", side_effect=lambda **kwargs: client_class(transport=transport)):
+        result = await create_clickhouse_node(config).execute({})
+    assert result["status"] == "success"
+    assert result["action"] == saved["operation"]
+    if saved["operation"] == "list_clickpipes":
+        assert result["data"] == [{"id": "cp-1"}, {"id": "cp-2"}]
+    else:
+        assert len(requests) == 4
+        assert all(r.method == "GET" for r in requests[:-1])
+        assert f"/services/{SERVICE_ID}/clickpipes/cp-1" in requests[-1].url.path
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("saved", [c for c in LEGACY_CLICKPIPE_CONFIGS if c["operation"] != "list_clickpipes"])
+async def test_ambiguous_saved_clickpipe_requires_explicit_service_before_mutation(saved, api_key_credentials):
+    import httpx
+
+    config = ClickHouseNodeConfig.model_validate({"config": {**saved, "organization_id": ORG_ID}, "credentials": api_key_credentials})
+    requests = []
+    transport = legacy_clickpipe_transport(requests, multiple=True, duplicate=True)
+    client_class = httpx.AsyncClient
+    with patch("nodes.clickhouse_node.httpx.AsyncClient", side_effect=lambda **kwargs: client_class(transport=transport)):
+        result = await create_clickhouse_node(config).execute({})
+    assert result["status"] == "error"
+    assert result["action"] == saved["operation"]
+    assert "set Service ID (service_id)" in result["error"]
+    assert SERVICE_ID in result["error"]
+    assert "other-service" in result["error"]
+    assert all(r.method == "GET" for r in requests)
+
+
+@pytest.mark.asyncio
+async def test_failed_service_discovery_never_mutates_pipe(api_key_credentials):
+    import httpx
+
+    config = ClickHouseNodeConfig.model_validate({
+        "config": {"operation": "delete_clickpipe", "organization_id": ORG_ID, "clickpipe_id": "cp-1"},
+        "credentials": api_key_credentials,
+    })
+    requests = []
+    transport = legacy_clickpipe_transport(requests, multiple=True, deny_discovery=True)
+    client_class = httpx.AsyncClient
+    with patch("nodes.clickhouse_node.httpx.AsyncClient", side_effect=lambda **kwargs: client_class(transport=transport)):
+        result = await create_clickhouse_node(config).execute({})
+    assert result["status"] == "error"
+    assert result["status_code"] == 403
+    assert result["action"] == "delete_clickpipe"
+    assert all(r.method == "GET" for r in requests)
+
+
+def test_clickpipe_schema_accepts_legacy_saved_settings():
+    definitions = ClickHouseNodeConfig.model_json_schema()["$defs"]
+    for model in [
+        ClickHouseListClickPipesConfig, ClickHouseCreateClickPipeConfig,
+        ClickHouseUpdateClickPipeStateConfig, ClickHouseGetClickPipeConfig, ClickHouseDeleteClickPipeConfig,
+    ]:
+        schema = definitions[model.__name__]
+        assert "service_id" not in schema.get("required", [])
+        assert schema["properties"]["service_id"]["default"] is None
+    command = definitions["ClickHouseUpdateClickPipeStateConfig"]["properties"]["command"]
+    assert set(command["enum"]) == {"start", "stop", "resync", "pause", "resume"}
+
+
+@pytest.mark.asyncio
+async def test_unknown_clickpipe_command_loads_but_is_not_sent(api_key_credentials):
+    config = ClickHouseNodeConfig(
+        config=ClickHouseUpdateClickPipeStateConfig(
+            organization_id=ORG_ID, service_id=SERVICE_ID, clickpipe_id="cp-1", command="unknown",
+        ), credentials=api_key_credentials,
+    )
+    with patch("nodes.clickhouse_node.httpx.AsyncClient") as client:
+        result = await create_clickhouse_node(config).execute({})
+    assert result["status"] == "error"
+    assert result["status_code"] == 400
+    assert result["action"] == "update_clickpipe_state"
+    client.assert_not_called()
