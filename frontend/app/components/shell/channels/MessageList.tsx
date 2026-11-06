@@ -12,7 +12,7 @@ import { useMemo, useRef, useState } from 'react';
 import { ArrowRight, ChevronDown, EyeOff, Hash, Plug, SmilePlus } from 'lucide-react';
 import type { AccountMenuUser } from '~/components/nav/AccountMenu';
 import { clockLabel } from '~/components/dashboard/primitives';
-import { LogoMark } from '~/components/shared/LogoMark';
+import { LogoMark, MARK_IN_A_SHAPE } from '~/components/shared/LogoMark';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '~/components/ui/dropdown-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
@@ -118,7 +118,7 @@ function Intro({
 function NoClickAvatar() {
     return (
         <span aria-hidden className="grid h-8 w-8 place-items-center rounded-full bg-foreground/[0.07]">
-            <LogoMark alt="" className="h-4 w-4" />
+            <LogoMark alt="" className={cn('h-4 w-4', MARK_IN_A_SHAPE)} />
         </span>
     );
 }

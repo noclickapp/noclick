@@ -4,6 +4,10 @@
 // to the plain glyph per design.)
 import { cn } from '~/lib/utils';
 
+/** The mark's weight sits up and left of its box (the solid arrow), so set in a circle or a tile it reads off-centre.
+ *  This moves it by its ink's offset from the middle, as a share of its own size (measured from /logo.svg). */
+export const MARK_IN_A_SHAPE = 'translate-x-[6.4%] translate-y-[6.3%]';
+
 export function LogoMark({
     className,
     alt = 'NoClick',
