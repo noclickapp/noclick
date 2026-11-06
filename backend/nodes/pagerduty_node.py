@@ -777,6 +777,14 @@ class PagerDutyUpdateServiceConfig(BaseModel):
         title="Update Service",
     )
     service_id: str = Field(..., title="Service ID", description="The ID of the service to update")
+    escalation_policy_id: Optional[str] = Field(
+        None, title="Escalation Policy", description="Escalation policy to assign to the service",
+        json_schema_extra={"x-dynamic-options": {
+            "field_name": "escalation_policy_id", "placeholder": "Select an escalation policy...",
+            "searchable": True, "allow_custom": True,
+            "custom_placeholder": "Or paste escalation policy ID",
+        }},
+    )
     name: Optional[str] = Field(None, title="Name", description="New service name (optional)")
     description: Optional[str] = Field(
         None, title="Description", description="New service description (optional)"
@@ -4308,90 +4316,6 @@ class PagerDutyDeleteRulesetRuleConfig(BaseModel):
 # ---------------------------------------------------------------------------
 
 
-class PagerDutyListResponsePlaysConfig(BaseModel):
-    """List response plays, optionally filtered by name."""
-
-    operation: Literal["list_response_plays"] = Field(
-        "list_response_plays",
-        json_schema_extra={"const": "list_response_plays", "ui:hidden": True, "x-category": "Response Plays", "x-is-trigger": False, "x-display-name": "List Response Plays"},
-        title="List Response Plays",
-    )
-    query: Optional[str] = Field(None, title="Query", description="Filter response plays by name (optional)")
-
-
-class PagerDutyGetResponsePlayConfig(BaseModel):
-    """Retrieve a single response play by ID."""
-
-    operation: Literal["get_response_play"] = Field(
-        "get_response_play",
-        json_schema_extra={"const": "get_response_play", "ui:hidden": True, "x-category": "Response Plays", "x-is-trigger": False, "x-display-name": "Get Response Play"},
-        title="Get Response Play",
-    )
-    response_play_id: str = Field(..., title="Response Play ID", description="The response play to retrieve")
-
-
-class PagerDutyCreateResponsePlayConfig(BaseModel):
-    """Create a response play (requires the From Email credential field)."""
-
-    operation: Literal["create_response_play"] = Field(
-        "create_response_play",
-        json_schema_extra={"const": "create_response_play", "ui:hidden": True,
-            "x-creates-resource": True,
-            "x-resource-type": "pagerduty_response_play",
-            "x-resource-id-path": "data.response_play.id", "x-category": "Response Plays", "x-is-trigger": False, "x-display-name": "Create Response Play"},
-        title="Create Response Play",
-    )
-    name: str = Field(..., title="Name", description="The name of the response play")
-    description: Optional[str] = Field(None, title="Description", description="A description of the response play (optional)")
-    additional_fields_json: Optional[str] = Field(
-        None,
-        title="Advanced Fields (JSON)",
-        description="Optional JSON object merged into the response_play body (subscribers, responders, escalation_rules, conference_number, runnability, etc.)",
-        json_schema_extra={"ui:widget": "textarea"},
-    )
-
-
-class PagerDutyUpdateResponsePlayConfig(BaseModel):
-    """Update an existing response play (requires the From Email credential field)."""
-
-    operation: Literal["update_response_play"] = Field(
-        "update_response_play",
-        json_schema_extra={"const": "update_response_play", "ui:hidden": True, "x-category": "Response Plays", "x-is-trigger": False, "x-display-name": "Update Response Play"},
-        title="Update Response Play",
-    )
-    response_play_id: str = Field(..., title="Response Play ID", description="The response play to update")
-    name: Optional[str] = Field(None, title="Name", description="New response play name (optional)")
-    description: Optional[str] = Field(None, title="Description", description="New description (optional)")
-    additional_fields_json: Optional[str] = Field(
-        None,
-        title="Advanced Fields (JSON)",
-        description="Optional JSON object merged into the response_play body (subscribers, responders, escalation_rules, etc.)",
-        json_schema_extra={"ui:widget": "textarea"},
-    )
-
-
-class PagerDutyDeleteResponsePlayConfig(BaseModel):
-    """Delete a response play (requires the From Email credential field)."""
-
-    operation: Literal["delete_response_play"] = Field(
-        "delete_response_play",
-        json_schema_extra={"const": "delete_response_play", "ui:hidden": True, "x-category": "Response Plays", "x-is-trigger": False, "x-display-name": "Delete Response Play"},
-        title="Delete Response Play",
-    )
-    response_play_id: str = Field(..., title="Response Play ID", description="The response play to delete")
-
-
-class PagerDutyRunResponsePlayConfig(BaseModel):
-    """Run a response play against an incident (requires the From Email credential field)."""
-
-    operation: Literal["run_response_play"] = Field(
-        "run_response_play",
-        json_schema_extra={"const": "run_response_play", "ui:hidden": True, "x-category": "Response Plays", "x-is-trigger": False, "x-display-name": "Run Response Play"},
-        title="Run Response Play",
-    )
-    response_play_id: str = Field(..., title="Response Play ID", description="The response play to run")
-    incident_id: str = Field(..., title="Incident ID", description="The incident to run the response play on")
-
 
 class PagerDutyListAutomationActionsConfig(BaseModel):
     """List automation actions, optionally filtered by name."""
@@ -4478,7 +4402,7 @@ class PagerDutyDeleteAutomationActionConfig(BaseModel):
 
 
 class PagerDutyInvokeAutomationActionConfig(BaseModel):
-    """Invoke an automation action, optionally against an incident (requires the From Email credential field)."""
+    """Invoke an automation action against an incident (requires the From Email credential field)."""
 
     operation: Literal["invoke_automation_action"] = Field(
         "invoke_automation_action",
@@ -4486,13 +4410,7 @@ class PagerDutyInvokeAutomationActionConfig(BaseModel):
         title="Invoke Automation Action",
     )
     action_id: str = Field(..., title="Action ID", description="The automation action to invoke")
-    incident_id: Optional[str] = Field(None, title="Incident ID", description="Invoke in the context of this incident (optional)")
-    inputs_json: Optional[str] = Field(
-        None,
-        title="Inputs (JSON)",
-        description="Optional JSON array of input parameters, e.g. [{\"name\": \"param\", \"value\": \"x\"}]",
-        json_schema_extra={"ui:widget": "textarea"},
-    )
+    incident_id: str = Field(..., title="Incident ID", description="Invoke in the context of this incident")
 
 
 class PagerDutyListInvocationsConfig(BaseModel):
@@ -6115,12 +6033,6 @@ PagerDutyConfig = Annotated[
         PagerDutyGetRulesetRuleConfig,
         PagerDutyUpdateRulesetRuleConfig,
         PagerDutyDeleteRulesetRuleConfig,
-        PagerDutyListResponsePlaysConfig,
-        PagerDutyGetResponsePlayConfig,
-        PagerDutyCreateResponsePlayConfig,
-        PagerDutyUpdateResponsePlayConfig,
-        PagerDutyDeleteResponsePlayConfig,
-        PagerDutyRunResponsePlayConfig,
         PagerDutyListAutomationActionsConfig,
         PagerDutyGetAutomationActionConfig,
         PagerDutyCreateAutomationActionConfig,
@@ -6881,12 +6793,6 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
             "get_ruleset_rule": self._get_ruleset_rule,
             "update_ruleset_rule": self._update_ruleset_rule,
             "delete_ruleset_rule": self._delete_ruleset_rule,
-            "list_response_plays": self._list_response_plays,
-            "get_response_play": self._get_response_play,
-            "create_response_play": self._create_response_play,
-            "update_response_play": self._update_response_play,
-            "delete_response_play": self._delete_response_play,
-            "run_response_play": self._run_response_play,
             "list_automation_actions": self._list_automation_actions,
             "get_automation_action": self._get_automation_action,
             "create_automation_action": self._create_automation_action,
@@ -7183,6 +7089,8 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     async def _update_service(self, c: PagerDutyUpdateServiceConfig, api_key, from_email) -> Dict[str, Any]:
         service: Dict[str, Any] = {"type": "service"}
+        if c.escalation_policy_id:
+            service["escalation_policy"] = _ref(c.escalation_policy_id, "escalation_policy_reference")
         if c.name:
             service["name"] = c.name
         if c.description:
@@ -7553,7 +7461,7 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
             rule["position"] = _safe_int(c.position, "position")
         if c.disabled:
             rule["disabled"] = c.disabled == "true"
-        return await _pagerduty_request(api_key, "PUT", f"/services/{c.service_id}/rules/{c.rule_id}", json_body={"rule": rule}, from_email=from_email, action_name="update_service_event_rule")
+        return await _pagerduty_request(api_key, "PUT", f"/services/{c.service_id}/rules/{c.rule_id}", json_body={"rule_id": c.rule_id, "rule": rule}, from_email=from_email, action_name="update_service_event_rule")
 
     async def _delete_service_event_rule(self, c: PagerDutyDeleteServiceEventRuleConfig, api_key, from_email) -> Dict[str, Any]:
         return await _pagerduty_request(api_key, "DELETE", f"/services/{c.service_id}/rules/{c.rule_id}", from_email=from_email, action_name="delete_service_event_rule")
@@ -8074,7 +7982,7 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
             raise ValueError(f"rule must be valid JSON: {e}")
         return await _pagerduty_request(
             api_key, "PUT", f"/rulesets/{c.ruleset_id}/rules/{c.rule_id}",
-            json_body={"rule": rule},
+            json_body={"rule_id": c.rule_id, "rule": rule},
             from_email=from_email, action_name="update_ruleset_rule",
         )
 
@@ -8085,49 +7993,6 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         )
 
     # --- response-automation-workflows ---
-    async def _list_response_plays(self, c: PagerDutyListResponsePlaysConfig, api_key, from_email) -> Dict[str, Any]:
-        return await _pagerduty_request(api_key, "GET", "/response_plays", params={"query": c.query}, action_name="list_response_plays")
-
-    async def _get_response_play(self, c: PagerDutyGetResponsePlayConfig, api_key, from_email) -> Dict[str, Any]:
-        return await _pagerduty_request(api_key, "GET", f"/response_plays/{c.response_play_id}", action_name="get_response_play")
-
-    async def _create_response_play(self, c: PagerDutyCreateResponsePlayConfig, api_key, from_email) -> Dict[str, Any]:
-        response_play = {"type": "response_play", "name": c.name}
-        if c.description:
-            response_play["description"] = c.description
-        if c.additional_fields_json:
-            try:
-                extra = json.loads(c.additional_fields_json)
-            except (ValueError, TypeError) as e:
-                raise ValueError(f"additional_fields_json must be valid JSON: {e}")
-            if not isinstance(extra, dict):
-                raise ValueError("additional_fields_json must be a JSON object")
-            response_play.update(extra)
-        return await _pagerduty_request(api_key, "POST", "/response_plays", json_body={"response_play": response_play}, from_email=from_email, action_name="create_response_play")
-
-    async def _update_response_play(self, c: PagerDutyUpdateResponsePlayConfig, api_key, from_email) -> Dict[str, Any]:
-        response_play = {"type": "response_play"}
-        if c.name:
-            response_play["name"] = c.name
-        if c.description:
-            response_play["description"] = c.description
-        if c.additional_fields_json:
-            try:
-                extra = json.loads(c.additional_fields_json)
-            except (ValueError, TypeError) as e:
-                raise ValueError(f"additional_fields_json must be valid JSON: {e}")
-            if not isinstance(extra, dict):
-                raise ValueError("additional_fields_json must be a JSON object")
-            response_play.update(extra)
-        return await _pagerduty_request(api_key, "PUT", f"/response_plays/{c.response_play_id}", json_body={"response_play": response_play}, from_email=from_email, action_name="update_response_play")
-
-    async def _delete_response_play(self, c: PagerDutyDeleteResponsePlayConfig, api_key, from_email) -> Dict[str, Any]:
-        return await _pagerduty_request(api_key, "DELETE", f"/response_plays/{c.response_play_id}", from_email=from_email, action_name="delete_response_play")
-
-    async def _run_response_play(self, c: PagerDutyRunResponsePlayConfig, api_key, from_email) -> Dict[str, Any]:
-        body = {"incident": _ref(c.incident_id, "incident_reference")}
-        return await _pagerduty_request(api_key, "POST", f"/response_plays/{c.response_play_id}/run", json_body=body, from_email=from_email, action_name="run_response_play")
-
     async def _list_automation_actions(self, c: PagerDutyListAutomationActionsConfig, api_key, from_email) -> Dict[str, Any]:
         return await _pagerduty_request(api_key, "GET", "/automation_actions/actions", params={"query": c.query, "limit": c.limit}, action_name="list_automation_actions")
 
@@ -8167,14 +8032,7 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return await _pagerduty_request(api_key, "DELETE", f"/automation_actions/actions/{c.action_id}", from_email=from_email, action_name="delete_automation_action")
 
     async def _invoke_automation_action(self, c: PagerDutyInvokeAutomationActionConfig, api_key, from_email) -> Dict[str, Any]:
-        invocation = {}
-        if c.incident_id:
-            invocation["incident"] = _ref(c.incident_id, "incident_reference")
-        if c.inputs_json:
-            try:
-                invocation["inputs"] = json.loads(c.inputs_json)
-            except (ValueError, TypeError) as e:
-                raise ValueError(f"inputs_json must be valid JSON: {e}")
+        invocation = {"metadata": {"incident_id": c.incident_id}}
         return await _pagerduty_request(api_key, "POST", f"/automation_actions/actions/{c.action_id}/invocations", json_body={"invocation": invocation}, from_email=from_email, action_name="invoke_automation_action")
 
     async def _list_invocations(self, c: PagerDutyListInvocationsConfig, api_key, from_email) -> Dict[str, Any]:
@@ -8593,7 +8451,20 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return await _pagerduty_request(api_key, "POST", f"/incidents/custom_fields/{c.field_id}/field_options", json_body=body, from_email=from_email, action_name="create_field_option")
 
     async def _get_field_option(self, c: PagerDutyGetFieldOptionConfig, api_key, from_email) -> Dict[str, Any]:
-        return await _pagerduty_request(api_key, "GET", f"/incidents/custom_fields/{c.field_id}/field_options/{c.field_option_id}", action_name="get_field_option")
+        result = await _pagerduty_request(
+            api_key, "GET", f"/incidents/custom_fields/{c.field_id}/field_options",
+            action_name="get_field_option",
+        )
+        if result["status"] != "success":
+            return result
+        for option in result["data"]["field_options"]:
+            if option["id"] == c.field_option_id:
+                result["data"] = {"field_option": option}
+                return result
+        return {
+            **result, "status": "error", "status_code": 404,
+            "error": f"Field option {c.field_option_id} was not found on custom field {c.field_id}",
+        }
 
     async def _update_field_option(self, c: PagerDutyUpdateFieldOptionConfig, api_key, from_email) -> Dict[str, Any]:
         body = {"field_option": {"id": c.field_option_id, "type": "field_option", "data": {"data_type": "string", "value": c.value}}}

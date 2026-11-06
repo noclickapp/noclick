@@ -903,7 +903,6 @@ from nodes.pagerduty_node import (
     PagerDutyCreateNotificationRuleConfig,
     PagerDutyCreateOrchestrationIntegrationConfig,
     PagerDutyCreateOverrideConfig,
-    PagerDutyCreateResponsePlayConfig,
     PagerDutyCreateRulesetConfig,
     PagerDutyCreateRulesetRuleConfig,
     PagerDutyCreateRunnerConfig,
@@ -932,7 +931,6 @@ from nodes.pagerduty_node import (
     PagerDutyDeleteOrchestrationIntegrationConfig,
     PagerDutyDeleteOverrideConfig,
     PagerDutyDeletePriorityThresholdsConfig,
-    PagerDutyDeleteResponsePlayConfig,
     PagerDutyDeleteRulesetConfig,
     PagerDutyDeleteRulesetRuleConfig,
     PagerDutyDeleteRunnerConfig,
@@ -979,7 +977,6 @@ from nodes.pagerduty_node import (
     PagerDutyGetPriorityThresholdsConfig,
     PagerDutyGetRawIncidentConfig,
     PagerDutyGetRelatedIncidentsConfig,
-    PagerDutyGetResponsePlayConfig,
     PagerDutyGetRulesetConfig,
     PagerDutyGetRulesetRuleConfig,
     PagerDutyGetRunnerConfig,
@@ -1029,7 +1026,6 @@ from nodes.pagerduty_node import (
     PagerDutyListOrchestrationIntegrationsConfig,
     PagerDutyListOverridesConfig,
     PagerDutyListRelatedChangeEventsConfig,
-    PagerDutyListResponsePlaysConfig,
     PagerDutyListRulesetRulesConfig,
     PagerDutyListRulesetsConfig,
     PagerDutyListRunnersConfig,
@@ -1059,7 +1055,6 @@ from nodes.pagerduty_node import (
     PagerDutyRemoveTeamMemberConfig,
     PagerDutyRenderTemplateConfig,
     PagerDutyResponderMetricsConfig,
-    PagerDutyRunResponsePlayConfig,
     PagerDutySendChangeEventConfig,
     PagerDutySetPriorityThresholdConfig,
     PagerDutySetServiceOrchestrationActiveConfig,
@@ -1083,7 +1078,6 @@ from nodes.pagerduty_node import (
     PagerDutyUpdateOrchestrationGlobalConfig,
     PagerDutyUpdateOrchestrationIntegrationConfig,
     PagerDutyUpdateOrchestrationRouterConfig,
-    PagerDutyUpdateResponsePlayConfig,
     PagerDutyUpdateRulesetConfig,
     PagerDutyUpdateRulesetRuleConfig,
     PagerDutyUpdateRunnerConfig,
@@ -1283,18 +1277,12 @@ _PD_COVERAGE_PARAMS = [
     (PagerDutyUpdateRulesetRuleConfig(ruleset_id="abc123", rule_id="9b5dcb28", rule='{"disabled": true, "conditions": {"operator": "and", "subconditions": []}, "actions": {"suppress": {"value": true}}}'), "update_ruleset_rule", {"rule": {"id": "9b5dcb28", "disabled": True, "actions": {"suppress": {"value": True}}}}),
     (PagerDutyDeleteRulesetRuleConfig(ruleset_id="abc123", rule_id="9b5dcb28"), "delete_ruleset_rule", {"success": True}),
     # response-automation-workflows
-    (PagerDutyListResponsePlaysConfig(query="Major Incident"), "list_response_plays", {"response_plays": [{"id": "PXYZ123", "type": "response_play", "name": "Major Incident"}]}),
-    (PagerDutyGetResponsePlayConfig(response_play_id="PXYZ123"), "get_response_play", {"response_play": {"id": "PXYZ123", "type": "response_play", "name": "Major Incident"}}),
-    (PagerDutyCreateResponsePlayConfig(name="Sev1 Play", description="Page leadership", additional_fields_json='{"conference_number": "+1-555-0100"}'), "create_response_play", {"response_play": {"id": "PNEW001", "type": "response_play", "name": "Sev1 Play"}}),
-    (PagerDutyUpdateResponsePlayConfig(response_play_id="PXYZ123", name="Sev1 Play v2"), "update_response_play", {"response_play": {"id": "PXYZ123", "type": "response_play", "name": "Sev1 Play v2"}}),
-    (PagerDutyDeleteResponsePlayConfig(response_play_id="PXYZ123"), "delete_response_play", {"success": True}),
-    (PagerDutyRunResponsePlayConfig(response_play_id="PXYZ123", incident_id="PINC456"), "run_response_play", {"status": "ok"}),
     (PagerDutyListAutomationActionsConfig(query="restart", limit="25"), "list_automation_actions", {"actions": [{"id": "01ABC", "name": "Restart Service", "action_type": "process_automation"}]}),
     (PagerDutyGetAutomationActionConfig(action_id="01ABC"), "get_automation_action", {"action": {"id": "01ABC", "name": "Restart Service", "action_type": "process_automation"}}),
     (PagerDutyCreateAutomationActionConfig(name="Restart Service", action_type="process_automation", runner_id="01RUNNER", action_data_json='{"process_automation_job_id": "job-123"}', only_invocable_on_unresolved_incidents="true"), "create_automation_action", {"action": {"id": "01NEW", "name": "Restart Service", "action_type": "process_automation"}}),
     (PagerDutyUpdateAutomationActionConfig(action_id="01ABC", name="Restart Service v2", description="Updated"), "update_automation_action", {"action": {"id": "01ABC", "name": "Restart Service v2"}}),
     (PagerDutyDeleteAutomationActionConfig(action_id="01ABC"), "delete_automation_action", {"success": True}),
-    (PagerDutyInvokeAutomationActionConfig(action_id="01ABC", incident_id="PINC456", inputs_json='[{"name": "region", "value": "us-east-1"}]'), "invoke_automation_action", {"invocation": {"id": "01INVOKE", "state": "created"}}),
+    (PagerDutyInvokeAutomationActionConfig(action_id="01ABC", incident_id="PINC456"), "invoke_automation_action", {"invocation": {"id": "01INVOKE", "state": "created"}}),
     (PagerDutyListInvocationsConfig(action_id="01ABC"), "list_invocations", {"invocations": [{"id": "01INVOKE", "state": "completed"}]}),
     (PagerDutyGetInvocationConfig(invocation_id="01INVOKE"), "get_invocation", {"invocation": {"id": "01INVOKE", "state": "completed"}}),
     (PagerDutyListRunnersConfig(query="prod"), "list_runners", {"runners": [{"id": "01RUNNER", "name": "prod-runner", "runner_type": "runbook"}]}),
@@ -1434,7 +1422,7 @@ _PD_COVERAGE_PARAMS = [
     (PagerDutyDeleteCustomFieldConfig(field_id="PF1"), "delete_custom_field", {"success": True}),
     (PagerDutyListFieldOptionsConfig(field_id="PF1"), "list_field_options", {"field_options": [{"id": "FO1", "data": {"data_type": "string", "value": "Low"}}]}),
     (PagerDutyCreateFieldOptionConfig(field_id="PF1", value="Low"), "create_field_option", {"field_option": {"id": "FO1", "data": {"data_type": "string", "value": "Low"}}}),
-    (PagerDutyGetFieldOptionConfig(field_id="PF1", field_option_id="FO1"), "get_field_option", {"field_option": {"id": "FO1", "data": {"data_type": "string", "value": "Low"}}}),
+    (PagerDutyGetFieldOptionConfig(field_id="PF1", field_option_id="FO1"), "get_field_option", {"field_options": [{"id": "FO1", "data": {"data_type": "string", "value": "Low"}}]}),
     (PagerDutyUpdateFieldOptionConfig(field_id="PF1", field_option_id="FO1", value="High"), "update_field_option", {"field_option": {"id": "FO1", "data": {"data_type": "string", "value": "High"}}}),
     (PagerDutyDeleteFieldOptionConfig(field_id="PF1", field_option_id="FO1"), "delete_field_option", {"success": True}),
     (PagerDutyListTemplatesConfig(template_type="status_update"), "list_templates", {"templates": [{"id": "PT1", "name": "Outage Update", "template_type": "status_update"}]}),
@@ -1473,3 +1461,115 @@ async def test_expanded_operation(api_key_credentials, cfg, action, payload):
     result = await _run(node, 200, payload)
     assert result["status"] == "success", result
     assert result["action"] == action
+
+
+@pytest.mark.parametrize("operation", [
+    "list_response_plays", "get_response_play", "create_response_play",
+    "update_response_play", "delete_response_play", "run_response_play",
+])
+def test_retired_response_plays_are_not_offered(operation):
+    from pydantic import ValidationError
+
+    schema = PagerDutyNode.get_config_schema()
+    choices = schema["properties"]["config"]["discriminator"]["mapping"]
+    assert operation not in choices
+    with pytest.raises(ValidationError, match="union_tag_invalid"):
+        PagerDutyNodeConfig(config={"operation": operation})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("config,path,body", [
+    (
+        PagerDutyUpdateServiceConfig(service_id="PQL78HM", name="My Web App", escalation_policy_id="PWIP6CQ"),
+        "/services/PQL78HM",
+        {"service": {"type": "service", "name": "My Web App", "escalation_policy": {"id": "PWIP6CQ", "type": "escalation_policy_reference"}}},
+    ),
+    (
+        PagerDutyUpdateServiceEventRuleConfig(
+            service_id="PQL78HM", rule_id="7123bdd1-74e8-4aa7-aa38-4a9ebe123456",
+            actions='{"suppress": {"value": true}}',
+        ),
+        "/services/PQL78HM/rules/7123bdd1-74e8-4aa7-aa38-4a9ebe123456",
+        {"rule_id": "7123bdd1-74e8-4aa7-aa38-4a9ebe123456", "rule": {"actions": {"suppress": {"value": True}}}},
+    ),
+    (
+        PagerDutyUpdateRulesetRuleConfig(
+            ruleset_id="PQL78HM", rule_id="7123bdd1-74e8-4aa7-aa38-4a9ebe123456",
+            rule='{"actions": {"suppress": {"value": true}}}',
+        ),
+        "/rulesets/PQL78HM/rules/7123bdd1-74e8-4aa7-aa38-4a9ebe123456",
+        {"rule_id": "7123bdd1-74e8-4aa7-aa38-4a9ebe123456", "rule": {"actions": {"suppress": {"value": True}}}},
+    ),
+    (
+        PagerDutyInvokeAutomationActionConfig(action_id="01ABC", incident_id="Q2LAR4ADCXC8IB"),
+        "/automation_actions/actions/01ABC/invocations",
+        {"invocation": {"metadata": {"incident_id": "Q2LAR4ADCXC8IB"}}},
+    ),
+])
+async def test_provider_request_bodies(config, path, body, api_key_credentials):
+    import json
+    import httpx
+
+    requests = []
+    original_client = httpx.AsyncClient
+
+    def transport(request):
+        requests.append(request)
+        return httpx.Response(204)
+
+    def client(*args, **kwargs):
+        return original_client(*args, **kwargs, transport=httpx.MockTransport(transport))
+
+    node = create_pagerduty_node(PagerDutyNodeConfig(config=config, credentials=api_key_credentials))
+    with patch("nodes.pagerduty_node.httpx.AsyncClient", side_effect=client):
+        result = await node.execute({})
+    assert result["status"] == "success", result
+    assert len(requests) == 1
+    assert requests[0].url.path == path
+    assert requests[0].method == ("POST" if config.operation == "invoke_automation_action" else "PUT")
+    assert json.loads(requests[0].content) == body
+
+
+def test_invocation_requires_incident_context():
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError, match="incident_id"):
+        PagerDutyInvokeAutomationActionConfig(action_id="01ABC")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("option_id,status", [("PQ9K7I8", "success"), ("missing", "error")])
+async def test_get_field_option_uses_documented_collection(option_id, status, api_key_credentials):
+    import httpx
+
+    # PagerDuty's listCustomFieldsFieldOptions response example.
+    option = {
+        "id": "PQ9K7I8", "type": "field_option",
+        "data": {"data_type": "string", "value": "production"},
+        "created_at": "2021-06-01T21:30:42Z", "updated_at": "2021-06-01T21:30:42Z",
+    }
+    original_client = httpx.AsyncClient
+    requests = []
+
+    def transport(request):
+        requests.append(request)
+        return httpx.Response(200, json={"field_options": [option]})
+
+    def client(*args, **kwargs):
+        return original_client(*args, **kwargs, transport=httpx.MockTransport(transport))
+
+    node = create_pagerduty_node(PagerDutyNodeConfig(
+        config=PagerDutyGetFieldOptionConfig(field_id="PF1", field_option_id=option_id),
+        credentials=api_key_credentials,
+    ))
+    with patch("nodes.pagerduty_node.httpx.AsyncClient", side_effect=client):
+        result = await node.execute({})
+    assert len(requests) == 1
+    assert requests[0].method == "GET"
+    assert requests[0].url.path == "/incidents/custom_fields/PF1/field_options"
+    assert result["status"] == status
+    if status == "success":
+        assert result["data"] == {"field_option": option}
+    else:
+        assert result["status_code"] == 404
+        assert option_id in result["error"]

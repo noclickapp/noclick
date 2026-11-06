@@ -1735,61 +1735,6 @@
       "title": "PagerDutyCreateOverrideConfig",
       "type": "object"
     },
-    "PagerDutyCreateResponsePlayConfig": {
-      "description": "Create a response play (requires the From Email credential field).",
-      "properties": {
-        "operation": {
-          "const": "create_response_play",
-          "default": "create_response_play",
-          "title": "Create Response Play",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Response Plays",
-          "x-creates-resource": true,
-          "x-display-name": "Create Response Play",
-          "x-is-trigger": false,
-          "x-resource-id-path": "data.response_play.id",
-          "x-resource-type": "pagerduty_response_play"
-        },
-        "name": {
-          "description": "The name of the response play",
-          "title": "Name",
-          "type": "string"
-        },
-        "description": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "A description of the response play (optional)",
-          "title": "Description"
-        },
-        "additional_fields_json": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Optional JSON object merged into the response_play body (subscribers, responders, escalation_rules, conference_number, runnability, etc.)",
-          "title": "Advanced Fields (JSON)",
-          "ui:widget": "textarea"
-        }
-      },
-      "required": [
-        "name"
-      ],
-      "title": "PagerDutyCreateResponsePlayConfig",
-      "type": "object"
-    },
     "PagerDutyCreateRulesetConfig": {
       "description": "Create a new legacy Event Ruleset.",
       "properties": {
@@ -3182,40 +3127,6 @@
         }
       },
       "title": "PagerDutyDeletePriorityThresholdsConfig",
-      "type": "object"
-    },
-    "PagerDutyDeleteResponsePlayConfig": {
-      "description": "Delete a response play (requires the From Email credential field).",
-      "properties": {
-        "operation": {
-          "const": "delete_response_play",
-          "default": "delete_response_play",
-          "title": "Delete Response Play",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Response Plays",
-          "x-display-name": "Delete Response Play",
-          "x-is-trigger": false
-        },
-        "response_play_id": {
-          "description": "The response play to delete",
-          "title": "Response Play ID",
-          "type": "string",
-          "x-dynamic-options": {
-            "field_name": "response_play_id",
-            "placeholder": "Select a response play\u2026",
-            "searchable": true,
-            "allow_custom": true,
-            "custom_placeholder": "Or paste a response play ID",
-            "auto_select_sole_option": true
-          },
-          "x-resource-type": "pagerduty_response_play"
-        }
-      },
-      "required": [
-        "response_play_id"
-      ],
-      "title": "PagerDutyDeleteResponsePlayConfig",
       "type": "object"
     },
     "PagerDutyDeleteRulesetConfig": {
@@ -4734,40 +4645,6 @@
       "title": "PagerDutyGetRelatedIncidentsConfig",
       "type": "object"
     },
-    "PagerDutyGetResponsePlayConfig": {
-      "description": "Retrieve a single response play by ID.",
-      "properties": {
-        "operation": {
-          "const": "get_response_play",
-          "default": "get_response_play",
-          "title": "Get Response Play",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Response Plays",
-          "x-display-name": "Get Response Play",
-          "x-is-trigger": false
-        },
-        "response_play_id": {
-          "description": "The response play to retrieve",
-          "title": "Response Play ID",
-          "type": "string",
-          "x-dynamic-options": {
-            "field_name": "response_play_id",
-            "placeholder": "Select a response play\u2026",
-            "searchable": true,
-            "allow_custom": true,
-            "custom_placeholder": "Or paste a response play ID",
-            "auto_select_sole_option": true
-          },
-          "x-resource-type": "pagerduty_response_play"
-        }
-      },
-      "required": [
-        "response_play_id"
-      ],
-      "title": "PagerDutyGetResponsePlayConfig",
-      "type": "object"
-    },
     "PagerDutyGetRulesetConfig": {
       "description": "Retrieve a single legacy Event Ruleset by ID.",
       "properties": {
@@ -5912,7 +5789,7 @@
       "x-requires-webhook": true
     },
     "PagerDutyInvokeAutomationActionConfig": {
-      "description": "Invoke an automation action, optionally against an incident (requires the From Email credential field).",
+      "description": "Invoke an automation action against an incident (requires the From Email credential field).",
       "properties": {
         "operation": {
           "const": "invoke_automation_action",
@@ -5930,42 +5807,22 @@
           "type": "string"
         },
         "incident_id": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Invoke in the context of this incident (optional)",
+          "description": "Invoke in the context of this incident",
           "title": "Incident ID",
+          "type": "string",
           "x-dynamic-options": {
             "field_name": "incident_id",
             "placeholder": "Select an incident\u2026",
             "searchable": true,
             "allow_custom": true,
-            "custom_placeholder": "Or paste an incident ID"
+            "custom_placeholder": "Or paste an incident ID",
+            "auto_select_sole_option": true
           }
-        },
-        "inputs_json": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Optional JSON array of input parameters, e.g. [{\"name\": \"param\", \"value\": \"x\"}]",
-          "title": "Inputs (JSON)",
-          "ui:widget": "textarea"
         }
       },
       "required": [
-        "action_id"
+        "action_id",
+        "incident_id"
       ],
       "title": "PagerDutyInvokeAutomationActionConfig",
       "type": "object"
@@ -7516,36 +7373,6 @@
         "incident_id"
       ],
       "title": "PagerDutyListRelatedChangeEventsConfig",
-      "type": "object"
-    },
-    "PagerDutyListResponsePlaysConfig": {
-      "description": "List response plays, optionally filtered by name.",
-      "properties": {
-        "operation": {
-          "const": "list_response_plays",
-          "default": "list_response_plays",
-          "title": "List Response Plays",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Response Plays",
-          "x-display-name": "List Response Plays",
-          "x-is-trigger": false
-        },
-        "query": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Filter response plays by name (optional)",
-          "title": "Query"
-        }
-      },
-      "title": "PagerDutyListResponsePlaysConfig",
       "type": "object"
     },
     "PagerDutyListRulesetRulesConfig": {
@@ -9499,54 +9326,6 @@
       "title": "PagerDutyResponderMetricsConfig",
       "type": "object"
     },
-    "PagerDutyRunResponsePlayConfig": {
-      "description": "Run a response play against an incident (requires the From Email credential field).",
-      "properties": {
-        "operation": {
-          "const": "run_response_play",
-          "default": "run_response_play",
-          "title": "Run Response Play",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Response Plays",
-          "x-display-name": "Run Response Play",
-          "x-is-trigger": false
-        },
-        "response_play_id": {
-          "description": "The response play to run",
-          "title": "Response Play ID",
-          "type": "string",
-          "x-dynamic-options": {
-            "field_name": "response_play_id",
-            "placeholder": "Select a response play\u2026",
-            "searchable": true,
-            "allow_custom": true,
-            "custom_placeholder": "Or paste a response play ID",
-            "auto_select_sole_option": true
-          },
-          "x-resource-type": "pagerduty_response_play"
-        },
-        "incident_id": {
-          "description": "The incident to run the response play on",
-          "title": "Incident ID",
-          "type": "string",
-          "x-dynamic-options": {
-            "field_name": "incident_id",
-            "placeholder": "Select an incident\u2026",
-            "searchable": true,
-            "allow_custom": true,
-            "custom_placeholder": "Or paste an incident ID",
-            "auto_select_sole_option": true
-          }
-        }
-      },
-      "required": [
-        "response_play_id",
-        "incident_id"
-      ],
-      "title": "PagerDutyRunResponsePlayConfig",
-      "type": "object"
-    },
     "PagerDutySendChangeEventConfig": {
       "description": "Send a change event via the Events API v2 change endpoint (deploys, config changes).",
       "properties": {
@@ -11293,80 +11072,6 @@
       "title": "PagerDutyUpdateOrchestrationRouterConfig",
       "type": "object"
     },
-    "PagerDutyUpdateResponsePlayConfig": {
-      "description": "Update an existing response play (requires the From Email credential field).",
-      "properties": {
-        "operation": {
-          "const": "update_response_play",
-          "default": "update_response_play",
-          "title": "Update Response Play",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Response Plays",
-          "x-display-name": "Update Response Play",
-          "x-is-trigger": false
-        },
-        "response_play_id": {
-          "description": "The response play to update",
-          "title": "Response Play ID",
-          "type": "string",
-          "x-dynamic-options": {
-            "field_name": "response_play_id",
-            "placeholder": "Select a response play\u2026",
-            "searchable": true,
-            "allow_custom": true,
-            "custom_placeholder": "Or paste a response play ID",
-            "auto_select_sole_option": true
-          },
-          "x-resource-type": "pagerduty_response_play"
-        },
-        "name": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "New response play name (optional)",
-          "title": "Name"
-        },
-        "description": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "New description (optional)",
-          "title": "Description"
-        },
-        "additional_fields_json": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Optional JSON object merged into the response_play body (subscribers, responders, escalation_rules, etc.)",
-          "title": "Advanced Fields (JSON)",
-          "ui:widget": "textarea"
-        }
-      },
-      "required": [
-        "response_play_id"
-      ],
-      "title": "PagerDutyUpdateResponsePlayConfig",
-      "type": "object"
-    },
     "PagerDutyUpdateRulesetConfig": {
       "description": "Update a legacy Event Ruleset's name.",
       "properties": {
@@ -11575,6 +11280,27 @@
             "auto_select_sole_option": true
           },
           "x-resource-type": "pagerduty_service"
+        },
+        "escalation_policy_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Escalation policy to assign to the service",
+          "title": "Escalation Policy",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste escalation policy ID",
+            "field_name": "escalation_policy_id",
+            "placeholder": "Select an escalation policy...",
+            "searchable": true
+          },
+          "x-resource-type": "pagerduty_escalation_policy"
         },
         "name": {
           "anyOf": [
@@ -12366,7 +12092,6 @@
           "create_notification_rule": "#/$defs/PagerDutyCreateNotificationRuleConfig",
           "create_orchestration_integration": "#/$defs/PagerDutyCreateOrchestrationIntegrationConfig",
           "create_override": "#/$defs/PagerDutyCreateOverrideConfig",
-          "create_response_play": "#/$defs/PagerDutyCreateResponsePlayConfig",
           "create_ruleset": "#/$defs/PagerDutyCreateRulesetConfig",
           "create_ruleset_rule": "#/$defs/PagerDutyCreateRulesetRuleConfig",
           "create_runner": "#/$defs/PagerDutyCreateRunnerConfig",
@@ -12399,7 +12124,6 @@
           "delete_orchestration_integration": "#/$defs/PagerDutyDeleteOrchestrationIntegrationConfig",
           "delete_override": "#/$defs/PagerDutyDeleteOverrideConfig",
           "delete_priority_thresholds": "#/$defs/PagerDutyDeletePriorityThresholdsConfig",
-          "delete_response_play": "#/$defs/PagerDutyDeleteResponsePlayConfig",
           "delete_ruleset": "#/$defs/PagerDutyDeleteRulesetConfig",
           "delete_ruleset_rule": "#/$defs/PagerDutyDeleteRulesetRuleConfig",
           "delete_runner": "#/$defs/PagerDutyDeleteRunnerConfig",
@@ -12449,7 +12173,6 @@
           "get_raw_incident": "#/$defs/PagerDutyGetRawIncidentConfig",
           "get_raw_incident_responses": "#/$defs/PagerDutyRawIncidentResponsesConfig",
           "get_related_incidents": "#/$defs/PagerDutyGetRelatedIncidentsConfig",
-          "get_response_play": "#/$defs/PagerDutyGetResponsePlayConfig",
           "get_ruleset": "#/$defs/PagerDutyGetRulesetConfig",
           "get_ruleset_rule": "#/$defs/PagerDutyGetRulesetRuleConfig",
           "get_runner": "#/$defs/PagerDutyGetRunnerConfig",
@@ -12508,7 +12231,6 @@
           "list_overrides": "#/$defs/PagerDutyListOverridesConfig",
           "list_priorities": "#/$defs/PagerDutyListPrioritiesConfig",
           "list_related_change_events": "#/$defs/PagerDutyListRelatedChangeEventsConfig",
-          "list_response_plays": "#/$defs/PagerDutyListResponsePlaysConfig",
           "list_ruleset_rules": "#/$defs/PagerDutyListRulesetRulesConfig",
           "list_rulesets": "#/$defs/PagerDutyListRulesetsConfig",
           "list_runners": "#/$defs/PagerDutyListRunnersConfig",
@@ -12543,7 +12265,6 @@
           "remove_team_escalation_policy": "#/$defs/PagerDutyRemoveTeamEscalationPolicyConfig",
           "remove_team_member": "#/$defs/PagerDutyRemoveTeamMemberConfig",
           "render_template": "#/$defs/PagerDutyRenderTemplateConfig",
-          "run_response_play": "#/$defs/PagerDutyRunResponsePlayConfig",
           "send_change_event": "#/$defs/PagerDutySendChangeEventConfig",
           "send_event": "#/$defs/PagerDutySendEventConfig",
           "set_priority_threshold": "#/$defs/PagerDutySetPriorityThresholdConfig",
@@ -12570,7 +12291,6 @@
           "update_orchestration_global": "#/$defs/PagerDutyUpdateOrchestrationGlobalConfig",
           "update_orchestration_integration": "#/$defs/PagerDutyUpdateOrchestrationIntegrationConfig",
           "update_orchestration_router": "#/$defs/PagerDutyUpdateOrchestrationRouterConfig",
-          "update_response_play": "#/$defs/PagerDutyUpdateResponsePlayConfig",
           "update_ruleset": "#/$defs/PagerDutyUpdateRulesetConfig",
           "update_ruleset_rule": "#/$defs/PagerDutyUpdateRulesetRuleConfig",
           "update_runner": "#/$defs/PagerDutyUpdateRunnerConfig",
@@ -13002,24 +12722,6 @@
         },
         {
           "$ref": "#/$defs/PagerDutyDeleteRulesetRuleConfig"
-        },
-        {
-          "$ref": "#/$defs/PagerDutyListResponsePlaysConfig"
-        },
-        {
-          "$ref": "#/$defs/PagerDutyGetResponsePlayConfig"
-        },
-        {
-          "$ref": "#/$defs/PagerDutyCreateResponsePlayConfig"
-        },
-        {
-          "$ref": "#/$defs/PagerDutyUpdateResponsePlayConfig"
-        },
-        {
-          "$ref": "#/$defs/PagerDutyDeleteResponsePlayConfig"
-        },
-        {
-          "$ref": "#/$defs/PagerDutyRunResponsePlayConfig"
         },
         {
           "$ref": "#/$defs/PagerDutyListAutomationActionsConfig"
