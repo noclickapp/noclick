@@ -1027,5 +1027,6 @@
     "Preview a subscription change before applying it",
     "Read an invoice and its payment status"
   ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "x-agent-tool-provider": true
 }
