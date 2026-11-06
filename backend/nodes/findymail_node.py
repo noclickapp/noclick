@@ -676,7 +676,7 @@ class FindymailRemoveExcludedDomainsConfig(BaseModel):
 
 
 class FindymailLookalikeSearchConfig(BaseModel):
-    """Find companies similar to seed companies."""
+    """Find companies similar to a seed company."""
 
     operation: Literal["lookalike_search"] = Field(
         "lookalike_search",
@@ -691,8 +691,8 @@ class FindymailLookalikeSearchConfig(BaseModel):
     )
     domains: str = Field(
         ...,
-        title="Seed Domains",
-        description="Seed company domains, comma-separated (e.g. acme.com, globex.com)",
+        title="Seed Domain",
+        description="One seed company domain or URL (e.g. stripe.com)",
     )
     limit: Optional[str] = Field(
         None, title="Limit", description="Max number of lookalike companies to return"
@@ -2026,8 +2026,11 @@ class FindymailNode(ExternalWebhookTriggerMixin, WorkflowNode):
     # Discovery handlers
     # ------------------------------------------------------------------
     async def _lookalike_search(self, c: FindymailLookalikeSearchConfig, api_key: str) -> Dict[str, Any]:
+        seeds = _comma_list(c.domains)
+        if not seeds or len(seeds) != 1:
+            raise ValueError("Lookalike search requires exactly one seed company domain or URL")
         body = {
-            "domains": _comma_list(c.domains),
+            "seed": seeds[0],
             "limit": _optional_int(c.limit),
         }
         return await _findymail_request(

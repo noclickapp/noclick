@@ -1370,7 +1370,7 @@
       "type": "object"
     },
     "FindymailLookalikeSearchConfig": {
-      "description": "Find companies similar to seed companies.",
+      "description": "Find companies similar to a seed company.",
       "properties": {
         "operation": {
           "const": "lookalike_search",
@@ -1383,8 +1383,8 @@
           "x-is-trigger": false
         },
         "domains": {
-          "description": "Seed company domains, comma-separated (e.g. acme.com, globex.com)",
-          "title": "Seed Domains",
+          "description": "One seed company domain or URL (e.g. stripe.com)",
+          "title": "Seed Domain",
           "type": "string"
         },
         "limit": {
