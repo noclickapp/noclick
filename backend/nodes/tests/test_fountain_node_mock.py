@@ -132,8 +132,9 @@ async def test_wrong_parent_prevents_write_and_sensitive_projection(transport):
     def reply(request):
         return httpx.Response(200, json=OPENING_ROW if "/funnels/" in request.url.path else {**APPLICANT_ROW, "funnel": {"id": OTHER}})
     transport[1]["handler"] = reply
-    result = await run("update_applicant", {"opening_id": OPENING, "applicant_id": APPLICANT, "body": {"name": "New"}})
-    assert result["status"] == "error" and all(call.method == "GET" for call in transport[0])
+    with pytest.raises(ValueError, match="belongs to a different opening"):
+        await run("update_applicant", {"opening_id": OPENING, "applicant_id": APPLICANT, "body": {"name": "New"}})
+    assert all(call.method == "GET" for call in transport[0])
     projection = api.project({**APPLICANT_ROW, "secure_data": {"ssn": "private"}, "data": {"secret": "x"}, "video_urls": ["https://private.test"], "i9_status": {"status": "complete"}}, "applicant", opening_id=OPENING)
     assert not {"secure_data", "data", "video_urls", "i9_status", "key"} & projection.keys()
 
@@ -172,8 +173,9 @@ def test_pagination_unknown_cursor_and_bad_boundaries():
 @pytest.mark.parametrize("response", [httpx.Response(200, text="<html>", headers={"Content-Type": "text/html"}), httpx.Response(200, content=b'{"funnels":[],"funnels":[]}', headers={"Content-Type": "application/json"}), httpx.Response(200, json={"error": CREDENTIAL["api_key"]}), httpx.Response(429, headers={"Retry-After": "10"}, json={"secret": CREDENTIAL["api_key"]})])
 async def test_media_error_and_quota_never_become_success(transport, response):
     transport[1]["handler"] = lambda _: response
-    result = await run("list_openings")
-    assert result["status"] == "error" and CREDENTIAL["api_key"] not in str(result)
+    with pytest.raises(ValueError) as error:
+        await run("list_openings")
+    assert CREDENTIAL["api_key"] not in str(error.value)
     assert len(transport[0]) == 1
 
 
@@ -289,6 +291,7 @@ async def test_untrusted_post_connect_context_cannot_claim_access():
 async def test_escaped_json_credential_echo_withheld(transport):
     secret = 'fixture"private-key'
     transport[1]["handler"] = lambda _: httpx.Response(200, json={"funnels": [], "extra": secret})
-    result = await run_node_operation(node_type="automation-fountain", operation="list_openings", arguments={}, user_id=USER,
-                                      credential_data={**CREDENTIAL, "api_key": secret})
-    assert result["status"] == "error" and secret not in str(result)
+    with pytest.raises(ValueError, match="credential material") as error:
+        await run_node_operation(node_type="automation-fountain", operation="list_openings", arguments={}, user_id=USER,
+                                 credential_data={**CREDENTIAL, "api_key": secret})
+    assert secret not in str(error.value)
