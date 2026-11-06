@@ -240,6 +240,12 @@ class DocspellNode(WorkflowNode):
     def get_config_model(cls): return DocspellNodeConfig
 
     @classmethod
+    def parse_config(cls, config_data):
+        # Folder identifiers are opaque strings. The shared parser's numeric
+        # string coercion would select a different ID than the caller supplied.
+        return DocspellNodeConfig.model_validate(config_data)
+
+    @classmethod
     async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=None, **_kwargs):
         value = guard(credential_data)
         if not credential_id: return value.model_dump()
@@ -249,12 +255,12 @@ class DocspellNode(WorkflowNode):
         return {**fresh.model_dump(), "_docspell_reader": reader}
 
     @classmethod
-    async def load_field_options(cls, field_name, credential_data, context=None, search_query=None, page_token=None):
+    async def load_field_options(cls, field_name, credential_data, context=None, search=None, page_token=None):
         value = guard(credential_data); reader = credential_data.get("_docspell_reader")
         if reader is not None and not isinstance(reader, Reader): raise ValueError("Invalid Docspell current-row reader")
         try:
             if field_name != "folder_id" or page_token is not None: raise ValueError("Docspell has one folder picker and no documented paging")
-            search = "" if search_query is None else search_query
+            search = "" if search is None else search
             if not isinstance(search, str) or len(search) > 256: raise ValueError("Supply a bounded local Docspell picker search")
             rows = catalog(await request(value, "folders", reader=reader), "folder")
             if len(rows) > MAX_OUTPUT: raise ValueError("Docspell picker exceeds local100 output bound; completeness remains unknown")

@@ -104,7 +104,7 @@ async def test_local_output_and_picker_bounds_do_not_claim_completion(monkeypatc
     with pytest.raises(ValueError): await p.DocspellNode.load_field_options("folder_id", KEY, page_token="synthetic")
     assert calls == []
     wire(monkeypatch)
-    options = await p.DocspellNode.load_field_options("folder_id", KEY, search_query="opaque")
+    options = await p.DocspellNode.load_field_options("folder_id", KEY, search="opaque")
     assert options == {"options": [{"value": FOLDER["id"], "label": "Folder " + FOLDER["id"]}], "next_page_token": None}
 
 
