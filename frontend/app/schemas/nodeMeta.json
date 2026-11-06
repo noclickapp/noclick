@@ -261,6 +261,9 @@
     "automation-elevenlabs": {
       "agentToolProvider": true
     },
+    "automation-etsy": {
+      "agentToolProvider": true
+    },
     "automation-exa": {
       "agentToolProvider": true,
       "triggerOperations": [
