@@ -269,12 +269,15 @@ class ForgejoNode(WorkflowNode):
             except ValueError as error: raise ConfigValidationError(str(error)) from None
         return super().parse_config(data)
     @classmethod
-    async def freshen_credential(cls, credential_data, **kwargs):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        return await cls._load_current_credential(credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
+    @classmethod
+    async def _load_current_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=None):
         _credential(credential_data)
-        if not kwargs.get("credential_id"): return credential_data
-        organization = kwargs.get("organization_id")
-        if organization is None and not kwargs.get("workflow_id"): organization = CURRENT_ORGANIZATION
-        store = ForgejoCredentialStore(kwargs.get("pool"), kwargs.get("user_id"), kwargs["credential_id"], credential_type="forgejo_pat", validate=_stored, organization_id=organization, workflow_id=kwargs.get("workflow_id"))
+        if not credential_id: return credential_data
+        organization = organization_id
+        if organization is None and not workflow_id: organization = CURRENT_ORGANIZATION
+        store = ForgejoCredentialStore(pool, user_id, credential_id, credential_type="forgejo_pat", validate=_stored, organization_id=organization, workflow_id=workflow_id)
         try: return _CurrentCredential(await store.load(), store)
         except Exception: raise ValueError("Forgejo saved PAT unavailable under current authority") from None
     @classmethod
@@ -343,5 +346,5 @@ class ForgejoNode(WorkflowNode):
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         raw = self.node_data.get("credentials") if self.node_data.get("credentials") is not None else self.config.credentials
         initial = _credential(raw)
-        credential = await self.freshen_credential(initial.model_dump(mode="json"), pool=self.node_data.get("_approval_pool"), user_id=self.user_id, credential_id=self.node_data["credential_id"], workflow_id=self.workflow_id, organization_id=self.organization_id) if self.node_data.get("credential_id") else initial
+        credential = await self._load_current_credential(initial.model_dump(mode="json"), pool=self.node_data.get("_approval_pool"), user_id=self.user_id, credential_id=self.node_data["credential_id"], workflow_id=self.workflow_id, organization_id=self.organization_id) if self.node_data.get("credential_id") else initial
         return await self._dispatch(credential, self.config.config)
