@@ -246,7 +246,7 @@
           "x-display-name": "Add Hour Entry"
         },
         "fields_json": {
-          "description": "e.g. {\"employeeId\":123,\"date\":\"2026-01-01\",\"hours\":8}",
+          "description": "JSON object with timeTrackingId (your unique record ID), employeeId, dateHoursWorked (YYYY-MM-DD), hoursWorked, and rateType (REG, OT, or DT).",
           "title": "Hour Entry (JSON)",
           "type": "string",
           "ui:widget": "textarea"
@@ -1533,10 +1533,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -1660,10 +1660,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -1788,10 +1788,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -1921,10 +1921,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -2048,10 +2048,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -2162,11 +2162,11 @@
         "operation": {
           "const": "get_timesheet_summary",
           "default": "get_timesheet_summary",
-          "title": "Get Timesheet Summary",
+          "title": "List Timesheet Entries",
           "type": "string",
           "ui:hidden": true,
           "x-category": "Time Tracking",
-          "x-display-name": "Get Timesheet Summary"
+          "x-display-name": "List Timesheet Entries"
         },
         "employee_ids": {
           "description": "Comma-separated employee IDs",
@@ -2318,7 +2318,7 @@
           "type": "string"
         },
         "fields_json": {
-          "description": "Fields to change, e.g. {\"hours\":6.5}",
+          "description": "Fields to change, including hoursWorked, e.g. {\"hoursWorked\":6}",
           "title": "Fields (JSON)",
           "type": "string",
           "ui:widget": "textarea"

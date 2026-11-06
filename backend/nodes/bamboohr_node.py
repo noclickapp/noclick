@@ -479,8 +479,8 @@ class BambooWhosOutConfig(BaseModel):
 class BambooTimesheetSummaryConfig(BaseModel):
     operation: Literal["get_timesheet_summary"] = Field(
         "get_timesheet_summary",
-        json_schema_extra={"const": "get_timesheet_summary", "ui:hidden": True, "x-category": "Time Tracking", "x-display-name": "Get Timesheet Summary"},
-        title="Get Timesheet Summary",
+        json_schema_extra={"const": "get_timesheet_summary", "ui:hidden": True, "x-category": "Time Tracking", "x-display-name": "List Timesheet Entries"},
+        title="List Timesheet Entries",
     )
     employee_ids: str = Field(..., title="Employee IDs", description="Comma-separated employee IDs")
     start: str = _date_field("Start Date", "Range start")
@@ -515,7 +515,7 @@ class BambooAddTimeTrackingConfig(BaseModel):
         json_schema_extra={"const": "add_time_tracking", "ui:hidden": True, "x-category": "Time Tracking", "x-display-name": "Add Hour Entry"},
         title="Add Hour Entry",
     )
-    fields_json: str = Field(..., title="Hour Entry (JSON)", description='e.g. {"employeeId":123,"date":"2026-01-01","hours":8}', json_schema_extra={"ui:widget": "textarea"})
+    fields_json: str = Field(..., title="Hour Entry (JSON)", description="JSON object with timeTrackingId (your unique record ID), employeeId, dateHoursWorked (YYYY-MM-DD), hoursWorked, and rateType (REG, OT, or DT).", json_schema_extra={"ui:widget": "textarea"})
 
 
 class BambooUpdateTimeTrackingConfig(BaseModel):
@@ -525,7 +525,7 @@ class BambooUpdateTimeTrackingConfig(BaseModel):
         title="Update Hour Entry",
     )
     time_tracking_id: str = Field(..., title="Time Tracking ID", description="The time-tracking entry id")
-    fields_json: str = Field(..., title="Fields (JSON)", description='Fields to change, e.g. {"hours":6.5}', json_schema_extra={"ui:widget": "textarea"})
+    fields_json: str = Field(..., title="Fields (JSON)", description='Fields to change, including hoursWorked, e.g. {"hoursWorked":6}', json_schema_extra={"ui:widget": "textarea"})
 
 
 class BambooDeleteTimeTrackingConfig(BaseModel):
@@ -1238,7 +1238,7 @@ class BambooHRNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     async def _update_table_row(self, c, auth):
         body = _parse_json_field(c.fields_json, "Row Fields")
-        return await _bamboo_request(auth, "PUT", f"/employees/{c.employee_id}/tables/{c.table_name}/{c.row_id}", json_body=body, action_name="update_table_row")
+        return await _bamboo_request(auth, "POST", f"/employees/{c.employee_id}/tables/{c.table_name}/{c.row_id}", json_body=body, action_name="update_table_row")
 
     async def _delete_table_row(self, c, auth):
         return await _bamboo_request(auth, "DELETE", f"/employees/{c.employee_id}/tables/{c.table_name}/{c.row_id}", action_name="delete_table_row")
@@ -1289,26 +1289,27 @@ class BambooHRNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     # -- Time tracking handlers ------------------------------------------
     async def _timesheet_summary(self, c, auth):
+        # Keep the persisted operation key; the date-range API returns entries.
         params = {"employeeIds": c.employee_ids, "start": c.start, "end": c.end}
-        return await _bamboo_request(auth, "GET", "/timesheet/summary", params=params, action_name="get_timesheet_summary")
+        return await _bamboo_request(auth, "GET", "/time_tracking/timesheet_entries", params=params, action_name="get_timesheet_summary")
 
     async def _clock_in(self, c, auth):
-        body = {"employeeId": c.employee_id, **_parse_json_field(c.fields_json, "Options")}
-        return await _bamboo_request(auth, "POST", "/timesheet/clock_in", json_body=body, action_name="clock_in")
+        body = _parse_json_field(c.fields_json, "Options")
+        return await _bamboo_request(auth, "POST", f"/time_tracking/employees/{c.employee_id}/clock_in", json_body=body, action_name="clock_in")
 
     async def _clock_out(self, c, auth):
-        return await _bamboo_request(auth, "POST", "/timesheet/clock_out", json_body={"employeeId": c.employee_id}, action_name="clock_out")
+        return await _bamboo_request(auth, "POST", f"/time_tracking/employees/{c.employee_id}/clock_out", json_body={}, action_name="clock_out")
 
     async def _add_time_tracking(self, c, auth):
         body = _parse_json_field(c.fields_json, "Hour Entry")
-        return await _bamboo_request(auth, "POST", "/time_tracking", json_body=body, action_name="add_time_tracking")
+        return await _bamboo_request(auth, "POST", "/timetracking/add", json_body=body, action_name="add_time_tracking")
 
     async def _update_time_tracking(self, c, auth):
-        body = _parse_json_field(c.fields_json, "Fields")
-        return await _bamboo_request(auth, "PUT", f"/time_tracking/{c.time_tracking_id}", json_body=body, action_name="update_time_tracking")
+        body = {**_parse_json_field(c.fields_json, "Fields"), "timeTrackingId": c.time_tracking_id}
+        return await _bamboo_request(auth, "PUT", "/timetracking/adjust", json_body=body, action_name="update_time_tracking")
 
     async def _delete_time_tracking(self, c, auth):
-        return await _bamboo_request(auth, "DELETE", f"/time_tracking/{c.time_tracking_id}", action_name="delete_time_tracking")
+        return await _bamboo_request(auth, "DELETE", f"/timetracking/delete/{c.time_tracking_id}", action_name="delete_time_tracking")
 
     # -- Report handlers --------------------------------------------------
     async def _list_datasets(self, c, auth):

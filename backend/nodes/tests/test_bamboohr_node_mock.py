@@ -40,6 +40,11 @@ from nodes.bamboohr_node import (
     BambooWhosOutConfig,
     BambooListTimeOffTypesConfig,
     BambooClockInConfig,
+    BambooClockOutConfig,
+    BambooTimesheetSummaryConfig,
+    BambooAddTimeTrackingConfig,
+    BambooUpdateTimeTrackingConfig,
+    BambooDeleteTimeTrackingConfig,
     BambooListDatasetsConfig,
     BambooGetReportConfig,
     BambooCustomReportConfig,
@@ -217,7 +222,7 @@ class TestBambooHREmployees:
         mc = create_mock_client(200, {})
         await _run(BambooUpdateTableRowConfig(employee_id="42", table_name="jobInfo", row_id="7", fields_json='{"x":1}'), api_key_credentials, mc)
         call = last(mc)
-        assert call["method"] == "PUT"
+        assert call["method"] == "POST"
         assert "/v1/employees/42/tables/jobInfo/7" in call["url"]
 
     @pytest.mark.asyncio
@@ -300,8 +305,48 @@ class TestBambooHRMisc:
         await _run(BambooClockInConfig(employee_id="42", fields_json='{"note":"start"}'), api_key_credentials, mc)
         call = last(mc)
         assert call["method"] == "POST"
-        assert call["url"].endswith("/timesheet/clock_in")
-        assert call["json"] == {"employeeId": "42", "note": "start"}
+        assert call["url"].endswith("/time_tracking/employees/42/clock_in")
+        assert call["json"] == {"note": "start"}
+
+    @pytest.mark.asyncio
+    async def test_clock_out(self, api_key_credentials):
+        mc = create_mock_client(200, {})
+        await _run(BambooClockOutConfig(employee_id="42"), api_key_credentials, mc)
+        assert last(mc)["method"] == "POST"
+        assert last(mc)["url"].endswith("/time_tracking/employees/42/clock_out")
+        assert last(mc)["json"] == {}
+
+    @pytest.mark.asyncio
+    async def test_timesheet_entries_preserves_range_and_employee_filter(self, api_key_credentials):
+        mc = create_mock_client(200, {"entries": []})
+        await _run(BambooTimesheetSummaryConfig(employee_ids="1,2,3", start="2025-01-01", end="2025-03-01"), api_key_credentials, mc)
+        assert last(mc)["method"] == "GET"
+        assert last(mc)["url"].endswith("/time_tracking/timesheet_entries")
+        assert last(mc)["params"] == {"employeeIds": "1,2,3", "start": "2025-01-01", "end": "2025-03-01"}
+
+    @pytest.mark.asyncio
+    async def test_add_hour_record(self, api_key_credentials):
+        mc = create_mock_client(201, {})
+        record = {"timeTrackingId": "hours-42", "employeeId": 42, "dateHoursWorked": "2025-01-01", "hoursWorked": 8, "rateType": "REG"}
+        await _run(BambooAddTimeTrackingConfig(fields_json=json.dumps(record)), api_key_credentials, mc)
+        assert last(mc)["method"] == "POST"
+        assert last(mc)["url"].endswith("/timetracking/add")
+        assert last(mc)["json"] == record
+
+    @pytest.mark.asyncio
+    async def test_adjust_hour_record_uses_selected_id(self, api_key_credentials):
+        mc = create_mock_client(200, {})
+        await _run(BambooUpdateTimeTrackingConfig(time_tracking_id="hours-42", fields_json='{"hoursWorked":6,"timeTrackingId":"other"}'), api_key_credentials, mc)
+        assert last(mc)["method"] == "PUT"
+        assert last(mc)["url"].endswith("/timetracking/adjust")
+        assert last(mc)["json"] == {"hoursWorked": 6, "timeTrackingId": "hours-42"}
+
+    @pytest.mark.asyncio
+    async def test_delete_hour_record(self, api_key_credentials):
+        mc = create_mock_client(200, {})
+        await _run(BambooDeleteTimeTrackingConfig(time_tracking_id="hours-42"), api_key_credentials, mc)
+        assert last(mc)["method"] == "DELETE"
+        assert last(mc)["url"].endswith("/timetracking/delete/hours-42")
 
     @pytest.mark.asyncio
     async def test_list_datasets(self, api_key_credentials):
