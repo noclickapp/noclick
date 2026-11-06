@@ -2,8 +2,8 @@
 Sentry (error-tracking / APM) automation node.
 
 Covers Sentry's public REST API (``/api/0/``): organizations, projects, teams,
-issues, events, releases + deploys, members, crons/monitors, dashboards,
-Discover queries, and service hooks — plus a
+issues, events, releases + deploys, members, issue-alert rules, metric-alert
+rules, crons/monitors, dashboards, Discover queries, and service hooks — plus a
 push trigger backed by Sentry **service hooks** (project webhooks) for
 ``event.created`` (On Error) and ``event.alert`` (On Alert). Service hooks are
 the ONLY REST-registerable per-URL webhook Sentry offers, so those two events are
@@ -163,12 +163,16 @@ _CREATES_RESOURCE: Dict[str, tuple] = {
     "create_team": ("sentry_team", "data.slug"),
     "create_monitor": ("sentry_monitor", "data.slug"),
     "create_dashboard": ("sentry_dashboard", "data.id"),
+    "create_metric_alert": ("sentry_metric_alert", "data.id"),
+    "create_issue_alert": ("sentry_issue_alert", "data.id"),
 }
 _FIELD_RESOURCE_TYPE: Dict[str, str] = {
     "project_slug": "sentry_project",
     "team_slug": "sentry_team",
     "monitor_slug": "sentry_monitor",
     "dashboard_id": "sentry_dashboard",
+    "alert_rule_id": "sentry_metric_alert",
+    "rule_id": "sentry_issue_alert",
 }
 
 
@@ -435,6 +439,73 @@ class SentryRemoveMemberConfig(BaseModel):
     member_id: str = Field(..., title="Member", json_schema_extra=_dyn("member_id", "Select a member…", "Or paste a member id"))
 
 
+class _SentryAlertConfig(BaseModel):
+    alert_api: Literal["legacy", "current"] = Field(
+        "legacy", title="Alert API",
+        description="Saved actions keep the legacy API. To migrate, choose current, replace rule/alert IDs with workflow/detector IDs, and use the current API JSON payload. Existing field names remain aliases.",
+        json_schema_extra={"x-help-url": "https://docs.sentry.io/api/monitors/"},
+    )
+
+
+# ---- Issue alert rules ----
+class SentryListIssueAlertsConfig(_SentryAlertConfig):
+    operation: Literal["list_issue_alerts"] = _op("list_issue_alerts", "Alerts", "List Issue Alert Rules", ["rules"])
+    project_slug: str = _project()
+
+
+class SentryCreateIssueAlertConfig(_SentryAlertConfig):
+    operation: Literal["create_issue_alert"] = _op("create_issue_alert", "Alerts", "Create Issue Alert Rule")
+    project_slug: str = _project()
+    body_json: str = Field(..., title="Rule (JSON)", description='Alert rule definition, e.g. {"name":"…","conditions":[…],"actions":[…],"frequency":30}', json_schema_extra={"ui:widget": "textarea"})
+
+
+class SentryGetIssueAlertConfig(_SentryAlertConfig):
+    operation: Literal["get_issue_alert"] = _op("get_issue_alert", "Alerts", "Get Issue Alert Rule")
+    project_slug: str = _project()
+    rule_id: str = Field(..., title="Rule", json_schema_extra=_dyn("rule_id", "Select a rule…", "Or paste a rule id", depends_on="project_slug"))
+
+
+class SentryUpdateIssueAlertConfig(_SentryAlertConfig):
+    operation: Literal["update_issue_alert"] = _op("update_issue_alert", "Alerts", "Update Issue Alert Rule")
+    project_slug: str = _project()
+    rule_id: str = Field(..., title="Rule", json_schema_extra=_dyn("rule_id", "Select a rule…", "Or paste a rule id", depends_on="project_slug"))
+    body_json: str = Field(..., title="Rule (JSON)", description="The FULL updated rule — Sentry replaces it wholesale, so include name, conditions, and actions (a rule with no action is rejected)", json_schema_extra={"ui:widget": "textarea"})
+
+
+class SentryDeleteIssueAlertConfig(_SentryAlertConfig):
+    operation: Literal["delete_issue_alert"] = _op("delete_issue_alert", "Alerts", "Delete Issue Alert Rule")
+    project_slug: str = _project()
+    rule_id: str = Field(..., title="Rule", json_schema_extra=_dyn("rule_id", "Select a rule…", "Or paste a rule id", depends_on="project_slug"))
+
+
+# ---- Metric alert rules ----
+class SentryListMetricAlertsConfig(_SentryAlertConfig):
+    operation: Literal["list_metric_alerts"] = _op("list_metric_alerts", "Alerts", "List Metric Alert Rules")
+    limit: Optional[str] = _limit()
+
+
+class SentryCreateMetricAlertConfig(_SentryAlertConfig):
+    project_slug: Optional[str] = Field(None, title="Project for Current API", description="Required when migrating creation to the current detector API", json_schema_extra=_dyn("project_slug", "Select a project…", "Or paste a project slug"))
+    operation: Literal["create_metric_alert"] = _op("create_metric_alert", "Alerts", "Create Metric Alert Rule")
+    body_json: str = Field(..., title="Rule (JSON)", description='Metric alert definition (name, aggregate, timeWindow, triggers, projects, …)', json_schema_extra={"ui:widget": "textarea"})
+
+
+class SentryGetMetricAlertConfig(_SentryAlertConfig):
+    operation: Literal["get_metric_alert"] = _op("get_metric_alert", "Alerts", "Get Metric Alert Rule")
+    alert_rule_id: str = Field(..., title="Metric Alert Rule", json_schema_extra=_dyn("alert_rule_id", "Select a metric alert…", "Or paste an alert rule id"))
+
+
+class SentryUpdateMetricAlertConfig(_SentryAlertConfig):
+    operation: Literal["update_metric_alert"] = _op("update_metric_alert", "Alerts", "Update Metric Alert Rule")
+    alert_rule_id: str = Field(..., title="Metric Alert Rule", json_schema_extra=_dyn("alert_rule_id", "Select a metric alert…", "Or paste an alert rule id"))
+    body_json: str = Field(..., title="Fields (JSON)", json_schema_extra={"ui:widget": "textarea"})
+
+
+class SentryDeleteMetricAlertConfig(_SentryAlertConfig):
+    operation: Literal["delete_metric_alert"] = _op("delete_metric_alert", "Alerts", "Delete Metric Alert Rule")
+    alert_rule_id: str = Field(..., title="Metric Alert Rule", json_schema_extra=_dyn("alert_rule_id", "Select a metric alert…", "Or paste an alert rule id"))
+
+
 # ---- Monitors (crons) ----
 class SentryListMonitorsConfig(BaseModel):
     operation: Literal["list_monitors"] = _op("list_monitors", "Crons", "List Monitors", ["cron", "scheduled jobs"])
@@ -498,8 +569,8 @@ class SentryDiscoverConfig(BaseModel):
     project_slug: Optional[str] = _project(required=False)
     environment: Optional[str] = Field(None, title="Environment", description="Filter to an environment (optional)",
                                        json_schema_extra=_dyn("environment", "Select an environment…", "Or paste an environment name"))
-    dataset: str = Field("errors", title="Dataset", description="The event dataset to query (defaults to errors)", json_schema_extra={
-        "enum": ["errors", "logs", "profile_functions", "spans", "tracemetrics", "uptime_results"], "x-enum-searchable": True})
+    dataset: Optional[str] = Field(None, title="Dataset", json_schema_extra={
+        "enum": ["", "errors", "transactions", "spans", "logs", "profile_functions", "tracemetrics", "uptime_results"], "x-enum-searchable": True})
     limit: Optional[str] = _limit()
 
 
@@ -593,6 +664,8 @@ _ACTION_CONFIGS = (
     SentryListReleasesConfig, SentryCreateReleaseConfig, SentryGetReleaseConfig, SentryUpdateReleaseConfig,
     SentryDeleteReleaseConfig, SentryListDeploysConfig, SentryCreateDeployConfig,
     SentryListMembersConfig, SentryInviteMemberConfig, SentryGetMemberConfig, SentryUpdateMemberConfig, SentryRemoveMemberConfig,
+    SentryListIssueAlertsConfig, SentryCreateIssueAlertConfig, SentryGetIssueAlertConfig, SentryUpdateIssueAlertConfig, SentryDeleteIssueAlertConfig,
+    SentryListMetricAlertsConfig, SentryCreateMetricAlertConfig, SentryGetMetricAlertConfig, SentryUpdateMetricAlertConfig, SentryDeleteMetricAlertConfig,
     SentryListMonitorsConfig, SentryCreateMonitorConfig, SentryGetMonitorConfig, SentryUpdateMonitorConfig, SentryDeleteMonitorConfig, SentryListCheckinsConfig,
     SentryListDashboardsConfig, SentryCreateDashboardConfig, SentryGetDashboardConfig, SentryDeleteDashboardConfig,
     SentryDiscoverConfig, SentryEventsStatsConfig, SentrySessionsConfig,
@@ -700,6 +773,26 @@ def _proj_path(cred: Dict[str, Any], project: str, resource: str) -> str:
     return f"/api/0/projects/{cred.get('organization_slug')}/{project}/{resource}"
 
 
+def _alert_output(data, *, metric):
+    """Retain native fields and add legacy keys only where units and meaning agree."""
+    if not isinstance(data, dict):
+        return data
+    out = dict(data)
+    if metric:
+        sources = data.get("dataSources") or []
+        if len(sources) == 1 and isinstance(sources[0], dict):
+            query = (sources[0].get("queryObj") or {}).get("snubaQuery") or {}
+            for key in ("aggregate", "dataset", "query", "environment", "eventTypes"):
+                if key in query:
+                    out.setdefault(key, query[key])
+            if isinstance(query.get("timeWindow"), (int, float)):
+                seconds = query["timeWindow"]
+                out.setdefault("timeWindow", seconds // 60 if seconds % 60 == 0 else seconds / 60)
+    elif "frequency" in (data.get("config") or {}):
+        out.setdefault("frequency", data["config"]["frequency"])
+    return out
+
+
 async def _default_org(cred: Dict[str, Any]) -> Optional[str]:
     """First accessible org slug (so OAuth users needn't type it)."""
     result = await _rest_request(cred, "GET", "/api/0/organizations/", params={"per_page": 1}, action_name="resolve_org")
@@ -715,12 +808,14 @@ _DYNAMIC_ORG_FIELDS: Dict[str, tuple] = {
     "release_version": ("releases", "version", ("shortVersion", "version")),
     "member_id": ("members", "id", ("email", "name")),
     "monitor_slug": ("monitors", "slug", ("name", "slug")),
+    "alert_rule_id": ("alert-rules", "id", ("name",)),
     "dashboard_id": ("dashboards", "id", ("title",)),
     "environment": ("environments", "name", ("name",)),
 }
 
 # Project-scoped dropdowns (need a project_slug from the sibling field via context).
 _DYNAMIC_PROJECT_FIELDS: Dict[str, tuple] = {
+    "rule_id": ("rules", "id", ("name",)),
     "hook_id": ("hooks", "id", ("url",)),
 }
 
@@ -750,6 +845,30 @@ class SentryNode(ExternalWebhookTriggerMixin, WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return SentryNodeConfig
+
+    @classmethod
+    def migrate_alert_config(cls, config, *, resource_id=None, current_body=None, project_slug=None):
+        """Explicit migration; IDs and native payloads must be supplied, never inferred."""
+        parsed = cls.get_config_model().model_validate({"config": config}).config
+        if not isinstance(parsed, _SentryAlertConfig):
+            raise ValueError("Only issue-alert and metric-alert configurations can be migrated")
+        migrated = parsed.model_dump()
+        action = parsed.operation.split("_", 1)[0]
+        metric = "metric_alert" in parsed.operation
+        if action in {"get", "update", "delete"}:
+            if resource_id is None:
+                raise ValueError("Supply the migrated workflow or detector ID; legacy IDs cannot be inferred")
+            migrated["alert_rule_id" if metric else "rule_id"] = str(resource_id)
+        if action in {"create", "update"}:
+            if not isinstance(current_body, dict):
+                raise ValueError("Supply the translated current API payload as current_body")
+            migrated["body_json"] = json.dumps(current_body)
+        if metric and action == "create":
+            if not project_slug:
+                raise ValueError("Supply project_slug for the migrated detector")
+            migrated["project_slug"] = project_slug
+        migrated["alert_api"] = "current"
+        return cls.get_config_model().model_validate({"config": migrated}).config.model_dump()
 
     # ---- OAuth freshening ----
     @classmethod
@@ -813,8 +932,12 @@ class SentryNode(ExternalWebhookTriggerMixin, WorkflowNode):
         if not cred.get("organization_slug"):
             return {"options": []}
 
+        current_alert = (context or {}).get("alert_api") == "current" and field_name in {"rule_id", "alert_rule_id"}
         # Project-scoped fields (rules, service hooks) depend on the chosen project.
-        if field_name in _DYNAMIC_PROJECT_FIELDS:
+        if current_alert:
+            path = _org_path(cred, "workflows" if field_name == "rule_id" else "detectors")
+            value_key, label_keys = "id", ("name",)
+        elif field_name in _DYNAMIC_PROJECT_FIELDS:
             project = (context or {}).get("project_slug")
             if not project:
                 return {"options": []}
@@ -827,7 +950,13 @@ class SentryNode(ExternalWebhookTriggerMixin, WorkflowNode):
             return {"options": []}
 
         async def fetch_page(cursor):
-            r = await _rest_request(cred, "GET", f"{path}/", params={"per_page": 100, "cursor": cursor}, action_name=f"list_{field_name}")
+            params = {"per_page": 100, "cursor": cursor}
+            if current_alert:
+                if field_name == "alert_rule_id":
+                    params["type"] = "metric_issue"
+                elif (context or {}).get("project_slug"):
+                    params["project"] = context["project_slug"]
+            r = await _rest_request(cred, "GET", f"{path}/", params=params, action_name=f"list_{field_name}")
             if r.get("status") != "success":
                 return [], None
             rows = r.get("data") or []
@@ -972,7 +1101,10 @@ class SentryNode(ExternalWebhookTriggerMixin, WorkflowNode):
         handler = self._HANDLERS.get(op.operation)
         if not handler:
             raise ValueError(f"Unknown operation: {op.operation}")
-        result = await handler(self, op, cred)
+        if isinstance(op, _SentryAlertConfig) and op.alert_api == "current":
+            result = await self._current_alert(op, cred)
+        else:
+            result = await handler(self, op, cred)
         if isinstance(result, dict):
             result["timing_ms"] = {**result.get("timing_ms", {}), "total": round((time.time() - start) * 1000, 2)}
         return result
@@ -1118,6 +1250,76 @@ class SentryNode(ExternalWebhookTriggerMixin, WorkflowNode):
     async def _remove_member(self, c, cred):
         return await _rest_request(cred, "DELETE", _org_path(cred, f"members/{c.member_id}") + "/", action_name="remove_member")
 
+    async def _current_alert(self, c, cred):
+        """Opt-in migration: rule_id aliases workflow_id; alert_rule_id aliases detector_id."""
+        action, family = c.operation.split("_", 1)
+        metric = family == "metric_alert" or family == "metric_alerts"
+        resource = "detectors" if metric else "workflows"
+        method = {"list": "GET", "get": "GET", "create": "POST", "update": "PUT", "delete": "DELETE"}[action]
+        path = _org_path(cred, resource) + "/"
+        params = None
+        body = None
+        if action == "list":
+            params = {"per_page": getattr(c, "limit", None)}
+            if metric:
+                params["type"] = "metric_issue"
+            else:
+                params["project"] = c.project_slug
+        elif action in {"get", "update", "delete"}:
+            resource_id = c.alert_rule_id if metric else c.rule_id
+            path += f"{resource_id}/"
+        elif metric:
+            if not c.project_slug:
+                raise ValueError("Migrating create_metric_alert requires project_slug for the current detector API")
+            path = _org_path(cred, f"projects/{c.project_slug}/detectors") + "/"
+        if action in {"create", "update"}:
+            body = _parse_json(c.body_json, "Current alert API payload")
+            if not isinstance(body, dict):
+                raise ValueError("Current alert API payload must be a JSON object")
+            legacy_fields = {"aggregate", "timeWindow", "triggers", "projects"} if metric else {"conditions", "actions", "frequency", "actionMatch", "filterMatch"}
+            if legacy_fields.intersection(body):
+                raise ValueError("Translate the legacy alert JSON before selecting current: https://docs.sentry.io/api/monitors/")
+        result = await _rest_request(cred, method, path, params=params, json_body=body, action_name=c.operation)
+        if result.get("status") == "success":
+            data = result.get("data")
+            if isinstance(data, list):
+                result["data"] = [_alert_output(row, metric=metric) for row in data]
+            elif isinstance(data, dict):
+                result["data"] = _alert_output(data, metric=metric)
+        return result
+
+    # ---- Issue alert rules ----
+    async def _list_issue_alerts(self, c, cred):
+        return await _rest_request(cred, "GET", _proj_path(cred, c.project_slug, "rules") + "/", action_name="list_issue_alerts")
+
+    async def _create_issue_alert(self, c, cred):
+        return await _rest_request(cred, "POST", _proj_path(cred, c.project_slug, "rules") + "/", json_body=_parse_json(c.body_json, "Rule"), action_name="create_issue_alert")
+
+    async def _get_issue_alert(self, c, cred):
+        return await _rest_request(cred, "GET", _proj_path(cred, c.project_slug, f"rules/{c.rule_id}") + "/", action_name="get_issue_alert")
+
+    async def _update_issue_alert(self, c, cred):
+        return await _rest_request(cred, "PUT", _proj_path(cred, c.project_slug, f"rules/{c.rule_id}") + "/", json_body=_parse_json(c.body_json, "Fields"), action_name="update_issue_alert")
+
+    async def _delete_issue_alert(self, c, cred):
+        return await _rest_request(cred, "DELETE", _proj_path(cred, c.project_slug, f"rules/{c.rule_id}") + "/", action_name="delete_issue_alert")
+
+    # ---- Metric alert rules ----
+    async def _list_metric_alerts(self, c, cred):
+        return await _rest_request(cred, "GET", _org_path(cred, "alert-rules") + "/", params={"per_page": c.limit}, action_name="list_metric_alerts")
+
+    async def _create_metric_alert(self, c, cred):
+        return await _rest_request(cred, "POST", _org_path(cred, "alert-rules") + "/", json_body=_parse_json(c.body_json, "Rule"), action_name="create_metric_alert")
+
+    async def _get_metric_alert(self, c, cred):
+        return await _rest_request(cred, "GET", _org_path(cred, f"alert-rules/{c.alert_rule_id}") + "/", action_name="get_metric_alert")
+
+    async def _update_metric_alert(self, c, cred):
+        return await _rest_request(cred, "PUT", _org_path(cred, f"alert-rules/{c.alert_rule_id}") + "/", json_body=_parse_json(c.body_json, "Fields"), action_name="update_metric_alert")
+
+    async def _delete_metric_alert(self, c, cred):
+        return await _rest_request(cred, "DELETE", _org_path(cred, f"alert-rules/{c.alert_rule_id}") + "/", action_name="delete_metric_alert")
+
     # ---- Monitors ----
     async def _list_monitors(self, c, cred):
         return await _rest_request(cred, "GET", _org_path(cred, "monitors") + "/", params={"per_page": c.limit}, action_name="list_monitors")
@@ -1203,6 +1405,10 @@ class SentryNode(ExternalWebhookTriggerMixin, WorkflowNode):
         "list_deploys": _list_deploys, "create_deploy": _create_deploy,
         "list_members": _list_members, "invite_member": _invite_member, "get_member": _get_member,
         "update_member": _update_member, "remove_member": _remove_member,
+        "list_issue_alerts": _list_issue_alerts, "create_issue_alert": _create_issue_alert, "get_issue_alert": _get_issue_alert,
+        "update_issue_alert": _update_issue_alert, "delete_issue_alert": _delete_issue_alert,
+        "list_metric_alerts": _list_metric_alerts, "create_metric_alert": _create_metric_alert, "get_metric_alert": _get_metric_alert,
+        "update_metric_alert": _update_metric_alert, "delete_metric_alert": _delete_metric_alert,
         "list_monitors": _list_monitors, "create_monitor": _create_monitor, "get_monitor": _get_monitor,
         "update_monitor": _update_monitor, "delete_monitor": _delete_monitor, "list_checkins": _list_checkins,
         "list_dashboards": _list_dashboards, "create_dashboard": _create_dashboard, "get_dashboard": _get_dashboard,

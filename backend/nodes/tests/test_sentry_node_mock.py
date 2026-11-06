@@ -11,7 +11,9 @@ dropdowns (org-scoped + project-scoped), and the service-hook trigger lifecycle
 import hashlib
 import hmac
 import pytest
-from pydantic import ValidationError
+import json
+from pathlib import Path
+import httpx
 from unittest.mock import Mock, patch
 
 from nodes.sentry_node import (
@@ -192,12 +194,20 @@ async def test_dropdown_organizations_not_org_scoped():
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("field", ["rule_id", "alert_rule_id"])
-async def test_retired_alert_dropdowns_make_no_request(field):
-    with patch("nodes.sentry_node._rest_request") as request:
-        res = await SentryNode.load_field_options(field, cred().model_dump(), context={"project_slug": "web"})
-    assert res == {"options": []}
-    request.assert_not_called()
+async def test_dropdown_rule_id_depends_on_project():
+    calls = []
+
+    async def fake(cred_, method, path, params=None, json_body=None, action_name="request"):
+        calls.append(path)
+        return {"status": "success", "data": [{"id": "77", "name": "High error rate"}], "next_cursor": None}
+
+    with patch("nodes.sentry_node._rest_request", side_effect=fake):
+        # No project in context → no options, no call.
+        empty = await SentryNode.load_field_options("rule_id", cred().model_dump(), context={})
+        assert empty == {"options": []}
+        res = await SentryNode.load_field_options("rule_id", cred().model_dump(), context={"project_slug": "web"})
+    assert "/api/0/projects/acme/web/rules/" in calls
+    assert res["options"] == [{"label": "High error rate", "value": "77"}]
 
 
 @pytest.mark.asyncio
@@ -308,25 +318,138 @@ async def test_trigger_passthrough_in_execute():
     assert result["data"] == payload
 
 
+_ALERT_OPERATIONS = [f"{action}_{family}_alert" + ("s" if action == "list" else "")
+                     for family in ("issue", "metric") for action in ("list", "create", "get", "update", "delete")]
+_CURRENT_EXAMPLES = json.loads((Path(__file__).parent / "fixtures/sentry_current_alerts.json").read_text())
+
+
+def _saved_alert(operation):
+    cfg = {"operation": operation}
+    if "issue" in operation:
+        cfg["project_slug"] = "web"
+        if not operation.startswith(("list", "create")):
+            cfg["rule_id"] = "77"
+    elif not operation.startswith(("list", "create")):
+        cfg["alert_rule_id"] = "88"
+    if operation.startswith(("create", "update")):
+        cfg["body_json"] = '{"name": "Saved rule"}'
+    return cfg
+
+
 @pytest.mark.asyncio
-@pytest.mark.parametrize("dataset", [None, "logs", "spans", "profile_functions", "tracemetrics", "uptime_results"])
-async def test_discover_sends_required_dataset(dataset):
+@pytest.mark.parametrize("operation", _ALERT_OPERATIONS)
+async def test_saved_alert_actions_keep_their_config_routes_and_outputs(operation):
+    parsed = SentryNode.parse_config({"config": _saved_alert(operation)})
+    assert parsed.config.alert_api == "legacy"
+    response = {"status": "success", "action": operation, "data": {"id": "77", "conditions": [], "frequency": 30}}
+    result, cap = await run_rest(parsed.config, response=response)
+    assert result["data"] == response["data"]
+    assert result["action"] == operation
+    assert ("/rules/" if "issue" in operation else "/alert-rules/") in cap["path"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("dataset", ["omitted", None, "", "transactions", "errors"])
+async def test_saved_discover_dataset_preserves_wire_semantics(dataset):
     cfg = {"operation": "query_discover", "field": "count()"}
-    if dataset is not None:
+    if dataset != "omitted":
         cfg["dataset"] = dataset
     parsed = SentryNode.parse_config({"config": cfg})
-    _, cap = await run_rest(parsed.config)
-    assert cap["path"] == "/api/0/organizations/acme/events/"
-    assert cap["params"]["dataset"] == (dataset or "errors")
-    assert cap["params"]["field"] == ["count()"]
+    captured = []
+    def respond(request):
+        captured.append(request)
+        return httpx.Response(200, json={"data": [], "meta": {}})
+    with patch("nodes.sentry_node.guarded_async_client", side_effect=lambda **kw: httpx.AsyncClient(transport=httpx.MockTransport(respond))):
+        result = await node(parsed.config).execute({})
+    assert result["status"] == "success"
+    if dataset in ("omitted", None, ""):
+        assert "dataset" not in captured[0].url.params
+    else:
+        assert captured[0].url.params["dataset"] == dataset
 
 
-@pytest.mark.parametrize("operation", [
-    "list_issue_alerts", "create_issue_alert", "get_issue_alert", "update_issue_alert", "delete_issue_alert",
-    "list_metric_alerts", "create_metric_alert", "get_metric_alert", "update_metric_alert", "delete_metric_alert",
-])
-def test_retired_alert_operations_are_not_offered(operation):
-    # Sentry removed these URLs; see getsentry/sentry's test_project_rules.py.
-    with pytest.raises(ValidationError, match="union_tag_invalid"):
-        SentryNodeConfig.model_validate({"config": {"operation": operation}})
-    assert operation not in SentryNode._HANDLERS
+def test_dataset_schema_keeps_legacy_values():
+    schema = SentryNode.get_config_schema()["$defs"]["SentryDiscoverConfig"]["properties"]["dataset"]
+    assert "transactions" in schema["enum"]
+    assert "" in schema["enum"]
+    assert schema["default"] is None
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("family,resource,old_id,new_id", [("issue", "workflows", "77", "6789123"), ("metric", "detectors", "88", "123456")])
+async def test_explicit_migration_keeps_old_field_names_and_output_keys(family, resource, old_id, new_id):
+    operation = f"get_{family}_alert"
+    saved = _saved_alert(operation)
+    migrated = SentryNode.migrate_alert_config(saved, resource_id=new_id)
+    assert saved["rule_id" if family == "issue" else "alert_rule_id"] == old_id
+    assert migrated["rule_id" if family == "issue" else "alert_rule_id"] == new_id
+    cfg = SentryNode.parse_config({"config": migrated}).config
+    example = _CURRENT_EXAMPLES["workflow" if family == "issue" else "detector"]["body"]
+    result, cap = await run_rest(cfg, response={"status": "success", "action": operation, "data": example})
+    assert cap["path"] == f"/api/0/organizations/acme/{resource}/{new_id}/"
+    assert result["data"]["id"] == example["id"]
+    assert result["data"]["name"] == example["name"]
+    if family == "issue":
+        assert result["data"]["frequency"] == example["config"]["frequency"]
+        assert result["data"]["triggers"] == example["triggers"]
+    else:
+        assert result["data"]["timeWindow"] == 15
+        assert isinstance(result["data"]["timeWindow"], int)
+        assert result["data"]["aggregate"] == "count()"
+        assert result["data"]["dataSources"] == example["dataSources"]
+
+
+def test_migration_does_not_guess_resource_ids_or_translate_legacy_payloads():
+    with pytest.raises(ValueError, match="cannot be inferred"):
+        SentryNode.migrate_alert_config(_saved_alert("get_issue_alert"))
+    with pytest.raises(ValueError, match="translated"):
+        SentryNode.migrate_alert_config(_saved_alert("update_metric_alert"), resource_id="123456")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", _ALERT_OPERATIONS)
+async def test_migrated_alert_routes_use_current_api(operation):
+    metric = "metric" in operation
+    action = operation.split("_")[0]
+    # Provider-authored response fixture also supplies representative native fields.
+    example = _CURRENT_EXAMPLES["detector" if metric else "workflow"]["body"]
+    body = {"name": example["name"]}
+    migrated = SentryNode.migrate_alert_config(
+        _saved_alert(operation), resource_id=example["id"], current_body=body, project_slug="web")
+    cfg = SentryNode.parse_config({"config": migrated}).config
+    result, cap = await run_rest(cfg, response={"status": "success", "data": [example] if action == "list" else example})
+    resource = "detectors" if metric else "workflows"
+    expected = f"/api/0/organizations/acme/{resource}/"
+    if action in {"get", "update", "delete"}:
+        expected += f"{example['id']}/"
+    elif action == "create" and metric:
+        expected = "/api/0/organizations/acme/projects/web/detectors/"
+    assert cap["path"] == expected
+    assert cap["method"] == {"list": "GET", "get": "GET", "create": "POST", "update": "PUT", "delete": "DELETE"}[action]
+    if action in {"create", "update"}:
+        assert cap["json_body"] == body
+    if action == "list":
+        assert cap["params"]["type" if metric else "project"] == ("metric_issue" if metric else "web")
+        assert result["data"][0]["id"] == example["id"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("field,resource", [("rule_id", "workflows"), ("alert_rule_id", "detectors")])
+async def test_migrated_alert_dropdown_uses_current_ids(field, resource):
+    calls = []
+    async def fake(cred_, method, path, **kwargs):
+        calls.append(path)
+        return {"status": "success", "data": [{"id": "current-id", "name": "Current alert"}]}
+    with patch("nodes.sentry_node._rest_request", side_effect=fake):
+        result = await SentryNode.load_field_options(field, cred().model_dump(), context={"alert_api": "current", "project_slug": "web"})
+    assert calls == [f"/api/0/organizations/acme/{resource}/"]
+    assert result["options"] == [{"value": "current-id", "label": "Current alert"}]
+
+
+@pytest.mark.asyncio
+async def test_current_alert_rejects_untranslated_payload_before_request():
+    cfg = SentryNode.parse_config({"config": {**_saved_alert("create_issue_alert"), "alert_api": "current", "body_json": '{"frequency": 30}'}}).config
+    with patch("nodes.sentry_node._rest_request") as request:
+        with pytest.raises(ValueError, match="Translate the legacy"):
+            await node(cfg).execute({})
+    request.assert_not_called()

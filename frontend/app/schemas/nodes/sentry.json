@@ -190,6 +190,120 @@
       "title": "SentryCreateDeployConfig",
       "type": "object"
     },
+    "SentryCreateIssueAlertConfig": {
+      "properties": {
+        "alert_api": {
+          "default": "legacy",
+          "description": "Saved actions keep the legacy API. To migrate, choose current, replace rule/alert IDs with workflow/detector IDs, and use the current API JSON payload. Existing field names remain aliases.",
+          "enum": [
+            "legacy",
+            "current"
+          ],
+          "title": "Alert API",
+          "type": "string",
+          "x-help-url": "https://docs.sentry.io/api/monitors/"
+        },
+        "operation": {
+          "const": "create_issue_alert",
+          "default": "create_issue_alert",
+          "title": "Create Issue Alert Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-creates-resource": true,
+          "x-display-name": "Create Issue Alert Rule",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "sentry_issue_alert"
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "body_json": {
+          "description": "Alert rule definition, e.g. {\"name\":\"\u2026\",\"conditions\":[\u2026],\"actions\":[\u2026],\"frequency\":30}",
+          "title": "Rule (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_slug",
+        "body_json"
+      ],
+      "title": "SentryCreateIssueAlertConfig",
+      "type": "object"
+    },
+    "SentryCreateMetricAlertConfig": {
+      "properties": {
+        "alert_api": {
+          "default": "legacy",
+          "description": "Saved actions keep the legacy API. To migrate, choose current, replace rule/alert IDs with workflow/detector IDs, and use the current API JSON payload. Existing field names remain aliases.",
+          "enum": [
+            "legacy",
+            "current"
+          ],
+          "title": "Alert API",
+          "type": "string",
+          "x-help-url": "https://docs.sentry.io/api/monitors/"
+        },
+        "project_slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when migrating creation to the current detector API",
+          "title": "Project for Current API",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "operation": {
+          "const": "create_metric_alert",
+          "default": "create_metric_alert",
+          "title": "Create Metric Alert Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-creates-resource": true,
+          "x-display-name": "Create Metric Alert Rule",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "sentry_metric_alert"
+        },
+        "body_json": {
+          "description": "Metric alert definition (name, aggregate, timeWindow, triggers, projects, \u2026)",
+          "title": "Rule (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "SentryCreateMetricAlertConfig",
+      "type": "object"
+    },
     "SentryCreateMonitorConfig": {
       "properties": {
         "operation": {
@@ -383,6 +497,64 @@
       "title": "SentryDeleteDashboardConfig",
       "type": "object"
     },
+    "SentryDeleteIssueAlertConfig": {
+      "properties": {
+        "alert_api": {
+          "default": "legacy",
+          "description": "Saved actions keep the legacy API. To migrate, choose current, replace rule/alert IDs with workflow/detector IDs, and use the current API JSON payload. Existing field names remain aliases.",
+          "enum": [
+            "legacy",
+            "current"
+          ],
+          "title": "Alert API",
+          "type": "string",
+          "x-help-url": "https://docs.sentry.io/api/monitors/"
+        },
+        "operation": {
+          "const": "delete_issue_alert",
+          "default": "delete_issue_alert",
+          "title": "Delete Issue Alert Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Delete Issue Alert Rule",
+          "x-is-trigger": false
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "rule_id": {
+          "title": "Rule",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a rule id",
+            "depends_on": "project_slug",
+            "field_name": "rule_id",
+            "placeholder": "Select a rule\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "sentry_issue_alert"
+        }
+      },
+      "required": [
+        "project_slug",
+        "rule_id"
+      ],
+      "title": "SentryDeleteIssueAlertConfig",
+      "type": "object"
+    },
     "SentryDeleteIssueConfig": {
       "properties": {
         "operation": {
@@ -413,6 +585,49 @@
         "issue_id"
       ],
       "title": "SentryDeleteIssueConfig",
+      "type": "object"
+    },
+    "SentryDeleteMetricAlertConfig": {
+      "properties": {
+        "alert_api": {
+          "default": "legacy",
+          "description": "Saved actions keep the legacy API. To migrate, choose current, replace rule/alert IDs with workflow/detector IDs, and use the current API JSON payload. Existing field names remain aliases.",
+          "enum": [
+            "legacy",
+            "current"
+          ],
+          "title": "Alert API",
+          "type": "string",
+          "x-help-url": "https://docs.sentry.io/api/monitors/"
+        },
+        "operation": {
+          "const": "delete_metric_alert",
+          "default": "delete_metric_alert",
+          "title": "Delete Metric Alert Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Delete Metric Alert Rule",
+          "x-is-trigger": false
+        },
+        "alert_rule_id": {
+          "title": "Metric Alert Rule",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an alert rule id",
+            "field_name": "alert_rule_id",
+            "placeholder": "Select a metric alert\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_metric_alert"
+        }
+      },
+      "required": [
+        "alert_rule_id"
+      ],
+      "title": "SentryDeleteMetricAlertConfig",
       "type": "object"
     },
     "SentryDeleteMonitorConfig": {
@@ -680,18 +895,26 @@
           }
         },
         "dataset": {
-          "default": "errors",
-          "description": "The event dataset to query (defaults to errors)",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
           "enum": [
+            "",
             "errors",
+            "transactions",
+            "spans",
             "logs",
             "profile_functions",
-            "spans",
             "tracemetrics",
             "uptime_results"
           ],
           "title": "Dataset",
-          "type": "string",
           "x-enum-searchable": true
         },
         "limit": {
@@ -848,6 +1071,64 @@
       "title": "SentryGetEventConfig",
       "type": "object"
     },
+    "SentryGetIssueAlertConfig": {
+      "properties": {
+        "alert_api": {
+          "default": "legacy",
+          "description": "Saved actions keep the legacy API. To migrate, choose current, replace rule/alert IDs with workflow/detector IDs, and use the current API JSON payload. Existing field names remain aliases.",
+          "enum": [
+            "legacy",
+            "current"
+          ],
+          "title": "Alert API",
+          "type": "string",
+          "x-help-url": "https://docs.sentry.io/api/monitors/"
+        },
+        "operation": {
+          "const": "get_issue_alert",
+          "default": "get_issue_alert",
+          "title": "Get Issue Alert Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Get Issue Alert Rule",
+          "x-is-trigger": false
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "rule_id": {
+          "title": "Rule",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a rule id",
+            "depends_on": "project_slug",
+            "field_name": "rule_id",
+            "placeholder": "Select a rule\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "sentry_issue_alert"
+        }
+      },
+      "required": [
+        "project_slug",
+        "rule_id"
+      ],
+      "title": "SentryGetIssueAlertConfig",
+      "type": "object"
+    },
     "SentryGetIssueConfig": {
       "properties": {
         "operation": {
@@ -909,6 +1190,49 @@
         "member_id"
       ],
       "title": "SentryGetMemberConfig",
+      "type": "object"
+    },
+    "SentryGetMetricAlertConfig": {
+      "properties": {
+        "alert_api": {
+          "default": "legacy",
+          "description": "Saved actions keep the legacy API. To migrate, choose current, replace rule/alert IDs with workflow/detector IDs, and use the current API JSON payload. Existing field names remain aliases.",
+          "enum": [
+            "legacy",
+            "current"
+          ],
+          "title": "Alert API",
+          "type": "string",
+          "x-help-url": "https://docs.sentry.io/api/monitors/"
+        },
+        "operation": {
+          "const": "get_metric_alert",
+          "default": "get_metric_alert",
+          "title": "Get Metric Alert Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Get Metric Alert Rule",
+          "x-is-trigger": false
+        },
+        "alert_rule_id": {
+          "title": "Metric Alert Rule",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an alert rule id",
+            "field_name": "alert_rule_id",
+            "placeholder": "Select a metric alert\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_metric_alert"
+        }
+      },
+      "required": [
+        "alert_rule_id"
+      ],
+      "title": "SentryGetMetricAlertConfig",
       "type": "object"
     },
     "SentryGetMonitorConfig": {
@@ -1349,6 +1673,53 @@
       "title": "SentryListEventsConfig",
       "type": "object"
     },
+    "SentryListIssueAlertsConfig": {
+      "properties": {
+        "alert_api": {
+          "default": "legacy",
+          "description": "Saved actions keep the legacy API. To migrate, choose current, replace rule/alert IDs with workflow/detector IDs, and use the current API JSON payload. Existing field names remain aliases.",
+          "enum": [
+            "legacy",
+            "current"
+          ],
+          "title": "Alert API",
+          "type": "string",
+          "x-help-url": "https://docs.sentry.io/api/monitors/"
+        },
+        "operation": {
+          "const": "list_issue_alerts",
+          "default": "list_issue_alerts",
+          "title": "List Issue Alert Rules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "List Issue Alert Rules",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rules"
+          ]
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        }
+      },
+      "required": [
+        "project_slug"
+      ],
+      "title": "SentryListIssueAlertsConfig",
+      "type": "object"
+    },
     "SentryListIssueEventsConfig": {
       "properties": {
         "operation": {
@@ -1547,6 +1918,46 @@
         }
       },
       "title": "SentryListMembersConfig",
+      "type": "object"
+    },
+    "SentryListMetricAlertsConfig": {
+      "properties": {
+        "alert_api": {
+          "default": "legacy",
+          "description": "Saved actions keep the legacy API. To migrate, choose current, replace rule/alert IDs with workflow/detector IDs, and use the current API JSON payload. Existing field names remain aliases.",
+          "enum": [
+            "legacy",
+            "current"
+          ],
+          "title": "Alert API",
+          "type": "string",
+          "x-help-url": "https://docs.sentry.io/api/monitors/"
+        },
+        "operation": {
+          "const": "list_metric_alerts",
+          "default": "list_metric_alerts",
+          "title": "List Metric Alert Rules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "List Metric Alert Rules",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (\u2264100)",
+          "title": "Limit"
+        }
+      },
+      "title": "SentryListMetricAlertsConfig",
       "type": "object"
     },
     "SentryListMonitorsConfig": {
@@ -2474,6 +2885,71 @@
       "title": "SentrySessionsConfig",
       "type": "object"
     },
+    "SentryUpdateIssueAlertConfig": {
+      "properties": {
+        "alert_api": {
+          "default": "legacy",
+          "description": "Saved actions keep the legacy API. To migrate, choose current, replace rule/alert IDs with workflow/detector IDs, and use the current API JSON payload. Existing field names remain aliases.",
+          "enum": [
+            "legacy",
+            "current"
+          ],
+          "title": "Alert API",
+          "type": "string",
+          "x-help-url": "https://docs.sentry.io/api/monitors/"
+        },
+        "operation": {
+          "const": "update_issue_alert",
+          "default": "update_issue_alert",
+          "title": "Update Issue Alert Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Update Issue Alert Rule",
+          "x-is-trigger": false
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "rule_id": {
+          "title": "Rule",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a rule id",
+            "depends_on": "project_slug",
+            "field_name": "rule_id",
+            "placeholder": "Select a rule\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "sentry_issue_alert"
+        },
+        "body_json": {
+          "description": "The FULL updated rule \u2014 Sentry replaces it wholesale, so include name, conditions, and actions (a rule with no action is rejected)",
+          "title": "Rule (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_slug",
+        "rule_id",
+        "body_json"
+      ],
+      "title": "SentryUpdateIssueAlertConfig",
+      "type": "object"
+    },
     "SentryUpdateIssueConfig": {
       "properties": {
         "operation": {
@@ -2595,6 +3071,55 @@
         "body_json"
       ],
       "title": "SentryUpdateMemberConfig",
+      "type": "object"
+    },
+    "SentryUpdateMetricAlertConfig": {
+      "properties": {
+        "alert_api": {
+          "default": "legacy",
+          "description": "Saved actions keep the legacy API. To migrate, choose current, replace rule/alert IDs with workflow/detector IDs, and use the current API JSON payload. Existing field names remain aliases.",
+          "enum": [
+            "legacy",
+            "current"
+          ],
+          "title": "Alert API",
+          "type": "string",
+          "x-help-url": "https://docs.sentry.io/api/monitors/"
+        },
+        "operation": {
+          "const": "update_metric_alert",
+          "default": "update_metric_alert",
+          "title": "Update Metric Alert Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Update Metric Alert Rule",
+          "x-is-trigger": false
+        },
+        "alert_rule_id": {
+          "title": "Metric Alert Rule",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an alert rule id",
+            "field_name": "alert_rule_id",
+            "placeholder": "Select a metric alert\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_metric_alert"
+        },
+        "body_json": {
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "alert_rule_id",
+        "body_json"
+      ],
+      "title": "SentryUpdateMetricAlertConfig",
       "type": "object"
     },
     "SentryUpdateMonitorConfig": {
@@ -2723,12 +3248,16 @@
           "add_project_to_team": "#/$defs/SentryAddProjectToTeamConfig",
           "create_dashboard": "#/$defs/SentryCreateDashboardConfig",
           "create_deploy": "#/$defs/SentryCreateDeployConfig",
+          "create_issue_alert": "#/$defs/SentryCreateIssueAlertConfig",
+          "create_metric_alert": "#/$defs/SentryCreateMetricAlertConfig",
           "create_monitor": "#/$defs/SentryCreateMonitorConfig",
           "create_project": "#/$defs/SentryCreateProjectConfig",
           "create_release": "#/$defs/SentryCreateReleaseConfig",
           "create_team": "#/$defs/SentryCreateTeamConfig",
           "delete_dashboard": "#/$defs/SentryDeleteDashboardConfig",
           "delete_issue": "#/$defs/SentryDeleteIssueConfig",
+          "delete_issue_alert": "#/$defs/SentryDeleteIssueAlertConfig",
+          "delete_metric_alert": "#/$defs/SentryDeleteMetricAlertConfig",
           "delete_monitor": "#/$defs/SentryDeleteMonitorConfig",
           "delete_project": "#/$defs/SentryDeleteProjectConfig",
           "delete_release": "#/$defs/SentryDeleteReleaseConfig",
@@ -2738,8 +3267,10 @@
           "get_dashboard": "#/$defs/SentryGetDashboardConfig",
           "get_event": "#/$defs/SentryGetEventConfig",
           "get_issue": "#/$defs/SentryGetIssueConfig",
+          "get_issue_alert": "#/$defs/SentryGetIssueAlertConfig",
           "get_latest_event": "#/$defs/SentryLatestEventConfig",
           "get_member": "#/$defs/SentryGetMemberConfig",
+          "get_metric_alert": "#/$defs/SentryGetMetricAlertConfig",
           "get_monitor": "#/$defs/SentryGetMonitorConfig",
           "get_organization": "#/$defs/SentryGetOrgConfig",
           "get_project": "#/$defs/SentryGetProjectConfig",
@@ -2750,9 +3281,11 @@
           "list_checkins": "#/$defs/SentryListCheckinsConfig",
           "list_dashboards": "#/$defs/SentryListDashboardsConfig",
           "list_deploys": "#/$defs/SentryListDeploysConfig",
+          "list_issue_alerts": "#/$defs/SentryListIssueAlertsConfig",
           "list_issue_events": "#/$defs/SentryListIssueEventsConfig",
           "list_issues": "#/$defs/SentryListIssuesConfig",
           "list_members": "#/$defs/SentryListMembersConfig",
+          "list_metric_alerts": "#/$defs/SentryListMetricAlertsConfig",
           "list_monitors": "#/$defs/SentryListMonitorsConfig",
           "list_organizations": "#/$defs/SentryListOrgsConfig",
           "list_project_events": "#/$defs/SentryListEventsConfig",
@@ -2770,7 +3303,9 @@
           "remove_member": "#/$defs/SentryRemoveMemberConfig",
           "remove_project_from_team": "#/$defs/SentryRemoveProjectFromTeamConfig",
           "update_issue": "#/$defs/SentryUpdateIssueConfig",
+          "update_issue_alert": "#/$defs/SentryUpdateIssueAlertConfig",
           "update_member": "#/$defs/SentryUpdateMemberConfig",
+          "update_metric_alert": "#/$defs/SentryUpdateMetricAlertConfig",
           "update_monitor": "#/$defs/SentryUpdateMonitorConfig",
           "update_project": "#/$defs/SentryUpdateProjectConfig",
           "update_release": "#/$defs/SentryUpdateReleaseConfig"
@@ -2882,6 +3417,36 @@
         },
         {
           "$ref": "#/$defs/SentryRemoveMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListIssueAlertsConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryCreateIssueAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryGetIssueAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryUpdateIssueAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryDeleteIssueAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListMetricAlertsConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryCreateMetricAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryGetMetricAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryUpdateMetricAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryDeleteMetricAlertConfig"
         },
         {
           "$ref": "#/$defs/SentryListMonitorsConfig"
