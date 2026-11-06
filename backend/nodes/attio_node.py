@@ -2184,11 +2184,11 @@ class AttioNode(ExternalWebhookTriggerMixin, WorkflowNode):
             "content": c.content,
             "format": "plaintext",
             "is_completed": c.is_completed == "true",
-            "deadline_at": c.deadline_at,
+            # Attio requires this key; null represents a task with no deadline.
+            "deadline_at": c.deadline_at or None,
             "assignees": _parse_json(c.assignees_json) or [],
             "linked_records": _parse_json(c.linked_records_json) or [],
         }
-        data = {k: v for k, v in data.items() if v is not None}
         return await _attio_request(
             token, "POST", "/v2/tasks", json_body={"data": data}, action_name="create_task"
         )

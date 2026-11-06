@@ -19,7 +19,7 @@ import hashlib
 import hmac
 
 import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import AsyncMock, Mock, patch, sentinel
 
 from nodes.attio_node import (
     AttioNode,
@@ -382,6 +382,27 @@ class TestAttioNotesMock:
 
 
 class TestAttioTasksMock:
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("deadline", [None, "", "2023-01-01T15:00:00.000000000Z"])
+    async def test_create_task_always_sends_deadline(self, api_key_credentials, deadline):
+        # POST /v2/tasks requires deadline_at even when the task has no deadline.
+        # https://docs.attio.com/rest-api/endpoint-reference/tasks/create-a-task
+        task = AttioCreateTaskConfig(
+            content="Follow up on current software solutions", deadline_at=deadline
+        )
+        node = create_attio_node(AttioNodeConfig(config=task, credentials=api_key_credentials))
+        with patch("nodes.attio_node._attio_request", new_callable=AsyncMock) as request:
+            request.return_value = sentinel.result
+            assert await node._create_task(task, api_key_credentials.access_token) is sentinel.result
+        request.assert_awaited_once_with(
+            api_key_credentials.access_token, "POST", "/v2/tasks",
+            json_body={"data": {
+                "content": task.content, "format": "plaintext", "is_completed": False,
+                "deadline_at": deadline or None, "assignees": [], "linked_records": [],
+            }},
+            action_name="create_task",
+        )
+
     @pytest.mark.asyncio
     async def test_list_tasks(self, api_key_credentials):
         config = AttioNodeConfig(config=AttioListTasksConfig(), credentials=api_key_credentials)
