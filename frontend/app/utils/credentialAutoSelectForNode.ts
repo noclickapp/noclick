@@ -61,6 +61,7 @@ const AUTO_SELECT_TYPES: ReadonlySet<string> = new Set([
     'automation-supabase',
     'automation-twitter',
     'automation-youtube',
+    'automation-powerdns',
     'automation-hubspot',
     'automation-mailchimp',
     'automation-firestore',

@@ -87,6 +87,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-whatsapp', 'WhatsAppNode'],
     ['automation-elevenlabs', 'ElevenLabsNode'],
     ['automation-youtube', 'YouTubeNode'],
+    ['automation-powerdns', 'PowerDNSNode'],
     ['automation-hubspot', 'HubSpotNode'],
     ['automation-mailchimp', 'MailchimpNode'],
     ['automation-pipedrive', 'PipedriveNode'],

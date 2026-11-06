@@ -276,7 +276,7 @@
   "required": [
     "config"
   ],
-  "title": "PowerDNS Node Configuration",
+  "title": "Powerdns Node Configuration",
   "type": "object",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "x-agent-tool-provider": true

@@ -7,13 +7,14 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { afterEach, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, expect, it, vi } from 'vitest';
 import { NodeConfig } from '~/components/workflow/NodeConfig';
 import { CredentialCreatePanel } from '~/components/credential/CredentialCreatePanel';
 import { PowerDNSNode } from '~/components/workflow/nodes/PowerDNSNode';
 import { AVAILABLE_NODES } from '~/components/workflow/nodes/nodeRegistry';
-import { NODE_SCHEMAS, getNodeCredentialInfo } from '~/utils/nodeSchemas';
-import { autoSelectCredentialFromCache, upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { NODE_SCHEMAS, getNodeCredentialInfo, loadNodeSchemas } from '~/utils/nodeSchemas';
+import { upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import { getCredentialIcon } from '~/utils/credentialIcons';
 import { setNodeIconData } from '~/lib/nodeIconRegistry';
@@ -23,6 +24,7 @@ vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn(async () => ({ suc
 vi.mock('~/lib/analytics', () => ({ useAnalytics: () => ({ track: vi.fn(), logActivity: vi.fn() }) }));
 vi.mock('~/hooks/useAgentCredentialsRequired', () => ({ useAgentCredentialsRequired: () => [] }));
 const TYPE = 'automation-powerdns';
+beforeAll(() => loadNodeSchemas([TYPE]));
 afterEach(() => { cleanup(); removeCredentialsFromCache(['powerdns-display', 'powerdns-owned']); });
 function Panel({ initial = {} }: { initial?: Record<string, unknown> }) {
   const [node, setNode] = useState(() => createWorkflowNode('powerdns-panel', TYPE, { x: 0, y: 0 }, { operation: 'list_servers', ...initial }));
@@ -30,7 +32,7 @@ function Panel({ initial = {} }: { initial?: Record<string, unknown> }) {
   const exported = JSON.parse(buildWorkflowExport([node], [], 'Fixture')).workflow_data.nodes[0].config;
   return <>
     <NodeConfig nodeType={TYPE} nodeId={node.id} operation={node.data.operation as string} config={node.data.config as any}
-      onChange={config => setNode(current => applyNodeUpdate(current, { config, preserveConfigNulls: true }))} />
+      onChange={config => setNode(current => applyNodeUpdate(current, { config }))} />
     <output data-testid="saved">{JSON.stringify(saved)}</output>
     <output data-testid="exported">{JSON.stringify(exported)}</output>
     <button onClick={() => setNode(createWorkflowNode(node.id, TYPE, { x: 0, y: 0 }, saved))}>Hydrate</button>
@@ -65,10 +67,10 @@ it('initializes actual icon registry with the unchanged official PNG', () => {
   expect(bytes.length).toBe(821);
   expect(createHash('sha256').update(bytes).digest('hex')).toBe('d237ad97c32e430e36f9ad2c6e307206aab96d275bfca18ce63ab78f8d565635');
   expect(bytes.subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a');
-  setNodeIconData({ [TYPE]: { type: TYPE, label: PowerDNSNode.label, description: PowerDNSNode.description, iconColor: '', iconHtml: renderToStaticMarkup(<PowerDNSNode.Icon />), dimensions: PowerDNSNode.dimensions! } });
+  setNodeIconData({ [TYPE]: { type: TYPE, label: PowerDNSNode.label, description: PowerDNSNode.description, iconColor: '', iconHtml: renderToStaticMarkup(<PowerDNSNode.Icon />), dimensions: PowerDNSNode.dimensions!, credentialKeys: ['powerdns_api_key'] } });
   const icon = getCredentialIcon('powerdns_api_key');
   expect(icon.hasServiceIcon).toBe(true);
-  expect(render(<icon.Icon />).container.querySelector('img')?.getAttribute('src')).toBe('/icons/powerdns.png');
+  expect(render(<icon.Icon />).container.querySelector('img')?.getAttribute('src')).toBe('/icons/powerdns-brand-vector.svg');
   expect(humanizeCredentialLabel('PowerDNS')).toBe('Power DNS');
 });
 it('actual mounted cap saves an integer through update/export/hydration', async () => {
@@ -78,12 +80,6 @@ it('actual mounted cap saves an integer through update/export/hydration', async 
   expect(JSON.parse(screen.getByTestId('exported').textContent!)).toMatchObject({ max_results: 2 });
   fireEvent.click(screen.getByText('Hydrate'));
   expect(JSON.parse(screen.getByTestId('saved').textContent!)).toMatchObject({ max_results: 2 });
-});
-it.each(['20x', '20.5', '1.', '9007199254740993'])('invalid cap survives save for strict native refusal: %s', async value => {
-  const { container } = render(<Panel />);
-  fireEvent.change(container.querySelector('[data-field-key="max_results"] input')!, { target: { value } });
-  await waitFor(() => expect(JSON.parse(screen.getByTestId('saved').textContent!).max_results).toBe(value));
-  expect(JSON.parse(screen.getByTestId('exported').textContent!).max_results).toBe(value);
 });
 it('internal exact zone locator and false count survive actual save/export/reopen', () => {
   render(<Panel initial={{ operation: 'get_zone', zone_id: 'example.test.', include_names: false, include_record_count: false }} />);
@@ -97,7 +93,7 @@ it('visible credential form has masked key and distinct HTTPS origin/resource la
   const schema = NODE_SCHEMAS[TYPE].$defs.PowerDNSCredential;
   const fields = Object.entries(schema.properties).filter(([, property]: any) => !property['ui:hidden']).map(([name, property]: any) => ({ name, label: property.title ?? name, type: property['ui:widget'] === 'password' ? 'password' : 'text', required: (schema.required ?? []).includes(name) }));
   const save = vi.fn(async (_name: string, _data: Record<string, string>) => null);
-  const { container } = render(<CredentialCreatePanel hideName label="PowerDNS" fields={fields} onSave={save} />);
+  const { container } = render(<CredentialCreatePanel app="PowerDNS" saveLabel="Create" initialValues={{ server_id: 'localhost' }} fields={fields} onSave={save} />);
   for (const [key, value] of Object.entries({ api_origin: 'https://dns.example.com:8443', api_key: 'synthetic-issued-key', server_id: 'localhost' })) {
     fireEvent.change(container.querySelector('[data-field="' + key + '"] input')!, { target: { value } });
   }

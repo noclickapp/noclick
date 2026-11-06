@@ -19,10 +19,10 @@ from opentelemetry.instrumentation.utils import suppress_http_instrumentation
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StrictBool, StrictInt, StrictStr, model_serializer
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
-from repositories.credentials import CredentialsRepo
 from utils.credentials import resolve_credential_with_owner_fallback
 from utils.encryption import get_encryption
-from utils.ssrf import SSRFError, guarded_async_client, normalize_https_origin
+from utils import ssrf
+from utils.ssrf import SSRFError, normalize_https_origin
 
 TYPE = "powerdns_api_key"
 AUTH_KEY = "_powerdns_authority"
@@ -157,6 +157,38 @@ class PowerDNSNodeConfig(NodeConfig[PowerDNSConfig, PowerDNSCredential]):
     node_type: Literal["automation-powerdns"] = "automation-powerdns"
 
 
+@dataclass(frozen=True)
+class PowerDNSAuthorityRow:
+    credential_type: str
+    owner_id: str
+    token_version: int
+    updated_at: Any
+    approval_revision: int
+    revoked_at: Any
+    credential: Any = field(repr=False)
+
+
+async def load_authority_row(pool, identifier):
+    # Access and workflow-owner/lender fallback are resolved by staging's
+    # canonical resolver before this snapshot is read. Keep the original blob
+    # discriminator and row revisions to discard a racing response.
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            "SELECT credential_type,owner_id,token_version,updated_at,"
+            "approval_revision,revoked_at,credential FROM credentials WHERE id=$1",
+            identifier,
+        )
+    return PowerDNSAuthorityRow(**{key: row[key] for key in PowerDNSAuthorityRow.__dataclass_fields__}) if row else None
+
+
+def guarded_async_client(*, require_public=True, **kwargs):
+    # Staging's pinned client supports an install-wide private-network opt-out.
+    # PowerDNS deliberately refuses that mode instead of weakening its contract.
+    if require_public is not True or ssrf.allow_private_hosts():
+        raise SSRFError("PowerDNS requires public-only outbound networking")
+    return ssrf.guarded_async_client(**kwargs)
+
+
 @dataclass(eq=False)
 class Authority:
     credential: PowerDNSCredential = field(repr=False)
@@ -191,23 +223,19 @@ class Authority:
             return await get_user_org_context(conn, self.user_id)
 
     async def load(self):
-        selected = []
-
-        async def loader(identifier, principal, pool, org_id):
-            row = await CredentialsRepo(pool).fetch_validation_authority(identifier, principal, org_id)
-            if row is None:
-                return None
-            if row.credential_type != TYPE or row.revoked_at is not None or type(row.token_version) is not int or row.token_version < 1:
-                raise ValueError(UNAVAILABLE)
-            shaped = credential(get_encryption().decrypt_credential(row.credential))
-            selected.append((principal, row, shaped))
-            return shaped.model_dump()
-
-        result = await resolve_credential_with_owner_fallback(self.credential_id, self.user_id, self.pool, org_id=self.organization_id, workflow_id=self.workflow_id, load_credential_fn=loader)
-        if not result or not selected:
+        result = await resolve_credential_with_owner_fallback(
+            self.credential_id, self.user_id, self.pool,
+            org_id=self.organization_id, workflow_id=self.workflow_id,
+        )
+        if not result:
             raise ValueError(UNAVAILABLE)
-        principal, row, shaped = selected[-1]
-        return shaped, (principal, row)
+        row = await load_authority_row(self.pool, self.credential_id)
+        if row is None or row.credential_type != TYPE or row.revoked_at is not None or type(row.token_version) is not int or row.token_version < 1:
+            raise ValueError(UNAVAILABLE)
+        shaped = credential(get_encryption().decrypt_credential(row.credential))
+        if credential(result) != shaped:
+            raise ValueError(UNAVAILABLE)
+        return shaped, row
 
     async def require_current(self):
         if self.credential_id:
