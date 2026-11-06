@@ -584,38 +584,20 @@ async def test_load_field_options():
 
 
 # ---------------------------------------------------------------------------
-# Records — search (text, no vector)
+# Records — native Search API payloads
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.asyncio
-async def test_search_sends_query_text(credentials):
-    config = ChromaNodeConfig(
-        config=ChromaSearchConfig(collection="docs", query_text="machine learning", n_results=3),
-        credentials=credentials,
-    )
-    node = create_node(config)
-    node._resolve_collection_id = AsyncMock(return_value="col-uuid")
-    client, calls = create_capturing_client(200, {"ids": [[]]})
-    with patch("nodes.chroma_node.httpx.AsyncClient", return_value=client):
-        result = await node.execute({})
-    assert result["status"] == "success"
-    assert calls[-1]["url"] == f"{COLBASE}/col-uuid/search"
-    body = calls[-1]["json"]
-    assert body["query"] == "machine learning"
-    assert body["n_results"] == 3
-    assert "distances" in body["include"]
-
-
-@pytest.mark.asyncio
-async def test_search_with_where_and_where_document(credentials):
+async def test_search_sends_searches_and_read_level(credentials):
+    searches = [{
+        "rank": {"$knn": {"query": [0.1, 0.2, 0.3], "limit": 10}},
+        "limit": {"limit": 10, "offset": 0},
+        "select": {"keys": ["#document", "#score"]},
+    }]
     config = ChromaNodeConfig(
         config=ChromaSearchConfig(
-            collection="docs",
-            query_text="AI",
-            where='{"topic": "ml"}',
-            where_document='{"$contains": "neural"}',
-            include='["documents"]',
+            collection="docs", searches=json.dumps(searches), read_level="index_only"
         ),
         credentials=credentials,
     )
@@ -625,10 +607,22 @@ async def test_search_with_where_and_where_document(credentials):
     with patch("nodes.chroma_node.httpx.AsyncClient", return_value=client):
         result = await node.execute({})
     assert result["status"] == "success"
-    body = calls[-1]["json"]
-    assert body["where"] == {"topic": "ml"}
-    assert body["where_document"] == {"$contains": "neural"}
-    assert body["include"] == ["documents"]
+    assert calls[-1]["url"] == f"{COLBASE}/col-uuid/search"
+    assert calls[-1]["json"] == {"searches": searches, "read_level": "index_only"}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("searches", ["not-json", "{}", "[]", "[1]", '["text"]'])
+async def test_search_rejects_invalid_searches_without_request(credentials, searches):
+    config = ChromaNodeConfig(
+        config=ChromaSearchConfig(collection="docs", searches=searches),
+        credentials=credentials,
+    )
+    node = create_node(config)
+    node._resolve_collection_id = AsyncMock()
+    result = await node.execute({})
+    assert result["status"] == "error"
+    node._resolve_collection_id.assert_not_called()
 
 
 # ---------------------------------------------------------------------------
@@ -674,24 +668,7 @@ async def test_fork_collection(credentials):
         result = await node.execute({})
     assert result["status"] == "success"
     assert calls[-1]["url"] == f"{COLBASE}/col-uuid/fork"
-    assert calls[-1]["json"]["name"] == "docs-fork"
-
-
-@pytest.mark.asyncio
-async def test_fork_collection_with_destination_database(credentials):
-    config = ChromaNodeConfig(
-        config=ChromaForkCollectionConfig(
-            collection="docs", new_name="docs-fork", destination_database="other-db"
-        ),
-        credentials=credentials,
-    )
-    node = create_node(config)
-    node._resolve_collection_id = AsyncMock(return_value="col-uuid")
-    client, calls = create_capturing_client(200, {"id": "fork-uuid", "name": "docs-fork"})
-    with patch("nodes.chroma_node.httpx.AsyncClient", return_value=client):
-        result = await node.execute({})
-    assert result["status"] == "success"
-    assert calls[-1]["json"]["destination_database"] == "other-db"
+    assert calls[-1]["json"] == {"new_name": "docs-fork"}
 
 
 @pytest.mark.asyncio
@@ -745,7 +722,9 @@ async def test_get_collection_by_crn(credentials):
 async def test_attach_function(credentials):
     config = ChromaNodeConfig(
         config=ChromaAttachFunctionConfig(
-            collection="docs", function_name="openai", function_config='{"model": "ada"}'
+            collection="docs", function_name="my_function",
+            function_id="1e30d217-3d78-4f8c-b244-79381dc6a254",
+            output_collection="output_collection_name", function_config="{}"
         ),
         credentials=credentials,
     )
@@ -756,7 +735,12 @@ async def test_attach_function(credentials):
         result = await node.execute({})
     assert result["status"] == "success"
     assert calls[-1]["url"] == f"{COLBASE}/col-uuid/functions/attach"
-    assert calls[-1]["json"] == {"name": "openai", "config": {"model": "ada"}}
+    assert calls[-1]["json"] == {
+        "name": "my_function",
+        "function_id": "1e30d217-3d78-4f8c-b244-79381dc6a254",
+        "output_collection": "output_collection_name",
+        "params": {},
+    }
 
 
 @pytest.mark.asyncio
@@ -778,7 +762,8 @@ async def test_get_attached_function(credentials):
 async def test_add_attached_function_input(credentials):
     config = ChromaNodeConfig(
         config=ChromaAddAttachedFunctionInputConfig(
-            collection="docs", function_name="openai", input='{"text": "hello"}'
+            collection="docs", function_name="openai",
+            input_collection_id="1e30d217-3d78-4f8c-b244-79381dc6a254"
         ),
         credentials=credentials,
     )
@@ -789,22 +774,16 @@ async def test_add_attached_function_input(credentials):
         result = await node.execute({})
     assert result["status"] == "success"
     assert calls[-1]["url"] == f"{COLBASE}/col-uuid/attached_functions/openai/add_input"
-    assert calls[-1]["json"] == {"input": {"text": "hello"}}
+    assert calls[-1]["json"] == {"input_collection_id": "1e30d217-3d78-4f8c-b244-79381dc6a254"}
 
 
-@pytest.mark.asyncio
-async def test_add_attached_function_input_invalid_json(credentials):
-    config = ChromaNodeConfig(
-        config=ChromaAddAttachedFunctionInputConfig(
-            collection="docs", function_name="fn", input="not-json"
-        ),
-        credentials=credentials,
-    )
-    node = create_node(config)
-    node._resolve_collection_id = AsyncMock(return_value="col-uuid")
-    result = await node.execute({})
-    assert result["status"] == "error"
-    assert "json" in result["error"].lower()
+def test_add_attached_function_input_rejects_invalid_collection_uuid():
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
+        ChromaAddAttachedFunctionInputConfig(
+            collection="docs", function_name="fn", input_collection_id="not-a-uuid"
+        )
 
 
 @pytest.mark.asyncio
@@ -870,7 +849,7 @@ async def test_create_tenant(credentials):
 @pytest.mark.asyncio
 async def test_update_tenant(credentials):
     config = ChromaNodeConfig(
-        config=ChromaUpdateTenantConfig(config='{"key": "val"}'), credentials=credentials
+        config=ChromaUpdateTenantConfig(resource_name="my-tenant"), credentials=credentials
     )
     node = create_node(config)
     client, calls = create_capturing_client(200, {"name": "t"})
@@ -878,7 +857,7 @@ async def test_update_tenant(credentials):
         result = await node.execute({})
     assert result["status"] == "success"
     assert calls[-1]["url"] == f"{TENANT_BASE}/t"
-    assert calls[-1]["json"] == {"config": {"key": "val"}}
+    assert calls[-1]["json"] == {"resource_name": "my-tenant"}
 
 
 # ---------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 {
   "$defs": {
     "ChromaAddAttachedFunctionInputConfig": {
-      "description": "Add input data to an attached function (e.g. provide documents to embed).",
+      "description": "Add another input collection to an attached function.",
       "properties": {
         "operation": {
           "const": "add_attached_function_input",
@@ -36,17 +36,17 @@
           "title": "Function Name",
           "type": "string"
         },
-        "input": {
-          "description": "JSON object to send as input to the function",
-          "title": "Input",
-          "type": "string",
-          "ui:widget": "textarea"
+        "input_collection_id": {
+          "description": "UUID of the additional collection the function should process",
+          "format": "uuid",
+          "title": "Input Collection ID",
+          "type": "string"
         }
       },
       "required": [
         "collection",
         "function_name",
-        "input"
+        "input_collection_id"
       ],
       "title": "ChromaAddAttachedFunctionInputConfig",
       "type": "object"
@@ -164,8 +164,18 @@
           "x-resource-type": "chroma_collection"
         },
         "function_name": {
-          "description": "Name of the function to attach (e.g. 'openai')",
+          "description": "Name for this attached function instance",
           "title": "Function Name",
+          "type": "string"
+        },
+        "function_id": {
+          "description": "ID of the function to attach",
+          "title": "Function ID",
+          "type": "string"
+        },
+        "output_collection": {
+          "description": "Collection where the function stores its output",
+          "title": "Output Collection",
           "type": "string"
         },
         "function_config": {
@@ -178,14 +188,16 @@
             }
           ],
           "default": null,
-          "description": "Optional JSON configuration for the function",
+          "description": "Optional JSON object sent as the function's params",
           "title": "Function Config",
           "ui:widget": "textarea"
         }
       },
       "required": [
         "collection",
-        "function_name"
+        "function_name",
+        "function_id",
+        "output_collection"
       ],
       "title": "ChromaAttachFunctionConfig",
       "type": "object"
@@ -726,19 +738,6 @@
           "description": "Name for the forked collection",
           "title": "New Name",
           "type": "string"
-        },
-        "destination_database": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Database for the fork (defaults to the same database as the source)",
-          "title": "Destination Database"
         }
       },
       "required": [
@@ -1408,25 +1407,25 @@
       "type": "object"
     },
     "ChromaSearchConfig": {
-      "description": "Full-text / semantic search using query text \u2014 Chroma embeds it server-side via an attached function.",
+      "description": "Dense, sparse, or hybrid search using Chroma's Search payloads.",
       "properties": {
         "operation": {
           "const": "search",
           "default": "search",
-          "title": "Search (Text)",
+          "title": "Search",
           "type": "string",
           "ui:hidden": true,
           "x-category": "Records",
-          "x-display-name": "Search (Text)",
+          "x-display-name": "Search",
           "x-is-trigger": false,
           "x-keywords": [
-            "text search",
+            "hybrid search",
             "semantic search",
             "rag",
             "similarity",
             "find",
-            "natural language",
-            "no vector"
+            "sparse",
+            "dense"
           ]
         },
         "collection": {
@@ -1442,20 +1441,20 @@
           },
           "x-resource-type": "chroma_collection"
         },
-        "query_text": {
-          "description": "Natural language query \u2014 Chroma embeds it server-side using the collection's attached function",
-          "title": "Query Text",
-          "type": "string"
+        "searches": {
+          "description": "JSON array of Chroma Search payloads (filter, rank, limit, select). Supply precomputed vectors in rank.$knn.query; text embedding is an SDK feature.",
+          "title": "Searches",
+          "type": "string",
+          "ui:widget": "textarea"
         },
-        "n_results": {
-          "default": 10,
-          "description": "Number of results to return",
-          "title": "N Results",
-          "type": "integer"
-        },
-        "where": {
+        "read_level": {
           "anyOf": [
             {
+              "enum": [
+                "index_and_wal",
+                "index_only",
+                "index_and_bounded_wal"
+              ],
               "type": "string"
             },
             {
@@ -1463,39 +1462,19 @@
             }
           ],
           "default": null,
-          "description": "Optional JSON metadata filter",
-          "title": "Where"
-        },
-        "where_document": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
+          "description": "Whether to include unindexed records in search results",
+          "title": "Read Level",
+          "enum": [
+            "index_and_wal",
+            "index_only",
+            "index_and_bounded_wal"
           ],
-          "default": null,
-          "description": "Filter by document text, e.g. {\"$contains\": \"keyword\"}",
-          "title": "Where Document"
-        },
-        "include": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "JSON array of fields. Default: [\"distances\",\"documents\",\"metadatas\"]",
-          "title": "Include Fields"
+          "x-enum-searchable": true
         }
       },
       "required": [
         "collection",
-        "query_text"
+        "searches"
       ],
       "title": "ChromaSearchConfig",
       "type": "object"
@@ -1682,21 +1661,15 @@
           "description": "Tenant to update (defaults to the tenant on the credential)",
           "title": "Tenant Name"
         },
-        "config": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Optional JSON config update for the tenant",
-          "title": "Config",
-          "ui:widget": "textarea"
+        "resource_name": {
+          "description": "Resource name to assign to the tenant",
+          "title": "Resource Name",
+          "type": "string"
         }
       },
+      "required": [
+        "resource_name"
+      ],
       "title": "ChromaUpdateTenantConfig",
       "type": "object"
     },

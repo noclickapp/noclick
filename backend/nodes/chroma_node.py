@@ -26,6 +26,7 @@ import base64
 import json
 import logging
 import time
+from uuid import UUID
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
 from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
@@ -146,7 +147,7 @@ class ChromaQueryConfig(BaseModel):
 
 
 class ChromaSearchConfig(BaseModel):
-    """Full-text / semantic search using query text — Chroma embeds it server-side via an attached function."""
+    """Dense, sparse, or hybrid search using Chroma's Search payloads."""
 
     operation: Literal["search"] = Field(
         "search",
@@ -155,26 +156,22 @@ class ChromaSearchConfig(BaseModel):
             "ui:hidden": True,
             "x-category": "Records",
             "x-is-trigger": False,
-            "x-display-name": "Search (Text)",
-            "x-keywords": ["text search", "semantic search", "rag", "similarity", "find", "natural language", "no vector"],
+            "x-display-name": "Search",
+            "x-keywords": ["hybrid search", "semantic search", "rag", "similarity", "find", "sparse", "dense"],
         },
-        title="Search (Text)",
+        title="Search",
     )
     collection: str = Field(..., title="Collection", json_schema_extra=_COLLECTION_FIELD_EXTRA)
-    query_text: str = Field(
+    searches: str = Field(
         ...,
-        title="Query Text",
-        description="Natural language query — Chroma embeds it server-side using the collection's attached function",
+        title="Searches",
+        description='JSON array of Chroma Search payloads (filter, rank, limit, select). Supply precomputed vectors in rank.$knn.query; text embedding is an SDK feature.',
+        json_schema_extra={"ui:widget": "textarea"},
     )
-    n_results: int = Field(10, title="N Results", description="Number of results to return")
-    where: Optional[str] = Field(None, title="Where", description="Optional JSON metadata filter")
-    where_document: Optional[str] = Field(
-        None, title="Where Document", description='Filter by document text, e.g. {"$contains": "keyword"}'
-    )
-    include: Optional[str] = Field(
+    read_level: Optional[Literal["index_and_wal", "index_only", "index_and_bounded_wal"]] = Field(
         None,
-        title="Include Fields",
-        description='JSON array of fields. Default: ["distances","documents","metadatas"]',
+        title="Read Level",
+        description="Whether to include unindexed records in search results",
     )
 
 
@@ -573,11 +570,6 @@ class ChromaForkCollectionConfig(BaseModel):
     )
     collection: str = Field(..., title="Source Collection", json_schema_extra=_COLLECTION_FIELD_EXTRA)
     new_name: str = Field(..., title="New Name", description="Name for the forked collection")
-    destination_database: Optional[str] = Field(
-        None,
-        title="Destination Database",
-        description="Database for the fork (defaults to the same database as the source)",
-    )
 
 
 class ChromaForkCountConfig(BaseModel):
@@ -656,12 +648,14 @@ class ChromaAttachFunctionConfig(BaseModel):
     )
     collection: str = Field(..., title="Collection", json_schema_extra=_COLLECTION_FIELD_EXTRA)
     function_name: str = Field(
-        ..., title="Function Name", description="Name of the function to attach (e.g. 'openai')"
+        ..., title="Function Name", description="Name for this attached function instance"
     )
+    function_id: str = Field(..., title="Function ID", description="ID of the function to attach")
+    output_collection: str = Field(..., title="Output Collection", description="Collection where the function stores its output")
     function_config: Optional[str] = Field(
         None,
         title="Function Config",
-        description="Optional JSON configuration for the function",
+        description="Optional JSON object sent as the function's params",
         json_schema_extra={"ui:widget": "textarea"},
     )
 
@@ -686,7 +680,7 @@ class ChromaGetAttachedFunctionConfig(BaseModel):
 
 
 class ChromaAddAttachedFunctionInputConfig(BaseModel):
-    """Add input data to an attached function (e.g. provide documents to embed)."""
+    """Add another input collection to an attached function."""
 
     operation: Literal["add_attached_function_input"] = Field(
         "add_attached_function_input",
@@ -702,11 +696,10 @@ class ChromaAddAttachedFunctionInputConfig(BaseModel):
     )
     collection: str = Field(..., title="Collection", json_schema_extra=_COLLECTION_FIELD_EXTRA)
     function_name: str = Field(..., title="Function Name", description="Name of the attached function")
-    input: str = Field(
+    input_collection_id: UUID = Field(
         ...,
-        title="Input",
-        description="JSON object to send as input to the function",
-        json_schema_extra={"ui:widget": "textarea"},
+        title="Input Collection ID",
+        description="UUID of the additional collection the function should process",
     )
 
 
@@ -794,11 +787,10 @@ class ChromaUpdateTenantConfig(BaseModel):
         title="Tenant Name",
         description="Tenant to update (defaults to the tenant on the credential)",
     )
-    config: Optional[str] = Field(
-        None,
-        title="Config",
-        description="Optional JSON config update for the tenant",
-        json_schema_extra={"ui:widget": "textarea"},
+    resource_name: str = Field(
+        ...,
+        title="Resource Name",
+        description="Resource name to assign to the tenant",
     )
 
 
@@ -1393,18 +1385,12 @@ class ChromaNode(WorkflowNode):
         return await self._record_request(config.collection, "query", credentials, body, "query")
 
     async def _handle_search(self, config: ChromaSearchConfig, credentials) -> Dict[str, Any]:
-        body: Dict[str, Any] = {
-            "query": config.query_text,
-            "n_results": config.n_results,
-        }
-        where = _parse_json_obj(config.where)
-        if where:
-            body["where"] = where
-        where_doc = _parse_json_obj(config.where_document)
-        if where_doc:
-            body["where_document"] = where_doc
-        include = _parse_json_list(config.include)
-        body["include"] = include if include else ["metadatas", "documents", "distances"]
+        searches = _parse_json_list(config.searches)
+        if not searches or not all(isinstance(search, dict) for search in searches):
+            return {"status": "error", "action": "search", "error": "`searches` must be a non-empty JSON array of Search objects"}
+        body: Dict[str, Any] = {"searches": searches}
+        if config.read_level is not None:
+            body["read_level"] = config.read_level
         return await self._record_request(config.collection, "search", credentials, body, "search")
 
     async def _handle_add(self, config: ChromaAddConfig, credentials) -> Dict[str, Any]:
@@ -1610,9 +1596,7 @@ class ChromaNode(WorkflowNode):
         except (ValueError, httpx.HTTPError) as e:
             return {"status": "error", "action": "fork_collection", "error": str(e), "status_code": 404}
         url = f"{self._collections_base(credentials)}/{col_id}/fork"
-        body: Dict[str, Any] = {"name": config.new_name}
-        if config.destination_database:
-            body["destination_database"] = config.destination_database
+        body: Dict[str, Any] = {"new_name": config.new_name}
         return await self._request("POST", url, credentials, json_body=body, action_name="fork_collection")
 
     async def _handle_fork_count(self, config: ChromaForkCountConfig, credentials) -> Dict[str, Any]:
@@ -1642,10 +1626,16 @@ class ChromaNode(WorkflowNode):
         except (ValueError, httpx.HTTPError) as e:
             return {"status": "error", "action": "attach_function", "error": str(e), "status_code": 404}
         url = f"{self._collections_base(credentials)}/{col_id}/functions/attach"
-        body: Dict[str, Any] = {"name": config.function_name}
+        body: Dict[str, Any] = {
+            "name": config.function_name,
+            "function_id": config.function_id,
+            "output_collection": config.output_collection,
+        }
         fn_cfg = _parse_json_obj(config.function_config)
-        if fn_cfg:
-            body["config"] = fn_cfg
+        if config.function_config is not None:
+            if fn_cfg is None:
+                return {"status": "error", "action": "attach_function", "error": "`function_config` must be a valid JSON object"}
+            body["params"] = fn_cfg
         return await self._request("POST", url, credentials, json_body=body, action_name="attach_function")
 
     async def _handle_get_attached_function(
@@ -1669,15 +1659,8 @@ class ChromaNode(WorkflowNode):
             f"{self._collections_base(credentials)}/{col_id}"
             f"/attached_functions/{config.function_name}/add_input"
         )
-        input_data = _parse_json_obj(config.input)
-        if input_data is None:
-            return {
-                "status": "error",
-                "action": "add_attached_function_input",
-                "error": "`input` must be a valid JSON object",
-            }
         return await self._request(
-            "POST", url, credentials, json_body={"input": input_data}, action_name="add_attached_function_input"
+            "POST", url, credentials, json_body={"input_collection_id": str(config.input_collection_id)}, action_name="add_attached_function_input"
         )
 
     async def _handle_detach_function(self, config: ChromaDetachFunctionConfig, credentials) -> Dict[str, Any]:
@@ -1709,10 +1692,7 @@ class ChromaNode(WorkflowNode):
     async def _handle_update_tenant(self, config: ChromaUpdateTenantConfig, credentials) -> Dict[str, Any]:
         name = config.tenant_name or credentials.tenant
         url = f"{self._tenant_base(credentials)}/{name}"
-        body: Dict[str, Any] = {}
-        cfg = _parse_json_obj(config.config)
-        if cfg:
-            body["config"] = cfg
+        body: Dict[str, Any] = {"resource_name": config.resource_name}
         return await self._request("PATCH", url, credentials, json_body=body, action_name="update_tenant")
 
     # =========================================================================
