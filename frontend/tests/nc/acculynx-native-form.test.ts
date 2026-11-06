@@ -9,6 +9,6 @@ export default async function test() {
     nc.nodes.select(node.id);
     await nc.wait.until(() => Boolean(document.body.textContent?.includes('Confirm CRM Change')));
     nc.assert.ok(document.body.textContent?.includes('Primary Contact'), 'The actual native lead form renders');
-    const image = document.querySelector<HTMLImageElement>('img[src="/icons/acculynx.svg"]');
-    nc.assert.ok(image && image.complete && image.naturalWidth > 0, 'The unchanged official SVG loads');
+    const image = document.querySelector<HTMLImageElement>('img[src="/icons/acculynx-preferred-brand.svg"]');
+    nc.assert.ok(image && image.complete && image.naturalWidth > 0, 'The AccuLynx brand symbol loads');
 }
