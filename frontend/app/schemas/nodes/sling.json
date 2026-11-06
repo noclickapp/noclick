@@ -285,6 +285,7 @@
       "title": "SlingUserTokenCredential",
       "type": "object",
       "x-credential-instructions": "Supply an existing user-bound Sling token and organization ID. The header is Authorization: token, without Bearer. Access follows the issuing user's permissions. Console-session tokens stop working on logout. No login, session mutation, token minting or refresh is performed.",
+      "x-credential-type": "api_key",
       "x-credential-url": "https://github.com/getsling/getsling-api-docs#authentication"
     }
   },

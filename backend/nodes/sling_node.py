@@ -29,7 +29,6 @@ ROOT = "https://api.getsling.com/v1"
 MAX_BYTES = 2 * 1024 * 1024
 MAX_ID = 9223372036854775807
 MAX_CATALOG = 1000
-CURRENT_ORGANIZATION = object()
 OPERATIONS = ("get_organization", "list_groups", "get_group", "list_users", "get_user", "list_group_users", "list_calendar_events")
 
 
@@ -66,6 +65,7 @@ class SlingUserTokenCredential(BaseModel):
     token: str = Field(..., min_length=1, max_length=6000, repr=False, title="Sling User Token", json_schema_extra={"ui:widget": "password"})
     organization_id: RecordID = Field(..., title="Sling Organization ID", description="The organization whose protected details you can read. This supplied ID is a resource parent, not proof of the token's current organization or principal identity.")
     model_config = ConfigDict(extra="ignore", hide_input_in_errors=True, json_schema_extra={
+        "x-credential-type": "api_key",
         "x-credential-url": "https://github.com/getsling/getsling-api-docs#authentication",
         "x-credential-instructions": "Supply an existing user-bound Sling token and organization ID. The header is Authorization: token, without Bearer. Access follows the issuing user's permissions. Console-session tokens stop working on logout. No login, session mutation, token minting or refresh is performed.",
     })
@@ -379,45 +379,38 @@ class SlingNode(WorkflowNode):
             raise ValueError("Use typed read fields without request, credential or organization overrides")
 
     @classmethod
-    def parse_config(cls, raw):
-        cls._require_raw(raw)
-        return super().parse_config(raw)
+    def parse_config(cls, config_data):
+        cls._require_raw(config_data)
+        return super().parse_config(config_data)
 
     @classmethod
-    def validate_config(cls, raw):
+    def validate_config(cls, config_data):
         try:
-            cls._require_raw(raw)
+            cls._require_raw(config_data)
         except ValueError:
             return {"valid": False, "errors": ["Use native Sling fields and a typed credential"], "satisfied_set": None}
-        return super().validate_config(raw)
+        return super().validate_config(config_data)
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=CURRENT_ORGANIZATION):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
         if credential_id:
             if not user_id:
                 raise ValueError("Stored Sling credential requires an authorized caller")
             from utils.database_pool import get_native_pool
             from wss.handlers.workflow_handler import get_user_org_context
             from repositories.credentials import CredentialsRepo
-            from utils.credentials import resolve_credential_with_owner_fallback, get_workflow_owner_id, is_credential_authorized_for_workflow
+            from utils.credentials import resolve_credential_with_owner_fallback
             pool = pool if pool is not None else get_native_pool()
-            if organization_id is CURRENT_ORGANIZATION:
-                async with pool.acquire() as conn:
-                    organization_id = await get_user_org_context(conn, user_id)
-            authority_user = user_id
+            async with pool.acquire() as conn:
+                organization_id = await get_user_org_context(conn, user_id)
             repo = CredentialsRepo(pool)
-            row = await repo.fetch_with_access(credential_id, authority_user, organization_id)
-            if row is None and workflow_id:
-                owner = await get_workflow_owner_id(pool, workflow_id)
-                if owner and owner != user_id and await is_credential_authorized_for_workflow(pool, workflow_id, credential_id):
-                    authority_user = owner
-                    row = await repo.fetch_with_access(credential_id, authority_user, organization_id)
+            row = await repo.fetch_with_access(credential_id, user_id, organization_id)
             if row is None or row.credential_type not in TYPES:
                 raise ValueError("Current Sling authority is unavailable or has a different family")
-            credential_data = await resolve_credential_with_owner_fallback(credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id)
+            credential_data = await resolve_credential_with_owner_fallback(credential_id, user_id, pool, org_id=organization_id)
             if not credential_data or credential_data.get("credential_type") != row.credential_type:
                 raise ValueError("Sling credential unavailable, revoked or access denied")
-            if await repo.fetch_with_access(credential_id, authority_user, organization_id) != row:
+            if await repo.fetch_with_access(credential_id, user_id, organization_id) != row:
                 raise ValueError("Sling authority changed during resolution; reconnect and retry deliberately")
         return credential_value(credential_data, manual=not credential_id).model_dump()
 
@@ -453,5 +446,5 @@ class SlingNode(WorkflowNode):
         if not isinstance(self.config, SlingNodeConfig) or self.config.credentials is None:
             raise ValueError("Connect a typed Sling credential")
         self._require_raw(self.node_data or self.config.model_dump())
-        credential = await self.freshen_credential(self.config.credentials.model_dump(), pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id, credential_id=(self.node_data or {}).get("credential_id"), workflow_id=self.workflow_id, organization_id=self.organization_id)
+        credential = await self.freshen_credential(self.config.credentials.model_dump(), pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id, credential_id=(self.node_data or {}).get("credential_id"))
         return {"status": "success", "action": self.config.config.operation, **await request_operation(credential, self.config.config)}

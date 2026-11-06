@@ -2,12 +2,12 @@
 // These source fixtures do not establish real account or canvas behavior.
 import { beforeAll, describe, expect, it } from 'vitest';
 import { SlingNode } from '~/components/workflow/nodes/SlingNode';
-import { getNodeCredentialInfo, loadAllNodeSchemas, NODE_SCHEMAS } from '~/utils/nodeSchemas';
+import { getNodeCredentialInfo, loadNodeSchemas, NODE_SCHEMAS } from '~/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 
 describe('Sling native wiring', () => {
-  beforeAll(() => loadAllNodeSchemas());
+  beforeAll(() => loadNodeSchemas(['automation-sling']));
   it('discovers the raw user-token family and required resource parent', () => {
     expect(SlingNode.type).toBe('automation-sling');
     expect(getNodeCredentialInfo(SlingNode.type)?.acceptedTypes).toEqual(['sling_user_token']);
@@ -16,6 +16,7 @@ describe('Sling native wiring', () => {
     expect(credential.required).toEqual(expect.arrayContaining(['token', 'organization_id']));
     expect(credential.properties.token['ui:widget']).toBe('password');
     expect(credential['x-oauth-provider']).toBeUndefined();
+    expect(credential['x-credential-type']).toBe('api_key');
     expect(humanizeCredentialLabel('SlingUserToken')).toBe('Sling User Token');
   });
 

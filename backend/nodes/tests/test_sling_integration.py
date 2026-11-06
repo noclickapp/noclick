@@ -97,7 +97,7 @@ async def test_actual_manual_connect_bad_auth_has_no_io(seams, change):
 async def test_current_row_family_blocks_blob_and_provider(seams, family):
     seams.row["credential_type"] = family
     with pytest.raises(ValueError, match="Current Sling authority"):
-        await node.SlingNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org")
+        await node.SlingNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool)
     assert seams.calls == []
 
 
@@ -118,7 +118,7 @@ async def test_current_authority_loss_or_race_stops_before_io(seams, condition):
             return seams.row
         seams.pool.conn.fetchrow.side_effect = read
     with pytest.raises(ValueError):
-        await node.SlingNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org")
+        await node.SlingNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool)
     assert seams.calls == []
 
 
@@ -149,26 +149,11 @@ async def test_malformed_protected_org_never_verified_identity(seams):
 
 
 
-@pytest.mark.parametrize("authorized", [False, True])
-async def test_workflow_owner_fallback_requires_actual_acl_and_current_org(seams, authorized):
-    workflow = "44444444-4444-4444-8444-444444444444"
-    owner_reads = []
-    async def read(statement, *args):
-        seams.sql.append((statement, args))
-        if "FROM workflows" in statement:
-            return {"owner_id": "fixture-owner"}
-        if "FROM workflow_authorized_credentials" in statement:
-            assert str(args[0]) == workflow and str(args[1]) == CID
-            return {"allowed": 1} if authorized else None
-        if args[1] == "fixture-owner":
-            owner_reads.append(args)
-            return {**seams.row, "owner_id": "fixture-owner"}
-        return None
-    seams.pool.conn.fetchrow.side_effect = read
-    if authorized:
-        assert await node.SlingNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org", workflow_id=workflow) == CREDENTIAL
-        assert len(owner_reads) == 3 and all(args[2] == "fixture-org" for args in owner_reads)
-    else:
-        with pytest.raises(ValueError, match="Current Sling authority"):
-            await node.SlingNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org", workflow_id=workflow)
-        assert owner_reads == []
+async def test_current_caller_access_is_required_without_workflow_fallback(seams):
+    seams.state["row"] = None
+    with pytest.raises(ValueError, match="Current Sling authority"):
+        await node.SlingNode.freshen_credential(
+            CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool,
+        )
+    assert seams.calls == []
+    assert all("FROM workflows" not in query for query, _ in seams.sql)
