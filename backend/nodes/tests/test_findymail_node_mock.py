@@ -427,7 +427,7 @@ class TestFindymailDiscoveryMock:
     @pytest.mark.asyncio
     async def test_lookalike_search(self, api_key_credentials):
         result = await _run(
-            FindymailLookalikeSearchConfig(domains="acme.com, globex.com", limit="10"),
+            FindymailLookalikeSearchConfig(domains="stripe.com", limit="10"),
             api_key_credentials, 200, {"companies": [{"domain": "initech.com"}]},
         )
         assert result["status"] == "success"
