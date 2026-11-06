@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import re
 from contextvars import ContextVar
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Annotated, Any, Literal, Optional, Union
 from uuid import UUID, uuid4
@@ -19,7 +19,6 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, Strict
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
-from nodes.core.credential_validation import CredentialValidationContext, CredentialValidationUnavailable, CredentialValidationUnverified
 from utils.ssrf import guarded_async_client
 
 API_ROOT = "https://api.mindbodyonline.com/public/v6"
@@ -351,23 +350,54 @@ def _native_config_view(data):
     return {**data, "config": {key: value for key, value in data["config"].items() if key not in ui_keys}}
 
 
-def _authority_shape(context: CredentialValidationContext):
-    row = context._authority
-    try:
-        if not isinstance(row.owner_id, str):
-            raise ValueError()
-        UUID(row.owner_id)
-        if any(type(value) is not int or value < 0 for value in (row.token_version, row.approval_revision)):
-            raise ValueError()
-        if not isinstance(row.updated_at, datetime) or row.updated_at.tzinfo is None or row.updated_at.utcoffset() is None:
-            raise ValueError()
-    except (ValueError, TypeError, AttributeError):
-        raise CredentialValidationUnavailable("Credential authority is invalid") from None
+class CredentialValidationUnavailable(ValueError):
+    """The saved Mindbody credential is unavailable or changed."""
+
+
+class CredentialValidationUnverified(ValueError):
+    """Protected Mindbody access has not been established."""
+
+
+@dataclass(frozen=True)
+class _MindbodyCredentialContext:
+    credential_id: str
+    user_id: str
+    organization_id: Optional[str]
+    pool: Any = field(repr=False, compare=False)
+    credential: dict = field(repr=False)
+    workflow_id: Optional[str] = None
+
+    @classmethod
+    async def create(cls, *, credential_id, user_id, pool, workflow_id=None):
+        from wss.handlers.workflow_handler import get_user_org_context
+        async with pool.acquire() as conn:
+            org_id = await get_user_org_context(conn, user_id)
+        credential = await cls._load(credential_id, user_id, pool, org_id, workflow_id)
+        return cls(credential_id, user_id, org_id, pool, credential, workflow_id)
+
+    @staticmethod
+    async def _load(credential_id, user_id, pool, org_id, workflow_id):
+        from utils.credentials import resolve_credential_with_owner_fallback
+        credential = await resolve_credential_with_owner_fallback(
+            credential_id, user_id, pool, org_id=org_id, workflow_id=workflow_id)
+        if not credential or credential.get("credential_type") != FAMILY:
+            raise CredentialValidationUnavailable("Credential is unavailable or access denied")
+        return credential
+
+    async def revalidate(self):
+        current = await type(self).create(credential_id=self.credential_id,
+            user_id=self.user_id, pool=self.pool, workflow_id=self.workflow_id)
+        if current.organization_id != self.organization_id or current.credential != self.credential:
+            raise CredentialValidationUnavailable("Mindbody credential changed; retry the operation")
+        return current.credential
+
+    async def load_current_credential(self):
+        return await self.revalidate()
 
 
 @dataclass(frozen=True)
 class _LookupAuthority:
-    context: CredentialValidationContext
+    context: _MindbodyCredentialContext
 
 
 class MindbodyNode(WorkflowNode):
@@ -392,13 +422,12 @@ class MindbodyNode(WorkflowNode):
 
     @classmethod
     async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
-        _guard({"credentials": credential_data, "credential_id": credential_id})
         if credential_id is None:
+            _guard({"credentials": credential_data})
             return credential_data
         if pool is None or user_id is None:
             raise CredentialValidationUnavailable("Trusted current lookup context required")
-        context = await CredentialValidationContext.create(credential_id=credential_id, node_type=NODE_TYPE, user_id=user_id, pool=pool)
-        _authority_shape(context)
+        context = await _MindbodyCredentialContext.create(credential_id=credential_id, user_id=user_id, pool=pool)
         current = await context.load_current_credential()
         _guard({"credentials": current, "credential_id": credential_id})
         return {**current, "_mindbody_lookup_authority": _LookupAuthority(context)}
@@ -412,7 +441,6 @@ class MindbodyNode(WorkflowNode):
         if not isinstance(ticket, _LookupAuthority):
             raise CredentialValidationUnavailable("A current saved Mindbody credential is required for choices")
         authority = ticket.context
-        _authority_shape(authority)
         await authority.revalidate()
         if page_token is None:
             offset = 0
@@ -439,39 +467,20 @@ class MindbodyNode(WorkflowNode):
             "search_scope": "current_page"}
 
     @classmethod
-    async def validate_credential_access(cls, credential_data, *, validation_context=None):
-        if validation_context is None:
-            _guard({"credentials": credential_data})
-            raise CredentialValidationUnverified("Stored current-row context is required to verify protected access")
-        if not isinstance(validation_context, CredentialValidationContext) or validation_context.node_type != NODE_TYPE:
-            raise CredentialValidationUnavailable("Trusted Mindbody validation context required")
-        _guard({"credentials": credential_data, "credential_id": validation_context.credential_id})
-        _authority_shape(validation_context)
-        result = await validation_context.run_operation("check_connection")
-        await validation_context.accept(result)
-        return {"valid": True}
+    async def validate_credential_access(cls, credential_data):
+        # Staging's post-connect hook supplies only decrypted form data, without
+        # the saved credential identity needed for admission. The explicit node
+        # operation checks protected access through WorkflowNode.run instead.
+        _guard({"credentials": credential_data})
+        return {"valid": None, "message": "Run Check Protected Client Access to verify this connection."}
 
     async def _resolve_current_context(self, cid):
         if not self.user_id:
             raise CredentialValidationUnavailable("Trusted current user context required")
-        from utils.credentials import resolve_credential_with_owner_fallback
         from utils.database_pool import get_native_pool
         pool = self.node_data.get("_approval_pool") or get_native_pool()
-
-        async def snapshot(credential_id, user_id, current_pool, _org_id):
-            try:
-                context = await CredentialValidationContext.create(credential_id=credential_id,
-                    node_type=NODE_TYPE, user_id=user_id, pool=current_pool)
-            except CredentialValidationUnavailable:
-                return None
-            _authority_shape(context)
-            return {"context": context}
-
-        result = await resolve_credential_with_owner_fallback(cid, self.user_id, pool,
-            org_id=self.organization_id, workflow_id=self.workflow_id, load_credential_fn=snapshot)
-        if not result:
-            raise CredentialValidationUnavailable("Credential is unavailable or access denied")
-        return result["context"]
+        return await _MindbodyCredentialContext.create(credential_id=cid,
+            user_id=self.user_id, pool=pool, workflow_id=self.workflow_id)
 
     async def _current(self):
         _guard(self.node_data)
@@ -488,7 +497,7 @@ class MindbodyNode(WorkflowNode):
     async def _revalidate(self, context):
         await context.revalidate()
         current = await self._resolve_current_context(context.credential_id)
-        if current._authority != context._authority:
+        if current.organization_id != context.organization_id or current.credential != context.credential:
             raise CredentialValidationUnavailable("Credential authority changed; retry validation")
 
     async def run(self, inputs):
@@ -509,7 +518,18 @@ class MindbodyNode(WorkflowNode):
     async def execute(self, inputs):
         ticket = _REQUEST_CONTEXT.get()
         if ticket is None or ticket[0] is not self:
-            return await self.run(inputs)
+            if _credential_id(self.node_data) is not None:
+                return await self.run(inputs)
+            # Direct execution with an unsaved credential has no stored policy
+            # to admit. Saved attachments always enter WorkflowNode.run above.
+            _guard(self.node_data)
+            if not self.config or not self.config.credentials:
+                raise ValueError("Supply a Mindbody credential")
+            token = _REQUEST_CONTEXT.set((self, None, self.config.credentials))
+            try:
+                return await self.execute(inputs)
+            finally:
+                _REQUEST_CONTEXT.reset(token)
         _, context, credentials = ticket
         if context is not None:
             await self._revalidate(context)

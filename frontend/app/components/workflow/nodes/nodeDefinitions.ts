@@ -141,6 +141,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-clickup', 'ClickUpNode'],
     ['automation-devin', 'DevinNode'],
     ['automation-asana', 'AsanaNode'],
+    ['automation-mindbody', 'MindbodyNode'],
     ['automation-firestore', 'FirestoreNode'],
     ['automation-google-cloud-storage', 'GoogleCloudStorageNode'],
     ['automation-monday', 'MondayNode'],

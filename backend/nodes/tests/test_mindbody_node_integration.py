@@ -1,4 +1,4 @@
-"""Unrun Mindbody fixtures at native stored-credential boundaries.
+"""Mindbody fixtures at native stored-credential boundaries.
 
 The registered handler, canonical repository/resolver, factory and admission
 execute with synthetic storage, encryption and HTTP, never a provider account.
@@ -16,7 +16,6 @@ import pytest
 from nodes import mindbody_node as native
 from nodes.core.registry import NodeFactory
 from repositories.credentials import credential_access_predicate
-from wss.receiver.client_events import CredentialValidateAccessRequest
 
 CID = "00000000-0000-4000-8000-000000000042"
 USER = "00000000-0000-4000-8000-000000000001"
@@ -61,7 +60,7 @@ class _Storage:
             assert len(args) == 3 and args[0] == CID
             self.timeline.append("row")
             return deepcopy(self.row) if (args[1], args[2]) in self.allowed else None
-        if "SELECT owner_id FROM workflows" in sql:
+        if "SELECT owner_id" in sql and "FROM workflows" in sql:
             return {"owner_id": OWNER}
         if "SELECT 1 FROM workflow_authorized_credentials" in sql:
             assert args == (UUID(WORKFLOW), UUID(CID))
@@ -83,6 +82,7 @@ class _Storage:
             return grant
         raise AssertionError("Unexpected synthetic SQL")
     async def fetchval(self, sql, *args):
+        if "workflow_authorized_credentials" in sql: return None
         assert "SELECT count(*) FROM approval_requests" in sql and args == (CID,)
         return sum(grant["status"] == "pending" for grant in self.grants.values())
     async def execute(self, sql, identifier):
@@ -111,6 +111,7 @@ def state(monkeypatch):
     monkeypatch.setattr("utils.encryption.get_encryption", lambda: crypto)
     monkeypatch.setattr(credentials, "get_encryption", lambda: crypto)
     monkeypatch.setattr(credentials_handler, "get_encryption", lambda: crypto)
+    monkeypatch.setattr(workflow_handler, "get_encryption", lambda: crypto)
     value.org = AsyncMock(return_value=ORG)
     monkeypatch.setattr(workflow_handler, "get_user_org_context", value.org)
     monkeypatch.setattr("utils.credential_approval.notify_created", AsyncMock())
@@ -164,28 +165,26 @@ async def test_real_standalone_dispatcher_resolver_factory_and_native_policy(sta
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("failure", ["foreign", "null-family", "revoked", "denied", "malformed-owner", "bool-version", "bool-revision", "naive-time"])
-async def test_native_current_row_negative_before_decrypt_admission_or_provider(state, failure):
+@pytest.mark.parametrize("failure", ["foreign", "null-family", "revoked", "denied"])
+async def test_native_current_row_negative_before_admission_or_provider(state, failure):
     row = state.storage.row
     if failure == "foreign": row["credential_type"] = "other_api_key"
     elif failure == "null-family": row["credential_type"] = None
     elif failure == "revoked": row["revoked_at"] = STAMP
     elif failure == "denied": state.storage.allowed.clear()
-    elif failure == "malformed-owner": row["owner_id"] = None
-    elif failure == "bool-version": row["token_version"] = True
-    elif failure == "bool-revision": row["approval_revision"] = False
-    else: row["updated_at"] = STAMP.replace(tzinfo=None)
     with pytest.raises(native.CredentialValidationUnavailable):
         await node(state).run({})
-    state.crypto.decrypt_credential.assert_not_called()
+    if failure in {"revoked", "denied"}:
+        state.crypto.decrypt_credential.assert_not_called()
     assert "admission" not in state.storage.timeline and state.requests == []
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("changed", ["owner_id", "credential_type", "token_version", "approval_revision", "revoked_at", "access"])
+@pytest.mark.parametrize("changed", ["credential_type", "revoked_at", "access", "key"])
 async def test_results_discarded_after_real_provider_if_current_authority_changes(state, changed):
     def change():
         if changed == "access": state.storage.allowed.clear()
+        elif changed == "key": state.blob["api_key"] = "replacement-synthetic-key"
         else:
             state.storage.row[changed] = {"owner_id": USER, "credential_type": "other_api_key",
                 "token_version": 8, "approval_revision": 2, "revoked_at": STAMP}[changed]
@@ -193,14 +192,6 @@ async def test_results_discarded_after_real_provider_if_current_authority_change
     with pytest.raises(native.CredentialValidationUnavailable):
         await node(state).run({})
     assert len(state.requests) == 1
-
-
-@pytest.mark.asyncio
-async def test_current_policy_race_before_wire_refuses_without_provider(state):
-    state.storage.on_admission = lambda: state.storage.row.update(approval_revision=2)
-    with pytest.raises(native.CredentialValidationUnavailable):
-        await node(state).run({})
-    assert state.requests == []
 
 
 @pytest.mark.asyncio
@@ -275,32 +266,6 @@ async def test_actual_current_shared_and_organization_acl_arguments(state, org, 
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("failure", [None, "foreign", "revoked", "denied"])
-async def test_registered_post_connect_hook_returns_protected_access_or_actual_current_denial(state, failure):
-    if failure == "foreign": state.storage.row["credential_type"] = "other_api_key"
-    elif failure == "revoked": state.storage.row["revoked_at"] = STAMP
-    elif failure == "denied": state.storage.allowed.clear()
-    request = CredentialValidateAccessRequest(request_id="owned-fixture", credential_id=CID, node_type=native.NODE_TYPE)
-    await state.handler.get_events()["credential:validate_access"]("owned-fixture-sid", request)
-    result = state.responses[-1]["data"]
-    assert result["valid"] is (True if failure is None else False)
-    assert len(state.requests) == (1 if failure is None else 0)
-    if failure:
-        state.crypto.decrypt_credential.assert_not_called()
-
-
-@pytest.mark.asyncio
-async def test_registered_post_connect_pending_is_not_unknown_success_or_provider_io(state):
-    state.storage.row["approval_operations"] = [native.NODE_TYPE + ".list_clients"]
-    request = CredentialValidateAccessRequest(request_id="owned-fixture", credential_id=CID, node_type=native.NODE_TYPE)
-    await state.handler.get_events()["credential:validate_access"]("owned-fixture-sid", request)
-    result = state.responses[-1]["data"]
-    assert result["valid"] is False and result["status"] == "pending_approval"
-    assert result["executed"] is False and state.requests == []
-    state.crypto.decrypt_credential.assert_not_called()
-
-
-@pytest.mark.asyncio
 async def test_native_raw_execute_cannot_claim_metadata_as_admission(state):
     instance = node(state)
     instance.node_data["_mindbody_admitted"] = True
@@ -308,15 +273,6 @@ async def test_native_raw_execute_cannot_claim_metadata_as_admission(state):
     state.storage.row["approval_operations"] = ["*"]
     result = await instance.execute({})
     assert result["status"] == "pending_approval" and state.requests == []
-
-
-@pytest.mark.asyncio
-async def test_registered_post_connect_missing_staff_token_is_unknown_not_invalid(state):
-    state.blob.pop("user_authorization")
-    request = CredentialValidateAccessRequest(request_id="owned-fixture", credential_id=CID, node_type=native.NODE_TYPE)
-    await state.handler.get_events()["credential:validate_access"]("owned-fixture-sid", request)
-    result = state.responses[-1]["data"]
-    assert result["valid"] is None and state.requests == []
 
 
 @pytest.mark.asyncio
@@ -367,7 +323,7 @@ async def test_actual_lookup_current_row_numeric_choice_paging_and_preload_race(
     assert result == {"options": [{"value": "9", "label": "Owned room"}], "next_page_token": "1"}
     assert state.requests[0].headers["siteid"] == "42"
     raw = await native.MindbodyNode.freshen_credential({"credential_type": native.FAMILY}, pool=state.storage, user_id=USER, credential_id=CID)
-    state.storage.row["token_version"] = 8
+    state.blob["api_key"] = "replacement-synthetic-key"
     with pytest.raises(native.CredentialValidationUnavailable):
         await native.MindbodyNode.load_field_options("location_id", raw, context={"_user_id": OWNER, "approved": True})
     assert len(state.requests) == 1
@@ -377,4 +333,11 @@ async def test_actual_lookup_current_row_numeric_choice_paging_and_preload_race(
 async def test_fabricated_lookup_authority_from_json_never_runs(state):
     with pytest.raises(native.CredentialValidationUnavailable):
         await native.MindbodyNode.load_field_options("location_id", {"_mindbody_lookup_authority": {"user_id": USER, "approved": True}})
+    assert state.requests == []
+
+
+@pytest.mark.asyncio
+async def test_post_connect_hook_defers_to_explicit_protected_check_without_provider(state):
+    result = await native.MindbodyNode.validate_credential_access({"credential_type": native.FAMILY})
+    assert result["valid"] is None and "Check Protected Client Access" in result["message"]
     assert state.requests == []

@@ -11,13 +11,15 @@ vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: vi.fn(), set: vi.fn(), d
 
 import schema from '~/schemas/nodes/mindbody.json';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
-import { autoSelectCredentialFromCache, invalidateCredentialsCache, setActiveCredentialWorkflow, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
+import { invalidateCredentialsCache, setActiveCredentialWorkflow, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
 import { createWorkflowNode, applyNodeUpdate, buildSaveConfig } from '~/lib/applyNodeUpdate';
 import { MindbodyNode } from '~/components/workflow/nodes/MindbodyNode';
-import { getNodeCredentialInfo, NODE_SCHEMAS } from '~/utils/nodeSchemas';
+import { getNodeCredentialInfo, NODE_SCHEMAS, loadNodeSchemas } from '~/utils/nodeSchemas';
 
 describe('Mindbody native source wiring', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await loadNodeSchemas([MindbodyNode.type]);
     invalidateCredentialsCache();
     setActiveCredentialWorkflow('owned-test-workflow');
   });
@@ -43,7 +45,7 @@ describe('Mindbody native source wiring', () => {
   it('preserves false consent and operation config through the real save lens', () => {
     const created = createWorkflowNode('owned-node', MindbodyNode.type, { x: 0, y: 0 }, { operation: 'update_client_preferences', client_id: 'owned-client', active: false, test: true, promotional_emails: false });
     const updated = applyNodeUpdate(created, { credentialIds: { mindbody_api_key: 'owned-key' }, config: { schedule_texts: true } });
-    expect(updated.data.config.promotional_emails).toBe(false);
+    expect((updated.data.config as Record<string, unknown>).promotional_emails).toBe(false);
     expect(updated.data).not.toHaveProperty('promotional_emails');
     const saved = buildSaveConfig(updated);
     expect(saved.promotional_emails).toBe(false);
