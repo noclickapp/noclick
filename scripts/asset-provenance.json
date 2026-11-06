@@ -52,6 +52,12 @@
       "sha256": "83af3042c6aae855b746472980a8e7b68d8a6501bb554039cc84b40354563b20"
     },
     {
+      "path": "frontend/public/icons/openstatus.svg",
+      "source": "https://www.openstatus.dev/assets/landing/openstatus-logo.svg (unaltered vector linked by the official OpenStatus homepage)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "54885f9c3b5df28aa980ebf557206dc6601730fda4b384ff9a2e9739aed149ea"
+    },
+    {
       "path": "frontend/public/icons/affinity.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
