@@ -184,6 +184,16 @@ class SlackBotTokenCredential(BaseModel):
         json_schema_extra={"ui:widget": "password", "placeholder": "xoxb-..."},
     )
 
+    client_id: Optional[str] = Field(
+        None, title="App Client ID", description="Required to uninstall this app"
+    )
+    client_secret: Optional[str] = Field(
+        None,
+        title="App Client Secret",
+        description="Required to uninstall this app",
+        json_schema_extra={"ui:widget": "password"},
+    )
+
 
 # Union type - OAuth shown first in UI
 SlackCredential = Union[SlackOAuthCredential, SlackBotTokenCredential]
@@ -3530,6 +3540,9 @@ class SlackSetExternalInvitePermissionsConfig(BaseModel):
     channel: str = _channel_field(
         "Channel to modify permissions for", title="Channel ID"
     )
+    target_team: str = Field(
+        ..., title="Target Team ID", description="Workspace in the shared channel to modify"
+    )
     action_type: str = Field(
         ..., title="Action", description="Permission action: 'upgrade' or 'downgrade'"
     )
@@ -6166,7 +6179,7 @@ class SlackAdminUsersSessionInvalidateConfig(BaseModel):
         },
         title="Invalidate User Session",
     )
-    session_id: str = Field(
+    session_id: int = Field(
         ..., title="Session ID", description="ID of the session to invalidate"
     )
     team_id: str = Field(..., title="Team ID", description="ID of the team")
@@ -9844,10 +9857,18 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         self, config: SlackAppsUninstallConfig, credentials: SlackCredential
     ) -> Dict[str, Any]:
         """Uninstall the app from a workspace."""
+        if not credentials.client_id or not credentials.client_secret:
+            raise ValueError(
+                "Uninstalling Slack requires this app's client ID and client secret in the credential."
+            )
         return await self._make_request(
             "GET",
             "apps.uninstall",
             credentials,
+            params={
+                "client_id": credentials.client_id,
+                "client_secret": credentials.client_secret,
+            },
             action_name="uninstall_app_from_workspace",
         )
 
@@ -10288,10 +10309,10 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
     ) -> Dict[str, Any]:
         """Delete the user's profile photo."""
         return await self._make_request(
-            "POST",
+            "GET",
             "users.deletePhoto",
             credentials,
-            json_body={},
+            params={},
             action_name="delete_user_profile_photo",
             send_as="user",
         )
@@ -10336,13 +10357,14 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         body = {
             "channel": config.channel,
             "action": config.action_type,
+            "target_team": config.target_team,
         }
 
         return await self._make_request(
             "POST",
             "conversations.externalInvitePermissions.set",
             credentials,
-            json_body=body,
+            form_body=body,
             action_name="set_channel_external_invite_permissions",
         )
 
@@ -10773,16 +10795,16 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
     ) -> Dict[str, Any]:
         """Create an information barrier."""
         body = {
-            "barriered_from_usergroup_ids": config.barriered_from_usergroup_ids,
+            "barriered_from_usergroup_ids": ",".join(config.barriered_from_usergroup_ids),
             "primary_usergroup_id": config.primary_usergroup_id,
-            "restricted_subjects": config.restricted_subjects,
+            "restricted_subjects": ",".join(config.restricted_subjects),
         }
 
         return await self._make_request(
             "POST",
             "admin.barriers.create",
             credentials,
-            json_body=body,
+            form_body=body,
             action_name="create_information_barrier",
         )
 
@@ -10796,7 +10818,7 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
             "POST",
             "admin.barriers.delete",
             credentials,
-            json_body=body,
+            form_body=body,
             action_name="delete_information_barrier",
         )
 
@@ -10822,16 +10844,16 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         """Update an information barrier."""
         body = {
             "barrier_id": config.barrier_id,
-            "barriered_from_usergroup_ids": config.barriered_from_usergroup_ids,
+            "barriered_from_usergroup_ids": ",".join(config.barriered_from_usergroup_ids),
             "primary_usergroup_id": config.primary_usergroup_id,
-            "restricted_subjects": config.restricted_subjects,
+            "restricted_subjects": ",".join(config.restricted_subjects),
         }
 
         return await self._make_request(
             "POST",
             "admin.barriers.update",
             credentials,
-            json_body=body,
+            form_body=body,
             action_name="update_information_barrier",
         )
 
@@ -10857,13 +10879,13 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         credentials: SlackCredential,
     ) -> Dict[str, Any]:
         """Bulk archive conversations."""
-        body = {"channel_ids": config.channel_ids}
+        body = {"channel_ids": ",".join(config.channel_ids)}
 
         return await self._make_request(
             "POST",
             "admin.conversations.bulkArchive",
             credentials,
-            json_body=body,
+            form_body=body,
             action_name="bulk_archive_conversations",
         )
 
@@ -10873,13 +10895,13 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         credentials: SlackCredential,
     ) -> Dict[str, Any]:
         """Bulk delete conversations."""
-        body = {"channel_ids": config.channel_ids}
+        body = {"channel_ids": ",".join(config.channel_ids)}
 
         return await self._make_request(
             "POST",
             "admin.conversations.bulkDelete",
             credentials,
-            json_body=body,
+            form_body=body,
             action_name="bulk_delete_conversations",
         )
 
@@ -10890,7 +10912,7 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
     ) -> Dict[str, Any]:
         """Bulk move conversations to a team."""
         body = {
-            "channel_ids": config.channel_ids,
+            "channel_ids": ",".join(config.channel_ids),
             "target_team_id": config.target_team_id,
         }
 
@@ -10898,7 +10920,7 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
             "POST",
             "admin.conversations.bulkMove",
             credentials,
-            json_body=body,
+            form_body=body,
             action_name="bulk_move_conversations_to_team",
         )
 
@@ -11149,10 +11171,10 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
             body["team_id"] = config.team_id
 
         return await self._make_request(
-            "POST",
+            "GET",
             "admin.conversations.restrictAccess.addGroup",
             credentials,
-            json_body=body,
+            params=body,
             action_name="add_idp_group_to_channel",
         )
 
@@ -11187,10 +11209,10 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         }
 
         return await self._make_request(
-            "POST",
+            "GET",
             "admin.conversations.restrictAccess.removeGroup",
             credentials,
-            json_body=body,
+            params=body,
             action_name="remove_idp_group_from_channel",
         )
 
@@ -11314,10 +11336,10 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         }
 
         return await self._make_request(
-            "POST",
+            "GET",
             "admin.emoji.add",
             credentials,
-            json_body=body,
+            params=body,
             action_name="add_custom_emoji",
         )
 
@@ -11331,10 +11353,10 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         }
 
         return await self._make_request(
-            "POST",
+            "GET",
             "admin.emoji.addAlias",
             credentials,
-            json_body=body,
+            params=body,
             action_name="add_emoji_alias",
         )
 
@@ -11361,10 +11383,10 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         body = {"name": config.name}
 
         return await self._make_request(
-            "POST",
+            "GET",
             "admin.emoji.remove",
             credentials,
-            json_body=body,
+            params=body,
             action_name="remove_custom_emoji",
         )
 
@@ -11378,10 +11400,10 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         }
 
         return await self._make_request(
-            "POST",
+            "GET",
             "admin.emoji.rename",
             credentials,
-            json_body=body,
+            params=body,
             action_name="rename_custom_emoji",
         )
 
@@ -11699,14 +11721,14 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         """Set default channels for team."""
         body = {
             "team_id": config.team_id,
-            "channel_ids": config.channel_ids,
+            "channel_ids": ",".join(config.channel_ids),
         }
 
         return await self._make_request(
-            "POST",
+            "GET",
             "admin.teams.settings.setDefaultChannels",
             credentials,
-            json_body=body,
+            params=body,
             action_name="set_default_channels_for_team",
         )
 
@@ -11758,10 +11780,10 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         }
 
         return await self._make_request(
-            "POST",
+            "GET",
             "admin.teams.settings.setIcon",
             credentials,
-            json_body=body,
+            params=body,
             action_name="set_team_icon",
         )
 
@@ -12299,7 +12321,7 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
     ) -> Dict[str, Any]:
         """Set workflow trigger type permissions."""
         body = {
-            "trigger_type_id": config.trigger_type_id,
+            "id": config.trigger_type_id,
             "visibility": config.visibility,
         }
         if config.user_ids:

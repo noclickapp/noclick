@@ -4916,7 +4916,7 @@
         "session_id": {
           "description": "ID of the session to invalidate",
           "title": "Session ID",
-          "type": "string"
+          "type": "integer"
         },
         "team_id": {
           "description": "ID of the team",
@@ -6130,6 +6130,33 @@
           "placeholder": "xoxb-...",
           "title": "Bot Token",
           "type": "string",
+          "ui:widget": "password"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required to uninstall this app",
+          "title": "App Client ID"
+        },
+        "client_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required to uninstall this app",
+          "title": "App Client Secret",
           "ui:widget": "password"
         }
       },
@@ -11345,6 +11372,11 @@
           },
           "x-resource-type": "slack_channel"
         },
+        "target_team": {
+          "description": "Workspace in the shared channel to modify",
+          "title": "Target Team ID",
+          "type": "string"
+        },
         "action_type": {
           "description": "Permission action: 'upgrade' or 'downgrade'",
           "title": "Action",
@@ -11353,6 +11385,7 @@
       },
       "required": [
         "channel",
+        "target_team",
         "action_type"
       ],
       "title": "SlackSetExternalInvitePermissionsConfig",
