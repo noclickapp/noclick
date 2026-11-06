@@ -1476,14 +1476,14 @@ async def _execute_alert(node, c, account, token):
 async def _set_alert_tags(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/alerts/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_alert_tags")
 
 
 async def _unset_alert_tags(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/alerts/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_alert_tags")
 
 
@@ -1790,14 +1790,14 @@ async def _delete_api_integration(node, c, account, token):
 async def _set_tags_api_integration(node, c, account, token):
     ep = f"/api-integrations/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_tags_api_integration")
 
 
 async def _unset_tags_api_integration(node, c, account, token):
     ep = f"/api-integrations/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_tags_api_integration")
 
 
@@ -2238,14 +2238,14 @@ async def _delete_catalog_integration(node, c, account, token):
 async def _set_catalog_integration_tags(node, c, account, token):
     ep = f"/catalog-integrations/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_catalog_integration_tags")
 
 
 async def _unset_catalog_integration_tags(node, c, account, token):
     ep = f"/catalog-integrations/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_catalog_integration_tags")
 
 
@@ -2560,13 +2560,13 @@ async def _list_compute_pool_instance_families(node, c, account, token):
 
 
 async def _set_tags_compute_pool(node, c, account, token):
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     params = {"ifExists": _sf_bool(c.if_exists)}
     return await node._request(account, token, "POST", f"/compute-pools/{c.name}:set-tags", params=params, json_body=body, action_name="set_tags_compute_pool")
 
 
 async def _unset_tags_compute_pool(node, c, account, token):
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     params = {"ifExists": _sf_bool(c.if_exists)}
     return await node._request(account, token, "POST", f"/compute-pools/{c.name}:unset-tags", params=params, json_body=body, action_name="unset_tags_compute_pool")
 
@@ -3047,7 +3047,7 @@ async def _primary_database_failover(node, c, account, token):
 async def _set_tags(node, c, account, token):
     ep = f"/databases/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params,
                                json_body=body, action_name="set_tags")
 
@@ -3055,7 +3055,7 @@ async def _set_tags(node, c, account, token):
 async def _unset_tags(node, c, account, token):
     ep = f"/databases/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": n.strip()} for n in c.tag_name.split(",") if n.strip()]
+    body = [{"tag_name": n.strip()} for n in c.tag_name.split(",") if n.strip()]
     return await node._request(account, token, "POST", ep, params=params,
                                json_body=body, action_name="unset_tags")
 
@@ -3552,14 +3552,14 @@ async def _revoke_future_grants_database_role(node, c, account, token):
 async def _set_tags_database_role(node, c, account, token):
     ep = f"/databases/{c.database}/database-roles/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_tags_database_role")
 
 
 async def _unset_tags_database_role(node, c, account, token):
     ep = f"/databases/{c.database}/database-roles/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_tags_database_role")
 
 
@@ -4111,14 +4111,14 @@ async def _swap_with_dynamic_table(node, c, account, token):
 async def _set_tags_dynamic_table(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/dynamic-tables/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_tags_dynamic_table")
 
 
 async def _unset_tags_dynamic_table(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/dynamic-tables/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_tags_dynamic_table")
 
 
@@ -4433,14 +4433,14 @@ async def _rename_event_table(node, c, account, token):
 async def _set_tags_event_table(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/event-tables/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_tags_event_table")
 
 
 async def _unset_tags_event_table(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/event-tables/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_tags_event_table")
 
 
@@ -4847,14 +4847,14 @@ async def _execute_function(node, c, account, token):
 async def _set_function_tags(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/functions/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_function_tags")
 
 
 async def _unset_function_tags(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/functions/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_function_tags")
 
 
@@ -5891,7 +5891,7 @@ async def _create_snowflake_managed_iceberg_table_like(node, c, account, token):
 async def _set_tags_iceberg_table(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/iceberg-tables/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body,
                                action_name="set_tags_iceberg_table")
 
@@ -5899,7 +5899,7 @@ async def _set_tags_iceberg_table(node, c, account, token):
 async def _unset_tags_iceberg_table(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/iceberg-tables/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body,
                                action_name="unset_tags_iceberg_table")
 
@@ -6187,14 +6187,14 @@ async def _list_images_in_repository(node, c, account, token):
 async def _set_tags_image_repository(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/image-repositories/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_tags_image_repository")
 
 
 async def _unset_tags_image_repository(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/image-repositories/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_tags_image_repository")
 
 
@@ -6476,14 +6476,14 @@ async def _delete_network_policy(node, c, account, token):
 async def _set_tags_network_policy(node, c, account, token):
     ep = f"/network-policies/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_tags_network_policy")
 
 
 async def _unset_tags_network_policy(node, c, account, token):
     ep = f"/network-policies/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_tags_network_policy")
 
 
@@ -7024,14 +7024,14 @@ async def _commit_notebook(node, c, account, token):
 async def _set_notebook_tags(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/notebooks/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_notebook_tags")
 
 
 async def _unset_notebook_tags(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/notebooks/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_notebook_tags")
 
 
@@ -7325,14 +7325,14 @@ async def _delete_notification_integration(node, c, account, token):
 async def _set_tags_notification_integration(node, c, account, token):
     ep = f"/notification-integrations/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_tags_notification_integration")
 
 
 async def _unset_tags_notification_integration(node, c, account, token):
     ep = f"/notification-integrations/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_tags_notification_integration")
 
 
@@ -7631,14 +7631,14 @@ async def _rename_password_policy(node, c, account, token):
 async def _set_password_policy_tags(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/password-policies/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_password_policy_tags")
 
 
 async def _unset_password_policy_tags(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/password-policies/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_password_policy_tags")
 
 
@@ -7939,14 +7939,14 @@ async def _refresh_pipe(node, c, account, token):
 async def _set_tags_pipe(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/pipes/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_tags_pipe")
 
 
 async def _unset_tags_pipe(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/pipes/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_tags_pipe")
 
 
@@ -8151,7 +8151,7 @@ class SnowflakeSetProcedureTagsConfig(BaseModel):
     name: str = Field(..., title="Procedure", description="Procedure name with arguments, e.g. my_proc(TEXT)")
     tags: Optional[str] = Field(
         None, title="Tags",
-        description="JSON array of tag assignments, e.g. [{\"name\":\"cost_center\",\"value\":\"eng\"}]",
+        description="JSON array of tag assignments, e.g. [{\"tag_name\":\"cost_center\",\"tag_value\":\"eng\"}]",
     )
     if_exists: Optional[str] = Field(
         None, title="If Exists", description="Do not error if the procedure is absent",
@@ -8181,7 +8181,7 @@ class SnowflakeUnsetProcedureTagsConfig(BaseModel):
     name: str = Field(..., title="Procedure", description="Procedure name with arguments, e.g. my_proc(TEXT)")
     tags: Optional[str] = Field(
         None, title="Tags",
-        description="JSON array of tag names to unset, e.g. [{\"name\":\"cost_center\"}]",
+        description="JSON array of tag names to unset, e.g. [{\"tag_name\":\"cost_center\"}]",
     )
     if_exists: Optional[str] = Field(
         None, title="If Exists", description="Do not error if the procedure is absent",
@@ -8637,14 +8637,14 @@ async def _set_tags_role(node, c, account, token):
         if not pair:
             continue
         tag_name, _, tag_value = pair.partition("=")
-        body.append({"name": tag_name.strip(), "value": tag_value.strip()})
+        body.append({"tag_name": tag_name.strip(), "tag_value": tag_value.strip()})
     params = {"ifExists": _sf_bool(c.if_exists)}
     return await node._request(account, token, "POST", f"/roles/{c.name}:set-tags",
                                params=params, json_body=body, action_name="set_tags_role")
 
 
 async def _unset_tags_role(node, c, account, token):
-    body = [{"name": t.strip()} for t in c.tags.split(",") if t.strip()]
+    body = [{"tag_name": t.strip()} for t in c.tags.split(",") if t.strip()]
     params = {"ifExists": _sf_bool(c.if_exists)}
     return await node._request(account, token, "POST", f"/roles/{c.name}:unset-tags",
                                params=params, json_body=body, action_name="unset_tags_role")
@@ -9019,7 +9019,7 @@ async def _delete_schema(node, c, account, token):
 async def _set_schema_tags(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params,
                                json_body=body, action_name="set_schema_tags")
 
@@ -9027,7 +9027,7 @@ async def _set_schema_tags(node, c, account, token):
 async def _unset_schema_tags(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": n.strip()} for n in c.tag_name.split(",") if n.strip()]
+    body = [{"tag_name": n.strip()} for n in c.tag_name.split(",") if n.strip()]
     return await node._request(account, token, "POST", ep, params=params,
                                json_body=body, action_name="unset_schema_tags")
 
@@ -10538,14 +10538,14 @@ async def _clone_stream(node, c, account, token):
 async def _set_tags_stream(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/streams/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_tags_stream")
 
 
 async def _unset_tags_stream(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/streams/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_tags_stream")
 
 
@@ -11103,14 +11103,14 @@ async def _push_streamlit(node, c, account, token):
 async def _set_tags_streamlit(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/streamlits/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_tags_streamlit")
 
 
 async def _unset_tags_streamlit(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/streamlits/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_tags_streamlit")
 
 
@@ -11909,14 +11909,14 @@ async def _swap_with_table_deprecated(node, c, account, token):
 
 async def _set_table_tags(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/tables/{c.name}:set-tags"
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     params = {"ifExists": _sf_bool(c.if_exists)}
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_table_tags")
 
 
 async def _unset_table_tags(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/tables/{c.name}:unset-tags"
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     params = {"ifExists": _sf_bool(c.if_exists)}
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_table_tags")
 
@@ -12597,14 +12597,14 @@ async def _get_complete_graphs(node, c, account, token):
 async def _set_tags_task(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/tasks/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_tags_task")
 
 
 async def _unset_tags_task(node, c, account, token):
     ep = f"/databases/{c.database}/schemas/{c.schema_name}/tasks/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_tags_task")
 
 
@@ -12881,14 +12881,14 @@ async def _set_tags_user(node, c, account, token):
         if not pair:
             continue
         tag_name, _, tag_value = pair.partition("=")
-        body.append({"name": tag_name.strip(), "value": tag_value.strip()})
+        body.append({"tag_name": tag_name.strip(), "tag_value": tag_value.strip()})
     params = {"ifExists": _sf_bool(c.if_exists)}
     return await node._request(account, token, "POST", f"/users/{c.name}:set-tags",
                                params=params, json_body=body, action_name="set_tags_user")
 
 
 async def _unset_tags_user(node, c, account, token):
-    body = [{"name": t.strip()} for t in c.tags.split(",") if t.strip()]
+    body = [{"tag_name": t.strip()} for t in c.tags.split(",") if t.strip()]
     params = {"ifExists": _sf_bool(c.if_exists)}
     return await node._request(account, token, "POST", f"/users/{c.name}:unset-tags",
                                params=params, json_body=body, action_name="unset_tags_user")
@@ -13130,7 +13130,7 @@ class SnowflakeSetUserDefinedFunctionTagsConfig(BaseModel):
     name: str = Field(..., title="UDF", description="UDF name with arguments, e.g. my_udf(TEXT)")
     tags: Optional[str] = Field(
         None, title="Tags",
-        description="JSON array of tag assignments, e.g. [{\"name\":\"cost_center\",\"value\":\"eng\"}]",
+        description="JSON array of tag assignments, e.g. [{\"tag_name\":\"cost_center\",\"tag_value\":\"eng\"}]",
     )
     if_exists: Optional[str] = Field(
         None, title="If Exists", description="Do not error if the UDF is absent",
@@ -13160,7 +13160,7 @@ class SnowflakeUnsetUserDefinedFunctionTagsConfig(BaseModel):
     name: str = Field(..., title="UDF", description="UDF name with arguments, e.g. my_udf(TEXT)")
     tags: Optional[str] = Field(
         None, title="Tags",
-        description="JSON array of tag references, e.g. [{\"name\":\"cost_center\"}]",
+        description="JSON array of tag references, e.g. [{\"tag_name\":\"cost_center\"}]",
     )
     if_exists: Optional[str] = Field(
         None, title="If Exists", description="Do not error if the UDF is absent",
@@ -13427,7 +13427,7 @@ class SnowflakeSetViewTagsConfig(BaseModel):
     name: str = Field(..., title="View", description="The view to tag")
     tags: str = Field(
         ..., title="Tags",
-        description='JSON array of tag assignments, e.g. [{"name": "cost_center", "value": "sales"}]',
+        description='JSON array of tag assignments, e.g. [{"tag_name": "cost_center", "tag_value": "sales"}]',
     )
     if_exists: Optional[str] = Field(
         None, title="If Exists", description="Do not error if the view is absent",
@@ -13457,7 +13457,7 @@ class SnowflakeUnsetViewTagsConfig(BaseModel):
     name: str = Field(..., title="View", description="The view to untag")
     tags: str = Field(
         ..., title="Tags",
-        description='JSON array of tag references to remove, e.g. [{"name": "cost_center"}]',
+        description='JSON array of tag references to remove, e.g. [{"tag_name": "cost_center"}]',
     )
     if_exists: Optional[str] = Field(
         None, title="If Exists", description="Do not error if the view is absent",
@@ -13825,14 +13825,14 @@ async def _disable_warehouse(node, c, account, token):
 async def _set_warehouse_tags(node, c, account, token):
     ep = f"/warehouses/{c.name}:set-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name, "value": c.tag_value}]
+    body = [{"tag_name": c.tag_name, "tag_value": c.tag_value}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="set_warehouse_tags")
 
 
 async def _unset_warehouse_tags(node, c, account, token):
     ep = f"/warehouses/{c.name}:unset-tags"
     params = {"ifExists": _sf_bool(c.if_exists)}
-    body = [{"name": c.tag_name}]
+    body = [{"tag_name": c.tag_name}]
     return await node._request(account, token, "POST", ep, params=params, json_body=body, action_name="unset_warehouse_tags")
 
 
@@ -13920,7 +13920,7 @@ async def _snowflake_request(
     method: str,
     endpoint: str,
     params: Optional[Dict[str, Any]] = None,
-    json_body: Optional[Dict[str, Any]] = None,
+    json_body: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
     action_name: str = "request",
     token_type: str = "PROGRAMMATIC_ACCESS_TOKEN",
 ) -> Dict[str, Any]:
@@ -13939,7 +13939,7 @@ async def _snowflake_request(
         "Accept": "application/json",
         "User-Agent": "NoClick-Workflow/1.0",
     }
-    if json_body:
+    if isinstance(json_body, dict):
         json_body = {k: v for k, v in json_body.items() if v is not None}
     if params:
         params = {k: v for k, v in params.items() if v not in (None, "")}
@@ -14096,7 +14096,7 @@ class SnowflakeNode(ScheduledPollTriggerMixin, WorkflowNode):
         method: str,
         endpoint: str,
         params: Optional[Dict[str, Any]] = None,
-        json_body: Optional[Dict[str, Any]] = None,
+        json_body: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         action_name: str = "request",
     ) -> Dict[str, Any]:
         """Instance wrapper that injects the per-credential token type."""

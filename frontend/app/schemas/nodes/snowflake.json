@@ -104,10 +104,10 @@
               "items": {
                 "anyOf": [
                   {
-                    "type": "integer"
+                    "type": "string"
                   },
                   {
-                    "type": "string"
+                    "type": "integer"
                   }
                 ]
               },
@@ -26121,7 +26121,7 @@
             }
           ],
           "default": null,
-          "description": "JSON array of tag assignments, e.g. [{\"name\":\"cost_center\",\"value\":\"eng\"}]",
+          "description": "JSON array of tag assignments, e.g. [{\"tag_name\":\"cost_center\",\"tag_value\":\"eng\"}]",
           "title": "Tags"
         },
         "if_exists": {
@@ -27480,7 +27480,7 @@
             }
           ],
           "default": null,
-          "description": "JSON array of tag assignments, e.g. [{\"name\":\"cost_center\",\"value\":\"eng\"}]",
+          "description": "JSON array of tag assignments, e.g. [{\"tag_name\":\"cost_center\",\"tag_value\":\"eng\"}]",
           "title": "Tags"
         },
         "if_exists": {
@@ -27552,7 +27552,7 @@
           "type": "string"
         },
         "tags": {
-          "description": "JSON array of tag assignments, e.g. [{\"name\": \"cost_center\", \"value\": \"sales\"}]",
+          "description": "JSON array of tag assignments, e.g. [{\"tag_name\": \"cost_center\", \"tag_value\": \"sales\"}]",
           "title": "Tags",
           "type": "string"
         },
@@ -29298,7 +29298,7 @@
             }
           ],
           "default": null,
-          "description": "JSON array of tag names to unset, e.g. [{\"name\":\"cost_center\"}]",
+          "description": "JSON array of tag names to unset, e.g. [{\"tag_name\":\"cost_center\"}]",
           "title": "Tags"
         },
         "if_exists": {
@@ -30561,7 +30561,7 @@
             }
           ],
           "default": null,
-          "description": "JSON array of tag references, e.g. [{\"name\":\"cost_center\"}]",
+          "description": "JSON array of tag references, e.g. [{\"tag_name\":\"cost_center\"}]",
           "title": "Tags"
         },
         "if_exists": {
@@ -30633,7 +30633,7 @@
           "type": "string"
         },
         "tags": {
-          "description": "JSON array of tag references to remove, e.g. [{\"name\": \"cost_center\"}]",
+          "description": "JSON array of tag references to remove, e.g. [{\"tag_name\": \"cost_center\"}]",
           "title": "Tags",
           "type": "string"
         },

@@ -14,6 +14,9 @@ Exercises every operation with mocked HTTP responses (no live API calls):
 - Host normalization helper
 """
 
+import json
+
+import httpx
 import pytest
 from unittest.mock import Mock, patch, AsyncMock
 
@@ -959,3 +962,53 @@ class TestSnowflakeGeneratedBodies:
             result = await node.execute({})
         assert result["status"] == "success"
         assert captured["body"]["schedule"] == {"schedule_type": "MINUTES_TYPE", "minutes": 5}
+
+
+@pytest.mark.parametrize(
+    "operation, fields, expected",
+    [
+        ("set_warehouse_tags", {"tag_name": "cost_center", "tag_value": "eng"},
+         [{"tag_name": "cost_center", "tag_value": "eng"}]),
+        ("unset_warehouse_tags", {"tag_name": "cost_center"},
+         [{"tag_name": "cost_center"}]),
+        ("set_tags_user", {"tags": "cost_center=eng, env=prod"},
+         [{"tag_name": "cost_center", "tag_value": "eng"},
+          {"tag_name": "env", "tag_value": "prod"}]),
+        ("unset_tags_role", {"tags": "cost_center, env"},
+         [{"tag_name": "cost_center"}, {"tag_name": "env"}]),
+        ("set_view_tags", {"database": "DB", "schema_name": "PUBLIC",
+                           "tags": '[{"tag_name":"cost_center","tag_value":"eng"}]'},
+         [{"tag_name": "cost_center", "tag_value": "eng"}]),
+        ("unset_view_tags", {"database": "DB", "schema_name": "PUBLIC",
+                             "tags": '[{"tag_name":"cost_center"}]'},
+         [{"tag_name": "cost_center"}]),
+    ],
+)
+async def test_tag_requests_reach_transport_with_provider_fields(credentials, operation, fields, expected):
+    # Warehouse set/unset require arrays of common.yaml TagAssignment/TagReference:
+    # https://raw.githubusercontent.com/snowflakedb/snowflake-rest-api-specs/HEAD/specifications/warehouse.yaml
+    requests = []
+
+    def transport(request):
+        requests.append(request)
+        return httpx.Response(200, json={"status": "Request successfully completed"})
+
+    config = SnowflakeNodeConfig(
+        config={"operation": operation, "name": "TEST_NAME", **fields},
+        credentials=credentials,
+    )
+    node = create_snowflake_node(config)
+    original_client = httpx.AsyncClient
+
+    def client(*args, **kwargs):
+        return original_client(*args, **kwargs, transport=httpx.MockTransport(transport))
+
+    with patch("nodes.snowflake_node.httpx.AsyncClient", side_effect=client):
+        result = await node.execute({})
+
+    assert result["status"] == "success"
+    assert len(requests) == 1
+    request = requests[0]
+    assert request.method == "POST"
+    assert request.url.path.endswith(":unset-tags" if operation.startswith("unset") else ":set-tags")
+    assert json.loads(request.content) == expected
