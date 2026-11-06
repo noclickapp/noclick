@@ -1118,9 +1118,18 @@ export function chargeQuery(view: UsageView, filter: ChargeFilter): { query: Cha
 }
 
 /** The lines one hourly reading of a site's hosting records together (what it served, and what it keeps). */
-const READING = new Set(['apps/hosting', 'apps/releases', 'apps/hostnames', 'apps/build_outputs', 'apps/build_cache']);
+const READING = new Set([
+    'apps/hosting',
+    'apps/releases',
+    'apps/hostnames',
+    'apps/build_outputs',
+    'apps/build_cache',
+    'apps/durable_objects',
+    'apps/object_storage',
+    'apps/object_scripts',
+]);
 
-/** A site's hourly reading, recorded as up to five charges in the same second, as one line ("Site hosting", an hour)
+/** A site's hourly reading, recorded as up to eight charges in the same second, as one line ("Site hosting", an hour)
  *  with its charges as its parts; everything else as it came. Lines of one reading fold wherever paging put them. */
 export function foldReadings(items: LineItem[]): LineItem[] {
     const out: LineItem[] = [];
