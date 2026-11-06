@@ -1818,8 +1818,8 @@ class BeehiivNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     async def _get_post_stats(self, c: BeehiivGetPostStatsConfig, api_key: str) -> Dict[str, Any]:
         return await _beehiiv_request(
-            api_key, "GET", f"/publications/{c.publication_id}/posts/{c.post_id}/aggregate_stats",
-            action_name="get_post_stats"
+            api_key, "GET", f"/publications/{c.publication_id}/posts/{c.post_id}",
+            params={"expand[]": ["stats"]}, action_name="get_post_stats"
         )
 
     # ------------------------------------------------------------------

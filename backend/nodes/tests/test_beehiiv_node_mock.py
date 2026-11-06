@@ -20,6 +20,7 @@ import hashlib
 import hmac
 
 import pytest
+import httpx
 from unittest.mock import Mock, patch
 
 from nodes.beehiiv_node import (
@@ -377,10 +378,33 @@ class TestBeehiivPostsMock:
             credentials=api_key_credentials,
         )
         node = create_beehiiv_node(config)
-        result = await _run(node, 200, _envelope({"open_rate": 0.5, "click_rate": 0.1}))
+        # Individual post statistics are an expansion of the post endpoint.
+        # The publication-wide aggregate endpoint cannot take a post ID.
+        requests = []
+
+        def respond(request):
+            requests.append(request)
+            return httpx.Response(200, json=_envelope({
+                "id": "post_1",
+                "stats": {"email": {"open_rate": 45, "click_rate": 8}},
+            }))
+
+        original_client = httpx.AsyncClient
+        with patch(
+            "nodes.beehiiv_node.httpx.AsyncClient",
+            side_effect=lambda **kwargs: original_client(
+                **kwargs, transport=httpx.MockTransport(respond)
+            ),
+        ):
+            result = await node.execute({})
+
+        assert len(requests) == 1
+        assert requests[0].method == "GET"
+        assert requests[0].url.path == f"/v2/publications/{PUB}/posts/post_1"
+        assert requests[0].url.params.get_list("expand[]") == ["stats"]
         assert result["status"] == "success"
         assert result["action"] == "get_post_stats"
-        assert result["data"]["open_rate"] == 0.5
+        assert result["data"]["stats"]["email"]["open_rate"] == 45
 
 
 # ============================================================================
