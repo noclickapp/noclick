@@ -15,7 +15,7 @@ import time
 from typing import ClassVar, Dict, Any, Optional, Tuple, Union, Literal, List, Annotated
 
 import httpx
-from pydantic import BaseModel, Field, Discriminator, ConfigDict
+from pydantic import BaseModel, Field, Discriminator, ConfigDict, TypeAdapter
 
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
@@ -3935,6 +3935,9 @@ class GithubDeleteReleaseAssetConfig(BaseModel):
     asset_id: int = Field(..., title="Asset Id", description="Asset Id")
 
 
+GithubGistFileMap = Dict[str, Optional[Dict[str, Optional[str]]]]
+
+
 class GithubUpdateGistConfig(BaseModel):
     """Update a gist"""
 
@@ -3951,15 +3954,46 @@ class GithubUpdateGistConfig(BaseModel):
         },
         title="Update Gist",
     )
-    gist_id: str = Field(..., title="Gist ID", description="The gist ID")
-    files: Optional[Dict[str, Optional[Dict[str, Optional[str]]]]] = Field(
+    gist_id: Union[str, int] = Field(..., title="Gist ID", description="The gist ID")
+    files: Optional[Union[GithubGistFileMap, List[Any]]] = Field(
         default=None,
         title="Files",
-        description="Map of current filenames to content/filename updates, or null to delete a file",
+        description="Map of current filenames to content/filename updates, or null to delete a file. Saved file arrays are also accepted.",
     )
     description: Optional[str] = Field(
         default=None, title="Description", description="Gist description"
     )
+
+    def request_files(self) -> Optional[GithubGistFileMap]:
+        """Adapt saved arrays at the HTTP boundary, preserving their stored shape.
+
+        An array can contain filename-keyed maps or rows with filename/content.
+        Never guess content or interpret a bare filename as a deletion.
+        """
+        if not isinstance(self.files, list):
+            return self.files
+        normalized = {}
+        message = (
+            "Legacy gist file arrays must contain filename-keyed objects or "
+            "objects with filename and content; use a filename-keyed map for "
+            "renames and explicit null deletions."
+        )
+        for entry in self.files:
+            if not isinstance(entry, dict):
+                raise ValueError(message)
+            if isinstance(entry.get("filename"), str):
+                if set(entry) != {"filename", "content"} or not isinstance(
+                    entry["content"], str
+                ):
+                    raise ValueError(message)
+                entry = {entry["filename"]: {"content": entry["content"]}}
+            for filename, update in entry.items():
+                if not isinstance(filename, str) or not filename:
+                    raise ValueError(message)
+                if filename in normalized:
+                    raise ValueError(f"Duplicate legacy gist filename: {filename}")
+                normalized[filename] = update
+        return TypeAdapter(GithubGistFileMap).validate_python(normalized)
 
 
 class GithubDeleteGistConfig(BaseModel):
@@ -9983,10 +10017,10 @@ class GithubRestNode(ExternalWebhookTriggerMixin, WorkflowNode):
         if config.description is not None:
             body["description"] = config.description
         if config.files is not None:
-            body["files"] = config.files
+            body["files"] = config.request_files()
         return await self._make_request(
             "PATCH",
-            f"/gists/{config.gist_id}",
+            f"/gists/{str(config.gist_id)}",
             credentials,
             json_body=body,
             action_name="update_gist",

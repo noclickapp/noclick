@@ -10,7 +10,6 @@ from unittest.mock import AsyncMock
 
 import httpx
 import pytest
-from pydantic import ValidationError
 
 from nodes.github_rest_node import (
     GithubRestNode,
@@ -62,6 +61,10 @@ async def run_node(monkeypatch, config, fixtures):
     result = await node.execute({})
     assert result["status"] == "success", result
     assert len(requests) == len(fixtures)
+    assert set(result) == {"type", "action", "status", "data", "timestamp", "timing_ms"}
+    assert result["type"] == "github_rest"
+    assert result["action"] == config["operation"]
+    assert result["data"] == RESPONSES[fixtures[-1]]["response"]
     return requests
 
 
@@ -223,9 +226,70 @@ async def test_update_gist_file_map_and_description(monkeypatch, update):
     assert json.loads(request.content) == update
 
 
-def test_update_gist_rejects_file_array():
-    with pytest.raises(ValidationError):
-        GithubUpdateGistConfig(gist_id="2decf6c462d9b4418f2", files=["README.md"])
+@pytest.mark.asyncio
+@pytest.mark.parametrize("gist_id", [123456, "123456", "2decf6c462d9b4418f2"])
+@pytest.mark.parametrize(
+    "files,expected",
+    [
+        ([], {}),
+        (
+            {"README.md": {"content": "Hello World from GitHub"}},
+            {"README.md": {"content": "Hello World from GitHub"}},
+        ),
+        (
+            [{"filename": "README.md", "content": "Hello World from GitHub"}],
+            {"README.md": {"content": "Hello World from GitHub"}},
+        ),
+        (
+            [
+                {"README.md": {"content": "Hello World from GitHub"}},
+                {"hello.py": {"filename": "goodbye.py"}},
+                {"old.py": None},
+            ],
+            {
+                "README.md": {"content": "Hello World from GitHub"},
+                "hello.py": {"filename": "goodbye.py"},
+                "old.py": None,
+            },
+        ),
+    ],
+)
+async def test_saved_gist_config_adapts_only_at_request_boundary(
+    monkeypatch, gist_id, files, expected
+):
+    saved = {"operation": "update_gist", "gist_id": gist_id, "files": files}
+    parsed = GithubUpdateGistConfig.model_validate(saved)
+    assert parsed.model_dump()["gist_id"] == gist_id
+    assert parsed.model_dump()["files"] == files
+    (request,) = await run_node(monkeypatch, saved, ["update_gist"])
+    assert request.url.path == f"/gists/{gist_id}"
+    assert json.loads(request.content) == {"files": expected}
+    assert parsed.model_dump()["files"] == files
+
+
+@pytest.mark.parametrize(
+    "files",
+    [
+        ["README.md"],
+        [{"filename": "README.md"}],
+        [{"README.md": {"content": "first"}}, {"README.md": {"content": "second"}}],
+    ],
+)
+def test_unrecoverable_saved_arrays_load_without_guessing_file_deletions(files):
+    parsed = GithubUpdateGistConfig(gist_id=123456, files=files)
+    assert parsed.model_dump()["files"] == files
+    with pytest.raises(ValueError, match="Legacy gist|Duplicate legacy gist"):
+        parsed.request_files()
+
+
+def test_gist_schema_still_accepts_saved_field_types():
+    properties = GithubUpdateGistConfig.model_json_schema()["properties"]
+    assert {s["type"] for s in properties["gist_id"]["anyOf"]} == {"integer", "string"}
+    assert {s["type"] for s in properties["files"]["anyOf"]} == {
+        "object",
+        "array",
+        "null",
+    }
 
 
 @pytest.mark.asyncio

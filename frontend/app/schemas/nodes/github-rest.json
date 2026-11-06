@@ -17820,9 +17820,16 @@
           ]
         },
         "gist_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
           "description": "The gist ID",
-          "title": "Gist ID",
-          "type": "string"
+          "title": "Gist ID"
         },
         "files": {
           "anyOf": [
@@ -17850,11 +17857,15 @@
               "type": "object"
             },
             {
+              "items": {},
+              "type": "array"
+            },
+            {
               "type": "null"
             }
           ],
           "default": null,
-          "description": "Map of current filenames to content/filename updates, or null to delete a file",
+          "description": "Map of current filenames to content/filename updates, or null to delete a file. Saved file arrays are also accepted.",
           "title": "Files"
         },
         "description": {
