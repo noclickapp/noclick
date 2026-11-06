@@ -118,6 +118,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-mailgun', 'MailgunNode'],
     ['automation-gitlab', 'GitLabNode'],
     ['automation-box', 'BoxNode'],
+    ['automation-ashby', 'AshbyNode'],
     ['automation-clickup', 'ClickUpNode'],
     ['automation-devin', 'DevinNode'],
     ['automation-asana', 'AsanaNode'],

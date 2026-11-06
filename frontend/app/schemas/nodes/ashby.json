@@ -2068,7 +2068,7 @@
   "required": [
     "config"
   ],
-  "title": "AshbyNodeConfig",
+  "title": "Ashby Node Configuration",
   "type": "object",
   "x-agent-tool-provider": true,
   "x-edit-examples": [
@@ -2076,5 +2076,6 @@
     "Create an Ashby candidate",
     "Move an Ashby application to another stage",
     "List open Ashby jobs"
-  ]
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
 }
