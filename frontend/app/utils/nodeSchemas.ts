@@ -546,6 +546,7 @@ function getProviderLabel(providerKey: string): string {
         'microsoft': 'Microsoft Account',
         'hubspot': 'HubSpot Account',
         'affinity': 'Affinity Account',
+        'bloomerang': 'Bloomerang',
         'nocodb': 'NocoDB Account',
         'basedash': 'Basedash Account',
         'salesforce': 'Salesforce Account',

@@ -1,16 +1,18 @@
-// UNRUN; generated native schema and additive metadata are prerequisites.
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn() }));
-vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: vi.fn(), set: vi.fn() } }));
-import { getNodeCredentialInfo, getAgentToolOperations, filterConfigForExecution, isAgentToolProviderType } from '~/utils/nodeSchemas';
+vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: vi.fn(), set: vi.fn(), delete: vi.fn() } }));
+import { getNodeCredentialInfo, getAgentToolOperations, filterConfigForExecution, isAgentToolProviderType, loadNodeSchemas } from '~/utils/nodeSchemas';
 import { getCredentialTypeFromSchemaTitle } from '~/utils/credentialTypeMap';
-import { autoSelectCredentialFromCache, invalidateCredentialsCache, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
+import { invalidateCredentialsCache, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
+
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
 
 describe('Bloomerang native consumers', () => {
+  beforeAll(() => loadNodeSchemas(['automation-bloomerang']));
   beforeEach(() => invalidateCredentialsCache());
   it('uses private CRM keys with the real title mapping', () => {
     expect(getNodeCredentialInfo('automation-bloomerang')?.acceptedTypes).toEqual(['bloomerang_private_api_key']);

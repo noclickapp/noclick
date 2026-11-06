@@ -19,8 +19,9 @@ from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator,
 
 from nodes.core.base import NodeConfig, WorkflowNode, runtime_config_view
 from nodes.core.connection_evidence import ConnectionEvidence
-from nodes.core.oauth_refresh_authority import AuthorityCredentialsTableStore, CURRENT_ORGANIZATION
-from repositories.credentials import CredentialsRepo
+from utils.credentials import resolve_credential_with_owner_fallback
+
+CURRENT_ORGANIZATION = object()
 
 BASE = "https://api.bloomerang.co/v2"
 TYPE = "bloomerang_private_api_key"
@@ -331,7 +332,7 @@ class ProviderError(ValueError):
 class Session:
     def __init__(self, data):
         self.data = credential(data)
-        self.store = self.anchor = self.validation_row = None
+        self.store = self.anchor = None
         self.database = self.user = None
         self.write_attempted = False
         self.acknowledgement = None
@@ -339,24 +340,44 @@ class Session:
     @classmethod
     async def saved(cls, data, *, pool, user_id, credential_id, organization_id=CURRENT_ORGANIZATION, workflow_id=None):
         session = cls(data)
-        session.store = AuthorityCredentialsTableStore(pool, user_id, credential_id, credential_type=TYPE, validate=credential, grant_fields=("api_key",), organization_id=organization_id, workflow_id=workflow_id)
-        if credential(await session.store.load()) != session.data:
-            raise ValueError("Bloomerang credential changed before the request")
-        session.anchor = session.store.current
-        session.validation_row = await session._row()
+        if pool is None:
+            from utils.database_pool import get_native_pool
+            pool = get_native_pool()
+        session.store = (pool, user_id, credential_id, organization_id, workflow_id)
+        session.anchor = await session._saved_state()
         return session
 
-    async def _row(self):
-        row = await CredentialsRepo(self.store.pool).fetch_validation_authority(self.anchor.credential_id, self.anchor.principal_id, self.anchor.organization_id)
-        if row is None or row.revoked_at is not None or row.credential_type != TYPE:
+    async def _saved_state(self):
+        # Staging owns credential access and workflow fallback. Recheck that
+        # policy and the saved grant around every provider request; the node's
+        # snapshot additionally detects reconnects and approval revisions.
+        pool, user_id, credential_id, organization_id, workflow_id = self.store
+        async with pool.acquire() as conn:
+            if organization_id is CURRENT_ORGANIZATION:
+                from repositories.organization import OrgRepo
+                organization_id = await OrgRepo(pool).get_primary_org_id(conn, user_id)
+            row = await conn.fetchrow("""
+                SELECT c.owner_id, c.credential_type, c.token_version,
+                       c.updated_at, c.revoked_at, c.approval_revision
+                FROM credentials c WHERE c.id = $1::uuid
+            """, credential_id)
+        if (row is None or row["credential_type"] != TYPE
+                or row["revoked_at"] is not None
+                or type(row["token_version"]) is not int or row["token_version"] < 1):
             raise ValueError("Bloomerang credential is unavailable or access denied")
-        return row
+        data = await resolve_credential_with_owner_fallback(
+            credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id,
+        )
+        if credential(data) != self.data:
+            raise ValueError("Bloomerang credential changed before the request")
+        return tuple(row[key] for key in (
+            "owner_id", "credential_type", "token_version", "updated_at",
+            "revoked_at", "approval_revision",
+        )) + (organization_id,)
 
     async def current(self):
-        if self.store is not None:
-            data = credential(await self.store.load())
-            if self.store.current != self.anchor or data != self.data or await self._row() != self.validation_row:
-                raise ValueError("Bloomerang credential authority changed; inspect writes before retrying")
+        if self.store is not None and await self._saved_state() != self.anchor:
+            raise ValueError("Bloomerang credential authority changed; inspect writes before retrying")
 
     async def request(self, method, route, *, params=None, body=None, write=False, absent=False):
         try:
@@ -565,12 +586,20 @@ class BloomerangNode(WorkflowNode):
 
     @classmethod
     async def validate_credential_access(cls, credential_data, *, validation_context=None):
-        credential(credential_data)
-        if validation_context is None:
-            return {"valid": None, "identity_verified": False, "message": "Bloomerang access has not been checked"}
-        result = await validation_context.run_operation("check_connection")
-        valid = True if result.get("status") == "success" and result.get("identity_verified") is True else False if result.get("http_status") in {401, 403} else None
-        return {"valid": valid, "identity_verified": valid is True, "message": result.get("message") or "Bloomerang private-key user could not be established"}
+        data = credential(credential_data)
+        try:
+            if validation_context is not None:
+                result = await validation_context.run_operation("check_connection")
+            else:
+                # Staging's post-connect hook supplies the credential directly.
+                result = await cls._perform(Session(data), CheckConnection())
+            valid = True if result.get("identity_verified") is True else None
+        except ProviderError as exc:
+            valid = False if exc.status in {401, 403} else None
+        except ValueError:
+            valid = None
+        return {"valid": valid, "identity_verified": valid is True,
+                "message": "Bloomerang private-key user verified" if valid else "Bloomerang private-key user could not be established"}
 
     async def execute(self, inputs):
         if self.config is None or self.config.credentials is None:

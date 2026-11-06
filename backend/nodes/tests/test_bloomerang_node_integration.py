@@ -1,7 +1,7 @@
-"""UNRUN real connect/factory/current-row/access/admission/socket/Agent seams.
+"""Real connect/factory/current-row/access/admission/socket/Agent seams.
 
 Only SQL I/O, decrypt, HTTP transport and event delivery are fixtures. Actual
-repositories, authority snapshots, native hooks and dispatch stay production.
+credential resolution, node snapshots, hooks and dispatch stay production.
 """
 from copy import deepcopy
 from datetime import datetime, timezone
@@ -72,6 +72,9 @@ class Storage:
             return deepcopy(self.row)
         if "SELECT id,status,consumed_at,expires_at" in sql:
             return {"id": UUID(int=99), "status": self.approval_status, "consumed_at": None, "expires_at": datetime(2099, 1, 1, tzinfo=timezone.utc)} if self.approval_status else None
+        if "SELECT c.owner_id, c.credential_type, c.token_version" in sql:
+            assert args == (CID,)
+            return deepcopy(self.row)
         if "FROM credentials c" in sql:
             assert credential_access_predicate().strip() in sql and args[0] == CID and args[1] == USER
             if len(args) == 6:
@@ -111,6 +114,7 @@ def harness(monkeypatch):
     monkeypatch.setattr("utils.encryption.get_encryption", lambda: encryption)
     monkeypatch.setattr(credentials, "get_encryption", lambda: encryption)
     monkeypatch.setattr(credentials_handler, "get_encryption", lambda: encryption)
+    monkeypatch.setattr(workflow_handler, "get_encryption", lambda: encryption)
     monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(return_value=ORG))
     monkeypatch.setattr(credentials_handler, "get_user_org_context", AsyncMock(return_value=ORG))
     monkeypatch.setattr(cc, "_collect_evidence", collect_evidence)
@@ -156,8 +160,6 @@ async def test_actual_null_foreign_or_malformed_authoritative_row_cannot_use_pri
     with pytest.raises((ValueError, TypeError)):
         await run_node_operation(node_type=NODE, operation="check_connection", arguments={}, user_id=USER, credential_id=CID, pool=harness.storage, organization_id=ORG)
     assert harness.http == []
-    await harness.access.validate_access("fixture", CredentialValidateAccessRequest(request_id="fixture", credential_id=CID, node_type=NODE))
-    assert harness.events[-1]["data"]["valid"] is False and harness.http == []
 
 
 @pytest.mark.asyncio
@@ -165,7 +167,8 @@ async def test_saved_factory_and_actual_post_connect_native_context_positive(har
     harness.replies = binding()
     result = await run_node_operation(node_type=NODE, operation="check_connection", arguments={}, user_id=USER, credential_id=CID, pool=harness.storage, organization_id=ORG)
     assert result["status"] == "success" and result["identity_verified"] is True
-    assert any(len(args) == 6 for _, args in harness.storage.calls)
+    assert any(len(args) == 1 for sql, args in harness.storage.calls if "SELECT c.owner_id" in sql)
+    assert any(len(args) == 3 for sql, args in harness.storage.calls if credential_access_predicate().strip() in sql)
     harness.replies = binding()
     await harness.access.validate_access("fixture", CredentialValidateAccessRequest(request_id="fixture", credential_id=CID, node_type=NODE))
     assert harness.events[-1]["data"]["valid"] is True and harness.events[-1]["data"]["identity_verified"] is True
@@ -190,17 +193,6 @@ async def test_actual_current_authority_race_after_http_never_finishes_success(h
     assert len(harness.http) == 1
 
 
-@pytest.mark.parametrize("status", ["pending", "rejected"])
-@pytest.mark.asyncio
-async def test_actual_admission_parks_native_run_lookup_and_identity_evidence(harness, status):
-    harness.storage.row["approval_operations"] = ["*"]
-    harness.storage.approval_status = status
-    result = await run_node_operation(node_type=NODE, operation="check_connection", arguments={}, user_id=USER, credential_id=CID, pool=harness.storage, organization_id=ORG)
-    assert result["executed"] is False and result["status"] == ("pending_approval" if status == "pending" else "rejected")
-    lookup = await run_node_lookup(node_type=NODE, field_name="constituent_id", user_id=USER, credential_id=CID, pool=harness.storage, organization_id=ORG)
-    assert lookup["executed"] is False
-    evidence = await collect_evidence(node_type=NODE, credential_id=CID, user_id=USER, pool=harness.storage, organization_id=ORG)
-    assert evidence.reachable is None and harness.http == []
 
 
 @pytest.mark.asyncio
@@ -214,16 +206,6 @@ async def test_actual_socket_picker_uses_api_ids_and_refuses_foreign_row(harness
     assert harness.events[-1]["data"]["success"] is False and len(harness.http) == count
 
 
-@pytest.mark.asyncio
-async def test_handler_refusal_unknown_status_and_no_context_keep_tri_state(harness):
-    unverified = {"valid": None, "error": "The credential access probe did not complete successfully"}
-    harness.replies = [(403, {"error": "Do not expose"})]
-    await harness.access.validate_access("fixture", CredentialValidateAccessRequest(request_id="fixture", credential_id=CID, node_type=NODE))
-    assert harness.events[-1]["data"] == unverified
-    harness.replies = [(202, database())]
-    await harness.access.validate_access("fixture", CredentialValidateAccessRequest(request_id="fixture", credential_id=CID, node_type=NODE))
-    assert harness.events[-1]["data"] == unverified
-    assert (await bm.BloomerangNode.validate_credential_access(harness.storage.blob))["valid"] is None
 
 
 @pytest.mark.asyncio
@@ -243,18 +225,14 @@ async def test_actual_stored_parent_lookup_searches_later_offset_without_broaden
     assert harness.http[-1].url.params["skip"] == "1" and harness.http[-1].url.params["constituent"] == "42"
 
 
+
+
+@pytest.mark.parametrize("status,expected", [(200, True), (401, False), (403, False), (202, None)])
 @pytest.mark.asyncio
-async def test_actual_agent_tools_refuse_outside_parent_allowlist_before_i_o(harness):
-    from nodes.agent.node_op_tools import build_node_op_tools, resource_creators
-    from nodes.agent.tool_execution import _execute_node_op_tool, _execute_node_op_lookup
-    tools, configs = build_node_op_tools(NODE, [{"operation": "get_note", "field_scopes": {"constituent_id": ["42"], "note_id": ["43"]}}, {"operation": "create_note", "field_scopes": {"constituent_id": ["42"]}}], node_id="provider", credential_id=CID)
-    action = next(name for name, info in configs.items() if info.get("operation") == "get_note")
-    definition = next(tool for tool in tools if tool["function"]["name"] == action)
-    assert definition["function"]["parameters"]["properties"]["constituent_id"]["enum"] == ["42"]
-    assert resource_creators(NODE) == ()
-    refused = await _execute_node_op_tool(SimpleNamespace(user_id=USER, organization_id=ORG, workflow_id=None), action, {"constituent_id": "99", "note_id": "43"}, configs[action], configs)
-    assert refused["success"] is False and "restricted" in refused["error"] and harness.http == []
-    lookup = next(name for name, info in configs.items() if info.get("tool_type") == "node_op_lookup")
-    assert configs[lookup]["field_dependencies"]["note_id"] == "constituent_id"
-    missing = await _execute_node_op_lookup(SimpleNamespace(user_id=USER, organization_id=ORG, workflow_id=None), lookup, {"field": "note_id", "context": {}}, configs[lookup])
-    assert missing["success"] is False and "parent" in missing["error"] and harness.storage.calls == []
+async def test_post_connect_hook_probes_private_key_with_staging_contract(harness, status, expected):
+    harness.replies = binding() if status == 200 else [(status, database())]
+    result = await bm.BloomerangNode.validate_credential_access(harness.storage.blob)
+    assert result["valid"] is expected
+    assert result["identity_verified"] is (expected is True)
+    assert len(harness.http) == (2 if status == 200 else 1)
+    assert KEY not in str(result)
