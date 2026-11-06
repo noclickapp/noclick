@@ -50,6 +50,7 @@ it('registers six closed APIv2 reads and the literal supplied key/secret form', 
   expect(schema.$defs.GetAntiAffinityGroup.required).toContain('anti_affinity_group_id');
   expect(schema.$defs.ListInstances.properties.include_names.default).toBe(false);
   const credential = schema.$defs.ExoscaleAPIKeyCredential;
+  expect(credential['x-credential-type']).toBeUndefined();
   expect(credential.required).toEqual(['api_key', 'api_secret']);
   expect(credential.properties.api_key['ui:widget']).toBe('password');
   expect(credential.properties.api_secret['ui:widget']).toBe('password');

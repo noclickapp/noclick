@@ -256,8 +256,11 @@ async def test_actual_saved_execute_discards_racing_response(stored, transport, 
 
 
 @pytest.mark.asyncio
-async def test_saved_actor_picker_unpaged_current_access(stored, transport):
-    fresh = await native.ExoscaleNode.freshen_credential(KEY, pool=object(), user_id=USER, credential_id=CID, organization_id=None)
+async def test_saved_actor_picker_unpaged_current_access(stored, transport, monkeypatch):
+    current_organization = AsyncMock(return_value=None)
+    monkeypatch.setattr(native.Authority, "current_organization", current_organization)
+    fresh = await native.ExoscaleNode.freshen_credential(credential_data=KEY, pool=object(), user_id=USER, credential_id=CID)
+    current_organization.assert_awaited_once()
     transport[1].append(deepcopy(PAGE))
     result = await native.ExoscaleNode.load_field_options(field_name="instance_id", credential_data=fresh, context={"_user_id": USER})
     assert result == {"options": [{"value": IID, "label": IID}], "next_page_token": None}

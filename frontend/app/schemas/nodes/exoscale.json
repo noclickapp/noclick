@@ -53,8 +53,7 @@
       "title": "ExoscaleAPIKeyCredential",
       "type": "object",
       "x-credential-help-url": "https://community.exoscale.com/reference/api/",
-      "x-credential-instructions": "Supply an existing API key and secret authorized for the selected zone's metadata GETs. Requests use APIv2 EXO2-HMAC-SHA256 headers, not legacy v1 or Partner API signing. Connection reads protected instance metadata; an empty catalog proves reachability only. The optional expected instance is an existing resource witness, not organization or human identity. This node never issues keys, assumes roles, provisions or controls resources.",
-      "x-credential-type": "exoscale_api_key"
+      "x-credential-instructions": "Supply an existing API key and secret authorized for the selected zone's metadata GETs. Requests use APIv2 EXO2-HMAC-SHA256 headers, not legacy v1 or Partner API signing. Connection reads protected instance metadata; an empty catalog proves reachability only. The optional expected instance is an existing resource witness, not organization or human identity. This node never issues keys, assumes roles, provisions or controls resources."
     },
     "GetAntiAffinityGroup": {
       "additionalProperties": false,

@@ -56,7 +56,6 @@ def key(value):
 
 class ExoscaleAPIKeyCredential(BaseModel):
     model_config = ConfigDict(extra="ignore", hide_input_in_errors=True, json_schema_extra={
-        "x-credential-type": TYPE,
         "x-credential-help-url": "https://community.exoscale.com/reference/api/",
         "x-credential-instructions": "Supply an existing API key and secret authorized for the selected zone's metadata GETs. Requests use APIv2 EXO2-HMAC-SHA256 headers, not legacy v1 or Partner API signing. Connection reads protected instance metadata; an empty catalog proves reachability only. The optional expected instance is an existing resource witness, not organization or human identity. This node never issues keys, assumes roles, provisions or controls resources.",
     })
@@ -451,18 +450,18 @@ class ExoscaleNode(WorkflowNode):
         return ExoscaleNodeConfig
 
     @classmethod
-    def parse_config(cls, data):
-        raw_guard(data)
-        return super().parse_config(data)
+    def parse_config(cls, config_data):
+        raw_guard(config_data)
+        return super().parse_config(config_data)
 
     @classmethod
-    def validate_config(cls, data):
-        raw_guard(data)
-        return super().validate_config(data)
+    def validate_config(cls, config_data):
+        raw_guard(config_data)
+        return super().validate_config(config_data)
 
     @classmethod
-    async def freshen_credential(cls, raw, *, pool=None, user_id=None, credential_id=None, organization_id=CURRENT_ORGANIZATION, workflow_id=None):
-        auth = await Authority.create(raw, pool=pool, user_id=user_id, credential_id=credential_id, organization_id=organization_id, workflow_id=workflow_id)
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        auth = await Authority.create(credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
         return {**auth.credential.model_dump(), AUTH_KEY: auth}
 
     @classmethod
