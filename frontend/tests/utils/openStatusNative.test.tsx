@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 // OpenStatus schema, native-key cache and mounted editor contracts.
 // The real generated schemas keep registration and editor behavior in sync.
-import { render, cleanup, fireEvent, screen } from '@testing-library/react';
+import { render, cleanup, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 import { OpenStatusNode } from '~/components/workflow/nodes/OpenStatusNode';
 import { NODE_SCHEMAS, getNodeCredentialInfo, loadAllNodeSchemas } from '~/utils/nodeSchemas';
@@ -74,9 +74,9 @@ it('keeps the native key family separate in the actual cache', () => {
 
 it('mounts the native editor credential form without OAuth or key issuance', async () => {
     render(<NodeCredentials nodeType="automation-openstatus" onChange={vi.fn()} />);
-    const label = await screen.findByText('Open Status API Key', { exact: true });
-    expect(label).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: 'Create new' }));
+    const input = await screen.findByLabelText('API key');
+    expect(input.getAttribute('type')).toBe('password');
+    expect(screen.getByRole('button', { name: 'Connect' })).toBeTruthy();
     expect(document.querySelector('[data-field="api_key"] input')).not.toBeNull();
     expect(document.querySelector('[data-field="refresh_token"]')).toBeNull();
     expect(screen.queryByTestId('oauth-route')).toBeNull();
