@@ -35,6 +35,7 @@ const AUTO_SELECT_TYPES: ReadonlySet<string> = new Set([
     'automation-github-rest',
     'automation-apify',
     'automation-openstatus',
+    'automation-rippling',
     'automation-ahrefs',
     'automation-okta',
     'automation-ringcentral',
