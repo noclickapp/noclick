@@ -1,4 +1,4 @@
-"""UNRUN real native factory/run/collector/picker fixtures; HTTP boundary only."""
+"""real native factory/run/collector/picker fixtures; HTTP boundary only."""
 from contextlib import asynccontextmanager
 from copy import deepcopy
 from dataclasses import asdict
@@ -52,7 +52,7 @@ def transport(monkeypatch):
         return httpx.Response(code, content=payload if isinstance(payload, bytes) else json.dumps(payload).encode(), headers=headers)
     @asynccontextmanager
     async def client(**kwargs):
-        assert kwargs == {"require_public": True, "timeout": 20, "follow_redirects": False, "trust_env": False}
+        assert kwargs == {"timeout": 20, "follow_redirects": False, "trust_env": False}
         async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as instance: yield instance
     monkeypatch.setattr("nodes.stackitdns_node.guarded_async_client", client)
     return calls, replies
@@ -81,7 +81,7 @@ async def test_actual_config_lens_raw_witness_and_honest_collector(transport):
     node = NodeFactory.create_node("fixture", TYPE, {"credentials": RAW, "config": {"operation": "get_zone", **PARENTS, "label": "Saved canvas", "disabled": False}}, user_id=USER)
     assert (await node.execute({}))["data"]["id"] == PARENTS["zone_id"]
     evidence = await collect_evidence(node_type=TYPE, user_id=USER, credential_data=deepcopy(RAW))
-    assert evidence.reachable is True and evidence.proves == "reachability" and not evidence.account_label
+    assert evidence.reachable is True and STACKITDNSNode.connection_evidence.proves == "reachability" and not evidence.account_label
     assert "PRIVATE" not in json.dumps(asdict(evidence))
     node.node_data["credentials"] = {**RAW, "credential_type": "foreign"}; transport[0].clear()
     with pytest.raises(ValueError): await node.execute({})
@@ -156,3 +156,23 @@ def test_raw_family_safe_string_ids_and_four_native_schema_operations():
     ops = {schema["$defs"][r["$ref"].split("/")[-1]]["properties"]["operation"]["const"] for r in schema["properties"]["config"]["oneOf"]}
     assert ops == {"list_zones", "get_zone", "list_rrsets", "get_rrset"}
     for field in ("records", "RDATA", "comment", "acl", "labels", "url", "body", "orderBy", "dnsName[eq]"): assert field not in schema["$defs"]["STACKITDNSRRSetConfig"]["properties"]
+
+
+@pytest.mark.asyncio
+async def test_staging_guarded_client_with_native_request(monkeypatch):
+    from unittest.mock import AsyncMock
+    from utils.ssrf import guarded_async_client
+    guard = AsyncMock()
+    monkeypatch.setattr("utils.ssrf.assert_url_allowed", guard)
+    calls = []
+    def handle(request):
+        calls.append(request)
+        assert request.method == "GET" and request.url.host == "dns.api.stackit.cloud"
+        assert request.headers["Authorization"] == "Bearer " + RAW["access_token"]
+        return httpx.Response(200, json=CATALOG)
+    def client(**kwargs):
+        return guarded_async_client(**kwargs, transport=httpx.MockTransport(handle))
+    monkeypatch.setattr("nodes.stackitdns_node.guarded_async_client", client)
+    result = await run("list_zones")
+    assert result["status"] == "success" and len(calls) == 1
+    guard.assert_awaited_once_with(str(calls[0].url))

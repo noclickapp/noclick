@@ -1,13 +1,15 @@
-// UNRUN actual schema/Agent/credential/cache/icon native consumers.
+// actual schema/Agent/credential/cache/icon native consumers.
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import STACKITDNSIcon from '~/components/icons/STACKITDNSIcon';
 import { STACKITDNSNode } from '~/components/workflow/nodes/STACKITDNSNode';
-import { NODE_SCHEMAS, getNodeCredentialInfo, isAgentToolProviderType } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, getNodeCredentialInfo, isAgentToolProviderType, loadNodeSchemas } from '~/utils/nodeSchemas';
 import { getCredentialTypeFromSchemaTitle } from '~/utils/credentialTypeMap';
-import { autoSelectCredentialFromCache, upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
 const TYPE = 'automation-stackitdns', FAMILY = 'stackitdns_access_token';
+beforeAll(async () => { await loadNodeSchemas([TYPE]); });
 describe('STACKIT DNS native metadata', () => {
   it('uses actual credential readers and four closed operations', () => {
     expect(getNodeCredentialInfo(TYPE)?.acceptedTypes).toEqual([FAMILY]);

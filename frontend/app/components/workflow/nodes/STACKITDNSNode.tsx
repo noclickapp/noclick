@@ -1,7 +1,6 @@
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
 import type { NodeDefinition } from './types';
-import STACKITDNSIcon from '~/components/icons/STACKITDNSIcon';
 
 import type { CSSProperties as BrandCSSProperties } from 'react';
 // Vector brand artwork from https://stackit.com/de

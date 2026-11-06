@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import ConfigValidationError, NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
-from nodes.core.oauth_refresh_authority import AuthorityCredentialsTableStore, CURRENT_ORGANIZATION
+from nodes.stackitdns_authority import STACKITDNSCredentialsStore, CURRENT_ORGANIZATION
 from utils.ssrf import SSRFError, guarded_async_client
 
 HOST, MAX_BYTES, MAX_ROWS = "https://dns.api.stackit.cloud", 2 * 1024 * 1024, 100
@@ -181,7 +181,7 @@ class _Session:
         try:
             if isinstance(self.raw, _CurrentCredential): await self.raw.reload()
             key = _credential(self.raw); self.status = None
-            async with guarded_async_client(require_public=True, timeout=20, follow_redirects=False, trust_env=False) as client:
+            async with guarded_async_client(timeout=20, follow_redirects=False, trust_env=False) as client:
                 self.attempted = True
                 async with client.stream("GET", HOST + path, params=params, headers={"Authorization": "Bearer " + key.access_token, "Accept": "application/json"}) as response:
                     self.status = response.status_code; content_type = response.headers.get("content-type", ""); body = bytearray()
@@ -221,14 +221,14 @@ class STACKITDNSNode(WorkflowNode):
         if not kwargs.get("credential_id"): return credential_data
         organization = kwargs.get("organization_id")
         if organization is None and not kwargs.get("workflow_id"): organization = CURRENT_ORGANIZATION
-        store = AuthorityCredentialsTableStore(kwargs.get("pool"), kwargs.get("user_id"), kwargs["credential_id"], credential_type="stackitdns_access_token", validate=_stored, grant_fields=("access_token", "project_id"), organization_id=organization, workflow_id=kwargs.get("workflow_id"), allow_same_grant_retry=False)
+        store = STACKITDNSCredentialsStore(kwargs.get("pool"), kwargs.get("user_id"), kwargs["credential_id"], credential_type="stackitdns_access_token", validate=_stored, organization_id=organization, workflow_id=kwargs.get("workflow_id"))
         try: return _CurrentCredential(await store.load(), store)
         except Exception: raise ValueError("STACKIT DNS saved credential unavailable under current authority") from None
     @classmethod
     async def validate_credential_access(cls, credential_data, *, validation_context=None):
         try: _stored(credential_data)
         except ValueError: return {"valid": False, "error": "STACKIT literal access-token/project family unsupported"}
-        if validation_context is None: return {"valid": True, "provider_verified": False}
+        if validation_context is None: return {"valid": None, "error": "Save and check protected STACKIT DNS project access"}
         await validation_context.revalidate(); result = await validation_context.run_operation("list_zones"); await validation_context.revalidate()
         if result.get("status") == "success" and result.get("protected_reachability_verified") is True: return {"valid": True, "provider_verified": True}
         return {"valid": False if result.get("http_status") == 401 else None, "error": result.get("error", "Protected zone access could not be verified")}

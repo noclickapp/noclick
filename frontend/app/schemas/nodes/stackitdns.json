@@ -387,7 +387,7 @@
   "required": [
     "config"
   ],
-  "title": "STACKIT DNS Node Configuration",
+  "title": "Stackitdns Node Configuration",
   "type": "object",
   "x-edit-examples": [
     "Read zone status and RRset TTL metadata in my supplied STACKIT project without DNS names or RDATA",

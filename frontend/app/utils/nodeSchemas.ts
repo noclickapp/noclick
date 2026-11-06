@@ -558,6 +558,7 @@ function getProviderLabel(providerKey: string): string {
         'qonversion': 'Qonversion Secret Key',
         'typeform': 'Typeform Account',
         '123formbuilder': '123FormBuilder Account',
+        'stackitdns': 'STACKIT DNS',
         'canva': 'Canva Account',
         'twitter': 'Twitter Account',
         'linkedin': 'LinkedIn Account',
