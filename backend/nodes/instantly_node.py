@@ -18,6 +18,7 @@ Documentation: https://developer.instantly.ai
 import json
 import logging
 import time
+from datetime import date
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
 from uuid import UUID
 from pydantic import BaseModel, Field, ConfigDict, Discriminator
@@ -136,29 +137,29 @@ class InstantlyCreateAccountConfig(BaseModel):
     daily_limit: Optional[str] = Field(
         None, title="Daily Limit", description="Max emails per day"
     )
-    imap_username: str = Field(
-        ..., title="IMAP Username", description="IMAP username"
+    imap_username: Optional[str] = Field(
+        None, title="IMAP Username", description="IMAP username"
     )
-    imap_password: str = Field(
-        ..., title="IMAP Password", description="IMAP password", json_schema_extra={"ui:widget": "password"}
+    imap_password: Optional[str] = Field(
+        None, title="IMAP Password", description="IMAP password", json_schema_extra={"ui:widget": "password"}
     )
-    imap_host: str = Field(
-        ..., title="IMAP Host", description="IMAP server hostname"
+    imap_host: Optional[str] = Field(
+        None, title="IMAP Host", description="IMAP server hostname"
     )
-    imap_port: str = Field(
-        ..., title="IMAP Port", description="IMAP server port"
+    imap_port: Optional[str] = Field(
+        None, title="IMAP Port", description="IMAP server port"
     )
-    smtp_username: str = Field(
-        ..., title="SMTP Username", description="SMTP username"
+    smtp_username: Optional[str] = Field(
+        None, title="SMTP Username", description="SMTP username"
     )
-    smtp_password: str = Field(
-        ..., title="SMTP Password", description="SMTP password", json_schema_extra={"ui:widget": "password"}
+    smtp_password: Optional[str] = Field(
+        None, title="SMTP Password", description="SMTP password", json_schema_extra={"ui:widget": "password"}
     )
-    smtp_host: str = Field(
-        ..., title="SMTP Host", description="SMTP server hostname"
+    smtp_host: Optional[str] = Field(
+        None, title="SMTP Host", description="SMTP server hostname"
     )
-    smtp_port: str = Field(
-        ..., title="SMTP Port", description="SMTP server port"
+    smtp_port: Optional[str] = Field(
+        None, title="SMTP Port", description="SMTP server port"
     )
 
 
@@ -285,10 +286,10 @@ class InstantlyCreateCampaignConfig(BaseModel):
     name: str = Field(
         ..., title="Campaign Name", description="Name for the new campaign"
     )
-    campaign_schedule: str = Field(
-        ...,
+    campaign_schedule: Optional[str] = Field(
+        None,
         title="Campaign Schedule (JSON)",
-        description="JSON object containing schedules with name, timing (from/to in HH:MM), days (0-6), and timezone",
+        description="Required by the API when creating a campaign. Existing configs remain loadable; set a JSON object containing schedules with name, timing (from/to in HH:MM), days (0-6), and timezone",
         json_schema_extra={"ui:widget": "code_editor", "ui:rows": 8},
     )
 
@@ -862,6 +863,12 @@ class InstantlyGetWarmupAnalyticsConfig(BaseModel):
     )
     email: str = Field(
         ..., title="Email", description="The email address of the account"
+    )
+    start_date: Optional[str] = Field(
+        None, title="Start Date", description="Start date (YYYY-MM-DD), inclusive. Filters daily email_date_data locally; aggregate_data remains the provider's summary."
+    )
+    end_date: Optional[str] = Field(
+        None, title="End Date", description="End date (YYYY-MM-DD), inclusive. Filters daily email_date_data locally; aggregate_data remains the provider's summary."
     )
 
 
@@ -1511,6 +1518,19 @@ class InstantlyNode(WorkflowNode):
     async def _handle_create_account(
         self, config: InstantlyCreateAccountConfig, credentials
     ) -> Dict[str, Any]:
+        # Mailbox secrets cannot be reconstructed from legacy saved configs.
+        missing = [
+            name for name in (
+                "imap_username", "imap_password", "imap_host", "imap_port",
+                "smtp_username", "smtp_password", "smtp_host", "smtp_port",
+            ) if not getattr(config, name)
+        ]
+        if missing:
+            return {
+                "status": "error", "action": "create_email_account", "status_code": 400,
+                "error": "Update this saved account configuration with the IMAP/SMTP settings required by Instantly: " + ", ".join(missing),
+                "config_upgrade_required": True, "missing_fields": missing, "timing_ms": {},
+            }
         body: Dict[str, Any] = {
             "email": config.email,
             "first_name": config.first_name,
@@ -1597,6 +1617,14 @@ class InstantlyNode(WorkflowNode):
     async def _handle_create_campaign(
         self, config: InstantlyCreateCampaignConfig, credentials
     ) -> Dict[str, Any]:
+        # Do not invent sending hours or a timezone for a saved name-only config.
+        if not config.campaign_schedule:
+            return {
+                "status": "error", "action": "create_campaign", "status_code": 400,
+                "error": "Update this saved campaign configuration with campaign_schedule (JSON schedules containing name, timing, days, and timezone) required by Instantly.",
+                "config_upgrade_required": True, "missing_fields": ["campaign_schedule"],
+                "timing_ms": {},
+            }
         try:
             schedule = json.loads(config.campaign_schedule)
         except json.JSONDecodeError as exc:
@@ -1960,11 +1988,27 @@ class InstantlyNode(WorkflowNode):
     async def _handle_get_warmup_analytics(
         self, config: InstantlyGetWarmupAnalyticsConfig, credentials
     ) -> Dict[str, Any]:
+        start = date.fromisoformat(config.start_date) if config.start_date else None
+        end = date.fromisoformat(config.end_date) if config.end_date else None
+        if start and end and start > end:
+            raise ValueError("Start date must be on or before end date")
         body: Dict[str, Any] = {"emails": [config.email]}
-        return await self._make_request(
+        result = await self._make_request(
             "POST",
             "/accounts/warmup-analytics",
             credentials,
             json_body=body,
             action_name="get_account_warmup_analytics",
         )
+        if result["status"] == "success" and (start or end):
+            # Keep the provider envelope and aggregate summary; scope only daily rows.
+            data = result["data"]
+            data["email_date_data"] = {
+                email: {
+                    day: metrics for day, metrics in days.items()
+                    if (start is None or date.fromisoformat(day) >= start)
+                    and (end is None or date.fromisoformat(day) <= end)
+                }
+                for email, days in data["email_date_data"].items()
+            }
+        return result

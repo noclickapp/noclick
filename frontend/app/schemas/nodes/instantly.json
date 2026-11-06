@@ -182,60 +182,116 @@
           "title": "Daily Limit"
         },
         "imap_username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
           "description": "IMAP username",
-          "title": "IMAP Username",
-          "type": "string"
+          "title": "IMAP Username"
         },
         "imap_password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
           "description": "IMAP password",
           "title": "IMAP Password",
-          "type": "string",
           "ui:widget": "password"
         },
         "imap_host": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
           "description": "IMAP server hostname",
-          "title": "IMAP Host",
-          "type": "string"
+          "title": "IMAP Host"
         },
         "imap_port": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
           "description": "IMAP server port",
-          "title": "IMAP Port",
-          "type": "string"
+          "title": "IMAP Port"
         },
         "smtp_username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
           "description": "SMTP username",
-          "title": "SMTP Username",
-          "type": "string"
+          "title": "SMTP Username"
         },
         "smtp_password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
           "description": "SMTP password",
           "title": "SMTP Password",
-          "type": "string",
           "ui:widget": "password"
         },
         "smtp_host": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
           "description": "SMTP server hostname",
-          "title": "SMTP Host",
-          "type": "string"
+          "title": "SMTP Host"
         },
         "smtp_port": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
           "description": "SMTP server port",
-          "title": "SMTP Port",
-          "type": "string"
+          "title": "SMTP Port"
         }
       },
       "required": [
         "email",
         "first_name",
-        "last_name",
-        "imap_username",
-        "imap_password",
-        "imap_host",
-        "imap_port",
-        "smtp_username",
-        "smtp_password",
-        "smtp_host",
-        "smtp_port"
+        "last_name"
       ],
       "title": "InstantlyCreateAccountConfig",
       "type": "object"
@@ -259,16 +315,23 @@
           "type": "string"
         },
         "campaign_schedule": {
-          "description": "JSON object containing schedules with name, timing (from/to in HH:MM), days (0-6), and timezone",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required by the API when creating a campaign. Existing configs remain loadable; set a JSON object containing schedules with name, timing (from/to in HH:MM), days (0-6), and timezone",
           "title": "Campaign Schedule (JSON)",
-          "type": "string",
           "ui:rows": 8,
           "ui:widget": "code_editor"
         }
       },
       "required": [
-        "name",
-        "campaign_schedule"
+        "name"
       ],
       "title": "InstantlyCreateCampaignConfig",
       "type": "object"
@@ -763,6 +826,32 @@
           "description": "The email address of the account",
           "title": "Email",
           "type": "string"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date (YYYY-MM-DD), inclusive. Filters daily email_date_data locally; aggregate_data remains the provider's summary.",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date (YYYY-MM-DD), inclusive. Filters daily email_date_data locally; aggregate_data remains the provider's summary.",
+          "title": "End Date"
         }
       },
       "required": [

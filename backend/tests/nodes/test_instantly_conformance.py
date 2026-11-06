@@ -80,3 +80,85 @@ async def test_create_campaign_rejects_invalid_schedule_json(schedule):
     )
     with pytest.raises(ValueError, match="[Cc]ampaign schedule"):
         await node.execute({})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("saved, missing", [
+    ({"operation": "create_email_account", "email": "user@example.com",
+      "first_name": "John", "last_name": "Doe"}, list(ACCOUNT_SETTINGS)),
+    ({"operation": "create_campaign", "name": "Saved campaign"}, ["campaign_schedule"]),
+])
+async def test_saved_creation_configs_remain_loadable_and_explain_upgrade(saved, missing, monkeypatch):
+    """A manual migration must not prevent an old workflow from loading."""
+    credentials = InstantlyAPIKeyCredential(api_key="test-key")
+    model = InstantlyNodeConfig.model_validate({"config": saved, "credentials": credentials})
+    restored = InstantlyNodeConfig.model_validate(model.model_dump())
+    for name, value in saved.items():
+        assert getattr(restored.config, name) == value
+
+    def no_http(**kwargs):
+        pytest.fail("Do not send invented mailbox credentials or a campaign schedule")
+
+    monkeypatch.setattr(instantly_node.httpx, "AsyncClient", no_http)
+    node = InstantlyNode(
+        node_id="saved", node_type="automation-instantly", node_data={}, config=restored,
+        sio=None, sid=None, workflow_id="saved-workflow",
+    )
+    result = await node.execute({})
+    assert result["status"] == "error"
+    assert result["action"] == saved["operation"]
+    assert result["status_code"] == 400
+    assert result["config_upgrade_required"] is True
+    assert result["missing_fields"] == missing
+    assert all(name in result["error"] for name in missing)
+    assert "total" in result["timing_ms"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("start, end, expected", [
+    ("2023-10-02", None, ["2023-10-02"]),
+    (None, "2023-10-01", ["2023-10-01"]),
+    ("2023-10-01", "2023-10-01", ["2023-10-01"]),
+    ("2023-10-01", "2023-10-02", ["2023-10-01", "2023-10-02"]),
+    ("2023-10-03", "2023-10-04", []),
+])
+async def test_saved_warmup_dates_filter_daily_rows_without_changing_provider_summary(start, end, expected, monkeypatch):
+    from tests.nodes.test_instantly_node_mock import provider_response
+
+    body = provider_response("warmup_analytics")
+    requests = []
+
+    def respond(request):
+        requests.append(request)
+        return httpx.Response(200, json=body)
+
+    client_type = httpx.AsyncClient
+    monkeypatch.setattr(instantly_node.httpx, "AsyncClient", lambda **kwargs: client_type(
+        transport=httpx.MockTransport(respond), **kwargs,
+    ))
+    model = InstantlyNodeConfig.model_validate({
+        "config": {"operation": "get_account_warmup_analytics", "email": "example1@example.com",
+                   "start_date": start, "end_date": end},
+        "credentials": {"credential_type": "instantly_api_key", "api_key": "test-key"},
+    })
+    assert model.model_dump()["config"]["start_date"] == start
+    assert model.model_dump()["config"]["end_date"] == end
+    node = InstantlyNode(
+        node_id="saved", node_type="automation-instantly", node_data={}, config=model,
+        sio=None, sid=None, workflow_id="saved-workflow",
+    )
+    result = await node.execute({})
+    assert len(requests) == 1
+    assert json.loads(requests[0].content) == {"emails": ["example1@example.com"]}
+    assert result["status"] == "success"
+    assert result["action"] == "get_account_warmup_analytics"
+    assert result["status_code"] == 200
+    data = result["data"]
+    assert list(data["email_date_data"]["example1@example.com"]) == expected
+    for email, days in data["email_date_data"].items():
+        for day, metrics in days.items():
+            assert day in expected
+            assert metrics == body["email_date_data"][email][day]
+    assert set(data["email_date_data"]) == set(body["email_date_data"])
+    assert data["aggregate_data"] == body["aggregate_data"]
+    assert {"api_request", "total"} <= result["timing_ms"].keys()

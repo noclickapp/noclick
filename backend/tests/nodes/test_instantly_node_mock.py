@@ -6,6 +6,7 @@ Organized by operation category for easy navigation.
 """
 
 import json
+from pathlib import Path
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -75,6 +76,12 @@ CAMPAIGN_SCHEDULE = {
                  "5": False, "6": False}, "timezone": "Etc/GMT+12",
     }],
 }
+
+
+def provider_response(name):
+    """Exact JSON examples copied from the official URLs stored beside each body."""
+    path = Path(__file__).parent / "fixtures" / "instantly" / f"{name}.json"
+    return json.loads(path.read_text())["body"]
 
 
 def make_mock_response(status_code=200, json_data=None):
@@ -462,16 +469,20 @@ class TestInstantlyNodeMock:
 
     @pytest.mark.asyncio
     async def test_get_campaign_analytics(self, credential):
-        response = make_mock_response(200, {
-            "sent": 1000, "opened": 450, "replied": 120, "bounced": 15
-        })
+        body = provider_response("campaign_analytics")
+        response = make_mock_response(200, body)
         config = InstantlyGetCampaignAnalyticsConfig(campaign_id="camp-1")
         node = self.create_node(config, credential)
         with self.mock_client(response):
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "get_campaign_analytics"
-        assert result["data"]["sent"] == 1000
+        assert isinstance(result["data"], list)
+        assert result["data"] == body
+        assert "emails_sent_count" in result["data"][0]
+        assert result["status_code"] == 200
+        assert "api_request" in result["timing_ms"]
+        assert "total" in result["timing_ms"]
 
     @pytest.mark.asyncio
     async def test_get_daily_campaign_analytics(self, credential):
@@ -488,13 +499,19 @@ class TestInstantlyNodeMock:
 
     @pytest.mark.asyncio
     async def test_get_warmup_analytics(self, credential):
-        response = make_mock_response(200, {"account_id": "acc-1", "warmup_score": 85})
-        config = InstantlyGetWarmupAnalyticsConfig(email="test@example.com")
+        body = provider_response("warmup_analytics")
+        response = make_mock_response(200, body)
+        config = InstantlyGetWarmupAnalyticsConfig(email="example1@example.com")
         node = self.create_node(config, credential)
         with self.mock_client(response):
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "get_account_warmup_analytics"
+        assert result["data"] == body
+        assert set(result["data"]) == {"email_date_data", "aggregate_data"}
+        assert result["status_code"] == 200
+        assert "api_request" in result["timing_ms"]
+        assert "total" in result["timing_ms"]
 
     # =========================================================================
     # Webhook Trigger (1 test)
