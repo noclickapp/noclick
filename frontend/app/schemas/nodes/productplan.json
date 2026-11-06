@@ -1142,7 +1142,7 @@
   "required": [
     "config"
   ],
-  "title": "ProductPlan Node Configuration",
+  "title": "Productplan Node Configuration",
   "type": "object",
   "x-edit-examples": [
     "List bars within a selected roadmap",

@@ -10,8 +10,8 @@ import hashlib
 import json
 import math
 import re
-from dataclasses import dataclass
-from datetime import date
+from dataclasses import dataclass, field
+from datetime import date, datetime
 from typing import Annotated, Any, Dict, Literal, Optional, Union
 from urllib.parse import quote, quote_plus
 
@@ -19,7 +19,8 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from nodes.core.base import NodeConfig, ValidationResult, WorkflowNode, runtime_config_view
 from nodes.core.connection_evidence import ConnectionEvidence
-from utils.ssrf import guarded_async_client
+from utils import ssrf
+from repositories.credentials import credential_access_predicate
 
 NODE_TYPE = "automation-productplan"
 FAMILIES = ("productplan_pat",)
@@ -29,6 +30,61 @@ MAX_ROWS = 1000
 MAX_ID = 9223372036854775807
 WRITE_OPS = ("create_bar", "update_bar", "delete_bar")
 
+
+class _ProductPlanPublicBackend(ssrf._PinnedNetworkBackend):
+    """Pin public DNS results even when staging permits private development hosts."""
+    async def connect_tcp(self, host, port, timeout=None, local_address=None, socket_options=None):
+        addresses = await ssrf._resolve_host_addresses(host, port)
+        last_error = None
+        for address in addresses:
+            try:
+                return await self._backend.connect_tcp(address, port, timeout=timeout,
+                    local_address=local_address, socket_options=socket_options)
+            except Exception as exc:
+                last_error = exc
+        raise last_error
+
+
+def guarded_async_client(**kwargs):
+    async def public_request(request):
+        if request.url.scheme != "https" or request.url.host != "app.productplan.com" or request.url.port not in (None, 443):
+            raise ValueError("Unsupported ProductPlan origin")
+        await ssrf._resolve_host_addresses(request.url.host, 443)
+    transport = kwargs.pop("transport", None)
+    if transport is None:
+        transport = httpx.AsyncHTTPTransport(trust_env=False)
+        if not hasattr(transport._pool, "_network_backend"):
+            raise RuntimeError("ProductPlan transport cannot pin DNS")
+        transport._pool._network_backend = _ProductPlanPublicBackend()
+    elif not isinstance(transport, httpx.MockTransport):
+        raise ValueError("Unsupported ProductPlan test transport")
+    return httpx.AsyncClient(transport=transport, event_hooks={"request": [public_request]}, **kwargs)
+
+
+@dataclass(frozen=True)
+class ProductPlanCredentialRow:
+    credential_type: Optional[str]
+    owner_id: str
+    token_version: int
+    updated_at: datetime
+    approval_revision: int
+    revoked_at: Optional[datetime]
+    credential: Any = field(repr=False)
+
+
+class ProductPlanCredentialsRepo:
+    """Node-local authority read using staging's canonical credential ACL."""
+    def __init__(self, pool):
+        self._pool = pool
+
+    async def fetch_validation_authority(self, credential_id, user_id, org_id):
+        async with self._pool.acquire() as conn:
+            row = await conn.fetchrow(
+                f"SELECT c.credential_type,c.owner_id,c.token_version,c.updated_at,"
+                f"c.approval_revision,c.revoked_at,c.credential FROM credentials c "
+                f"WHERE c.id=$1 AND {credential_access_predicate()}",
+                credential_id, user_id, org_id)
+        return ProductPlanCredentialRow(**{**dict(row), "owner_id": str(row["owner_id"])}) if row else None
 
 def _token(value):
     if not isinstance(value, str) or len(value) != 64 or any(ord(c) <= 32 or ord(c) >= 127 for c in value):
@@ -282,8 +338,7 @@ class _LookupAuthority:
 async def _current_data(data, *, pool=None, user_id=None, credential_id=None, organization_id=None, workflow_id=None):
     if not credential_id:
         return _shape(data)
-    from repositories.credentials import CredentialsRepo
-    from utils.credentials import resolve_credential_with_owner_fallback
+    from utils.credentials import get_workflow_owner_id, is_credential_authorized_for_workflow, credential_lender
     from utils.encryption import get_encryption
     if pool is None:
         from utils.database_pool import get_native_pool
@@ -293,7 +348,7 @@ async def _current_data(data, *, pool=None, user_id=None, credential_id=None, or
         async with pool.acquire() as conn:
             organization_id = await get_user_org_context(conn, user_id)
     async def load(cid, principal, actual_pool, org_id):
-        row = await CredentialsRepo(actual_pool).fetch_validation_authority(cid, principal, org_id)
+        row = await ProductPlanCredentialsRepo(actual_pool).fetch_validation_authority(cid, principal, org_id)
         if row is None:
             return None
         if row.revoked_at is not None or row.credential_type not in FAMILIES or not isinstance(row.owner_id, str) or not row.owner_id or type(row.token_version) is not int or row.token_version < 1 or type(row.approval_revision) is not int or row.approval_revision < 0:
@@ -305,7 +360,15 @@ async def _current_data(data, *, pool=None, user_id=None, credential_id=None, or
         if not isinstance(blob, dict):
             raise ValueError("ProductPlan current credential data is invalid")
         return _shape({**blob, "credential_type": row.credential_type, "owner_id": row.owner_id, "token_version": row.token_version, "updated_at": row.updated_at.isoformat() if row.updated_at else None, "approval_revision": row.approval_revision})
-    result = await resolve_credential_with_owner_fallback(credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id, load_credential_fn=load)
+    result = await load(credential_id, user_id, pool, organization_id)
+    if result is None and workflow_id:
+        owner = await get_workflow_owner_id(pool, workflow_id)
+        if owner and owner != user_id and await is_credential_authorized_for_workflow(pool, workflow_id, credential_id):
+            result = await load(credential_id, owner, pool, organization_id)
+    if result is None and workflow_id:
+        lender = await credential_lender(pool, workflow_id, credential_id)
+        if lender and lender != str(user_id):
+            result = await load(credential_id, lender, pool, organization_id)
     if result is None:
         raise ValueError("ProductPlan current credential is unavailable or access denied")
     return {**result, "_productplan_authority": _LookupAuthority(pool, user_id, credential_id, organization_id, workflow_id)}
@@ -318,7 +381,7 @@ def _context(data, context):
     if type(bound) is _LookupAuthority:
         if bound.user_id != context.get("_user_id"):
             raise ValueError("ProductPlan picker actor does not match saved authority")
-        result.update({"_approval_pool": bound.pool, "_user_id": bound.user_id, "_credential_id": bound.credential_id, "_organization_id": bound.organization_id, "_workflow_id": bound.workflow_id})
+        result.update({"_approval_pool": bound.pool, "_user_id": bound.user_id, "_credential_id": bound.credential_id, "_organization_id": bound.organization_id, "_workflow_id": bound.workflow_id or context.get("_workflow_id")})
     return result
 
 
@@ -381,7 +444,7 @@ async def _request(data, context, route, *, method="GET", params=None, body=None
             raise ValueError("ProductPlan bar payload exceeds the local bound; no request was sent")
     expected = 201 if method == "POST" else 204 if write else 200
     try:
-        async with guarded_async_client(require_public=True, timeout=20, follow_redirects=False, trust_env=False) as client:
+        async with guarded_async_client(timeout=20, follow_redirects=False, trust_env=False) as client:
             async with client.stream(method, BASE_URL + route,
                                      headers={"Authorization": "Bearer " + _secret(current), "Accept": "application/json", **({"Content-Type": "application/json"} if body is not None else {})},
                                      **({"params": params} if params else {}), **({"json": body} if body is not None else {})) as response:
@@ -589,25 +652,22 @@ class ProductPlanNode(WorkflowNode):
 
     @classmethod
     async def freshen_credential(cls, data, **context):
+        # Staging freshens before it supplies the trusted workflow context to the
+        # picker. Carry only server-supplied authority; load the row in the picker.
+        if context.get("credential_id") and "workflow_id" not in context and "organization_id" not in context:
+            return {**_shape(data), "_productplan_authority": _LookupAuthority(
+                context.get("pool"), context.get("user_id"), context["credential_id"], None, None)}
         return await _current_data(data, **context)
 
     @classmethod
     async def validate_credential_access(cls, data, *, validation_context=None):
-        if validation_context is None:
-            return {"valid": None, "error": "ProductPlan validation requires trusted current-row authority"}
-        from nodes.core.credential_validation import CredentialValidationUnavailable, CredentialValidationPending, CredentialValidationUnverified
         try:
-            result = await validation_context.run_operation("test_connection")
-            proof = result.get("data") if isinstance(result, dict) else None
-            if not isinstance(result, dict) or result.get("status") != "success" or not isinstance(proof, dict) or proof.get("protected_read_completed") is not True or proof.get("account_identity_verified") is not False:
-                return {"valid": None, "error": "ProductPlan protected roadmap read was not verified"}
-        except CredentialValidationUnavailable:
-            return {"valid": False, "error": "ProductPlan current credential authority is unavailable"}
-        except (CredentialValidationPending, CredentialValidationUnverified):
-            return {"valid": None, "error": "ProductPlan protected read was not executed or verified"}
-        except ProductPlanAPIError as exc:
-            return {"valid": False if exc.authority_rejected else None, "error": str(exc)}
-        return {"valid": True, "proves": "reachability", "account_identity_verified": False, "write_permission_verified": False}
+            _shape(data)
+        except ValueError:
+            return {"valid": False, "error": "ProductPlan credential shape is invalid"}
+        # Staging's hook has no current-row context. Its connection-evidence
+        # dispatcher performs the protected read with saved credential authority.
+        return {"valid": None, "error": "Save and check current ProductPlan roadmap access"}
 
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         if not isinstance(self.config, ProductPlanNodeConfig) or self.config.credentials is None:
