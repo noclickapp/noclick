@@ -890,6 +890,24 @@
       "source": "https://www.powerdns.com/",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "d237ad97c32e430e36f9ad2c6e307206aab96d275bfca18ce63ab78f8d565635"
+    },
+    {
+      "path": "frontend/public/icons/tavily-brand.svg",
+      "source": "https://www.tavily.com/ (official Tavily brand asset)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "c265bd72bed3b8c509a4e3abdd378f4462ef26ff4a3c8789b5aa88c2f6107b65"
+    },
+    {
+      "path": "frontend/public/icons/tavily-dark.svg",
+      "source": "https://www.tavily.com/ (official Tavily brand asset)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "ff1dbb5a01fb6c3cf73229d55d2b86ad5554977ff4f62f1c967d3317699e5572"
+    },
+    {
+      "path": "frontend/public/icons/tavily.svg",
+      "source": "https://www.tavily.com/ (official Tavily brand asset)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "320ef37b5a13331bee4d756c6aed45422e61e73a02816ac3a4768815f6ed5153"
     }
   ],
   "excludedSourceAssets": [
