@@ -39,6 +39,7 @@ const AUTO_SELECT_TYPES: ReadonlySet<string> = new Set([
     'automation-airtable',
     'automation-stripe',
     'automation-github-rest',
+    'automation-forgejo',
     'automation-apify',
     'automation-openstatus',
     'automation-rippling',

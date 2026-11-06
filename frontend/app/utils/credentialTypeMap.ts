@@ -87,6 +87,8 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
 
     // GitHub
     'GithubPATCredential': 'github_pat',
+    'ForgejoPATCredential': 'forgejo_pat',
+    'Forgejo Personal Access Token': 'forgejo_pat',
     'GithubOAuthCredential': 'github_oauth',
 
     // Apify
@@ -216,10 +218,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Twitter/X
     'TwitterOAuthCredential': 'twitter_oauth',
     'TwitterBearerTokenCredential': 'twitter_bearer_token',
-
-    // Forgejo
-    'Forgejo Personal Access Token': 'forgejo_pat',
-    'ForgejoPATCredential': 'forgejo_pat',
 
     // Cloudflare
     'CloudflareAPITokenCredential': 'cloudflare_api_token',

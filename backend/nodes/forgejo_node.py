@@ -9,8 +9,8 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import ConfigValidationError, NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
-from nodes.core.oauth_refresh_authority import AuthorityCredentialsTableStore, CURRENT_ORGANIZATION
-from utils.ssrf import SSRFError, guarded_async_client, normalize_https_origin
+from nodes.forgejo_credentials import ForgejoCredentialStore, CURRENT_ORGANIZATION
+from utils.ssrf import SSRFError, guarded_async_client, normalize_https_origin, allow_private_hosts
 
 MAX_BYTES, MAX_ROWS, MAX_INTEGER = 2 * 1024 * 1024, 100, 2**53 - 1
 
@@ -220,7 +220,8 @@ class _Session:
         try:
             if isinstance(self.raw, _CurrentCredential): await self.raw.reload()
             key = _credential(self.raw); self.status = None
-            async with guarded_async_client(require_public=True, timeout=20, follow_redirects=False, trust_env=False) as client:
+            if allow_private_hosts(): raise ValueError("Forgejo requires the public-only outbound policy")
+            async with guarded_async_client(timeout=20, follow_redirects=False, trust_env=False) as client:
                 self.attempted = True
                 async with client.stream("GET", key.instance_url + path, params=params, headers={"Authorization": "token " + key.access_token, "Accept": "application/json"}) as response:
                     self.status = response.status_code; headers = response.headers; body = bytearray()
@@ -273,7 +274,7 @@ class ForgejoNode(WorkflowNode):
         if not kwargs.get("credential_id"): return credential_data
         organization = kwargs.get("organization_id")
         if organization is None and not kwargs.get("workflow_id"): organization = CURRENT_ORGANIZATION
-        store = AuthorityCredentialsTableStore(kwargs.get("pool"), kwargs.get("user_id"), kwargs["credential_id"], credential_type="forgejo_pat", validate=_stored, grant_fields=("access_token", "instance_url"), organization_id=organization, workflow_id=kwargs.get("workflow_id"), allow_same_grant_retry=False)
+        store = ForgejoCredentialStore(kwargs.get("pool"), kwargs.get("user_id"), kwargs["credential_id"], credential_type="forgejo_pat", validate=_stored, organization_id=organization, workflow_id=kwargs.get("workflow_id"))
         try: return _CurrentCredential(await store.load(), store)
         except Exception: raise ValueError("Forgejo saved PAT unavailable under current authority") from None
     @classmethod

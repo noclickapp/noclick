@@ -28,6 +28,7 @@ from nodes.delay_node import DelayNode
 from nodes.http_request_node import HttpRequestNode
 from nodes.linear_node import LinearNode
 from nodes.github_rest_node import GithubRestNode
+from nodes.forgejo_node import ForgejoNode
 from nodes.affinity_node import AffinityNode
 from nodes.aprimo_node import AprimoNode
 from nodes.bloomerang_node import BloomerangNode
@@ -247,6 +248,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-http-request': HttpRequestNode,
     'automation-linear': LinearNode,
     'automation-github-rest': GithubRestNode,
+    'automation-forgejo': ForgejoNode,
     'automation-affinity': AffinityNode,
     'automation-aprimo': AprimoNode,
     'automation-bloomerang': BloomerangNode,

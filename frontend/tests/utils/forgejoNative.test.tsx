@@ -1,17 +1,19 @@
 // UNRUN actual schema/Agent/credential/cache/icon consumers, not implementation stand-ins.
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import ForgejoIcon from '~/components/icons/ForgejoIcon';
 import { ForgejoNode } from '~/components/workflow/nodes/ForgejoNode';
-import { NODE_SCHEMAS, getNodeCredentialInfo, isAgentToolProviderType } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, getNodeCredentialInfo, isAgentToolProviderType, loadNodeSchemas } from '~/utils/nodeSchemas';
 import { getCredentialTypeFromSchemaTitle } from '~/utils/credentialTypeMap';
-import { autoSelectCredentialFromCache, upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
 const TYPE = 'automation-forgejo', FAMILY = 'forgejo_pat';
 describe('Forgejo native metadata', () => {
+  beforeAll(() => loadNodeSchemas([TYPE]));
   it('uses actual credential readers and five closed operations', () => {
     expect(getNodeCredentialInfo(TYPE)?.acceptedTypes).toEqual([FAMILY]);
-    expect(getNodeCredentialInfo(TYPE)?.label).toBe('Forgejo');
+    expect(getNodeCredentialInfo(TYPE)?.label).toBe('Forgejo Account');
     expect(getCredentialTypeFromSchemaTitle('ForgejoPATCredential')).toBe(FAMILY);
     expect(isAgentToolProviderType(TYPE)).toBe(true);
     expect(ForgejoNode.type).toBe(TYPE);

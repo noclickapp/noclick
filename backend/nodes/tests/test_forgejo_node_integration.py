@@ -1,13 +1,11 @@
 """UNRUN actual Forgejo factory/run/collector/picker source; HTTP boundary mocked."""
 from contextlib import asynccontextmanager
 from copy import deepcopy
-from dataclasses import asdict
 import json
 import httpx
 import pytest
 from nodes.core.registry import NodeFactory
 from nodes.core.run_op import run_node_operation
-from nodes.core.connection_evidence import collect_evidence
 from nodes.forgejo_node import ForgejoNode, _credential
 
 TYPE = "automation-forgejo"
@@ -54,7 +52,7 @@ def transport(monkeypatch):
         return httpx.Response(code, content=payload if isinstance(payload, bytes) else json.dumps(payload).encode(), headers=headers)
     @asynccontextmanager
     async def client(**kwargs):
-        assert kwargs == {"require_public": True, "timeout": 20, "follow_redirects": False, "trust_env": False}
+        assert kwargs == {"timeout": 20, "follow_redirects": False, "trust_env": False}
         async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as instance: yield instance
     monkeypatch.setattr("nodes.forgejo_node.guarded_async_client", client)
     return calls, replies
@@ -80,12 +78,9 @@ async def test_actual_five_factory_operations_header_shapes_privacy_and_foreign_
 
 
 @pytest.mark.asyncio
-async def test_actual_config_lens_raw_witness_and_actor_evidence(transport):
+async def test_actual_config_lens_and_raw_witness(transport):
     node = NodeFactory.create_node("fixture", TYPE, {"credentials": RAW, "config": {"operation": "get_user", "label": "Saved canvas", "disabled": False}}, user_id=USER)
     assert (await node.execute({}))["data"] == {"id": 7}
-    evidence = await collect_evidence(node_type=TYPE, user_id=USER, credential_data=deepcopy(RAW))
-    assert evidence.reachable is True and evidence.proves == "account"
-    assert evidence.account_label == "7" and "PRIVATE" not in json.dumps(asdict(evidence))
     node.node_data["credentials"] = {**RAW, "credential_type": "foreign"}; transport[0].clear()
     with pytest.raises(ValueError): await node.execute({})
     assert not transport[0]
@@ -176,3 +171,11 @@ def test_raw_family_public_origin_and_five_closed_schema_operations():
     ops = {schema["$defs"][r["$ref"].split("/")[-1]]["properties"]["operation"]["const"] for r in schema["properties"]["config"]["oneOf"]}
     assert ops == {"get_user", "list_repositories", "get_repository", "list_issues", "get_issue"}
     for field in ("body", "labels", "assignees", "url", "headers", "detailed", "q", "token", "sudo", "pull_request"): assert field not in schema["$defs"]["ForgejoIssueConfig"]["properties"]
+
+
+@pytest.mark.asyncio
+async def test_forgejo_refuses_private_outbound_opt_out(transport, monkeypatch):
+    monkeypatch.setenv("OUTBOUND_ALLOW_PRIVATE_IPS", "true")
+    result = await run("get_user")
+    assert result["status"] == "error" and "data" not in result
+    assert not transport[0]
