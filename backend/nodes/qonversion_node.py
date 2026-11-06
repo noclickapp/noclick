@@ -371,21 +371,22 @@ class QonversionNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):return QonversionNodeConfig
     @classmethod
-    def parse_config(cls,raw):
+    def parse_config(cls,config_data):
         try:
-            if isinstance(raw,dict) and raw.get('credentials') is not None:guard(raw['credentials'])
+            if isinstance(config_data,dict) and config_data.get('credentials') is not None:guard(config_data['credentials'])
         except ValueError:raise ConfigValidationError("Select a native Qonversion Secret Key") from None
-        return super().parse_config(raw)
+        return super().parse_config(config_data)
     @classmethod
-    def validate_config(cls,raw):
+    def validate_config(cls,config_data):
         try:
-            if isinstance(raw,dict) and raw.get('credentials') is not None:guard(raw['credentials'])
+            if isinstance(config_data,dict) and config_data.get('credentials') is not None:guard(config_data['credentials'])
         except ValueError:return {'valid':False,'errors':['Select a native Qonversion Secret Key'],'satisfied_set':None}
-        return super().validate_config(raw)
+        return super().validate_config(config_data)
     @classmethod
-    def _extract_actionable_validation_error(cls,error,data):return "Check the native Secret Key, resource ID and required read confirmation"
+    def _extract_actionable_validation_error(cls,error,config_data):return "Check the native Secret Key, resource ID and required read confirmation"
     @classmethod
-    async def freshen_credential(cls,data,**kwargs):return await freshen(data,**kwargs)
+    async def freshen_credential(cls,credential_data,*,pool=None,user_id=None,credential_id=None):
+        return await freshen(credential_data,pool=pool,user_id=user_id,credential_id=credential_id)
     @classmethod
     async def validate_credential(cls,data):
         credential(data)
