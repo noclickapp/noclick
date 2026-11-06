@@ -558,7 +558,7 @@ class ESCreateIndexConfig(BaseModel):
         title="Create Index",
     )
     index: str = Field(..., title="Index", description="Name for the new index")
-    mappings: str = Field(..., title="Mappings", description="JSON mappings object", json_schema_extra=_TEXTAREA)
+    mappings: Optional[str] = Field(None, title="Mappings", description="Optional JSON mappings object", json_schema_extra=_TEXTAREA)
     settings: Optional[str] = Field(None, title="Settings", description="Optional JSON index settings object", json_schema_extra=_TEXTAREA)
     aliases: Optional[str] = Field(None, title="Aliases", description="Optional JSON aliases object", json_schema_extra=_TEXTAREA)
 
@@ -1586,10 +1586,12 @@ class ElasticsearchNode(WorkflowNode):
         )
 
     async def _handle_create_index(self, config: ESCreateIndexConfig, credentials: ElasticsearchCredential) -> Dict[str, Any]:
-        mappings = _parse_json_obj(config.mappings)
-        if mappings is None:
-            return {"status": "error", "action": "create_index", "error": "`mappings` must be a JSON object"}
-        body: Dict[str, Any] = {"mappings": mappings}
+        body: Dict[str, Any] = {}
+        if config.mappings is not None:
+            mappings = _parse_json_obj(config.mappings)
+            if mappings is None:
+                return {"status": "error", "action": "create_index", "error": "`mappings` must be a JSON object"}
+            body["mappings"] = mappings
         if config.settings:
             settings = _parse_json_obj(config.settings)
             if settings is None:

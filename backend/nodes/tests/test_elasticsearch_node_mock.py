@@ -602,3 +602,35 @@ async def test_api_error_surfaced(credentials):
     assert result["status"] == "error"
     assert result["status_code"] == 404
     assert "no such index" in result["error"].lower()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("settings", [None, '{"number_of_shards": 3, "number_of_replicas": 2}'])
+async def test_create_index_without_mappings(credentials, settings):
+    # Elastic documents settings-only creation; dynamic mappings need no definition.
+    config = ElasticsearchNodeConfig(
+        config=ESCreateIndexConfig(index="my-index-000001", settings=settings),
+        credentials=credentials,
+    )
+    client, calls = create_capturing_client(200, {"acknowledged": True})
+    with patch("nodes.elasticsearch_node.httpx.AsyncClient", return_value=client):
+        result = await create_node(config).execute({})
+    assert result["status"] == "success"
+    assert calls[-1]["method"] == "PUT"
+    assert calls[-1]["url"] == f"{BASE}/my-index-000001"
+    assert calls[-1]["json"] == ({"settings": json.loads(settings)} if settings else {})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("mappings", ["[]", "invalid", ""])
+async def test_create_index_rejects_invalid_supplied_mappings(credentials, mappings):
+    config = ElasticsearchNodeConfig(
+        config=ESCreateIndexConfig(index="my-index-000001", mappings=mappings),
+        credentials=credentials,
+    )
+    client, calls = create_capturing_client()
+    with patch("nodes.elasticsearch_node.httpx.AsyncClient", return_value=client):
+        result = await create_node(config).execute({})
+    assert result["status"] == "error"
+    assert result["error"] == "`mappings` must be a JSON object"
+    assert not calls

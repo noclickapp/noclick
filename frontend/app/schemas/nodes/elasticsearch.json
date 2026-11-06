@@ -402,9 +402,17 @@
           "type": "string"
         },
         "mappings": {
-          "description": "JSON mappings object",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON mappings object",
           "title": "Mappings",
-          "type": "string",
           "ui:widget": "textarea"
         },
         "settings": {
@@ -437,8 +445,7 @@
         }
       },
       "required": [
-        "index",
-        "mappings"
+        "index"
       ],
       "title": "ESCreateIndexConfig",
       "type": "object"
