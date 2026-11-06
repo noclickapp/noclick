@@ -5,6 +5,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import STACKITDNSIcon from '~/components/icons/STACKITDNSIcon';
 import { STACKITDNSNode } from '~/components/workflow/nodes/STACKITDNSNode';
 import { NODE_SCHEMAS, getNodeCredentialInfo, isAgentToolProviderType, loadNodeSchemas } from '~/utils/nodeSchemas';
+import { methodFromRequirement, requirementsFromSchema } from '~/components/credential/credentialMethods';
 import { getCredentialTypeFromSchemaTitle } from '~/utils/credentialTypeMap';
 import { upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
 import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
@@ -21,6 +22,7 @@ describe('STACKIT DNS native metadata', () => {
     expect(key.required).toEqual(expect.arrayContaining(['access_token', 'project_id']));
     expect(key.properties.access_token['ui:widget']).toBe('password');
     expect(key['x-oauth-provider']).toBeUndefined();
+    expect(requirementsFromSchema(schema).map(req => methodFromRequirement(req).method_kind)).toEqual(['api_key']);
     const ops = schema.properties.config.oneOf.map((r: { $ref: string }) => schema.$defs[r.$ref.split('/').at(-1)!].properties.operation.const);
     expect(ops.sort()).toEqual(['get_rrset', 'get_zone', 'list_rrsets', 'list_zones']);
     const properties = schema.$defs.STACKITDNSRRSetConfig.properties;

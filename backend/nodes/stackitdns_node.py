@@ -210,18 +210,21 @@ class STACKITDNSNode(WorkflowNode):
     @classmethod
     def get_config_model(cls): return STACKITDNSNodeConfig
     @classmethod
-    def parse_config(cls, data):
-        if data.get("credentials") is not None:
-            try: _stored(data["credentials"])
+    def parse_config(cls, config_data):
+        if config_data.get("credentials") is not None:
+            try: _stored(config_data["credentials"])
             except ValueError as error: raise ConfigValidationError(str(error)) from None
-        return super().parse_config(data)
+        return super().parse_config(config_data)
     @classmethod
-    async def freshen_credential(cls, credential_data, **kwargs):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        return await cls._freshen_saved_credential(credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
+    @classmethod
+    async def _freshen_saved_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=None):
         _credential(credential_data)
-        if not kwargs.get("credential_id"): return credential_data
-        organization = kwargs.get("organization_id")
-        if organization is None and not kwargs.get("workflow_id"): organization = CURRENT_ORGANIZATION
-        store = STACKITDNSCredentialsStore(kwargs.get("pool"), kwargs.get("user_id"), kwargs["credential_id"], credential_type="stackitdns_access_token", validate=_stored, organization_id=organization, workflow_id=kwargs.get("workflow_id"))
+        if not credential_id: return credential_data
+        organization = organization_id
+        if organization is None and not workflow_id: organization = CURRENT_ORGANIZATION
+        store = STACKITDNSCredentialsStore(pool, user_id, credential_id, credential_type="stackitdns_access_token", validate=_stored, organization_id=organization, workflow_id=workflow_id)
         try: return _CurrentCredential(await store.load(), store)
         except Exception: raise ValueError("STACKIT DNS saved credential unavailable under current authority") from None
     @classmethod
@@ -280,5 +283,5 @@ class STACKITDNSNode(WorkflowNode):
         return {"options": [row for row in options if not search or search.casefold() in row["label"].casefold() or search.casefold() in row["value"].casefold()], "has_more": False if field_name == "project_id" else result["has_more"], "next_page_token": None if field_name == "project_id" else result["next_page_token"]}
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         initial = _credential(self.node_data.get("credentials") if self.node_data.get("credentials") is not None else self.config.credentials)
-        credential = await self.freshen_credential(initial.model_dump(mode="json"), pool=self.node_data.get("_approval_pool"), user_id=self.user_id, credential_id=self.node_data["credential_id"], workflow_id=self.workflow_id, organization_id=self.organization_id) if self.node_data.get("credential_id") else initial
+        credential = await self._freshen_saved_credential(initial.model_dump(mode="json"), pool=self.node_data.get("_approval_pool"), user_id=self.user_id, credential_id=self.node_data["credential_id"], workflow_id=self.workflow_id, organization_id=self.organization_id) if self.node_data.get("credential_id") else initial
         return await self._dispatch(credential, self.config.config)
