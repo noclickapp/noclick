@@ -105,7 +105,7 @@ async def test_manual_shape_errors_never_call_provider(seams, credential):
 async def test_current_authoritative_wrong_family_denies_stale_valid_blob(seams, kind):
     seams.row["credential_type"] = kind
     with pytest.raises(ValueError, match="Current Printify authority"):
-        await node.PrintifyNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org")
+        await node.PrintifyNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool)
     assert seams.calls == [] and seams.admission.await_count == 0
 
 
@@ -116,7 +116,7 @@ async def test_current_authority_null_or_revocation_precedes_provider(seams, den
     else:
         seams.row["revoked_at"] = datetime.now(timezone.utc)
     with pytest.raises(ValueError):
-        await node.PrintifyNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org")
+        await node.PrintifyNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool)
     assert seams.calls == []
 
 
@@ -128,34 +128,14 @@ async def test_real_canonical_picker_and_parent_argument_admission(seams):
     assert len(seams.calls) == 1
 
 
-@pytest.mark.parametrize("authorized", [False, True])
-async def test_workflow_owner_fallback_keeps_real_authorization_gate_and_current_blob(seams, authorized):
-    workflow = "22222222-2222-4222-8222-222222222222"
-    owner_reads = []
-    async def read(statement, *args):
-        seams.sql.append((statement, args))
-        if "FROM workflows" in statement and "workflow_authorized_credentials" not in statement:
-            return {"owner_id": "fixture-owner"}
-        if "FROM workflow_authorized_credentials" in statement:
-            assert str(args[0]) == workflow and str(args[1]) == CID
-            return {"allowed": 1} if authorized else None
-        if args[1] == "fixture-owner":
-            owner_reads.append(args)
-            return {**seams.row, "owner_id": "fixture-owner"}
-        return None
-    seams.pool.conn.fetchrow.side_effect = read
-    async def read_types(statement, *args):
-        result = await read(statement, *args)
-        return [{"id": CID, "credential_type": result["credential_type"]}] if result else []
-    seams.pool.conn.fetch.side_effect = read_types
-    if authorized:
-        result = await node.PrintifyNode.freshen_credential({**CREDENTIAL, "personal_access_token": "stale-fixture-token"}, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org", workflow_id=workflow)
-        assert result["personal_access_token"] == TOKEN and len(owner_reads) == 2
-        assert all(args[2] == "fixture-org" for args in owner_reads)
-    else:
-        with pytest.raises(ValueError, match="Current Printify authority"):
-            await node.PrintifyNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org", workflow_id=workflow)
-        assert owner_reads == []
+async def test_stored_refresh_uses_callers_current_organization(seams):
+    result = await node.PrintifyNode.freshen_credential(
+        {**CREDENTIAL, "personal_access_token": "stale-fixture-token"},
+        credential_id=CID, user_id="fixture-user", pool=seams.pool,
+    )
+    assert result["personal_access_token"] == TOKEN
+    workflow_handler.get_user_org_context.assert_awaited_once_with(seams.pool.conn, "fixture-user")
+    assert all(args[2] == "fixture-org" for _, args in seams.sql)
     assert seams.calls == []
 
 

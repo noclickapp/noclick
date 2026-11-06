@@ -30,7 +30,6 @@ BASES = {
 TYPES = ("printify_pat", "printify_oauth_access_token")
 MAX_BYTES = 2 * 1024 * 1024
 MAX_CATALOG = 1000
-CURRENT_ORGANIZATION = object()
 
 
 def positive_id(value):
@@ -521,7 +520,7 @@ class PrintifyNode(WorkflowNode):
         return super().validate_config(raw)
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=CURRENT_ORGANIZATION):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
         if credential_id:
             if not user_id:
                 raise ValueError("Stored Printify credential requires an authorized caller")
@@ -529,25 +528,15 @@ class PrintifyNode(WorkflowNode):
             from wss.handlers.workflow_handler import get_user_org_context
             from utils.credentials import (
                 resolve_accessible_credential_types, resolve_credential_with_owner_fallback,
-                get_workflow_owner_id, is_credential_authorized_for_workflow, credential_lender,
             )
             pool = pool if pool is not None else get_native_pool()
-            if organization_id is CURRENT_ORGANIZATION:
-                async with pool.acquire() as conn:
-                    organization_id = await get_user_org_context(conn, user_id)
+            async with pool.acquire() as conn:
+                organization_id = await get_user_org_context(conn, user_id)
             types = await resolve_accessible_credential_types([credential_id], user_id, pool, organization_id)
-            if credential_id not in types and workflow_id:
-                owner = await get_workflow_owner_id(pool, workflow_id)
-                if owner and owner != user_id and await is_credential_authorized_for_workflow(pool, workflow_id, credential_id):
-                    types = await resolve_accessible_credential_types([credential_id], owner, pool, organization_id)
-                if credential_id not in types:
-                    lender = await credential_lender(pool, workflow_id, credential_id)
-                    if lender and lender != user_id:
-                        types = await resolve_accessible_credential_types([credential_id], lender, pool, organization_id)
             current_type = types.get(credential_id)
             if current_type not in TYPES:
                 raise ValueError("Current Printify authority is unavailable or has a different family")
-            credential_data = await resolve_credential_with_owner_fallback(credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id)
+            credential_data = await resolve_credential_with_owner_fallback(credential_id, user_id, pool, org_id=organization_id)
             if not credential_data or credential_data.get("credential_type") != current_type:
                 raise ValueError("Printify credential unavailable, revoked or access denied")
         credential = credential_value(credential_data, manual=not credential_id)
@@ -596,5 +585,5 @@ class PrintifyNode(WorkflowNode):
         # Direct callers can supply the validated config separately from node_data.
         # Still inspect any supplied raw fields before executing the typed model.
         self._require_raw({"credentials": self.config.credentials.model_dump(), "config": self.config.config.model_dump(), **(self.node_data or {})})
-        credential = await self.freshen_credential(self.config.credentials.model_dump(), pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id, credential_id=(self.node_data or {}).get("credential_id"), workflow_id=self.workflow_id, organization_id=self.organization_id)
+        credential = await self.freshen_credential(self.config.credentials.model_dump(), pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id, credential_id=(self.node_data or {}).get("credential_id"))
         return {"status": "success", "action": self.config.config.operation, **await request_operation(credential, self.config.config)}
