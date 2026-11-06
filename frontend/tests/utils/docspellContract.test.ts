@@ -1,5 +1,6 @@
 // Generated schema and editor registration contracts for Docspell.
 import { describe, expect, it } from 'vitest';
+import { kindFromCredentialType } from '../../app/lib/credentialMethodKind';
 import schema from '../../app/schemas/nodes/docspell.json';
 import { NODE_SCHEMAS, loadNodeSchemas } from '../../app/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '../../app/utils/credentialTypeMap';
@@ -18,6 +19,7 @@ describe('Docspell metadata contracts', () => {
         expect(credential.required).toEqual(expect.arrayContaining(['instance_origin', 'auth_token']));
         expect(credential.properties.auth_token['ui:widget']).toBe('password');
         expect(credential['x-oauth-provider']).toBeUndefined();
+        expect(kindFromCredentialType(credential['x-credential-type'])).toBe('api_key');
         const refs = native.properties.config.oneOf ?? native.properties.config.anyOf;
         const definitions = refs.map((r: any) => native.$defs[r.$ref.split('/').pop()]);
         expect(definitions.map((d: any) => d.properties.operation.const).sort()).toEqual(['get_folder', 'list_folders', 'list_tags']);

@@ -248,7 +248,11 @@ class DocspellNode(WorkflowNode):
         return DocspellNodeConfig.model_validate(config_data)
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=None, **_kwargs):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        return await cls._freshen_for_execution(credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
+
+    @classmethod
+    async def _freshen_for_execution(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=None):
         value = guard(credential_data)
         if not credential_id: return value.model_dump()
         if not user_id: raise ValueError("Stored Docspell credentials require a caller")
@@ -278,7 +282,7 @@ class DocspellNode(WorkflowNode):
     async def execute(self, inputs):
         cfg = self.config.config
         raw = self.node_data.get("credentials") or (self.config.credentials.model_dump() if self.config.credentials is not None else None)
-        data = await self.freshen_credential(raw, credential_id=self.node_data.get("credential_id"), user_id=self.user_id, workflow_id=self.workflow_id, organization_id=self.organization_id, pool=self.node_data.get("_approval_pool"))
+        data = await self._freshen_for_execution(raw, credential_id=self.node_data.get("credential_id"), user_id=self.user_id, workflow_id=self.workflow_id, organization_id=self.organization_id, pool=self.node_data.get("_approval_pool"))
         value, reader = guard(data), data.get("_docspell_reader")
         try:
             if cfg.operation == "list_folders": return result_page(await request(value, "folders", reader=reader), "folder", names=cfg.include_names)
