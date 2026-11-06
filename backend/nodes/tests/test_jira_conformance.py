@@ -10,7 +10,7 @@ from nodes import jira_node as jira
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize('config,path,params', [
-    (jira.JiraGetWorkflowConfig(workflow_name='Software'), '/workflow/search', {'workflowName': 'Software'}),
+    (jira.JiraGetWorkflowConfig(workflow_name='Software'), '/workflows/search', {'queryString': 'Software'}),
     (jira.JiraGetIssueTypeSchemeConfig(scheme_id=10000), '/issuetypescheme', {'id': '10000'}),
     (jira.JiraValidateJQLConfig(jql='project = HSP'), '/jql/parse', {'validation': 'strict'}),
 ])
@@ -82,3 +82,20 @@ def test_dashboard_permissions_drop_read_only_expansions():
         'type': 'group', 'group': {'groupId': 'abc', 'name': 'Team'}
     }
     assert jira.JiraNode._dashboard_permission_for_write({'type': 'loggedin'}) == {'type': 'authenticated'}
+
+
+@pytest.mark.asyncio
+async def test_workflow_exact_name_lookup_keeps_legacy_output_paths_across_pages():
+    requests = []
+    def respond(request):
+        requests.append(request)
+        assert request.url.params['queryString'] == 'Software'
+        if request.url.params['startAt'] == '0':
+            return httpx.Response(200, json={'startAt': 0, 'isLast': False, 'values': [{'id': 'other', 'name': 'Software Copy'}]})
+        return httpx.Response(200, json={'startAt': 1, 'isLast': True, 'values': [{'id': 'exact', 'name': 'Software', 'description': 'Existing'}]})
+    result = await execute(jira.JiraGetWorkflowConfig(workflow_name='Software'), respond)
+    assert len(requests) == 2
+    assert result['values'][0]['id'] == {'name': 'Software', 'entityId': 'exact'}
+    assert result['values'][0]['workflowId'] == 'exact'
+    assert result['values'][0]['description'] == 'Existing'
+    assert result['total'] == 1

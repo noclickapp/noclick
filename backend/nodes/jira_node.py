@@ -8695,19 +8695,44 @@ class JiraNode(WatchChannelTriggerMixin, WorkflowNode):
     async def _get_workflow(
         self, api_base: str, headers: Dict, config: JiraGetWorkflowConfig
     ) -> Dict[str, Any]:
-        """Get a workflow by name"""
+        """Look up an exact workflow name using the supported search API."""
         async with guarded_async_client() as client:
-            response = await client.get(
-                f"{api_base}/workflow/search",
-                headers=headers,
-                params={"workflowName": config.workflow_name},
-            )
-            response.raise_for_status()
-            result = response.json()
+            start_at = 0
+            matches = []
+            while True:
+                response = await client.get(
+                    f"{api_base}/workflows/search",
+                    headers=headers,
+                    params={"queryString": config.workflow_name, "startAt": start_at},
+                )
+                response.raise_for_status()
+                result = response.json()
+                values = result.get("values", [])
+                for workflow in values:
+                    if workflow.get("name") == config.workflow_name:
+                        # Keep the legacy values[].id.name/entityId paths.
+                        workflow = dict(workflow)
+                        workflow["workflowId"] = workflow["id"]
+                        workflow["id"] = {
+                            "name": workflow["name"], "entityId": workflow["workflowId"]
+                        }
+                        matches.append(workflow)
+                next_start = result.get("startAt", start_at) + len(values)
+                if (
+                    result.get("isLast", True) or not values
+                    or next_start <= start_at
+                    or ("total" in result and next_start >= result["total"])
+                ):
+                    break
+                start_at = next_start
             await self.emit(
                 {"action": "get_workflow", "workflow_name": config.workflow_name}
             )
-            return result
+            return {
+                **result, "values": matches, "startAt": 0,
+                "total": len(matches), "maxResults": len(matches), "isLast": True,
+                "nextPage": None,
+            }
 
     async def _get_workflow_schemes(
         self, api_base: str, headers: Dict, config: JiraGetWorkflowSchemesConfig
