@@ -97,6 +97,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-gohighlevel', 'GoHighLevelNode'],
     ['automation-expensify', 'ExpensifyNode'],
     ['automation-launchdarkly', 'LaunchDarklyNode'],
+    ['automation-doppler', 'DopplerNode'],
     ['automation-webflow', 'WebflowNode'],
     ['automation-connecteam', 'ConnecteamNode'],
     ['automation-phantombuster', 'PhantomBusterNode'],

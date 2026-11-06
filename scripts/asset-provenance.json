@@ -232,6 +232,12 @@
       "sha256": "00ea931ab69dd5397150ed2d50815fb9d2a7c87886e3f36d7b362fbe4f4fa517"
     },
     {
+      "path": "frontend/public/icons/doppler.svg",
+      "source": "https://cdn.sanity.io/images/q3zajrd2/production/01ad0eb786c8260c4daa709fe8a6f57fb063655e-101x100.svg (Doppler brand mark published on https://www.doppler.com/)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "ab093dca219fd5b980124b4f2c8b18a76bd96687abbf1231a588a96dfe9512d9"
+    },
+    {
       "path": "frontend/public/icons/dropbox.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
