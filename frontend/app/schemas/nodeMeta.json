@@ -1049,6 +1049,9 @@
         "receive_webhook"
       ]
     },
+    "automation-ringcentral": {
+      "agentToolProvider": true
+    },
     "automation-rss": {
       "agentToolProvider": true
     },
