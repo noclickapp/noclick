@@ -20,7 +20,11 @@ Exercises every operation with mocked HTTP responses (no live API calls):
 import base64
 import hashlib
 import hmac
+import json
+from email.parser import BytesParser
+from email.policy import default
 
+import httpx
 import pytest
 from unittest.mock import Mock, patch
 
@@ -267,11 +271,61 @@ class TestBoxFilesMock:
     @pytest.mark.asyncio
     async def test_upload_version(self, token_credentials):
         config = BoxNodeConfig(
-            config=BoxUploadVersionConfig(file_id="f1", content="updated"), credentials=token_credentials
+            config=BoxUploadVersionConfig(file_id="12345", content="updated"), credentials=token_credentials
         )
-        result = await _run(create_box_node(config), {"entries": [{"id": "f1"}]}, status_code=201)
+        requests = []
+
+        def respond(request):
+            requests.append(request)
+            if request.method == "GET":
+                return httpx.Response(200, json={"id": "12345", "type": "file", "name": "Contract.pdf"})
+            return httpx.Response(200, json={"total_count": 1, "entries": [{"id": "12345", "type": "file", "name": "Contract.pdf"}]})
+
+        with patch(
+            "nodes.box_node.guarded_async_client",
+            side_effect=lambda **kwargs: httpx.AsyncClient(transport=httpx.MockTransport(respond)),
+        ):
+            result = await create_box_node(config).execute({})
         assert result["status"] == "success"
         assert result["action"] == "upload_version"
+        assert result["data"]["entries"][0]["id"] == "12345"
+        assert [(r.method, str(r.url)) for r in requests] == [
+            ("GET", "https://api.box.com/2.0/files/12345?fields=name"),
+            ("POST", "https://upload.box.com/api/2.0/files/12345/content"),
+        ]
+        assert all(r.headers["authorization"] == f"Bearer {token_credentials.access_token}" for r in requests)
+        upload = requests[1]
+        multipart = BytesParser(policy=default).parsebytes(
+            f"Content-Type: {upload.headers['content-type']}\r\n\r\n".encode() + upload.content
+        )
+        parts = list(multipart.iter_parts())
+        assert [p.get_param("name", header="content-disposition") for p in parts] == ["attributes", "file"]
+        assert json.loads(parts[0].get_payload(decode=True)) == {"name": "Contract.pdf"}
+        assert parts[0].get_content_type() == "application/json"
+        assert parts[1].get_filename() == "Contract.pdf"
+        assert parts[1].get_payload(decode=True) == b"updated"
+
+    @pytest.mark.asyncio
+    async def test_upload_version_stops_when_file_lookup_fails(self, token_credentials):
+        config = BoxNodeConfig(
+            config=BoxUploadVersionConfig(file_id="12345", content="updated"), credentials=token_credentials
+        )
+        requests = []
+
+        def respond(request):
+            requests.append(request)
+            return httpx.Response(404, json={"type": "error", "status": 404, "code": "not_found", "message": "Not Found"})
+
+        with patch(
+            "nodes.box_node.guarded_async_client",
+            side_effect=lambda **kwargs: httpx.AsyncClient(transport=httpx.MockTransport(respond)),
+        ):
+            result = await create_box_node(config).execute({})
+        assert result["status"] == "error"
+        assert result["status_code"] == 404
+        assert result["action"] == "upload_version"
+        assert len(requests) == 1
+        assert requests[0].method == "GET"
 
     @pytest.mark.asyncio
     async def test_update_file(self, token_credentials):

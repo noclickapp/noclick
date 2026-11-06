@@ -1606,8 +1606,19 @@ class BoxNode(ExternalWebhookTriggerMixin, WorkflowNode):
         )
 
     async def _upload_version(self, c: BoxUploadVersionConfig, token: str) -> Dict[str, Any]:
+        import json as _json
+
+        # Box requires attributes before content; retain the existing file name.
+        metadata = await _box_request(
+            token, "GET", f"/files/{c.file_id}", params={"fields": "name"},
+            action_name="upload_version",
+        )
+        if metadata["status"] != "success":
+            return metadata
+        name = metadata["data"]["name"]
         files = {
-            "file": ("version", c.content.encode("utf-8"), "application/octet-stream"),
+            "attributes": (None, _json.dumps({"name": name}), "application/json"),
+            "file": (name, c.content.encode("utf-8"), "application/octet-stream"),
         }
         return await _box_request(
             token, "POST", f"/files/{c.file_id}/content", base=BOX_UPLOAD_BASE, files=files,
