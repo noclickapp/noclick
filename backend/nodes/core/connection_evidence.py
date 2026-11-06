@@ -611,7 +611,7 @@ async def collect_evidence(
 
                 pending = await admit_lookup(
                     credential_id=credential_id, user_id=user_id, node_type=node_type,
-                    arguments={"field_name": spec.field, "context": None, "page_token": None, "search": None},
+                    arguments={"field_name": spec.field, "context": {}, "page_token": None, "search": None},
                     pool=pool, organization_id=organization_id, workflow_id=workflow_id,
                 )
                 if pending:
