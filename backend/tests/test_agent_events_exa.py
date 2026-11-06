@@ -13,8 +13,10 @@ any other shape falls through to the base. Fixtures are fictional
 
 import json
 
+import pytest
+
 from nodes.core.agent_events import default_agent_event
-from nodes.exa_node import EVENT_RESULTS_SHOWN, ExaNode
+from nodes.exa_node import EVENT_RESULTS_SHOWN, EVENT_TEXT_CHARS, EVENT_URL_CHARS, ExaNode
 
 SECRET = "t=1700000000,v1=deadbeefcafe0123"
 WEBHOOK = {"id": "wh-1", "method": "POST", "headers": {"exa-signature": SECRET}, "query_params": {}}
@@ -120,6 +122,47 @@ def test_a_big_run_stays_bounded_and_says_what_it_left_out():
     assert "more on the trigger node]" in text
     assert "y" * 1600 not in text
     assert text.rstrip().endswith("list_monitor_runs monitor_id=01kmonitorexample.")
+
+
+@pytest.mark.parametrize("status", ["completed", "failed"])
+def test_every_part_of_the_turn_is_bounded_whatever_the_run_carries(status):
+    """No field of a delivery makes the turn longer than ``EVENT_TEXT_CHARS``: the ids, the times, the reason, the
+    metadata, every grounding entry, each result's title, URL and excerpt are clipped, and a result is shown only
+    while it fits (the first always does)."""
+    huge = "z" * 50_000
+    results = [_result(i, id=huge, title=huge, url=f"https://news.example/{huge}", summary=huge,
+                       publishedDate=huge) for i in range(1, 26)]
+    grounding = [{"field": huge, "confidence": huge} for _ in range(500)]
+    delivery = _delivery(status=status, results=results, content=huge, id=huge, monitorId=huge, failReason=huge,
+                         metadata={f"k{i}": huge for i in range(100)}, completedAt=huge, failedAt=huge)
+    if status == "completed":
+        delivery["data"]["output"]["grounding"] = grounding
+    ev = ExaNode.resolve_agent_event(delivery)
+    assert len(ev["text"]) <= EVENT_TEXT_CHARS and len(ev["title"]) < 300
+    assert "z" * 1_300 not in ev["text"]
+    if status == "completed":
+        assert "\n1. " in ev["text"] and "more on the trigger node]" in ev["text"]
+    assert ev["text"].rstrip().endswith(".") and "list_monitor_runs monitor_id=" in ev["text"]
+
+
+@pytest.mark.parametrize("value", [5, 2.5, True, "results", {"0": {"title": "x"}}])
+def test_lists_that_arent_lists_count_as_none(value):
+    """A delivery whose ``results``, ``grounding`` or a result's ``highlights`` isn't a list reaches the agent as
+    one with none, never failing its run."""
+    delivery = _delivery(results=[_result(1, highlights=value)])
+    delivery["data"]["output"]["grounding"] = value
+    text = ExaNode.resolve_agent_event(delivery)["text"]
+    assert "1. Battery recycling plant 1 announced" in text and "- confidence" not in text
+    delivery["data"]["output"]["results"] = value
+    text = ExaNode.resolve_agent_event(delivery)["text"]
+    assert text.splitlines()[0] == "Exa monitor run completed: nothing new"
+
+
+def test_a_title_that_falls_back_to_a_long_url_shows_it_once():
+    url = "https://news.example/" + "a" * (EVENT_URL_CHARS + 100)
+    text = ExaNode.resolve_agent_event(_delivery(results=[_result(1, title=None, url=url, id=url)]))["text"]
+    assert text.count("https://news.example/aaa") == 1
+    assert "1. https://news.example/aaa" in text
 
 
 def test_a_failed_run_says_why_and_how_to_run_it_again():

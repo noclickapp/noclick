@@ -69,11 +69,16 @@ SIGNATURE_MAX_AGE_S = 300
 DEFAULT_MONITOR_PERIOD = "1d"
 _MONITOR_PERIOD_RE = re.compile(r"[1-9]\d*[hd]")
 _CRON_RUNS_COMPARED = 60
-# A monitor run as an agent's turn: its summary and an excerpt per result, bounded; the rest stays on the node.
-EVENT_SUMMARY_CHARS = 1_500
+# A monitor run as an agent's turn: every part of it clipped, and as many results as fit in the whole; the rest
+# stays on the node. The parts' bounds leave room for the first result whatever else the run carries.
+EVENT_TEXT_CHARS = 4_000
+EVENT_SUMMARY_CHARS = 1_200
+EVENT_LINE_CHARS = 200
+EVENT_ID_CHARS = 100
+EVENT_TITLE_CHARS = 200
+EVENT_URL_CHARS = 300
 EVENT_RESULT_CHARS = 240
 EVENT_RESULTS_SHOWN = 10
-EVENT_TEXT_BUDGET = 3_500
 
 
 def _period_of_cron(expression: str) -> Optional[str]:
@@ -108,11 +113,33 @@ def monitor_period(cadence: Optional[str]) -> str:
     return period
 
 
+def _listed(value: Any) -> List[Any]:
+    """A list a delivery carries; anything else in its place counts as none."""
+    return value if isinstance(value, list) else []
+
+
+def _clip(value: Any, limit: int) -> str:
+    """``value`` as one line of at most ``limit`` characters, saying how much it left out."""
+    return prune_empty(" ".join(str(value if value is not None else "").split()), max_str=limit)
+
+
 def _result_excerpt(result: Dict[str, Any]) -> str:
     """A page a monitor found, in a line: Exa's summary of it, else its highlights, else the start of its text."""
-    highlights = [h for h in result.get("highlights") or [] if isinstance(h, str) and h.strip()]
-    excerpt = result.get("summary") or " … ".join(highlights) or result.get("text") or ""
-    return prune_empty(" ".join(excerpt.split()), max_str=EVENT_RESULT_CHARS) if isinstance(excerpt, str) else ""
+    highlights = " … ".join(h for h in _listed(result.get("highlights")) if isinstance(h, str) and h.strip())
+    excerpt = next((part for part in (result.get("summary"), highlights, result.get("text"))
+                    if isinstance(part, str) and part.strip()), "")
+    return _clip(excerpt, EVENT_RESULT_CHARS)
+
+
+def _result_block(i: int, result: Dict[str, Any]) -> List[str]:
+    """A page a monitor found: its title (else its URL), when it was published, its URL when the title isn't it,
+    and an excerpt."""
+    url = str(result.get("url") or "").strip()
+    name = str(result.get("title") or "").strip() or url or str(result.get("id") or "").strip() or "Untitled"
+    published = _clip(result.get("publishedDate"), 40)[:10]
+    block = [f"{i}. {_clip(name, EVENT_TITLE_CHARS)}" + (f" ({published})" if published else "")]
+    return block + [f"   {part}" for part in (_clip(url, EVENT_URL_CHARS) if url != name else "",
+                                              _result_excerpt(result)) if part]
 
 
 # ============================================================================
@@ -1163,24 +1190,27 @@ class ExaNode(ExternalWebhookTriggerMixin, WorkflowNode):
         run = output.get("data")
         if not isinstance(run, dict) or not run.get("monitorId"):
             return super().resolve_agent_event(output)
-        monitor_id, status = run["monitorId"], run.get("status") or "completed"
+        monitor_id = _clip(run["monitorId"], EVENT_ID_CHARS)
+        status = _clip(run.get("status") or "completed", 40)
         found = run.get("output") if isinstance(run.get("output"), dict) else {}
-        results = [r for r in found.get("results") or [] if isinstance(r, dict)]
+        results = [r for r in _listed(found.get("results")) if isinstance(r, dict)]
         if status != "completed":
-            reason = str(run.get("failReason") or "").replace("_", " ")
+            reason = _clip(str(run.get("failReason") or "").replace("_", " "), EVENT_LINE_CHARS)
             head = f"Exa monitor run {status}" + (f": {reason}" if reason else "")
         elif results:
             head = f"Exa monitor run completed: {len(results)} new result{'s' if len(results) != 1 else ''}"
         else:
             head = "Exa monitor run completed: nothing new"
         metadata = prune_empty(run.get("metadata")) if isinstance(run.get("metadata"), dict) else {}
-        grounding = [g for g in found.get("grounding") or [] if isinstance(g, dict) and g.get("confidence")]
+        grounding = [g for g in _listed(found.get("grounding")) if isinstance(g, dict) and g.get("confidence")]
+        finished = run.get("completedAt") or run.get("failedAt") or run.get("cancelledAt") or output.get("createdAt")
         lines = [head] + bullet_lines([
             ("monitor", monitor_id),
-            ("run", run.get("id")),
-            ("finished", run.get("completedAt") or run.get("failedAt") or run.get("cancelledAt") or output.get("createdAt")),
-            ("metadata", prune_empty(", ".join(f"{k}: {v}" for k, v in metadata.items()), max_str=300)),
-            ("confidence", ", ".join(f"{g.get('field') or 'output'} {g['confidence']}" for g in grounding)),
+            ("run", _clip(run.get("id"), EVENT_ID_CHARS)),
+            ("finished", _clip(finished, 40)),
+            ("metadata", _clip(", ".join(f"{k}: {v}" for k, v in metadata.items()), EVENT_LINE_CHARS)),
+            ("confidence", _clip(", ".join(f"{g.get('field') or 'output'} {g['confidence']}" for g in grounding),
+                                 EVENT_LINE_CHARS)),
         ])
         content = found.get("content")
         if isinstance(content, str) and content.strip():
@@ -1189,27 +1219,25 @@ class ExaNode(ExternalWebhookTriggerMixin, WorkflowNode):
             lines += ["", "Summary:", compact_json(content, limit=EVENT_SUMMARY_CHARS)]
         if results:
             lines += ["", "New results:"]
-        shown, size = 0, sum(len(line) + 1 for line in lines)
+        tail = [""]
+        if results:
+            tail.append("To read a page in full: get_contents urls=<url>.")
+        if status != "completed":
+            tail.append(f"To run it again: trigger_monitor monitor_id={monitor_id}.")
+        tail.append(f"Earlier runs: list_monitor_runs monitor_id={monitor_id}.")
+        # What's left of the turn once the rest of it and the line saying how many more there are are written.
+        room = EVENT_TEXT_CHARS - len("\n".join(lines + tail)) - len(f"\n[… {len(results)} more on the trigger node]")
+        shown = 0
         for i, result in enumerate(results[:EVENT_RESULTS_SHOWN], 1):
-            url = str(result.get("url") or "")
-            title = prune_empty(str(result.get("title") or url or result.get("id") or "Untitled"), max_str=200)
-            published = str(result.get("publishedDate") or "")[:10]
-            block = [f"{i}. {title}" + (f" ({published})" if published else "")]
-            block += [f"   {part}" for part in (url if url != title else "", _result_excerpt(result)) if part]
-            size += sum(len(line) + 1 for line in block)
-            if shown and size > EVENT_TEXT_BUDGET:  # the turn stays bounded; the rest is on the node
+            block = _result_block(i, result)
+            room -= sum(len(line) + 1 for line in block)
+            if room < 0:
                 break
             lines += block
             shown += 1
         if len(results) > shown:
             lines.append(f"[… {len(results) - shown} more on the trigger node]")
-        lines.append("")
-        if results:
-            lines.append("To read a page in full: get_contents urls=<url>.")
-        if status != "completed":
-            lines.append(f"To run it again: trigger_monitor monitor_id={monitor_id}.")
-        lines.append(f"Earlier runs: list_monitor_runs monitor_id={monitor_id}.")
-        return {"text": "\n".join(lines), "conversation_key": None, "title": head}
+        return {"text": "\n".join(lines + tail), "conversation_key": None, "title": head}
 
     # ------------------------------------------------------------------
     # Execute
