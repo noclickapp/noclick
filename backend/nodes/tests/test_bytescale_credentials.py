@@ -40,7 +40,7 @@ class Context:
 
 class Storage:
     def __init__(self):
-        self.row = {"credential": b"synthetic-ciphertext", "credential_type": KEY["credential_type"], "owner_id": OWNER, "revoked_at": None, "token_version": 3}
+        self.row = {"credential": b"synthetic-ciphertext", "credential_type": KEY["credential_type"], "owner_id": OWNER, "revoked_at": None, "token_version": 3, "updated_at": None}
         self.policy = {"name": "Fixture Bytescale application", "owner_id": OWNER, "approval_operations": [], "approval_revision": 1, "revoked_at": None}
         self.calls, self.allowed, self.approval = [], {(USER, ORG), (USER, None)}, None
     def acquire(self): return Context(self)
@@ -180,12 +180,13 @@ async def test_actual_locked_admission_stops_factory_dispatcher_and_collector(st
 
 
 @pytest.mark.asyncio
-async def test_actual_lookup_uses_trusted_org_not_request_context(storage, provider, monkeypatch):
+@pytest.mark.parametrize("search,expected", [(None, [LOCATION]), ("  UPLOADS  ", [LOCATION]), ("absent", [])])
+async def test_actual_lookup_uses_trusted_org_not_request_context(storage, provider, monkeypatch, search, expected):
     store, _ = storage
     loader = AsyncMock(wraps=p.BytescaleNode.freshen_credential)
     monkeypatch.setattr(p.BytescaleNode, "freshen_credential", loader)
-    result = await run_node_lookup(node_type="automation-bytescale", field_name="folder_path", credential_id=CID, user_id=USER, organization_id=ORG, pool=store, context={"organization_id": OWNER, "workflow_id": "forged"})
-    assert result["options"][0]["value"] == str(LOCATION) and len(provider) == 1
+    result = await run_node_lookup(node_type="automation-bytescale", field_name="folder_path", credential_id=CID, user_id=USER, organization_id=ORG, pool=store, context={"organization_id": OWNER, "workflow_id": "forged"}, search=search)
+    assert [option["value"] for option in result["options"]] == expected and len(provider) == 1
     assert loader.await_args.kwargs["organization_id"] == ORG and loader.await_args.kwargs["workflow_id"] is None
 
 

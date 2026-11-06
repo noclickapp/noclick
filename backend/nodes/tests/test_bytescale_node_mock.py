@@ -73,7 +73,7 @@ def test_invalid_credential_has_no_secret_diagnostic(change):
 @pytest.mark.asyncio
 async def test_real_connect_probe_is_reachability_only(wire, monkeypatch):
     monkeypatch.setattr(cc, "_collect_evidence", evidence.collect_evidence)
-    verdict = await cc.validate_for_connect(credential_type="BytescaleSecretAPIKey", credential_data={k: v for k, v in KEY.items() if k != "credential_type"}, user_id="fixture", probe=True)
+    verdict = await cc.validate_for_connect(credential_type=p.TYPE, credential_data={k: v for k, v in KEY.items() if k != "credential_type"}, user_id="fixture", probe=True)
     assert verdict.ok and verdict.credential_data == KEY
     assert verdict.evidence.reachable is True and verdict.evidence.proves == "reachability"
     assert verdict.evidence.answers_field is None and verdict.evidence.account_label is None

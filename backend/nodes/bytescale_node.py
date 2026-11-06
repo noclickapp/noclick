@@ -370,10 +370,12 @@ class BytescaleNode(WorkflowNode):
         return selected
 
     @classmethod
-    async def load_field_options(cls, field_name, credential_data, context=None, search_query=None, page_token=None):
+    async def load_field_options(cls, field_name, credential_data, context=None, search_query=None, page_token=None, *, search=None):
         value, reader = guard(credential_data), reader_from(credential_data)
         context = context or {}
-        search = search_query or ""
+        search = search if search is not None else search_query
+        if search is None:
+            search = ""
         if not isinstance(search, str) or len(search) > 256:
             raise ValueError("Supply a bounded Bytescale picker search")
         try:
