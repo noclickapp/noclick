@@ -163,3 +163,36 @@ async def test_without_a_recorder_the_run_is_unchanged(monkeypatch):
 
     assert await plain() == 7
     assert run_cpu.cpu_ms(run_cpu.RunMeter()) == 0
+
+
+async def test_cancelling_a_child_before_its_first_step_closes_the_original(spent):
+    import inspect
+
+    original = None
+
+    @run_named("early-cancel")
+    async def run():
+        nonlocal original
+
+        async def child():
+            pytest.fail("a cancelled child must never start")
+
+        original = child()
+        task = asyncio.create_task(original)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+
+    await run()
+    assert inspect.getcoroutinestate(original) == inspect.CORO_CLOSED
+
+
+async def test_closing_a_proxy_before_its_first_send_closes_the_original():
+    import inspect
+
+    async def child():
+        pytest.fail("a closed child must never start")
+
+    original = child()
+    run_cpu.drive(original, run_cpu.RunMeter()).close()
+    assert inspect.getcoroutinestate(original) == inspect.CORO_CLOSED

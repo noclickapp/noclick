@@ -27,6 +27,7 @@ import functools
 import logging
 import threading
 import time
+from collections.abc import Coroutine
 from contextvars import ContextVar
 from typing import Any, Awaitable, Callable, Optional
 
@@ -76,8 +77,8 @@ def _timed(meter: RunMeter, step: Callable[[], Any]) -> Any:
             stack[-1][1] = now
 
 
-class _Driven:
-    """Awaiting it runs ``coro`` to its end, each step of it timed for ``meter``."""
+class _Driven(Coroutine):
+    """A coroutine proxy that forwards every operation, even before its first step."""
 
     __slots__ = ("_coro", "_meter")
 
@@ -86,32 +87,32 @@ class _Driven:
         self._meter = meter
 
     def __await__(self):
-        coro, meter = self._coro, self._meter
-        value: Any = None
-        error: Optional[BaseException] = None
-        while True:
-            try:
-                if meter.closed:
-                    yielded = coro.throw(error) if error is not None else coro.send(value)
-                elif error is not None:
-                    yielded = _timed(meter, functools.partial(coro.throw, error))
-                else:
-                    yielded = _timed(meter, functools.partial(coro.send, value))
-            except StopIteration as done:
-                return done.value
-            error = None
-            try:
-                value = yield yielded
-            except GeneratorExit:
-                coro.close()
-                raise
-            except BaseException as thrown:  # a cancel or anything else thrown into the task: the run's to handle
-                value, error = None, thrown
+        return self
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return self.send(None)
+
+    def _step(self, method, *args):
+        if self._meter.closed:
+            return method(*args)
+        return _timed(self._meter, functools.partial(method, *args))
+
+    def send(self, value):
+        return self._step(self._coro.send, value)
+
+    def throw(self, *args):
+        return self._step(self._coro.throw, *args)
+
+    def close(self):
+        return self._step(self._coro.close)
 
 
-async def drive(coro, meter: RunMeter):
+def drive(coro, meter: RunMeter):
     """Run ``coro`` to its end with each of its steps counted for ``meter``."""
-    return await _Driven(coro, meter)
+    return _Driven(coro, meter)
 
 
 def _metered_factory(previous):
