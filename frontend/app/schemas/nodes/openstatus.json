@@ -686,7 +686,7 @@
   "required": [
     "config"
   ],
-  "title": "OpenStatus Node Configuration",
+  "title": "Openstatus Node Configuration",
   "type": "object",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "x-agent-tool-provider": true

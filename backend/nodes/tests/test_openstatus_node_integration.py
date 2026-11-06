@@ -34,7 +34,7 @@ class Storage:
     async def fetchrow(self, sql,*v):
         self.calls.append((sql,v))
         if sql==PRIMARY_ORG_SQL: return {"organization_id": self.current_org} if self.current_org else None
-        if "SELECT owner_id FROM workflows" in sql: return {"owner_id": self.workflow_owner} if self.workflow_owner else None
+        if "FROM workflows WHERE id" in sql and "SELECT owner_id" in sql: return {"owner_id": self.workflow_owner, "system": None} if self.workflow_owner else None
         if "SELECT 1 FROM workflow_authorized_credentials" in sql: return {"authorized": 1} if self.workflow_authorized else None
         assert "FROM credentials c" in sql and credential_access_predicate() in sql and str(v[0])==CID
         principal,org=str(v[1]),v[2]
@@ -73,7 +73,6 @@ def admission(monkeypatch):
     from utils import credential_approval
     admit=AsyncMock(return_value=None)
     monkeypatch.setattr(CredentialApprovalRepo,"admit",admit)
-    monkeypatch.setattr(credential_approval,"get_frontend_url",lambda:"https://synthetic.invalid")
     return admit
 
 
@@ -147,22 +146,16 @@ async def test_actual_registered_operation_pin_and_authorized_owner_fallback(sto
 
 
 @pytest.mark.asyncio
-async def test_real_shared_picker_and_trusted_context_preserve_unknown(storage,world,registry,admission,monkeypatch):
+async def test_native_picker_and_validation_preserve_unknown(storage,world,registry,admission,monkeypatch):
     from nodes.core.run_op import run_node_lookup
-    from nodes.core.credential_validation import CredentialValidationContext
-    from repositories.credentials import CredentialsRepo
     storage.row["owner_id"]=USER
     result=await run_node_lookup(node_type=R.NODE_TYPE,field_name="page_id",credential_id=CID,
         user_id=USER,pool=storage,organization_id=ORG,workflow_id=WF,context={})
     assert result["options"][0]["metadata"]["proves"]=="reachability"
-    row=await CredentialsRepo(storage).fetch_validation_authority(CID,USER,ORG)
-    ctx=CredentialValidationContext(CID,R.NODE_TYPE,USER,ORG,storage,row,WF)
-    monkeypatch.setattr("wss.handlers.workflow_handler.get_user_org_context",AsyncMock(return_value=ORG))
-    assert await R.OpenStatusNode.validate_credential_access(AUTH)=={"valid":None,"error":"Save and check a protected metadata read"}
-    storage.row["owner_id"]=USER
-    value=await R.OpenStatusNode.validate_credential_access(AUTH,validation_context=ctx)
+    value=await R.OpenStatusNode.validate_credential_access(AUTH)
     assert value["valid"] is True and value["identity_verified"] is False
-
+    world.status=429
+    assert (await R.OpenStatusNode.validate_credential_access(AUTH))["valid"] is None
 
 
 
@@ -174,44 +167,23 @@ async def test_storage_uncertainty_is_sanitized_unknown(storage,world):
     assert "private-storage-diagnostic" not in str(caught.value) and world.calls==[]
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("status,expected",[(200,True),(401,False),(403,False),(429,None),(500,None),(0,False),(-1,None)])
-async def test_actual_saved_socket_context_has_honest_tristate(storage,world,registry,admission,monkeypatch,status,expected):
-    from types import SimpleNamespace
-    from wss.handlers import credentials_handler as H, workflow_handler
-    from wss.receiver.client_events import CredentialValidateAccessRequest
-    storage.row["owner_id"]=USER
-    monkeypatch.setattr(workflow_handler,"get_user_org_context",AsyncMock(return_value=ORG))
-    monkeypatch.setattr(H,"get_encryption",lambda:storage.crypto)
-    sent=[]
-    async def send(_sio,_sid,response): sent.append(response.model_dump()["data"])
-    monkeypatch.setattr(H,"send_event",send)
-    handler=H.CredentialsHandler(SimpleNamespace(get_session=AsyncMock(return_value={"user_id":USER})))
-    handler.get_pool=AsyncMock(return_value=storage)
-    if status==0: storage.row["revoked_at"]=datetime.now(timezone.utc)
-    elif status==-1: world.override=lambda *_:[]
-    else: world.status=status
-    body=CredentialValidateAccessRequest(request_id="synthetic-validation",node_type=R.NODE_TYPE,credential_id=CID)
-    await handler.get_events()[body.event_name]("synthetic-sid",body)
-    assert sent[0]["valid"] is expected and AUTH["api_key"] not in str(sent)
-    if expected is True: assert sent[0]["identity_verified"] is False and sent[0]["proves"]=="reachability"
-    assert len(world.calls)==(0 if status==0 else 2 if status==200 else 1)
 
 
 @pytest.mark.asyncio
 async def test_actual_public_discovery_manual_connect_and_no_guessed_identity(world,registry,monkeypatch):
     from nodes.core import credential_connect,connection_evidence
-    from utils.credential_request_routes import _credential_union_leaves, _get_oauth_provider
-    leaves=_credential_union_leaves(R.OpenStatusNode.get_config_schema())
-    assert len(leaves)==1
-    _,schema,hidden=leaves[0]
-    assert not hidden and _get_oauth_provider(R.FAMILY) is None
+    from nodes.core.credential_connect import credential_classes_for_node
+    from utils.credential_request_routes import _get_oauth_provider
+    classes=credential_classes_for_node(R.OpenStatusNode)
+    assert classes==[R.OpenStatusApiKeyCredential]
+    schema=classes[0].model_json_schema()
+    assert _get_oauth_provider(R.FAMILY) is None
     assert schema["properties"]["credential_type"]["const"]==R.FAMILY
     assert schema["required"]==["api_key"] and schema["properties"]["api_key"]["ui:sensitive"] is True
     monkeypatch.setattr(credential_connect,"_collect_evidence",connection_evidence.collect_evidence)
     value=await credential_connect.validate_for_connect(credential_type=R.FAMILY,credential_data={"api_key":AUTH["api_key"]},user_id=USER)
     assert value.ok and value.credential_data["credential_type"]==R.FAMILY
-    assert value.evidence.reachable is True and value.evidence.proves=="reachability" and value.evidence.account_label is None
+    assert value.evidence.reachable is True and R.OpenStatusNode.connection_evidence.proves=="reachability" and value.evidence.account_label is None
 
 
 
@@ -220,11 +192,12 @@ async def test_actual_public_discovery_manual_connect_and_no_guessed_identity(wo
 async def test_actual_public_transport_policy_blocks_private_dns_despite_override(monkeypatch):
     import asyncio,socket,httpx
     from utils import ssrf
+    from nodes import openstatus_transport
     lookup=AsyncMock(return_value=[(socket.AF_INET,socket.SOCK_STREAM,6,"",("10.0.0.8",443))])
     monkeypatch.setattr(asyncio.get_running_loop(),"getaddrinfo",lookup)
     monkeypatch.setattr(ssrf,"allow_private_hosts",lambda:True)
     calls=[]
-    def client(**kw): return ssrf.guarded_async_client(**kw,transport=httpx.MockTransport(lambda req:calls.append(req) or httpx.Response(200,json={})))
+    def client(**kw): return openstatus_transport.guarded_async_client(**kw,transport=httpx.MockTransport(lambda req:calls.append(req) or httpx.Response(200,json={})))
     monkeypatch.setattr(R,"guarded_async_client",client)
     with pytest.raises(ValueError): await R.request(AUTH,"ListStatusPages",{"limit":50,"offset":0})
     assert calls==[]

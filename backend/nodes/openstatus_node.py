@@ -17,9 +17,10 @@ from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.core.dynamic_options import normalize_search, filter_options_by_search
-from nodes.core.oauth_refresh_authority import AuthorityCredentialsTableStore, CURRENT_ORGANIZATION
+from nodes.openstatus_authority import AuthorityCredentialsTableStore, CURRENT_ORGANIZATION
 from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
-from utils.ssrf import assert_exact_url_origin, guarded_async_client
+from utils.ssrf import assert_exact_url_origin
+from nodes.openstatus_transport import guarded_async_client
 
 FAMILY = "openstatus_api_key"
 NODE_TYPE = "automation-openstatus"
@@ -676,30 +677,23 @@ class OpenStatusNode(WorkflowNode):
             return now
         store = _Store(pool, user_id, credential_id, credential_type=FAMILY, validate=validate,
             organization_id=CURRENT_ORGANIZATION if organization_id is _ORG_OMITTED else organization_id,
-            workflow_id=workflow_id, require_owner=require_owner, allow_same_grant_retry=False)
+            workflow_id=workflow_id, require_owner=require_owner)
         now, snapshot = await _load_current(store)
         return _BoundCredential(now, store, snapshot)
 
     @classmethod
-    async def validate_credential_access(cls, credential_data, *, validation_context=None):
+    async def validate_credential_access(cls, credential_data):
         try:
-            credential(credential_data)
+            data = credential(credential_data)
         except ValueError:
             return {"valid": False, "error": "OpenStatus credential shape is invalid"}
-        if validation_context is None:
-            return {"valid": None, "error": "Save and check a protected metadata read"}
-        from nodes.core.credential_validation import CredentialValidationContext, CredentialValidationPending, CredentialValidationUnverified
-        if not isinstance(validation_context, CredentialValidationContext) or validation_context.node_type != NODE_TYPE:
-            raise ValueError("OpenStatus requires its trusted validation context")
         try:
-            result = await validation_context.run_operation("list_status_pages", {})
-        except (CredentialValidationPending, CredentialValidationUnverified):
-            raise
-        except ValueError:
+            result = await records(data, {"operation": "list_status_pages"})
+        except _Refused:
             return {"valid": False, "error": "OpenStatus current metadata access refused"}
         except Exception:
             return {"valid": None, "error": "OpenStatus metadata access could not be judged"}
-        if not isinstance(result, dict) or result.get("read_completed") is not True or result.get("reachability_verified") is not True or result.get("identity_verified") is not False:
+        if result.get("read_completed") is not True or result.get("reachability_verified") is not True:
             return {"valid": None, "error": "OpenStatus protected metadata read is unverified"}
         return {"valid": True, "proves": "reachability", "identity_verified": False}
 

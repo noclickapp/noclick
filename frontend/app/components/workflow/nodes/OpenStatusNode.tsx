@@ -9,7 +9,7 @@ import { NodeDefinition, SvgIconComponent } from './types';
 import type { CSSProperties as BrandCSSProperties } from 'react';
 // Vector brand artwork from https://www.openstatus.dev
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/openstatus-brand-vector.svg" alt="" aria-hidden="true" className={(className || '') + ' [--brand-invert:0] dark:[--brand-invert:1]'}
+    <img src="/icons/openstatus.svg" alt="" aria-hidden="true" className={(className || '') + ' [--brand-invert:0] dark:[--brand-invert:1]'}
         style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />
 );
 

@@ -143,6 +143,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-fellow', 'FellowNode'],
     ['automation-fathom', 'FathomNode'],
     ['automation-sigma', 'SigmaNode'],
+    ['automation-openstatus', 'OpenStatusNode'],
     ['automation-trello', 'TrelloNode'],
     ['automation-firecrawl', 'FirecrawlNode'],
     ['automation-attio', 'AttioNode'],
