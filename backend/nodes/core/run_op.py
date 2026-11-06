@@ -257,15 +257,11 @@ async def run_node_lookup(
             credential_id, user_id, pool, organization_id, workflow_id
         )
         with caller_path_scope("dropdown"):
-            refresh_context = {}
-            if getattr(node_class, "workflow_credential_refresh", False):
-                refresh_context = {"workflow_id": workflow_id, "organization_id": organization_id}
             credential_data = await node_class.freshen_credential(
                 credential_data,
                 pool=pool,
                 user_id=user_id,
                 credential_id=credential_id,
-                **refresh_context,
             )
 
     lookup_context = loader_context(context, user_id=user_id, workflow_id=workflow_id)
@@ -353,9 +349,6 @@ async def run_node_op_tool(
         if unconnected:
             return unconnected
         context = (arguments or {}).get("context")
-        scope_error = _check_lookup_context_scopes(context, info, field)
-        if scope_error:
-            return {"success": False, "error": scope_error}
         scopes = info.get("field_scopes") or {}
         scope_for_field = scopes.get(field) if isinstance(scopes, dict) else None
         return await run_node_lookup(
