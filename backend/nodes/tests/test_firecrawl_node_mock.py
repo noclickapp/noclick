@@ -260,12 +260,46 @@ class TestFirecrawlDiscoveryAndResearch:
         assert calls[0]["kwargs"]["json"]["scrapeOptions"] == {"formats": ["markdown"]}
 
     @pytest.mark.asyncio
+    async def test_github_research_uses_developer_repository_index(self, api_key_credentials):
+        # Provider example: https://docs.firecrawl.dev/api-reference/endpoint/developer-search
+        payload = {
+            "success": True,
+            "partial": False,
+            "results": [{
+                "id": "issue:firecrawl/firecrawl#1234",
+                "url": "https://github.com/firecrawl/firecrawl/issues/1234",
+                "title": "Retries are not applied to 429 responses",
+                "passages": [{
+                    "text": "The client treats 429 as a terminal status, so the backoff never runs."
+                }],
+            }],
+        }
+        result, calls = await _run(
+            firecrawl.FirecrawlSearchResearchGithubConfig(
+                query="how do I configure retries", k="10"
+            ),
+            api_key_credentials,
+            json_data=payload,
+        )
+        request = calls[0]["kwargs"]
+        assert request["method"] == "GET"
+        assert request["url"] == "https://api.firecrawl.dev/v2/search/developer"
+        assert request["params"] == {
+            "query": "how do I configure retries",
+            "k": 10,
+            "types": ["issue", "pull_request", "readme"],
+        }
+        assert result["status"] == "success"
+        assert result["action"] == "search_research_github"
+        assert result["data"] == payload
+
+    @pytest.mark.asyncio
     async def test_research_endpoints(self, api_key_credentials):
         cases = [
             (
                 firecrawl.FirecrawlSearchResearchGithubConfig(query="oauth", k="3"),
                 "search_research_github",
-                "/search/research/github",
+                "/search/developer",
             ),
             (
                 firecrawl.FirecrawlSearchResearchPapersConfig(

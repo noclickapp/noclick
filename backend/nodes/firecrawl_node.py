@@ -2137,8 +2137,12 @@ class FirecrawlNode(WorkflowNode):
         return await _firecrawl_request(
             api_key,
             "GET",
-            "/search/research/github",
-            params={"query": c.query, "k": _optional_int(c.k)},
+            "/search/developer",
+            params={
+                "query": c.query,
+                "k": _optional_int(c.k),
+                "types": ["issue", "pull_request", "readme"],
+            },
             action_name="search_research_github",
         )
 
