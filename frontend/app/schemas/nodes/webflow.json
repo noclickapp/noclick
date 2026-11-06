@@ -4843,7 +4843,7 @@
             }
           ],
           "default": null,
-          "description": "The secondary locale to update",
+          "description": "Secondary locale to update. Required when running this operation. For existing workflows, set Locale ID and save the node before running. Use Get Site to find the site's secondary locale IDs.",
           "title": "Locale ID"
         },
         "nodes_json": {
@@ -4902,7 +4902,7 @@
             }
           ],
           "default": null,
-          "description": "The secondary locale to update",
+          "description": "Secondary locale to update. Required when running this operation. For existing workflows, set Locale ID and save the node before running. Use Get Site to find the site's secondary locale IDs.",
           "title": "Locale ID"
         },
         "properties_json": {
@@ -5107,9 +5107,17 @@
           "type": "string"
         },
         "locale_id": {
-          "description": "The secondary locale to update",
-          "title": "Locale ID",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Secondary locale to update. Required when running this operation. For existing workflows, set Locale ID and save the node before running. Use Get Site to find the site's secondary locale IDs.",
+          "title": "Locale ID"
         },
         "nodes_json": {
           "description": "JSON array of DOM node updates, e.g. [{\"nodeId\":\"...\",\"text\":\"New text\"}]",
@@ -5120,7 +5128,6 @@
       },
       "required": [
         "page_id",
-        "locale_id",
         "nodes_json"
       ],
       "title": "WebflowUpdatePageContentConfig",

@@ -937,7 +937,7 @@ class TestWebflowExpandedCoverage:
             (WebflowGetPageMetadataConfig(page_id="p1"), "GET", "/pages/p1"),
             (WebflowUpdatePageMetadataConfig(page_id="p1", metadata_json='{"title":"T"}'), "PUT", "/pages/p1"),
             (WebflowListComponentsConfig(site_id=SID), "GET", f"/sites/{SID}/components"),
-            (WebflowUpdateComponentContentConfig(site_id=SID, component_id="cm1", nodes_json='[]'), "POST", f"/sites/{SID}/components/cm1/dom"),
+            (WebflowUpdateComponentContentConfig(site_id=SID, component_id="cm1", locale_id="locale1", nodes_json='[]'), "POST", f"/sites/{SID}/components/cm1/dom"),
             (WebflowDeleteCollectionConfig(collection_id=CID), "DELETE", f"/collections/{CID}"),
             (WebflowUpdateCollectionFieldConfig(collection_id=CID, field_id="f1", display_name="X"), "PATCH", f"/collections/{CID}/fields/f1"),
             (WebflowDeleteCollectionFieldConfig(collection_id=CID, field_id="f1"), "DELETE", f"/collections/{CID}/fields/f1"),
@@ -1032,3 +1032,32 @@ async def test_bulk_items_use_the_items_array_endpoint(api_token_credentials):
     assert cap["method"] == "POST"
     assert cap["url"] == "https://api.webflow.com/v2/collections/c1/items"
     assert cap["json"] == {"items": items}
+
+
+_LEGACY_LOCALIZED_UPDATES = [
+    {"operation": "update_page_content", "page_id": "p1", "nodes_json": "[]"},
+    {"operation": "update_component_content", "site_id": "s1", "component_id": "cm1", "nodes_json": "[]"},
+    {"operation": "update_component_properties", "site_id": "s1", "component_id": "cm1", "properties_json": "[]"},
+]
+
+
+@pytest.mark.parametrize("saved_config", _LEGACY_LOCALIZED_UPDATES)
+def test_saved_localized_configs_load_without_new_locale_field(saved_config, api_token_credentials):
+    config = WebflowNodeConfig.model_validate({"config": saved_config, "credentials": api_token_credentials})
+    assert config.config.locale_id is None
+    assert config.config.model_dump(exclude={"locale_id"}) == saved_config
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("saved_config", _LEGACY_LOCALIZED_UPDATES)
+@pytest.mark.parametrize("locale", [None, "", "   "])
+async def test_localized_updates_require_configuration_before_http(saved_config, locale, api_token_credentials):
+    raw = dict(saved_config)
+    if locale is not None:
+        raw["locale_id"] = locale
+    config = WebflowNodeConfig.model_validate({"config": raw, "credentials": api_token_credentials})
+    node = create_webflow_node(config)
+    with patch("nodes.webflow_node.httpx.AsyncClient") as client:
+        with pytest.raises(ValueError, match="Set Locale ID to the secondary locale"):
+            await node.execute({})
+    client.assert_not_called()

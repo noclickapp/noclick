@@ -47,6 +47,12 @@ logger = logging.getLogger(__name__)
 
 WEBFLOW_API_BASE = "https://api.webflow.com/v2"
 
+_UPDATE_LOCALE_DESCRIPTION = (
+    "Secondary locale to update. Required when running this operation. "
+    "For existing workflows, set Locale ID and save the node before running. "
+    "Use Get Site to find the site's secondary locale IDs."
+)
+
 # Webhook trigger types Webflow can register via POST /sites/{site_id}/webhooks.
 WEBFLOW_TRIGGER_TYPES = [
     "form_submission",
@@ -360,7 +366,7 @@ class WebflowUpdatePageContentConfig(BaseModel):
         title="Update Page Content",
     )
     page_id: str = Field(..., title="Page ID", description="The page to update DOM content on")
-    locale_id: str = Field(..., title="Locale ID", description="The secondary locale to update")
+    locale_id: Optional[str] = Field(None, title="Locale ID", description=_UPDATE_LOCALE_DESCRIPTION)
     nodes_json: str = Field(
         ...,
         title="DOM Nodes (JSON)",
@@ -1083,7 +1089,7 @@ class WebflowUpdateComponentContentConfig(BaseModel):
     operation: Literal["update_component_content"] = _op("update_component_content", "Components", "Update Component Content")
     site_id: str = _site_id_field()
     component_id: str = Field(..., title="Component ID", description="The component ID")
-    locale_id: Optional[str] = Field(None, title="Locale ID", description="The secondary locale to update")
+    locale_id: Optional[str] = Field(None, title="Locale ID", description=_UPDATE_LOCALE_DESCRIPTION)
     nodes_json: str = _json_field("DOM Nodes (JSON)", 'JSON array of node updates')
 
 
@@ -1099,7 +1105,7 @@ class WebflowUpdateComponentPropertiesConfig(BaseModel):
     operation: Literal["update_component_properties"] = _op("update_component_properties", "Components", "Update Component Properties")
     site_id: str = _site_id_field()
     component_id: str = Field(..., title="Component ID", description="The component ID")
-    locale_id: Optional[str] = Field(None, title="Locale ID", description="The secondary locale to update")
+    locale_id: Optional[str] = Field(None, title="Locale ID", description=_UPDATE_LOCALE_DESCRIPTION)
     properties_json: str = _json_field("Properties (JSON)", 'JSON array of property overrides')
 
 
@@ -1569,6 +1575,15 @@ def _comma_list(value: Optional[str]) -> List[str]:
     if not value:
         return []
     return [p.strip() for p in value.split(",") if p.strip()]
+
+
+def _require_update_locale(locale_id: Optional[str]) -> str:
+    if not locale_id or not locale_id.strip():
+        raise ValueError(
+            "Set Locale ID to the secondary locale you want to update, then save this node. "
+            "Use Get Site to find the site's secondary locale IDs."
+        )
+    return locale_id.strip()
 
 
 def _parse_json_obj(value: str, field_label: str) -> Any:
@@ -2045,12 +2060,13 @@ class WebflowNode(ExternalWebhookTriggerMixin, WorkflowNode):
     async def _update_page_content(
         self, c: WebflowUpdatePageContentConfig, t: str
     ) -> Dict[str, Any]:
+        locale_id = _require_update_locale(c.locale_id)
         nodes = _parse_json_obj(c.nodes_json, "DOM Nodes")
         return await _webflow_request(
             t,
             "POST",
             f"/pages/{c.page_id}/dom",
-            params={"localeId": c.locale_id},
+            params={"localeId": locale_id},
             json_body={"nodes": nodes},
             action_name="update_page_content",
         )
@@ -2333,15 +2349,17 @@ class WebflowNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return await _webflow_request(t, "GET", f"/sites/{c.site_id}/components/{c.component_id}/dom", action_name="get_component_content")
 
     async def _update_component_content(self, c: WebflowUpdateComponentContentConfig, t: str) -> Dict[str, Any]:
+        locale_id = _require_update_locale(c.locale_id)
         nodes = _parse_json_obj(c.nodes_json, "DOM Nodes")
-        return await _webflow_request(t, "POST", f"/sites/{c.site_id}/components/{c.component_id}/dom", params={"localeId": c.locale_id}, json_body={"nodes": nodes}, action_name="update_component_content")
+        return await _webflow_request(t, "POST", f"/sites/{c.site_id}/components/{c.component_id}/dom", params={"localeId": locale_id}, json_body={"nodes": nodes}, action_name="update_component_content")
 
     async def _get_component_properties(self, c: WebflowGetComponentPropertiesConfig, t: str) -> Dict[str, Any]:
         return await _webflow_request(t, "GET", f"/sites/{c.site_id}/components/{c.component_id}/properties", action_name="get_component_properties")
 
     async def _update_component_properties(self, c: WebflowUpdateComponentPropertiesConfig, t: str) -> Dict[str, Any]:
+        locale_id = _require_update_locale(c.locale_id)
         props = _parse_json_obj(c.properties_json, "Properties")
-        return await _webflow_request(t, "POST", f"/sites/{c.site_id}/components/{c.component_id}/properties", params={"localeId": c.locale_id}, json_body={"properties": props}, action_name="update_component_properties")
+        return await _webflow_request(t, "POST", f"/sites/{c.site_id}/components/{c.component_id}/properties", params={"localeId": locale_id}, json_body={"properties": props}, action_name="update_component_properties")
 
     # ------------------------------------------------------------------
     # Handlers — Collections / Fields (extra)
