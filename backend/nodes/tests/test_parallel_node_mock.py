@@ -618,3 +618,80 @@ class TestParallelErrorHandlingMock:
         node = create_parallel_node(config)
         with pytest.raises(ValueError, match="Credentials are required"):
             await node.execute({})
+
+
+class TestParallelConformanceRegressions:
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("operation", ["enrich_findall", "extend_findall"])
+    async def test_findall_wire_contract(self, api_key_credentials, operation):
+        import json
+        import httpx
+
+        captured = []
+
+        def transport(request):
+            captured.append(request)
+            # Provider-authored 404 example, shared by both endpoints:
+            # https://docs.parallel.ai/public-openapi.json
+            return httpx.Response(404, json={
+                "type": "error",
+                "error": {
+                    "ref_id": "fcb2b4f3-c75e-4186-87bc-caa1a8381331",
+                    "message": "FindAll run not found",
+                },
+            })
+
+        if operation == "enrich_findall":
+            config = ParallelEnrichFindAllConfig(
+                findall_id="findall_40e0ab8c10754be0b7a16477abb38a2f",
+                enrichments="Name of the CEO\nYear the company was founded",
+            )
+        else:
+            config = ParallelExtendFindAllConfig(
+                findall_id="findall_40e0ab8c10754be0b7a16477abb38a2f",
+                match_limit="40",
+            )
+        node = create_parallel_node(ParallelNodeConfig(
+            config=config, credentials=api_key_credentials,
+        ))
+        async_client = httpx.AsyncClient
+        with patch("nodes.parallel_node.httpx.AsyncClient", side_effect=lambda **kw:
+                   async_client(transport=httpx.MockTransport(transport), **kw)):
+            result = await node.execute({})
+        assert result["status_code"] == 404
+        assert len(captured) == 1
+        request = captured[0]
+        assert request.method == "POST"
+        assert request.headers["x-api-key"] == api_key_credentials.api_key
+        body = json.loads(request.content)
+        if operation == "enrich_findall":
+            assert request.url.path.endswith("/enrich")
+            assert "enrichments" not in body
+            assert body["output_schema"]["type"] == "json"
+            schema = body["output_schema"]["json_schema"]
+            assert schema["type"] == "object"
+            assert set(schema["required"]) == set(schema["properties"])
+            assert set(schema["properties"]) == {
+                "Name of the CEO", "Year the company was founded",
+            }
+            assert all(field["type"] == "string" and field["description"]
+                       for field in schema["properties"].values())
+        else:
+            assert request.url.path.endswith("/extend")
+            assert body == {"additional_match_limit": 40}
+
+    @pytest.mark.parametrize("limit", [None, "", "0", "-1", "1.5", "many"])
+    def test_extend_requires_positive_integer(self, limit):
+        from pydantic import ValidationError
+
+        with pytest.raises(ValidationError):
+            ParallelExtendFindAllConfig(findall_id="fa_1", match_limit=limit)
+
+    def test_removed_simulation_is_not_available(self, api_key_credentials):
+        from pydantic import ValidationError
+
+        with pytest.raises(ValidationError):
+            ParallelNodeConfig(
+                config={"operation": "simulate_monitor_event", "monitor_id": "monitor_1"},
+                credentials=api_key_credentials,
+            )

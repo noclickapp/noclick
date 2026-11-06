@@ -554,7 +554,7 @@ class ParallelEnrichFindAllConfig(BaseModel):
     enrichments: str = Field(
         ...,
         title="Enrichments",
-        description="Enrichment column descriptions, one per line",
+        description="Enrichment column descriptions, one per line; each becomes a string field in the output schema",
         json_schema_extra={"ui:widget": "textarea"},
     )
 
@@ -574,8 +574,9 @@ class ParallelExtendFindAllConfig(BaseModel):
         title="Extend FindAll Run",
     )
     findall_id: str = Field(..., title="FindAll Run ID", description="The FindAll run id")
-    match_limit: Optional[str] = Field(
-        None, title="Additional Match Limit", description="Additional number of entities to find"
+    match_limit: str = Field(
+        ..., title="Additional Match Limit", description="Positive additional number of entities to find",
+        pattern=r"^[1-9][0-9]*$",
     )
 
 
@@ -847,26 +848,6 @@ class ParallelCancelMonitorConfig(BaseModel):
     )
 
 
-class ParallelSimulateMonitorEventConfig(BaseModel):
-    """Simulate a monitor event to test webhook delivery without waiting for a real run."""
-
-    operation: Literal["simulate_monitor_event"] = Field(
-        "simulate_monitor_event",
-        json_schema_extra={
-            "const": "simulate_monitor_event",
-            "ui:hidden": True,
-            "x-category": "Monitors",
-            "x-is-trigger": False,
-            "x-display-name": "Simulate Monitor Event",
-        },
-        title="Simulate Monitor Event",
-    )
-    monitor_id: str = Field(
-        ..., title="Monitor ID", description="The monitor to simulate an event for",
-        json_schema_extra={"x-dynamic-options": {"field_name": "monitor_id", "placeholder": "Select a monitor...", "searchable": True}, "x-resource-type": "parallel_monitor"},
-    )
-
-
 # ============================================================================
 # Operation Configs — Chat
 # ============================================================================
@@ -993,7 +974,6 @@ ParallelConfig = Annotated[
         ParallelListMonitorEventsConfig,
         ParallelTriggerMonitorConfig,
         ParallelCancelMonitorConfig,
-        ParallelSimulateMonitorEventConfig,
         ParallelChatCompletionsConfig,
         ParallelReceiveWebhookConfig,
     ],
@@ -1321,7 +1301,6 @@ class ParallelNode(WorkflowNode):
             "list_monitor_events": self._list_monitor_events,
             "trigger_monitor": self._trigger_monitor,
             "cancel_monitor": self._cancel_monitor,
-            "simulate_monitor_event": self._simulate_monitor_event,
             "chat_completions": self._chat_completions,
         }
         handler = handlers.get(op.operation)
@@ -1604,7 +1583,23 @@ class ParallelNode(WorkflowNode):
         )
 
     async def _enrich_findall(self, c: ParallelEnrichFindAllConfig, api_key: str) -> Dict[str, Any]:
-        body = {"enrichments": _lines(c.enrichments)}
+        columns = list(dict.fromkeys(_lines(c.enrichments) or []))
+        if not columns:
+            raise ValueError("Provide at least one enrichment column description.")
+        body = {
+            "output_schema": {
+                "type": "json",
+                "json_schema": {
+                    "type": "object",
+                    "properties": {
+                        column: {"type": "string", "description": column}
+                        for column in columns
+                    },
+                    "required": columns,
+                    "additionalProperties": False,
+                },
+            },
+        }
         return await _parallel_request(
             api_key,
             "POST",
@@ -1614,9 +1609,7 @@ class ParallelNode(WorkflowNode):
         )
 
     async def _extend_findall(self, c: ParallelExtendFindAllConfig, api_key: str) -> Dict[str, Any]:
-        body = {
-            "match_limit": int(c.match_limit) if c.match_limit and c.match_limit.isdigit() else None
-        }
+        body = {"additional_match_limit": int(c.match_limit)}
         return await _parallel_request(
             api_key,
             "POST",
@@ -1730,17 +1723,6 @@ class ParallelNode(WorkflowNode):
             "POST",
             f"/v1/monitors/{c.monitor_id}/cancel",
             action_name="cancel_monitor",
-        )
-
-    async def _simulate_monitor_event(
-        self, c: ParallelSimulateMonitorEventConfig, api_key: str
-    ) -> Dict[str, Any]:
-        # No request body — the endpoint takes no parameters, just the monitor_id in the path.
-        return await _parallel_request(
-            api_key,
-            "POST",
-            f"/v1alpha/monitors/{c.monitor_id}/simulate_event",
-            action_name="simulate_monitor_event",
         )
 
     # ------------------------------------------------------------------
