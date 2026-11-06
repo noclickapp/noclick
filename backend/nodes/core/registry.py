@@ -252,6 +252,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'trigger-cron': CronTriggerNode,
 
     # Automation nodes
+    'automation-singlestore': SingleStoreNode,
     'automation-porkbun': PorkbunNode,
     'automation-predictleads': PredictLeadsNode,
     'automation-telegram': TelegramNode,

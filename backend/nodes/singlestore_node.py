@@ -17,7 +17,6 @@ from pydantic import BaseModel, ConfigDict, Field, StrictStr, StrictBool, field_
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import is_placeholder, is_url_shaped
-from nodes.core.credential_validation import CredentialValidationContext, CredentialValidationUnavailable, CredentialValidationUnverified
 from utils.ssrf import SSRFError, guarded_async_client
 
 NODE_TYPE = "automation-singlestore"
@@ -167,35 +166,65 @@ SingleStoreConfig = Annotated[Union[GetOrganization, ListProjects, GetProject, R
 class SingleStoreNodeConfig(NodeConfig[SingleStoreConfig, SingleStoreManagementCredential]):
     model_config = ConfigDict(extra="ignore", hide_input_in_errors=True)
     credentials: Optional[SingleStoreManagementCredential] = None
+
+
+class CredentialValidationUnavailable(ValueError):
+    """The stored SingleStore credential is no longer available."""
+
+
+async def _authority_row(pool, credential_id, user_id, organization_id):
+    # Reuse staging's canonical ACL predicate without extending its repository.
+    from repositories.credentials import credential_access_predicate
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            "SELECT c.credential, c.credential_type, c.owner_id, c.token_version, "
+            "c.updated_at, c.approval_revision, c.revoked_at FROM credentials c "
+            "WHERE c.id = $1 AND " + credential_access_predicate(),
+            credential_id, user_id, organization_id,
+        )
+    if row is None or row["revoked_at"] is not None or row["credential_type"] not in FAMILIES:
+        raise CredentialValidationUnavailable("Credential is unavailable or its type is not supported by SingleStore")
+    return dict(row)
+
+
 @dataclass(frozen=True)
 class _Authority:
-    context: CredentialValidationContext = field(repr=False)
+    credential_id: str
     actor: str
     actor_org: Optional[str]
+    user_id: str
+    organization_id: Optional[str]
+    pool: object = field(repr=False)
+    row: dict = field(repr=False)
+    workflow_id: Optional[str] = None
 
     async def revalidate(self):
         from wss.handlers.workflow_handler import get_user_org_context
         from utils.credentials import get_workflow_owner_id, is_credential_authorized_for_workflow
-        async with self.context.pool.acquire() as conn:
-            org = await get_user_org_context(conn, self.actor)
-        if org != self.actor_org:
+        async with self.pool.acquire() as conn:
+            actor_org = await get_user_org_context(conn, self.actor)
+            effective_org = await get_user_org_context(conn, self.user_id)
+        if actor_org != self.actor_org or effective_org != self.organization_id:
             raise CredentialValidationUnavailable("Credential access context changed; retry")
-        if self.context.user_id != self.actor:
-            if (await get_workflow_owner_id(self.context.pool, self.context.workflow_id) != self.context.user_id
-                    or not await is_credential_authorized_for_workflow(self.context.pool, self.context.workflow_id, self.context.credential_id)):
+        if self.user_id != self.actor:
+            if (await get_workflow_owner_id(self.pool, self.workflow_id) != self.user_id
+                    or not await is_credential_authorized_for_workflow(self.pool, self.workflow_id, self.credential_id)):
                 raise CredentialValidationUnavailable("Credential workflow authorization changed; retry")
-        row = await self.context.revalidate()
-        if row.credential_type not in FAMILIES:
-            raise CredentialValidationUnavailable("Credential type is not supported by SingleStore")
+        row = await _authority_row(self.pool, self.credential_id, self.user_id, self.organization_id)
+        if row != self.row:
+            raise CredentialValidationUnavailable("Credential authority changed; retry")
         return row
 
     async def load(self):
-        await self.revalidate()
-        return await self.context.load_current_credential()
+        from utils.encryption import get_encryption
+        row = await self.revalidate()
+        raw = get_encryption().decrypt_credential(row["credential"])
+        if not isinstance(raw, dict):
+            raise CredentialValidationUnavailable("Credential data is invalid")
+        return {**raw, "credential_type": row["credential_type"]}
 
 
 async def _current_authority(*, credential_id, user_id, pool, workflow_id=None):
-    from repositories.credentials import CredentialsRepo
     from wss.handlers.workflow_handler import get_user_org_context
     from utils.credentials import get_workflow_owner_id, is_credential_authorized_for_workflow
     if not user_id or pool is None:
@@ -203,21 +232,19 @@ async def _current_authority(*, credential_id, user_id, pool, workflow_id=None):
     async with pool.acquire() as conn:
         actor_org = await get_user_org_context(conn, user_id)
     effective_user, effective_org = user_id, actor_org
-    row = await CredentialsRepo(pool).fetch_validation_authority(credential_id, user_id, actor_org)
-    if row is None and workflow_id:
+    try:
+        row = await _authority_row(pool, credential_id, user_id, actor_org)
+    except CredentialValidationUnavailable:
+        if not workflow_id:
+            raise
         owner = await get_workflow_owner_id(pool, workflow_id)
-        if owner and await is_credential_authorized_for_workflow(pool, workflow_id, credential_id):
-            async with pool.acquire() as conn:
-                effective_org = await get_user_org_context(conn, owner)
-            row = await CredentialsRepo(pool).fetch_validation_authority(credential_id, owner, effective_org)
-            effective_user = owner
-    if row is None or row.credential_type not in FAMILIES:
-        raise CredentialValidationUnavailable("Credential is unavailable or its type is not supported by SingleStore")
-    CredentialValidationContext._require_available(row, NODE_TYPE)
-    return _Authority(CredentialValidationContext(credential_id, NODE_TYPE, effective_user, effective_org, pool, row, workflow_id), user_id, actor_org)
-
-
-
+        if not owner or not await is_credential_authorized_for_workflow(pool, workflow_id, credential_id):
+            raise CredentialValidationUnavailable("Credential workflow authorization is unavailable") from None
+        async with pool.acquire() as conn:
+            effective_org = await get_user_org_context(conn, owner)
+        row = await _authority_row(pool, credential_id, owner, effective_org)
+        effective_user = owner
+    return _Authority(credential_id, user_id, actor_org, effective_user, effective_org, pool, row, workflow_id)
 
 
 _ACTIVE_AUTHORITY: ContextVar[Optional[_Authority]] = ContextVar("singlestore_authority", default=None)
@@ -239,10 +266,17 @@ class _AuthRefused(ValueError):
 
 
 class _BoundCredential(dict):
-    """Private in-process authority binding; a JSON flag cannot carry authority."""
-    def __init__(self, credential, authority):
-        super().__init__(credential.model_dump())
-        self.authority = authority
+    """Opaque stored reference; the loader supplies staging's trusted workflow context."""
+    def __init__(self, *, credential_id, user_id, pool, workflow_id=None):
+        super().__init__()
+        self.credential_id = credential_id
+        self.user_id = user_id
+        self.pool = pool
+        self.workflow_id = workflow_id
+
+    async def authority(self, workflow_id=None):
+        return await _current_authority(credential_id=self.credential_id, user_id=self.user_id,
+            pool=self.pool, workflow_id=workflow_id or self.workflow_id)
 
 
 def _unique(pairs):
@@ -301,7 +335,7 @@ class _Session:
             raise CredentialValidationUnavailable("SingleStore credential or organization binding changed; retry")
         private = _PRIVATE_REQUEST.set(True)
         try:
-            async with guarded_async_client(require_public=True, follow_redirects=False, trust_env=False, timeout=20.0) as client:
+            async with guarded_async_client(follow_redirects=False, trust_env=False, timeout=20.0) as client:
                 kwargs = {"params": params, "headers": {"Authorization": "Bearer " + self.credential.api_key, "Accept": "application/json"}}
                 if body is not None:
                     kwargs["json"] = body
@@ -466,24 +500,19 @@ class SingleStoreNode(WorkflowNode):
     @classmethod
     async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=None):
         if credential_id:
-            authority = await _current_authority(credential_id=credential_id, user_id=user_id, pool=pool, workflow_id=workflow_id)
-            return _BoundCredential(_credential(await authority.load()), authority)
+            return _BoundCredential(credential_id=credential_id, user_id=user_id, pool=pool, workflow_id=workflow_id)
         return _credential(credential_data).model_dump()
 
     @classmethod
-    async def validate_credential_access(cls, credential_data, *, validation_context=None):
-        if not isinstance(validation_context, CredentialValidationContext) or validation_context.node_type != NODE_TYPE:
-            raise CredentialValidationUnverified("Trusted stored credential context is required")
+    async def validate_credential_access(cls, credential_data):
+        # Staging's post-connect hook supplies decrypted credentials only.
         try:
-            await _current_authority(credential_id=validation_context.credential_id, user_id=validation_context.user_id, pool=validation_context.pool, workflow_id=validation_context.workflow_id)
-            result = await validation_context.run_operation("get_organization")
-            await validation_context.accept(result)
+            await cls._organization(_Session(_credential(credential_data)))
             return {"valid": True}
-        except CredentialValidationUnavailable:
-            return {"valid": False, "error": "Credential is unavailable or access denied"}
         except _AuthRefused:
-            await validation_context.revalidate()
             return {"valid": False, "error": "SingleStore API key or access was rejected"}
+        except ValueError:
+            return {"valid": None, "error": "SingleStore access could not be verified"}
 
     @classmethod
     async def load_field_options(cls, field_name, credential_data, context=None, page_token=None, search=None):
@@ -498,7 +527,7 @@ class SingleStoreNode(WorkflowNode):
             raise ValueError("Use a valid SingleStore picker context")
         # The dependent parent is validated before current-row reload/provider work.
         config = ListProjects() if field_name == "project_id" else ListClusters.model_validate({"project_id": context.get("project_id")})
-        authority = credential_data.authority if isinstance(credential_data, _BoundCredential) else None
+        authority = await credential_data.authority(context.get("_workflow_id")) if isinstance(credential_data, _BoundCredential) else None
         binding = _ACTIVE_AUTHORITY.set(authority)
         try:
             credential = _credential(await authority.load()) if authority else _credential(credential_data)

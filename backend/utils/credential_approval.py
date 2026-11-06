@@ -4,7 +4,7 @@ No caller may supply an approval verdict. Only an unexpired, exact-call grant
 written by the owner's authenticated review page can admit a restricted call.
 """
 
-from utils.frontend_url import get_frontend_url
+from mcp_adapter.auth.endpoints import get_frontend_url
 from repositories.credential_approvals import CredentialApprovalRepo
 from utils.database_pool import get_native_pool
 

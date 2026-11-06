@@ -559,7 +559,7 @@
   "required": [
     "config"
   ],
-  "title": "SingleStore Node Configuration",
+  "title": "Singlestore Node Configuration",
   "type": "object",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "x-agent-tool-provider": true

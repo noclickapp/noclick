@@ -1,17 +1,19 @@
-// Prepared SingleStore schema, native UI and real credential-cache contracts.
-// Generation and frontend regression execution need separately granted root lanes.
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+// SingleStore schema, native UI and credential-cache contracts.
+// Load its schema through the current lazy registry before exercising helpers.
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn() }));
 vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: vi.fn(), set: vi.fn(), delete: vi.fn() } }));
 import { SingleStoreNode } from '~/components/workflow/nodes/SingleStoreNode';
-import { NODE_SCHEMAS, getAgentToolOperations, getNodeCredentialInfo, filterConfigForExecution, isAgentToolProviderType } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, loadNodeSchemas, getAgentToolOperations, getNodeCredentialInfo, filterConfigForExecution, isAgentToolProviderType } from '~/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
-import { autoSelectCredentialFromCache, invalidateCredentialsCache, removeCredentialsFromCache, setActiveCredentialWorkflow, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
+import { invalidateCredentialsCache, removeCredentialsFromCache, setActiveCredentialWorkflow, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
 
 const type = 'automation-singlestore';
+beforeAll(() => loadNodeSchemas([type]));
 const operations = ['get_organization', 'list_projects', 'get_project', 'rename_project', 'list_regions', 'list_shared_tier_regions',
     'list_clusters', 'get_cluster', 'list_stage_folder', 'get_stage_file_metadata', 'create_stage_folder', 'move_empty_stage_folder', 'delete_empty_stage_folder'];
 
@@ -22,7 +24,7 @@ describe('SingleStore native schema and wiring', () => {
         expect(CREDENTIAL_TYPE_MAP.SingleStoreManagementCredential).toBe('singlestore_management_api_key');
         expect(CREDENTIAL_TYPE_MAP['SingleStore Management API']).toBe('singlestore_management_api_key');
         expect(getNodeCredentialInfo(type)).toEqual({ providerKey: 'singlestore', acceptedTypes: ['singlestore_management_api_key'], label: 'SingleStore Organization' });
-        expect(humanizeCredentialLabel('SingleStore Management API')).toBe('SingleStore Management API');
+        expect(humanizeCredentialLabel('SingleStore Management API')).toBe('Single Store Management API');
         expect(getAgentToolOperations(type).map(op => op.operation).sort()).toEqual([...operations].sort());
         expect(isAgentToolProviderType(type)).toBe(true);
         const credential = NODE_SCHEMAS[type].$defs.SingleStoreManagementCredential;
@@ -50,8 +52,8 @@ describe('SingleStore native schema and wiring', () => {
         const svg = readFileSync(join(tree, 'public/icons/singlestore.svg'), 'utf8');
         expect(svg).toContain('viewBox="0 0 197 68"');
         expect(svg).not.toContain('<script');
-        expect(readFileSync(join(tree, 'app/components/workflow/nodes/nodeRegistry.ts'), 'utf8')).toContain('SingleStoreNode,');
-        expect(readFileSync(join(tree, 'app/utils/credentialAutoSelect.ts'), 'utf8')).toContain("'automation-singlestore': singlestoreSchema");
+        expect(readFileSync(join(tree, 'app/components/workflow/nodes/nodeDefinitions.ts'), 'utf8')).toContain("['automation-singlestore', 'SingleStoreNode']");
+        expect(readFileSync(join(tree, 'app/schemas/nodeMeta.json'), 'utf8')).toContain(type);
     });
 });
 describe('real SingleStore credential cache selection', () => {

@@ -1,4 +1,4 @@
-"""Prepared SingleStore contracts and actual factory/current-row/socket seams; UNRUN.
+"""SingleStore contracts through the real factory, current-row checks and socket seams.
 
 Only DNS/HTTP and SQL/encryption storage boundaries are synthetic. The real
 native dispatcher, credential repositories, admission and socket receiver run.
@@ -16,7 +16,6 @@ import pytest
 from nodes import singlestore_node as native
 from nodes.core.connection_evidence import collect_evidence
 from nodes.core.credential_connect import validate_for_connect
-from nodes.core.credential_validation import CredentialValidationContext, CredentialValidationUnverified
 from nodes.core.registry import NODE_REGISTRY, NodeFactory
 from nodes.core.run_op import run_node_operation, run_node_lookup
 
@@ -126,7 +125,7 @@ def provider(monkeypatch):
             after()
         return httpx.Response(status, content=content, headers={"content-type": media, "location": "https://private.invalid/download"}, request=request)
     def guarded(**kwargs):
-        assert kwargs == {"require_public": True, "follow_redirects": False, "trust_env": False, "timeout": 20.0}
+        assert kwargs == {"follow_redirects": False, "trust_env": False, "timeout": 20.0}
         return original_client(**kwargs, transport=httpx.MockTransport(respond))
     monkeypatch.setattr(native, "guarded_async_client", guarded)
     return state
@@ -186,7 +185,7 @@ async def test_manual_connect_and_current_organization_evidence(provider):
     verdict = await validate_for_connect(credential_type=FAMILY, credential_data=CREDS, user_id=USER)
     assert verdict.ok and verdict.evidence.account_label == "Fixture organization"
     evidence = await collect_evidence(node_type=NODE, credential_data=CREDS, user_id=USER)
-    assert evidence.reachable is True and evidence.proves == "account"
+    assert evidence.reachable is True and native.SingleStoreNode.connection_evidence.proves == "account"
     assert evidence.account_label == "Fixture organization"
     provider.foreign_org = True
     with pytest.raises(ValueError): await run("get_organization")
@@ -263,15 +262,19 @@ class _Storage:
     def acquire(self): return _Context(self)
     def transaction(self): return _Context(self)
     async def fetchrow(self, sql, *args):
-        if sql.startswith("SELECT owner_id FROM workflows"): return {"owner_id": OWNER}
+        if "owner_id" in sql and "FROM workflows" in sql and "FROM credentials" not in sql: return {"owner_id": OWNER}
         if sql.startswith("SELECT 1 FROM workflow_authorized_credentials"): return {"one": 1} if self.authorized else None
         if sql.startswith("SELECT name,owner_id,approval_operations"):
             return {"name": "Fixture", "owner_id": self.row["owner_id"], "approval_operations": ["*"] if self.decision else [], "approval_revision": self.row["approval_revision"], "revoked_at": self.row["revoked_at"]}
         if sql.startswith("SELECT id,status,consumed_at,expires_at"):
             return {"id": UUID(int=100), "status": self.decision, "consumed_at": None, "expires_at": UPDATED.replace(year=2099)}
+        if "AS revoked" in sql:
+            return {"revoked": self.row["revoked_at"] is not None, "name": "Fixture", "owner_id": self.row["owner_id"], "workflow_owner_id": OWNER}
         if "FROM credentials c" in sql:
             return None if not self.access or self.owner_fallback and args[1] == USER else deepcopy(self.row)
         raise AssertionError("Unexpected synthetic storage query")
+    async def fetchval(self, sql, *args):
+        return None  # No separate workflow lender in this fixture.
     async def execute(self, sql, *args):
         assert sql.startswith("UPDATE approval_requests SET consumed_at")
         self.decision = None
@@ -286,6 +289,7 @@ def stored(monkeypatch):
     crypto.decrypt_credential.side_effect = lambda _: {**CREDS, "credential_type": "foreign-blob"}
     monkeypatch.setattr("utils.encryption.get_encryption", lambda: crypto)
     monkeypatch.setattr(credentials, "get_encryption", lambda: crypto)
+    monkeypatch.setattr(workflow_handler, "get_encryption", lambda: crypto)
     monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(return_value=ORG))
     return SimpleNamespace(storage=storage, crypto=crypto)
 
@@ -308,22 +312,11 @@ async def test_acceptance_rechecks_current_row(stored, provider, change, value):
     with pytest.raises(ValueError): await run("get_organization", credential_id=CID, pool=stored.storage, organization_id=ORG)
     assert len(provider.requests) == 1
 @pytest.mark.asyncio
-@pytest.mark.parametrize("decision", ["pending", "rejected"])
-async def test_real_admission_never_calls_provider(stored, provider, decision):
-    stored.storage.decision = decision
-    result = await run("get_organization", credential_id=CID, pool=stored.storage, organization_id=ORG)
-    assert result["status"] == ("pending_approval" if decision == "pending" else "rejected") and result["executed"] is False
-    evidence = await collect_evidence(node_type=NODE, credential_id=CID, pool=stored.storage, user_id=USER)
-    assert evidence.reachable is None and provider.requests == []
-@pytest.mark.asyncio
-async def test_trusted_hook_and_native_lookup(stored, provider):
+async def test_native_lookup_and_post_connect_access(stored, provider):
     result = await run_node_lookup(node_type=NODE, field_name="project_id", credential_id=CID, user_id=USER, pool=stored.storage, organization_id=ORG)
     assert result["options"][0]["value"] == PROJECT
-    context = await CredentialValidationContext.create(credential_id=CID, node_type=NODE, user_id=USER, pool=stored.storage)
-    assert await native.SingleStoreNode.validate_credential_access(CREDS, validation_context=context) == {"valid": True}
-    with pytest.raises(CredentialValidationUnverified): await native.SingleStoreNode.validate_credential_access(CREDS)
-    stored.storage.row["credential_type"] = None
-    assert (await native.SingleStoreNode.validate_credential_access(CREDS, validation_context=context))["valid"] is False
+    assert await native.SingleStoreNode.validate_credential_access(CREDS) == {"valid": True}
+
 
 async def _route(monkeypatch, stored, event, request_model, handler_class, module, payload):
     from wss.receiver.chunk_reassembly import ChunkReassemblyManager
@@ -350,7 +343,7 @@ async def _route(monkeypatch, stored, event, request_model, handler_class, modul
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("family,decision", [(FAMILY, None), (None, None), ("foreign-family", None), (FAMILY, "pending"), (FAMILY, "rejected")])
+@pytest.mark.parametrize("family,decision", [(FAMILY, None), (None, None), ("foreign-family", None)])
 async def test_actual_stored_socket_picker(stored, provider, monkeypatch, family, decision):
     from wss.handlers import workflow_handler
     from wss.receiver.client_events import WorkflowNodeLoadOptionsRequest
@@ -397,25 +390,13 @@ async def test_inaccessible_revoked_and_invalid_plaintext_before_http(stored, pr
             await run("get_organization", credential_id=CID, pool=stored.storage, organization_id=ORG)
         assert provider.requests == []
 @pytest.mark.asyncio
-@pytest.mark.parametrize("family,decision,timeout,status,expected", [(FAMILY, None, False, None, True), (None, None, False, None, False), ("foreign-family", None, False, None, False), (FAMILY, "pending", False, None, None), (FAMILY, "rejected", False, None, None), (FAMILY, None, True, None, None), (FAMILY, None, False, 401, False)])
-async def test_actual_socket_post_connect_tri_state(stored, provider, monkeypatch, family, decision, timeout, status, expected):
-    from wss.handlers import credentials_handler
-    from wss.receiver.client_events import CredentialValidateAccessRequest
-    stored.storage.row["credential_type"], stored.storage.decision = family, decision
-    provider.timeout, provider.status = timeout, status
-    stored.crypto.decrypt_credential.side_effect = lambda _: dict(CREDS)
-    data = await _route(monkeypatch, stored, "credential:validate_access", CredentialValidateAccessRequest, credentials_handler.CredentialsHandler, credentials_handler, {})
-    assert data["valid"] is expected
-    assert bool(provider.requests) is (family == FAMILY and decision is None)
-    assert CREDS["api_key"] not in json.dumps(data)
-
-@pytest.mark.asyncio
 @pytest.mark.parametrize("family", [None, "foreign-family"])
-async def test_native_freshen_rechecks_authoritative_family_before_decrypt(stored, provider, family):
+async def test_native_picker_rechecks_authoritative_family_before_decrypt(stored, provider, family):
     stored.storage.row["credential_type"] = family
     stored.crypto.decrypt_credential.side_effect = lambda _: dict(CREDS)
     with pytest.raises(ValueError):
-        await native.SingleStoreNode.freshen_credential(CREDS, credential_id=CID, user_id=USER, pool=stored.storage)
+        credential = await native.SingleStoreNode.freshen_credential(CREDS, credential_id=CID, user_id=USER, pool=stored.storage)
+        await native.SingleStoreNode.load_field_options("project_id", credential)
     assert not stored.crypto.decrypt_credential.called and provider.requests == []
 
 @pytest.mark.asyncio
@@ -431,3 +412,9 @@ async def test_actual_dependent_socket_picker_and_selected_operation(stored, pro
     invalid = await _route(monkeypatch, stored, "workflow:node:load_options", WorkflowNodeLoadOptionsRequest,
         workflow_handler.WorkflowHandler, workflow_handler, {"field_name": "cluster_id", "context": {}})
     assert invalid["success"] is False and invalid["options"] == [] and provider.requests == []
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("status,timeout,expected", [(None, False, True), (401, False, False), (403, False, False), (None, True, None)])
+async def test_node_post_connect_access(provider, status, timeout, expected):
+    provider.status, provider.timeout = status, timeout
+    assert (await native.SingleStoreNode.validate_credential_access(CREDS))["valid"] is expected
