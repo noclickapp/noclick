@@ -371,7 +371,12 @@ class SematextNode(WorkflowNode):
         await current_credential(credential_data)
         return {"options": options, "next_page_token": None, "completion": "unknown"}
     async def execute(self, inputs: dict) -> dict:
-        data = await self.freshen_credential(self.node_data.get("credentials"), pool=self.node_data.get("_approval_pool"),
+        # Keep raw bound credentials intact so their current authority is rechecked.
+        if "credentials" in self.node_data:
+            raw_credential = self.node_data["credentials"]
+        else:
+            raw_credential = self.config.credentials.model_dump() if self.config.credentials is not None else None
+        data = await self.freshen_credential(raw_credential, pool=self.node_data.get("_approval_pool"),
             user_id=self.user_id, credential_id=self.node_data.get("credential_id"), organization_id=self.organization_id, workflow_id=self.workflow_id)
         cfg = self.config.config
         now = await current_credential(data)

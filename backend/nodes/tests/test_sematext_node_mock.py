@@ -82,6 +82,24 @@ async def execute(config, data=None, inputs=None):
 
 
 @pytest.mark.asyncio
+async def test_validated_config_credentials_work_without_raw_node_data(wire):
+    config = p.SematextNodeConfig.model_validate({"config": {"operation": "check_connection"}, "credentials": blob()})
+    node = p.SematextNode(node_id="fixture", node_type=p.NODE_TYPE, node_data={}, config=config)
+    wire.queue = [envelope("apps", [app()])]
+    assert (await node.execute({}))["witness_verified"]
+    assert wire.calls[0][2]["headers"]["Authorization"] == "apiKey synthetic-account-key"
+
+
+@pytest.mark.asyncio
+async def test_explicit_raw_credential_is_not_replaced_by_config(wire):
+    config = p.SematextNodeConfig.model_validate({"config": {"operation": "check_connection"}, "credentials": blob()})
+    node = p.SematextNode(node_id="fixture", node_type=p.NODE_TYPE, node_data={"credentials": None}, config=config)
+    with pytest.raises(ValueError, match="Connect a native Sematext account API key"):
+        await node.execute({})
+    assert not wire.calls
+
+
+@pytest.mark.asyncio
 async def test_actual_factory_dispatcher_regional_account_header_and_no_input_overlay(wire):
     assert NODE_REGISTRY[p.NODE_TYPE] is p.SematextNode
     wire.queue = [envelope("apps", [app()]), envelope("apps", [])]
