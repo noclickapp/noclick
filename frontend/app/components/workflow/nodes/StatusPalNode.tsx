@@ -4,7 +4,7 @@ import AutomationNode from './base/AutomationNode';
 import { NodeDefinition, SvgIconComponent } from './types';
 
 import type { CSSProperties as BrandCSSProperties } from 'react';
-// Vector brand artwork from https://statuspal.io/
+// Statuspal path from Simple Icons; see statuspal.provenance.md.
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
     <img src="/icons/statuspal-brand-vector.svg" alt="" aria-hidden="true" className={(className || '') + ' [--brand-invert:0] dark:[--brand-invert:1]'}
         style={{ ...style, objectFit: 'contain' } as BrandCSSProperties} />

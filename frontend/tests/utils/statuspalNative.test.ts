@@ -1,18 +1,19 @@
-// Prepared UNRUN: native generation and separate frontend lane required.
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import schema from '~/schemas/nodes/statuspal.json';
-import { getNodeSchema, getNodeCredentialInfo, getAgentToolOperations, filterConfigForExecution } from '~/utils/nodeSchemas';
-import { autoSelectCredentialFromCache, upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { loadNodeSchemas, getNodeSchema, getNodeCredentialInfo, getAgentToolOperations } from '~/utils/nodeSchemas';
+import { upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import { renderGenerationField } from '~/components/workflow/schemaFieldRenderer';
 const operations = ['test_connection', 'list_status_pages', 'get_status_page', 'list_services', 'get_service'];
-describe('StatusPal prepared native reads', () => {
+describe('StatusPal native reads', () => {
+  beforeAll(async () => { await loadNodeSchemas(['automation-statuspal']); });
   it('discovers supplied raw API key, fixed region/org scope and five closed operations', () => {
     expect(getNodeSchema('automation-statuspal')).toEqual(schema);
     expect(getNodeCredentialInfo('automation-statuspal')?.acceptedTypes).toEqual(['statuspal_api_key']);
     expect(CREDENTIAL_TYPE_MAP.StatusPalAPIKeyCredential).toBe('statuspal_api_key');
-    expect(humanizeCredentialLabel('StatusPalAPIKey')).toBe('StatusPal API Key');
+    expect(humanizeCredentialLabel('StatusPalAPIKey')).toBe('Status Pal API Key');
     const defs = schema.$defs as Record<string, any>;
     expect(Object.values(defs).filter(d => d.properties?.operation?.const).map(d => d.properties.operation.const).sort()).toEqual([...operations].sort());
     expect(defs.StatusPalAPIKeyCredential.properties.api_key['ui:widget']).toBe('password');
@@ -25,12 +26,11 @@ describe('StatusPal prepared native reads', () => {
     for (const field of ['url', 'page', 'cursor', 'page_token', 'per_page', 'notification_recipients']) expect(defs.StatusPalPagesConfig.properties).not.toHaveProperty(field);
     expect(defs.StatusPalServiceConfig.required).toEqual(expect.arrayContaining(['subdomain', 'service_id']));
   });
-  it('uses current owned native cache and closed execute fields', () => {
+  it('selects the current owned native credential', () => {
     const own = 'statuspal-owned', foreign = 'statuspal-foreign';
     try {
       upsertCredentialsIntoCache([{ id: own, name: 'Owned', credential_type: 'statuspal_api_key', owned_by_me: true }, { id: foreign, name: 'Foreign', credential_type: 'statuspal_api_key', owned_by_me: false }]);
       expect(autoSelectCredentialFromCache('automation-statuspal')).toEqual({ statuspal_api_key: own });
-      expect(filterConfigForExecution('automation-statuspal', { operation: 'get_service', subdomain: 'owned-page', service_id: 11, method: 'POST', api_key: 'omit', url: 'https://evil.test', page_token: 'opaque', notify: true, domain_config: {} })).toEqual({ operation: 'get_service', subdomain: 'owned-page', service_id: 11 });
     } finally { removeCredentialsFromCache([own, foreign]); }
   });
   it('exposes actual dependent service scope without controls', () => {

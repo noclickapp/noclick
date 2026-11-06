@@ -46,9 +46,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'KeilaAPIKeyCredential': 'keila_api_key',
     'MediaSiloAPIKeyCredential': 'mediasilo_api_key',
 
-    // StatusPal existing raw API key
-    'StatusPalAPIKeyCredential': 'statuspal_api_key',
-
     // Telegram
     'TelegramBotTokenCredential': 'telegram_bot_token',
 

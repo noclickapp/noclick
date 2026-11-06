@@ -263,7 +263,7 @@
   "required": [
     "config"
   ],
-  "title": "StatusPal Node Configuration",
+  "title": "Statuspal Node Configuration",
   "type": "object",
   "x-edit-examples": [
     "Read organization status-page identifiers/time zones without DNS settings",
