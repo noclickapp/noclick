@@ -218,8 +218,7 @@
       "title": "PowerDNSCredential",
       "type": "object",
       "x-credential-help-url": "https://docs.powerdns.com/authoritative/http-api/index.html",
-      "x-credential-instructions": "Supply an existing X-API-Key and a publicly reachable HTTPS API origin. The selected server ID must be present in the protected catalog with daemon_type authoritative. localhost is the documented server resource label, not the API host. This proves resource access, not a user or tenant identity. No key issuance, webserver enabling, trust changes or private network workaround.",
-      "x-credential-type": "powerdns_api_key"
+      "x-credential-instructions": "Supply an existing X-API-Key and a publicly reachable HTTPS API origin. The selected server ID must be present in the protected catalog with daemon_type authoritative. localhost is the documented server resource label, not the API host. This proves resource access, not a user or tenant identity. No key issuance, webserver enabling, trust changes or private network workaround."
     }
   },
   "properties": {

@@ -79,7 +79,6 @@ def secret(value):
 
 class PowerDNSCredential(BaseModel):
     model_config = ConfigDict(extra="ignore", hide_input_in_errors=True, json_schema_extra={
-        "x-credential-type": TYPE,
         "x-credential-help-url": "https://docs.powerdns.com/authoritative/http-api/index.html",
         "x-credential-instructions": "Supply an existing X-API-Key and a publicly reachable HTTPS API origin. The selected server ID must be present in the protected catalog with daemon_type authoritative. localhost is the documented server resource label, not the API host. This proves resource access, not a user or tenant identity. No key issuance, webserver enabling, trust changes or private network workaround.",
     })
@@ -474,18 +473,18 @@ class PowerDNSNode(WorkflowNode):
         return PowerDNSNodeConfig
 
     @classmethod
-    def parse_config(cls, data):
-        raw_guard(data)
-        return super().parse_config(data)
+    def parse_config(cls, config_data):
+        raw_guard(config_data)
+        return super().parse_config(config_data)
 
     @classmethod
-    def validate_config(cls, data):
-        raw_guard(data)
-        return super().validate_config(data)
+    def validate_config(cls, config_data):
+        raw_guard(config_data)
+        return super().validate_config(config_data)
 
     @classmethod
-    async def freshen_credential(cls, raw, *, pool=None, user_id=None, credential_id=None, organization_id=CURRENT_ORGANIZATION, workflow_id=None):
-        auth = await Authority.create(raw, pool=pool, user_id=user_id, credential_id=credential_id, organization_id=organization_id, workflow_id=workflow_id)
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        auth = await Authority.create(credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
         return {**auth.credential.model_dump(), AUTH_KEY: auth}
 
     @classmethod

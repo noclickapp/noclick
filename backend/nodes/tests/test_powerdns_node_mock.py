@@ -175,7 +175,7 @@ async def test_strict_json_errors_are_private(transport, body, ctype):
 
 @pytest.mark.asyncio
 async def test_saved_actor_picker_preserves_internal_id_and_no_name_default(stored, transport):
-    fresh = await native.PowerDNSNode.freshen_credential(KEY, pool=object(), user_id=USER, credential_id=CID, organization_id=None)
+    fresh = await native.PowerDNSNode.freshen_credential(KEY, pool=object(), user_id=USER, credential_id=CID)
     transport[1].extend([[SERVER], [ZONE]])
     picked = await native.PowerDNSNode.load_field_options(field_name="zone_id", credential_data=fresh, context={"_user_id": USER})
     assert picked == {"options": [{"value": ZONE["id"], "label": "Zone 1"}], "next_page_token": None}
@@ -211,6 +211,7 @@ def stored(monkeypatch):
         row = state["row"]
         return {**deepcopy(row.credential), "credential_type": row.credential_type} if state["accessible"] and row.revoked_at is None else None
     monkeypatch.setattr(native, "load_authority_row", fetch)
+    monkeypatch.setattr(native.Authority, "current_organization", AsyncMock(return_value=None))
     monkeypatch.setattr("utils.credentials.get_credential", resolve)
     monkeypatch.setattr(native, "get_encryption", lambda: SimpleNamespace(decrypt_credential=lambda raw: deepcopy(raw)))
     return state
