@@ -652,6 +652,9 @@
         "on_company_event"
       ]
     },
+    "automation-invoiceninja": {
+      "agentToolProvider": true
+    },
     "automation-jira": {
       "agentToolProvider": true,
       "triggerOperations": [
