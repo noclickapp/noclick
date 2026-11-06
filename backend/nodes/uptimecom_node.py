@@ -287,7 +287,11 @@ class PageCurrentStatus(StatusPage):
     metrics: list[dict] = Field(max_length=1000, exclude=True)
 
 
-class CheckStatistics(Identified):
+class CheckStatistics(Projection):
+    # The provider SDK's documented stats response omits pk. The witnessed
+    # parent and fixed request route bind the response; verify pk if supplied.
+    # An explicit null is still invalid (the OpenAPI integer is not nullable).
+    pk: int = Field(default=None, ge=1, le=999999999999999999)
     start_date: str = Field(max_length=100)
     end_date: str = Field(max_length=100)
     statistics: list[dict] = Field(max_length=1000, exclude=True)
@@ -589,7 +593,12 @@ class UptimeComNode(WorkflowNode):
         await current_credential(credential_data)
         return {"options": options, "has_more": result["has_more"], "next_page_token": str(result["next_page"]) if result["next_page"] is not None else None}
     async def execute(self, inputs: dict) -> dict:
-        data = await self.freshen_credential(self.node_data.get("credentials"), pool=self.node_data.get("_approval_pool"),
+        # Preserve bound saved authority when present; direct native execution
+        # also accepts the credential already validated in the parsed config.
+        supplied = self.node_data.get("credentials")
+        if supplied is None and self.config.credentials is not None:
+            supplied = self.config.credentials.model_dump()
+        data = await self.freshen_credential(supplied, pool=self.node_data.get("_approval_pool"),
             user_id=self.user_id, credential_id=self.node_data.get("credential_id"), organization_id=self.organization_id, workflow_id=self.workflow_id)
         cfg = self.config.config
         now = await current_credential(data)
@@ -621,7 +630,7 @@ class UptimeComNode(WorkflowNode):
         if isinstance(cfg, GetCheckStatistics):
             row = typed(CheckStatistics, await request(data, "/checks/" + selected + "/stats/", params={"start_date": cfg.start_date,
                 "end_date": cfg.end_date, "include_alerts": "false", "locations_response_times": "false", "download": "false", "pdf": "false"}))
-            if (row.pk != parent.pk or response_date(row.start_date) != utc_date(cfg.start_date) or response_date(row.end_date) != utc_date(cfg.end_date)):
+            if (("pk" in row.model_fields_set and row.pk != parent.pk) or response_date(row.start_date) != utc_date(cfg.start_date) or response_date(row.end_date) != utc_date(cfg.end_date)):
                 raise RuntimeError("Uptime.com statistics do not match the selected check/date window")
             await current_credential(data)
             return {"status": "success", "check_pk": parent.pk, "start_date": row.start_date, "end_date": row.end_date,

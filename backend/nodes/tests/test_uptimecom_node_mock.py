@@ -295,3 +295,53 @@ async def test_opaque_outage_strings_are_omitted_and_bad_documented_timestamps_r
     result = await execute({"operation": "get_outage", "check_id": CHECK, "outage_id": OUTAGE})
     assert "resolved_at" not in result["data"] and "duration_secs" not in result["data"] and PRIVATE not in json.dumps(result)
     with pytest.raises(RuntimeError): await execute({"operation": "get_check", "check_id": CHECK})
+
+
+@pytest.mark.asyncio
+async def test_direct_native_execution_uses_validated_config_credential(wire):
+    config = p.UptimeComNodeConfig.model_validate({
+        "config": {"operation": "check_connection"}, "credentials": blob()})
+    node = p.UptimeComNode(node_id="fixture", node_type=p.NODE_TYPE, node_data={}, config=config)
+    wire.queue = [me()]
+    result = await node.execute({})
+    assert result["user_pk"] == int(USER_PK) and result["identity_verified"]
+    assert wire.calls[0][2]["headers"]["Authorization"] == "Token synthetic-issued-key"
+    # An explicit raw credential must still be validated, never bypassed by
+    # falling back to a different parsed credential.
+    node.node_data["credentials"] = {}
+    with pytest.raises(ValueError, match="native Uptime.com API token"):
+        await node.execute({})
+    assert len(wire.calls) == 1
+
+
+@pytest.mark.asyncio
+async def test_provider_statistics_fixture_without_pk_keeps_parent_and_window_checks(wire):
+    # Copied verbatim from the provider SDK's response fixture:
+    # https://raw.githubusercontent.com/uptime-com/uptime-client-go/v1.3.0/testdata/stats.json
+    documented = {
+        "start_date": "2020-01-01T00:00:00Z",
+        "end_date": "2020-01-02T00:00:00Z",
+        "statistics": [{
+            "date": "2020-01-01", "outages": 0, "downtime_secs": 0, "uptime": 1,
+            "response_time": None, "response_time_datapoints": [], "alerts": [],
+            "locations_response_time_datapoints": {},
+        }],
+        "totals": {"outages": 0, "downtime_secs": 0, "uptime": 1, "response_time": None},
+        "available_locations": [],
+    }
+    config = {"operation": "get_check_statistics", "check_id": CHECK,
+        "start_date": documented["start_date"], "end_date": documented["end_date"]}
+    wire.queue = [me(), check(), documented]
+    result = await execute(config)
+    assert result["check_pk"] == int(CHECK) and result["parent_route_verified"]
+    assert result["start_date"] == documented["start_date"]
+    assert result["end_date"] == documented["end_date"]
+    assert result["statistic_record_count"] == 1 and result["available_location_count"] == 0
+    assert result["totals_present"] and result["opaque_values_omitted"]
+    for changed in ({**documented, "pk": 999}, {**documented, "end_date": documented["start_date"]}):
+        wire.queue = [me(), check(), changed]
+        with pytest.raises(RuntimeError, match="selected check/date window"):
+            await execute(config)
+    wire.queue = [me(), check(), {**documented, "pk": None}]
+    with pytest.raises(RuntimeError, match="unverified metadata"):
+        await execute(config)
