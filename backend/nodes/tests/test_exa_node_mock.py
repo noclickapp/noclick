@@ -91,10 +91,7 @@ def create_mock_client(status_code=200, json_data=None):
     mock_response = create_mock_response(status_code, json_data)
     mock_client = Mock()
 
-    async def async_request(*args, **kwargs):
-        return mock_response
-
-    mock_client.request = async_request
+    mock_client.request = AsyncMock(return_value=mock_response)
 
     async def aenter(self):
         return mock_client
@@ -154,9 +151,12 @@ class TestExaSearchMock:
         assert "news" in search["parameters"]["properties"]["search_type"]["enum"]
 
     @pytest.mark.asyncio
-    async def test_get_contents(self, api_key_credentials):
+    @pytest.mark.parametrize("include_summary", ["true", "false"])
+    async def test_get_contents(self, api_key_credentials, include_summary):
         config = ExaNodeConfig(
-            config=ExaGetContentsConfig(urls="https://exa.ai, https://example.com"),
+            config=ExaGetContentsConfig(
+                urls="https://exa.ai, https://example.com", include_summary=include_summary
+            ),
             credentials=api_key_credentials,
         )
         node = create_exa_node(config)
@@ -165,6 +165,12 @@ class TestExaSearchMock:
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "get_contents"
+        # https://exa.ai/docs/reference/get-contents: summary accepts an options object.
+        body = mock_client.request.call_args.kwargs["json"]
+        if include_summary == "true":
+            assert body["summary"] == {}
+        else:
+            assert "summary" not in body
 
     @pytest.mark.asyncio
     async def test_answer(self, api_key_credentials):
@@ -208,6 +214,8 @@ class TestExaAgentMock:
         assert result["status"] == "success"
         assert result["action"] == "create_agent_run"
         assert result["data"]["id"] == "run_1"
+        # https://exa.ai/docs/reference/agent-api/create-a-run: JSON or SSE, never */*.
+        assert mock_client.request.call_args.kwargs["headers"]["Accept"] == "application/json"
 
     @pytest.mark.asyncio
     async def test_get_agent_run(self, api_key_credentials):

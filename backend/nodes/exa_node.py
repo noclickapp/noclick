@@ -959,6 +959,7 @@ async def _exa_request(
     headers = {
         "x-api-key": api_key,
         "Content-Type": "application/json",
+        "Accept": "application/json",
     }
     if json_body:
         json_body = {k: v for k, v in json_body.items() if v is not None}
@@ -1397,7 +1398,7 @@ class ExaNode(ExternalWebhookTriggerMixin, WorkflowNode):
         if c.include_highlights == "true":
             body["highlights"] = True
         if c.include_summary == "true":
-            body["summary"] = True
+            body["summary"] = {}
         if c.livecrawl:
             body["livecrawl"] = c.livecrawl
         return await _exa_request(api_key, "POST", "/contents", json_body=body, action_name="get_contents")
