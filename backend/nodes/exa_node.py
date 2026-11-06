@@ -28,6 +28,7 @@ from typing import Dict, Any, Optional, List, Literal, Union, Annotated
 from pydantic import BaseModel, Field, ConfigDict, Discriminator, field_validator
 import httpx
 
+from nodes.core.agent_events import bullet_lines, compact_json, prune_empty
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
@@ -68,6 +69,11 @@ SIGNATURE_MAX_AGE_S = 300
 DEFAULT_MONITOR_PERIOD = "1d"
 _MONITOR_PERIOD_RE = re.compile(r"[1-9]\d*[hd]")
 _CRON_RUNS_COMPARED = 60
+# A monitor run as an agent's turn: its summary and an excerpt per result, bounded; the rest stays on the node.
+EVENT_SUMMARY_CHARS = 1_500
+EVENT_RESULT_CHARS = 240
+EVENT_RESULTS_SHOWN = 10
+EVENT_TEXT_BUDGET = 3_500
 
 
 def _period_of_cron(expression: str) -> Optional[str]:
@@ -100,6 +106,13 @@ def monitor_period(cadence: Optional[str]) -> str:
             "Set an interval such as 6h or 1d."
         )
     return period
+
+
+def _result_excerpt(result: Dict[str, Any]) -> str:
+    """A page a monitor found, in a line: Exa's summary of it, else its highlights, else the start of its text."""
+    highlights = [h for h in result.get("highlights") or [] if isinstance(h, str) and h.strip()]
+    excerpt = result.get("summary") or " … ".join(highlights) or result.get("text") or ""
+    return prune_empty(" ".join(excerpt.split()), max_str=EVENT_RESULT_CHARS) if isinstance(excerpt, str) else ""
 
 
 # ============================================================================
@@ -1139,6 +1152,64 @@ class ExaNode(ExternalWebhookTriggerMixin, WorkflowNode):
             return False
         expected = hmac.new(secret.encode(), timestamp.encode() + b"." + body, hashlib.sha256).hexdigest()
         return hmac.compare_digest(expected.encode(), provided.encode())
+
+    @classmethod
+    def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """Exa's ``monitor.run.completed`` delivery (``{type, data: <the run>}``) → the agent's user turn: what the
+        run found (Exa's summary and each new page, clipped) or why it failed, with the ids ``get_contents`` and
+        ``list_monitor_runs`` take. No conversation key: a monitor's runs are a stream, not a thread."""
+        if not isinstance(output, dict) or output.get("type") != MONITOR_RESULTS_EVENT:
+            return super().resolve_agent_event(output)
+        run = output.get("data")
+        if not isinstance(run, dict) or not run.get("monitorId"):
+            return super().resolve_agent_event(output)
+        monitor_id, status = run["monitorId"], run.get("status") or "completed"
+        found = run.get("output") if isinstance(run.get("output"), dict) else {}
+        results = [r for r in found.get("results") or [] if isinstance(r, dict)]
+        if status != "completed":
+            reason = str(run.get("failReason") or "").replace("_", " ")
+            head = f"Exa monitor run {status}" + (f": {reason}" if reason else "")
+        elif results:
+            head = f"Exa monitor run completed: {len(results)} new result{'s' if len(results) != 1 else ''}"
+        else:
+            head = "Exa monitor run completed: nothing new"
+        metadata = prune_empty(run.get("metadata")) if isinstance(run.get("metadata"), dict) else {}
+        grounding = [g for g in found.get("grounding") or [] if isinstance(g, dict) and g.get("confidence")]
+        lines = [head] + bullet_lines([
+            ("monitor", monitor_id),
+            ("run", run.get("id")),
+            ("finished", run.get("completedAt") or run.get("failedAt") or run.get("cancelledAt") or output.get("createdAt")),
+            ("metadata", prune_empty(", ".join(f"{k}: {v}" for k, v in metadata.items()), max_str=300)),
+            ("confidence", ", ".join(f"{g.get('field') or 'output'} {g['confidence']}" for g in grounding)),
+        ])
+        content = found.get("content")
+        if isinstance(content, str) and content.strip():
+            lines += ["", "Summary:", prune_empty(content.strip(), max_str=EVENT_SUMMARY_CHARS)]
+        elif content and not isinstance(content, str):
+            lines += ["", "Summary:", compact_json(content, limit=EVENT_SUMMARY_CHARS)]
+        if results:
+            lines += ["", "New results:"]
+        shown, size = 0, sum(len(line) + 1 for line in lines)
+        for i, result in enumerate(results[:EVENT_RESULTS_SHOWN], 1):
+            url = str(result.get("url") or "")
+            title = prune_empty(str(result.get("title") or url or result.get("id") or "Untitled"), max_str=200)
+            published = str(result.get("publishedDate") or "")[:10]
+            block = [f"{i}. {title}" + (f" ({published})" if published else "")]
+            block += [f"   {part}" for part in (url if url != title else "", _result_excerpt(result)) if part]
+            size += sum(len(line) + 1 for line in block)
+            if shown and size > EVENT_TEXT_BUDGET:  # the turn stays bounded; the rest is on the node
+                break
+            lines += block
+            shown += 1
+        if len(results) > shown:
+            lines.append(f"[… {len(results) - shown} more on the trigger node]")
+        lines.append("")
+        if results:
+            lines.append("To read a page in full: get_contents urls=<url>.")
+        if status != "completed":
+            lines.append(f"To run it again: trigger_monitor monitor_id={monitor_id}.")
+        lines.append(f"Earlier runs: list_monitor_runs monitor_id={monitor_id}.")
+        return {"text": "\n".join(lines), "conversation_key": None, "title": head}
 
     # ------------------------------------------------------------------
     # Execute
