@@ -177,6 +177,7 @@ from nodes.bamboohr_node import BambooHRNode
 from nodes.dv360_node import DV360Node
 from nodes.typeform_node import TypeformNode
 from nodes.formbuilder123_node import FormBuilder123Node
+from nodes.acculynx_node import AccuLynxNode
 from nodes.filter_node import FilterNode
 from nodes.split_out_node import SplitOutNode
 from nodes.conditional_node import ConditionalNode

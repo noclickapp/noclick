@@ -15,6 +15,7 @@ type DefinitionModule = Record<string, unknown>;
 
 /** [type, its module under nodes/ without the extension], in palette order. */
 export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: string]> = [
+    ['automation-acculynx', 'AccuLynxNode'],
     ['trigger-run', 'RunTriggerNode'],
     ['trigger-webhook', 'WebhookTriggerNode'],
     ['trigger-email', 'InboundEmailTriggerNode'],

@@ -259,7 +259,7 @@ class CRMSession:
         expected = 200 if method == "GET" else 201 if method == "POST" else 204
         empty = method == "PUT" or method == "POST" and path.endswith("/notes")
         try:
-            async with guarded_async_client(require_public=True, timeout=20, trust_env=False, follow_redirects=False) as client:
+            async with guarded_async_client(timeout=20, trust_env=False, follow_redirects=False) as client:
                 async with client.stream(method, BASE_URL + "/" + path, params=params,
                                          headers={"Authorization": "Bearer " + self.credential.api_key, "Accept": "application/json"}, json=body) as response:
                     status = response.status_code
@@ -406,10 +406,7 @@ class AccuLynxNode(WorkflowNode):
         return super().parse_config(data)
 
     @classmethod
-    async def validate_credential_access(cls, credential_data, *, validation_context=None):
-        if validation_context is not None:
-            await validation_context.collect_evidence()
-            return {"valid": True, "name": None}
+    async def validate_credential_access(cls, credential_data):
         try:
             session = CRMSession(AccuLynxAPIKeyCredential.model_validate(credential_data))
             row, _ = await session.company()

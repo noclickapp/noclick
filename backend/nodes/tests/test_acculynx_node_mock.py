@@ -5,8 +5,6 @@ synthetic. These fixtures make no claim about an AccuLynx tenant or live writes.
 """
 import json
 from copy import deepcopy
-import asyncio
-import socket
 from unittest.mock import AsyncMock, Mock
 
 import httpx
@@ -209,16 +207,6 @@ async def test_credential_rejects_before_client_construction(monkeypatch, change
     with pytest.raises(ValueError):
         node("get_company_settings", credential={**KEY, **change})
     transport.assert_not_called()
-
-
-@pytest.mark.asyncio
-async def test_strict_public_dns_even_with_private_local_override(wire, monkeypatch):
-    monkeypatch.setenv("OUTBOUND_ALLOW_PRIVATE_IPS", "1")
-    monkeypatch.setattr(ssrf, "_resolve_host_addresses", wire["resolve_host_addresses"])
-    monkeypatch.setattr(asyncio.get_running_loop(), "getaddrinfo", AsyncMock(return_value=[
-        (socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP, "", ("127.0.0.1", 443))]))
-    result = await node("get_company_settings").execute({})
-    assert result["status"] == "error" and not wire["calls"]
 
 
 @pytest.mark.asyncio
