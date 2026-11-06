@@ -77,6 +77,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
 
     // Ahrefs
     'AhrefsAPIKeyCredential': 'ahrefs_api_key',
+    'OktaAPITokenCredential': 'okta_api_token',
 
     // Apollo
     'ApolloAPIKeyCredential': 'apollo_api_key',
