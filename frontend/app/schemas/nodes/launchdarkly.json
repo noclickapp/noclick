@@ -780,11 +780,31 @@
           },
           "x-resource-type": "launchdarkly_segment"
         },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Legacy import options (mode and waitOnApprovals) as a JSON object",
+          "title": "Import Body (JSON)"
+        },
         "csv_content": {
-          "description": "CSV file contents containing the context keys to import",
-          "minLength": 1,
-          "title": "CSV Content",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional CSV file contents containing the context keys to import",
+          "title": "CSV Content"
         },
         "mode": {
           "default": "merge",
@@ -805,8 +825,7 @@
       "required": [
         "project_key",
         "environment_key",
-        "segment_key",
-        "csv_content"
+        "segment_key"
       ],
       "title": "LaunchDarklyCreateBigSegmentImportConfig",
       "type": "object"

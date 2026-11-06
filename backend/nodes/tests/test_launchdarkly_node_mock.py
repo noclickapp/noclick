@@ -928,14 +928,72 @@ class TestBigSegmentImports:
         assert result["data"] == {"success": True}
 
 
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("legacy,fields,expected_mode,expected_wait", [
+        ({"mode": "replace", "waitOnApprovals": True}, {}, "replace", True),
+        ({"mode": "replace", "waitOnApprovals": True}, {"csv_content": "user-key-123abc"}, "replace", True),
+        ({"mode": "replace", "waitOnApprovals": True}, {"mode": "merge", "wait_on_approvals": False}, "merge", False),
+        ({}, {}, "merge", False),
+    ])
+    async def test_saved_import_configs(self, token_credentials, monkeypatch, legacy, fields, expected_mode, expected_wait):
+        import json
+        import httpx
+        from email.parser import BytesParser
+        from email.policy import default
+
+        saved = {
+            "config": {"operation": "create_big_segment_import", "project_key": "web",
+                       "environment_key": "production", "segment_key": "beta-users",
+                       "body_json": json.dumps(legacy), **fields},
+            "credentials": token_credentials.model_dump(),
+        }
+        config = LaunchDarklyNodeConfig.model_validate(saved)
+        assert config.config.body_json == saved["config"]["body_json"]
+        assert config.config.mode == expected_mode
+        assert config.config.wait_on_approvals is expected_wait
+        # Saving the validated model and loading it again must retain translated options.
+        config = LaunchDarklyNodeConfig.model_validate(config.model_dump())
+        captured = []
+
+        def transport(request):
+            captured.append(request)
+            assert request.headers["content-type"].startswith("multipart/form-data; boundary=")
+            message = BytesParser(policy=default).parsebytes(
+                f"Content-Type: {request.headers['content-type']}\r\n\r\n".encode() + request.content
+            )
+            parts = {part.get_param("name", header="content-disposition"): part for part in message.iter_parts()}
+            expected_parts = {"mode"}
+            if expected_wait:
+                expected_parts.add("waitOnApprovals")
+                assert parts["waitOnApprovals"].get_payload(decode=True) == b"true"
+            if "csv_content" in fields:
+                expected_parts.add("file")
+                assert parts["file"].get_payload(decode=True) == fields["csv_content"].encode()
+            assert set(parts) == expected_parts
+            assert parts["mode"].get_payload(decode=True) == expected_mode.encode()
+            return httpx.Response(204)
+
+        original_client = httpx.AsyncClient
+        monkeypatch.setattr("nodes.launchdarkly_node.httpx.AsyncClient", lambda **kwargs: original_client(
+            **kwargs, transport=httpx.MockTransport(transport), trust_env=False
+        ))
+        result = await create_ld_node(config).execute({})
+        assert len(captured) == 1
+        assert result["status"] == "success"
+        assert result["action"] == "create_big_segment_import"
+        assert result["status_code"] == 204
+        assert result["data"] == {"success": True}
+        assert "total" in result["timing_ms"]
+
+
 class TestBigSegmentTargets:
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation,endpoint", [
         ("update_big_segment_context_targets", "contexts"),
         ("update_big_segment_user_targets", "users"),
     ])
-    @pytest.mark.parametrize("advanced_only", [False, True])
-    async def test_serializes_additions_and_removals(self, token_credentials, monkeypatch, operation, endpoint, advanced_only):
+    @pytest.mark.parametrize("input_style", ["convenience", "advanced", "mixed"])
+    async def test_serializes_additions_and_removals(self, token_credentials, monkeypatch, operation, endpoint, input_style):
         import json
         import httpx
 
@@ -956,10 +1014,16 @@ class TestBigSegmentTargets:
         monkeypatch.setattr("nodes.launchdarkly_node.httpx.AsyncClient", lambda **kwargs: original_client(
             **kwargs, transport=httpx.MockTransport(transport), trust_env=False
         ))
-        fields = {"body_json": json.dumps(expected)} if advanced_only else {
+        fields = {"body_json": json.dumps(expected)} if input_style == "advanced" else {
             "included": " user-key-123abc ", "included_remove": "user-key-456def",
             "excluded": "other-user", "excluded_remove": " former-user ",
         }
+        if input_style == "mixed":
+            fields = {
+                "body_json": json.dumps({"included": {"remove": expected["included"]["remove"]},
+                                         "excluded": expected["excluded"]}),
+                "included": " user-key-123abc ",
+            }
         config = LaunchDarklyNodeConfig.model_validate({
             "config": {"operation": operation, "project_key": "web", "environment_key": "production",
                        "segment_key": "beta-users", **fields},

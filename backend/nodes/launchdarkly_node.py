@@ -28,7 +28,7 @@ import json
 import logging
 import time
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
-from pydantic import BaseModel, Field, ConfigDict, Discriminator
+from pydantic import BaseModel, Field, ConfigDict, Discriminator, model_validator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
@@ -100,7 +100,11 @@ async def _ld_request(
     start = time.time()
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
-            body_args = {"files": files, "data": form_data} if files is not None else {"json": json_body}
+            body_args = {"json": json_body}
+            if files is not None:
+                # Field-only imports must also use multipart, even without a CSV file.
+                parts = {name: (None, value) for name, value in (form_data or {}).items()}
+                body_args = {"files": {**parts, **files}}
             response = await client.request(
                 method=method, url=url, headers=headers, params=params, **body_args
             )
@@ -443,20 +447,39 @@ class LaunchDarklyCreateBigSegmentImportConfig(BaseModel):
     project_key: str = _project_key_field("The project key")
     environment_key: str = _environment_key_field()
     segment_key: str = _segment_key_field()
-    csv_content: str = Field(..., title="CSV Content", min_length=1,
-        description="CSV file contents containing the context keys to import")
+    body_json: Optional[str] = Field(None, title="Import Body (JSON)",
+        description="Legacy import options (mode and waitOnApprovals) as a JSON object")
+    csv_content: Optional[str] = Field(None, title="CSV Content",
+        description="Optional CSV file contents containing the context keys to import")
     mode: Literal["merge", "replace"] = Field("merge", title="Import Mode")
     wait_on_approvals: bool = Field(False, title="Wait on Approvals",
         description="Wait for approvals before processing the import")
+
+    @model_validator(mode="before")
+    @classmethod
+    def translate_legacy_options(cls, values):
+        if not isinstance(values, dict) or not isinstance(values.get("body_json"), str) or not values["body_json"]:
+            return values
+        legacy = json.loads(values["body_json"])
+        if not isinstance(legacy, dict):
+            raise ValueError("Import Body must be a JSON object")
+        values = dict(values)
+        for old, new in (("mode", "mode"), ("waitOnApprovals", "wait_on_approvals")):
+            if new not in values and old in legacy:
+                values[new] = legacy[old]
+        return values
 
 
 async def _create_big_segment_import(c, token, region) -> Dict[str, Any]:
     form_data = {"mode": c.mode}
     if c.wait_on_approvals:
         form_data["waitOnApprovals"] = "true"
+    files = {}
+    if c.csv_content is not None:
+        files["file"] = ("contexts.csv", c.csv_content.encode("utf-8"), "text/csv")
     return await _ld_request(token, region, "POST",
                              f"/segments/{c.project_key}/{c.environment_key}/{c.segment_key}/imports",
-                             files={"file": ("contexts.csv", c.csv_content.encode("utf-8"), "text/csv")},
+                             files=files,
                              form_data=form_data,
                              action_name="create_big_segment_import")
 
