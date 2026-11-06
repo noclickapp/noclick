@@ -146,7 +146,7 @@ def _projected(raw, account, kind, names=False, singleton=False):
         if row.get("state") not in {"hosted", "registered", "expired"}: raise ValueError("Expected documented domain state")
         if "expires_at" not in row: raise ValueError("Explicit nullable domain expiry required")
         out.update(state=row["state"], expires_at=_date(row.get("expires_at"), nullable=True))
-        if "expires_on" in row: out["expires_on"] = _date(row["expires_on"], day=True)
+        if "expires_on" in row: out["expires_on"] = _date(row["expires_on"], nullable=True, day=True)
         if names: out["unicode_name"] = _text(row.get("unicode_name"))
     elif kind == "zones":
         if "last_transferred_at" not in row: raise ValueError("Explicit nullable zone transfer date required")

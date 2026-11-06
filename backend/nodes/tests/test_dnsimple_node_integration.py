@@ -4,6 +4,7 @@ Only HTTP boundaries are mocked; native execute/config and scoped selection rema
 from contextlib import asynccontextmanager
 from copy import deepcopy
 from dataclasses import asdict
+from pathlib import Path
 import json
 import httpx
 import pytest
@@ -161,3 +162,29 @@ def test_raw_family_binding_and_closed_operation_schema():
     assert ops == {"list_domains", "get_domain", "list_zones", "get_zone"}
     for field in ("records", "content", "account_id", "url", "headers", "registrant_id", "auto_renew"): assert field not in schema["$defs"]["DNSimpleZoneConfig"]["properties"]
 
+
+@pytest.mark.asyncio
+async def test_documented_domain_catalog_preserves_nullable_expiry(monkeypatch):
+    # Copied unchanged from https://developer.dnsimple.com/v2/domains/#list-domains.
+    payload = json.loads((Path(__file__).parent / "fixtures/dnsimple/list_domains.json").read_text())
+    calls = []
+
+    def handle(request):
+        calls.append(request)
+        assert request.url.path == "/v2/1385/domains"
+        return httpx.Response(200, json=payload)
+
+    @asynccontextmanager
+    async def client(**kwargs):
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as instance:
+            yield instance
+
+    monkeypatch.setattr("nodes.dnsimple_node.guarded_async_client", client)
+    result = await run_node_operation(
+        node_type=TYPE, operation="list_domains", arguments={},
+        credential_data={**RAW, "account_id": 1385}, user_id=USER,
+    )
+    assert result["status"] == "success" and len(calls) == 2
+    assert result["data"][0]["expires_on"] == "2021-06-05"
+    assert result["data"][1]["expires_on"] is None
+    assert result["data"][1]["expires_at"] is None
