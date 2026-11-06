@@ -336,10 +336,10 @@ class RebrandlyNode(WorkflowNode):
         return detail
 
     @classmethod
-    async def load_field_options(cls, field_name, credential_data, context=None, search_query=None, page_token=None):
+    async def load_field_options(cls, field_name, credential_data, context=None, search=None, page_token=None):
         value = guard(credential_data); reader = credential_data.get("_rebrandly_reader")
         if reader is not None and not isinstance(reader, Reader): raise ValueError("Invalid Rebrandly current-row reader")
-        context = context or {}; search = search_query or ""
+        context = context or {}; search = search or ""
         if not isinstance(search, str) or len(search) > 256: raise ValueError("Supply a bounded Rebrandly picker search")
         names = context.get("include_names") is True
         try:

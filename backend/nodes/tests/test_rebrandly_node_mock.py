@@ -68,7 +68,7 @@ def test_real_native_schema_five_discriminators_and_manual_visible_credential():
 @pytest.mark.asyncio
 async def test_real_manual_connect_catalog_is_access_not_identity(wire, monkeypatch):
     monkeypatch.setattr(cc, "_collect_evidence", evidence.collect_evidence)
-    verdict = await cc.validate_for_connect(credential_type="RebrandlyAPIKey", credential_data={k: v for k, v in KEY.items() if k != "credential_type"}, user_id="fixture", probe=True)
+    verdict = await cc.validate_for_connect(credential_type=p.TYPE, credential_data={k: v for k, v in KEY.items() if k != "credential_type"}, user_id="fixture", probe=True)
     assert verdict.ok and verdict.credential_data == KEY
     assert verdict.evidence.reachable is True and verdict.evidence.proves == "reachability"
     assert verdict.evidence.account_label is None and verdict.evidence.answers_field is None
@@ -140,7 +140,7 @@ async def test_real_picker_parent_context_string_values_and_search_binding(wire)
     wire["calls"].clear()
     with pytest.raises(ValueError): await p.RebrandlyNode.load_field_options("domain_id", KEY)
     with pytest.raises(ValueError): await p.RebrandlyNode.load_field_options("link_id", KEY, {"workspace_id": "workspaceA"})
-    with pytest.raises(ValueError, match="continuation"): await p.RebrandlyNode.load_field_options("domain_id", KEY, {"workspace_id": "workspaceA"}, search_query="changed", page_token=domains["next_page_token"])
+    with pytest.raises(ValueError, match="continuation"): await p.RebrandlyNode.load_field_options("domain_id", KEY, {"workspace_id": "workspaceA"}, search="changed", page_token=domains["next_page_token"])
     assert wire["calls"] == []
 
 
