@@ -61,6 +61,22 @@ from nodes.instantly_node import (
 )
 
 
+# Required transport settings and schedule from the provider's documented examples.
+ACCOUNT_SETTINGS = {
+    "imap_username": "username", "imap_password": "password",
+    "imap_host": "imap.gmail.com", "imap_port": "993",
+    "smtp_username": "username", "smtp_password": "password",
+    "smtp_host": "smtp.gmail.com", "smtp_port": "587",
+}
+CAMPAIGN_SCHEDULE = {
+    "schedules": [{
+        "name": "My Schedule", "timing": {"from": "09:00", "to": "17:00"},
+        "days": {"0": True, "1": True, "2": True, "3": True, "4": True,
+                 "5": False, "6": False}, "timezone": "Etc/GMT+12",
+    }],
+}
+
+
 def make_mock_response(status_code=200, json_data=None):
     """Create a mock httpx Response."""
     resp = MagicMock()
@@ -129,7 +145,7 @@ class TestInstantlyNodeMock:
     async def test_create_account(self, credential):
         response = make_mock_response(200, {"id": "acc-new", "email": "new@example.com"})
         config = InstantlyCreateAccountConfig(
-            email="new@example.com", first_name="New", last_name="User", provider_code="2"
+            email="new@example.com", first_name="New", last_name="User", provider_code="2", **ACCOUNT_SETTINGS
         )
         node = self.create_node(config, credential)
         with self.mock_client(response):
@@ -191,7 +207,7 @@ class TestInstantlyNodeMock:
     @pytest.mark.asyncio
     async def test_create_campaign(self, credential):
         response = make_mock_response(200, {"id": "camp-new", "name": "New Campaign"})
-        node = self.create_node(InstantlyCreateCampaignConfig(name="New Campaign"), credential)
+        node = self.create_node(InstantlyCreateCampaignConfig(name="New Campaign", campaign_schedule=json.dumps(CAMPAIGN_SCHEDULE)), credential)
         with self.mock_client(response):
             result = await node.execute({})
         assert result["status"] == "success"
@@ -607,13 +623,13 @@ class TestInstantlyNodeMock:
         configs = [
             InstantlyListAccountsConfig(),
             InstantlyGetAccountConfig(email="test@test.com"),
-            InstantlyCreateAccountConfig(email="t@t.com", first_name="T", last_name="T"),
+            InstantlyCreateAccountConfig(email="t@t.com", first_name="T", last_name="T", **ACCOUNT_SETTINGS),
             InstantlyPauseAccountConfig(email="test@test.com"),
             InstantlyResumeAccountConfig(email="test@test.com"),
             InstantlyDeleteAccountConfig(email="test@test.com"),
             InstantlyListCampaignsConfig(),
             InstantlyGetCampaignConfig(campaign_id="test"),
-            InstantlyCreateCampaignConfig(name="test"),
+            InstantlyCreateCampaignConfig(name="test", campaign_schedule=json.dumps(CAMPAIGN_SCHEDULE)),
             InstantlyUpdateCampaignConfig(campaign_id="test"),
             InstantlyDeleteCampaignConfig(campaign_id="test"),
             InstantlyActivateCampaignConfig(campaign_id="test"),

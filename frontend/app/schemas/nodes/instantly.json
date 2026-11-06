@@ -180,12 +180,62 @@
           "default": null,
           "description": "Max emails per day",
           "title": "Daily Limit"
+        },
+        "imap_username": {
+          "description": "IMAP username",
+          "title": "IMAP Username",
+          "type": "string"
+        },
+        "imap_password": {
+          "description": "IMAP password",
+          "title": "IMAP Password",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "imap_host": {
+          "description": "IMAP server hostname",
+          "title": "IMAP Host",
+          "type": "string"
+        },
+        "imap_port": {
+          "description": "IMAP server port",
+          "title": "IMAP Port",
+          "type": "string"
+        },
+        "smtp_username": {
+          "description": "SMTP username",
+          "title": "SMTP Username",
+          "type": "string"
+        },
+        "smtp_password": {
+          "description": "SMTP password",
+          "title": "SMTP Password",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "smtp_host": {
+          "description": "SMTP server hostname",
+          "title": "SMTP Host",
+          "type": "string"
+        },
+        "smtp_port": {
+          "description": "SMTP server port",
+          "title": "SMTP Port",
+          "type": "string"
         }
       },
       "required": [
         "email",
         "first_name",
-        "last_name"
+        "last_name",
+        "imap_username",
+        "imap_password",
+        "imap_host",
+        "imap_port",
+        "smtp_username",
+        "smtp_password",
+        "smtp_host",
+        "smtp_port"
       ],
       "title": "InstantlyCreateAccountConfig",
       "type": "object"
@@ -207,10 +257,18 @@
           "description": "Name for the new campaign",
           "title": "Campaign Name",
           "type": "string"
+        },
+        "campaign_schedule": {
+          "description": "JSON object containing schedules with name, timing (from/to in HH:MM), days (0-6), and timezone",
+          "title": "Campaign Schedule (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor"
         }
       },
       "required": [
-        "name"
+        "name",
+        "campaign_schedule"
       ],
       "title": "InstantlyCreateCampaignConfig",
       "type": "object"
@@ -705,32 +763,6 @@
           "description": "The email address of the account",
           "title": "Email",
           "type": "string"
-        },
-        "start_date": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Start date (YYYY-MM-DD)",
-          "title": "Start Date"
-        },
-        "end_date": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "End date (YYYY-MM-DD)",
-          "title": "End Date"
         }
       },
       "required": [

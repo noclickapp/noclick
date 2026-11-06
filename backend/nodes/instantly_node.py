@@ -15,6 +15,7 @@ API Base URL: https://api.instantly.ai/api/v2
 Documentation: https://developer.instantly.ai
 """
 
+import json
 import logging
 import time
 from typing import Dict, Any, Optional, List, Literal, Union, Annotated
@@ -134,6 +135,30 @@ class InstantlyCreateAccountConfig(BaseModel):
     )
     daily_limit: Optional[str] = Field(
         None, title="Daily Limit", description="Max emails per day"
+    )
+    imap_username: str = Field(
+        ..., title="IMAP Username", description="IMAP username"
+    )
+    imap_password: str = Field(
+        ..., title="IMAP Password", description="IMAP password", json_schema_extra={"ui:widget": "password"}
+    )
+    imap_host: str = Field(
+        ..., title="IMAP Host", description="IMAP server hostname"
+    )
+    imap_port: str = Field(
+        ..., title="IMAP Port", description="IMAP server port"
+    )
+    smtp_username: str = Field(
+        ..., title="SMTP Username", description="SMTP username"
+    )
+    smtp_password: str = Field(
+        ..., title="SMTP Password", description="SMTP password", json_schema_extra={"ui:widget": "password"}
+    )
+    smtp_host: str = Field(
+        ..., title="SMTP Host", description="SMTP server hostname"
+    )
+    smtp_port: str = Field(
+        ..., title="SMTP Port", description="SMTP server port"
     )
 
 
@@ -259,6 +284,12 @@ class InstantlyCreateCampaignConfig(BaseModel):
     )
     name: str = Field(
         ..., title="Campaign Name", description="Name for the new campaign"
+    )
+    campaign_schedule: str = Field(
+        ...,
+        title="Campaign Schedule (JSON)",
+        description="JSON object containing schedules with name, timing (from/to in HH:MM), days (0-6), and timezone",
+        json_schema_extra={"ui:widget": "code_editor", "ui:rows": 8},
     )
 
 
@@ -832,12 +863,6 @@ class InstantlyGetWarmupAnalyticsConfig(BaseModel):
     email: str = Field(
         ..., title="Email", description="The email address of the account"
     )
-    start_date: Optional[str] = Field(
-        None, title="Start Date", description="Start date (YYYY-MM-DD)"
-    )
-    end_date: Optional[str] = Field(
-        None, title="End Date", description="End date (YYYY-MM-DD)"
-    )
 
 
 # ============================================================================
@@ -1045,7 +1070,7 @@ async def register_instantly_webhook(
                     "Content-Type": "application/json",
                 },
                 json={
-                    "webhook_url": webhook_url,
+                    "target_hook_url": webhook_url,
                     "event_type": event_type,
                 },
             )
@@ -1491,6 +1516,14 @@ class InstantlyNode(WorkflowNode):
             "first_name": config.first_name,
             "last_name": config.last_name,
             "provider_code": int(config.provider_code),
+            "imap_username": config.imap_username,
+            "imap_password": config.imap_password,
+            "imap_host": config.imap_host,
+            "imap_port": int(config.imap_port),
+            "smtp_username": config.smtp_username,
+            "smtp_password": config.smtp_password,
+            "smtp_host": config.smtp_host,
+            "smtp_port": int(config.smtp_port),
         }
         if config.daily_limit:
             body["daily_limit"] = int(config.daily_limit)
@@ -1564,12 +1597,19 @@ class InstantlyNode(WorkflowNode):
     async def _handle_create_campaign(
         self, config: InstantlyCreateCampaignConfig, credentials
     ) -> Dict[str, Any]:
+        try:
+            schedule = json.loads(config.campaign_schedule)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"Invalid JSON for campaign schedule: {exc}") from exc
+        if not isinstance(schedule, dict):
+            raise ValueError("Campaign schedule must be a JSON object")
         return await self._make_request(
             "POST",
             "/campaigns",
             credentials,
             json_body={
                 "name": config.name,
+                "campaign_schedule": schedule,
             },
             action_name="create_campaign",
         )
@@ -1613,7 +1653,7 @@ class InstantlyNode(WorkflowNode):
     ) -> Dict[str, Any]:
         return await self._make_request(
             "POST",
-            f"/campaigns/{config.campaign_id}/stop",
+            f"/campaigns/{config.campaign_id}/pause",
             credentials,
             action_name="pause_campaign",
         )
@@ -1623,10 +1663,10 @@ class InstantlyNode(WorkflowNode):
     ) -> Dict[str, Any]:
         return await self._make_request(
             "GET",
-            "/campaigns/search-by-lead-email",
+            "/campaigns/search-by-contact",
             credentials,
             params={
-                "email": config.email,
+                "search": config.email,
             },
             action_name="search_campaigns_by_contact_email",
         )
@@ -1640,7 +1680,7 @@ class InstantlyNode(WorkflowNode):
     ) -> Dict[str, Any]:
         body: Dict[str, Any] = {}
         if config.campaign_id:
-            body["campaign_id"] = config.campaign_id
+            body["campaign"] = config.campaign_id
         if config.list_id:
             body["list_id"] = config.list_id
         if config.limit:
@@ -1648,7 +1688,7 @@ class InstantlyNode(WorkflowNode):
         if config.starting_after:
             body["starting_after"] = config.starting_after
         if config.email:
-            body["email"] = config.email
+            body["contacts"] = [config.email]
         return await self._make_request(
             "POST", "/leads/list", credentials, json_body=body, action_name="list_leads"
         )
@@ -1829,7 +1869,7 @@ class InstantlyNode(WorkflowNode):
             credentials,
             params={
                 "campaign_id": config.campaign_id,
-                "lead_email": config.lead_email,
+                "lead": config.lead_email,
                 "limit": config.limit,
             },
             action_name="list_emails",
@@ -1868,7 +1908,7 @@ class InstantlyNode(WorkflowNode):
     ) -> Dict[str, Any]:
         return await self._make_request(
             "GET",
-            "/emails/unread-count",
+            "/emails/unread/count",
             credentials,
             action_name="count_unread_emails",
         )
@@ -1878,11 +1918,8 @@ class InstantlyNode(WorkflowNode):
     ) -> Dict[str, Any]:
         return await self._make_request(
             "POST",
-            "/emails/thread/mark-read",
+            f"/emails/threads/{config.thread_id}/mark-as-read",
             credentials,
-            json_body={
-                "thread_id": config.thread_id,
-            },
             action_name="mark_email_thread_as_read",
         )
 
@@ -1895,9 +1932,10 @@ class InstantlyNode(WorkflowNode):
     ) -> Dict[str, Any]:
         return await self._make_request(
             "GET",
-            f"/campaigns/{config.campaign_id}/analytics",
+            "/campaigns/analytics",
             credentials,
             params={
+                "id": config.campaign_id,
                 "start_date": config.start_date,
                 "end_date": config.end_date,
             },
@@ -1922,14 +1960,10 @@ class InstantlyNode(WorkflowNode):
     async def _handle_get_warmup_analytics(
         self, config: InstantlyGetWarmupAnalyticsConfig, credentials
     ) -> Dict[str, Any]:
-        body: Dict[str, Any] = {"email": config.email}
-        if config.start_date:
-            body["start_date"] = config.start_date
-        if config.end_date:
-            body["end_date"] = config.end_date
+        body: Dict[str, Any] = {"emails": [config.email]}
         return await self._make_request(
             "POST",
-            "/warmup/analytics",
+            "/accounts/warmup-analytics",
             credentials,
             json_body=body,
             action_name="get_account_warmup_analytics",
