@@ -16,7 +16,7 @@ from nodes import printify_node as node
 from nodes.core import credential_connect, connection_evidence, run_op
 from nodes.core.registry import NODE_REGISTRY, NodeFactory
 from repositories.credential_approvals import CredentialApprovalRepo
-from utils import credentials, encryption, ssrf
+from utils import credentials, ssrf
 from wss.handlers import workflow_handler
 
 TOKEN = "fixture-printify-bearer-7de693"
@@ -47,7 +47,7 @@ def seams(monkeypatch):
         return state["row"]
     conn = SimpleNamespace(fetchrow=AsyncMock(side_effect=read))
     pool = Pool(conn)
-    monkeypatch.setattr(encryption, "get_encryption", lambda: SimpleNamespace(decrypt_credential=lambda _: deepcopy(state["blob"])))
+    monkeypatch.setattr(credentials, "get_encryption", lambda: SimpleNamespace(decrypt_credential=lambda _: deepcopy(state["blob"])))
     monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(return_value="fixture-org"))
     admission = AsyncMock(return_value=None)
     monkeypatch.setattr(CredentialApprovalRepo, "admit", admission)

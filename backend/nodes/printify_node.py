@@ -587,8 +587,10 @@ class PrintifyNode(WorkflowNode):
         return {"options": options[cursor:cursor + 100], "next_page_token": prefix + str(cursor + 100) if cursor + 100 < len(options) else None}
 
     async def execute(self, inputs: dict[str, Any]):
-        self._require_raw(self.node_data or {})
         if not isinstance(self.config, PrintifyNodeConfig) or self.config.credentials is None:
             raise ValueError("Connect a typed Printify token")
+        # Direct callers can supply the validated config separately from node_data.
+        # Still inspect any supplied raw fields before executing the typed model.
+        self._require_raw({"credentials": self.config.credentials.model_dump(), "config": self.config.config.model_dump(), **(self.node_data or {})})
         credential = await self.freshen_credential(self.config.credentials.model_dump(), pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id, credential_id=(self.node_data or {}).get("credential_id"), workflow_id=self.workflow_id, organization_id=self.organization_id)
         return {"status": "success", "action": self.config.config.operation, **await request_operation(credential, self.config.config)}

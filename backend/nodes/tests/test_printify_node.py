@@ -156,3 +156,23 @@ async def test_expired_supplied_oauth_has_zero_provider_calls(transport):
     with pytest.raises(ValueError, match="expired"):
         await node.request_operation({"credential_type": "printify_oauth_access_token", "access_token": TOKEN, "expires_at": "2020-01-01T00:00:00+00:00"}, node.ListShops())
     assert calls == []
+
+
+async def test_execute_accepts_separately_validated_config(transport):
+    calls, replies = transport
+    replies[("GET", "/v1/shops.json")] = [{"id": 5432, "title": "My new store", "sales_channel": "My Sales Channel"}]
+    config = node.PrintifyNodeConfig.model_validate({"credentials": CREDENTIAL, "config": {"operation": "list_shops"}})
+    instance = node.PrintifyNode(node_id="typed", node_type="automation-printify", node_data={}, config=config)
+    result = await instance.execute({})
+    assert result["data"]["items"][0]["id"] == "5432"
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize("raw", [{"credentials": {"credential_type": "slack_oauth", "access_token": TOKEN}}, {"config": {"operation": "list_shops", "url": "https://example.test"}}, {"headers": {"Authorization": "override"}}])
+async def test_separate_config_still_rejects_invalid_supplied_raw_fields(transport, raw):
+    calls, _ = transport
+    config = node.PrintifyNodeConfig.model_validate({"credentials": CREDENTIAL, "config": {"operation": "list_shops"}})
+    instance = node.PrintifyNode(node_id="typed", node_type="automation-printify", node_data=raw, config=config)
+    with pytest.raises(ValueError):
+        await instance.execute({})
+    assert calls == []
