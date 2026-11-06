@@ -58,6 +58,11 @@
             "auto_select_sole_option": true
           }
         },
+        "service_id": {
+          "description": "The service that owns the ClickPipe",
+          "title": "Service ID",
+          "type": "string"
+        },
         "definition": {
           "description": "JSON object describing the ClickPipe (name, source, destination, etc.)",
           "title": "ClickPipe Definition (JSON)",
@@ -67,6 +72,7 @@
       },
       "required": [
         "organization_id",
+        "service_id",
         "definition"
       ],
       "title": "ClickHouseCreateClickPipeConfig",
@@ -260,6 +266,17 @@
           "description": "Cloud region (e.g. us-east-1, eu-west-1)",
           "title": "Region",
           "type": "string"
+        },
+        "ip_access_list": {
+          "description": "IP access entries with source (IP or CIDR) and optional description. Empty denies public access.",
+          "items": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "title": "IP Access List",
+          "type": "array"
         }
       },
       "required": [
@@ -296,6 +313,11 @@
             "auto_select_sole_option": true
           }
         },
+        "service_id": {
+          "description": "The service that owns the ClickPipe",
+          "title": "Service ID",
+          "type": "string"
+        },
         "clickpipe_id": {
           "description": "The ClickPipe to delete",
           "title": "ClickPipe ID",
@@ -304,6 +326,7 @@
       },
       "required": [
         "organization_id",
+        "service_id",
         "clickpipe_id"
       ],
       "title": "ClickHouseDeleteClickPipeConfig",
@@ -574,6 +597,11 @@
             "auto_select_sole_option": true
           }
         },
+        "service_id": {
+          "description": "The service that owns the ClickPipe",
+          "title": "Service ID",
+          "type": "string"
+        },
         "clickpipe_id": {
           "description": "The ClickPipe to retrieve",
           "title": "ClickPipe ID",
@@ -582,6 +610,7 @@
       },
       "required": [
         "organization_id",
+        "service_id",
         "clickpipe_id"
       ],
       "title": "ClickHouseGetClickPipeConfig",
@@ -995,7 +1024,7 @@
       "type": "object"
     },
     "ClickHouseListClickPipesConfig": {
-      "description": "List ingestion pipelines (ClickPipes) for an organization.",
+      "description": "List ingestion pipelines (ClickPipes) for a service.",
       "properties": {
         "operation": {
           "const": "list_clickpipes",
@@ -1019,10 +1048,16 @@
             "searchable": true,
             "auto_select_sole_option": true
           }
+        },
+        "service_id": {
+          "description": "The service that owns the ClickPipe",
+          "title": "Service ID",
+          "type": "string"
         }
       },
       "required": [
-        "organization_id"
+        "organization_id",
+        "service_id"
       ],
       "title": "ClickHouseListClickPipesConfig",
       "type": "object"
@@ -1546,7 +1581,7 @@
       "type": "object"
     },
     "ClickHouseUpdateClickPipeStateConfig": {
-      "description": "Start, stop, or pause a ClickPipe.",
+      "description": "Start, stop, or resync a ClickPipe.",
       "properties": {
         "operation": {
           "const": "update_clickpipe_state",
@@ -1571,6 +1606,11 @@
             "auto_select_sole_option": true
           }
         },
+        "service_id": {
+          "description": "The service that owns the ClickPipe",
+          "title": "Service ID",
+          "type": "string"
+        },
         "clickpipe_id": {
           "description": "The ClickPipe to change state",
           "title": "ClickPipe ID",
@@ -1582,14 +1622,12 @@
           "enum": [
             "start",
             "stop",
-            "pause",
-            "resume"
+            "resync"
           ],
           "enumNames": [
             "Start",
             "Stop",
-            "Pause",
-            "Resume"
+            "Resync"
           ],
           "title": "Command",
           "type": "string",
@@ -1598,6 +1636,7 @@
       },
       "required": [
         "organization_id",
+        "service_id",
         "clickpipe_id"
       ],
       "title": "ClickHouseUpdateClickPipeStateConfig",
@@ -2033,6 +2072,12 @@
           "title": "Service ID",
           "type": "string"
         },
+        "roles": {
+          "default": "sql_console_read_only",
+          "description": "Comma-separated query endpoint roles: sql_console_admin, sql_console_read_only",
+          "title": "Allowed Roles",
+          "type": "string"
+        },
         "open_api_keys": {
           "anyOf": [
             {
@@ -2043,8 +2088,8 @@
             }
           ],
           "default": null,
-          "description": "Comma-separated API key roles allowed (e.g. sql_console_admin, sql_console_read_only)",
-          "title": "Allowed Roles"
+          "description": "Comma-separated API key IDs allowed to access the query endpoint",
+          "title": "API Keys"
         },
         "allowed_origins": {
           "anyOf": [

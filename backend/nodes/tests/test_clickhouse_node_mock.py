@@ -229,10 +229,12 @@ class TestClickHouseServicesMock:
         assert len(result["data"]) == 1
 
     @pytest.mark.asyncio
-    async def test_create_service(self, api_key_credentials):
+    @pytest.mark.parametrize("access_list", [[], [{"source": "192.0.2.0/24", "description": "Office"}]])
+    async def test_create_service(self, api_key_credentials, access_list):
         config = ClickHouseNodeConfig(
             config=ClickHouseCreateServiceConfig(
-                organization_id=ORG_ID, name="analytics", provider="aws", region="us-east-1"
+                organization_id=ORG_ID, name="analytics", provider="aws", region="us-east-1",
+                **({"ip_access_list": access_list} if access_list else {})
             ),
             credentials=api_key_credentials,
         )
@@ -244,6 +246,7 @@ class TestClickHouseServicesMock:
         assert result["status"] == "success"
         assert result["action"] == "create_service"
         assert capture["json"]["region"] == "us-east-1"
+        assert capture["json"]["ipAccessList"] == access_list
         assert capture["json"]["provider"] == "aws"
 
     @pytest.mark.asyncio
@@ -407,7 +410,8 @@ class TestClickHouseQueryEndpointsMock:
         config = ClickHouseNodeConfig(
             config=ClickHouseUpsertQueryEndpointConfig(
                 organization_id=ORG_ID, service_id=SERVICE_ID,
-                open_api_keys="sql_console_admin, sql_console_read_only",
+                roles="sql_console_admin, sql_console_read_only",
+                open_api_keys="key-1, key-2",
                 allowed_origins="https://app.example.com",
             ),
             credentials=api_key_credentials,
@@ -419,7 +423,11 @@ class TestClickHouseQueryEndpointsMock:
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "upsert_query_endpoint"
-        assert capture["json"]["openApiKeys"] == ["sql_console_admin", "sql_console_read_only"]
+        assert capture["json"] == {
+            "roles": ["sql_console_admin", "sql_console_read_only"],
+            "openApiKeys": ["key-1", "key-2"],
+            "allowedOrigins": "https://app.example.com",
+        }
         assert capture["method"] == "POST"
 
     @pytest.mark.asyncio
@@ -512,7 +520,7 @@ class TestClickHouseClickPipesMock:
     @pytest.mark.asyncio
     async def test_list_clickpipes(self, api_key_credentials):
         config = ClickHouseNodeConfig(
-            config=ClickHouseListClickPipesConfig(organization_id=ORG_ID),
+            config=ClickHouseListClickPipesConfig(organization_id=ORG_ID, service_id=SERVICE_ID),
             credentials=api_key_credentials,
         )
         node = create_clickhouse_node(config)
@@ -522,14 +530,14 @@ class TestClickHouseClickPipesMock:
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "list_clickpipes"
-        assert "/clickpipes" in capture["url"]
-        assert "services" not in capture["url"]
+        assert capture["url"] == f"https://api.clickhouse.cloud/v1/organizations/{ORG_ID}/services/{SERVICE_ID}/clickpipes"
+        assert capture["method"] == "GET"
 
     @pytest.mark.asyncio
     async def test_create_clickpipe(self, api_key_credentials):
         config = ClickHouseNodeConfig(
             config=ClickHouseCreateClickPipeConfig(
-                organization_id=ORG_ID,
+                organization_id=ORG_ID, service_id=SERVICE_ID,
                 definition='{"name": "kafka-pipe", "source": {"kafka": {}}}',
             ),
             credentials=api_key_credentials,
@@ -542,13 +550,13 @@ class TestClickHouseClickPipesMock:
         assert result["status"] == "success"
         assert result["action"] == "create_clickpipe"
         assert capture["json"]["name"] == "kafka-pipe"
-        assert "services" not in capture["url"]
+        assert capture["url"] == f"https://api.clickhouse.cloud/v1/organizations/{ORG_ID}/services/{SERVICE_ID}/clickpipes"
 
     @pytest.mark.asyncio
     async def test_create_clickpipe_invalid_json(self, api_key_credentials):
         config = ClickHouseNodeConfig(
             config=ClickHouseCreateClickPipeConfig(
-                organization_id=ORG_ID, definition="not json{"
+                organization_id=ORG_ID, service_id=SERVICE_ID, definition="not json{"
             ),
             credentials=api_key_credentials,
         )
@@ -563,7 +571,7 @@ class TestClickHouseClickPipesMock:
     async def test_update_clickpipe_state(self, api_key_credentials):
         config = ClickHouseNodeConfig(
             config=ClickHouseUpdateClickPipeStateConfig(
-                organization_id=ORG_ID, clickpipe_id="cp-1", command="pause"
+                organization_id=ORG_ID, service_id=SERVICE_ID, clickpipe_id="cp-1", command="resync"
             ),
             credentials=api_key_credentials,
         )
@@ -574,13 +582,13 @@ class TestClickHouseClickPipesMock:
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "update_clickpipe_state"
-        assert capture["json"]["command"] == "pause"
-        assert "services" not in capture["url"]
+        assert capture["json"]["command"] == "resync"
+        assert capture["url"] == f"https://api.clickhouse.cloud/v1/organizations/{ORG_ID}/services/{SERVICE_ID}/clickpipes/cp-1/state"
 
     @pytest.mark.asyncio
     async def test_get_clickpipe(self, api_key_credentials):
         config = ClickHouseNodeConfig(
-            config=ClickHouseGetClickPipeConfig(organization_id=ORG_ID, clickpipe_id="cp-1"),
+            config=ClickHouseGetClickPipeConfig(organization_id=ORG_ID, service_id=SERVICE_ID, clickpipe_id="cp-1"),
             credentials=api_key_credentials,
         )
         node = create_clickhouse_node(config)
@@ -591,12 +599,12 @@ class TestClickHouseClickPipesMock:
         assert result["status"] == "success"
         assert result["action"] == "get_clickpipe"
         assert result["data"]["id"] == "cp-1"
-        assert "services" not in capture["url"]
+        assert capture["url"] == f"https://api.clickhouse.cloud/v1/organizations/{ORG_ID}/services/{SERVICE_ID}/clickpipes/cp-1"
 
     @pytest.mark.asyncio
     async def test_delete_clickpipe(self, api_key_credentials):
         config = ClickHouseNodeConfig(
-            config=ClickHouseDeleteClickPipeConfig(organization_id=ORG_ID, clickpipe_id="cp-1"),
+            config=ClickHouseDeleteClickPipeConfig(organization_id=ORG_ID, service_id=SERVICE_ID, clickpipe_id="cp-1"),
             credentials=api_key_credentials,
         )
         node = create_clickhouse_node(config)
@@ -607,7 +615,7 @@ class TestClickHouseClickPipesMock:
         assert result["status"] == "success"
         assert result["action"] == "delete_clickpipe"
         assert capture["method"] == "DELETE"
-        assert "services" not in capture["url"]
+        assert capture["url"] == f"https://api.clickhouse.cloud/v1/organizations/{ORG_ID}/services/{SERVICE_ID}/clickpipes/cp-1"
 
 
 # ============================================================================
@@ -1082,3 +1090,26 @@ class TestClickHouseTriggerMock:
         assert node.trigger_produced_no_event({"new_count": 0, "items": []}) is True
         # Output with items should not suppress
         assert node.trigger_produced_no_event({"new_count": 2, "items": [{"id": "a1"}, {"id": "a2"}]}) is False
+
+
+@pytest.mark.asyncio
+async def test_query_endpoint_default_roles_and_empty_keys(api_key_credentials):
+    node = create_clickhouse_node(ClickHouseNodeConfig(
+        config=ClickHouseUpsertQueryEndpointConfig(organization_id=ORG_ID, service_id=SERVICE_ID),
+        credentials=api_key_credentials,
+    ))
+    capture = {}
+    with patch("nodes.clickhouse_node.httpx.AsyncClient", return_value=create_mock_client(200, _envelope({}), capture=capture)):
+        result = await node.execute({})
+    assert result["status"] == "success"
+    assert capture["json"] == {"roles": ["sql_console_read_only"], "openApiKeys": []}
+
+
+@pytest.mark.parametrize("command", ["pause", "resume"])
+def test_clickpipe_rejects_unsupported_commands(command):
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
+        ClickHouseUpdateClickPipeStateConfig(
+            organization_id=ORG_ID, service_id=SERVICE_ID, clickpipe_id="cp-1", command=command,
+        )

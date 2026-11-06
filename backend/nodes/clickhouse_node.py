@@ -7,7 +7,7 @@ Provides workflow integration with the ClickHouse Cloud control-plane API
 - Services: list, get, create, update, delete, change state, update scaling, update password
 - Query Endpoints: get, upsert, delete
 - Backups: list, get single, get/update backup configuration
-- ClickPipes: list, create, get, update state, delete (org-level path)
+- ClickPipes: list, create, get, update state, delete (service-level paths)
 - API Keys: list, create, delete
 - Members & Invitations: list/get/update members, remove member, list/create/get/delete invitations
 - Metrics: get Prometheus metrics
@@ -312,6 +312,11 @@ class ClickHouseCreateServiceConfig(BaseModel):
     region: str = Field(
         ..., title="Region", description="Cloud region (e.g. us-east-1, eu-west-1)"
     )
+    ip_access_list: List[Dict[str, str]] = Field(
+        default_factory=list,
+        title="IP Access List",
+        description="IP access entries with source (IP or CIDR) and optional description. Empty denies public access.",
+    )
 
 
 class ClickHouseGetServiceConfig(BaseModel):
@@ -605,10 +610,15 @@ class ClickHouseUpsertQueryEndpointConfig(BaseModel):
         },
     )
     service_id: str = Field(..., title="Service ID", description="The service to attach the endpoint to")
+    roles: str = Field(
+        "sql_console_read_only",
+        title="Allowed Roles",
+        description="Comma-separated query endpoint roles: sql_console_admin, sql_console_read_only",
+    )
     open_api_keys: Optional[str] = Field(
         None,
-        title="Allowed Roles",
-        description="Comma-separated API key roles allowed (e.g. sql_console_admin, sql_console_read_only)",
+        title="API Keys",
+        description="Comma-separated API key IDs allowed to access the query endpoint",
     )
     allowed_origins: Optional[str] = Field(
         None, title="Allowed Origins", description="Comma-separated allowed CORS origins"
@@ -728,7 +738,7 @@ class ClickHouseUpdateBackupConfigurationConfig(BaseModel):
 
 
 class ClickHouseListClickPipesConfig(BaseModel):
-    """List ingestion pipelines (ClickPipes) for an organization."""
+    """List ingestion pipelines (ClickPipes) for a service."""
 
     operation: Literal["list_clickpipes"] = Field(
         "list_clickpipes",
@@ -755,6 +765,7 @@ class ClickHouseListClickPipesConfig(BaseModel):
             }
         },
     )
+    service_id: str = Field(..., title="Service ID", description="The service that owns the ClickPipe")
 
 
 class ClickHouseCreateClickPipeConfig(BaseModel):
@@ -785,6 +796,7 @@ class ClickHouseCreateClickPipeConfig(BaseModel):
             }
         },
     )
+    service_id: str = Field(..., title="Service ID", description="The service that owns the ClickPipe")
     definition: str = Field(
         ...,
         title="ClickPipe Definition (JSON)",
@@ -794,7 +806,7 @@ class ClickHouseCreateClickPipeConfig(BaseModel):
 
 
 class ClickHouseUpdateClickPipeStateConfig(BaseModel):
-    """Start, stop, or pause a ClickPipe."""
+    """Start, stop, or resync a ClickPipe."""
 
     operation: Literal["update_clickpipe_state"] = Field(
         "update_clickpipe_state",
@@ -821,14 +833,15 @@ class ClickHouseUpdateClickPipeStateConfig(BaseModel):
             }
         },
     )
+    service_id: str = Field(..., title="Service ID", description="The service that owns the ClickPipe")
     clickpipe_id: str = Field(..., title="ClickPipe ID", description="The ClickPipe to change state")
-    command: str = Field(
+    command: Literal["start", "stop", "resync"] = Field(
         "start",
         title="Command",
         description="State change to apply",
         json_schema_extra={
-            "enum": ["start", "stop", "pause", "resume"],
-            "enumNames": ["Start", "Stop", "Pause", "Resume"],
+            "enum": ["start", "stop", "resync"],
+            "enumNames": ["Start", "Stop", "Resync"],
             "x-enum-searchable": True,
         },
     )
@@ -839,6 +852,7 @@ class ClickHouseGetClickPipeConfig(BaseModel):
 
     operation: Literal["get_clickpipe"] = Field("get_clickpipe", json_schema_extra={"const": "get_clickpipe", "ui:hidden": True, "x-category": "ClickPipes", "x-is-trigger": False, "x-display-name": "Get ClickPipe"}, title="Get ClickPipe")
     organization_id: str = Field(..., title="Organization", description="The organization the ClickPipe belongs to", json_schema_extra={"x-dynamic-options": {"field_name": "organization_id", "placeholder": "Select an organization...", "searchable": True, "allow_custom": True, "custom_placeholder": "Or paste organization ID"}})
+    service_id: str = Field(..., title="Service ID", description="The service that owns the ClickPipe")
     clickpipe_id: str = Field(..., title="ClickPipe ID", description="The ClickPipe to retrieve")
 
 
@@ -847,6 +861,7 @@ class ClickHouseDeleteClickPipeConfig(BaseModel):
 
     operation: Literal["delete_clickpipe"] = Field("delete_clickpipe", json_schema_extra={"const": "delete_clickpipe", "ui:hidden": True, "x-category": "ClickPipes", "x-is-trigger": False, "x-display-name": "Delete ClickPipe"}, title="Delete ClickPipe")
     organization_id: str = Field(..., title="Organization", description="The organization the ClickPipe belongs to", json_schema_extra={"x-dynamic-options": {"field_name": "organization_id", "placeholder": "Select an organization...", "searchable": True, "allow_custom": True, "custom_placeholder": "Or paste organization ID"}})
+    service_id: str = Field(..., title="Service ID", description="The service that owns the ClickPipe")
     clickpipe_id: str = Field(..., title="ClickPipe ID", description="The ClickPipe to delete")
 
 
@@ -1818,7 +1833,7 @@ class ClickHouseNode(WorkflowNode):
         )
 
     async def _create_service(self, c: ClickHouseCreateServiceConfig, key_id, key_secret) -> Dict[str, Any]:
-        body = {"name": c.name, "provider": c.provider, "region": c.region}
+        body = {"name": c.name, "provider": c.provider, "region": c.region, "ipAccessList": c.ip_access_list}
         return await _clickhouse_request(
             key_id, key_secret, "POST", f"/organizations/{c.organization_id}/services",
             json_body=body, action_name="create_service",
@@ -1904,11 +1919,12 @@ class ClickHouseNode(WorkflowNode):
         )
 
     async def _upsert_query_endpoint(self, c: ClickHouseUpsertQueryEndpointConfig, key_id, key_secret) -> Dict[str, Any]:
-        body: Dict[str, Any] = {}
-        if c.open_api_keys:
-            body["openApiKeys"] = _comma_list(c.open_api_keys)
+        body: Dict[str, Any] = {
+            "roles": _comma_list(c.roles),
+            "openApiKeys": _comma_list(c.open_api_keys) if c.open_api_keys else [],
+        }
         if c.allowed_origins:
-            body["allowedOrigins"] = _comma_list(c.allowed_origins)
+            body["allowedOrigins"] = c.allowed_origins
         return await _clickhouse_request(
             key_id, key_secret, "POST",
             f"/organizations/{c.organization_id}/services/{c.service_id}/serviceQueryEndpoint",
@@ -1963,7 +1979,7 @@ class ClickHouseNode(WorkflowNode):
     async def _list_clickpipes(self, c: ClickHouseListClickPipesConfig, key_id, key_secret) -> Dict[str, Any]:
         return await _clickhouse_request(
             key_id, key_secret, "GET",
-            f"/organizations/{c.organization_id}/clickpipes",
+            f"/organizations/{c.organization_id}/services/{c.service_id}/clickpipes",
             action_name="list_clickpipes",
         )
 
@@ -1981,28 +1997,28 @@ class ClickHouseNode(WorkflowNode):
             }
         return await _clickhouse_request(
             key_id, key_secret, "POST",
-            f"/organizations/{c.organization_id}/clickpipes",
+            f"/organizations/{c.organization_id}/services/{c.service_id}/clickpipes",
             json_body=definition, action_name="create_clickpipe",
         )
 
     async def _update_clickpipe_state(self, c: ClickHouseUpdateClickPipeStateConfig, key_id, key_secret) -> Dict[str, Any]:
         return await _clickhouse_request(
             key_id, key_secret, "PATCH",
-            f"/organizations/{c.organization_id}/clickpipes/{c.clickpipe_id}/state",
+            f"/organizations/{c.organization_id}/services/{c.service_id}/clickpipes/{c.clickpipe_id}/state",
             json_body={"command": c.command}, action_name="update_clickpipe_state",
         )
 
     async def _get_clickpipe(self, c: ClickHouseGetClickPipeConfig, key_id, key_secret) -> Dict[str, Any]:
         return await _clickhouse_request(
             key_id, key_secret, "GET",
-            f"/organizations/{c.organization_id}/clickpipes/{c.clickpipe_id}",
+            f"/organizations/{c.organization_id}/services/{c.service_id}/clickpipes/{c.clickpipe_id}",
             action_name="get_clickpipe",
         )
 
     async def _delete_clickpipe(self, c: ClickHouseDeleteClickPipeConfig, key_id, key_secret) -> Dict[str, Any]:
         return await _clickhouse_request(
             key_id, key_secret, "DELETE",
-            f"/organizations/{c.organization_id}/clickpipes/{c.clickpipe_id}",
+            f"/organizations/{c.organization_id}/services/{c.service_id}/clickpipes/{c.clickpipe_id}",
             action_name="delete_clickpipe",
         )
 
