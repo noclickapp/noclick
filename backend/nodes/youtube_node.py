@@ -4028,7 +4028,7 @@ class YouTubeNode(WorkflowNode):
             )
 
         # Upload thumbnail
-        upload_url = f"{YOUTUBE_API_BASE}/thumbnails/set"
+        upload_url = f"{YOUTUBE_UPLOAD_ORIGIN}/upload/youtube/v3/thumbnails/set"
         async with httpx.AsyncClient(timeout=60.0) as client:
             response = await client.post(
                 upload_url,

@@ -1233,6 +1233,15 @@ class TestThumbnailOperations:
 
         assert result["action"] == "set_video_thumbnail"
         assert result["video_id"] == "test_video_id"
+        mock_post.assert_awaited_once_with(
+            "https://www.googleapis.com/upload/youtube/v3/thumbnails/set",
+            params={"videoId": "test_video_id"},
+            headers={
+                "Authorization": "Bearer mock_access_token",
+                "Content-Type": "image/jpeg",
+            },
+            content=resolved.data,
+        )
 
 
 # ============================================================================
