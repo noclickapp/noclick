@@ -6,12 +6,11 @@ const state = vi.hoisted(() => ({ send: vi.fn(), connect: vi.fn() }));
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: state.send }));
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 vi.mock('~/hooks/useCredentialOAuth', () => ({ useCredentialOAuth: () => ({ availableCredentials: [], loading: false, loadCredentials: vi.fn(), initiateOAuth: state.connect, oauthConnecting: null }) }));
-vi.mock('~/hooks/useOrgContext', () => ({ useOrgContext: () => ({ orgId: null, orgs: [], isOrgAdmin: false }) }));
+vi.mock('~/hooks/useOrgContext', () => ({ useOrgContext: () => [{ id: null, role: null, subscription_tier: null, isPersonalWorkspace: true }, vi.fn()] }));
 vi.mock('~/components/workflow/OAuthCredentialForm', () => ({ OAuthCredentialForm: () => <div data-testid="oauth-route" /> }));
 vi.mock('~/components/credential/OAuthConnectForm', () => ({ OAuthConnectForm: () => <div data-testid="oauth-route" /> }));
 vi.mock('~/components/workflow/WhatsAppQRCredentialForm', () => ({ WhatsAppQRCredentialForm: () => null }));
 vi.mock('~/components/workflow/MCPCredentialForm', () => ({ MCPCredentialForm: () => null }));
-vi.mock('~/components/workflow/CredentialRequestActions', () => ({ CredentialRequestActions: () => null }));
 vi.mock('~/components/credential/PhoneNumberPurchaseForm', () => ({ PhoneNumberPurchaseForm: () => null }));
 vi.mock('~/components/shared/popups/DeleteConfirmPopup', () => ({ DeleteConfirmPopup: () => null }));
 vi.mock('~/components/shared/popups/ShareDialog', () => ({ ShareDialog: () => null }));
@@ -23,8 +22,9 @@ beforeEach(() => { state.send.mockClear(); state.connect.mockClear(); });
 afterEach(cleanup);
 
 it('mounts the native token family without OAuth', async () => {
-    const { container } = render(<NodeCredentials nodeType="automation-123formbuilder" onChange={vi.fn()} />);
-    await screen.findByText('Form Builder123 Token', { exact: true });
+    render(<NodeCredentials nodeType="automation-123formbuilder" onChange={vi.fn()} />);
+    const token = await screen.findByLabelText(/API v2 token/i);
+    expect(token.getAttribute('type')).toBe('password');
     expect(screen.queryByTestId('oauth-route')).toBeNull(); expect(state.connect).not.toHaveBeenCalled();
 });
 

@@ -4,6 +4,9 @@
     "agent": {},
     "alarm": {},
     "approval": {},
+    "automation-123formbuilder": {
+      "agentToolProvider": true
+    },
     "automation-affinity": {
       "agentToolProvider": true
     },
@@ -1428,9 +1431,6 @@
     "tool": {},
     "trigger-cron": {},
     "trigger-email": {},
-    "trigger-webhook": {},
-    "automation-123formbuilder": {
-      "agentToolProvider": true
-    }
+    "trigger-webhook": {}
   }
 }
