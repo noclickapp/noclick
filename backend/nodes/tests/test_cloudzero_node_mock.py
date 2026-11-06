@@ -4,7 +4,7 @@ import logging
 from dataclasses import replace
 from datetime import datetime, timezone
 from types import SimpleNamespace
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 import pytest
 from nodes import cloudzero_node as cn
 from nodes.core.registry import NodeFactory
@@ -175,10 +175,10 @@ async def test_current_row_type_over_blob_trusted_context_and_actual_stored_pick
     row = CredentialValidationRow(cn.FAMILIES[0], "owner", 2, STAMP, 1, None, "sealed")
     authority = AsyncMock(return_value=row); monkeypatch.setattr(cn, "_fetch_authority", authority)
     monkeypatch.setattr(encryption, "get_encryption", lambda: SimpleNamespace(decrypt_credential=lambda _: {**CREDS, "credential_type": "http_bearer", "owner_id": "forged"}))
-    fresh = await cn.CloudZeroNode.freshen_credential(CREDS, pool=pool, user_id="actor", credential_id="saved", organization_id="org", workflow_id="wf")
+    fresh = await cn.CloudZeroNode.freshen_credential(credential_data=CREDS, pool=pool, user_id="actor", credential_id="saved")
     assert fresh["credential_type"] == cn.FAMILIES[0] and fresh["owner_id"] == "owner" and fresh["token_version"] == 2 and fresh["approval_revision"] == 1
     context = cn._context(fresh, {"_user_id": "actor", "_approval_pool": "forged", "_credential_id": "forged"})
-    assert context["_approval_pool"] is pool and context["_credential_id"] == "saved" and context["_workflow_id"] == "wf"
+    assert context["_approval_pool"] is pool and context["_credential_id"] == "saved" and context["_workflow_id"] is None
     with pytest.raises(ValueError, match="actor"): cn._context(fresh, {"_user_id": "other"})
     monkeypatch.setattr(run_op, "resolve_operation_credential", AsyncMock(return_value=CREDS)); monkeypatch.setattr(CredentialApprovalRepo, "admit", AsyncMock(return_value=None))
     wire.responses.append(DIMENSIONS)
@@ -194,7 +194,9 @@ async def test_invalid_current_row_stops_before_decrypt_or_transport(monkeypatch
     if state == "revoked": row = replace(row, revoked_at=STAMP)
     if state == "foreign_family": row = replace(row, credential_type="http_bearer")
     monkeypatch.setattr(cn, "_fetch_authority", AsyncMock(return_value=row)); monkeypatch.setattr(encryption, "get_encryption", lambda: (_ for _ in ()).throw(AssertionError("No decrypt")))
-    with pytest.raises(ValueError): await cn.CloudZeroNode.freshen_credential(CREDS, pool=object(), user_id="actor", credential_id="saved", organization_id="org")
+    from wss.handlers import workflow_handler
+    monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(return_value="org"))
+    with pytest.raises(ValueError): await cn.CloudZeroNode.freshen_credential(CREDS, pool=MagicMock(), user_id="actor", credential_id="saved")
     assert wire.calls == []
 
 @pytest.mark.asyncio
