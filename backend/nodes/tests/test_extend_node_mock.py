@@ -192,6 +192,26 @@ async def test_operation_contract(cls, kw, method, path, body, params):
             assert (call["params"] or {}).get(k) == v, f"params[{k}] for {cls.__name__}: {call['params']}"
 
 
+@pytest.mark.parametrize("config_cls,kwargs", [
+    (E.ExtendCreateExtractRunConfig, {"file_id": "file_123"}),
+    (E.ExtendCreateClassifyRunConfig, {"file_id": "file_123"}),
+    (E.ExtendCreateSplitRunConfig, {"file_id": "file_123"}),
+    (E.ExtendCreateWorkflowRunConfig, {"workflow_id": "wf_123", "file_id": "file_123"}),
+    (E.ExtendBatchParseRunsConfig, {"inputs": '[{"file":{"id":"file_123"}}]'}),
+    (E.ExtendBatchExtractRunsConfig, {"extractor_id": "ex_123", "inputs": '[{"file":{"id":"file_123"}}]'}),
+    (E.ExtendBatchClassifyRunsConfig, {"classifier_id": "cl_123", "inputs": '[{"file":{"id":"file_123"}}]'}),
+    (E.ExtendBatchSplitRunsConfig, {"splitter_id": "spl_123", "inputs": '[{"file":{"id":"file_123"}}]'}),
+    (E.ExtendBatchWorkflowRunsConfig, {"workflow_id": "wf_123", "inputs": '[{"file":{"id":"file_123"}}]'}),
+])
+@pytest.mark.parametrize("priority", ["1", "50", "100"])
+@pytest.mark.asyncio
+async def test_run_priority_is_serialized_as_integer(config_cls, kwargs, priority):
+    # Extend's RunPriority schema is an integer; config text must not reach JSON.
+    call = await run_op(config_cls(**kwargs, priority=priority))
+    assert type(call["body"]["priority"]) is int
+    assert call["body"]["priority"] == int(priority)
+
+
 def test_every_operation_has_a_case():
     """Guard: every non-trigger operation is covered by a contract case."""
     import typing

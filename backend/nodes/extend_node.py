@@ -1562,7 +1562,7 @@ class ExtendNode(ExternalWebhookTriggerMixin, WorkflowNode):
             if hasattr(c, k):
                 body[k] = self._jl(getattr(c, k))
         if getattr(c, "priority", None):
-            body["priority"] = c.priority
+            body["priority"] = int(c.priority)
         return await self._req(api_key, ws, "POST", f"/{resource}", body=body, action=action)
 
     async def _batch_runs(self, c, api_key, ws, resource, action, processor_key=None, processor_field=None):
@@ -1572,7 +1572,7 @@ class ExtendNode(ExternalWebhookTriggerMixin, WorkflowNode):
         if getattr(c, "config", None) is not None:
             body["config"] = self._jl(c.config)
         if getattr(c, "priority", None):
-            body["priority"] = c.priority
+            body["priority"] = int(c.priority)
         return await self._req(api_key, ws, "POST", f"/{resource}/batch", body=body, action=action)
 
     # Parse runs
@@ -1804,7 +1804,7 @@ class ExtendNode(ExternalWebhookTriggerMixin, WorkflowNode):
                 "outputs": self._jl(c.outputs), "metadata": self._jl(c.metadata),
                 "secrets": self._jl(c.secrets)}
         if c.priority:
-            body["priority"] = c.priority
+            body["priority"] = int(c.priority)
         return await self._req(api_key, ws, "POST", "/workflow_runs", body=body, action="create_workflow_run")
 
     async def _get_workflow_run(self, c, api_key, ws):
