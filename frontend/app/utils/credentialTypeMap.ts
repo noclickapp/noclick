@@ -90,6 +90,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Auth0
     'Auth0TokenCredential': 'auth0_token',
     'Auth0 Token': 'auth0_token',
+    'EtsyTokenCredential': 'etsy_token',
 
     // Apollo
     'ApolloAPIKeyCredential': 'apollo_api_key',
