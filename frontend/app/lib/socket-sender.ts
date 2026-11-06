@@ -168,7 +168,7 @@ export function sendEventWithCallback<
     profilingStore.endEvent(
       requestId,
       !hasError,
-      hasError ? (data as any).error : undefined,
+      hasError ? String((data as any).error) : undefined,
       data // Store response data
     );
     callback(data);
@@ -176,7 +176,7 @@ export function sendEventWithCallback<
 
   registerRequestCallback(requestId, (data) => {
     wrappedCallback(data as ResolvedResponse<T, E>);
-  }, event.event_name as string);
+  });
 
   // Send event
   sendEvent(eventWithId, env);

@@ -20,6 +20,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['trigger-email', 'InboundEmailTriggerNode'],
     ['trigger-cron', 'CronTriggerNode'],
     ['interface-form', 'interface/InterfaceFormNode'],
+    ['automation-porkbun', 'PorkbunNode'],
     ['automation-telegram', 'TelegramNode'],
     ['automation-google-sheets', 'GoogleSheetsNode'],
     ['automation-google-drive', 'GoogleDriveNode'],

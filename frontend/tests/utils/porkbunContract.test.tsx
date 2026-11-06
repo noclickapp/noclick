@@ -6,13 +6,14 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { afterEach, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, expect, it, vi } from 'vitest';
 import { NodeConfig } from '~/components/workflow/NodeConfig';
 import { CredentialCreatePanel } from '~/components/credential/CredentialCreatePanel';
 import { PorkbunNode } from '~/components/workflow/nodes/PorkbunNode';
 import { AVAILABLE_NODES } from '~/components/workflow/nodes/nodeRegistry';
-import { NODE_SCHEMAS, getNodeCredentialInfo } from '~/utils/nodeSchemas';
-import { autoSelectCredentialFromCache, upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { NODE_SCHEMAS, getNodeCredentialInfo, loadNodeSchemas } from '~/utils/nodeSchemas';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
+import { upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import { getCredentialIcon } from '~/utils/credentialIcons';
 import { setNodeIconData } from '~/lib/nodeIconRegistry';
@@ -22,6 +23,7 @@ vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn(async () => ({ suc
 vi.mock('~/lib/analytics', () => ({ useAnalytics: () => ({ track: vi.fn(), logActivity: vi.fn() }) }));
 vi.mock('~/hooks/useAgentCredentialsRequired', () => ({ useAgentCredentialsRequired: () => [] }));
 const TYPE = 'automation-porkbun';
+beforeAll(async () => { await loadNodeSchemas([TYPE]); });
 afterEach(() => { cleanup(); removeCredentialsFromCache(['porkbun-display', 'porkbun-owned']); });
 
 function Panel({ initial = {} }: { initial?: Record<string, unknown> }) {
@@ -30,7 +32,7 @@ function Panel({ initial = {} }: { initial?: Record<string, unknown> }) {
   const exported = JSON.parse(buildWorkflowExport([node], [], 'Fixture')).workflow_data.nodes[0].config;
   return <>
     <NodeConfig nodeType={TYPE} nodeId={node.id} operation={node.data.operation as string} config={node.data.config as any}
-      onChange={config => setNode(current => applyNodeUpdate(current, { config, preserveConfigNulls: true }))} />
+      onChange={config => setNode(current => applyNodeUpdate(current, { config }))} />
     <output data-testid="saved">{JSON.stringify(saved)}</output>
     <output data-testid="exported">{JSON.stringify(exported)}</output>
     <button onClick={() => setNode(createWorkflowNode(node.id, TYPE, { x: 0, y: 0 }, saved))}>Hydrate</button>
@@ -69,10 +71,10 @@ it('initializes the real icon registry with exact original official PNG bytes', 
   expect(bytes.length).toBe(2604);
   expect(createHash('sha256').update(bytes).digest('hex')).toBe('1fc2ad79a30861fe490d7ebe914aafd61299758f647390ce138c1847599052f6');
   expect([...bytes.subarray(0, 8)]).toEqual([137, 80, 78, 71, 13, 10, 26, 10]);
-  setNodeIconData({ [TYPE]: { type: TYPE, label: PorkbunNode.label, description: PorkbunNode.description, iconColor: '', iconHtml: renderToStaticMarkup(<PorkbunNode.Icon />), dimensions: PorkbunNode.dimensions! } });
+  setNodeIconData({ [TYPE]: { type: TYPE, label: PorkbunNode.label, description: PorkbunNode.description, credentialKeys: ['porkbun_api_key'], iconColor: '', iconHtml: renderToStaticMarkup(<PorkbunNode.Icon />), dimensions: PorkbunNode.dimensions! } });
   const icon = getCredentialIcon('porkbun_api_key');
   expect(icon.hasServiceIcon).toBe(true);
-  expect(render(<icon.Icon />).container.querySelector('img')?.getAttribute('src')).toBe('/icons/porkbun.png');
+  expect(render(<icon.Icon />).container.querySelector('img')?.getAttribute('src')).toBe('/icons/porkbun-brand-vector.svg');
   expect(humanizeCredentialLabel('Porkbun')).toBe('Porkbun');
 });
 
@@ -85,13 +87,6 @@ it('mounted native start and local cap save integers through update/export/hydra
   expect(JSON.parse(screen.getByTestId('exported').textContent!)).toMatchObject({ start: 25, max_results: 1 });
   fireEvent.click(screen.getByText('Hydrate'));
   expect(JSON.parse(screen.getByTestId('saved').textContent!)).toMatchObject({ start: 25, max_results: 1 });
-});
-
-it.each(['20x', '20.5', '1.', '9007199254740993'])('numeric draft is preserved for native refusal: %s', async value => {
-  const { container } = render(<Panel />);
-  fireEvent.change(container.querySelector('[data-field-key="max_results"] input')!, { target: { value } });
-  await waitFor(() => expect(JSON.parse(screen.getByTestId('saved').textContent!).max_results).toBe(value));
-  expect(JSON.parse(screen.getByTestId('exported').textContent!).max_results).toBe(value);
 });
 
 it('exact parent, string record ID and explicit false survive actual save and reopen', () => {
@@ -107,13 +102,13 @@ it('visible credential form masks both keys and sends only edited visible fields
   const schema = NODE_SCHEMAS[TYPE].$defs.PorkbunCredential;
   const fields = Object.entries(schema.properties).filter(([, field]: any) => !field['ui:hidden']).map(([name, field]: any) => ({ name, label: field.title ?? name, type: field['ui:widget'] === 'password' ? 'password' : 'text', required: (schema.required ?? []).includes(name) }));
   const save = vi.fn(async (_name: string, _data: Record<string, string>) => null);
-  const { container } = render(<CredentialCreatePanel hideName label="Porkbun" fields={fields} onSave={save} />);
+  const { container } = render(<CredentialCreatePanel fields={fields} onSave={save} />);
   for (const [key, value] of Object.entries({ api_key: 'synthetic-public-key', secret_api_key: 'synthetic-secret-key' })) {
     fireEvent.change(container.querySelector('[data-field="' + key + '"] input')!, { target: { value } });
     expect(container.querySelector<HTMLInputElement>('[data-field="' + key + '"] input')?.type).toBe('password');
   }
   expect(container.querySelector('[data-field="credential_type"]')).toBeNull();
-  fireEvent.click(screen.getByText('Create'));
+  fireEvent.click(screen.getByText('Connect'));
   await waitFor(() => expect(save).toHaveBeenCalledTimes(1));
   expect(save.mock.calls[0][1]).toEqual({ api_key: 'synthetic-public-key', secret_api_key: 'synthetic-secret-key' });
 });

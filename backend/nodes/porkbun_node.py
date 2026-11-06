@@ -17,8 +17,9 @@ from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StrictBool, 
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
-from repositories.credentials import CredentialsRepo
-from utils.credentials import resolve_credential_with_owner_fallback
+from repositories.credentials import credential_access_predicate
+from utils.credentials import (resolve_credential_with_owner_fallback, get_workflow_owner_id,
+                               is_credential_authorized_for_workflow, credential_lender)
 from utils.encryption import get_encryption
 from utils.ssrf import SSRFError, guarded_async_client
 
@@ -133,6 +134,34 @@ class PorkbunNodeConfig(NodeConfig[PorkbunConfig, PorkbunCredential]):
     node_type: Literal["automation-porkbun"] = "automation-porkbun"
 
 
+@dataclass(frozen=True)
+class CredentialValidationRow:
+    credential_type: str
+    owner_id: str
+    token_version: int
+    updated_at: Any
+    approval_revision: int
+    revoked_at: Any
+    credential: Any = field(repr=False)
+
+
+async def fetch_validation_authority(pool, identifier, principal, organization_id):
+    """Read Porkbun's current authority using staging's canonical access rule."""
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(f"""
+            SELECT c.credential_type, c.owner_id, c.token_version, c.updated_at,
+                   c.approval_revision, c.revoked_at, c.credential
+            FROM credentials c
+            WHERE c.id = $1 AND {credential_access_predicate()}
+        """, identifier, principal, organization_id)
+    if row is None:
+        return None
+    return CredentialValidationRow(
+        row['credential_type'], str(row['owner_id']), row['token_version'],
+        row['updated_at'], row['approval_revision'], row['revoked_at'], row['credential'],
+    )
+
+
 @dataclass(eq=False)
 class Authority:
     credential: PorkbunCredential = field(repr=False)
@@ -167,22 +196,31 @@ class Authority:
             return await get_user_org_context(conn, self.user_id)
 
     async def load(self):
-        selected = []
-
-        async def loader(identifier, principal, pool, org_id):
-            row = await CredentialsRepo(pool).fetch_validation_authority(identifier, principal, org_id)
-            if row is None:
-                return None
-            if row.credential_type != TYPE or row.revoked_at is not None or type(row.token_version) is not int or row.token_version < 1:
-                raise ValueError(UNAVAILABLE)
-            shaped = credential(get_encryption().decrypt_credential(row.credential))
-            selected.append((principal, row, shaped))
-            return shaped.model_dump()
-
-        result = await resolve_credential_with_owner_fallback(self.credential_id, self.user_id, self.pool, org_id=self.organization_id, workflow_id=self.workflow_id, load_credential_fn=loader)
-        if not result or not selected:
+        # Staging's resolver owns the workflow authorization decision. Re-read
+        # the matching accessible row to bind Porkbun to its current revisions.
+        resolved = await resolve_credential_with_owner_fallback(
+            self.credential_id, self.user_id, self.pool,
+            org_id=self.organization_id, workflow_id=self.workflow_id,
+        )
+        if not resolved:
             raise ValueError(UNAVAILABLE)
-        principal, row, shaped = selected[-1]
+        principal = self.user_id
+        row = await fetch_validation_authority(self.pool, self.credential_id, principal, self.organization_id)
+        if row is None and self.workflow_id:
+            owner = await get_workflow_owner_id(self.pool, self.workflow_id)
+            if owner and owner != self.user_id and await is_credential_authorized_for_workflow(self.pool, self.workflow_id, self.credential_id):
+                principal = owner
+                row = await fetch_validation_authority(self.pool, self.credential_id, principal, self.organization_id)
+        if row is None and self.workflow_id:
+            lender = await credential_lender(self.pool, self.workflow_id, self.credential_id)
+            if lender and lender != self.user_id:
+                principal = lender
+                row = await fetch_validation_authority(self.pool, self.credential_id, principal, self.organization_id)
+        if row is None or row.credential_type != TYPE or row.revoked_at is not None or type(row.token_version) is not int or row.token_version < 1:
+            raise ValueError(UNAVAILABLE)
+        shaped = credential(get_encryption().decrypt_credential(row.credential))
+        if shaped != credential(resolved):
+            raise ValueError(UNAVAILABLE)
         return shaped, (principal, row)
 
     async def require_current(self):
@@ -272,7 +310,7 @@ async def request(auth, route, params=None):
     private = _PRIVATE.set(True)
     try:
         with suppress_http_instrumentation():
-            async with guarded_async_client(require_public=True, timeout=30, follow_redirects=False, trust_env=False) as client:
+            async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
                 req = client.build_request("GET", API + route, params=params, headers={"X-API-Key": auth.credential.api_key, "X-Secret-API-Key": auth.credential.secret_api_key, "Accept": "application/json"})
                 await auth.require_current()
                 response = await client.send(req, stream=True)

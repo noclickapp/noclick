@@ -1,5 +1,4 @@
-// Native metadata reads with the unchanged PNG linked by Porkbun's official guide.
-import { ComponentProps } from 'react';
+// Native metadata reads with Porkbun's official vector brand artwork.
 import AutomationNode from './base/AutomationNode';
 import { NodeDefinition } from './types';
 import type { CSSProperties as BrandCSSProperties } from 'react';
@@ -9,9 +8,6 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
-const Icon = ({ className, style }: ComponentProps<'svg'>) => (
-  <img src="/icons/porkbun.png" alt="" className={className} style={style} />
-);
 export const PorkbunNode: NodeDefinition = {
   type: 'automation-porkbun',
   label: 'Porkbun',

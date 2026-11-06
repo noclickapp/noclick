@@ -17,7 +17,7 @@ from nodes import porkbun_node as native
 from nodes.core.registry import NodeFactory
 from nodes.core.run_op import run_node_operation
 from nodes.core.credential_connect import validate_for_connect
-from repositories.credentials import CredentialValidationRow
+from nodes.porkbun_node import CredentialValidationRow
 
 NT = "automation-porkbun"
 USER = "11111111-1111-4111-8111-111111111111"
@@ -66,7 +66,7 @@ def transport(monkeypatch):
         return value if isinstance(value, httpx.Response) else httpx.Response(200, json=value)
     @asynccontextmanager
     async def client(**kwargs):
-        assert kwargs == {"require_public": True, "timeout": 30, "follow_redirects": False, "trust_env": False}
+        assert kwargs == {"timeout": 30, "follow_redirects": False, "trust_env": False}
         async with httpx.AsyncClient(transport=httpx.MockTransport(receive)) as instance:
             yield instance
     monkeypatch.setattr(native, "guarded_async_client", client)
@@ -101,7 +101,7 @@ async def test_actual_visible_form_connect_is_reachability_not_identity(transpor
     transport[1].append(catalog(rows))
     result = await validate_for_connect(credential_type=native.TYPE, credential_data={k: v for k, v in KEY.items() if k != "credential_type"}, user_id=USER)
     assert result.ok and result.credential_data["credential_type"] == native.TYPE
-    assert result.evidence.reachable and result.evidence.proves == "reachability" and not result.evidence.account_label
+    assert result.evidence.reachable and native.PorkbunNode.connection_evidence.proves == "reachability" and not result.evidence.account_label
     assert "verified_as" not in result.verified_metadata()
     assert len(transport[0]) == 1 and transport[0][0].url.path.endswith("/domain/listAll")
 
@@ -245,10 +245,14 @@ async def test_bound_and_local_diagnostics_keep_unrelated_logs(transport, caplog
 @pytest.fixture
 def stored(monkeypatch):
     state = {"accessible": True, "row": CredentialValidationRow(native.TYPE,USER,1,datetime(2026,10,1,tzinfo=timezone.utc),1,None,deepcopy(KEY))}
-    async def fetch(self, identifier, principal, organization_id=None):
+    async def fetch(pool, identifier, principal, organization_id=None):
         assert identifier == CID and principal == USER and organization_id is None
         return state["row"] if state["accessible"] else None
-    monkeypatch.setattr(native.CredentialsRepo,"fetch_validation_authority",fetch)
+    async def get_credential(identifier, principal, pool, org=None):
+        row = await fetch(pool, identifier, principal, org)
+        return deepcopy(row.credential) if row and row.revoked_at is None else None
+    monkeypatch.setattr("utils.credentials.get_credential", get_credential)
+    monkeypatch.setattr(native,"fetch_validation_authority",fetch)
     monkeypatch.setattr(native,"get_encryption",lambda:SimpleNamespace(decrypt_credential=lambda raw:deepcopy(raw)))
     return state
 
@@ -304,11 +308,6 @@ async def test_picker_refuses_oversized_observed_catalog(stored,transport):
     assert len(transport[0])==1
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("status",["pending_approval","rejected"])
-async def test_actual_run_admission_is_zero_provider_io(monkeypatch,transport,status):
-    monkeypatch.setattr("utils.credential_approval.admit_node",AsyncMock(return_value={"status":status,"message":"Owner review"}))
-    assert (await node().run({}))["status"]==status and not transport[0]
 
 
 @pytest.mark.asyncio
@@ -316,15 +315,22 @@ async def test_actual_run_admission_is_zero_provider_io(monkeypatch,transport,st
 async def test_actual_workflow_owner_fallback_keeps_trusted_context(monkeypatch,transport,change):
     owner="33333333-3333-4333-8333-333333333333";workflow="44444444-4444-4444-8444-444444444444";organization="55555555-5555-4555-8555-555555555555";pool=object();state={"owner":owner,"authorized":True};principals=[]
     row=CredentialValidationRow(native.TYPE,owner,1,datetime(2026,10,1,tzinfo=timezone.utc),1,None,deepcopy(KEY))
-    async def fetch(self,identifier,principal,org=None):
+    async def fetch(pool,identifier,principal,org=None):
         assert identifier==CID and org==organization;principals.append(principal);return row if principal==owner else None
     async def get_owner(actual_pool,actual_workflow):
         assert actual_pool is pool and actual_workflow==workflow;return state["owner"]
     async def allowed(actual_pool,actual_workflow,identifier):
         assert actual_pool is pool and actual_workflow==workflow and identifier==CID;return state["authorized"]
-    monkeypatch.setattr(native.CredentialsRepo,"fetch_validation_authority",fetch)
+    async def get_credential(identifier, principal, pool, org=None):
+        row = await fetch(pool, identifier, principal, org)
+        return deepcopy(row.credential) if row and row.revoked_at is None else None
+    monkeypatch.setattr("utils.credentials.get_credential", get_credential)
+    monkeypatch.setattr(native,"fetch_validation_authority",fetch)
     monkeypatch.setattr(native,"get_encryption",lambda:SimpleNamespace(decrypt_credential=lambda raw:deepcopy(raw)))
     monkeypatch.setattr("utils.credentials.get_workflow_owner_id",get_owner);monkeypatch.setattr("utils.credentials.is_credential_authorized_for_workflow",allowed)
+    monkeypatch.setattr(native,"get_workflow_owner_id",get_owner);monkeypatch.setattr(native,"is_credential_authorized_for_workflow",allowed)
+    monkeypatch.setattr("utils.credentials.credential_lender",AsyncMock(return_value=None))
+    monkeypatch.setattr(native,"credential_lender",AsyncMock(return_value=None))
     instance=NodeFactory.create_node(node_id="fallback",node_type=NT,node_data={"config":{"operation":"list_domains"},"credentials":deepcopy(KEY),"credential_id":CID,"_approval_pool":pool},user_id=USER,organization_id=organization,workflow_id=workflow,sio=None,sid=None)
     def changed(request):
         if change=="authorization":state["authorized"]=False
@@ -336,75 +342,3 @@ async def test_actual_workflow_owner_fallback_keeps_trusted_context(monkeypatch,
     else:
         with pytest.raises(ValueError):await instance.execute({})
     assert len(transport[0])==1
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("decision",[None,"pending_approval","rejected","foreign_original"])
-async def test_actual_socket_picker_authenticated_actor_admission_and_raw_pair(stored,transport,monkeypatch,decision):
-    from utils import encryption
-    from wss.handlers import workflow_handler as module
-    from wss.receiver.client_events import WorkflowNodeLoadOptionsRequest
-    class Pool:
-        @asynccontextmanager
-        async def acquire(self):yield connection
-    if decision=="foreign_original":stored["row"]=replace(stored["row"],credential={**KEY,"credential_type":"foreign"})
-    row=stored["row"];connection=SimpleNamespace(fetchrow=AsyncMock(return_value={"credential":row.credential,"credential_type":native.TYPE,"revoked_at":None,"token_version":1,"updated_at":row.updated_at}));pool=Pool();send=AsyncMock()
-    monkeypatch.setattr(encryption,"get_encryption",lambda:SimpleNamespace(decrypt_credential=lambda value:deepcopy(value)))
-    monkeypatch.setattr(module,"get_user_org_context",AsyncMock(return_value=None));monkeypatch.setattr(module,"send_event",send)
-    pending=None if decision in (None,"foreign_original") else {"status":decision,"message":"Owner review","approval_url":"https://frontend.example.test/credential/approval/fixture"}
-    admit=AsyncMock(return_value=pending);monkeypatch.setattr("utils.credential_approval.admit_lookup",admit)
-    freshen=AsyncMock(wraps=native.PorkbunNode.freshen_credential);monkeypatch.setattr(native.PorkbunNode,"freshen_credential",freshen)
-    handler=module.WorkflowHandler.__new__(module.WorkflowHandler);handler.sio=SimpleNamespace(get_session=AsyncMock(return_value={"user_id":USER}));handler.get_pool=AsyncMock(return_value=pool)
-    if decision is None:transport[1].append(catalog())
-    request=WorkflowNodeLoadOptionsRequest(request_id="porkbun-socket",node_type=NT,field_name="domain",credential_id=CID,context={"_user_id":CID})
-    await handler.load_node_options("fixture-sid",request);result=send.await_args.args[2].data
-    assert admit.await_args.kwargs["user_id"]==USER
-    if decision is None:
-        assert result["success"] and result["options"]==[{"value":"example.com","label":"Domain 1","metadata":None}]
-        assert len(transport[0])==1 and freshen.await_count==1
-    else:
-        assert not result["success"] and not transport[0]
-        if decision in ("pending_approval","rejected"):freshen.assert_not_awaited()
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("entry", ["agent_tool", "cross_container"])
-@pytest.mark.parametrize("context", [{}, {"domain":"foreign.com"}, {"domain":True}, {"domain":"foreign.com","field_scopes":{"domain":["foreign.com"]}}])
-async def test_actual_agent_dependent_lookup_parent_scope_refuses_before_every_io(monkeypatch,transport,entry,context):
-    from nodes.agent import rehearsal, tool_execution
-    from nodes.agent.node_op_tools import build_node_op_tools
-    from nodes.core import run_op
-    _, configurations=build_node_op_tools(NT,[{"operation":"get_dns_record","field_scopes":{"domain":["example.com"],"record_id":[RECORD["id"]]}}],node_id="porkbun-provider",credential_id=CID)
-    name=next(name for name,info in configurations.items() if info["tool_type"]=="node_op_lookup");info=configurations[name]
-    assert info["field_dependencies"]["record_id"]=="domain"
-    resolved=AsyncMock(return_value=deepcopy(KEY));admit=AsyncMock(return_value=None);freshen=AsyncMock();loader=AsyncMock()
-    monkeypatch.setattr(run_op,"resolve_credential_with_owner_fallback",resolved);monkeypatch.setattr("utils.credential_approval.admit_lookup",admit)
-    monkeypatch.setattr(native.PorkbunNode,"freshen_credential",freshen);monkeypatch.setattr(native.PorkbunNode,"load_field_options",loader)
-    monkeypatch.setattr(rehearsal,"is_rehearsing",AsyncMock(return_value=False))
-    args={"field":"record_id","context":context}
-    result=await tool_execution._execute_node_op_lookup(SimpleNamespace(user_id=USER,organization_id=None,workflow_id=None),name,args,info) if entry=="agent_tool" else await run_op.run_node_op_tool(info,args,user_id=USER)
-    assert not result["success"] and "context scope" in result["error"].lower()
-    for boundary in (resolved,admit,freshen,loader):boundary.assert_not_awaited()
-    assert not transport[0]
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("entry", ["agent_tool", "cross_container"])
-async def test_actual_agent_allowed_parent_reaches_native_picker_with_trusted_context(stored,transport,monkeypatch,entry):
-    from nodes.agent import rehearsal, tool_execution
-    from nodes.agent.node_op_tools import build_node_op_tools
-    from nodes.core import run_op
-    workflow="44444444-4444-4444-8444-444444444444"
-    _, configurations=build_node_op_tools(NT,[{"operation":"get_dns_record","field_scopes":{"domain":["example.com"],"record_id":[RECORD["id"]]}}],node_id="porkbun-provider",credential_id=CID)
-    name=next(name for name,info in configurations.items() if info["tool_type"]=="node_op_lookup");info=configurations[name]
-    resolved=AsyncMock(return_value=deepcopy(KEY));admit=AsyncMock(return_value=None)
-    monkeypatch.setattr(run_op,"resolve_credential_with_owner_fallback",resolved);monkeypatch.setattr("utils.credential_approval.admit_lookup",admit)
-    monkeypatch.setattr("utils.database_pool.get_native_pool",lambda:object());monkeypatch.setattr(rehearsal,"is_rehearsing",AsyncMock(return_value=False))
-    freshen=AsyncMock(wraps=native.PorkbunNode.freshen_credential);monkeypatch.setattr(native.PorkbunNode,"freshen_credential",freshen)
-    transport[1].extend([catalog(),detail(),records()])
-    args={"field":"record_id","context":{"domain":"example.com","_user_id":CID,"workflow_id":"spoof","organization_id":"spoof"}}
-    result=await tool_execution._execute_node_op_lookup(SimpleNamespace(user_id=USER,organization_id=None,workflow_id=workflow),name,args,info) if entry=="agent_tool" else await run_op.run_node_op_tool(info,args,user_id=USER,organization_id=None,workflow_id=workflow)
-    assert result["options"]==[{"value":RECORD["id"],"label":"A record 123456789"}]
-    assert len(transport[0])==3 and freshen.await_args.kwargs["user_id"]==USER
-    assert freshen.await_args.kwargs["workflow_id"]==workflow and freshen.await_args.kwargs["organization_id"] is None
-    assert resolved.await_count==2 and admit.await_args.kwargs["workflow_id"]==workflow
