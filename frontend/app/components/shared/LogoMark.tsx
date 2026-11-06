@@ -5,8 +5,9 @@
 import { cn } from '~/lib/utils';
 
 /** The mark's weight sits up and left of its box (the solid arrow), so set in a circle or a tile it reads off-centre.
- *  This moves it by its ink's offset from the middle, as a share of its own size (measured from /logo.svg). */
-export const MARK_IN_A_SHAPE = 'translate-x-[6.4%] translate-y-[6.3%]';
+ *  This moves it halfway from its box's middle to its ink's, as a share of its own size: the whole way (6.4%) reads
+ *  low and right at small sizes, and none high and left (compared at 18px, 38px and 180px). */
+export const MARK_IN_A_SHAPE = 'translate-x-[3.2%] translate-y-[3.2%]';
 
 export function LogoMark({
     className,
