@@ -49,6 +49,7 @@ def test_actual_factory_native_schema_and_raw_types():
     assert AprimoNode.parse_config(config_data=config_data).config.operation == "get_classification"
     assert AprimoNode.validate_config(config_data=config_data)["valid"] is True
     schema = AprimoNode.get_config_schema()
+    assert "x-credential-type" not in schema["$defs"]["AprimoBearerCredential"]
     actual = {v["properties"]["operation"]["const"] for v in schema["$defs"].values() if "operation" in v.get("properties", {})}
     assert actual == set(OPERATIONS) and len(actual) == 8
     for args in ({"take": True}, {"skip": "0"}, {"include_names": "false"}, {"record_id": 4}):

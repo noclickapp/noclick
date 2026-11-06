@@ -65,7 +65,6 @@ def _operation(name, label, category):
 
 class AprimoBearerCredential(BaseModel):
     model_config = ConfigDict(title="Aprimo DAM Bearer Token", json_schema_extra={
-        "x-credential-type": "api_key",
         "x-credential-url": "https://developers.aprimo.com/docs/rest-api/dam/dam-intro",
         "x-credential-instructions": "Supply an existing Aprimo DAM bearer token, its single tenant label, and one readable classification UUID. No token exchange or refresh is performed. DAM API entitlement and API scope must already be granted. The connection proves selected resource reachability, not account identity.",
     })

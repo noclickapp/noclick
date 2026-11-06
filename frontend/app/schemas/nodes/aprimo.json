@@ -33,7 +33,6 @@
       "title": "Aprimo DAM Bearer Token",
       "type": "object",
       "x-credential-instructions": "Supply an existing Aprimo DAM bearer token, its single tenant label, and one readable classification UUID. No token exchange or refresh is performed. DAM API entitlement and API scope must already be granted. The connection proves selected resource reachability, not account identity.",
-      "x-credential-type": "api_key",
       "x-credential-url": "https://developers.aprimo.com/docs/rest-api/dam/dam-intro"
     },
     "AprimoGetClassification": {
