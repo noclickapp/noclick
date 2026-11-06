@@ -46,3 +46,13 @@ export const OAuthSignInStandInProvider = OAuthSignInStandInContext.Provider;
 export function useOAuthSignInStandIn(): OAuthSignInStandIn | null {
     return useContext(OAuthSignInStandInContext);
 }
+
+// A page that must reach nothing (a demo of a provide link) answers the link's own requests itself, a QR scan's start
+// and status among them, in place of the link's routes. Unset everywhere real.
+const ProvideExchangeStandInContext = createContext<OAuthExchange | null>(null);
+
+export const ProvideExchangeStandInProvider = ProvideExchangeStandInContext.Provider;
+
+export function useProvideExchangeStandIn(): OAuthExchange | null {
+    return useContext(ProvideExchangeStandInContext);
+}

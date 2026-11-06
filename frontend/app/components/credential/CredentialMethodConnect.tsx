@@ -20,6 +20,7 @@ import type { CredentialTestConnectionResponse } from '~/types/socket-events.gen
 import { RedirectOAuthProvideMethod } from './RedirectOAuthProvideMethod';
 import { AgentOAuthProvideMethod } from './AgentOAuthProvideMethod';
 import { provideLinkTransport, requestEnded } from './provideLinkTransport';
+import { useProvideExchangeStandIn } from '~/hooks/oauth/OAuthExchangeContext';
 import { WhatsAppQRCredentialForm } from '~/components/workflow/WhatsAppQRCredentialForm';
 import { KeySteps } from './connect/ConnectApp';
 import { copyMethodOf, howToGet } from '~/utils/credentialCopy';
@@ -186,9 +187,11 @@ function AgentOAuthMethod({ method, apiBase, token, onProvided, onRequestEnded }
 }
 
 /** qr_scan — the same transport-aware QR form the in-app UI uses, bound to the
- *  requester through the provide transport's whatsapp:qr:* route. */
+ *  requester through the provide transport's whatsapp:qr:* route (a demo's own
+ *  answers where a demo stands in). */
 function QrScanMethod({ method, apiBase, token, onProvided, onRequestEnded }: CredentialMethodConnectProps) {
-    const transport = provideLinkTransport(apiBase, token, method.credential_type, onRequestEnded);
+    const standIn = useProvideExchangeStandIn();
+    const transport = standIn ?? provideLinkTransport(apiBase, token, method.credential_type, onRequestEnded);
     return (
         <WhatsAppQRCredentialForm
             credentialType={method.credential_type}
