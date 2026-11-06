@@ -1532,7 +1532,12 @@ class TestAdditionalTeamAuthOperations:
         mock_client.get.return_value = mock_slack_response({})
 
         config = SlackAppsUninstallConfig()
-        node = create_node(config, bot_credentials)
+        credentials = SlackBotTokenCredential(
+            bot_token=bot_credentials.bot_token,
+            client_id="123456789.987654321",
+            client_secret="fake-client-secret",
+        )
+        node = create_node(config, credentials)
         result = await node.execute({})
 
         assert result["status"] == "success"
@@ -1956,7 +1961,7 @@ class TestAdditionalUserOperations:
         """Test deleting user photo."""
         mock_client = AsyncMock()
         mock_client_class.return_value.__aenter__.return_value = mock_client
-        mock_client.post.return_value = mock_slack_response({})
+        mock_client.get.return_value = mock_slack_response({})
 
         config = SlackDeleteUserPhotoConfig()
         node = create_node(config, bot_credentials)
@@ -2014,7 +2019,7 @@ class TestSlackConnectRequestOperations:
         mock_client.post.return_value = mock_slack_response({})
 
         config = SlackSetExternalInvitePermissionsConfig(
-            channel="C12345678", action_type="upgrade"
+            channel="C12345678", action_type="upgrade", target_team="T726G27TT"
         )
         node = create_node(config, bot_credentials)
         result = await node.execute({})
@@ -2249,7 +2254,7 @@ class TestAdminEmojiOperations:
         """Test adding emoji."""
         mock_client = AsyncMock()
         mock_client_class.return_value.__aenter__.return_value = mock_client
-        mock_client.post.return_value = mock_slack_response({})
+        mock_client.get.return_value = mock_slack_response({})
 
         config = SlackAdminEmojiAddConfig(
             name="test_emoji", url="https://example.com/emoji.png"
