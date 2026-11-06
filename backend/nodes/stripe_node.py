@@ -893,10 +893,18 @@ class StripeListSubscriptionsConfig(BaseModel):
     extra_params: Optional[Dict[str, Any]] = _extra()
 
 
+class StripeResumeBillingCycleAnchor(BaseModel):
+    type: Literal["now", "unchanged"]
+
+
 class StripeResumeSubscriptionConfig(BaseModel):
     operation: Literal["resume_subscription"] = _opf("resume_subscription", "Resume Subscription", "Subscriptions")
     subscription_id: str = _id("Subscription", dyn="subscription_id")
-    billing_cycle_anchor: Optional[str] = Field(None, title="Billing Cycle Anchor")
+    billing_cycle_anchor: Optional[Union[StripeResumeBillingCycleAnchor, Literal["now", "unchanged"]]] = Field(
+        None,
+        title="Billing Cycle Anchor",
+        description='Use {"type": "now"} or {"type": "unchanged"} for current API versions; string values are for older API versions.',
+    )
     extra_params: Optional[Dict[str, Any]] = _extra()
 
 

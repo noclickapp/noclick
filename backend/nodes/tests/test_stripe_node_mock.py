@@ -121,6 +121,8 @@ def _make_node(op_dict, credentials=None):
 
 def _fake_value(annotation):
     """Produce a minimal valid value for a field annotation."""
+    if isinstance(annotation, type) and issubclass(annotation, sn.BaseModel):
+        return {name: _fake_value(field.annotation) for name, field in annotation.model_fields.items() if field.is_required()}
     origin = typing.get_origin(annotation)
     args = typing.get_args(annotation)
     if origin is typing.Literal:
@@ -547,3 +549,40 @@ async def test_trigger_manual_run_outputs_description():
     result = await node.execute({})
     assert result["action"] == "on_event"
     assert result["event_types"] == "invoice.paid"
+
+
+@pytest.mark.parametrize("anchor", ["now", "unchanged"])
+async def test_resume_subscription_object_billing_cycle_anchor(anchor):
+    node = _make_node(
+        {
+            "operation": "resume_subscription",
+            "subscription_id": "sub_1MoGGtLkdIwHu7ixk5CfdiqC",
+            "billing_cycle_anchor": {"type": anchor},
+        },
+        credentials={
+            "credential_type": "stripe_api_key",
+            "api_key": API_KEY,
+            "stripe_version": "2026-09-30.endive",
+        },
+    )
+    await node.execute({})
+    assert CapturingClient.last["url"] == f"{API_BASE}/subscriptions/sub_1MoGGtLkdIwHu7ixk5CfdiqC/resume"
+    assert CapturingClient.last["headers"]["Stripe-Version"] == "2026-09-30.endive"
+    assert _form_body() == {"billing_cycle_anchor[type]": anchor}
+
+
+async def test_resume_subscription_legacy_billing_cycle_anchor():
+    node = _make_node(
+        {"operation": "resume_subscription", "subscription_id": "sub_123", "billing_cycle_anchor": "now"},
+        credentials={"credential_type": "stripe_api_key", "api_key": API_KEY, "stripe_version": "2024-06-20"},
+    )
+    await node.execute({})
+    assert _form_body() == {"billing_cycle_anchor": "now"}
+
+
+@pytest.mark.parametrize("anchor", ["invalid", {"type": "invalid"}, {}])
+def test_resume_subscription_rejects_invalid_billing_cycle_anchor(anchor):
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
+        _make_node({"operation": "resume_subscription", "subscription_id": "sub_123", "billing_cycle_anchor": anchor})
