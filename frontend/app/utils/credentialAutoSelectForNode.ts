@@ -20,6 +20,7 @@ import { NODE_SCHEMAS, loadNodeSchemas, nodeSchemasLoaded } from '~/utils/nodeSc
 // The node types whose new nodes pick a credential on their own.
 const AUTO_SELECT_TYPES: ReadonlySet<string> = new Set([
     'automation-porkbun',
+    'automation-hetrixtools',
     'automation-telegram',
     'automation-google-sheets',
     'automation-google-drive',

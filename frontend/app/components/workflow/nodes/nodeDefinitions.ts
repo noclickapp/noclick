@@ -21,6 +21,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['trigger-cron', 'CronTriggerNode'],
     ['interface-form', 'interface/InterfaceFormNode'],
     ['automation-porkbun', 'PorkbunNode'],
+    ['automation-hetrixtools', 'HetrixToolsNode'],
     ['automation-telegram', 'TelegramNode'],
     ['automation-google-sheets', 'GoogleSheetsNode'],
     ['automation-google-drive', 'GoogleDriveNode'],

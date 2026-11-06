@@ -16,6 +16,7 @@
 export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'FormBuilder123TokenCredential': '123formbuilder_v2_token',
     'PorkbunCredential': 'porkbun_api_key',
+    'HetrixToolsAPIKeyCredential': 'hetrixtools_api_key',
     // Agent credentials
     'AgentCredentials': 'agent_api_key',
 

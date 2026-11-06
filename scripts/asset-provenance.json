@@ -830,6 +830,24 @@
       "source": "https://kb.porkbun.com/article/307-getting-started-porkbun-api",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "1fc2ad79a30861fe490d7ebe914aafd61299758f647390ce138c1847599052f6"
+    },
+    {
+      "path": "frontend/public/icons/hetrixtools-brand-vector.svg",
+      "source": "https://hetrixtools.com",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "1a5057178ef0e917c4aa4c7948473b8ace739ec2e02074195f515ad822b9c9ce"
+    },
+    {
+      "path": "frontend/public/icons/hetrixtools-brand.ico",
+      "source": "https://hetrixtools.com",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "880a30a70dac3ae8ba8d28c15f3c6b2a392ed8f3fc99f589c3595f9fa1bd0d66"
+    },
+    {
+      "path": "frontend/public/icons/hetrixtools.png",
+      "source": "https://hetrixtools.com",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "106c44319e3519ab4db66353bf17503bd2fe2a64d292c831fa8f782982566cc8"
     }
   ],
   "excludedSourceAssets": [
