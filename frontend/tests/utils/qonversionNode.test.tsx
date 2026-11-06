@@ -1,17 +1,18 @@
 // Actual generated native schema, node definition and credential-cache fixtures.
 // Covers read-only scope and Secret Key selection without asserting live account or entitlement access.
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createElement } from 'react';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import schema from '~/schemas/nodes/qonversion.json';
 import { QonversionNode } from '~/components/workflow/nodes/QonversionNode';
-import { NODE_SCHEMAS, getNodeCredentialInfo } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, getNodeCredentialInfo, loadNodeSchemas } from '~/utils/nodeSchemas';
 import { isAgentToolProviderType, isTriggerSource } from '~/utils/nodeMeta';
 
 const boundary=vi.hoisted(()=>({send:vi.fn(),get:vi.fn(),set:vi.fn(),delete:vi.fn()}));
 vi.mock('~/lib/socket-sender',()=>({sendEventAsync:boundary.send}));
 vi.mock('~/lib/indexeddb',()=>({valtioCache:{get:boundary.get,set:boundary.set,delete:boundary.delete}}));
-const { prefetchCredentials, autoSelectCredentialFromCache, invalidateCredentialsCache, removeCredentialsFromCache, upsertCredentialsIntoCache }=await import('~/utils/credentialAutoSelect');
+const { prefetchCredentials, invalidateCredentialsCache, removeCredentialsFromCache, upsertCredentialsIntoCache }=await import('~/utils/credentialAutoSelect');
+const { autoSelectCredentialFromCache } = await import('~/utils/credentialAutoSelectForNode');
+beforeAll(async () => { await loadNodeSchemas(['automation-qonversion']); });
 beforeEach(()=>{invalidateCredentialsCache();vi.clearAllMocks();boundary.get.mockResolvedValue(undefined);});
 afterEach(()=>{removeCredentialsFromCache(['qon-healthy','qon-revoked','qon-shared','foreign']);invalidateCredentialsCache();});
 
@@ -41,7 +42,7 @@ describe('native Qonversion v4 metadata',()=>{
         expect(autoSelectCredentialFromCache('automation-qonversion')).toEqual({qonversion_secret_key:'qon-healthy'});
         expect(boundary.send).toHaveBeenCalledTimes(1);expect(boundary.send.mock.calls[0][0].event_name).toBe('credential:list');
     });
-    it('renders the unchanged exact official PNG',()=>{
-        expect(renderToStaticMarkup(createElement(QonversionNode.Icon))).toContain('/icons/qonversion.png');
+    it('renders the provider vector mark',()=>{
+        expect(renderToStaticMarkup(<QonversionNode.Icon />)).toContain('/icons/qonversion-brand-vector.svg');
     });
 });

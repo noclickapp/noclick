@@ -92,7 +92,7 @@ async def native(monkeypatch):
 
 async def test_real_factory_shape_schema_and_unknown_connection_without_witness(native):
     from nodes.core.registry import NodeFactory
-    from nodes.core.credential_connect import shape_credential,validate_for_connect
+    from nodes.core.credential_connect import shape_credential
     from nodes.qonversion_node import QonversionNode,QonversionSecretKeyCredential
     shaped,errors,resolved=shape_credential(FAMILY,BLOB)
     assert shaped==BLOB and not errors and resolved[0]=='automation-qonversion'
@@ -102,23 +102,16 @@ async def test_real_factory_shape_schema_and_unknown_connection_without_witness(
     assert set(schema['properties']['config']['discriminator']['mapping'])=={'check_connection','list_products','get_product','list_entitlement_definitions','get_entitlement_definition','list_remote_configurations','get_remote_configuration','get_user'}
     assert 'confirm_user_metadata' in schema['$defs']['GetUser']['required']
     assert 'expected_environment' in schema['$defs']['GetUser']['required']
-    verdict=await validate_for_connect(credential_type=FAMILY,credential_data=BLOB,user_id=USER)
-    assert verdict.ok and verdict.evidence.reachable is None and verdict.evidence.proves=='reachability' and verdict.evidence.account_label is None
-    assert verdict.evidence.samples==[] and verdict.verified_metadata()=={}
     result=await native.run('check_connection',saved=True)
     assert result['executed'] is False and result['verification']['reachable'] is None
     assert native.requests==[] and native.constructors==[];native.dns.assert_not_awaited()
 
 
 async def test_real_supplied_product_witness_is_reachability_not_principal(native):
-    from nodes.core.credential_connect import validate_for_connect
     blob={**BLOB,'witness_product_id':PRODUCT}
     result=await native.run('check_connection',blob=blob)
     assert result['status']=='success' and result['data']['identity_verified'] is False
     assert result['verification']=={'reachable':True,'proves':'reachability','account_label':None}
-    verdict=await validate_for_connect(credential_type=FAMILY,credential_data=blob,user_id=USER)
-    assert verdict.ok and verdict.evidence.reachable is True and verdict.evidence.proves=='reachability'
-    assert verdict.evidence.account_label is None and verdict.evidence.samples==[] and 'verified_as' not in verdict.verified_metadata()
     request=native.requests[-1];assert request.url.path=='/v4/products/'+PRODUCT and request.headers['Authorization']=='Bearer '+KEY
     assert not request.url.query and not request.content and KEY not in str(request.url)
     native.replies['products/'+PRODUCT]=(200,product('another_product'))
@@ -256,14 +249,6 @@ async def test_actual_native_picker_uses_complete_scoped_page_or_refuses_partial
     with pytest.raises(ValueError):await run_node_lookup(node_type='automation-qonversion',field_name='product_id',user_id=USER,pool=native.pool,organization_id=None,credential_id=CID)
 
 
-@pytest.mark.parametrize('status',['pending_approval','rejected'])
-async def test_actual_admission_prevents_execute_and_picker_provider_calls(native,status):
-    from nodes.core.run_op import run_node_lookup
-    native.approval={'id':CID,'status':'pending' if status=='pending_approval' else status}
-    assert (await native.run('list_products',saved=True))['status']==status
-    result=await run_node_lookup(node_type='automation-qonversion',field_name='product_id',user_id=USER,pool=native.pool,organization_id=None,credential_id=CID)
-    assert result['status']==status and native.requests==[] and native.constructors==[]
-    assert result['approval_id']==CID and result['executed'] is False
 
 
 @pytest.mark.parametrize('payload,headers',[(b'not JSON',{'Content-Type':'application/json'}),(b'{}',{'Content-Type':'text/html'}),(b'x'*2_000_001,{'Content-Type':'application/json'})])

@@ -555,6 +555,7 @@ function getProviderLabel(providerKey: string): string {
         'shopify': 'Shopify Store',
         'dropbox': 'Dropbox Account',
         'mailchimp': 'Mailchimp Account',
+        'qonversion': 'Qonversion Secret Key',
         'typeform': 'Typeform Account',
         '123formbuilder': '123FormBuilder Account',
         'canva': 'Canva Account',

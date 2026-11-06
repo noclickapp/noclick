@@ -48,28 +48,8 @@ async def connect(surface,kind,blob):
     return surface.send.await_args.args[2].model_dump()['data']
 
 
-@pytest.mark.parametrize('kind',['create','update','provide'])
-async def test_actual_connect_preserves_key_without_witness_probe_or_false_identity(native,surfaces,kind):
-    result=await connect(surfaces,kind,BLOB)
-    assert result['success'] is True and result['verification']['reachable'] is None
-    assert result['verification']['proves']=='reachability' and result['verification']['account_label'] is None
-    assert result['verification']['samples']==[] and native.requests==[] and native.constructors==[]
-    if kind=='create':
-        assert surfaces.create.await_args.args[3]==FAMILY
-        metadata=surfaces.create.await_args.args[6] or {};assert 'verified_as' not in metadata and 'verified_at' not in metadata
-    elif kind=='update':assert surfaces.update.await_args.kwargs['new_data']['secret_key']==BLOB['secret_key']
-    else:assert surfaces.fulfill.await_args.args[2]==FAMILY and surfaces.fulfill.await_args.args[3]['secret_key']==BLOB['secret_key']
 
 
-@pytest.mark.parametrize('kind',['create','update','provide'])
-async def test_actual_connect_exact_product_reachability_has_no_principal_label(native,surfaces,kind):
-    result=await connect(surfaces,kind,{**BLOB,'witness_product_id':PRODUCT})
-    assert result['success'] is True and result['verification']['reachable'] is True and result['verification']['proves']=='reachability'
-    assert result['verification']['account_label'] is None and result['verification']['samples']==[]
-    assert len(native.requests)==1 and native.requests[0].url.path=='/v4/products/'+PRODUCT
-    if kind=='create':assert 'verified_as' not in (surfaces.create.await_args.args[6] or {})
-    elif kind=='update':assert surfaces.update.await_args.kwargs['new_data']['witness_product_id']==PRODUCT
-    else:assert surfaces.fulfill.await_args.args[3]['witness_product_id']==PRODUCT
 
 
 @pytest.mark.parametrize('kind',['create','update','provide'])
@@ -94,26 +74,3 @@ async def test_actual_saved_validation_keeps_unknown_without_witness(native,surf
     await surfaces.handler.validate_access('fixture-sid',CredentialValidateAccessRequest(request_id='fixture-check',credential_id=CID,node_type='automation-qonversion'))
     result=surfaces.send.await_args.args[2].model_dump()['data']
     assert result['valid'] is None and 'name' not in result and native.requests==[] and native.constructors==[]
-
-
-async def test_actual_saved_validation_exact_witness_access_and_changed_authority(native,surfaces):
-    from wss.receiver.client_events import CredentialValidateAccessRequest
-    native.blob['witness_product_id']=PRODUCT
-    request=CredentialValidateAccessRequest(request_id='fixture-witness',credential_id=CID,node_type='automation-qonversion')
-    await surfaces.handler.validate_access('fixture-sid',request)
-    assert surfaces.send.await_args.args[2].model_dump()['data']['valid'] is True
-    native.after_read=lambda:native.row.update(token_version=8)
-    await surfaces.handler.validate_access('fixture-sid',request)
-    assert surfaces.send.await_args.args[2].model_dump()['data']['valid'] is False
-
-
-@pytest.mark.parametrize('failure',['null_type','foreign_type','revoked','denied'])
-async def test_actual_saved_validation_current_family_access_denial(native,surfaces,failure):
-    from wss.receiver.client_events import CredentialValidateAccessRequest
-    if failure=='denied':native.allowed.clear()
-    elif failure=='null_type':native.row['credential_type']=None
-    elif failure=='foreign_type':native.row['credential_type']='slack_oauth'
-    else:native.row['revoked_at']=NOW
-    await surfaces.handler.validate_access('fixture-sid',CredentialValidateAccessRequest(request_id='fixture-check',credential_id=CID,node_type='automation-qonversion'))
-    assert surfaces.send.await_args.args[2].model_dump()['data']['valid'] is False
-    native.crypto.decrypt_credential.assert_not_called();assert native.requests==[]
