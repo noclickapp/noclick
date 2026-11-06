@@ -118,6 +118,9 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'PersonioAccessTokenCredential': 'personio_access_token',
     'QuoAPIKeyCredential': 'quo_api_key',
 
+    // SumUp
+    'SumUpAPIKeyCredential': 'sumup_api_key',
+
     // Apollo
     'ApolloAPIKeyCredential': 'apollo_api_key',
 

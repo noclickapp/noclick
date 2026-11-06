@@ -1253,6 +1253,9 @@
       ]
     },
     "automation-submit-external-form": {},
+    "automation-sumup": {
+      "agentToolProvider": true
+    },
     "automation-supabase": {
       "agentToolProvider": true
     },
