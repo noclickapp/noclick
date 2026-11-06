@@ -32,6 +32,9 @@ second run with `run_provider("etsy", enrich=False)` keeps the tutorial inputs
 unchanged. Both reports must be read together; a single-image enrichment is not
 evidence that the documented multi-image request matches Etsy's spec.
 
+The preserved `get_listing` input also uses two associations to verify the
+spec-declared exploded query-array encoding (`includes=Images&includes=Shop`).
+
 The two known form-array encoding discrepancies are recorded in
 `spec-mistakes.json`, with current official documentation URLs. Neither the node
 nor the pinned provider spec is altered to conceal these discrepancies.

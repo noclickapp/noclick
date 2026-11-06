@@ -226,9 +226,9 @@ async def test_inventory_preserves_required_nullable_offering_field():
 
 
 @pytest.mark.asyncio
-async def test_query_associations_are_comma_separated():
+async def test_query_associations_use_declared_exploded_encoding():
     def respond(request):
-        assert request.url.params["includes"] == "Images,Shop"
+        assert request.url.params.get_list("includes") == ["Images", "Shop"]
         assert "json" not in request.headers.get("Content-Type", "")
         return httpx.Response(200, json=FIXTURES["get_listing"]["body"])
 

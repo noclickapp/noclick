@@ -1759,9 +1759,11 @@ OPERATIONS = {
 
 
 def _wire(value: Any) -> str:
-    """Etsy uses comma-separated arrays and lowercase booleans in query/forms.
+    """Lowercase scalar booleans and Etsy's documented CSV form arrays.
 
-    https://developers.etsy.com/documentation/essentials/requests/
+    Query arrays are kept as lists to use the spec's default exploded form
+    style; CSV form bodies follow the official listings tutorial.
+    https://developers.etsy.com/documentation/tutorials/listings/
     """
     if isinstance(value, bool):
         return "true" if value else "false"
@@ -1807,7 +1809,13 @@ class EtsyNode(WorkflowNode):
             **{key: values[key] for key in route["path_fields"]}
         )
         params = {
-            key: _wire(values[key]) for key in route["query_fields"] if key in values
+            key: (
+                [_wire(item) for item in values[key]]
+                if isinstance(values[key], list)
+                else _wire(values[key])
+            )
+            for key in route["query_fields"]
+            if key in values
         }
         body = {key: values[key] for key in route["body_fields"] if key in values}
         headers = {
