@@ -1048,11 +1048,13 @@ async def _mailgun_request(
     json_body: Optional[Dict[str, Any]] = None,
     files: Optional[Union[Dict[str, Any], List[Tuple[str, Any]]]] = None,
     action_name: str = "request",
+    multipart: bool = False,
 ) -> Dict[str, Any]:
     """Make an authenticated Mailgun request (HTTP Basic Auth) and return a structured result.
 
     Pass ``files`` to force a multipart/form-data request (required by the
     ``/messages.mime`` endpoint, which expects the raw MIME as a file part).
+    Set ``multipart`` for form endpoints even when no files are attached.
     A list of ``(name, file_tuple)`` pairs allows repeated part names
     (``attachment`` file parts on ``/messages``).
     """
@@ -1066,6 +1068,15 @@ async def _mailgun_request(
         data = {k: v for k, v in data.items() if v not in (None, "")}
     if json_body:
         json_body = {k: v for k, v in json_body.items() if v is not None}
+
+    if multipart:
+        parts = [
+            (name, (None, str(item)))
+            for name, value in (data or {}).items()
+            for item in (value if isinstance(value, list) else [value])
+        ]
+        files = parts + (list(files.items()) if isinstance(files, dict) else files or [])
+        data = None
 
     start = time.time()
     async with httpx.AsyncClient(timeout=30.0) as client:
@@ -1431,7 +1442,7 @@ class MailgunNode(ExternalWebhookTriggerMixin, WorkflowNode):
             ] or None
         return await _mailgun_request(
             api_key, region, "POST", f"/v3/{c.domain}/messages", data=data,
-            files=files, action_name="send_message",
+            files=files, multipart=True, action_name="send_message",
         )
 
     async def _send_mime(self, c: MailgunSendMimeConfig, api_key, region) -> Dict[str, Any]:
@@ -1491,7 +1502,7 @@ class MailgunNode(ExternalWebhookTriggerMixin, WorkflowNode):
     async def _create_domain(self, c: MailgunCreateDomainConfig, api_key, region) -> Dict[str, Any]:
         return await _mailgun_request(
             api_key, region, "POST", "/v4/domains", data={"name": c.name},
-            action_name="create_domain",
+            multipart=True, action_name="create_domain",
         )
 
     async def _get_domain(self, c: MailgunGetDomainConfig, api_key, region) -> Dict[str, Any]:
@@ -1522,7 +1533,7 @@ class MailgunNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return await _mailgun_request(
             api_key, region, "POST", "/v3/lists",
             data={"address": c.address, "name": c.name, "description": c.description},
-            action_name="create_mailing_list",
+            multipart=True, action_name="create_mailing_list",
         )
 
     async def _list_members(self, c: MailgunListMembersConfig, api_key, region) -> Dict[str, Any]:
@@ -1542,7 +1553,7 @@ class MailgunNode(ExternalWebhookTriggerMixin, WorkflowNode):
             data["vars"] = json.dumps(vars_obj)
         return await _mailgun_request(
             api_key, region, "POST", f"/v3/lists/{c.list_address}/members", data=data,
-            action_name="add_member",
+            multipart=True, action_name="add_member",
         )
 
     async def _bulk_add_members(self, c: MailgunBulkAddMembersConfig, api_key, region) -> Dict[str, Any]:
@@ -1550,7 +1561,7 @@ class MailgunNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return await _mailgun_request(
             api_key, region, "POST", f"/v3/lists/{c.list_address}/members.json",
             data={"members": json.dumps(members), "upsert": c.upsert},
-            action_name="bulk_add_members",
+            multipart=True, action_name="bulk_add_members",
         )
 
     async def _delete_member(self, c: MailgunDeleteMemberConfig, api_key, region) -> Dict[str, Any]:
@@ -1573,7 +1584,7 @@ class MailgunNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return await _mailgun_request(
             api_key, region, "POST", f"/v3/{c.domain}/templates",
             data={"name": c.name, "template": c.template, "description": c.description},
-            action_name="create_template",
+            multipart=True, action_name="create_template",
         )
 
     async def _get_template(self, c: MailgunGetTemplateConfig, api_key, region) -> Dict[str, Any]:
@@ -1586,7 +1597,7 @@ class MailgunNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return await _mailgun_request(
             api_key, region, "POST", f"/v3/{c.domain}/templates/{c.template_name}/versions",
             data={"tag": c.tag, "template": c.template, "active": c.active},
-            action_name="create_template_version",
+            multipart=True, action_name="create_template_version",
         )
 
     # ------------------------------------------------------------------
@@ -1636,7 +1647,7 @@ class MailgunNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return await _mailgun_request(
             api_key, region, "POST", f"/v3/{c.domain}/unsubscribes",
             data={"address": c.address, "tag": c.tag},
-            action_name="add_unsubscribe",
+            multipart=True, action_name="add_unsubscribe",
         )
 
     # ------------------------------------------------------------------

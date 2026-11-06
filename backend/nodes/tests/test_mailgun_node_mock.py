@@ -667,3 +667,122 @@ class TestMailgunDynamicOptionsMock:
         assert "options" in result
         assert result["options"][0]["value"] == "mg.example.com"
         assert "active" in result["options"][0]["label"]
+
+
+@pytest.fixture
+def wire_requests():
+    import httpx
+
+    requests = []
+    original_client = httpx.AsyncClient
+
+    def respond(request):
+        requests.append(request)
+        return httpx.Response(200, json={"message": "Queued. Thank you."})
+
+    def client(*args, **kwargs):
+        return original_client(*args, transport=httpx.MockTransport(respond), **kwargs)
+
+    with patch("nodes.mailgun_node.httpx.AsyncClient", client):
+        yield requests
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "operation,fields,expected",
+    [
+        ("send_message", {"domain": "example.com", "from_address": "sender@example.com",
+                          "to": "alice@example.com,bob@example.com", "subject": "Hello", "text": "Hi"},
+         {"to": ["alice@example.com", "bob@example.com"], "subject": ["Hello"]}),
+        ("create_domain", {"name": "example.com"}, {"name": ["example.com"]}),
+        ("add_unsubscribe", {"domain": "example.com", "address": "alice@example.com"},
+         {"address": ["alice@example.com"], "tag": ["*"]}),
+        ("create_mailing_list", {"address": "list@example.com"}, {"address": ["list@example.com"]}),
+        ("add_member", {"list_address": "list@example.com", "address": "alice@example.com"},
+         {"address": ["alice@example.com"], "subscribed": ["yes"]}),
+        ("create_template", {"domain": "example.com", "name": "welcome", "template": "Hello {{name}}"},
+         {"template": ["Hello {{name}}"]}),
+        ("create_template_version", {"domain": "example.com", "template_name": "welcome",
+                                     "tag": "v2", "template": "Hello {{name}}", "active": "yes"},
+         {"tag": ["v2"], "active": ["yes"]}),
+    ],
+)
+async def test_multipart_requests_without_attachments(api_key_credentials, wire_requests, operation, fields, expected):
+    from email import policy
+    from email.parser import BytesParser
+
+    config = MailgunNodeConfig.model_validate({
+        "config": {"operation": operation, **fields}, "credentials": api_key_credentials,
+    })
+    result = await create_mailgun_node(config).execute({})
+    assert result["status"] == "success"
+    request, = wire_requests
+    content_type = request.headers["content-type"]
+    assert content_type.startswith("multipart/form-data; boundary=")
+    message = BytesParser(policy=policy.default).parsebytes(
+        f"Content-Type: {content_type}\r\n\r\n".encode() + request.content
+    )
+    actual = {}
+    for part in message.iter_parts():
+        assert part.get_filename() is None
+        actual.setdefault(part.get_param("name", header="content-disposition"), []).append(
+            part.get_payload(decode=True).decode()
+        )
+    for name, values in expected.items():
+        assert actual[name] == values
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("upsert", ["yes", "no"])
+async def test_bulk_member_form_parameters(api_key_credentials, wire_requests, upsert):
+    from email import policy
+    from email.parser import BytesParser
+
+    config = MailgunNodeConfig(
+        config=MailgunBulkAddMembersConfig(
+            list_address="list@example.com", members_json='["alice@example.com"]', upsert=upsert,
+        ),
+        credentials=api_key_credentials,
+    )
+    result = await create_mailgun_node(config).execute({})
+    assert result["status"] == "success"
+    request, = wire_requests
+    content_type = request.headers["content-type"]
+    assert content_type.startswith("multipart/form-data; boundary=")
+    message = BytesParser(policy=policy.default).parsebytes(
+        f"Content-Type: {content_type}\r\n\r\n".encode() + request.content
+    )
+    fields = {part.get_param("name", header="content-disposition"):
+              part.get_payload(decode=True).decode() for part in message.iter_parts()}
+    assert json.loads(fields["members"]) == ["alice@example.com"]
+    assert fields["upsert"] == upsert
+
+
+@pytest.mark.asyncio
+async def test_message_preserves_repeated_attachments(api_key_credentials, wire_requests):
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+    from email import policy
+    from email.parser import BytesParser
+
+    config = MailgunNodeConfig(
+        config=MailgunSendMessageConfig(
+            domain="example.com", from_address="sender@example.com", to="alice@example.com",
+            subject="Hello", text="Hi", attachments=["file-a", "file-b"],
+        ),
+        credentials=api_key_credentials,
+    )
+    media = [SimpleNamespace(filename=name, data=body, mime_type="text/plain")
+             for name, body in [("a.txt", b"first"), ("b.txt", b"second")]]
+    with patch("nodes.core.media_resolver.resolve_attachments", AsyncMock(return_value=media)):
+        result = await create_mailgun_node(config).execute({})
+    assert result["status"] == "success"
+    request, = wire_requests
+    message = BytesParser(policy=policy.default).parsebytes(
+        f"Content-Type: {request.headers['content-type']}\r\n\r\n".encode() + request.content
+    )
+    attachments = [part for part in message.iter_parts() if part.get_filename()]
+    assert [(p.get_filename(), p.get_payload(decode=True)) for p in attachments] == [
+        ("a.txt", b"first"), ("b.txt", b"second"),
+    ]
+    assert all(p.get_param("name", header="content-disposition") == "attachment" for p in attachments)
