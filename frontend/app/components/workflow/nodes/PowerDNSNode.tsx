@@ -25,4 +25,3 @@ export const PowerDNSNode: NodeDefinition = {
   dimensions: { width: 90, height: 90, iconSize: 48 },
   component: memo((props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />),
 };
-
