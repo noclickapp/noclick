@@ -25,7 +25,7 @@ def ensure_native_db_pool():
 class Pool:
     def __init__(self):
         self.org, self.shared, self.authorized, self.workflow_owner = None, False, True, OWNER
-        self.row = {"credential": deepcopy(RAW), "credential_type": "supernormal_api_token", "owner_id": USER, "revoked_at": None, "token_version": 1, "updated_at": datetime(2026, 1, 1, tzinfo=timezone.utc)}
+        self.row = {"credential": deepcopy(RAW), "credential_type": "supernormal_api_key", "owner_id": USER, "revoked_at": None, "token_version": 1, "updated_at": datetime(2026, 1, 1, tzinfo=timezone.utc)}
 
     @asynccontextmanager
     async def acquire(self):
@@ -91,7 +91,7 @@ async def test_issued_key_without_expiry_still_revalidates_current_authority(aut
 async def test_positive_workflow_owner_fallback_and_current_acl(authority):
     pool, _ = authority
     pool.row["owner_id"] = OWNER
-    grant = await SupernormalNode.freshen_credential(RAW, pool=pool, user_id=USER, credential_id=KEY, workflow_id=WORKFLOW)
+    grant = await SupernormalNode._load_current_credential(RAW, pool=pool, user_id=USER, credential_id=KEY, workflow_id=WORKFLOW)
     assert grant.store.current.principal_id == OWNER
     pool.authorized = False
     with pytest.raises(ValueError): await grant.reload()

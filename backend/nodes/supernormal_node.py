@@ -18,7 +18,7 @@ from nodes.core.credential_fields import clean_secret
 from nodes.supernormal_authority import SupernormalAuthorityStore, CURRENT_ORGANIZATION
 from utils.ssrf import SSRFError, guarded_async_client
 
-FAMILY = "supernormal_api_token"
+FAMILY = "supernormal_api_key"
 BASE_URL = "https://api.supernormal.com/api/v1"
 MAX_BYTES, MAX_RECORDS, MAX_SEGMENTS = 2 * 1024 * 1024, 250, 2000
 READ_SCOPES = {"user:read", "recordings:read", "calendar_events:read"}
@@ -52,7 +52,7 @@ class SupernormalAPITokenCredential(BaseModel):
     model_config = ConfigDict(title="Supernormal API Token", hide_input_in_errors=True, json_schema_extra={
         "x-credential-url": "https://app.supernormal.com/settings",
         "x-credential-instructions": "Supply an already-issued Supernormal scoped API key and its actual granted read scopes. The fixed v1 API sends X-API-TOKEN, not Bearer/Basic. user:read is required for the real identity probe; add recordings:read or calendar_events:read only when issued for those operations. API entitlement is account-dependent and not verified here. No OAuth/global client or key creation is automated."})
-    credential_type: Literal["supernormal_api_token"] = Field(FAMILY, json_schema_extra={"ui:hidden": True})
+    credential_type: Literal["supernormal_api_key"] = Field(FAMILY, json_schema_extra={"ui:hidden": True})
     api_token: str = Field(..., title="Existing Scoped Supernormal API Token", repr=False, json_schema_extra={"ui:widget": "password"})
     scopes: list[Literal["user:read", "recordings:read", "calendar_events:read"]] = Field(..., min_length=1, max_length=3, title="Actual Granted Read Scopes", description="Enter only these scopes actually issued to the key. This is not an API scope-grant request; unknown scope requires issuer clarification.")
     expected_user_id: str | None = Field(None, title="Expected User ID (if known)", description="Optional actual /user ID. If supplied, every operation refuses a different principal. Absence is unknown, not filled from the current app or a guessed account.")
@@ -262,19 +262,23 @@ class SupernormalNode(WorkflowNode):
     def get_config_model(cls): return SupernormalNodeConfig
 
     @classmethod
-    def parse_config(cls, data):
-        if data.get("credentials") is not None:
-            try: _stored(data["credentials"])
+    def parse_config(cls, config_data):
+        if config_data.get("credentials") is not None:
+            try: _stored(config_data["credentials"])
             except ValueError as error: raise ConfigValidationError(str(error)) from None
-        return super().parse_config(data)
+        return super().parse_config(config_data)
 
     @classmethod
-    async def freshen_credential(cls, credential_data, **kwargs):
+    async def freshen_credential(cls, credential_data: Dict[str, Any] | None, *, pool=None, user_id: str | None = None, credential_id: str | None = None) -> Dict[str, Any] | None:
+        if credential_data is None: return None
+        return await cls._load_current_credential(credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
+
+    @classmethod
+    async def _load_current_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=CURRENT_ORGANIZATION):
         _credential(credential_data)
-        if not kwargs.get("credential_id"): return credential_data
-        organization = kwargs.get("organization_id")
-        if organization is None and not kwargs.get("workflow_id"): organization = CURRENT_ORGANIZATION
-        store = SupernormalAuthorityStore(kwargs.get("pool"), kwargs.get("user_id"), kwargs["credential_id"], credential_type=FAMILY, validate=_stored, grant_fields=("api_token", "scopes", "expected_user_id"), organization_id=organization, workflow_id=kwargs.get("workflow_id"), allow_same_grant_retry=False)
+        if not credential_id: return credential_data
+        if organization_id is None and not workflow_id: organization_id = CURRENT_ORGANIZATION
+        store = SupernormalAuthorityStore(pool, user_id, credential_id, credential_type=FAMILY, validate=_stored, grant_fields=("api_token", "scopes", "expected_user_id"), organization_id=organization_id, workflow_id=workflow_id, allow_same_grant_retry=False)
         try: return _CurrentCredential(await store.load(), store)
         except Exception: raise ValueError("Supernormal saved scoped key is unavailable under current access") from None
 
@@ -355,5 +359,5 @@ class SupernormalNode(WorkflowNode):
 
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         initial = _credential(self.node_data.get("credentials") if self.node_data.get("credentials") is not None else self.config.credentials)
-        credential = await self.freshen_credential(initial.model_dump(mode="json"), pool=self.node_data.get("_approval_pool"), user_id=self.user_id, credential_id=self.node_data["credential_id"], workflow_id=self.workflow_id, organization_id=self.organization_id) if self.node_data.get("credential_id") else initial
+        credential = await self._load_current_credential(initial.model_dump(mode="json"), pool=self.node_data.get("_approval_pool"), user_id=self.user_id, credential_id=self.node_data["credential_id"], workflow_id=self.workflow_id, organization_id=self.organization_id) if self.node_data.get("credential_id") else initial
         return await self._dispatch(credential, self.config.config)

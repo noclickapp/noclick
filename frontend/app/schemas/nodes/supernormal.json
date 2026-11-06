@@ -3,8 +3,8 @@
     "SupernormalAPITokenCredential": {
       "properties": {
         "credential_type": {
-          "const": "supernormal_api_token",
-          "default": "supernormal_api_token",
+          "const": "supernormal_api_key",
+          "default": "supernormal_api_key",
           "title": "Credential Type",
           "type": "string",
           "ui:hidden": true

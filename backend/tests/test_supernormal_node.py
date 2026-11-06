@@ -18,7 +18,7 @@ from nodes.supernormal_node import SupernormalNode, _credential
 TYPE = "automation-supernormal"
 USER = "11111111-1111-4111-8111-111111111111"
 KEY = "22222222-2222-4222-8222-222222222222"
-RAW = {"credential_type": "supernormal_api_token", "api_token": "synthetic-supernormal-issued-token", "scopes": ["user:read", "recordings:read", "calendar_events:read"], "expected_user_id": "userfixture1"}
+RAW = {"credential_type": "supernormal_api_key", "api_token": "synthetic-supernormal-issued-token", "scopes": ["user:read", "recordings:read", "calendar_events:read"], "expected_user_id": "userfixture1"}
 IDENTITY = {"id": "userfixture1", "first_name": "Fixture", "last_name": "Owner", "email": "PRIVATE-EMAIL", "avatar_url": "https://attacker.invalid/avatar"}
 RECORDING = {"id": "recordingfixture1", "title": "Fixture meeting", "status": "done", "recorded_at": "2026-01-01T10:00:00Z", "duration_seconds": 120, "participants_count": 2, "owner": {**IDENTITY, "id": "sharedowner1"}, "summary": "PRIVATE-TEXT https://media.example.invalid/recording?signature=PRIVATE-SIGNATURE", "notes": "PRIVATE-NOTES", "meeting_summary": "PRIVATE-SUMMARY", "download_url": "https://media.example.invalid/signed"}
 TRANSCRIPT = [{"start": 0.5, "end": 2.0, "content": "PRIVATE-SPOKEN https://media.example.invalid/signed?token=PRIVATE", "original_speaker": "PRIVATE-SPEAKER", "assigned_speaker_name": "PRIVATE-NAME", "author_name": "PRIVATE-NAME"}]
@@ -158,3 +158,10 @@ async def test_provider_status_pagination_or_error_has_no_echo_retry(transport, 
     result = await run("list_recordings")
     assert result["status"] == "error" and "data" not in result and len(calls) == 2
     assert "PRIVATE" not in json.dumps(result) and RAW["api_token"] not in json.dumps(result)
+
+
+@pytest.mark.asyncio
+async def test_freshen_credential_accepts_base_hook_arguments():
+    assert await SupernormalNode.freshen_credential(None) is None
+    credential = deepcopy(RAW)
+    assert await SupernormalNode.freshen_credential(credential, pool=None, user_id=USER, credential_id=None) is credential

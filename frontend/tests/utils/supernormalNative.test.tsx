@@ -13,10 +13,10 @@ describe('native Supernormal wiring', () => {
   beforeAll(() => loadNodeSchemas(['automation-supernormal']));
   it('exposes the real scoped token family and only five meeting-service reads', () => {
     const schema = NODE_SCHEMAS['automation-supernormal'];
-    expect(schema.$defs.SupernormalAPITokenCredential.properties.credential_type.const).toBe('supernormal_api_token');
-    expect(getNodeCredentialInfo('automation-supernormal')?.acceptedTypes).toEqual(['supernormal_api_token']);
-    expect(getCredentialTypeFromSchemaTitle('Supernormal API Token')).toBe('supernormal_api_token');
-    expect(getCredentialTypeFromSchemaTitle('SupernormalAPITokenCredential')).toBe('supernormal_api_token');
+    expect(schema.$defs.SupernormalAPITokenCredential.properties.credential_type.const).toBe('supernormal_api_key');
+    expect(getNodeCredentialInfo('automation-supernormal')?.acceptedTypes).toEqual(['supernormal_api_key']);
+    expect(getCredentialTypeFromSchemaTitle('Supernormal API Token')).toBe('supernormal_api_key');
+    expect(getCredentialTypeFromSchemaTitle('SupernormalAPITokenCredential')).toBe('supernormal_api_key');
     expect(isAgentToolProviderType('automation-supernormal')).toBe(true);
     const ops = schema.properties.config.oneOf.map((r: { $ref: string }) => schema.$defs[r.$ref.split('/').at(-1)!].properties.operation.const);
     expect(ops).toEqual(['get_user', 'list_upcoming_calendar_events', 'list_recordings', 'get_recording', 'get_transcript']);
@@ -26,8 +26,8 @@ describe('native Supernormal wiring', () => {
 
   it('selects and removes an owned credential through the actual native mapping', () => {
     const id = 'supernormal-owned-fixture';
-    upsertCredentialsIntoCache([{ id, name: 'Owned token fixture', credential_type: 'supernormal_api_token', owned_by_me: true }]);
-    expect(autoSelectCredentialFromCache('automation-supernormal')).toEqual({ supernormal_api_token: id });
+    upsertCredentialsIntoCache([{ id, name: 'Owned token fixture', credential_type: 'supernormal_api_key', owned_by_me: true }]);
+    expect(autoSelectCredentialFromCache('automation-supernormal')).toEqual({ supernormal_api_key: id });
     removeCredentialsFromCache([id]);
     expect(autoSelectCredentialFromCache('automation-supernormal')).toEqual({});
   });
