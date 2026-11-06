@@ -16,7 +16,7 @@ import pytest
 from nodes import botpress_node as native
 from nodes.core import credential_connect, registry, run_op
 from repositories.credential_approvals import CredentialApprovalRepo
-from utils import credentials, encryption
+from utils import credential_approval, credentials, encryption
 
 NODE = "automation-botpress"
 USER, ORG = "botpress-fixture-user", "botpress-fixture-org"
@@ -68,6 +68,7 @@ def local(monkeypatch):
         monkeypatch.setattr(module, "get_encryption", lambda: crypto)
     monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: state.pool)
     monkeypatch.setattr(credentials, "get_native_pool", lambda: state.pool)
+    monkeypatch.setattr(credential_approval, "get_native_pool", lambda: state.pool)
     state.admit = AsyncMock(side_effect=lambda **_: state.pending)
     monkeypatch.setattr(CredentialApprovalRepo, "admit", state.admit)
 
