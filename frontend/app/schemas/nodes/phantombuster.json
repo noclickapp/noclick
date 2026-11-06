@@ -711,17 +711,9 @@
           "x-is-trigger": false
         },
         "script_id": {
-          "description": "The ID of the script whose code to retrieve",
-          "title": "Script ID",
-          "type": "string",
-          "x-dynamic-options": {
-            "allow_custom": true,
-            "custom_placeholder": "Or paste script ID",
-            "field_name": "script_id",
-            "placeholder": "Select a script...",
-            "searchable": true,
-            "auto_select_sole_option": true
-          }
+          "description": "The name of the script whose code to retrieve, including its .js or .coffee extension",
+          "title": "Script Name",
+          "type": "string"
         }
       },
       "required": [
@@ -1594,8 +1586,8 @@
           "x-is-trigger": false
         },
         "query_params": {
-          "description": "JSON of the SERP query params per the docs (e.g. search terms / engine options)",
-          "title": "Query Parameters (JSON)",
+          "description": "JSON request body containing the searchQuery string",
+          "title": "Search Payload (JSON)",
           "type": "string",
           "ui:widget": "textarea"
         }

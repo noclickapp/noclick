@@ -309,7 +309,7 @@ class TestPhantomBusterScriptsMock:
     @pytest.mark.asyncio
     async def test_get_script_code(self, api_key_credentials):
         config = PhantomBusterNodeConfig(
-            config=PhantomBusterGetScriptCodeConfig(script_id="s1"),
+            config=PhantomBusterGetScriptCodeConfig(script_id="my-script.js"),
             credentials=api_key_credentials,
         )
         node, mock_client = _run(config, 200, {"code": "console.log('hi')"})
@@ -502,6 +502,7 @@ def create_capturing_client(status_code=200, json_data=None):
         captured["url"] = kwargs.get("url")
         captured["params"] = kwargs.get("params")
         captured["json"] = kwargs.get("json")
+        captured["headers"] = kwargs.get("headers")
         return mock_response
 
     mock_client.request = async_request
@@ -536,6 +537,42 @@ class TestPhantomBusterEndpointPaths:
     async def test_get_user_uses_v2_path(self, api_key_credentials):
         _, cap = await self._capture(PhantomBusterGetUserConfig(), api_key_credentials)
         assert cap["method"] == "GET" and cap["url"].endswith("/api/v2/users/fetch-me")
+        assert cap["headers"]["X-Phantombuster-Key"] == api_key_credentials.api_key
+
+    @pytest.mark.asyncio
+    async def test_get_script_code_uses_script_name(self, api_key_credentials):
+        _, cap = await self._capture(
+            PhantomBusterGetScriptCodeConfig(script_id="my-script.js"), api_key_credentials
+        )
+        assert cap["url"].endswith("/scripts/code")
+        assert cap["params"] == {"script": "my-script.js"}
+        field = PhantomBusterGetScriptCodeConfig.model_json_schema()["properties"]["script_id"]
+        assert field["title"] == "Script Name"
+        assert "x-dynamic-options" not in field
+
+    @pytest.mark.asyncio
+    async def test_save_leads_routes_arrays_to_save_many(self, api_key_credentials):
+        # Reuse the existing single-lead fixture for both supported payload shapes.
+        lead = '{"email": "a@b.com"}'
+        for payload, suffix, body in (
+            (lead, "/leads/save", {"email": "a@b.com"}),
+            (f"[{lead}]", "/leads/save-many", {"leads": [{"email": "a@b.com"}]}),
+        ):
+            _, cap = await self._capture(
+                PhantomBusterSaveLeadsConfig(leads_payload=payload), api_key_credentials
+            )
+            assert cap["url"].endswith(suffix)
+            assert cap["json"] == body
+
+    @pytest.mark.asyncio
+    async def test_serp_sends_search_query_in_json_body(self, api_key_credentials):
+        _, cap = await self._capture(
+            PhantomBusterSerpSearchConfig(query_params='{"searchQuery":"x"}'),
+            api_key_credentials,
+        )
+        assert cap["method"] == "GET" and cap["url"].endswith("/brightdata/serp")
+        assert cap["params"] is None
+        assert cap["json"] == {"searchQuery": "x"}
 
     @pytest.mark.asyncio
     async def test_solve_hcaptcha_path_and_body(self, api_key_credentials):

@@ -16,14 +16,13 @@ Provides workflow integration with PhantomBuster (v2 REST API) for operations in
 - AI / utilities: AI completion, advice, task; solve hCaptcha/reCAPTCHA; SERP; IP geolocation
 - Webhook Trigger: receive per-Phantom completion notifications
 
-Authentication: API Key. The workspace key is sent in the X-Phantombuster-Key-1
-header (the long-standing form PhantomBuster still accepts; X-Phantombuster-Key
-is the newer alias). No OAuth.
+Authentication: API Key. The workspace key is sent in the X-Phantombuster-Key
+header declared by the v2 API specification. No OAuth.
 API Base URL: https://api.phantombuster.com/api/v2
 Documentation: https://hub.phantombuster.com/reference
 
 PhantomBuster has no OAuth: all access uses a static workspace API key passed in
-the non-standard `X-Phantombuster-Key-1` header (no Bearer prefix). v2 endpoints
+the non-standard `X-Phantombuster-Key` header (no Bearer prefix). v2 endpoints
 return plain JSON. Webhooks are configured per-Phantom in the agent's dashboard
 settings (no registerable webhook API), so the trigger is a passive receiver.
 """
@@ -482,8 +481,7 @@ class PhantomBusterGetScriptCodeConfig(BaseModel):
         title="Get Script Code",
     )
     script_id: str = Field(
-        ..., title="Script ID", description="The ID of the script whose code to retrieve",
-        json_schema_extra=_SCRIPT_DROPDOWN,
+        ..., title="Script Name", description="The name of the script whose code to retrieve, including its .js or .coffee extension",
     )
 
 
@@ -1222,8 +1220,8 @@ class PhantomBusterSerpSearchConfig(BaseModel):
         title="SERP Search",
     )
     query_params: str = Field(
-        ..., title="Query Parameters (JSON)",
-        description="JSON of the SERP query params per the docs (e.g. search terms / engine options)",
+        ..., title="Search Payload (JSON)",
+        description="JSON request body containing the searchQuery string",
         json_schema_extra={"ui:widget": "textarea"},
     )
 
@@ -1361,7 +1359,7 @@ async def _phantombuster_request(
     """Make an authenticated PhantomBuster v2 request and return a structured result."""
     url = f"{PHANTOMBUSTER_API_BASE}{endpoint}"
     headers = {
-        "X-Phantombuster-Key-1": api_key,
+        "X-Phantombuster-Key": api_key,
         "Content-Type": "application/json",
         "Accept": "application/json",
     }
@@ -1799,7 +1797,7 @@ class PhantomBusterNode(WorkflowNode):
         self, c: PhantomBusterGetScriptCodeConfig, api_key: str
     ) -> Dict[str, Any]:
         return await _phantombuster_request(
-            api_key, "GET", "/scripts/code", params={"id": c.script_id}, action_name="get_script_code"
+            api_key, "GET", "/scripts/code", params={"script": c.script_id}, action_name="get_script_code"
         )
 
     async def _save_script(self, c: PhantomBusterSaveScriptConfig, api_key: str) -> Dict[str, Any]:
@@ -1846,9 +1844,14 @@ class PhantomBusterNode(WorkflowNode):
     # ------------------------------------------------------------------
     async def _save_leads(self, c: PhantomBusterSaveLeadsConfig, api_key: str) -> Dict[str, Any]:
         body = _parse_json_field(c.leads_payload)
-        json_body = body if isinstance(body, dict) else {"leads": body}
+        if isinstance(body, list):
+            endpoint, json_body = "/org-storage/leads/save-many", {"leads": body}
+        elif isinstance(body, dict):
+            endpoint, json_body = "/org-storage/leads/save", body
+        else:
+            raise ValueError("Leads payload must be a JSON object or array")
         return await _phantombuster_request(
-            api_key, "POST", "/org-storage/leads/save", json_body=json_body, action_name="save_leads"
+            api_key, "POST", endpoint, json_body=json_body, action_name="save_leads"
         )
 
     async def _save_many_leads(self, c: PhantomBusterSaveManyLeadsConfig, api_key: str) -> Dict[str, Any]:
@@ -2071,6 +2074,6 @@ class PhantomBusterNode(WorkflowNode):
 
     async def _serp_search(self, c: PhantomBusterSerpSearchConfig, api_key: str) -> Dict[str, Any]:
         return await _phantombuster_request(
-            api_key, "GET", "/brightdata/serp", params=_parse_params(c.query_params),
+            api_key, "GET", "/brightdata/serp", json_body=_parse_params(c.query_params),
             action_name="serp_search",
         )
