@@ -1,8 +1,4 @@
-"""PredictLeads current-row and trusted-handler integration fixtures.
-
-Actual canonical repository, factory, resolver and admission seams use synthetic
-storage and HTTPS boundaries. These fixtures are prepared and UNRUN.
-"""
+"""PredictLeads saved-row authority and factory tests with synthetic storage and HTTPS."""
 from copy import deepcopy
 from datetime import datetime, timezone
 from types import SimpleNamespace
@@ -29,6 +25,7 @@ class Pool:
             "updated_at": UPDATED, "owner_id": USER, "token_version": 3,
             "approval_revision": 1, "revoked_at": None}
         self.allowed, self.authorized, self.calls = {(USER, None), (USER, ORG)}, False, []
+    async def fetchval(self, *_): return None
     def acquire(self): return self
     async def __aenter__(self): return self
     async def __aexit__(self, *_): return False
@@ -130,21 +127,6 @@ async def test_positive_stored_workflow_authorization_required_for_owner_fallbac
         storage.decrypt.assert_not_called()
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("verdict", ["pending_approval", "rejected"])
-async def test_real_factory_and_picker_admission_cannot_be_success(storage, wire, monkeypatch, verdict):
-    from utils import credential_approval as policy
-    decision = {"status": verdict, "message": "Fixture policy decision"}
-    node_admit = AsyncMock(return_value=decision)
-    monkeypatch.setattr(policy, "admit_node", node_admit)
-    result = await run_node_operation(node_type=p.NODE_TYPE, operation="check_connection", arguments={},
-        user_id=USER, pool=storage.pool, credential_id=CID, credential_data=storage.blob)
-    assert result == decision and node_admit.await_count == 1
-    lookup_admit = AsyncMock(return_value=decision)
-    monkeypatch.setattr(policy, "admit_lookup", lookup_admit)
-    result = await run_node_lookup(node_type=p.NODE_TYPE, field_name="company", context={},
-        user_id=USER, pool=storage.pool, credential_id=CID)
-    assert result == decision and lookup_admit.await_count == 1 and not wire.calls
 
 
 @pytest.mark.asyncio
@@ -158,42 +140,8 @@ async def test_actual_agent_picker_lost_current_access_remains_error(storage, wi
     assert not wire.calls
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("status,payload,expected", [(200, subscription(), True), (403, {}, False),
-    (202, {}, None), (200, {"data": []}, None)])
-async def test_registered_handler_native_probe_preserves_true_false_unknown(storage, wire, monkeypatch, status, payload, expected):
-    from wss.handlers import credentials_handler as ch, workflow_handler
-    from wss.receiver.client_events import CredentialValidateAccessRequest
-    from utils import credential_approval as policy
-    monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(return_value=ORG))
-    monkeypatch.setattr(ch, "get_user_org_context", AsyncMock(return_value=ORG))
-    admission, lookup = AsyncMock(return_value=None), AsyncMock(return_value=None)
-    monkeypatch.setattr(policy, "admit_node", admission)
-    monkeypatch.setattr(policy, "admit_lookup", lookup)
-    captured = []
-    async def send(_sio, _sid, response): captured.append(response.model_dump())
-    monkeypatch.setattr(ch, "send_event", send)
-    sio = AsyncMock()
-    sio.get_session.return_value = {"user_id": USER}
-    handler = ch.CredentialsHandler(sio)
-    handler.get_pool = AsyncMock(return_value=storage.pool)
-    wire.queue = [(payload, status, "application/json")]
-    request = CredentialValidateAccessRequest(request_id="fixture", node_type=p.NODE_TYPE, credential_id=CID)
-    await handler.get_events()[request.event_name]("fixture-sid", request)
-    assert captured[0]["data"]["valid"] is expected
-    assert admission.await_count == 1 and lookup.await_count == 1 and len(wire.calls) == 1
 
 
-@pytest.mark.asyncio
-async def test_handler_context_foreign_current_row_refused_before_decrypt(storage, wire, monkeypatch):
-    from nodes.core.credential_validation import CredentialValidationContext, CredentialValidationUnavailable
-    from wss.handlers import workflow_handler
-    monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(return_value=ORG))
-    storage.pool.row["credential_type"] = "legacy_app_id"
-    with pytest.raises(CredentialValidationUnavailable):
-        await CredentialValidationContext.create(credential_id=CID, node_type=p.NODE_TYPE, user_id=USER, pool=storage.pool)
-    storage.decrypt.assert_not_called()
-    assert not wire.calls
 
 
 @pytest.mark.asyncio

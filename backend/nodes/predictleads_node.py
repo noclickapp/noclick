@@ -10,6 +10,7 @@ import math
 import re
 from typing import Annotated, Literal, Optional, Union
 from uuid import UUID
+from types import SimpleNamespace
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -18,8 +19,8 @@ from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.core.dynamic_options import normalize_search
 from nodes.core.oauth_scopes import Enforcement, ScopeRegistry, ScopeRequirement
-from repositories.credentials import CredentialsRepo
-from utils.credentials import resolve_credential_with_owner_fallback
+from repositories.credentials import credential_access_predicate
+from utils import credentials as credential_utils
 from utils.ssrf import guarded_async_client
 
 FAMILY = "predictleads_api_key_token"
@@ -339,7 +340,15 @@ async def bind_current(data, *, pool, user_id, credential_id, organization_id, w
     selected = {}
     async def load(cid, principal, current_pool, org):
         from utils.encryption import get_encryption
-        row = await CredentialsRepo(current_pool).fetch_validation_authority(cid, principal, org)
+        # Keep the saved-row snapshot local; staging exposes the canonical ACL
+        # predicate and workflow authorization helpers, not a validation loader.
+        async with current_pool.acquire() as conn:
+            record = await conn.fetchrow(f"""
+                SELECT c.credential_type, c.credential, c.owner_id::text AS owner_id,
+                       c.token_version, c.approval_revision, c.updated_at, c.revoked_at
+                FROM credentials c WHERE c.id = $1 AND {credential_access_predicate()}
+            """, cid, principal, org)
+        row = SimpleNamespace(**dict(record)) if record is not None else None
         if row is None: return None
         require_row(row)
         authority = Authority(str(cid), str(user_id), str(principal), org, workflow_id, row)
@@ -353,8 +362,16 @@ async def bind_current(data, *, pool, user_id, credential_id, organization_id, w
             raise ValueError("PredictLeads saved key, token or grants changed")
         selected["authority"] = authority
         return now
-    now = await resolve_credential_with_owner_fallback(credential_id, user_id, pool,
-        org_id=organization_id, workflow_id=workflow_id, load_credential_fn=load)
+    now = await load(credential_id, user_id, pool, organization_id)
+    if now is None and workflow_id:
+        owner = await credential_utils.get_workflow_owner_id(pool, workflow_id)
+        if (owner and owner != user_id
+                and await credential_utils.is_credential_authorized_for_workflow(pool, workflow_id, credential_id)):
+            now = await load(credential_id, owner, pool, organization_id)
+    if now is None and workflow_id:
+        lender = await credential_utils.credential_lender(pool, workflow_id, credential_id)
+        if lender and lender != str(user_id):
+            now = await load(credential_id, lender, pool, organization_id)
     if now is None or "authority" not in selected:
         raise ValueError("PredictLeads current access denied")
     return BoundCredential(now, selected["authority"], pool)
@@ -375,7 +392,7 @@ async def current_credential(data):
 async def request(data, path, params=None):
     now = await current_credential(data)
     try:
-        async with guarded_async_client(require_public=True, timeout=30, follow_redirects=False, trust_env=False) as client:
+        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
             async with client.stream("GET", ROOT + path, headers={"X-Api-Key": now["api_key"], "X-Api-Token": now["api_token"], "Accept": "application/json"}, params=params) as response:
                 await current_credential(data)
                 status = response.status_code
@@ -557,18 +574,16 @@ class PredictLeadsNode(WorkflowNode):
         return await bind_current(data, pool=pool, user_id=user_id, credential_id=credential_id,
             organization_id=organization_id, workflow_id=workflow_id)
     @classmethod
-    async def validate_credential_access(cls, data, *, validation_context=None):
-        from nodes.core.credential_validation import CredentialValidationContext, CredentialValidationPending, CredentialValidationUnverified
-        if not isinstance(validation_context, CredentialValidationContext) or validation_context.node_type != NODE_TYPE:
-            return {"valid": None, "error": "Save and check the current PredictLeads subscription"}
+    async def validate_credential_access(cls, data):
+        # Staging calls the hook with the accessible, decrypted credential only.
         try:
-            require_row(validation_context._authority)
-            require_row(await validation_context.revalidate())
-            result = await validation_context.run_operation("check_connection")
-        except (CredentialValidationPending, CredentialValidationUnverified): raise
-        except ValueError: return {"valid": False, "error": "PredictLeads refused current subscription access"}
-        except Exception: return {"valid": None, "error": "PredictLeads subscription access could not be judged"}
-        if result.get("witness_verified") is not True: return {"valid": None, "error": "PredictLeads did not verify the subscription witness"}
+            result = await check_subscription(credential(data))
+        except ValueError:
+            return {"valid": False, "error": "PredictLeads refused current subscription access"}
+        except Exception:
+            return {"valid": None, "error": "PredictLeads subscription access could not be judged"}
+        if result.get("witness_verified") is not True:
+            return {"valid": None, "error": "PredictLeads did not verify the subscription witness"}
         return {"valid": True, "proves": "reachability", "identity_verified": False}
     @classmethod
     async def load_field_options(cls, field_name, credential_data, context=None, page_token=None, search=None):

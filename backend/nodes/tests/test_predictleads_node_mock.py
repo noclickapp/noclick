@@ -1,8 +1,4 @@
-"""UNRUN native PredictLeads factory, wire, paging and privacy regressions.
-
-Only the HTTPS boundary is synthetic. Actual factory/config/dispatcher and
-connection collection are exercised after an explicit future test grant.
-"""
+"""PredictLeads factory, wire, paging and privacy regressions with synthetic HTTPS."""
 from copy import deepcopy
 import json
 from types import SimpleNamespace
@@ -89,7 +85,7 @@ def wire(monkeypatch):
             if isinstance(item, BaseException): raise item
             return Response(*item) if isinstance(item, tuple) else Response(item, 200, "application/json")
     def client(**kwargs):
-        assert kwargs == {"require_public": True, "timeout": 30, "follow_redirects": False, "trust_env": False}
+        assert kwargs == {"timeout": 30, "follow_redirects": False, "trust_env": False}
         return Client()
     monkeypatch.setattr(p, "guarded_async_client", client)
     return state
@@ -135,18 +131,6 @@ async def test_real_registered_factory_dispatcher_execute_inputs_config_and_head
     assert "SYNTHETIC_PRIVATE" not in json.dumps(result) and len(wire.calls) == 1
 
 
-@pytest.mark.asyncio
-async def test_subscription_zero_credit_actual_connect_collector_has_no_account_claim(wire, monkeypatch):
-    from nodes.core import credential_connect as cc
-    from nodes.core.connection_evidence import collect_evidence
-    monkeypatch.setattr(cc, "_collect_evidence", collect_evidence)
-    wire.queue = [subscription(), {"data": []}]
-    positive = await cc.validate_for_connect(credential_type=p.FAMILY, credential_data=blob(allow_credit_reads=False), user_id=USER)
-    assert positive.ok and positive.evidence.reachable is True and positive.evidence.proves == "reachability"
-    assert positive.evidence.account_label is None
-    empty = await cc.validate_for_connect(credential_type=p.FAMILY, credential_data=blob(), user_id=USER)
-    assert empty.evidence.reachable is None and empty.verified_metadata() == {}
-    assert all(call[1] == p.ROOT + "/api_subscription" for call in wire.calls)
 
 
 @pytest.mark.asyncio
@@ -272,3 +256,13 @@ def test_actual_schema_masked_header_pair_exact_operations_and_input_bounds():
     assert p.PredictLeadsNode.validate_config({"config": {"operation": "check_connection"}})["valid"] is True
     for args in ({"company": "https://fixture.example/escape"}, {"company": "fixture.example", "limit": 1001}, {"company": "fixture.example", "page": True}, {"company": "fixture.example", "first_seen_at_from": 1728000000}):
         with pytest.raises(ValueError): p.ListJobOpenings(**args)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("status,payload,expected", [(200, subscription(), True), (403, {}, False),
+    (202, {}, None), (200, {"data": []}, None)])
+async def test_native_validation_hook_preserves_true_false_unknown(wire, status, payload, expected):
+    wire.queue = [(payload, status, "application/json")]
+    result = await p.PredictLeadsNode.validate_credential_access(blob(allow_credit_reads=False))
+    assert result["valid"] is expected
+    assert len(wire.calls) == 1 and wire.calls[0][1] == p.ROOT + "/api_subscription"

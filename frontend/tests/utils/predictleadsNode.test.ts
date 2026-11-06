@@ -1,18 +1,21 @@
-// Exercises PredictLeads' real native credential, selector and editor helpers.
-// Synthetic fixtures remain unrun until a root frontend lane is granted.
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+// Exercises PredictLeads native credential, selector and editor helpers.
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { createElement } from 'react';
+import { createElement, type ComponentType } from 'react';
 
+vi.mock('~/components/workflow/nodes/base/AutomationNode', () => ({ default: () => null }));
+vi.mock('~/lib/applyNodeUpdate', () => ({ updateNodeInList: vi.fn() }));
+vi.mock('@lobehub/icons', () => ({ Anthropic: () => null, MCP: () => null, OpenAI: () => null }));
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn() }));
-vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: vi.fn(), set: vi.fn(), clear: vi.fn() } }));
+vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: vi.fn(), set: vi.fn(), delete: vi.fn(), clear: vi.fn() } }));
 
 import { PredictLeadsNode } from '~/components/workflow/nodes/PredictLeadsNode';
-import { AVAILABLE_NODES } from '~/components/workflow/nodes/nodeRegistry';
+import { NODE_DEFINITION_FILES } from '~/components/workflow/nodes/nodeDefinitions';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
-import { NODE_SCHEMAS, getAgentToolOperations, getNodeCredentialInfo } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, getAgentToolOperations, getNodeCredentialInfo, loadAllNodeSchemas, credentialMarks } from '~/utils/nodeSchemas';
 import { humanizeCredentialLabel, fixWordCasing } from '~/utils/credentialLabels';
-import { autoSelectCredentialFromCache, invalidateCredentialsCache, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
+import { invalidateCredentialsCache, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
 import { getProviderConfigByCredentialType } from '~/utils/oauthProviders';
 import { setNodeIconData } from '~/lib/nodeIconRegistry';
 import { getCredentialIcon } from '~/utils/credentialIcons';
@@ -21,10 +24,11 @@ const family = 'predictleads_api_key_token';
 const type = 'automation-predictleads';
 
 describe('native PredictLeads wiring', () => {
+    beforeAll(async () => { await loadAllNodeSchemas(); });
     beforeEach(() => invalidateCredentialsCache());
-    it('registers the native editor and unchanged official favicon', () => {
-        expect(AVAILABLE_NODES.filter(n => n.type === type)).toEqual([PredictLeadsNode]);
-        expect(renderToStaticMarkup(createElement(PredictLeadsNode.Icon))).toContain('/icons/predictleads.svg');
+    it('registers the native editor and sourced brand asset', () => {
+        expect(NODE_DEFINITION_FILES.filter(([nodeType]) => nodeType === type)).toEqual([[type, 'PredictLeadsNode']]);
+        expect(renderToStaticMarkup(createElement(PredictLeadsNode.Icon as ComponentType<any>))).toContain('/icons/predictleads-preferred-brand.svg');
         expect(PredictLeadsNode.iconColor).toBe('');
     });
     it('keeps the supplied header pair masked and manual, with an explicit local credit grant', () => {
@@ -59,7 +63,8 @@ describe('native PredictLeads wiring', () => {
     });
     it('uses the same brand asset for saved credentials', () => {
         setNodeIconData({ [type]: { type, label: PredictLeadsNode.label, description: '', iconColor: '',
-            iconHtml: '<img src="/icons/predictleads.svg" />', dimensions: PredictLeadsNode.dimensions } });
+            iconHtml: '<img src="/icons/predictleads-preferred-brand.svg" />', dimensions: PredictLeadsNode.dimensions,
+            credentialKeys: credentialMarks(() => true).get(type) } });
         expect(getCredentialIcon(family).hasServiceIcon).toBe(true);
     });
 });

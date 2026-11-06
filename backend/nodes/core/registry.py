@@ -10,6 +10,7 @@ from typing import Dict, Optional, Type, Any
 from nodes.adapty_node import AdaptyNode
 from nodes.core.base import WorkflowNode
 from nodes.porkbun_node import PorkbunNode
+from nodes.predictleads_node import PredictLeadsNode
 from nodes.telegram_node import TelegramNode
 from nodes.hetrixtools_node import HetrixToolsNode
 from nodes.phone_node import PhoneNode
@@ -222,6 +223,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
 
     # Automation nodes
     'automation-porkbun': PorkbunNode,
+    'automation-predictleads': PredictLeadsNode,
     'automation-telegram': TelegramNode,
     'automation-phone': PhoneNode,
     'automation-http-request': HttpRequestNode,
