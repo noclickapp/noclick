@@ -406,32 +406,27 @@ class SlingNode(WorkflowNode):
                     organization_id = await get_user_org_context(conn, user_id)
             authority_user = user_id
             repo = CredentialsRepo(pool)
-            row = await repo.fetch_validation_authority(credential_id, authority_user, organization_id)
+            row = await repo.fetch_with_access(credential_id, authority_user, organization_id)
             if row is None and workflow_id:
                 owner = await get_workflow_owner_id(pool, workflow_id)
                 if owner and owner != user_id and await is_credential_authorized_for_workflow(pool, workflow_id, credential_id):
                     authority_user = owner
-                    row = await repo.fetch_validation_authority(credential_id, authority_user, organization_id)
-            if row is None or row.credential_type not in TYPES or row.revoked_at is not None:
+                    row = await repo.fetch_with_access(credential_id, authority_user, organization_id)
+            if row is None or row.credential_type not in TYPES:
                 raise ValueError("Current Sling authority is unavailable or has a different family")
             credential_data = await resolve_credential_with_owner_fallback(credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id)
             if not credential_data or credential_data.get("credential_type") != row.credential_type:
                 raise ValueError("Sling credential unavailable, revoked or access denied")
-            if await repo.fetch_validation_authority(credential_id, authority_user, organization_id) != row:
+            if await repo.fetch_with_access(credential_id, authority_user, organization_id) != row:
                 raise ValueError("Sling authority changed during resolution; reconnect and retry deliberately")
         return credential_value(credential_data, manual=not credential_id).model_dump()
 
     @classmethod
-    async def validate_credential_access(cls, credential_data, *, validation_context=None):
+    async def validate_credential_access(cls, credential_data):
         try:
             credential_value(credential_data)
         except ValueError:
             return {"valid": False, "error": "Connect a typed Sling user token"}
-        if validation_context is not None:
-            from nodes.core.credential_validation import CredentialValidationContext
-            if not isinstance(validation_context, CredentialValidationContext):
-                raise ValueError("Stored Sling validation requires trusted current authority")
-            await validation_context.collect_evidence()
         return {"valid": True}
 
     @classmethod

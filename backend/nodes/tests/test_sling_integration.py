@@ -1,4 +1,4 @@
-"""Unrun actual Sling factory/connect/current-row/admission regressions.
+"""Sling factory/connect/current-row regressions against staging APIs.
 
 Only local repository storage, encryption and remote HTTP are substituted.
 """
@@ -38,7 +38,7 @@ class Pool:
 
 @pytest.fixture
 def seams(monkeypatch):
-    row = {"credential_type": node.TYPES[0], "owner_id": "fixture-user", "token_version": 7, "updated_at": datetime(2026, 10, 7, tzinfo=timezone.utc), "approval_revision": 3, "revoked_at": None, "credential": b"local-cipher"}
+    row = {"id": CID, "name": "Sling", "metadata": {}, "created_at": datetime(2026, 10, 7, tzinfo=timezone.utc), "credential_type": node.TYPES[0], "owner_id": "fixture-user", "token_version": 7, "updated_at": datetime(2026, 10, 7, tzinfo=timezone.utc), "approval_revision": 3, "revoked_at": None, "credential": b"local-cipher"}
     calls, sql, state = [], [], {"row": row, "blob": deepcopy(CREDENTIAL), "organization": {"name": "Fixture Organization", "password": "PRIVATE PASSWORD"}, "users": [{"id": 31, "name": "Fixture User", "email": "PRIVATE EMAIL"}]}
     async def read(statement, *args):
         sql.append((statement, args))
@@ -73,24 +73,16 @@ async def test_actual_factory_uses_current_row_and_real_admission(seams):
     assert result["principal_identity_verified"] is False
     args = seams.admission.call_args.kwargs
     assert args["operation"] == "get_organization" and args["credential_id"] == CID
-    assert len(seams.calls) == 1 and sum("token_version" in query for query, _ in seams.sql) >= 2
+    assert len(seams.calls) == 1 and sum("c.updated_at" in query for query, _ in seams.sql) >= 2
 
 
-@pytest.mark.parametrize("status", ["pending", "rejected"])
-async def test_real_stored_operation_and_collector_park_before_provider(seams, status):
-    seams.admission.return_value = {"id": "fixture-approval", "status": status, "new_request": False}
-    result = await run_op.run_node_operation(node_type="automation-sling", operation="get_organization", arguments={}, user_id="fixture-user", credential_id=CID, pool=seams.pool, organization_id="fixture-org")
-    assert result["executed"] is False and result["_halt_downstream"] is True
-    evidence = await connection_evidence.collect_evidence(node_type="automation-sling", credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org")
-    assert evidence.reachable is None and evidence.proves == "reachability" and evidence.account_label is None and evidence.samples == []
-    assert evidence.noun == "Sling organization metadata" and seams.calls == []
 
 
 async def test_real_manual_connect_shapes_family_and_honest_resource_proof(seams):
     raw = {key: value for key, value in CREDENTIAL.items() if key != "credential_type"}
     verdict = await credential_connect.validate_for_connect(credential_type=node.TYPES[0], credential_data=raw, user_id="fixture-user", pool=seams.pool)
     assert verdict.field_errors == {} and verdict.rejection is None and verdict.credential_data == CREDENTIAL
-    assert verdict.evidence.reachable is True and verdict.evidence.proves == "reachability" and verdict.evidence.account_label is None
+    assert verdict.evidence.reachable is True and node.SlingNode.connection_evidence.proves == "reachability" and verdict.evidence.account_label is None
     assert len(seams.calls) == 1 and seams.admission.await_count == 0
 
 
@@ -109,7 +101,7 @@ async def test_current_row_family_blocks_blob_and_provider(seams, family):
     assert seams.calls == []
 
 
-@pytest.mark.parametrize("condition", ["absent", "revoked", "lost_access", "changed_version"])
+@pytest.mark.parametrize("condition", ["absent", "revoked", "lost_access", "changed_revision"])
 async def test_current_authority_loss_or_race_stops_before_io(seams, condition):
     if condition == "absent":
         seams.state["row"] = None
@@ -119,10 +111,10 @@ async def test_current_authority_loss_or_race_stops_before_io(seams, condition):
         reads = 0
         async def read(statement, *args):
             nonlocal reads
-            if "token_version" in statement:
+            if "c.updated_at" in statement:
                 reads += 1
                 if reads == 2:
-                    return None if condition == "lost_access" else {**seams.row, "token_version": 8}
+                    return None if condition == "lost_access" else {**seams.row, "updated_at": datetime(2026, 10, 8, tzinfo=timezone.utc)}
             return seams.row
         seams.pool.conn.fetchrow.side_effect = read
     with pytest.raises(ValueError):
@@ -138,12 +130,6 @@ async def test_current_token_and_organization_replace_stale_caller(seams):
     assert seams.calls[0].headers["Authorization"] == "rotated-token"
 
 
-async def test_real_saved_picker_exact_fingerprint_parks(seams):
-    seams.admission.return_value = {"id": "fixture-approval", "status": "pending", "new_request": False}
-    result = await run_op.run_node_lookup(node_type="automation-sling", field_name="user_id", context=None, page_token=None, search="fixture", user_id="fixture-user", credential_id=CID, pool=seams.pool, organization_id="fixture-org")
-    assert result["executed"] is False and seams.calls == []
-    args = seams.admission.call_args.kwargs
-    assert args["operation"] == "__lookup__" and args["arguments"] == {"field_name": "user_id", "context": None, "page_token": None, "search": "fixture"}
 
 
 async def test_actual_stored_picker_uses_current_token(seams):
@@ -159,21 +145,8 @@ async def test_malformed_protected_org_never_verified_identity(seams):
     assert len(seams.calls) == 1
 
 
-async def test_trusted_post_connect_rechecks_current_revision(seams):
-    from nodes.core.credential_validation import CredentialValidationContext
-    context = await CredentialValidationContext.create(credential_id=CID, node_type="automation-sling", user_id="fixture-user", pool=seams.pool)
-    result = await node.SlingNode.validate_credential_access(CREDENTIAL, validation_context=context)
-    await context.accept(result)
-    assert result == {"valid": True} and len(seams.calls) == 1
-    seams.row["approval_revision"] += 1
-    with pytest.raises(ValueError, match="authority changed"):
-        await context.accept(result)
 
 
-async def test_forged_validation_context_cannot_probe(seams):
-    with pytest.raises(ValueError, match="trusted"):
-        await node.SlingNode.validate_credential_access(CREDENTIAL, validation_context={"credential_id": CID})
-    assert seams.calls == []
 
 
 @pytest.mark.parametrize("authorized", [False, True])

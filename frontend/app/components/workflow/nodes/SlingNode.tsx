@@ -1,9 +1,9 @@
 // Sling exposes protected workforce catalogs and bounded calendar metadata.
 // The shared editor uses the native schema; this node performs no schedule writes.
-import { memo, forwardRef } from 'react';
+import { memo } from 'react';
 import { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
-import { NodeDefinition, SvgIconComponent } from './types';
+import { NodeDefinition } from './types';
 
 
 // Unmodified compact brand asset from https://getsling.com
@@ -13,12 +13,6 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
 
-const SlingIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
-  ({ className, style, ...props }, ref) => (
-    <img ref={ref} src="/icons/sling.png" alt="" className={className} style={style} {...props} />
-  ),
-);
-SlingIcon.displayName = 'SlingIcon';
 const SlingNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 
 export const SlingNode: NodeDefinition = {

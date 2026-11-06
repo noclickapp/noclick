@@ -1,12 +1,13 @@
 // Covers the actual Sling schema and credential consumers after generation.
 // These source fixtures do not establish real account or canvas behavior.
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { SlingNode } from '~/components/workflow/nodes/SlingNode';
-import { getNodeCredentialInfo, NODE_SCHEMAS } from '~/utils/nodeSchemas';
+import { getNodeCredentialInfo, loadAllNodeSchemas, NODE_SCHEMAS } from '~/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 
 describe('Sling native wiring', () => {
+  beforeAll(() => loadAllNodeSchemas());
   it('discovers the raw user-token family and required resource parent', () => {
     expect(SlingNode.type).toBe('automation-sling');
     expect(getNodeCredentialInfo(SlingNode.type)?.acceptedTypes).toEqual(['sling_user_token']);
