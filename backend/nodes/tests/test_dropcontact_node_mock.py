@@ -252,7 +252,14 @@ async def test_actual_post_connect_handler_trusted_context_tristate_and_evidence
     from repositories.credential_approvals import CredentialApprovalRepo
     from wss.handlers import credentials_handler as hm
     from wss.receiver.client_events import CredentialValidateAccessRequest
-    row = CredentialValidationRow(dn.FAMILIES[0], "owner", 2, STAMP, 0, None, "sealed")
+    from cryptography.fernet import Fernet
+    from utils import encryption
+    # The handler loads the current encrypted row before calling the node hook.
+    # Keep the real decrypt path and give it a valid, test-only credential blob.
+    monkeypatch.setenv("CREDENTIALS_ENCRYPTION_KEY", Fernet.generate_key().decode())
+    monkeypatch.setattr(encryption, "_encryption_instance", encryption.CredentialEncryption())
+    sealed = encryption.get_encryption().encrypt_credential(CREDS)
+    row = CredentialValidationRow(dn.FAMILIES[0], "owner", 2, STAMP, 0, None, sealed)
     context = CredentialValidationContext("saved", dn.NODE_TYPE, "actor", "org", object(), row)
     monkeypatch.setattr(CredentialValidationContext, "create", AsyncMock(return_value=context)); monkeypatch.setattr(CredentialValidationContext, "revalidate", AsyncMock(return_value=row)); monkeypatch.setattr(run_op, "resolve_operation_credential", AsyncMock(return_value=CREDS)); monkeypatch.setattr(CredentialApprovalRepo, "admit", AsyncMock(return_value=None)); monkeypatch.setattr(dn, "_current_data", AsyncMock(return_value=dn._shape(CREDS)))
     sent = []
