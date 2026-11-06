@@ -1463,18 +1463,29 @@ async def test_expanded_operation(api_key_credentials, cfg, action, payload):
     assert result["action"] == action
 
 
-@pytest.mark.parametrize("operation", [
-    "list_response_plays", "get_response_play", "create_response_play",
-    "update_response_play", "delete_response_play", "run_response_play",
+@pytest.mark.asyncio
+@pytest.mark.parametrize("saved", [
+    {"operation": "list_response_plays", "query": "Major Incident"},
+    {"operation": "get_response_play", "response_play_id": "PXYZ123"},
+    {"operation": "create_response_play", "name": "Sev1 Play", "additional_fields_json": '{"conference_number": "+1-555-0100"}'},
+    {"operation": "update_response_play", "response_play_id": "PXYZ123", "description": "Page leadership"},
+    {"operation": "delete_response_play", "response_play_id": "PXYZ123"},
+    {"operation": "run_response_play", "response_play_id": "PXYZ123", "incident_id": "PINC456"},
 ])
-def test_retired_response_plays_are_not_offered(operation):
-    from pydantic import ValidationError
-
+async def test_retired_response_plays_load_and_report_migration(saved, api_key_credentials):
+    config = PagerDutyNodeConfig.model_validate({"config": saved, "credentials": api_key_credentials})
+    assert config.model_dump()["config"].items() >= saved.items()
     schema = PagerDutyNode.get_config_schema()
-    choices = schema["properties"]["config"]["discriminator"]["mapping"]
-    assert operation not in choices
-    with pytest.raises(ValidationError, match="union_tag_invalid"):
-        PagerDutyNodeConfig(config={"operation": operation})
+    ref = schema["properties"]["config"]["discriminator"]["mapping"][saved["operation"]]
+    assert schema["$defs"][ref.rsplit("/", 1)[-1]]["deprecated"] is True
+    with patch("nodes.pagerduty_node.httpx.AsyncClient") as client:
+        result = await create_pagerduty_node(config).execute({})
+    client.assert_not_called()
+    assert result["status"] == "error"
+    assert result["action"] == saved["operation"]
+    assert result["status_code"] == 400
+    assert "retired" in result["error"]
+    assert "Incident Workflows" in result["error"]
 
 
 @pytest.mark.asyncio
@@ -1570,11 +1581,32 @@ async def test_provider_request_bodies(config, path, body, api_key_credentials):
     assert json.loads(requests[0].content) == body
 
 
-def test_invocation_requires_incident_context():
-    from pydantic import ValidationError
+@pytest.mark.asyncio
+@pytest.mark.parametrize("legacy", [{}, {"incident_id": None}, {"incident_id": ""}, {"incident_id": " "}])
+async def test_saved_invocation_without_incident_loads_and_reports_migration(legacy, api_key_credentials):
+    saved = {"operation": "invoke_automation_action", "action_id": "01ABC", **legacy}
+    config = PagerDutyNodeConfig.model_validate({"config": saved, "credentials": api_key_credentials})
+    assert config.model_dump()["config"].items() >= saved.items()
+    with patch("nodes.pagerduty_node.httpx.AsyncClient") as client:
+        result = await create_pagerduty_node(config).execute({})
+    client.assert_not_called()
+    assert result["status"] == "error"
+    assert result["status_code"] == 400
+    assert "Add incident_id" in result["error"]
 
-    with pytest.raises(ValidationError, match="incident_id"):
-        PagerDutyInvokeAutomationActionConfig(action_id="01ABC")
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("value", ['[{"name":"region","value":"us-east-1"}]', "invalid legacy JSON"])
+async def test_saved_invocation_inputs_are_preserved_and_explicitly_rejected(value, api_key_credentials):
+    saved = {"operation": "invoke_automation_action", "action_id": "01ABC", "incident_id": "PINC456", "inputs_json": value}
+    config = PagerDutyNodeConfig.model_validate({"config": saved, "credentials": api_key_credentials})
+    assert config.model_dump()["config"].items() >= saved.items()
+    with patch("nodes.pagerduty_node.httpx.AsyncClient") as client:
+        result = await create_pagerduty_node(config).execute({})
+    client.assert_not_called()
+    assert result["status"] == "error"
+    assert result["status_code"] == 400
+    assert "Remove inputs_json" in result["error"]
 
 
 @pytest.mark.asyncio

@@ -4317,6 +4317,103 @@ class PagerDutyDeleteRulesetRuleConfig(BaseModel):
 
 
 
+class PagerDutyListResponsePlaysConfig(BaseModel):
+    """List response plays, optionally filtered by name."""
+
+    model_config = ConfigDict(json_schema_extra={"deprecated": True})
+
+    operation: Literal["list_response_plays"] = Field(
+        "list_response_plays",
+        json_schema_extra={"const": "list_response_plays", "ui:hidden": True, "x-category": "Response Plays", "x-is-trigger": False, "x-display-name": "List Response Plays"},
+        title="List Response Plays",
+    )
+    query: Optional[str] = Field(None, title="Query", description="Filter response plays by name (optional)")
+
+
+class PagerDutyGetResponsePlayConfig(BaseModel):
+    """Retrieve a single response play by ID."""
+
+    model_config = ConfigDict(json_schema_extra={"deprecated": True})
+
+    operation: Literal["get_response_play"] = Field(
+        "get_response_play",
+        json_schema_extra={"const": "get_response_play", "ui:hidden": True, "x-category": "Response Plays", "x-is-trigger": False, "x-display-name": "Get Response Play"},
+        title="Get Response Play",
+    )
+    response_play_id: str = Field(..., title="Response Play ID", description="The response play to retrieve")
+
+
+class PagerDutyCreateResponsePlayConfig(BaseModel):
+    """Create a response play (requires the From Email credential field)."""
+
+    model_config = ConfigDict(json_schema_extra={"deprecated": True})
+
+    operation: Literal["create_response_play"] = Field(
+        "create_response_play",
+        json_schema_extra={"const": "create_response_play", "ui:hidden": True,
+            "x-creates-resource": True,
+            "x-resource-type": "pagerduty_response_play",
+            "x-resource-id-path": "data.response_play.id", "x-category": "Response Plays", "x-is-trigger": False, "x-display-name": "Create Response Play"},
+        title="Create Response Play",
+    )
+    name: str = Field(..., title="Name", description="The name of the response play")
+    description: Optional[str] = Field(None, title="Description", description="A description of the response play (optional)")
+    additional_fields_json: Optional[str] = Field(
+        None,
+        title="Advanced Fields (JSON)",
+        description="Optional JSON object merged into the response_play body (subscribers, responders, escalation_rules, conference_number, runnability, etc.)",
+        json_schema_extra={"ui:widget": "textarea"},
+    )
+
+
+class PagerDutyUpdateResponsePlayConfig(BaseModel):
+    """Update an existing response play (requires the From Email credential field)."""
+
+    model_config = ConfigDict(json_schema_extra={"deprecated": True})
+
+    operation: Literal["update_response_play"] = Field(
+        "update_response_play",
+        json_schema_extra={"const": "update_response_play", "ui:hidden": True, "x-category": "Response Plays", "x-is-trigger": False, "x-display-name": "Update Response Play"},
+        title="Update Response Play",
+    )
+    response_play_id: str = Field(..., title="Response Play ID", description="The response play to update")
+    name: Optional[str] = Field(None, title="Name", description="New response play name (optional)")
+    description: Optional[str] = Field(None, title="Description", description="New description (optional)")
+    additional_fields_json: Optional[str] = Field(
+        None,
+        title="Advanced Fields (JSON)",
+        description="Optional JSON object merged into the response_play body (subscribers, responders, escalation_rules, etc.)",
+        json_schema_extra={"ui:widget": "textarea"},
+    )
+
+
+class PagerDutyDeleteResponsePlayConfig(BaseModel):
+    """Delete a response play (requires the From Email credential field)."""
+
+    model_config = ConfigDict(json_schema_extra={"deprecated": True})
+
+    operation: Literal["delete_response_play"] = Field(
+        "delete_response_play",
+        json_schema_extra={"const": "delete_response_play", "ui:hidden": True, "x-category": "Response Plays", "x-is-trigger": False, "x-display-name": "Delete Response Play"},
+        title="Delete Response Play",
+    )
+    response_play_id: str = Field(..., title="Response Play ID", description="The response play to delete")
+
+
+class PagerDutyRunResponsePlayConfig(BaseModel):
+    """Run a response play against an incident (requires the From Email credential field)."""
+
+    model_config = ConfigDict(json_schema_extra={"deprecated": True})
+
+    operation: Literal["run_response_play"] = Field(
+        "run_response_play",
+        json_schema_extra={"const": "run_response_play", "ui:hidden": True, "x-category": "Response Plays", "x-is-trigger": False, "x-display-name": "Run Response Play"},
+        title="Run Response Play",
+    )
+    response_play_id: str = Field(..., title="Response Play ID", description="The response play to run")
+    incident_id: str = Field(..., title="Incident ID", description="The incident to run the response play on")
+
+
 class PagerDutyListAutomationActionsConfig(BaseModel):
     """List automation actions, optionally filtered by name."""
 
@@ -4410,7 +4507,15 @@ class PagerDutyInvokeAutomationActionConfig(BaseModel):
         title="Invoke Automation Action",
     )
     action_id: str = Field(..., title="Action ID", description="The automation action to invoke")
-    incident_id: str = Field(..., title="Incident ID", description="Invoke in the context of this incident")
+    incident_id: Optional[str] = Field(
+        None, title="Incident ID",
+        description="Required by PagerDuty when invoking an action. Add an incident ID before running saved actions without incident context.",
+    )
+    inputs_json: Optional[str] = Field(
+        None, title="Legacy Inputs (unsupported)",
+        description="Preserved for saved workflows. PagerDuty does not support this inputs field; remove its value before invoking the action.",
+        json_schema_extra={"ui:widget": "textarea", "deprecated": True},
+    )
 
 
 class PagerDutyListInvocationsConfig(BaseModel):
@@ -6033,6 +6138,12 @@ PagerDutyConfig = Annotated[
         PagerDutyGetRulesetRuleConfig,
         PagerDutyUpdateRulesetRuleConfig,
         PagerDutyDeleteRulesetRuleConfig,
+        PagerDutyListResponsePlaysConfig,
+        PagerDutyGetResponsePlayConfig,
+        PagerDutyCreateResponsePlayConfig,
+        PagerDutyUpdateResponsePlayConfig,
+        PagerDutyDeleteResponsePlayConfig,
+        PagerDutyRunResponsePlayConfig,
         PagerDutyListAutomationActionsConfig,
         PagerDutyGetAutomationActionConfig,
         PagerDutyCreateAutomationActionConfig,
@@ -6793,6 +6904,12 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
             "get_ruleset_rule": self._get_ruleset_rule,
             "update_ruleset_rule": self._update_ruleset_rule,
             "delete_ruleset_rule": self._delete_ruleset_rule,
+            "list_response_plays": self._retired_response_play,
+            "get_response_play": self._retired_response_play,
+            "create_response_play": self._retired_response_play,
+            "update_response_play": self._retired_response_play,
+            "delete_response_play": self._retired_response_play,
+            "run_response_play": self._retired_response_play,
             "list_automation_actions": self._list_automation_actions,
             "get_automation_action": self._get_automation_action,
             "create_automation_action": self._create_automation_action,
@@ -7992,6 +8109,15 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         )
 
     # --- response-automation-workflows ---
+    async def _retired_response_play(self, c, api_key, from_email) -> Dict[str, Any]:
+        raise ValueError(
+            f"PagerDuty retired Response Plays; saved operation '{c.operation}' can no longer run. "
+            "Replace this step with Incident Workflows (list_incident_workflows, "
+            "get_incident_workflow, create_incident_workflow, update_incident_workflow, "
+            "delete_incident_workflow, or start_incident_workflow). "
+            "https://docs.pagerduty.com/developer/api-changelog"
+        )
+
     async def _list_automation_actions(self, c: PagerDutyListAutomationActionsConfig, api_key, from_email) -> Dict[str, Any]:
         return await _pagerduty_request(api_key, "GET", "/automation_actions/actions", params={"query": c.query, "limit": c.limit}, action_name="list_automation_actions")
 
@@ -8031,6 +8157,16 @@ class PagerDutyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         return await _pagerduty_request(api_key, "DELETE", f"/automation_actions/actions/{c.action_id}", from_email=from_email, action_name="delete_automation_action")
 
     async def _invoke_automation_action(self, c: PagerDutyInvokeAutomationActionConfig, api_key, from_email) -> Dict[str, Any]:
+        if not c.incident_id or not c.incident_id.strip():
+            raise ValueError(
+                "PagerDuty now requires incident context to invoke an automation action. "
+                "Add incident_id to this saved step before running it."
+            )
+        if c.inputs_json:
+            raise ValueError(
+                "This saved step contains legacy inputs_json, which PagerDuty does not support. "
+                "Remove inputs_json and configure the action inputs in PagerDuty before running it."
+            )
         invocation = {"metadata": {"incident_id": c.incident_id}}
         return await _pagerduty_request(api_key, "POST", f"/automation_actions/actions/{c.action_id}/invocations", json_body={"invocation": invocation}, from_email=from_email, action_name="invoke_automation_action")
 
