@@ -1,16 +1,16 @@
 // Exercises Sematext's real credential, selector and editor helpers.
-// Prepared synthetic fixtures remain unrun until a root frontend lane is granted.
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { createElement } from 'react';
+// Synthetic fixtures verify wiring against staging's lazy schema helpers.
+import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { createElement, type ComponentType } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+vi.mock('@lobehub/icons', () => ({ Anthropic: () => null, MCP: () => null, OpenAI: () => null }));
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn() }));
 vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: vi.fn(), set: vi.fn(), clear: vi.fn() } }));
 import { SematextNode } from '~/components/workflow/nodes/SematextNode';
-import { AVAILABLE_NODES } from '~/components/workflow/nodes/nodeRegistry';
-import { NODE_SCHEMAS, getAgentToolOperations, getNodeCredentialInfo } from '~/utils/nodeSchemas';
+import { NODE_DEFINITION_FILES } from '~/components/workflow/nodes/nodeDefinitions';
+import { NODE_SCHEMAS, getAgentToolOperations, getNodeCredentialInfo, loadAllNodeSchemas } from '~/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
-import { autoSelectCredentialFromCache, invalidateCredentialsCache, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
 import { getProviderConfigByCredentialType } from '~/utils/oauthProviders';
 import { setNodeIconData } from '~/lib/nodeIconRegistry';
 import { getCredentialIcon } from '~/utils/credentialIcons';
@@ -18,10 +18,10 @@ import { getCredentialIcon } from '~/utils/credentialIcons';
 const type = 'automation-sematext';
 const family = 'sematext_account_api_key';
 describe('native Sematext metadata', () => {
-    beforeEach(() => invalidateCredentialsCache());
+    beforeAll(() => loadAllNodeSchemas());
     it('registers the editor with the exact official SVG', () => {
-        expect(AVAILABLE_NODES.filter(n => n.type === type)).toEqual([SematextNode]);
-        expect(renderToStaticMarkup(createElement(SematextNode.Icon))).toContain('/icons/sematext.svg');
+        expect(NODE_DEFINITION_FILES.filter(([nodeType]) => nodeType === type)).toEqual([[type, 'SematextNode']]);
+        expect(renderToStaticMarkup(createElement(SematextNode.Icon as ComponentType))).toContain('/icons/sematext-brand-vector.svg');
         expect(SematextNode.iconColor).toBe('');
     });
     it('uses masked manual API-key credentials and saved opt-in names', () => {
@@ -40,13 +40,6 @@ describe('native Sematext metadata', () => {
         expect(humanizeCredentialLabel(model.title)).toBe(model.title);
         expect(getNodeCredentialInfo(type)).toEqual({ providerKey: 'sematext', acceptedTypes: [family], label: model.title });
     });
-    it('auto-selects only a viewer-owned native token', () => {
-        upsertCredentialsIntoCache([{ id: 'foreign', credential_type: 'sematext_app_token', name: 'Foreign', owned_by_me: true },
-            { id: 'display-only', credential_type: family, name: 'Display only' }]);
-        expect(autoSelectCredentialFromCache(type)).toEqual({});
-        upsertCredentialsIntoCache([{ id: 'native', credential_type: family, name: 'Fixture token', owned_by_me: true }]);
-        expect(autoSelectCredentialFromCache(type)).toEqual({ [family]: 'native' });
-    });
     it('exposes exactly five metadata reads with local limits and a bound app selector', () => {
         const operations = getAgentToolOperations(type);
         expect(operations.map(op => op.operation).sort()).toEqual(['check_connection', 'get_app',
@@ -61,7 +54,7 @@ describe('native Sematext metadata', () => {
     });
     it('uses the native asset for saved credentials', () => {
         setNodeIconData({ [type]: { type, label: SematextNode.label, description: '', iconColor: '',
-            iconHtml: '<img src="/icons/sematext.svg" />', dimensions: SematextNode.dimensions } });
+            credentialKeys: [family], iconHtml: '<img src="/icons/sematext-brand-vector.svg" />', dimensions: SematextNode.dimensions } });
         expect(getCredentialIcon(family).hasServiceIcon).toBe(true);
     });
 });

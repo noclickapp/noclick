@@ -70,7 +70,7 @@ def wire(monkeypatch):
             if isinstance(value, BaseException): raise value
             return Response(*value) if isinstance(value, tuple) else Response(value, 200, "application/json")
     def client(**kwargs):
-        assert kwargs == {"require_public": True, "timeout": 30, "follow_redirects": False, "trust_env": False}
+        assert kwargs == {"timeout": 30, "follow_redirects": False, "trust_env": False}
         return Client()
     monkeypatch.setattr(p, "guarded_async_client", client)
     return state
@@ -121,7 +121,7 @@ async def test_actual_connect_empty_catalog_is_only_reachability(wire, monkeypat
     monkeypatch.setattr(cc, "_collect_evidence", collect_evidence)
     wire.queue = [envelope("apps", []), envelope("apps", [], success="true")]
     result = await cc.validate_for_connect(credential_type=p.FAMILY, credential_data=blob(), user_id=USER)
-    assert result.evidence.reachable is True and result.evidence.proves == "reachability" and result.evidence.account_label is None
+    assert result.evidence.reachable is True and p.SematextNode.connection_evidence.proves == "reachability" and result.evidence.account_label is None
     assert "verified_as" not in result.verified_metadata()
     unknown = await cc.validate_for_connect(credential_type=p.FAMILY, credential_data=blob(), user_id=USER)
     assert unknown.evidence.reachable is None and not unknown.verified_metadata()

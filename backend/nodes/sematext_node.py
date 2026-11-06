@@ -17,8 +17,7 @@ from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.core.dynamic_options import normalize_search
 from nodes.core.oauth_scopes import Enforcement, ScopeRegistry, ScopeRequirement
-from repositories.credentials import CredentialsRepo
-from utils.credentials import resolve_credential_with_owner_fallback
+from nodes.sematext_authority import SematextCredentialsRepo
 from utils.ssrf import guarded_async_client
 
 FAMILY = "sematext_account_api_key"
@@ -193,7 +192,7 @@ async def bind_current(data, *, pool, user_id, credential_id, organization_id, w
     selected = {}
     async def load(cid, principal, current_pool, org):
         from utils.encryption import get_encryption
-        row = await CredentialsRepo(current_pool).fetch_validation_authority(cid, principal, org)
+        row = await SematextCredentialsRepo(current_pool).fetch_validation_authority(cid, principal, org)
         if row is None: return None
         require_row(row)
         authority = Authority(str(cid), str(user_id), str(principal), org, workflow_id, organization_derived, row)
@@ -204,8 +203,19 @@ async def bind_current(data, *, pool, user_id, credential_id, organization_id, w
         if now != initial: raise ValueError("Sematext Cloud saved token, resources or label restriction changed")
         selected["authority"] = authority
         return now
-    now = await resolve_credential_with_owner_fallback(credential_id, user_id, pool,
-        org_id=organization_id, workflow_id=workflow_id, load_credential_fn=load)
+    # Staging exposes its principal policy helpers without a custom row-loader hook.
+    from utils.credentials import (get_workflow_owner_id,
+        is_credential_authorized_for_workflow, credential_lender)
+    now = await load(credential_id, user_id, pool, organization_id)
+    if now is None and workflow_id:
+        owner = await get_workflow_owner_id(pool, workflow_id)
+        if (owner and owner != user_id and
+                await is_credential_authorized_for_workflow(pool, workflow_id, credential_id)):
+            now = await load(credential_id, owner, pool, organization_id)
+        if now is None:
+            lender = await credential_lender(pool, workflow_id, credential_id)
+            if lender and lender != user_id:
+                now = await load(credential_id, lender, pool, organization_id)
     if now is None or "authority" not in selected: raise ValueError("Sematext Cloud current access denied")
     return BoundCredential(now, selected["authority"], pool)
 
@@ -228,7 +238,7 @@ async def current_credential(data):
 async def request(data, path, *, params=None):
     now = await current_credential(data)
     try:
-        async with guarded_async_client(require_public=True, timeout=30, follow_redirects=False, trust_env=False) as client:
+        async with guarded_async_client(timeout=30, follow_redirects=False, trust_env=False) as client:
             async with client.stream("GET", ROOTS[now["region"]] + BASE + path, headers={"Authorization": "apiKey " + now["api_key"],
                 "Accept": "application/json", "Content-Type": "application/json"}, params=params) as response:
                 await current_credential(data)
@@ -345,18 +355,11 @@ class SematextNode(WorkflowNode):
             organization_id=organization_id, workflow_id=workflow_id, organization_derived=organization_derived)
     @classmethod
     async def validate_credential_access(cls, data, *, validation_context=None):
-        from nodes.core.credential_validation import CredentialValidationContext, CredentialValidationPending, CredentialValidationUnverified
-        if not isinstance(validation_context, CredentialValidationContext) or validation_context.node_type != NODE_TYPE:
-            return {"valid": None, "error": "Save and check current Sematext Cloud resource access"}
-        try:
-            require_row(validation_context._authority)
-            require_row(await validation_context.revalidate())
-            result = await validation_context.run_operation("check_connection")
-        except (CredentialValidationPending, CredentialValidationUnverified): raise
-        except ValueError: return {"valid": False, "error": "Sematext Cloud refused current resource access"}
-        except Exception: return {"valid": None, "error": "Sematext Cloud resource access could not be judged"}
-        if result.get("witness_verified") is not True: return {"valid": None, "error": "Sematext Cloud returned unverified catalog metadata"}
-        return {"valid": True, "proves": "reachability", "identity_verified": False, "account_ownership_verified": False}
+        try: credential(data)
+        except ValueError: return {"valid": False, "error": "Complete the native Sematext Cloud credential form"}
+        # Staging's post-connect hook supplies no trusted saved-row context.
+        # The registered connection-evidence operation performs the native probe.
+        return {"valid": None, "error": "Save and check current Sematext Cloud resource access"}
     @classmethod
     async def load_field_options(cls, field_name, credential_data, context=None, page_token=None, search=None):
         await current_credential(credential_data)

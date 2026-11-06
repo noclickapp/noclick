@@ -356,7 +356,7 @@ async def resolve_host_addresses(host: str, port: int) -> list[str]:
     )
 
 
-async def assert_url_allowed(url: str, *, require_public: bool = False) -> None:
+async def assert_url_allowed(url: str) -> None:
     """Validate scheme and resolve the host, blocking non-public targets.
 
     Raises :class:`SSRFError` if the scheme is not http(s), the URL has no host,
@@ -380,12 +380,7 @@ async def assert_url_allowed(url: str, *, require_public: bool = False) -> None:
         port = parts.port or (443 if scheme == "https" else 80)
     except ValueError as e:
         raise SSRFError("URL has an invalid port") from e
-    if require_public:
-        # Provider credentials explicitly bound to a public instance must not
-        # inherit the deployment's legacy private-host development override.
-        await _resolve_host_addresses(host, port)
-    else:
-        await assert_host_allowed(host, port)
+    await assert_host_allowed(host, port)
 
 
 def assert_exact_url_origin(url: str, allowed_origin: str) -> None:
@@ -445,10 +440,8 @@ class _PinnedNetworkBackend(httpcore.AsyncNetworkBackend):
         *,
         trusted_dial_context: ContextVar[tuple[str, int] | None] | None = None,
         backend: httpcore.AsyncNetworkBackend | None = None,
-        require_public: bool = False,
     ) -> None:
         self._trusted_dial_context = trusted_dial_context
-        self._require_public = require_public
         self._backend = backend or httpcore.AnyIOBackend()
 
     async def connect_tcp(
@@ -459,7 +452,7 @@ class _PinnedNetworkBackend(httpcore.AsyncNetworkBackend):
         local_address: str | None = None,
         socket_options: Iterable[Any] | None = None,
     ) -> httpcore.AsyncNetworkStream:
-        if not self._require_public and allow_private_hosts():
+        if allow_private_hosts():
             return await self._backend.connect_tcp(
                 host,
                 port,
@@ -476,7 +469,7 @@ class _PinnedNetworkBackend(httpcore.AsyncNetworkBackend):
         addresses = await _resolve_host_addresses(
             host,
             port,
-            permit_non_public=trusted and not self._require_public,
+            permit_non_public=trusted,
         )
         last_error: Exception | None = None
         for address in addresses:
@@ -512,7 +505,6 @@ class _PinnedAsyncHTTPTransport(httpx.AsyncHTTPTransport):
         self,
         *,
         trusted_dial_context: ContextVar[tuple[str, int] | None] | None = None,
-        require_public: bool = False,
         **kwargs,
     ) -> None:
         super().__init__(**kwargs)
@@ -521,13 +513,12 @@ class _PinnedAsyncHTTPTransport(httpx.AsyncHTTPTransport):
         if not hasattr(self._pool, "_network_backend"):
             raise RuntimeError("HTTP transport does not expose a pinnable network backend")
         self._pool._network_backend = _PinnedNetworkBackend(  # type: ignore[attr-defined]
-            trusted_dial_context=trusted_dial_context,
-            require_public=require_public,
+            trusted_dial_context=trusted_dial_context
         )
 
 
 def guarded_async_client(
-    *, trusted_exact_urls: Iterable[str] = (), require_public: bool = False, **kwargs
+    *, trusted_exact_urls: Iterable[str] = (), **kwargs
 ) -> httpx.AsyncClient:
     """Return an ``httpx`` client guarded on every request and redirect hop.
 
@@ -539,10 +530,6 @@ def guarded_async_client(
     check (for example a workflow-scoped object-store URL). Those exact URLs
     may resolve privately; every other request, including any redirect target,
     remains guarded. Never pass raw user input through this escape hatch.
-
-    ``require_public=True`` enforces public addresses in both the request hook
-    and pinned dial, even when the deployment allows private hosts. Exact URL
-    trust cannot bypass this stricter boundary. The default preserves callers.
     """
     normalized_trusted_urls: dict[str, tuple[str, int]] = {}
     for raw_url in trusted_exact_urls:
@@ -569,7 +556,7 @@ def guarded_async_client(
     async def _guard_request(request: httpx.Request) -> None:
         trusted_target = normalized_trusted_urls.get(str(request.url))
         trusted_dial_context.set(trusted_target)
-        if trusted_target is not None and not require_public:
+        if trusted_target is not None:
             return
         request_port = request.url.port or (
             443 if request.url.scheme == "https" else 80
@@ -578,7 +565,7 @@ def guarded_async_client(
             (request.url.host or "").lower().rstrip("."),
             request_port,
         )
-        if request_host_port in trusted_host_ports and not require_public:
+        if request_host_port in trusted_host_ports:
             # The exact URL may already have opened a pooled connection to a
             # private object-store host. Never let a non-exact redirect/request
             # reuse that connection; only separately ownership-checked exact
@@ -586,10 +573,7 @@ def guarded_async_client(
             raise SSRFError(
                 "Refusing non-exact request on an exact-trust storage origin"
             )
-        if require_public:
-            await assert_url_allowed(str(request.url), require_public=True)
-        else:
-            await assert_url_allowed(str(request.url))
+        await assert_url_allowed(str(request.url))
 
     event_hooks = {
         name: list(hooks)
@@ -613,7 +597,6 @@ def guarded_async_client(
         }
         kwargs["transport"] = _PinnedAsyncHTTPTransport(
             trusted_dial_context=trusted_dial_context,
-            require_public=require_public,
             **transport_kwargs,
         )
     return httpx.AsyncClient(event_hooks=event_hooks, **kwargs)
