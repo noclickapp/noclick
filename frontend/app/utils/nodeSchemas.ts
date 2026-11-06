@@ -514,7 +514,6 @@ function extractProviderKeyFromNodeType(nodeType: string): string {
 function getProviderLabel(providerKey: string): string {
     // Special cases for display names
     const labelMap: Record<string, string> = {
-        'predictleads': 'PredictLeads API Key and Token',
         'google_sheets': 'Google Account',
         'google_drive': 'Google Account',
         'gmail': 'Google Account',
