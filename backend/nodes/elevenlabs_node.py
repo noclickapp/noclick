@@ -1505,14 +1505,15 @@ class ElevenLabsNode(WorkflowNode):
         credentials: ElevenLabsAPIKeyCredential,
         json_data: Optional[Dict[str, Any]] = None,
         params: Optional[Dict[str, Any]] = None,
-        files: Optional[Dict[str, Any]] = None,
+        files: Optional[Union[Dict[str, Any], List[Any]]] = None,
+        multipart: bool = False,
         return_binary: bool = False,
     ) -> Dict[str, Any]:
         """Make an authenticated request to ElevenLabs API"""
         url = f"{ELEVENLABS_API_BASE}/{ELEVENLABS_API_VERSION}/{endpoint}"
 
         headers = {"xi-api-key": credentials.api_key}
-        if not files:
+        if not files and not multipart:
             headers["Content-Type"] = "application/json"
 
         async with httpx.AsyncClient(timeout=120.0) as client:
@@ -1520,12 +1521,23 @@ class ElevenLabsNode(WorkflowNode):
                 if method == "GET":
                     response = await client.get(url, headers=headers, params=params)
                 elif method == "POST":
-                    if files:
+                    if files or multipart:
+                        # A filename of None makes a text form part. This also
+                        # forces multipart encoding for endpoints without files.
+                        parts = (
+                            list(files.items())
+                            if isinstance(files, dict)
+                            else list(files or [])
+                        )
+                        for key, value in (json_data or {}).items():
+                            if isinstance(value, bool):
+                                value = str(value).lower()
+                            parts.append((key, (None, str(value))))
                         response = await client.post(
                             url,
                             headers={"xi-api-key": credentials.api_key},
-                            files=files,
-                            data=json_data,
+                            files=parts,
+                            params=params,
                         )
                     else:
                         response = await client.post(
@@ -1674,7 +1686,7 @@ class ElevenLabsNode(WorkflowNode):
             files = {"file": ("audio.mp3", audio_data, "audio/mpeg")}
             data = {"model_id": typed_config.model_id}
             if typed_config.language:
-                data["language"] = typed_config.language
+                data["language_code"] = typed_config.language
 
             return await self._make_request(
                 "POST", "speech-to-text", credentials, json_data=data, files=files
@@ -1705,10 +1717,10 @@ class ElevenLabsNode(WorkflowNode):
 
             files_data = json.loads(typed_config.files_base64)
 
-            files = {}
+            files = []
             for i, file_b64 in enumerate(files_data):
                 audio_data = base64.b64decode(file_b64)
-                files[f"files_{i}"] = (f"sample_{i}.mp3", audio_data, "audio/mpeg")
+                files.append(("files", (f"sample_{i}.mp3", audio_data, "audio/mpeg")))
 
             data = {"name": typed_config.name}
             if typed_config.description:
@@ -1722,21 +1734,27 @@ class ElevenLabsNode(WorkflowNode):
 
         elif action == "edit_voice_settings":
             typed_config: ElevenLabsEditVoiceConfig = config
-            payload = {}
-            if typed_config.name:
-                payload["name"] = typed_config.name
+            # The provider requires a name even for metadata-only edits.
+            name = typed_config.name
+            if not name:
+                voice = await self._make_request(
+                    "GET", f"voices/{typed_config.voice_id}", credentials
+                )
+                name = voice["name"]
+            payload = {"name": name}
             if typed_config.description:
                 payload["description"] = typed_config.description
             if typed_config.labels:
                 import json
 
-                payload["labels"] = json.loads(typed_config.labels)
+                payload["labels"] = json.dumps(json.loads(typed_config.labels))
 
             return await self._make_request(
                 "POST",
                 f"voices/{typed_config.voice_id}/edit",
                 credentials,
                 json_data=payload,
+                multipart=True,
             )
 
         elif action == "delete_custom_voice":
@@ -1755,7 +1773,7 @@ class ElevenLabsNode(WorkflowNode):
             if typed_config.duration_seconds:
                 payload["duration_seconds"] = typed_config.duration_seconds
             if typed_config.enable_looping:
-                payload["enable_looping"] = typed_config.enable_looping
+                payload["loop"] = typed_config.enable_looping
 
             return await self._make_request(
                 "POST",
@@ -1790,7 +1808,7 @@ class ElevenLabsNode(WorkflowNode):
                 payload["num_speakers"] = typed_config.num_speakers
 
             return await self._make_request(
-                "POST", "dubbing", credentials, json_data=payload
+                "POST", "dubbing", credentials, json_data=payload, multipart=True
             )
 
         elif action == "get_dubbing_project_status":
@@ -1884,7 +1902,7 @@ class ElevenLabsNode(WorkflowNode):
 
             return await self._make_request(
                 "POST",
-                "pronunciation-dictionaries/add-from-file",
+                "pronunciation-dictionaries/add-from-rules",
                 credentials,
                 json_data=payload,
             )
@@ -1902,26 +1920,31 @@ class ElevenLabsNode(WorkflowNode):
             typed_config: ElevenLabsCreateAudioNativeConfig = config
             payload = {
                 "name": typed_config.name,
-                "html": typed_config.html,
                 "voice_id": typed_config.voice_id,
                 "model_id": typed_config.model_id,
                 "auto_convert": typed_config.auto_convert,
             }
 
             return await self._make_request(
-                "POST", "audio-native", credentials, json_data=payload
+                "POST",
+                "audio-native",
+                credentials,
+                json_data=payload,
+                files={
+                    "file": ("article.html", typed_config.html.encode("utf-8"), "text/html")
+                },
             )
 
         elif action == "get_audio_native_project_details":
             typed_config: ElevenLabsGetAudioNativeConfig = config
             return await self._make_request(
-                "GET", f"audio-native/{typed_config.project_id}", credentials
+                "GET", f"audio-native/{typed_config.project_id}/settings", credentials
             )
 
         elif action == "delete_audio_native_project":
             typed_config: ElevenLabsDeleteAudioNativeConfig = config
             return await self._make_request(
-                "DELETE", f"audio-native/{typed_config.project_id}", credentials
+                "DELETE", f"studio/projects/{typed_config.project_id}", credentials
             )
 
         # ========== Models Operations ==========
