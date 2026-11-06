@@ -297,9 +297,69 @@ class TestUpdateContact:
                 {"type": "CONTACT", "id": "1234567890", "etag": "source-etag"},
                 {"type": "PROFILE", "id": "profile-id"},
             ]},
-            "names": [{"givenName": "Jane", "familyName": "Doe", "middleName": "M"}],
-            "organizations": [{"name": "Acme", "title": "Lead", "department": "R&D", "type": "work"}],
+            "names": [{"givenName": "Jane", "familyName": "Doe", "middleName": "M", "metadata": {}}],
+            "organizations": [{"name": "Acme", "title": "Lead", "department": "R&D", "type": "work",
+                               "metadata": {"source": {"type": "CONTACT"}}}],
         }
+        assert current == original
+
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("org_change", [{"organization": "Updated"}, {"job_title": "Lead"}])
+    async def test_update_retains_merged_sources_and_nonfirst_primary_organization(self, org_change):
+        node = create_node(GoogleContactsUpdateContactConfig(
+            resource_name="people/c123", given_name="Updated", **org_change
+        ))
+        contact_source = {"type": "CONTACT", "id": "c123"}
+        profile_source = {"type": "PROFILE", "id": "p123"}
+        current = {
+            "etag": "person-etag",
+            "metadata": {"sources": [{**contact_source, "etag": "contact-etag"}, profile_source]},
+            "names": [
+                {"givenName": "Contact", "familyName": "Name", "displayName": "Contact Name",
+                 "metadata": {"source": contact_source, "sourcePrimary": True,
+                              "primary": True, "verified": False}},
+                {"givenName": "Profile", "familyName": "Name", "displayName": "Profile Name",
+                 "metadata": {"source": {**profile_source,
+                                         "profileMetadata": {"objectType": "PERSON"},
+                                         "updateTime": "2024-01-01T00:00:00Z"},
+                              "sourcePrimary": True, "primary": False, "verified": True}},
+            ],
+            "organizations": [
+                {"name": "First", "title": "Engineer", "formattedType": "Work",
+                 "metadata": {"source": contact_source, "sourcePrimary": False,
+                              "primary": False, "verified": False}},
+                {"name": "Primary", "title": "Director", "formattedType": "Work",
+                 "metadata": {"source": contact_source, "sourcePrimary": True,
+                              "primary": True, "verified": False}},
+            ],
+        }
+        original = copy.deepcopy(current)
+        with patch("httpx.AsyncClient") as mock_client:
+            client = AsyncMock()
+            mock_client.return_value.__aenter__.return_value = client
+            client.get.return_value = mock_response(200, current)
+            client.patch.return_value = mock_response(200, current)
+
+            result = await node.execute({})
+
+        assert result["status"] == "success"
+        body = client.patch.call_args.kwargs["json"]
+        assert body["names"] == [
+            {"givenName": "Updated", "familyName": "Name",
+             "metadata": {"source": contact_source, "sourcePrimary": True}},
+            {"givenName": "Profile", "familyName": "Name",
+             "metadata": {"source": profile_source, "sourcePrimary": True}},
+        ]
+        assert body["organizations"] == [
+            {"name": org_change.get("organization", "First"),
+             "title": org_change.get("job_title", "Engineer"),
+             "metadata": {"source": contact_source, "sourcePrimary": False}},
+            {"name": "Primary", "title": "Director",
+             "metadata": {"source": contact_source, "sourcePrimary": True}},
+        ]
+        assert body["metadata"]["sources"] == [{**contact_source, "etag": "contact-etag"}, profile_source]
+        assert client.patch.call_args.kwargs["params"] == {"updatePersonFields": "names,organizations"}
         assert current == original
 
 

@@ -774,6 +774,27 @@ class GoogleContactsNode(WorkflowNode):
             )
             return output
 
+    @staticmethod
+    def _contact_field_for_update(
+        field: Dict[str, Any], output_only: set[str]
+    ) -> Dict[str, Any]:
+        """Copy a name/organization, retaining writable field provenance."""
+        result = {key: value for key, value in field.items() if key not in output_only}
+        if "metadata" in field:
+            # FieldMetadata.source and sourcePrimary are writable; only the
+            # derived primary/verified flags and Source output fields are not.
+            metadata = {
+                key: value for key, value in field["metadata"].items()
+                if key not in {"primary", "verified"}
+            }
+            if "source" in metadata:
+                metadata["source"] = {
+                    key: value for key, value in metadata["source"].items()
+                    if key not in {"updateTime", "profileMetadata"}
+                }
+            result["metadata"] = metadata
+        return result
+
     async def _update_contact(
         self, config: GoogleContactsUpdateContactConfig, access_token: str
     ) -> Dict[str, Any]:
@@ -823,13 +844,12 @@ class GoogleContactsNode(WorkflowNode):
             update_fields = []
 
             if config.given_name or config.family_name:
-                # Preserve editable name components without replaying output-only
-                # display names or field metadata from the GET response.
+                # Preserve editable name components and provenance without
+                # replaying output-only display names or metadata properties.
                 update_person["names"] = [
-                    {
-                        key: value for key, value in name.items()
-                        if key not in {"displayName", "displayNameLastFirst", "metadata"}
-                    }
+                    self._contact_field_for_update(
+                        name, {"displayName", "displayNameLastFirst"}
+                    )
                     for name in existing.get("names", [{}])
                 ]
                 if not update_person["names"]:
@@ -850,10 +870,7 @@ class GoogleContactsNode(WorkflowNode):
 
             if config.organization or config.job_title:
                 update_person["organizations"] = [
-                    {
-                        key: value for key, value in organization.items()
-                        if key not in {"formattedType", "metadata"}
-                    }
+                    self._contact_field_for_update(organization, {"formattedType"})
                     for organization in existing.get("organizations", [{}])
                 ]
                 if not update_person["organizations"]:
