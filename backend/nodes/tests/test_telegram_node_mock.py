@@ -777,7 +777,7 @@ async def test_send_poll(mock_client_class, credentials):
     assert result["status"] == "sent"
     body = mock_client.request.call_args[1]["json"]
     assert body["question"] == "Best color?"
-    assert body["options"] == ["Option A", "Option B", "Option C"]
+    assert body["options"] == [{"text": "Option A"}, {"text": "Option B"}, {"text": "Option C"}]
 
 
 @pytest.mark.asyncio
@@ -801,8 +801,35 @@ async def test_send_poll_quiz_mode(mock_client_class, credentials):
     result = await node.execute({})
     body = mock_client.request.call_args[1]["json"]
     assert body["type"] == "quiz"
-    assert body["correct_option_id"] == 0
+    assert body["correct_option_ids"] == [0]
+    assert "correct_option_id" not in body
     assert body["explanation"] == "One plus one is two"
+
+
+@pytest.mark.asyncio
+@patch("httpx.AsyncClient")
+async def test_send_poll_preserves_option_objects(mock_client_class, credentials):
+    mock_client = AsyncMock()
+    mock_client_class.return_value.__aenter__.return_value = mock_client
+    mock_client.request.return_value = mock_ok({"message_id": 60})
+    options = [{"text": "Option A", "text_parse_mode": "HTML"}, {"text": "Option B"}]
+    node = create_node(
+        TelegramSendPollConfig(chatId="123", question="Best color?", options=json.dumps(options))
+    )
+    await node.execute({})
+    assert mock_client.request.call_args[1]["json"]["options"] == options
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("options", [1, {}, [], [1], [{}], [""], ["Option A"] * 13])
+@patch("httpx.AsyncClient")
+async def test_send_poll_rejects_invalid_options_before_request(mock_client_class, options, credentials):
+    node = create_node(
+        TelegramSendPollConfig(chatId="123", question="Best color?", options=json.dumps(options))
+    )
+    with pytest.raises(ValueError, match="options must|poll option must"):
+        await node.execute({})
+    mock_client_class.assert_not_called()
 
 
 @pytest.mark.asyncio
