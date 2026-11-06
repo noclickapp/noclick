@@ -185,3 +185,17 @@ def test_metadata_redacts_raw_and_encoded_authentication_and_admin_contact():
     result = node.safe_text(credential.api_key + " " + encoded + " " + credential.admin_contact_email, credential)
     assert result == "[redacted] [redacted] [redacted]"
     assert credential.api_key not in repr(credential)
+
+
+async def test_execute_accepts_prevalidated_config_without_raw_payload(transport):
+    calls, _ = transport
+    instance = node.ClinikoNode(
+        node_id="fixture", node_type="automation-cliniko", node_data={},
+        config=node.ClinikoNodeConfig.model_validate({
+            "config": {"operation": "get_business", "business_id": "12"},
+            "credentials": CREDENTIAL,
+        }),
+    )
+    result = await instance.execute({})
+    assert result["status"] == "success" and result["data"]["id"] == "12"
+    assert len(calls) == 1

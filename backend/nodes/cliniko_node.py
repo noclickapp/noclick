@@ -608,7 +608,6 @@ class ClinikoNode(WorkflowNode):
         return {"options": filter_options_by_search(options, query), "next_page_token": prefix + str(data["next_page"]) if data["next_page"] is not None else None}
 
     async def execute(self, inputs: dict[str, Any]):
-        self._require_raw(self.node_data or {})
         if not isinstance(self.config, ClinikoNodeConfig) or self.config.credentials is None:
             raise ValueError("Connect a typed Cliniko user API key")
         credential = await self.freshen_credential(self.config.credentials.model_dump(), pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id, credential_id=(self.node_data or {}).get("credential_id"), workflow_id=self.workflow_id, organization_id=self.organization_id)

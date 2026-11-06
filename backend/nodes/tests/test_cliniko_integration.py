@@ -16,7 +16,7 @@ from nodes import cliniko_node as node
 from nodes.core import credential_connect, connection_evidence, run_op
 from nodes.core.registry import NODE_REGISTRY, NodeFactory
 from repositories.credential_approvals import CredentialApprovalRepo
-from utils import encryption, ssrf
+from utils import credentials as credential_utils, encryption, ssrf
 from wss.handlers import workflow_handler
 
 CREDENTIAL = {"credential_type": "cliniko_api_key", "api_key": "fixture-cliniko-key-uk2", "admin_contact_email": "admin@example.test", "shard": "uk2"}
@@ -47,7 +47,9 @@ def seams(monkeypatch):
         return state["row"]
     conn = SimpleNamespace(fetchrow=AsyncMock(side_effect=read))
     pool = Pool(conn)
-    monkeypatch.setattr(encryption, "get_encryption", lambda: SimpleNamespace(decrypt_credential=lambda _: deepcopy(state["blob"])))
+    decryptor = lambda: SimpleNamespace(decrypt_credential=lambda _: deepcopy(state["blob"]))
+    monkeypatch.setattr(encryption, "get_encryption", decryptor)
+    monkeypatch.setattr(credential_utils, "get_encryption", decryptor)
     monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(return_value="fixture-org"))
     admission = AsyncMock(return_value=None)
     monkeypatch.setattr(CredentialApprovalRepo, "admit", admission)
