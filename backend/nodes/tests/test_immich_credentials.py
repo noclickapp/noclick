@@ -163,8 +163,6 @@ async def test_trusted_workflow_owner_fallback_is_current_and_revocable(storage,
 
 
 
-
-
 @pytest.mark.asyncio
 async def test_actual_saved_factory_run_uses_current_row_and_locked_admission(storage, provider):
     store, crypto = storage
@@ -206,4 +204,3 @@ async def test_actual_transport_postread_current_revocation_suppresses_success_o
     node = NodeFactory.create_node("fixture", "automation-immich", {"config": {"operation": "list_albums"}, "credentials": KEY, "credential_id": CID, "_approval_pool": store}, user_id=USER, organization_id=ORG)
     with pytest.raises(ValueError, match="unavailable"): await node.execute({})
     assert len(calls) == 1
-
