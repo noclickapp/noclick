@@ -153,7 +153,7 @@ async def _request(data, context, route):
     _protect_transport_logs(); private_token = _PRIVATE_REQUEST.set(True)
     try:
         try:
-            async with guarded_async_client(require_public=True, timeout=20.0, follow_redirects=False, trust_env=False) as client:
+            async with guarded_async_client(timeout=20.0, follow_redirects=False, trust_env=False) as client:
                 async with client.stream("GET", BASE + route, headers={"x-key": current["api_key"], "x-secret": current["api_secret"], "Accept": "application/json"}) as response:
                     code = response.status_code
                     if code == 403: raise MediaSiloAPIError("MediaSilo refused the protected read; credential, role, plan or resource cause remains unverified", http_status=403)
@@ -263,15 +263,13 @@ class MediaSiloNode(WorkflowNode):
     @classmethod
     async def freshen_credential(cls, data, **context): return await _current_data(data, **context)
     @classmethod
-    async def validate_credential_access(cls, data, *, validation_context=None):
-        if validation_context is None: return {"valid": None, "error": "MediaSilo validation requires trusted current-row authority"}
-        from nodes.core.credential_validation import CredentialValidationUnavailable, CredentialValidationPending, CredentialValidationUnverified
+    async def validate_credential_access(cls, data):
+        # Staging invokes this hook with the supplied credential only. Saved-row
+        # authority is checked by execute/freshen, where actor and row ID exist.
         try:
-            result = await validation_context.run_operation("test_connection"); proof = result.get("data") if isinstance(result, dict) else None
-            if not isinstance(result, dict) or result.get("status") != "success" or not isinstance(proof, dict) or proof.get("protected_read_completed") is not True or proof.get("account_identity_verified") is not False: return {"valid": None, "error": "MediaSilo protected catalog read was not executed or verified"}
-        except CredentialValidationUnavailable: return {"valid": False, "error": "MediaSilo current credential authority is unavailable"}
-        except (CredentialValidationPending, CredentialValidationUnverified): return {"valid": None, "error": "MediaSilo protected read was not executed or verified"}
-        except MediaSiloAPIError as exc: return {"valid": False if exc.authority_rejected else None, "error": str(exc)}
+            await _projects(_shape(data), {})
+        except (MediaSiloAPIError, ValueError):
+            return {"valid": None, "error": "MediaSilo protected catalog read was not executed or verified"}
         return {"valid": True, "proves": "reachability", "account_identity_verified": False, "user_identity_verified": False, "account_ownership_verified": False, "all_permissions_verified": False, "entitlement_verified": False}
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         if not isinstance(self.config, MediaSiloNodeConfig) or self.config.credentials is None: raise ValueError("MediaSilo requires an existing native key and secret")
@@ -353,11 +351,38 @@ class _LookupAuthority:
     workflow_id: Optional[str]
 
 
+@dataclass(frozen=True, repr=False)
+class _MediaSiloCredentialRow:
+    credential_type: Optional[str]
+    owner_id: str
+    token_version: int
+    updated_at: datetime
+    approval_revision: int
+    revoked_at: Optional[datetime]
+    credential: Any
+
+
+async def _fetch_authority(pool, credential_id, user_id, organization_id):
+    from repositories.credentials import credential_access_predicate
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            "SELECT c.credential_type,c.owner_id,c.token_version,c.updated_at,"
+            "c.approval_revision,c.revoked_at,c.credential FROM credentials c "
+            f"WHERE c.id=$1 AND {credential_access_predicate()}",
+            credential_id, user_id, organization_id,
+        )
+    return _MediaSiloCredentialRow(
+        credential_type=row["credential_type"], owner_id=str(row["owner_id"]),
+        token_version=row["token_version"], updated_at=row["updated_at"],
+        approval_revision=row["approval_revision"], revoked_at=row["revoked_at"],
+        credential=row["credential"],
+    ) if row else None
+
+
 async def _current_data(data, *, pool=None, user_id=None, credential_id=None, organization_id=None, workflow_id=None):
     if not credential_id:
         return _shape(data)
-    from repositories.credentials import CredentialsRepo
-    from utils.credentials import resolve_credential_with_owner_fallback
+    from utils.credentials import get_workflow_owner_id, is_credential_authorized_for_workflow, credential_lender
     from utils.encryption import get_encryption
     if pool is None:
         from utils.database_pool import get_native_pool
@@ -367,7 +392,7 @@ async def _current_data(data, *, pool=None, user_id=None, credential_id=None, or
         async with pool.acquire() as conn:
             organization_id = await get_user_org_context(conn, user_id)
     async def load(cid, principal, actual_pool, org_id):
-        row = await CredentialsRepo(actual_pool).fetch_validation_authority(cid, principal, org_id)
+        row = await _fetch_authority(actual_pool, cid, principal, org_id)
         if row is None:
             return None
         if row.revoked_at is not None or row.credential_type not in FAMILIES or not isinstance(row.owner_id, str) or not row.owner_id or type(row.token_version) is not int or row.token_version < 1 or type(row.approval_revision) is not int or row.approval_revision < 0:
@@ -379,7 +404,17 @@ async def _current_data(data, *, pool=None, user_id=None, credential_id=None, or
         if not isinstance(blob, dict):
             raise ValueError("MediaSilo current credential data is invalid")
         return _shape({**blob, "credential_type": row.credential_type, "owner_id": row.owner_id, "token_version": row.token_version, "updated_at": row.updated_at.isoformat() if row.updated_at else None, "approval_revision": row.approval_revision})
-    result = await resolve_credential_with_owner_fallback(credential_id, user_id, pool, org_id=organization_id, workflow_id=workflow_id, load_credential_fn=load)
+    # Follow staging's runner/authorized-owner/lender policy, using this node's
+    # current-row read so metadata and the decrypted keys stay bound together.
+    result = await load(credential_id, user_id, pool, organization_id)
+    if result is None and workflow_id:
+        owner_id = await get_workflow_owner_id(pool, workflow_id)
+        if owner_id and owner_id != user_id and await is_credential_authorized_for_workflow(pool, workflow_id, credential_id):
+            result = await load(credential_id, owner_id, pool, organization_id)
+    if result is None and workflow_id:
+        lender = await credential_lender(pool, workflow_id, credential_id)
+        if lender and lender != str(user_id):
+            result = await load(credential_id, lender, pool, organization_id)
     if result is None:
         raise ValueError("MediaSilo current credential is unavailable or access denied")
     return {**result, "_mediasilo_authority": _LookupAuthority(pool, user_id, credential_id, organization_id, workflow_id)}

@@ -249,7 +249,7 @@
   "required": [
     "config"
   ],
-  "title": "MediaSilo Node Configuration",
+  "title": "Mediasilo Node Configuration",
   "type": "object",
   "x-edit-examples": [
     "Read project identifiers, times and folder counts",
