@@ -4914,19 +4914,46 @@
           ]
         },
         "session_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
           "description": "ID of the session to invalidate",
-          "title": "Session ID",
-          "type": "integer"
+          "title": "Session ID"
         },
         "team_id": {
-          "description": "ID of the team",
-          "title": "Team ID",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Legacy workspace ID, retained for saved workflows",
+          "title": "Team ID"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User who owns the session. Required by Slack; add this to saved workflows to resolve a missing_argument error.",
+          "title": "User ID"
         }
       },
       "required": [
-        "session_id",
-        "team_id"
+        "session_id"
       ],
       "title": "SlackAdminUsersSessionInvalidateConfig",
       "type": "object",
@@ -11373,9 +11400,17 @@
           "x-resource-type": "slack_channel"
         },
         "target_team": {
-          "description": "Workspace in the shared channel to modify",
-          "title": "Target Team ID",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace in the shared channel to modify. Required by Slack; add this to saved workflows to resolve a missing_argument error.",
+          "title": "Target Team ID"
         },
         "action_type": {
           "description": "Permission action: 'upgrade' or 'downgrade'",
@@ -11385,7 +11420,6 @@
       },
       "required": [
         "channel",
-        "target_team",
         "action_type"
       ],
       "title": "SlackSetExternalInvitePermissionsConfig",

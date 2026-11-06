@@ -3540,8 +3540,15 @@ class SlackSetExternalInvitePermissionsConfig(BaseModel):
     channel: str = _channel_field(
         "Channel to modify permissions for", title="Channel ID"
     )
-    target_team: str = Field(
-        ..., title="Target Team ID", description="Workspace in the shared channel to modify"
+    # Existing workflows omit this field. Keep them loadable and let Slack
+    # return its usual error result until the target workspace is configured.
+    target_team: Optional[str] = Field(
+        None,
+        title="Target Team ID",
+        description=(
+            "Workspace in the shared channel to modify. Required by Slack; "
+            "add this to saved workflows to resolve a missing_argument error."
+        ),
     )
     action_type: str = Field(
         ..., title="Action", description="Permission action: 'upgrade' or 'downgrade'"
@@ -6179,10 +6186,22 @@ class SlackAdminUsersSessionInvalidateConfig(BaseModel):
         },
         title="Invalidate User Session",
     )
-    session_id: int = Field(
+    session_id: Union[str, int] = Field(
         ..., title="Session ID", description="ID of the session to invalidate"
     )
-    team_id: str = Field(..., title="Team ID", description="ID of the team")
+    # Keep legacy team-based configurations and string session IDs loadable.
+    # New configurations should identify the session's user, per current docs.
+    team_id: Optional[str] = Field(
+        None, title="Team ID", description="Legacy workspace ID, retained for saved workflows"
+    )
+    user_id: Optional[str] = Field(
+        None,
+        title="User ID",
+        description=(
+            "User who owns the session. Required by Slack; add this to saved "
+            "workflows to resolve a missing_argument error."
+        ),
+    )
 
 
 class SlackAdminUsersSessionListConfig(BaseModel):
@@ -8256,7 +8275,9 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
                         url, headers=request_headers, params=params, timeout=30.0
                     )
                 if form_body is not None:
-                    # Some methods (files.remote.*) only parse form encoding.
+                    # Some methods only parse forms, including when a stored
+                    # credential has no app client fields to put in the body.
+                    request_headers["Content-Type"] = "application/x-www-form-urlencoded"
                     return await client.post(
                         url, headers=request_headers, data=form_body, timeout=30.0
                     )
@@ -9857,15 +9878,14 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         self, config: SlackAppsUninstallConfig, credentials: SlackCredential
     ) -> Dict[str, Any]:
         """Uninstall the app from a workspace."""
-        if not credentials.client_id or not credentials.client_secret:
-            raise ValueError(
-                "Uninstalling Slack requires this app's client ID and client secret in the credential."
-            )
+        # App client fields stay optional for stored token/OAuth credentials.
+        # When absent, preserve Slack's error-result path instead of introducing
+        # a local exception; users can add the app fields to their credential.
         return await self._make_request(
-            "GET",
+            "POST",
             "apps.uninstall",
             credentials,
-            params={
+            form_body={
                 "client_id": credentials.client_id,
                 "client_secret": credentials.client_secret,
             },
@@ -12026,8 +12046,14 @@ class SlackNode(AppEventTriggerMixin, WorkflowNode):
         credentials: SlackCredential,
     ) -> Dict[str, Any]:
         """Invalidate user session."""
+        session_id = config.session_id
+        if isinstance(session_id, str) and session_id.isascii() and session_id.isdecimal():
+            session_id = int(session_id)
+        # Preserve older opaque string values for Slack's existing error path;
+        # numeric saved IDs and new integer IDs are sent as integers.
         body = {
-            "session_id": config.session_id,
+            "session_id": session_id,
+            "user_id": config.user_id,
             "team_id": config.team_id,
         }
 

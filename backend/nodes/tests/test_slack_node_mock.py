@@ -1529,7 +1529,7 @@ class TestAdditionalTeamAuthOperations:
         """Test uninstalling the app."""
         mock_client = AsyncMock()
         mock_client_class.return_value.__aenter__.return_value = mock_client
-        mock_client.get.return_value = mock_slack_response({})
+        mock_client.post.return_value = mock_slack_response({})
 
         config = SlackAppsUninstallConfig()
         credentials = SlackBotTokenCredential(
