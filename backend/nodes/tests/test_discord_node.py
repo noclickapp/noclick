@@ -1,7 +1,7 @@
 """
 Integration tests for Discord node.
 
-Tests the complete Discord node functionality including all 136 API operations:
+Tests the complete Discord node functionality including all 137 API operations:
 - Message operations (11): send, edit, delete, pin, unpin, get messages, crosspost, bulk delete, etc
 - Reaction operations (5): create, delete, get, delete all, delete for emoji
 - Channel operations (7): get, create, modify, delete, typing, permissions, list
@@ -20,7 +20,7 @@ Tests the complete Discord node functionality including all 136 API operations:
 - Voice (1): list regions
 - Poll (2): get answer voters, end poll
 - Soundboard (7): send, list default/guild sounds, get, create, modify, delete
-- Guild Templates (6): get, list, create, sync, modify, delete
+- Guild Templates (7): get, legacy create from template, list, create, sync, modify, delete
 - Guild Onboarding (2): get, modify
 - DM/Group DM (2): create DM, create group DM
 - Application Commands (10): full CRUD for global and guild commands
@@ -173,6 +173,7 @@ from nodes.discord_node import (
     DiscordDeleteGuildSoundboardSoundConfig,
     # Guild Template Operations
     DiscordGetGuildTemplateConfig,
+    DiscordCreateGuildFromTemplateConfig,
     DiscordGetGuildTemplatesConfig,
     DiscordCreateGuildTemplateConfig,
     DiscordSyncGuildTemplateConfig,
@@ -488,13 +489,18 @@ class TestConfigParsing:
         config = DiscordGetGuildTemplateConfig(template_code="abc123")
         assert config.operation == "get_guild_template"
 
-    def test_retired_create_guild_from_template_is_rejected(self):
-        with pytest.raises(ValueError, match="union_tag_invalid"):
-            DiscordNodeConfig(
-                config={"operation": "create_guild_from_template",
-                        "template_code": "abc123", "name": "New Guild"},
-                credentials=DiscordBotTokenCredential(bot_token="mock_token_123"),
-            )
+    @pytest.mark.parametrize("optional_fields", [{}, {"icon": "legacy-icon"}])
+    def test_legacy_create_guild_from_template_config_round_trips(self, optional_fields):
+        saved = {"operation": "create_guild_from_template",
+                 "template_code": "abc123", "name": "New Guild", **optional_fields}
+        config = DiscordNodeConfig(
+            config=saved,
+            credentials=DiscordBotTokenCredential(bot_token="mock_token_123"),
+        )
+        reloaded = DiscordNodeConfig.model_validate(config.model_dump())
+        assert isinstance(reloaded.config, DiscordCreateGuildFromTemplateConfig)
+        assert reloaded.config.model_dump() == {"icon": None, **saved}
+        assert DiscordCreateGuildFromTemplateConfig.model_json_schema()["deprecated"] is True
 
     def test_get_guild_templates_config(self):
         """Test GetGuildTemplates config parsing."""
@@ -1590,6 +1596,21 @@ class TestMockAPIOperations:
 
             assert result["action"] == "list_guild_soundboard_sounds"
             assert result["count"] == 2
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("optional_fields", [{}, {"icon": "legacy-icon"}])
+    async def test_legacy_guild_creation_reports_retirement_without_io(self, optional_fields):
+        node = create_mock_node(DiscordCreateGuildFromTemplateConfig(
+            template_code="abc123", name="New Guild", **optional_fields
+        ))
+        with patch.object(node, "_make_request", new_callable=AsyncMock) as request, patch(
+            "nodes.core.media_resolver.resolve_media_input", new_callable=AsyncMock
+        ) as media:
+            with pytest.raises(ValueError, match="Discord retired guild creation by apps") as exc:
+                await node.execute({})
+        assert "https://docs.discord.com/developers/change-log#guild-create-deprecation" in str(exc.value)
+        request.assert_not_awaited()
+        media.assert_not_awaited()
 
     # Guild Template Mock Tests
     @pytest.mark.asyncio

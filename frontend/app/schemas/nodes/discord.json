@@ -1042,6 +1042,59 @@
       "title": "DiscordCreateGuildEmojiConfig",
       "type": "object"
     },
+    "DiscordCreateGuildFromTemplateConfig": {
+      "deprecated": true,
+      "description": "Deprecated: Discord no longer supports guild creation by apps.",
+      "properties": {
+        "operation": {
+          "const": "create_guild_from_template",
+          "default": "create_guild_from_template",
+          "title": "Create Guild from Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Guild",
+          "x-display-name": "Create Guild from Template",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new server from template",
+            "clone server blueprint",
+            "spin up server template",
+            "build server from template"
+          ]
+        },
+        "template_code": {
+          "description": "Guild template code",
+          "title": "Template Code",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of the new guild",
+          "title": "Guild Name",
+          "type": "string"
+        },
+        "icon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The guild icon to use \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}).",
+          "title": "Guild Icon",
+          "ui:accept": "image/*",
+          "ui:widget": "media_upload"
+        }
+      },
+      "required": [
+        "template_code",
+        "name"
+      ],
+      "title": "DiscordCreateGuildFromTemplateConfig",
+      "type": "object"
+    },
     "DiscordCreateGuildSoundboardSoundConfig": {
       "description": "Create a new soundboard sound for a guild",
       "properties": {
@@ -8251,6 +8304,7 @@
           "create_global_application_command": "#/$defs/DiscordCreateGlobalApplicationCommandConfig",
           "create_group_direct_message_channel": "#/$defs/DiscordCreateGroupDMConfig",
           "create_guild_application_command": "#/$defs/DiscordCreateGuildApplicationCommandConfig",
+          "create_guild_from_template": "#/$defs/DiscordCreateGuildFromTemplateConfig",
           "create_guild_soundboard_sound": "#/$defs/DiscordCreateGuildSoundboardSoundConfig",
           "create_guild_template": "#/$defs/DiscordCreateGuildTemplateConfig",
           "create_role_in_guild": "#/$defs/DiscordCreateRoleConfig",
@@ -8709,6 +8763,9 @@
         },
         {
           "$ref": "#/$defs/DiscordGetGuildTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/DiscordCreateGuildFromTemplateConfig"
         },
         {
           "$ref": "#/$defs/DiscordGetGuildTemplatesConfig"
