@@ -552,6 +552,7 @@ function getProviderLabel(providerKey: string): string {
         'dropbox': 'Dropbox Account',
         'mailchimp': 'Mailchimp Account',
         'typeform': 'Typeform Account',
+        '123formbuilder': '123FormBuilder Account',
         'canva': 'Canva Account',
         'twitter': 'Twitter Account',
         'linkedin': 'LinkedIn Account',

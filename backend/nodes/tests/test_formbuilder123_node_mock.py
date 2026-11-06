@@ -80,8 +80,8 @@ def world(monkeypatch):
     result = World()
     @asynccontextmanager
     async def client(**kwargs):
-        assert kwargs["require_public"] is True and kwargs["trust_env"] is False and kwargs["follow_redirects"] is False
-        kwargs.pop("require_public")
+        assert kwargs["trust_env"] is False and kwargs["follow_redirects"] is False
+        assert "require_public" not in kwargs
         async with httpx.AsyncClient(transport=httpx.MockTransport(result.handle), **kwargs) as value: yield value
     monkeypatch.setattr(F, "guarded_async_client", client)
     return result

@@ -9,7 +9,6 @@
 // Casings plain Title Case gets wrong — single-token acronyms and brands
 // (used on the snake_case path, where tokens arrive whole).
 const WORD_CASING: Record<string, string> = {
-  '123formbuilder': '123FormBuilder',
   qr: 'QR', api: 'API', oauth: 'OAuth', pat: 'PAT', id: 'ID', url: 'URL',
   sso: 'SSO', ai: 'AI', whatsapp: 'WhatsApp', github: 'GitHub',
   gitlab: 'GitLab', hubspot: 'HubSpot', linkedin: 'LinkedIn',
@@ -35,7 +34,6 @@ const COMPOUND_BRANDS = [
 // Split forms whose CANONICAL brand differs from the class name entirely —
 // the derived-restore trick can't produce these.
 const SPLIT_FORM_CANONICAL: Record<string, string> = {
-  'Form Builder123': '123FormBuilder',
   'Cal Com': 'Cal.com',
   'Blue Sky': 'Bluesky',
   'Fresh RSS': 'FreshRSS',

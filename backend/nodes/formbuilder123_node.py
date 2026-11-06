@@ -13,7 +13,7 @@ from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 from nodes.core.dynamic_options import normalize_search, filter_options_by_search
-from nodes.core.oauth_refresh_authority import AuthorityCredentialsTableStore, CURRENT_ORGANIZATION
+from nodes.formbuilder123_authority import FormBuilder123CredentialsStore, CURRENT_ORGANIZATION
 from nodes.core.oauth_scopes import Enforcement, ScopeRegistry, ScopeRequirement
 from utils.ssrf import assert_exact_url_origin, guarded_async_client
 
@@ -183,14 +183,7 @@ class _BoundCredential(dict):
         self.store, self.snapshot = store, snapshot
 
 
-class _Store(AuthorityCredentialsTableStore):
-    def _repo(self):
-        from repositories.formbuilder123_authority import FormBuilder123AuthorityRepo
-        if self.pool is None:
-            from utils.database_pool import get_native_pool
-            self.pool = get_native_pool()
-        return FormBuilder123AuthorityRepo(self.pool)
-
+_Store = FormBuilder123CredentialsStore
 
 async def _load_current(store):
     try:
@@ -261,7 +254,7 @@ async def request(data, method, path, *, params=None, body=None, status=200, tok
     marker = _PRIVATE.set(True)
     _install_privacy()
     try:
-        async with guarded_async_client(timeout=20, trust_env=False, follow_redirects=False, require_public=True, event_hooks={"request": [exact]}) as client:
+        async with guarded_async_client(timeout=20, trust_env=False, follow_redirects=False, event_hooks={"request": [exact]}) as client:
             async with client.stream(method, origin+route, params=query, data=payload if method != "GET" else None, headers={"Accept": "application/json"}) as response:
                 if response.status_code != status: raise FormBuilder123HTTPError(response.status_code)
                 async for part in response.aiter_bytes():
@@ -420,19 +413,16 @@ class FormBuilder123Node(WorkflowNode):
             return shaped
         store = _Store(pool, user_id, credential_id, credential_type=FAMILY, validate=validate,
             organization_id=CURRENT_ORGANIZATION if organization_id is _ORG_OMITTED else organization_id,
-            workflow_id=workflow_id, require_owner=require_owner, allow_same_grant_retry=False)
+            workflow_id=workflow_id, require_owner=require_owner)
         current, snapshot = await _load_current(store)
         return _BoundCredential(current, store, snapshot)
     @classmethod
     async def validate_credential_access(cls, credential_data, *, validation_context=None):
         try: credential(credential_data)
         except ValueError: return {"valid": False, "error": "123FormBuilder credential shape is invalid"}
-        if validation_context is None: return {"valid": None, "error": "Save and check current regional API access"}
-        from nodes.core.credential_validation import CredentialValidationContext
-        if not isinstance(validation_context, CredentialValidationContext) or validation_context.node_type != NODE_TYPE: raise ValueError("123FormBuilder requires its trusted validation context")
-        result = await validation_context.run_operation("check_connection")
-        if not isinstance(result, dict) or result.get("reachable") is not True: return {"valid": None, "error": "123FormBuilder access could not be judged"}
-        return {"valid": True, "proves": "reachability", "identity_verified": False}
+        # Staging's legacy hook receives only the decrypted blob, with no
+        # trusted row/context. Connection evidence performs the native probe.
+        return {"valid": None, "error": "Save and check current regional API access"}
     @classmethod
     async def load_field_options(cls, field_name, credential_data, context=None, page_token=None, search=None):
         if field_name not in {"form_id", "group_id", "field_id", "submission_id"}: raise ValueError("Unsupported 123FormBuilder picker")

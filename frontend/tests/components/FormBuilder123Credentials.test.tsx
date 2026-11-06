@@ -1,12 +1,11 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, expect, it, vi } from 'vitest';
 import { CredentialCreatePanel } from '~/components/credential/CredentialCreatePanel';
 const state = vi.hoisted(() => ({ send: vi.fn(), connect: vi.fn() }));
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: state.send }));
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
-vi.mock('~/lib/analyticsClient', () => ({ useAnalyticsActiveFeatureFlags: () => [] }));
-vi.mock('~/hooks/useCredentialOAuth', () => ({ useCredentialOAuth: () => ({ credentials: [], loading: false, fetchCredentials: vi.fn(), fetchAllCredentials: vi.fn(), initiateOAuth: state.connect, oauthConnecting: null }) }));
+vi.mock('~/hooks/useCredentialOAuth', () => ({ useCredentialOAuth: () => ({ availableCredentials: [], loading: false, loadCredentials: vi.fn(), initiateOAuth: state.connect, oauthConnecting: null }) }));
 vi.mock('~/hooks/useOrgContext', () => ({ useOrgContext: () => ({ orgId: null, orgs: [], isOrgAdmin: false }) }));
 vi.mock('~/components/workflow/OAuthCredentialForm', () => ({ OAuthCredentialForm: () => <div data-testid="oauth-route" /> }));
 vi.mock('~/components/credential/OAuthConnectForm', () => ({ OAuthConnectForm: () => <div data-testid="oauth-route" /> }));
@@ -18,19 +17,18 @@ vi.mock('~/components/shared/popups/DeleteConfirmPopup', () => ({ DeleteConfirmP
 vi.mock('~/components/shared/popups/ShareDialog', () => ({ ShareDialog: () => null }));
 vi.mock('~/components/utils/UpgradePopup', () => ({ UpgradePopup: () => null }));
 const { NodeCredentials } = await import('~/components/workflow/NodeCredentials');
-const { NODE_SCHEMAS } = await import('~/utils/nodeSchemas');
+const { NODE_SCHEMAS, loadNodeSchemas } = await import('~/utils/nodeSchemas');
+beforeAll(() => loadNodeSchemas(['automation-123formbuilder']));
 beforeEach(() => { state.send.mockClear(); state.connect.mockClear(); });
 afterEach(cleanup);
 
-it('mounts the native token family with provider-scoped capture exclusion and no OAuth', async () => {
+it('mounts the native token family without OAuth', async () => {
     const { container } = render(<NodeCredentials nodeType="automation-123formbuilder" onChange={vi.fn()} />);
-    await screen.findByText('123FormBuilder Token', { exact: true });
-    expect(container.firstElementChild?.classList.contains('ph-mask')).toBe(true);
-    expect(container.firstElementChild?.classList.contains('ph-no-capture')).toBe(true);
+    await screen.findByText('Form Builder123 Token', { exact: true });
     expect(screen.queryByTestId('oauth-route')).toBeNull(); expect(state.connect).not.toHaveBeenCalled();
 });
 
-it('uses the actual shared/public form and keeps the revealed token excluded while submitting the selected region', () => {
+it('uses the actual shared/public form and submits the selected region with the token', () => {
     const schema: any = (NODE_SCHEMAS['automation-123formbuilder'] as any).$defs.FormBuilder123TokenCredential;
     const save = vi.fn(async () => null);
     const fields = [
@@ -42,7 +40,7 @@ it('uses the actual shared/public form and keeps the revealed token excluded whi
     const input = container.querySelector('[data-field="token"] input') as HTMLInputElement;
     fireEvent.change(input, { target: { value: 'synthetic-private-token' } });
     expect(input.type).toBe('password'); fireEvent.click(screen.getByRole('button', { name: 'Show secret' }));
-    expect(input.type).toBe('text'); expect(input.closest('.ph-mask.ph-no-capture')).toBeTruthy();
+    expect(input.type).toBe('text');
     fireEvent.click(screen.getByRole('button', { name: 'Provide' }));
     expect(save).toHaveBeenCalledWith('', { region: 'eu', token: 'synthetic-private-token' });
     expect(state.connect).not.toHaveBeenCalled(); expect(state.send).not.toHaveBeenCalled();

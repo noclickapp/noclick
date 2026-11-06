@@ -1428,6 +1428,9 @@
     "tool": {},
     "trigger-cron": {},
     "trigger-email": {},
-    "trigger-webhook": {}
+    "trigger-webhook": {},
+    "automation-123formbuilder": {
+      "agentToolProvider": true
+    }
   }
 }

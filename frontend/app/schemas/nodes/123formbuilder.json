@@ -667,7 +667,7 @@
   "required": [
     "config"
   ],
-  "title": "123FormBuilder Node Configuration",
+  "title": "123formbuilder Node Configuration",
   "type": "object",
   "x-edit-examples": [
     "List my forms and folders",

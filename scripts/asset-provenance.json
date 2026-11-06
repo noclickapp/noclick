@@ -5,12 +5,9 @@
     "package": "simple-icons",
     "version": "16.12.0",
     "license": "CC0-1.0",
-    "assets": {
-    }
+    "assets": {}
   },
-  "generatedMonograms": [
-
-  ],
+  "generatedMonograms": [],
   "reviewedCustomAssets": [
     {
       "path": "frontend/public/icons/affinity.svg",

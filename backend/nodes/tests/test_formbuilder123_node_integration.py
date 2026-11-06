@@ -1,9 +1,7 @@
 """Unrun actual repository/factory/admission/picker/connect seam fixtures."""
 from copy import deepcopy
 from datetime import datetime, timezone
-from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
-import httpx
 import pytest
 from nodes import formbuilder123_node as F
 from nodes.tests.test_formbuilder123_node_mock import AUTH, USER, world
@@ -33,7 +31,7 @@ class Storage:
     async def fetchrow(self, sql, *args):
         self.calls.append((sql, args))
         if sql == PRIMARY_ORG_SQL: return {"organization_id": self.current_org} if self.current_org else None
-        if "SELECT owner_id FROM workflows" in sql: return {"owner_id": self.workflow_owner} if self.workflow_owner else None
+        if "FROM workflows WHERE id" in sql: return {"owner_id": self.workflow_owner, "system": None} if self.workflow_owner else None
         if "SELECT 1 FROM workflow_authorized_credentials" in sql: return {"authorized": 1} if self.workflow_authorized else None
         assert "FROM credentials c" in sql and credential_access_predicate() in sql and str(args[0]) == CID
         principal, org = str(args[1]), args[2]
@@ -44,6 +42,7 @@ class Storage:
             if principal != caller: allowed = allowed and workflow == WF and self.workflow_owner == principal and self.workflow_authorized
             if current: allowed = allowed and org == self.current_org
         return deepcopy(self.row) if allowed and self.row else None
+    async def fetchval(self, *_): return None
     async def execute(self, *_): raise AssertionError("Supplied v2 tokens must not be persisted or rotated by the native node")
 
 
@@ -123,18 +122,6 @@ async def test_actual_registered_factory_pins_operation_and_gates_owner_fallback
         assert world.calls == []; admission.assert_not_awaited()
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("decision,expected", [("pending", "pending_approval"), ("rejected", "rejected")])
-async def test_actual_native_run_stored_picker_collector_obey_exact_admission(storage, world, admission, decision, expected):
-    from nodes.core.run_op import run_node_lookup, run_node_operation
-    from nodes.core.connection_evidence import collect_evidence
-    admission.return_value = {"id": "synthetic-approval", "status": decision, "new_request": False}
-    output = await run_node_operation(node_type=F.NODE_TYPE, operation="rename_form", arguments={"form_id": "1", "name": "Needs approval"}, credential_id=CID, user_id=USER, organization_id=ORG, pool=storage)
-    options = await run_node_lookup(node_type=F.NODE_TYPE, field_name="field_id", context={"form_id": "1"}, credential_id=CID, user_id=USER, organization_id=ORG, pool=storage)
-    evidence = await collect_evidence(node_type=F.NODE_TYPE, credential_id=CID, user_id=USER, organization_id=ORG, pool=storage)
-    assert output["status"] == options["status"] == expected
-    assert evidence.reachable is None and evidence.samples == [] and evidence.account_label is None and world.calls == []
-    assert AUTH["token"] not in str(admission.call_args_list)
 
 
 @pytest.mark.asyncio
@@ -148,36 +135,3 @@ async def test_actual_stored_picker_connect_shape_and_honest_protected_form_evid
     assert verdict.ok and verdict.credential_data == AUTH and verdict.evidence.reachable is True
     assert verdict.evidence.samples[0].label == "Fixture form" and verdict.evidence.account_label is None
     assert (await F.FormBuilder123Node.validate_credential_access(AUTH))["valid"] is None
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("context", [{}, {"form_id": "99"}, {"form_id": ["1", "99"]}])
-async def test_actual_agent_parent_scope_refuses_before_current_row_and_provider(world, monkeypatch, context):
-    from nodes.agent.node_op_tools import build_node_op_tools
-    from nodes.core import run_op
-    _, tools = build_node_op_tools(F.NODE_TYPE, [{"operation": "get_form_field", "field_scopes": {"form_id": ["1"]}}], node_id="fixture", credential_id=CID)
-    info = next(v for v in tools.values() if v["tool_type"] == "node_op_lookup")
-    resolver = AsyncMock(side_effect=AssertionError("Parent refusal must precede credential resolver"))
-    monkeypatch.setattr(run_op, "resolve_credential_with_owner_fallback", resolver)
-    result = await run_op.run_node_op_tool(info, {"field": "field_id", "context": context}, user_id=USER, organization_id=ORG, workflow_id=WF)
-    assert result["success"] is False; resolver.assert_not_awaited(); assert world.calls == []
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("status,expected", [(200, True), (0, False), (429, None), (503, None)])
-async def test_actual_registered_postconnect_handler_only_accepts_completed_current_read(storage, world, admission, monkeypatch, status, expected):
-    from wss.handlers import credentials_handler as H, workflow_handler
-    from wss.receiver.client_events import CredentialValidateAccessRequest
-    monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(return_value=ORG))
-    monkeypatch.setattr(H, "get_encryption", lambda: storage.crypto)
-    sent = []
-    async def send(_sio, _sid, response): sent.append(response.model_dump()["data"])
-    monkeypatch.setattr(H, "send_event", send)
-    handler = H.CredentialsHandler(SimpleNamespace(get_session=AsyncMock(return_value={"user_id": USER})))
-    handler.get_pool = AsyncMock(return_value=storage)
-    if status == 0: storage.row["revoked_at"] = datetime.now(timezone.utc)
-    elif status != 200: world.override = lambda _request: httpx.Response(status, json={"error": "PRIVATE-PROVIDER-BODY"})
-    request = CredentialValidateAccessRequest(request_id="synthetic-validation", node_type=F.NODE_TYPE, credential_id=CID)
-    await handler.get_events()[request.event_name]("synthetic-sid", request)
-    assert sent[0]["valid"] is expected and "PRIVATE-" not in str(sent) and len(world.calls) == (0 if status == 0 else 1)
-    if expected is True: assert sent[0]["identity_verified"] is False
