@@ -13,7 +13,7 @@ API shape:
   on lists); error `{"error": {"title", "detail"}}`.
 - Pagination: cursor-based — `limit` (1-100, default 50) + `cursor`.
 - Every resource except `/organizations` is nested under `/organizations/{orgId}/…`.
-- Some AI endpoints are async (202); pass `wait=true` for a synchronous result.
+- Some AI endpoints are async (202); chat requests accept `wait` as a number of seconds (1-300).
 
 Docs: https://www.basedash.com/docs/api-reference/overview
 """
@@ -871,7 +871,7 @@ class BasedashNode(WorkflowNode):
 
     async def _create_chat(self, c, k):
         body = {"message": c.message, **_parse_json(c.body_json, "Extra Fields")}
-        params = {"wait": "true"} if c.wait == "true" else None
+        params = {"wait": "30"} if c.wait == "true" else None
         return await _bd_request(k, "POST", f"{self._org_base(c)}/chats", params=params, json_body=body, action_name="create_chat")
 
     async def _get_chat(self, c, k):
@@ -884,7 +884,7 @@ class BasedashNode(WorkflowNode):
         return await _bd_request(k, "GET", f"{self._org_base(c)}/chats/{c.chat_id}/messages", params=_page_params(c), action_name="list_chat_messages")
 
     async def _send_chat_message(self, c, k):
-        params = {"wait": "true"} if c.wait == "true" else None
+        params = {"wait": "30"} if c.wait == "true" else None
         return await _bd_request(k, "POST", f"{self._org_base(c)}/chats/{c.chat_id}/messages", params=params, json_body={"message": c.message}, action_name="send_chat_message")
 
     async def _get_chat_message(self, c, k):
@@ -956,20 +956,20 @@ class BasedashNode(WorkflowNode):
         params = _page_params(c)
         if c.database_connection_id:
             params["databaseConnectionId"] = c.database_connection_id
-        return await _bd_request(k, "GET", f"{self._org_base(c)}/definitions", params=params, action_name="list_definitions")
+        return await _bd_request(k, "GET", f"{self._org_base(c)}/models", params=params, action_name="list_definitions")
 
     async def _get_definition(self, c, k):
-        return await _bd_request(k, "GET", f"{self._org_base(c)}/definitions/{c.definition_id}", action_name="get_definition")
+        return await _bd_request(k, "GET", f"{self._org_base(c)}/models/{c.definition_id}", action_name="get_definition")
 
     async def _create_definition(self, c, k):
         body = {"name": c.name, "sqlQuery": c.sql_query, "databaseConnectionId": c.database_connection_id, **_parse_json(c.body_json, "Extra Fields")}
-        return await _bd_request(k, "POST", f"{self._org_base(c)}/definitions", json_body=body, action_name="create_definition")
+        return await _bd_request(k, "POST", f"{self._org_base(c)}/models", json_body=body, action_name="create_definition")
 
     async def _update_definition(self, c, k):
-        return await _bd_request(k, "PATCH", f"{self._org_base(c)}/definitions/{c.definition_id}", json_body=_parse_json(c.body_json, "Fields"), action_name="update_definition")
+        return await _bd_request(k, "PATCH", f"{self._org_base(c)}/models/{c.definition_id}", json_body=_parse_json(c.body_json, "Fields"), action_name="update_definition")
 
     async def _delete_definition(self, c, k):
-        return await _bd_request(k, "DELETE", f"{self._org_base(c)}/definitions/{c.definition_id}", action_name="delete_definition")
+        return await _bd_request(k, "DELETE", f"{self._org_base(c)}/models/{c.definition_id}", action_name="delete_definition")
 
     # ---- Insights ----------------------------------------------------------
     async def _list_insights(self, c, k):

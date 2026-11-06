@@ -15,7 +15,8 @@ from nodes.basedash_node import (
     BDListOrganizationsConfig, BDGetDashboardConfig, BDCreateChartConfig,
     BDCreateDefinitionConfig, BDInviteMemberConfig, BDGetChartImageConfig,
     BDUpdateDashboardConfig, BDDeleteDashboardConfig, BDCreateChatConfig,
-    BDListDashboardsConfig,
+    BDListDashboardsConfig, BDListDefinitionsConfig, BDGetDefinitionConfig,
+    BDUpdateDefinitionConfig, BDDeleteDefinitionConfig, BDSendChatMessageConfig,
 )
 from nodes.core.binary_output import BinaryOutput
 
@@ -125,6 +126,7 @@ class TestPathsAndBodies:
     async def test_create_definition_body(self, creds):
         mc = create_mock_client(201, {"data": {"id": "def_1"}})
         await _run(BDCreateDefinitionConfig(organization_id="org_1", name="Active", sql_query="select 1", database_connection_id="ds_1", body_json="{}"), creds, mc)
+        assert last(mc)["url"].endswith("/organizations/org_1/models")
         body = last(mc)["json"]
         assert body == {"name": "Active", "sqlQuery": "select 1", "databaseConnectionId": "ds_1"}
 
@@ -153,8 +155,40 @@ class TestPathsAndBodies:
         mc = create_mock_client(200, {"data": {"chat": {"id": "chat_1"}}})
         await _run(BDCreateChatConfig(organization_id="org_1", message="hi", wait="true", body_json="{}"), creds, mc)
         call = last(mc)
-        assert call["params"] == {"wait": "true"}
+        assert call["params"] == {"wait": "30"}
         assert call["json"] == {"message": "hi"}
+
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("operation,method,suffix", [
+        (BDListDefinitionsConfig, "GET", "/models"),
+        (BDGetDefinitionConfig, "GET", "/models/model_1"),
+        (BDUpdateDefinitionConfig, "PATCH", "/models/model_1"),
+        (BDDeleteDefinitionConfig, "DELETE", "/models/model_1"),
+    ])
+    async def test_definition_operations_use_model_routes(self, creds, operation, method, suffix):
+        mc = create_mock_client(200, {"data": {"id": "model_1"}})
+        fields = {"organization_id": "org_1"}
+        if operation is BDListDefinitionsConfig:
+            fields.update(database_connection_id="ds_1", limit="25", cursor="prev")
+        else:
+            fields["definition_id"] = "model_1"
+        await _run(operation(**fields), creds, mc)
+        assert last(mc)["method"] == method
+        assert last(mc)["url"].endswith("/organizations/org_1" + suffix)
+        if operation is BDListDefinitionsConfig:
+            assert last(mc)["params"] == {"databaseConnectionId": "ds_1", "limit": "25", "cursor": "prev"}
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("operation", [BDCreateChatConfig, BDSendChatMessageConfig])
+    @pytest.mark.parametrize("wait,params", [("true", {"wait": "30"}), ("false", None)])
+    async def test_chat_wait_uses_seconds_or_returns_immediately(self, creds, operation, wait, params):
+        mc = create_mock_client(202, {"data": {}})
+        fields = {"organization_id": "org_1", "message": "hi", "wait": wait}
+        if operation is BDSendChatMessageConfig:
+            fields["chat_id"] = "chat_1"
+        await _run(operation(**fields), creds, mc)
+        assert last(mc)["params"] == params
 
 
 class TestChartImage:
