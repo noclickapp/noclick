@@ -233,6 +233,9 @@
         "on_new_event"
       ]
     },
+    "automation-deel": {
+      "agentToolProvider": true
+    },
     "automation-devin": {
       "agentToolProvider": true,
       "triggerOperations": [
