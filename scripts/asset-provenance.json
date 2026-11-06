@@ -872,6 +872,24 @@
       "source": "https://www.openstatus.dev/assets/landing/openstatus-logo.svg (unaltered vector linked by the official OpenStatus homepage)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "54885f9c3b5df28aa980ebf557206dc6601730fda4b384ff9a2e9739aed149ea"
+    },
+    {
+      "path": "frontend/public/icons/powerdns-brand-vector.svg",
+      "source": "https://www.powerdns.com/",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "7017d8b282052923fad8406703ddfd8b562ec013a0fe5a385f6c72f3b11dfa72"
+    },
+    {
+      "path": "frontend/public/icons/powerdns-brand.png",
+      "source": "https://www.powerdns.com/",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "d237ad97c32e430e36f9ad2c6e307206aab96d275bfca18ce63ab78f8d565635"
+    },
+    {
+      "path": "frontend/public/icons/powerdns.png",
+      "source": "https://www.powerdns.com/",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "d237ad97c32e430e36f9ad2c6e307206aab96d275bfca18ce63ab78f8d565635"
     }
   ],
   "excludedSourceAssets": [
