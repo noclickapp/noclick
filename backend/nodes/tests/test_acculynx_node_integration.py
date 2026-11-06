@@ -135,7 +135,10 @@ async def test_actual_factory_current_owner_row_and_stale_blob_tag(native):
     assert (await operation(native))["companies"][0]["name"] == "Owned Roofing"
     assert (await lookup(native))["options"][0]["value"] == CONTACT
     assert (await access(native))["valid"] is True
-    assert any(len(args) == 6 for sql, args in native.sql if "FROM credentials c" in sql)
+    # Standalone calls have no workflow-owner fallback; every read uses the
+    # current caller's ACL (also checked by the Storage boundary above).
+    reads = [args for sql, args in native.sql if "FROM credentials c" in sql]
+    assert reads and all(args == (CID, USER, None) for args in reads)
 
 
 @pytest.mark.asyncio
@@ -209,5 +212,5 @@ async def test_actual_socket_picker_uses_current_session_row_and_admission(nativ
         native.row["credential_type"] = "api_key"
     else:
         native.approval = denial
-    await native.workflow.handle_load_options("fixture-sid", WorkflowNodeLoadOptionsRequest(request_id="fixture-picker", node_type=NODE, field_name="contact_id", credential_id=CID))
-    assert native.responses and not native.calls
+    await native.workflow.load_node_options("fixture-sid", WorkflowNodeLoadOptionsRequest(request_id="fixture-picker", node_type=NODE, field_name="contact_id", credential_id=CID))
+    assert native.responses[-1]["data"]["success"] is False and not native.calls

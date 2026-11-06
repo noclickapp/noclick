@@ -191,9 +191,9 @@ class LeadSource(Change):
     lead_source_id: RecordId = Field(..., title="Lead Source", json_schema_extra=_pick("lead_source_id"))
 
 
-AccuLynxOperation = Union[Company, Contacts, Contact, ContactTypes, CreateContact, ContactNote,
+AccuLynxOperation = Annotated[Union[Company, Contacts, Contact, ContactTypes, CreateContact, ContactNote,
                         Jobs, Leads, Job, CreateLead, Milestones, CurrentMilestone, LeadHistory,
-                        LeadSources, Priority, LeadSource]
+                        LeadSources, Priority, LeadSource], Field(discriminator="operation")]
 
 
 class AccuLynxNodeConfig(NodeConfig[AccuLynxOperation, AccuLynxAPIKeyCredential]):
@@ -252,7 +252,7 @@ class CRMSession:
         if method == "PUT" and re.fullmatch(rf"jobs/{identifier}/lead-source", path):
             allowed_body[path] = {"id"}
         valid = method == "GET" and read and body is None or method in {"POST", "PUT"} and path in allowed_body and isinstance(body, dict) and set(body) <= allowed_body[path] and not params
-        query = {"pageSize", "recordStartIndex", "assignment", "milestones", "startDate", "endDate", "dateFilterType", "sortBy", "sortOrder"} if path == "jobs" else {"pageSize", "recordStartIndex"} if path == "company-settings/leads/lead-sources" else {"pageSize", "pageStartIndex"} if path in {"contacts", "contacts/contact-types"} else set()
+        query = {"pageSize", "pageStartIndex", "assignment", "milestones", "startDate", "endDate", "dateFilterType", "sortBy", "sortOrder"} if path == "jobs" else {"pageSize", "recordStartIndex"} if path == "company-settings/leads/lead-sources" else {"pageSize", "pageStartIndex"} if path in {"contacts", "contacts/contact-types"} else set()
         if not valid or params and not set(params) <= query:
             raise AccuLynxError("Unsupported native AccuLynx request")
         mutation, status = method != "GET", None
@@ -422,7 +422,7 @@ class AccuLynxNode(WorkflowNode):
     @classmethod
     async def load_field_options(cls, field_name, credential_data, context=None, page_token=None, search=None):
         routes = {"contact_id": ("contacts", "contacts", "pageStartIndex"), "contact_type_id": ("contacts/contact-types", "types", "pageStartIndex"),
-                  "job_id": ("jobs", "jobs", "recordStartIndex"), "lead_id": ("jobs", "jobs", "recordStartIndex"),
+                  "job_id": ("jobs", "jobs", "pageStartIndex"), "lead_id": ("jobs", "jobs", "pageStartIndex"),
                   "lead_source_id": ("company-settings/leads/lead-sources", "sources", "recordStartIndex")}
         if field_name not in routes:
             return {"options": [], "next_page_token": None}
@@ -459,7 +459,7 @@ class AccuLynxNode(WorkflowNode):
             elif isinstance(config, (Contacts, ContactTypes, Jobs, Leads, LeadSources)):
                 kind = "contacts" if isinstance(config, Contacts) else "types" if isinstance(config, ContactTypes) else "sources" if isinstance(config, LeadSources) else "jobs"
                 path = "contacts" if kind == "contacts" else "contacts/contact-types" if kind == "types" else "company-settings/leads/lead-sources" if kind == "sources" else "jobs"
-                params = {"pageSize": config.page_size, "pageStartIndex" if kind in {"contacts", "types"} else "recordStartIndex": config.start_index}
+                params = {"pageSize": config.page_size, "recordStartIndex" if kind == "sources" else "pageStartIndex": config.start_index}
                 if isinstance(config, Jobs):
                     params.update(dateFilterType=config.date_filter_type, sortBy=config.sort_by, sortOrder=config.sort_order)
                     if config.assignment:

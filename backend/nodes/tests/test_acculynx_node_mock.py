@@ -5,6 +5,8 @@ synthetic. These fixtures make no claim about an AccuLynx tenant or live writes.
 """
 import json
 from copy import deepcopy
+import asyncio
+import socket
 from unittest.mock import AsyncMock, Mock
 
 import httpx
@@ -30,7 +32,8 @@ def ensure_native_db_pool():
 
 @pytest.fixture
 def wire(monkeypatch):
-    state = {"calls": [], "reply": lambda _: httpx.Response(200, json={"id": CONTACT, "firstName": "Owned", "lastName": "Contact"}), "company": COMPANY}
+    state = {"calls": [], "reply": lambda _: httpx.Response(200, json={"id": CONTACT, "firstName": "Owned", "lastName": "Contact"}), "company": COMPANY,
+             "resolve_host_addresses": ssrf._resolve_host_addresses}
     monkeypatch.setattr(ssrf, "_resolve_host_addresses", AsyncMock(return_value=["8.8.8.8"]))
     def answer(request):
         state["calls"].append(request)
@@ -77,10 +80,10 @@ async def test_contact_record_index_paging_and_projection_never_follows_link(wir
 
 @pytest.mark.asyncio
 async def test_job_dates_assignment_max_size_and_unassigned_lead_semantics(wire):
-    wire["reply"] = lambda _: httpx.Response(200, json=collection([{"id": JOB, "jobName": "Owned Lead", "currentMilestone": "Lead"}]))
-    result = await node("list_jobs", assignment="unassigned", milestones=["lead"], start_date="2026-10-01", end_date="2026-10-05", date_filter_type="ModifiedDate", sort_by="ModifiedDate", sort_order="Descending").execute({})
+    wire["reply"] = lambda _: httpx.Response(200, json=collection([{"id": JOB, "jobName": "Owned Lead", "currentMilestone": "Lead"}], start=25))
+    result = await node("list_jobs", start_index=25, assignment="unassigned", milestones=["lead"], start_date="2026-10-01", end_date="2026-10-05", date_filter_type="ModifiedDate", sort_by="ModifiedDate", sort_order="Descending").execute({})
     params = dict(wire["calls"][-1].url.params)
-    assert params["recordStartIndex"] == "0" and "pageStartIndex" not in params
+    assert params["pageStartIndex"] == "25" and "recordStartIndex" not in params
     assert params["startDate"] == "2026-10-01" and params["endDate"] == "2026-10-05"
     assert params["assignment"] == "unassigned" and params["milestones"] == "lead"
     assert params["dateFilterType"] == params["sortBy"] == "ModifiedDate" and params["sortOrder"] == "Descending"
@@ -88,6 +91,22 @@ async def test_job_dates_assignment_max_size_and_unassigned_lead_semantics(wire)
     for fields in ({"page_size": 26}, {"page_size": True}, {"start_date": "2026-10-05"}, {"start_date": "2026-10-05", "end_date": "2026-10-01"}, {"milestones": ["cancelled"]}):
         with pytest.raises(ValidationError):
             s.Jobs.model_validate({"operation": "list_jobs", **fields})
+
+
+@pytest.mark.asyncio
+async def test_unassigned_leads_and_job_pickers_use_documented_record_index(wire):
+    # GET /jobs documents pageStartIndex; recordStartIndex belongs to lead sources.
+    wire["reply"] = lambda _: httpx.Response(200, json=collection([{"id": JOB, "jobName": "Owned Lead"}], start=25))
+    result = await node("list_unassigned_leads", start_index=25).execute({})
+    assert result["status"] == "success"
+    assert dict(wire["calls"][-1].url.params) == {
+        "pageSize": "25", "pageStartIndex": "25", "assignment": "unassigned", "milestones": "lead"}
+    for field, assignment in (("job_id", "assigned"), ("lead_id", "unassigned")):
+        result = await s.AccuLynxNode.load_field_options(field, KEY, page_token="25")
+        assert result["options"] == [{"value": JOB, "label": "Owned Lead"}]
+        params = dict(wire["calls"][-1].url.params)
+        assert params["pageStartIndex"] == "25" and "recordStartIndex" not in params
+        assert params["assignment"] == assignment
 
 
 @pytest.mark.asyncio
@@ -194,8 +213,10 @@ async def test_credential_rejects_before_client_construction(monkeypatch, change
 
 @pytest.mark.asyncio
 async def test_strict_public_dns_even_with_private_local_override(wire, monkeypatch):
-    monkeypatch.setenv("NOCLICK_ALLOW_PRIVATE_HOSTS", "1")
-    monkeypatch.setattr(ssrf, "_resolve_host_addresses", AsyncMock(return_value=["127.0.0.1"]))
+    monkeypatch.setenv("OUTBOUND_ALLOW_PRIVATE_IPS", "1")
+    monkeypatch.setattr(ssrf, "_resolve_host_addresses", wire["resolve_host_addresses"])
+    monkeypatch.setattr(asyncio.get_running_loop(), "getaddrinfo", AsyncMock(return_value=[
+        (socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP, "", ("127.0.0.1", 443))]))
     result = await node("get_company_settings").execute({})
     assert result["status"] == "error" and not wire["calls"]
 

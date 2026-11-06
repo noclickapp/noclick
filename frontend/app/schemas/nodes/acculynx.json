@@ -747,7 +747,29 @@
   },
   "properties": {
     "config": {
-      "anyOf": [
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/CreateContact",
+          "create_contact_note": "#/$defs/ContactNote",
+          "create_unassigned_lead": "#/$defs/CreateLead",
+          "get_company_settings": "#/$defs/Company",
+          "get_contact": "#/$defs/Contact",
+          "get_current_job_milestone": "#/$defs/CurrentMilestone",
+          "get_job": "#/$defs/Job",
+          "get_lead_history": "#/$defs/LeadHistory",
+          "list_contact_types": "#/$defs/ContactTypes",
+          "list_contacts": "#/$defs/Contacts",
+          "list_jobs": "#/$defs/Jobs",
+          "list_lead_sources": "#/$defs/LeadSources",
+          "list_milestones": "#/$defs/Milestones",
+          "list_unassigned_leads": "#/$defs/Leads",
+          "update_job_lead_source": "#/$defs/LeadSource",
+          "update_job_priority": "#/$defs/Priority"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
         {
           "$ref": "#/$defs/Company"
         },
@@ -797,7 +819,6 @@
           "$ref": "#/$defs/LeadSource"
         }
       ],
-      "description": "Node-specific configuration",
       "title": "Config"
     },
     "credentials": {
@@ -816,7 +837,7 @@
   "required": [
     "config"
   ],
-  "title": "AccuLynx Node Configuration",
+  "title": "Acculynx Node Configuration",
   "type": "object",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "x-agent-tool-provider": true
