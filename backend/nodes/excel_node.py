@@ -279,8 +279,8 @@ class ExcelExecuteFunctionConfig(BaseModel):
     )
     parameters: str = Field(
         ...,
-        title="Function Parameters (JSON Array)",
-        description="Function arguments as JSON array (e.g., [[1,2,3]] for SUM)",
+        title="Function Parameters (JSON Object)",
+        description='Named function arguments as a JSON object (e.g., {"rate":4.5,"nper":12,"pv":-1250} for pmt)',
         json_schema_extra={"ui:widget": "code_editor", "x-code-language": "json"},
     )
 
@@ -1245,7 +1245,7 @@ class ExcelFormatRangeConfig(BaseModel):
                 "Right",
                 "Fill",
                 "Justify",
-                "CenterContinuous",
+                "CenterAcrossSelection",
                 "Distributed",
             ],
             "x-enum-searchable": True,
@@ -3480,6 +3480,7 @@ class ExcelNode(WorkflowNode):
         """Apply formatting to a range"""
         # Build format update object
         format_updates = {}
+        updates = {}
 
         # Font formatting
         if any(
@@ -3499,25 +3500,25 @@ class ExcelNode(WorkflowNode):
                 font_format["size"] = config.font_size
             if config.font_color is not None:
                 font_format["color"] = config.font_color
-            format_updates["font"] = font_format
+            updates["/font"] = font_format
 
         # Fill (background) formatting
         if config.background_color is not None:
-            format_updates["fill"] = {"color": config.background_color}
+            updates["/fill"] = {"color": config.background_color}
 
         # Alignment formatting
         if (
             config.horizontal_alignment is not None
             or config.vertical_alignment is not None
         ):
-            alignment = {}
             if config.horizontal_alignment is not None:
-                alignment["horizontal"] = config.horizontal_alignment
+                format_updates["horizontalAlignment"] = config.horizontal_alignment
             if config.vertical_alignment is not None:
-                alignment["vertical"] = config.vertical_alignment
-            format_updates["alignment"] = alignment
+                format_updates["verticalAlignment"] = config.vertical_alignment
+        if format_updates:
+            updates[""] = format_updates
 
-        if not format_updates:
+        if not updates:
             return {
                 "status": "error",
                 "action": "format_range",
@@ -3526,19 +3527,20 @@ class ExcelNode(WorkflowNode):
 
         async with httpx.AsyncClient() as client:
             url = f"https://graph.microsoft.com/v1.0/me/drive/items/{config.workbook_id}/workbook/worksheets/{config.worksheet_name}/range(address='{config.range_address}')/format"
-            response = await client.patch(
-                url,
-                headers={"Authorization": f"Bearer {access_token}"},
-                json=format_updates,
-            )
+            for suffix, body in updates.items():
+                response = await client.patch(
+                    url + suffix,
+                    headers={"Authorization": f"Bearer {access_token}"},
+                    json=body,
+                )
 
-            if response.status_code != 200:
-                return {
-                    "status": "error",
-                    "action": "format_range",
-                    "message": f"Failed to format range: {response.text}",
-                    "status_code": response.status_code,
-                }
+                if response.status_code != 200:
+                    return {
+                        "status": "error",
+                        "action": "format_range",
+                        "message": f"Failed to format range: {response.text}",
+                        "status_code": response.status_code,
+                    }
 
             return {
                 "status": "success",
@@ -3628,9 +3630,6 @@ class ExcelNode(WorkflowNode):
             "hasHeaders": config.has_headers,
         }
 
-        if config.table_name:
-            table_data["name"] = config.table_name
-
         async with httpx.AsyncClient() as client:
             url = f"https://graph.microsoft.com/v1.0/me/drive/items/{config.workbook_id}/workbook/tables/add"
             response = await client.post(
@@ -3648,6 +3647,20 @@ class ExcelNode(WorkflowNode):
                 }
 
             data = response.json()
+            if config.table_name:
+                response = await client.patch(
+                    f"https://graph.microsoft.com/v1.0/me/drive/items/{config.workbook_id}/workbook/tables/{data['id']}",
+                    headers={"Authorization": f"Bearer {access_token}"},
+                    json={"name": config.table_name},
+                )
+                if response.status_code != 200:
+                    return {
+                        "status": "error",
+                        "action": "create_table_from_range",
+                        "message": f"Failed to name created table: {response.text}",
+                        "status_code": response.status_code,
+                    }
+                data = response.json()
             return {
                 "status": "success",
                 "action": "create_table_from_range",
@@ -3793,7 +3806,7 @@ class ExcelNode(WorkflowNode):
     ) -> Dict[str, Any]:
         """Delete a row from a table"""
         async with httpx.AsyncClient() as client:
-            url = f"https://graph.microsoft.com/v1.0/me/drive/items/{config.workbook_id}/workbook/tables/{config.table_name}/rows/itemAt(index={config.index})"
+            url = f"https://graph.microsoft.com/v1.0/me/drive/items/{config.workbook_id}/workbook/tables/{config.table_name}/rows/{config.index}"
             response = await client.delete(
                 url, headers={"Authorization": f"Bearer {access_token}"}
             )
@@ -3925,13 +3938,25 @@ class ExcelNode(WorkflowNode):
         """Sort a table by column"""
         async with httpx.AsyncClient() as client:
             url = f"https://graph.microsoft.com/v1.0/me/drive/items/{config.workbook_id}/workbook/tables/{config.table_name}/sort/apply"
+            column_url = f"https://graph.microsoft.com/v1.0/me/drive/items/{config.workbook_id}/workbook/tables/{config.table_name}/columns/{config.column_name}"
+            column_response = await client.get(
+                column_url, headers={"Authorization": f"Bearer {access_token}"}
+            )
+            if column_response.status_code != 200:
+                return {
+                    "status": "error",
+                    "action": "sort_table_by_column",
+                    "message": f"Failed to get sort column: {column_response.text}",
+                    "status_code": column_response.status_code,
+                }
+            column_index = column_response.json()["index"]
 
             response = await client.post(
                 url,
                 headers={"Authorization": f"Bearer {access_token}"},
                 json={
                     "fields": [
-                        {"key": config.column_name, "ascending": config.ascending}
+                        {"key": column_index, "ascending": config.ascending}
                     ]
                 },
             )
@@ -4127,14 +4152,12 @@ class ExcelNode(WorkflowNode):
         update_data = {}
         if config.new_name:
             update_data["name"] = config.new_name
-        if config.title:
-            update_data["title"] = {"text": config.title}
         if config.height is not None:
             update_data["height"] = config.height
         if config.width is not None:
             update_data["width"] = config.width
 
-        if not update_data:
+        if not update_data and not config.title:
             return {
                 "status": "error",
                 "action": "update_chart",
@@ -4143,11 +4166,29 @@ class ExcelNode(WorkflowNode):
 
         async with httpx.AsyncClient() as client:
             url = f"https://graph.microsoft.com/v1.0/me/drive/items/{config.workbook_id}/workbook/worksheets/{config.worksheet_name}/charts/{config.chart_name}"
-            response = await client.patch(
-                url,
-                headers={"Authorization": f"Bearer {access_token}"},
-                json=update_data,
-            )
+            if config.title:
+                response = await client.patch(
+                    url + "/title",
+                    headers={"Authorization": f"Bearer {access_token}"},
+                    json={"text": config.title},
+                )
+                if response.status_code != 200:
+                    return {
+                        "status": "error",
+                        "action": "update_chart",
+                        "message": f"Failed to update chart title: {response.text}",
+                        "status_code": response.status_code,
+                    }
+            if update_data:
+                response = await client.patch(
+                    url,
+                    headers={"Authorization": f"Bearer {access_token}"},
+                    json=update_data,
+                )
+            else:
+                response = await client.get(
+                    url, headers={"Authorization": f"Bearer {access_token}"}
+                )
 
             if response.status_code != 200:
                 return {
@@ -4192,16 +4233,19 @@ class ExcelNode(WorkflowNode):
         self, config: ExcelGetChartImageConfig, access_token: str
     ) -> Dict[str, Any]:
         """Get chart as base64-encoded PNG image"""
-        params = {}
-        if config.width is not None:
-            params["width"] = config.width
+        image_args = []
+        if config.width is not None or config.height is not None:
+            width = config.width if config.width is not None else 0
+            image_args.append(f"width={width}")
         if config.height is not None:
-            params["height"] = config.height
+            image_args.append(f"height={config.height}")
 
         async with httpx.AsyncClient() as client:
             url = f"https://graph.microsoft.com/v1.0/me/drive/items/{config.workbook_id}/workbook/worksheets/{config.worksheet_name}/charts/{config.chart_name}/image"
+            if image_args:
+                url += f"({','.join(image_args)})"
             response = await client.get(
-                url, headers={"Authorization": f"Bearer {access_token}"}, params=params
+                url, headers={"Authorization": f"Bearer {access_token}"}
             )
 
             if response.status_code != 200:

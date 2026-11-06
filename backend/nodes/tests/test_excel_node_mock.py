@@ -1085,9 +1085,22 @@ class TestExcelTableOperations:
                 return_value=mock_response
             )
 
+            # https://learn.microsoft.com/en-us/graph/api/tablecolumn-get?view=graph-rest-1.0
+            column_response = MagicMock()
+            column_response.status_code = 200
+            column_response.json.return_value = {
+                "id": "99", "name": "name-value", "index": 99, "values": "values-value"
+            }
+            mock_client.return_value.__aenter__.return_value.get = AsyncMock(
+                return_value=column_response
+            )
+
             result = await node.execute({})
 
             assert result["status"] == "success"
+
+            sent = mock_client.return_value.__aenter__.return_value.post.call_args
+            assert sent.kwargs["json"]["fields"] == [{"key": 99, "ascending": True}]
 
 
 # ============================================================================

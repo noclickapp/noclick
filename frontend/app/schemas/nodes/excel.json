@@ -1207,8 +1207,8 @@
           "ui:placeholder": "sum"
         },
         "parameters": {
-          "description": "Function arguments as JSON array (e.g., [[1,2,3]] for SUM)",
-          "title": "Function Parameters (JSON Array)",
+          "description": "Named function arguments as a JSON object (e.g., {\"rate\":4.5,\"nper\":12,\"pv\":-1250} for pmt)",
+          "title": "Function Parameters (JSON Object)",
           "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
@@ -1363,7 +1363,7 @@
             "Right",
             "Fill",
             "Justify",
-            "CenterContinuous",
+            "CenterAcrossSelection",
             "Distributed"
           ],
           "title": "Horizontal Alignment (Optional)",
