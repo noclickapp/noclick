@@ -633,8 +633,13 @@ class NylasNode(WorkflowNode):
         return NylasNodeConfig
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None,
-                                organization_id=CURRENT_ORGANIZATION, workflow_id=None):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        return await cls._freshen_credential(credential_data, pool=pool, user_id=user_id,
+                                            credential_id=credential_id)
+
+    @classmethod
+    async def _freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None,
+                                 organization_id=CURRENT_ORGANIZATION, workflow_id=None):
         shape_credential(credential_data)
         if not credential_id:
             return credential_data
@@ -672,7 +677,7 @@ class NylasNode(WorkflowNode):
         shape_credential(raw)  # Original stored family before base reconciliation.
         credential_id = self.node_data.get("credential_id")
         if credential_id:
-            raw = await self.freshen_credential(raw, pool=self.node_data.get("_approval_pool"), user_id=self.user_id,
+            raw = await self._freshen_credential(raw, pool=self.node_data.get("_approval_pool"), user_id=self.user_id,
                                                credential_id=credential_id, organization_id=self.organization_id,
                                                workflow_id=self.workflow_id)
         return _Client(raw, getattr(raw, "_store", None))
