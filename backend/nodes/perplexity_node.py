@@ -926,7 +926,7 @@ class PerplexityNode(WorkflowNode):
             "search_domain_filter": _comma_list(c.search_domain_filter),
         }
         return await _perplexity_request(
-            api_key, "POST", "/chat/completions", json_body=body, action_name="chat_completion"
+            api_key, "POST", "/v1/sonar", json_body=body, action_name="chat_completion"
         )
 
     async def _create_async_completion(
@@ -939,7 +939,7 @@ class PerplexityNode(WorkflowNode):
             }
         }
         return await _perplexity_request(
-            api_key, "POST", "/async/chat/completions", json_body=body,
+            api_key, "POST", "/v1/async/sonar", json_body=body,
             action_name="create_async_completion",
         )
 
@@ -947,7 +947,7 @@ class PerplexityNode(WorkflowNode):
         self, c: PerplexityListAsyncCompletionsConfig, api_key: str
     ) -> Dict[str, Any]:
         return await _perplexity_request(
-            api_key, "GET", "/async/chat/completions",
+            api_key, "GET", "/v1/async/sonar",
             action_name="list_async_completions",
         )
 
@@ -955,7 +955,7 @@ class PerplexityNode(WorkflowNode):
         self, c: PerplexityGetAsyncCompletionConfig, api_key: str
     ) -> Dict[str, Any]:
         return await _perplexity_request(
-            api_key, "GET", f"/async/chat/completions/{c.request_id}",
+            api_key, "GET", f"/v1/async/sonar/{c.request_id}",
             action_name="get_async_completion",
         )
 
@@ -1058,7 +1058,7 @@ class PerplexityNode(WorkflowNode):
             "search_mode": "academic",
         }
         return await _perplexity_request(
-            api_key, "POST", "/chat/completions", json_body=body,
+            api_key, "POST", "/v1/sonar", json_body=body,
             action_name="academic_search",
         )
 
@@ -1071,7 +1071,7 @@ class PerplexityNode(WorkflowNode):
             "search_mode": "sec",
         }
         return await _perplexity_request(
-            api_key, "POST", "/chat/completions", json_body=body,
+            api_key, "POST", "/v1/sonar", json_body=body,
             action_name="sec_search",
         )
 
@@ -1096,6 +1096,6 @@ class PerplexityNode(WorkflowNode):
             },
         }
         return await _perplexity_request(
-            api_key, "POST", "/chat/completions", json_body=body,
+            api_key, "POST", "/v1/sonar", json_body=body,
             action_name="structured_output",
         )
