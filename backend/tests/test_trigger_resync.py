@@ -42,10 +42,20 @@ async def db(real_database):  # noqa: F811
     await real_database.execute("DELETE FROM trigger_resync_state")
 
 
-async def _owner(db) -> str:
+async def _owner(db, *, seen_days_ago: int | None = 0) -> str:
+    """An owner who signed in ``seen_days_ago`` days ago (None: never), which is what says a workflow is in use."""
     owner = str(uuid.uuid4())
-    await db.execute("INSERT INTO auth.users (id, email) VALUES ($1, $2)", owner, f"{owner}@example.test")
+    seen = None if seen_days_ago is None else datetime.now(timezone.utc) - timedelta(days=seen_days_ago, hours=1)
+    await db.execute("INSERT INTO auth.users (id, email, last_sign_in_at) VALUES ($1, $2, $3)",
+                     owner, f"{owner}@example.test", seen)
     return owner
+
+
+async def _ran(db, workflow_id, days_ago: int) -> None:
+    await db.execute(
+        "INSERT INTO workflow_executions (id, workflow_id, user_id, status, started_at) "
+        "SELECT gen_random_uuid(), id, owner_id, 'completed', $2 FROM workflows WHERE id = $1",
+        workflow_id, datetime.now(timezone.utc) - timedelta(days=days_ago, hours=1))
 
 
 async def _workflow(db, owner, nodes, *, edited_days_ago: int = 0, workflow_id: str | None = None) -> str:
@@ -360,10 +370,20 @@ class Provider:
     """Each provider's edge, and everything else a dry run must never reach."""
 
     def __init__(self):
+        self.schedules = {}  # the scheduler's own rows, by (workflow, step)
+        self.reset_calls()
+
+    def reset_calls(self):
         self.registered = []
         self.deregistered = []
         self.scheduled = []
+        self.scheduled_workflows = []
         self.unscheduled = []
+
+    def schedule(self, workflow_id, node_id, expressions, timezone, webhook_url):
+        self.schedules[(str(workflow_id), node_id)] = [
+            {"node_id": node_id, "cron_expression": e, "timezone": timezone, "enabled": 1, "webhook_url": webhook_url}
+            for e in expressions]
 
     def fakes(self):
         provider = self
@@ -389,10 +409,18 @@ class Provider:
 
         async def register_schedules(**kwargs):
             provider.scheduled.append(kwargs["node_id"])
+            provider.scheduled_workflows.append(str(kwargs["workflow_id"]))
+            provider.schedule(kwargs["workflow_id"], kwargs["node_id"], kwargs["cron_expressions"],
+                              kwargs["timezone"], kwargs["webhook_url"])
             return {"schedule_ids": ["s1"], "schedule_id": "s1", "next_run": "2026-11-06T00:00:00Z", "is_active": True}
 
         async def delete_schedules(workflow_id, node_ids, **kwargs):
             provider.unscheduled += list(node_ids)
+            for node_id in node_ids:
+                provider.schedules.pop((str(workflow_id), node_id), None)
+
+        async def list_schedules(workflow_id=None, timeout=10.0, **kwargs):
+            return [row for (wf, _), rows in provider.schedules.items() if wf == str(workflow_id) for row in rows]
 
         async def no_next_run(*args, **kwargs):
             raise AssertionError("a sweep doesn't read the scheduler for a converged step")
@@ -404,6 +432,7 @@ class Provider:
             patch.object(SlackNode, "_resolve_trigger_credential", classmethod(resolve_slack)),
             patch.object(cron_scheduler_client, "register_node_schedules", register_schedules),
             patch.object(cron_scheduler_client, "delete_schedules_for_nodes", delete_schedules),
+            patch.object(cron_scheduler_client, "list_schedules", list_schedules),
             patch.object(cron_scheduler_client, "get_schedule", no_next_run),
             patch.object(cron_scheduler_client, "is_cron_scheduler_enabled", lambda: True),
             patch("utils.webhook_delivery.get_webhook_url", lambda webhook_id: f"https://hooks.example.test/{webhook_id}"),
@@ -459,12 +488,14 @@ async def _a_bit_of_everything(db):
     on_stripe = _step(STRIPE, {"operation": "on_event", "credentialIds": {"stripe_api": stripe}})
     on_slack = _step(SLACK, {"operation": "on_app_mention", "credentialIds": {"slack_bot": slack}})
     wf = {
-        "cron": await _workflow(db, owner, [_step(CRON, HOURLY)], edited_days_ago=200),
-        "stripe": await _workflow(db, owner, [on_stripe], edited_days_ago=40),
-        "slack": await _workflow(db, owner, [on_slack], edited_days_ago=3),
+        "cron": await _workflow(db, owner, [_step(CRON, HOURLY)]),
+        "stripe": await _workflow(db, owner, [on_stripe]),
+        "slack": await _workflow(db, owner, [on_slack]),
         "stale_stripe": await _workflow(db, owner, [on_stripe]),
         "gone": await _workflow(db, owner, [_step(CRON, HOURLY, node_id="something_else")]),
     }
+    for key, days_ago in (("cron", 200), ("stripe", 40), ("slack", 3)):
+        await _ran(db, wf[key], days_ago)
     await _row(db, wf["stale_stripe"], operation="on_event", fingerprint="an-older-fingerprint")
     await _row(db, wf["gone"], operation="on_event", fingerprint="f", node_id="removed_step")
     return wf, owner, stripe, slack
@@ -495,11 +526,14 @@ async def test_the_dry_run_writes_nothing_calls_no_provider_and_shows_no_custome
 
     new = {e["workflow_id"]: e for e in plan["listed"]["would_register"]}
     assert {wf["cron"], wf["stripe"], wf["slack"], wf["gone"]} <= set(new)
-    assert (new[wf["cron"]]["type"], new[wf["cron"]]["operation"], new[wf["cron"]]["edited_days_ago"]) == (CRON, None, 200)
-    assert (new[wf["stripe"]]["type"], new[wf["stripe"]]["operation"], new[wf["stripe"]]["edited_days_ago"]) == (
+    assert (new[wf["cron"]]["type"], new[wf["cron"]]["operation"], new[wf["cron"]]["last_run_days_ago"]) == (CRON, None, 200)
+    assert (new[wf["stripe"]]["type"], new[wf["stripe"]]["operation"], new[wf["stripe"]]["last_run_days_ago"]) == (
         STRIPE, "on_event", 40)
-    assert (new[wf["slack"]]["type"], new[wf["slack"]]["operation"], new[wf["slack"]]["edited_days_ago"]) == (
+    assert (new[wf["slack"]]["type"], new[wf["slack"]]["operation"], new[wf["slack"]]["last_run_days_ago"]) == (
         SLACK, "on_app_mention", 3)
+    # In use: its owner signed in today, whenever it last ran.
+    assert new[wf["cron"]]["last_active_days_ago"] == 0 and new[wf["gone"]]["last_run_days_ago"] is None
+    assert new[wf["cron"]]["reason"] == webhook_manager.REASONS["never_registered"]
     assert wf["stale_stripe"] in {e["workflow_id"] for e in plan["listed"]["would_reregister"]}
     assert wf["gone"] in {e["workflow_id"] for e in plan["listed"]["would_deregister"]}
 
@@ -511,7 +545,8 @@ async def test_the_dry_run_writes_nothing_calls_no_provider_and_shows_no_custome
     for private in (LABEL, "removed_step", "something_else", stripe, slack, "secret", "@example.test"):
         assert private not in shown
     assert {key for entries in plan["listed"].values() for e in entries for key in e} == {
-        "workflow_id", "edited_days_ago", "type", "operation"}
+        "workflow_id", "type", "operation", "reason", "last_active_days_ago", "last_run_days_ago", "owner_seen_days_ago"}
+    assert {e["reason"] for entries in plan["listed"].values() for e in entries} <= set(webhook_manager.REASONS.values())
 
 
 async def test_an_operation_nobody_defined_is_never_shown(db, provider, nothing_leaves):
@@ -536,16 +571,22 @@ async def test_a_credential_id_that_was_never_saved_is_no_credential(db, provide
     assert result["state"] == "unregistered"
 
 
-async def test_a_workflow_with_no_edit_time_is_listed_without_one(db, provider, nothing_leaves):
-    [workflow_id] = await _cron_workflows(db, 1)
-    await db.execute("ALTER TABLE workflows DISABLE TRIGGER update_workflows_updated_at")
-    await db.execute("UPDATE workflows SET updated_at = NULL WHERE id = $1", workflow_id)
-    await db.execute("ALTER TABLE workflows ENABLE TRIGGER update_workflows_updated_at")
+async def test_a_workflow_nobody_uses_is_held_back_and_says_so(db, provider, nothing_leaves):
+    """NoClick's own writes to a step's mirrors move updated_at, so it never said whether a person was there."""
+    owner = await _owner(db, seen_days_ago=None)
+    idle = await _workflow(db, owner, [_step(CRON, HOURLY)])
+    ran_lately = await _workflow(db, owner, [_step(CRON, HOURLY)])
+    await _ran(db, ran_lately, 2)
+    gone_quiet = await _workflow(db, await _owner(db, seen_days_ago=webhook_manager.RESYNC_ACTIVE_WITHIN.days + 5),
+                                 [_step(CRON, HOURLY)])
 
     plan = await WebhookManager.plan_trigger_resync(db.pool)
 
-    [entry] = [e for e in plan["listed"]["would_register"] if e["workflow_id"] == workflow_id]
-    assert entry["edited_days_ago"] is None
+    held = {e["workflow_id"]: e for e in plan["listed"]["inactive"]}
+    assert held[idle]["last_active_days_ago"] is None and held[idle]["held_back"] == "would_register"
+    assert held[gone_quiet]["last_active_days_ago"] == webhook_manager.RESYNC_ACTIVE_WITHIN.days + 5
+    assert held[idle]["reason"] == webhook_manager.REASONS["inactive"]
+    assert ran_lately in {e["workflow_id"] for e in plan["listed"]["would_register"]}
 
 
 async def test_a_plan_out_of_time_says_so(db, provider, nothing_leaves):
@@ -602,10 +643,86 @@ async def _never_registered(db, owner, node_type, config, **_):
     return await _workflow(db, owner, [_step(node_type, config)])
 
 
-async def _stale(db, owner, node_type, config, operation, **_):
+async def _stale(db, owner, node_type, config, operation, provider, **_):
     workflow_id = await _workflow(db, owner, [_step(node_type, config)])
     await _row(db, workflow_id, operation=operation or "__schedule__", fingerprint="an-older-fingerprint")
+    if node_type == CRON:
+        provider.schedule(workflow_id, NODE, ["0 9 * * *"], "UTC", await _row_url(db, workflow_id))
     return workflow_id
+
+
+async def _row_url(db, workflow_id, node_id=NODE):
+    row_id = await db.fetchval("SELECT id FROM webhooks WHERE workflow_id = $1 AND node_id = $2", workflow_id, node_id)
+    return f"https://hooks.example.test/{row_id}"
+
+
+async def _cron_spec(db, workflow_id, config):
+    from nodes.core.registry import NODE_REGISTRY
+
+    return await NODE_REGISTRY[CRON].cron_schedule_spec(
+        {"label": LABEL, **config}, None, workflow_id=workflow_id, pool=db.pool)
+
+
+async def _cron_unrecorded_live(db, owner, node_type, config, provider, **_):
+    """Scheduled before the row recorded schedules: it fires as asked, and the row says nothing of it."""
+    workflow_id = await _workflow(db, owner, [_step(node_type, config)])
+    await _row(db, workflow_id, operation=None, fingerprint=None)
+    spec = await _cron_spec(db, workflow_id, config)
+    provider.schedule(workflow_id, NODE, spec.expressions, spec.timezone, await _row_url(db, workflow_id))
+    return workflow_id
+
+
+async def _cron_unrecorded_other(db, owner, node_type, config, provider, **_):
+    workflow_id = await _workflow(db, owner, [_step(node_type, config)])
+    await _row(db, workflow_id, operation=None, fingerprint=None)
+    provider.schedule(workflow_id, NODE, ["0 9 * * *"], "UTC", await _row_url(db, workflow_id))
+    return workflow_id
+
+
+async def _cron_disabled_unrecorded_schedule(db, owner, node_type, config, provider, **_):
+    """Switched off, with a schedule nothing of NoClick's records: once left firing and skipped at every tick."""
+    workflow_id = await _workflow(db, owner, [_step(node_type, {**config, "disabled": True})])
+    await _row(db, workflow_id, operation=None, fingerprint=None)
+    provider.schedule(workflow_id, NODE, ["0 9 * * *"], "UTC", await _row_url(db, workflow_id))
+    return workflow_id
+
+
+async def _refused(db, owner, node_type, config, operation, *, kind, holder_live=True, saved_again=False, **_):
+    """A registration the provider refused at these very settings."""
+    workflow_id = await _workflow(db, owner, [_step(node_type, config)])
+    credential_id = config["credentialIds"]["stripe_api"]
+    await _row(db, workflow_id, operation=None, fingerprint=None, active=False)
+    holder = None
+    if kind == "held_elsewhere":
+        other = await _workflow(db, owner, [_step(node_type, config)])
+        await _row(db, other, operation=operation, fingerprint="f", active=holder_live)
+        holder = await db.fetchval("SELECT id FROM webhooks WHERE workflow_id = $1", other)
+    await db.execute(
+        "UPDATE webhooks SET refused_fingerprint = $2, refused_kind = $3, refused_holder_id = $4, "
+        "refused_credential_version = (SELECT token_version FROM credentials WHERE id = $5), refused_at = now() "
+        "WHERE workflow_id = $1",
+        workflow_id, registration_fingerprint(StripeNode, operation, credential_id, {"label": LABEL, **config}),
+        kind, holder, credential_id)
+    if saved_again:
+        await db.execute("UPDATE credentials SET credential = $2 WHERE id = $1", credential_id,
+                         get_encryption().encrypt_credential({"api_key": "sk_test_new"}))
+    return workflow_id
+
+
+async def _rejected(db, owner, node_type, config, operation, **_):
+    return await _refused(db, owner, node_type, config, operation, kind="credential_rejected")
+
+
+async def _rejected_then_saved_again(db, owner, node_type, config, operation, **_):
+    return await _refused(db, owner, node_type, config, operation, kind="credential_rejected", saved_again=True)
+
+
+async def _held_elsewhere(db, owner, node_type, config, operation, **_):
+    return await _refused(db, owner, node_type, config, operation, kind="held_elsewhere")
+
+
+async def _held_elsewhere_let_go(db, owner, node_type, config, operation, **_):
+    return await _refused(db, owner, node_type, config, operation, kind="held_elsewhere", holder_live=False)
 
 
 async def _torn_down_row(db, owner, node_type, config, operation, **_):
@@ -712,38 +829,52 @@ async def _cron_live(db, owner, node_type, config, **_):
 ON_EVENT = {"operation": "on_event"}
 MENTION = {"operation": "on_app_mention"}
 SCENARIOS = [
-    # build, node type, config, what the dry run says, what the reconcile then does
-    (_never_registered, CRON, HOURLY, "would_register", "registered"),
-    (_stale, CRON, HOURLY, "would_reregister", "registered"),
-    (_torn_down_row, CRON, HOURLY, "would_register", "registered"),
-    (_cron_live, CRON, HOURLY, "live", "live"),
-    (_cron_disabled_with_a_schedule, CRON, HOURLY, "would_deregister", "deregistered"),
-    (_cron_disabled_never_scheduled, CRON, HOURLY, "noop", "noop"),
-    (_step_removed, STRIPE, ON_EVENT, "would_deregister", "deregistered"),
-    (_unfinished_setup, CRON, HOURLY, "refused", "raises"),
-    (_stale_unfinished_setup, CRON, HOURLY, "would_deregister", "raises"),
-    (_never_registered, STRIPE, ON_EVENT, "would_register", "registered"),
-    (_stale, STRIPE, ON_EVENT, "would_reregister", "registered"),
-    (_torn_down_row, STRIPE, ON_EVENT, "would_register", "registered"),
-    (_live_stripe, STRIPE, ON_EVENT, "live", "live"),
-    (_adoptable, STRIPE, ON_EVENT, "would_adopt", "live"),
-    (_moved_off_its_trigger, STRIPE, ON_EVENT, "would_deregister", "deregistered"),
-    (_no_credential, STRIPE, ON_EVENT, "unregistered", "unregistered"),
-    (_revoked_credential, STRIPE, ON_EVENT, "unregistered", "unregistered"),
-    (_unfinished_setup, STRIPE, ON_EVENT, "refused", "raises"),
-    (_stale_unfinished_setup, STRIPE, ON_EVENT, "would_deregister", "raises"),
-    (_never_registered, SLACK, MENTION, "would_register", "registered"),
-    (_slack_rows, SLACK, MENTION, "live", "live"),
-    (_slack_moved_off, SLACK, MENTION, "would_deregister", "deregistered"),
-    (_slack_other_event, SLACK, MENTION, "would_reregister", "registered"),
-    (_slack_credential_gone, SLACK, MENTION, "unregistered", "unregistered"),
-    (_no_credential, SLACK, MENTION, "unregistered", "unregistered"),
+    # build, node type, config, what the dry run says, what the reconcile then does, held back (a sweep, inactive)
+    (_never_registered, CRON, HOURLY, "would_register", "registered", False),
+    (_stale, CRON, HOURLY, "would_reregister", "registered", False),
+    (_torn_down_row, CRON, HOURLY, "would_register", "registered", False),
+    (_cron_live, CRON, HOURLY, "live", "live", False),
+    (_cron_unrecorded_live, CRON, HOURLY, "would_adopt", "live", False),
+    (_cron_unrecorded_other, CRON, HOURLY, "would_reregister", "registered", False),
+    (_cron_disabled_with_a_schedule, CRON, HOURLY, "would_deregister", "deregistered", False),
+    (_cron_disabled_unrecorded_schedule, CRON, HOURLY, "would_deregister", "deregistered", False),
+    (_cron_disabled_never_scheduled, CRON, HOURLY, "noop", "noop", False),
+    (_step_removed, STRIPE, ON_EVENT, "would_deregister", "deregistered", False),
+    (_unfinished_setup, CRON, HOURLY, "refused", "raises", False),
+    (_stale_unfinished_setup, CRON, HOURLY, "would_deregister", "raises", False),
+    (_never_registered, STRIPE, ON_EVENT, "would_register", "registered", False),
+    (_stale, STRIPE, ON_EVENT, "would_reregister", "registered", False),
+    (_torn_down_row, STRIPE, ON_EVENT, "would_register", "registered", False),
+    (_live_stripe, STRIPE, ON_EVENT, "live", "live", False),
+    (_adoptable, STRIPE, ON_EVENT, "would_adopt", "live", False),
+    (_moved_off_its_trigger, STRIPE, ON_EVENT, "would_deregister", "deregistered", False),
+    (_no_credential, STRIPE, ON_EVENT, "unregistered", "unregistered", False),
+    (_revoked_credential, STRIPE, ON_EVENT, "unregistered", "unregistered", False),
+    (_unfinished_setup, STRIPE, ON_EVENT, "refused", "raises", False),
+    (_stale_unfinished_setup, STRIPE, ON_EVENT, "would_deregister", "raises", False),
+    (_rejected, STRIPE, ON_EVENT, "provider_refused", "provider_refused", False),
+    (_rejected_then_saved_again, STRIPE, ON_EVENT, "would_register", "registered", False),
+    (_held_elsewhere, STRIPE, ON_EVENT, "provider_refused", "provider_refused", False),
+    (_held_elsewhere_let_go, STRIPE, ON_EVENT, "would_register", "registered", False),
+    (_never_registered, SLACK, MENTION, "would_register", "registered", False),
+    (_slack_rows, SLACK, MENTION, "live", "live", False),
+    (_slack_moved_off, SLACK, MENTION, "would_deregister", "deregistered", False),
+    (_slack_other_event, SLACK, MENTION, "would_reregister", "registered", False),
+    (_slack_credential_gone, SLACK, MENTION, "unregistered", "unregistered", False),
+    (_no_credential, SLACK, MENTION, "unregistered", "unregistered", False),
+    # A sweep over a workflow nobody uses starts and replaces nothing, and still tears down and records.
+    (_never_registered, CRON, HOURLY, "inactive", "inactive", True),
+    (_stale, STRIPE, ON_EVENT, "inactive", "inactive", True),
+    (_never_registered, SLACK, MENTION, "inactive", "inactive", True),
+    (_cron_disabled_with_a_schedule, CRON, HOURLY, "would_deregister", "deregistered", True),
+    (_cron_unrecorded_live, CRON, HOURLY, "would_adopt", "live", True),
+    (_moved_off_its_trigger, STRIPE, ON_EVENT, "would_deregister", "deregistered", True),
 ]
 
 
-@pytest.mark.parametrize("build,node_type,config,says,does", SCENARIOS,
-                         ids=[f"{s[0].__name__}-{s[1]}" for s in SCENARIOS])
-async def test_the_dry_run_says_what_the_reconcile_then_does(db, provider, build, node_type, config, says, does):
+@pytest.mark.parametrize("build,node_type,config,says,does,hold", SCENARIOS,
+                         ids=[f"{s[0].__name__}-{s[1]}{'-held' if s[5] else ''}" for s in SCENARIOS])
+async def test_the_dry_run_says_what_the_reconcile_then_does(db, provider, build, node_type, config, says, does, hold):
     from utils.workflow_readiness import WorkflowNotReadyError
 
     owner = await _owner(db)
@@ -752,28 +883,159 @@ async def test_the_dry_run_says_what_the_reconcile_then_does(db, provider, build
         config["credentialIds"] = {"stripe_api": await _credential(db, owner, "stripe_api")}
     elif node_type == SLACK:
         config["credentialIds"] = {"slack_bot": await _credential(db, owner, "slack_bot")}
-    workflow_id = await build(db, owner, node_type, config, operation=config.get("operation"))
-    provider.__init__()
+    workflow_id = await build(db, owner, node_type, config, operation=config.get("operation"), provider=provider)
+    provider.reset_calls()
     before = await _everything(db)
 
-    planned = await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, plan_only=True)
+    # As the sweep reads it: its dry run and its pass also ask the scheduler and providers what's live.
+    planned = await WebhookManager.reconcile_node(
+        db.pool, workflow_id, NODE, plan_only=True, hold_starts=hold, observe=True)
 
     assert planned["state"] == says
+    assert planned["reason"] in webhook_manager.REASONS.values()
     assert await _everything(db) == before
     assert provider.registered == provider.deregistered == provider.scheduled == provider.unscheduled == []
 
     if does == "raises":
         with pytest.raises(WorkflowNotReadyError):
-            await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, refresh_next_run=False)
+            await WebhookManager.reconcile_node(
+                db.pool, workflow_id, NODE, refresh_next_run=False, hold_starts=hold, observe=True)
     else:
-        done = await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, refresh_next_run=False)
+        done = await WebhookManager.reconcile_node(
+            db.pool, workflow_id, NODE, refresh_next_run=False, hold_starts=hold, observe=True)
         assert done["state"] == does
+        assert done["outcome"] == planned["outcome"], "the dry run reads the decision the reconcile carries out"
         assert bool(done.get("adopted")) == (says == "would_adopt")
     acted = bool(provider.registered or provider.scheduled)
     assert acted == (says in ("would_register", "would_reregister"))
     tore_down = bool(provider.deregistered or provider.unscheduled)
     if says == "would_deregister" and node_type != SLACK:
         assert tore_down
+
+
+# ── A provider's lasting refusal ─────────────────────────────────────────────
+
+
+@pytest.mark.parametrize("kind", ["credential_rejected", "held_elsewhere"])
+async def test_a_registration_refused_for_good_isnt_tried_again_until_something_changes(db, provider, kind):
+    """Telegram answering a revoked token, or a bot another workflow holds, was retried every night for good."""
+    from nodes.core.webhook_trigger import RegistrationRefused
+
+    owner = await _owner(db)
+    credential_id = await _credential(db, owner, "stripe_api")
+    holder_wf = await _workflow(db, owner, [_step(STRIPE, {"operation": "on_event"})])
+    await _row(db, holder_wf, operation="on_event", fingerprint="f")
+    holder = str(await db.fetchval("SELECT id FROM webhooks WHERE workflow_id = $1", holder_wf))
+    workflow_id = await _workflow(db, owner, [
+        _step(STRIPE, {"operation": "on_event", "credentialIds": {"stripe_api": credential_id}})])
+    attempts = []
+
+    async def refuses(cls=None, *, webhook_url, credential, config, node_id):
+        attempts.append(node_id)
+        raise RegistrationRefused("Refused.", kind=kind, holder_webhook_id=holder if kind == "held_elsewhere" else None)
+
+    with patch.object(StripeNode, "_register_external_webhook", classmethod(refuses)):
+        assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE))["state"] == "failed"
+        for plan_only in (True, False, False):
+            result = await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, plan_only=plan_only)
+            assert result["state"] == "provider_refused"
+            assert result["reason"] == webhook_manager.REASONS[kind]
+        assert attempts == [NODE], "tried once, then left alone"
+
+        # What it was waiting on changes: it's tried again.
+        if kind == "credential_rejected":
+            await db.execute("UPDATE credentials SET credential = $2 WHERE id = $1", credential_id,
+                             get_encryption().encrypt_credential({"api_key": "sk_test_new"}))
+        else:
+            await db.execute("UPDATE webhooks SET is_active = false WHERE id = $1::uuid", holder)
+        assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, plan_only=True))["state"] == (
+            "would_register")
+
+    assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE))["state"] == "registered"
+    row = await db.fetchrow("SELECT is_active, refused_fingerprint, refused_kind FROM webhooks WHERE workflow_id = $1",
+                            workflow_id)
+    assert row["is_active"] and row["refused_fingerprint"] is None and row["refused_kind"] is None
+
+
+async def test_a_refusal_at_other_settings_says_nothing_of_these(db, provider):
+    from nodes.core.webhook_trigger import RegistrationRefused
+
+    owner = await _owner(db)
+    credential_id = await _credential(db, owner, "stripe_api")
+    workflow_id = await _workflow(db, owner, [
+        _step(STRIPE, {"operation": "on_event", "credentialIds": {"stripe_api": credential_id}})])
+
+    async def refuses(cls=None, **_):
+        raise RegistrationRefused("Refused.", kind="credential_rejected")
+
+    with patch.object(StripeNode, "_register_external_webhook", classmethod(refuses)):
+        await WebhookManager.reconcile_node(db.pool, workflow_id, NODE)
+    other = await _credential(db, owner, "stripe_api")
+    graph = await db.fetchval("SELECT workflow FROM workflows WHERE id = $1", workflow_id)
+    graph["nodes"][0]["config"]["credentialIds"] = {"stripe_api": other}
+    await db.execute("UPDATE workflows SET workflow = $2::jsonb WHERE id = $1", workflow_id, graph)
+
+    assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE))["state"] == "registered"
+
+
+# ── A sweep acts only where someone is ───────────────────────────────────────
+
+
+async def test_a_sweep_starts_nothing_nobody_uses_and_still_cleans_up(db, provider):
+    idle_owner = await _owner(db, seen_days_ago=None)
+    idle = await _workflow(db, idle_owner, [_step(CRON, HOURLY)])
+    idle_switched_off = await _workflow(db, idle_owner, [_step(CRON, {**HOURLY, "disabled": True})])
+    await _row(db, idle_switched_off, operation="__schedule__", fingerprint="sched:f")
+    in_use = await _workflow(db, idle_owner, [_step(CRON, HOURLY)])
+    await _ran(db, in_use, 1)
+    await trigger_resync.set_registers(db.pool, True)
+
+    stats = await WebhookManager.resync_trigger_registrations(db.pool, limit=10_000)
+
+    scheduled = {wf for (wf, _), rows in provider.schedules.items() if rows}
+    assert in_use in scheduled and idle not in scheduled
+    assert NODE in provider.unscheduled and stats["inactive"] >= 1
+    assert await db.fetchval("SELECT is_active FROM webhooks WHERE workflow_id = $1", idle_switched_off) is False
+
+
+async def test_a_sweep_records_an_unrecorded_live_schedule_and_registers_nothing(db, provider):
+    """Read off the row alone, a schedule from before the row recorded them looked like none, and a pass that acted
+    would have registered it again; in the open, it's only recorded."""
+    owner = await _owner(db)
+    workflow_id = await _cron_unrecorded_live(db, owner, CRON, HOURLY, provider)
+    await trigger_resync.set_registers(db.pool, True)
+    before = await db.fetchrow("SELECT updated_at, graph_version FROM workflows WHERE id = $1", workflow_id)
+
+    stats = await WebhookManager.resync_trigger_registrations(db.pool, limit=10_000)
+
+    assert stats["adopted"] >= 1 and workflow_id not in provider.scheduled_workflows
+    row = await db.fetchrow("SELECT is_active, registered_operation, registered_fingerprint FROM webhooks "
+                            "WHERE workflow_id = $1", workflow_id)
+    assert row["is_active"] and row["registered_operation"] == "__schedule__"
+    assert row["registered_fingerprint"].startswith("sched:")
+    assert await db.fetchrow("SELECT updated_at, graph_version FROM workflows WHERE id = $1", workflow_id) == before
+    assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, plan_only=True, observe=True))["state"] == (
+        "live")
+
+
+async def test_the_dry_run_reads_workflows_at_once(db, provider):
+    """It took over an hour to read production one step at a time from outside the datacenter."""
+    await _cron_workflows(db, 12)
+    running, most = 0, 0
+
+    real = WebhookManager.reconcile_node
+
+    async def slow(pool, workflow_id, node_id, **kwargs):
+        nonlocal running, most
+        running += 1
+        most = max(most, running)
+        await asyncio.sleep(0.05)
+        running -= 1
+        return await real(pool, workflow_id, node_id, **kwargs)
+
+    with patch.object(WebhookManager, "reconcile_node", slow):
+        plan = await WebhookManager.plan_trigger_resync(db.pool)
+    assert plan["complete"] and 1 < most <= webhook_manager.RESYNC_PLAN_CONCURRENCY
 
 
 # ── Nothing is torn down on a signal that says nothing ───────────────────────

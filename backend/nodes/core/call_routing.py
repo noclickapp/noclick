@@ -5,14 +5,17 @@ the first still read "registered" — the registration refuses it by name."""
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from utils.webhook_manager import Holder
 
 # The trigger operation every call-answering node uses; the voice function
 # and the call-ended relay look it up by this name whichever node holds it.
 ON_CALL = "on_call"
 
 
-async def number_holder(number_sid: str, *, except_webhook_id: str) -> Optional[str]:
+async def number_holder(number_sid: str, *, except_webhook_id: str) -> Optional["Holder"]:
     """The workflow whose active on_call trigger already routes this number
     (its name, for the message), or None. The webhook row's
     external_webhook_id IS the number's provider id."""

@@ -45,6 +45,23 @@ from utils.credential_loader import load_credential
 logger = logging.getLogger(__name__)
 
 
+class RegistrationRefused(RuntimeError):
+    """A registration the provider will refuse again until something changes:
+    ``credential_rejected`` (the provider says the account's key is no good)
+    lasts until the credential is saved again; ``held_elsewhere`` (a resource
+    with one address, already another workflow's) until that workflow's
+    registration ``holder_webhook_id`` lets go. Its message is the step's
+    ``trigger_error``. Anything else a registration raises is worth retrying."""
+
+    CREDENTIAL_REJECTED = "credential_rejected"
+    HELD_ELSEWHERE = "held_elsewhere"
+
+    def __init__(self, message: str, *, kind: str, holder_webhook_id: Optional[str] = None):
+        super().__init__(message)
+        self.kind = kind
+        self.holder_webhook_id = holder_webhook_id
+
+
 class WebhookTriggerConfigBase(BaseModel):
     """Shared hidden config fields for every external-webhook trigger node.
 

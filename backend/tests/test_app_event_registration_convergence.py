@@ -12,6 +12,7 @@ Drives the REAL SlackNode registration core against a stateful fake
 subscription table; only the DB/credential edges are patched.
 """
 import uuid
+from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -210,7 +211,7 @@ async def test_reconcile_waits_for_downstream_setup_and_registers_after_repair(w
     world.nodes.append(agent)
     world.edges = [{"source": NODE, "target": "agent"}]
     result = await _reconcile(world)
-    assert result["state"] == "failed"
+    assert result["state"] == "refused"
     assert "less than or equal to 2" in result["error"].lower()
     assert world.rows == []
 
@@ -399,7 +400,8 @@ async def _run_sweep(world, sub_node_ids=(), webhook_node_ids=()):
         patch("repositories.trigger_resync.read_state",
               AsyncMock(return_value=trigger_resync.State(registers=True))),
         patch("repositories.trigger_resync.candidates",
-              AsyncMock(return_value=[{"id": wf_uuid, "has_graph": True}])),
+              AsyncMock(return_value=[{"id": wf_uuid, "has_graph": True, "last_run_at": None, "person_edit_at": None,
+                                       "owner_seen_at": datetime.now(timezone.utc)}])),
         patch("repositories.trigger_resync.advance", AsyncMock(return_value=True)),
         patch("repositories.trigger_resync.registered_nodes",
               AsyncMock(return_value=set(webhook_node_ids) | set(sub_node_ids))),

@@ -142,7 +142,7 @@ async def test_a_step_still_recording_a_failed_registration_is_judged_again(monk
                               trigger_error="Not registered: Instagram subscription request returned HTTP 500")
     registered = _stub_reconcile(monkeypatch, rows=[ROW], config=config)
 
-    assert await _reconcile(config) == {"state": "registered"}
+    assert (await _reconcile(config))["state"] == "registered"
     assert registered == ["ig-comments"] and config["trigger_error"] is None
 
 
@@ -151,5 +151,5 @@ async def test_a_converged_step_is_left_alone(monkeypatch):
     config = _comment_trigger(trigger_registered=True, subscription_status="Registered", trigger_error=None)
     registered = _stub_reconcile(monkeypatch, rows=[ROW], config=config)
 
-    assert await _reconcile(config) == {"state": "live"}
+    assert (await _reconcile(config))["state"] == "live"
     assert registered == []

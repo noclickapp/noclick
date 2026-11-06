@@ -1726,6 +1726,14 @@ def _wahooks_ensure_webhook(api_key: str, connection_id: str, webhook_url: str) 
         return changed
 
 
+def _wahooks_webhooks(api_key: str, connection_id: str) -> List[Dict[str, Any]]:
+    """Sync (thread-pool) read of a connection's WAHooks webhooks with the platform key."""
+    from wahooks import WAHooks
+
+    with WAHooks(api_key=api_key) as client:
+        return list(client.list_webhooks(connection_id))
+
+
 def _wahooks_drop_webhooks(api_key: str, connection_id: str, webhook_url: str) -> int:
     """Sync (thread-pool) removal of every WAHooks webhook on a connection that
     delivers to ``webhook_url``. Needs only the platform key, never the
@@ -1785,6 +1793,34 @@ class WhatsAppNode(WorkflowNode):
     @classmethod
     def get_config_model(cls):
         return WhatsAppNodeConfig
+
+    @classmethod
+    async def observe_registration(
+        cls, pool, *, webhook_url: str, credential_id: Optional[str], config: Dict[str, Any],
+    ) -> Optional[Dict[str, Any]]:
+        """What WAHooks holds for the trigger, read with NoClick's own key and
+        the connection the credential's metadata names (nothing decrypted): the
+        row's fields when the connection delivers to ``webhook_url`` with every
+        event the loader asks for, False when it doesn't, None when it can't say."""
+        from utils.wahooks_connections import get_wahooks_api_key
+
+        api_key = get_wahooks_api_key()
+        if not (api_key and credential_id):
+            return None
+        async with pool.acquire() as conn:
+            connection_id = await conn.fetchval(
+                "SELECT metadata->>'connection_id' FROM credentials WHERE id::text = $1", str(credential_id))
+        if not connection_id:
+            return None
+        try:
+            hooks = await asyncio.to_thread(_wahooks_webhooks, api_key, connection_id)
+        except Exception as e:
+            logger.warning(f"[WhatsAppNode] Couldn't read connection {connection_id}'s webhooks: {e}")
+            return None
+        ours = [w for w in hooks if w.get("url") == webhook_url]
+        if ours and all(set(WAHOOKS_WEBHOOK_EVENTS) <= set(w.get("events") or []) for w in ours):
+            return {"external_webhook_id": connection_id}
+        return False
 
     @classmethod
     def resolve_agent_event(cls, output: Dict[str, Any]) -> Optional[Dict[str, Any]]:

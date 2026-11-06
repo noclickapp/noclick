@@ -7,7 +7,7 @@ No row means nobody has turned it on and no lap has started."""
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, List, Optional, Sequence, Set
 from uuid import UUID
 
@@ -65,9 +65,14 @@ async def candidates(
     or that holds an active registered ``webhooks`` row or any ``webhook_subscriptions``
     row (an orphan whose step left the graph), past ``after`` in id order. Ids never
     change, so a lap isn't reordered by the writes it makes. ``has_graph`` says the
-    blob holds a list of steps at all."""
+    blob holds a list of steps at all.
+
+    Each row says when the workflow was last in use, which ``updated_at`` can't
+    (NoClick's own mirror writes move it): ``last_run_at``, ``person_edit_at``
+    (a version a person authored) and ``owner_seen_at`` (the owner's last
+    sign-in or text to NoClick)."""
     async with pool.acquire() as conn:
-        return await conn.fetch(
+        rows = await conn.fetch(
             """
             WITH candidates AS (
                 SELECT wf.id, wf.updated_at, jsonb_typeof(wf.workflow->'nodes') = 'array' AS has_graph
@@ -99,6 +104,26 @@ async def candidates(
             """,
             list(registerable_types), after, limit,
         )
+        # Keyed by id, apart: folded into the walk above, it ran past the pool's time limit.
+        used = {
+            r["id"]: r for r in await conn.fetch(
+                """
+                SELECT wf.id,
+                       (SELECT e.started_at FROM workflow_executions e WHERE e.workflow_id = wf.id
+                        ORDER BY e.started_at DESC LIMIT 1) AS last_run_at,
+                       (SELECT max(v.updated_at) FROM workflow_versions v
+                        WHERE v.workflow_id = wf.id AND v.author_user_id IS NOT NULL AND v.source <> 'baseline'
+                       ) AS person_edit_at,
+                       (SELECT GREATEST(u.last_sign_in_at,
+                                        (SELECT max(p.last_seen_at) FROM user_phones p WHERE p.user_id = u.id))
+                        FROM auth.users u WHERE u.id = wf.owner_id) AS owner_seen_at
+                FROM workflows wf WHERE wf.id = ANY($1::uuid[])
+                """,
+                [r["id"] for r in rows],
+            )
+        }
+    return [{**dict(r), **{k: used[r["id"]][k] if r["id"] in used else None
+                           for k in ("last_run_at", "person_edit_at", "owner_seen_at")}} for r in rows]
 
 
 async def registered_nodes(pool, workflow_id: UUID) -> Set[str]:
@@ -114,3 +139,14 @@ async def registered_nodes(pool, workflow_id: UUID) -> Set[str]:
             workflow_id,
         )
     return {r["node_id"] for r in rows}
+
+
+def last_active(row) -> Optional[datetime]:
+    """When a candidate was last in use: run, edited by a person, or its owner back."""
+    seen = [row[key] for key in ("last_run_at", "person_edit_at", "owner_seen_at") if row[key] is not None]
+    return max(seen) if seen else None
+
+
+def is_active(row, now: datetime, within: timedelta) -> bool:
+    last = last_active(row)
+    return last is not None and now - last <= within

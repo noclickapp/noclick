@@ -8,6 +8,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import httpx
 import pytest
+
+from utils.webhook_manager import Holder
 import respx
 
 from nodes.agent.node_op_tools import is_trigger_operation
@@ -60,7 +62,7 @@ async def test_on_call_routes_the_number_at_the_platforms_call_receiver(monkeypa
     with pytest.raises(ValueError, match="Account SID"):
         await TwilioNode._register_external_webhook(webhook_url="https://x", credential=API_KEY, config=config, node_id="n1")
     # One number rings one agent, whichever node holds it.
-    monkeypatch.setattr("nodes.twilio_node.number_holder", AsyncMock(return_value='"Support line"'))
+    monkeypatch.setattr("nodes.twilio_node.number_holder", AsyncMock(return_value=Holder('"Support line"', "wh-holder")))
     with pytest.raises(RuntimeError, match='already answers calls for "Support line"'):
         await TwilioNode._register_external_webhook(webhook_url="https://x", credential=ACCOUNT, config=config, node_id="n2")
     # Calls never arrive on the worker's webhook URL.

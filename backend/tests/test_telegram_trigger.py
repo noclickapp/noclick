@@ -24,7 +24,7 @@ from nodes.telegram_node import (
     TelegramNodeConfig,
     TelegramReceiveConfig,
 )
-from utils.webhook_manager import WebhookManager
+from utils.webhook_manager import Holder, WebhookManager
 
 pytestmark = pytest.mark.asyncio
 
@@ -86,12 +86,38 @@ async def test_registration_sets_the_webhook_with_a_secret_and_records_the_bot(m
 async def test_a_bot_wakes_one_trigger(monkeypatch):
     """A second trigger on the same bot is refused by name: setWebhook would
     take the bot's updates from the first, which would still read registered."""
-    monkeypatch.setattr("utils.webhook_manager.registration_holder", AsyncMock(return_value='"Support desk"'))
+    monkeypatch.setattr("utils.webhook_manager.registration_holder",
+                        AsyncMock(return_value=Holder('"Support desk"', "wh-holder")))
     with patch("nodes.telegram_node.set_telegram_webhook", AsyncMock()) as set_hook:
         with pytest.raises(RuntimeError, match='already sends its messages to "Support desk"'):
             await TelegramNode._register_external_webhook(
                 webhook_url=URL, credential=CRED, config={"webhook_id": OURS}, node_id="n2")
     set_hook.assert_not_awaited()
+
+
+async def test_a_refusal_that_lasts_says_what_it_waits_on(monkeypatch):
+    """A revoked token, or a bot another trigger holds, would be refused again every night: the refusal says so,
+    and which registration holds the bot, so nothing tries it again until that changes."""
+    from nodes.core.webhook_trigger import RegistrationRefused
+
+    monkeypatch.setattr("utils.webhook_manager.registration_holder",
+                        AsyncMock(return_value=Holder('"Support desk"', "wh-holder")))
+    with pytest.raises(RegistrationRefused) as held:
+        await TelegramNode._register_external_webhook(
+            webhook_url=URL, credential=CRED, config={"webhook_id": OURS}, node_id="n2")
+    assert (held.value.kind, held.value.holder_webhook_id) == (RegistrationRefused.HELD_ELSEWHERE, "wh-holder")
+
+    for status, lasting in ((401, True), (404, True), (502, False), (None, False)):
+        async def info(token, status=status):
+            return {"success": False, "error": "Unauthorized", **({"status": status} if status else {})}
+
+        monkeypatch.setattr("nodes.telegram_node.get_telegram_webhook_info", info)
+        with pytest.raises(ValueError if not lasting else RegistrationRefused) as refused:
+            await TelegramNode._register_external_webhook(
+                webhook_url=URL, credential=CRED, config={"webhook_id": OURS}, node_id="n1")
+        assert isinstance(refused.value, RegistrationRefused) == lasting, status
+        if lasting:
+            assert refused.value.kind == RegistrationRefused.CREDENTIAL_REJECTED
 
 
 async def test_the_trigger_telegram_points_the_bot_at_now_holds_it(monkeypatch, bot):
@@ -100,7 +126,7 @@ async def test_the_trigger_telegram_points_the_bot_at_now_holds_it(monkeypatch, 
     by a resync can't take the bot from the trigger that hears it today."""
     from tests.mocks.mock_asyncpg import MockNativePool
 
-    live = MockNativePool({"FROM webhooks w": {"workflow_id": "wf0", "name": "Front desk"}})
+    live = MockNativePool({"FROM webhooks w": {"id": "wh-holder", "workflow_id": "wf0", "name": "Front desk"}})
     monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: live)
     bot["url"] = f"{BASE}/webhook/{OTHER}"
     with patch("nodes.telegram_node.set_telegram_webhook", AsyncMock()) as set_hook:

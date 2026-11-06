@@ -22,7 +22,7 @@ import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
-from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, RegistrationRefused, WebhookTriggerConfigBase
 from utils.self_echo import is_self_post, record_self_post
 from utils.ssrf import guarded_async_client
 
@@ -188,6 +188,7 @@ async def get_telegram_webhook_info(bot_token: str) -> Dict[str, Any]:
                 return {
                     "success": False,
                     "error": data.get("description", "Unknown error"),
+                    "status": response.status_code,
                 }
     except Exception as e:
         logger.error(f"[TELEGRAM] Error getting webhook info: {e}")
@@ -2463,16 +2464,21 @@ class TelegramNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         info = await get_telegram_webhook_info(token)
         if not info.get("success"):
-            raise ValueError(f"Telegram didn't say where the bot's webhook points: {info.get('error')}")
+            message = f"Telegram didn't say where the bot's webhook points: {info.get('error')}"
+            # 401 is a revoked token, 404 one that never named a bot: the same token never works again.
+            if info.get("status") in (401, 404):
+                raise RegistrationRefused(message, kind=RegistrationRefused.CREDENTIAL_REJECTED)
+            raise ValueError(message)
         current = (info.get("info") or {}).get("url") or ""
         bot = bot_id(token)
         holder = (
             await address_holder(current, except_webhook_id=webhook_id) if current and current != webhook_url else None
         ) or await registration_holder(bot, WEBHOOK_OPERATIONS, except_webhook_id=webhook_id)
         if holder is not None:
-            raise RuntimeError(
+            raise RegistrationRefused(
                 f"This bot already sends its messages to {holder}. Telegram gives a bot one webhook, so it "
-                "wakes one trigger: remove that trigger first, or make another bot with @BotFather for this one."
+                "wakes one trigger: remove that trigger first, or make another bot with @BotFather for this one.",
+                kind=RegistrationRefused.HELD_ELSEWHERE, holder_webhook_id=holder.webhook_id,
             )
         secret = secrets.token_urlsafe(32)
         result = await set_telegram_webhook(token, webhook_url, secret)

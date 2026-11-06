@@ -29,6 +29,8 @@ from tests.fixtures.real_db_fixture import real_database  # noqa: F401
 from utils.encryption import get_encryption
 from utils.webhook_manager import WebhookManager
 
+WAHOOKS_EVENTS = ("message", "session.status")
+
 pytestmark = pytest.mark.asyncio
 
 NODE = "messages"
@@ -99,7 +101,9 @@ def wahooks(monkeypatch):
 async def _seed(db, wahooks, operation="receive_message"):
     """An owner with two QR-linked WhatsApps (credentials and their live sessions) and a trigger on the first."""
     owner, workflow_id = str(uuid.uuid4()), str(uuid.uuid4())
-    await db.execute("INSERT INTO auth.users (id, email) VALUES ($1, $2)", owner, f"{owner}@example.test")
+    # Signed in today: the nightly resync acts only on workflows in use.
+    await db.execute("INSERT INTO auth.users (id, email, last_sign_in_at) VALUES ($1, $2, now())",
+                     owner, f"{owner}@example.test")
     credentials, connections = {}, {name: f"conn-{name}-{uuid.uuid4().hex[:8]}" for name in "ab"}
     wahooks.live |= set(connections.values())
     for name, connection in connections.items():
@@ -175,6 +179,38 @@ async def test_a_loader_registered_trigger_stays_registered_and_follows_its_conf
     finally:
         await db.execute("DELETE FROM trigger_resync_state")
     assert (await _row(db, workflow_id))["is_active"] and _urls(wahooks, connections["b"]) == [url]
+
+
+@pytest.mark.parametrize("events,says,does", [
+    (["message", "session.status"], "would_adopt", "live"),
+    (["message"], "would_register", "registered"),
+], ids=["live as asked", "missing an event"])
+async def test_a_registration_the_row_never_recorded_is_recorded_not_added_again(  # noqa: F811
+        real_database, wahooks, events, says, does):
+    """Made before the row recorded registrations: read off the row alone, it looked like none, and a pass would
+    have registered it again. WAHooks, read with NoClick's own key, says what's live: as asked, it's only recorded."""
+    db = real_database
+    owner, workflow_id, credentials, connections = await _seed(db, wahooks)
+    webhook = await WebhookManager.get_or_create_webhook(db.pool, owner, uuid.UUID(workflow_id), NODE)
+    url = webhook["webhook_url"]
+    wahooks.hooks[connections["a"]] = [{"id": "wh-before", "url": url, "events": list(events)}]
+    await db.execute("UPDATE webhooks SET is_active = true, registered_operation = NULL, registered_fingerprint = NULL "
+                     "WHERE workflow_id = $1", workflow_id)
+
+    # As the nightly sweep reads it, which asks WAHooks what's live.
+    planned = await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, plan_only=True, observe=True)
+    assert planned["state"] == says
+    assert wahooks.hooks[connections["a"]] == [{"id": "wh-before", "url": url, "events": list(events)}]
+
+    done = await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, observe=True)
+    assert done["state"] == does and done["outcome"] == planned["outcome"]
+    assert _urls(wahooks, connections["a"]) == [url], "one webhook, never a second"
+    assert set(WAHOOKS_EVENTS) <= set(wahooks.hooks[connections["a"]][0]["events"])
+    row = await db.fetchrow("SELECT is_active, registered_operation, registered_credential_id, external_webhook_id "
+                            "FROM webhooks WHERE workflow_id = $1", workflow_id)
+    assert row["is_active"] and row["registered_operation"] == "receive_message"
+    assert str(row["registered_credential_id"]) == credentials["a"] and row["external_webhook_id"] == connections["a"]
+    assert (await WebhookManager.reconcile_node(db.pool, workflow_id, NODE))["state"] == "live"
 
 
 async def test_a_cloud_api_message_trigger_is_left_alone(real_database, wahooks):  # noqa: F811

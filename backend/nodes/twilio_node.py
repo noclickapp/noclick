@@ -48,7 +48,7 @@ from nodes.core.agent_events import phone_call_event
 from nodes.core.call_routing import already_answers, number_holder
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.dynamic_options import load_paginated_options
-from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, RegistrationRefused, WebhookTriggerConfigBase
 from utils.call_safety import emergency_refusal
 from utils.capabilities import PHONE_CALLS, capability
 from utils.phone_numbers import is_noclick_number, noclick_line_refusal
@@ -1850,7 +1850,8 @@ class TwilioNode(ExternalWebhookTriggerMixin, WorkflowNode):
                 raise RuntimeError("The call receiver is not provisioned yet")
             holder = await number_holder(phone_sid, except_webhook_id=webhook_id)
             if holder is not None:
-                raise RuntimeError(already_answers(phone_sid, holder))
+                raise RegistrationRefused(already_answers(phone_sid, holder),
+                                          kind=RegistrationRefused.HELD_ELSEWHERE, holder_webhook_id=holder.webhook_id)
             await set_twilio_voice_webhook(account_sid, auth_token, phone_sid, calls.receiver_url(webhook_id))
             return {"external_webhook_id": phone_sid, "signing_secret": auth_token}
         await set_twilio_sms_webhook(account_sid, auth_token, phone_sid, webhook_url)

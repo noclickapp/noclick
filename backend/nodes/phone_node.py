@@ -16,7 +16,7 @@ from nodes.core.agent_events import phone_call_event
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.call_routing import already_answers, number_holder as _number_holder
 from nodes.core.connection_evidence import ConnectionEvidence
-from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, WebhookTriggerConfigBase
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin, RegistrationRefused, WebhookTriggerConfigBase
 from utils.capabilities import PHONE_CALLS, PHONE_NUMBERS, capability
 
 logger = logging.getLogger(__name__)
@@ -155,7 +155,8 @@ class PhoneNode(ExternalWebhookTriggerMixin, WorkflowNode):
         # every call silently while the first still read "registered".
         holder = await _number_holder(credential["number_sid"], except_webhook_id=webhook_id)
         if holder is not None:
-            raise RuntimeError(already_answers(credential.get("phone_number"), holder))
+            raise RegistrationRefused(already_answers(credential.get("phone_number"), holder),
+                                      kind=RegistrationRefused.HELD_ELSEWHERE, holder_webhook_id=holder.webhook_id)
         await numbers.route(credential["number_sid"], webhook_id=webhook_id)
         return {"external_webhook_id": credential["number_sid"]}
 

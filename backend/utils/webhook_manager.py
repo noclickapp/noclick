@@ -37,7 +37,8 @@ import logging
 import re
 from collections import Counter
 from contextvars import ContextVar
-from datetime import datetime, timezone
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
 from functools import lru_cache
 from time import monotonic
 from typing import Dict, Any, List, Optional, Set, Tuple
@@ -105,23 +106,36 @@ def _loader_registers(node_type: Optional[str], node: Dict[str, Any], node_confi
     return any(t in declared for t in _usable_credentials(node, node_config))
 
 
-async def _live_holder(where: str, *args) -> Optional[str]:
+class Holder(str):
+    """The workflow holding a one-address resource, as a refusal names it, with
+    ``webhook_id``: its registration's row, which a refusal waits on."""
+
+    webhook_id: str
+
+    def __new__(cls, label: str, webhook_id: str):
+        holder = super().__new__(cls, label)
+        holder.webhook_id = webhook_id
+        return holder
+
+
+async def _live_holder(where: str, *args) -> Optional[Holder]:
     """The workflow of an active webhooks row matching ``where`` (its name, for a refusal), or None."""
     from utils.database_pool import get_native_pool
 
     row = await get_native_pool().fetchrow(
-        "SELECT w.workflow_id, wf.name FROM webhooks w LEFT JOIN workflows wf ON wf.id = w.workflow_id "
+        "SELECT w.id, w.workflow_id, wf.name FROM webhooks w LEFT JOIN workflows wf ON wf.id = w.workflow_id "
         f"WHERE w.is_active AND {where} LIMIT 1",
         *args,
     )
     if row is None:
         return None
-    return f'"{row["name"]}"' if row["name"] else f"workflow {row['workflow_id']}"
+    label = f'"{row["name"]}"' if row["name"] else f"workflow {row['workflow_id']}"
+    return Holder(label, str(row["id"]))
 
 
 async def registration_holder(
     external_webhook_id: str, operations: Tuple[str, ...], *, except_webhook_id: str
-) -> Optional[str]:
+) -> Optional[Holder]:
     """The workflow whose live registration on one of ``operations`` already
     holds ``external_webhook_id``, or None. For a provider resource that points
     at ONE address (a phone number's voice webhook, a Telegram bot's webhook):
@@ -136,7 +150,7 @@ async def registration_holder(
 _WEBHOOK_ID_RE = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", re.IGNORECASE)
 
 
-async def address_holder(url: str, *, except_webhook_id: str) -> Optional[str]:
+async def address_holder(url: str, *, except_webhook_id: str) -> Optional[Holder]:
     """The workflow whose live webhook ``url`` is, when it is one of this
     instance's webhook addresses, or None. Where a provider says a one-address
     resource points now: that outlasts any record of ours (a registration made
@@ -364,15 +378,33 @@ def _failure_on_record(node_config: Dict[str, Any]) -> bool:
     ).startswith("Not registered:")
 
 
-async def _activation_refused(pool, wf_uuid, node_id: str) -> bool:
-    """Whether registering the step would be refused for unfinished setup. A failed read raises: it says nothing."""
+async def _activation_refusal(pool, wf_uuid, node_id: str):
+    """The refusal registering the step would meet for unfinished setup, or None. A failed read raises: it says nothing."""
     from utils.workflow_readiness import WorkflowNotReadyError, require_activation_ready
 
     try:
         await require_activation_ready(pool, wf_uuid, node_id)
-    except WorkflowNotReadyError:
-        return True
-    return False
+    except WorkflowNotReadyError as refusal:
+        return refusal
+    return None
+
+
+_ROW_COLUMNS = (
+    "id, is_active, external_webhook_id, registered_operation, registered_credential_id, registered_fingerprint, "
+    "refused_fingerprint, refused_kind, refused_holder_id, refused_credential_version"
+)
+
+
+async def _webhook_row(pool, wf_uuid, node_id: str) -> Optional[Dict[str, Any]]:
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            f"SELECT {_ROW_COLUMNS} FROM webhooks WHERE workflow_id = $1 AND node_id = $2", wf_uuid, node_id)
+    return dict(row) if row is not None else None
+
+
+def _recorded(row: Optional[Dict[str, Any]]) -> bool:
+    """Whether the row records a registration a teardown can find: its operation, while live or with its endpoint."""
+    return bool(row and row.get("registered_operation") and (row.get("is_active") or row.get("external_webhook_id")))
 
 
 def _app_event_class_for_provider(provider: str):
@@ -397,6 +429,144 @@ def _app_event_class_for_provider(provider: str):
 # registration and its record, the next pass would register a second hook.
 RESYNC_BUDGET_S = 600
 RESYNC_PLAN_STEP_TIMEOUT_S = 90
+# How many workflows the dry run reads at once: each step is a few short reads.
+RESYNC_PLAN_CONCURRENCY = 8
+# A sweep starts or replaces a registration only for a workflow that ran, was edited by
+# a person, or whose owner came back within this window; tearing one down is never held.
+RESYNC_ACTIVE_WITHIN = timedelta(days=30)
+
+
+# Why a reconcile decided what it did, in NoClick's words only: a report shows these.
+REASONS = {
+    "converged": "registered as its settings ask",
+    "nothing_desired": "its step doesn't ask for a registration",
+    "step_removed": "its step left the workflow",
+    "switched_off": "its step is switched off",
+    "not_runnable": "its settings can't run yet",
+    "never_registered": "nothing is registered for it",
+    "taken_down": "its registration was taken down",
+    "settings_changed": "its settings changed since it registered",
+    "unrecorded": "it's live, and the record of it predates what's kept now",
+    "seen_live": "the scheduler or provider holds it as its settings ask, and the record lacks it",
+    "seen_other": "the scheduler or provider holds something its settings don't ask for",
+    "no_credential": "no usable account is attached",
+    "setup_unfinished": "the workflow's setup is unfinished",
+    "credential_rejected": "the provider rejected its account, which hasn't been saved again since",
+    "held_elsewhere": "another workflow still holds the one address this needs",
+    "inactive": "the workflow hasn't run, been edited or seen its owner lately",
+    "no_scheduler": "the scheduler isn't configured here",
+    "unreadable": "its schedule couldn't be worked out",
+}
+
+# What a dry run calls an outcome, where the name says what would be done.
+PLAN_STATES = {
+    "register": "would_register",
+    "reregister": "would_reregister",
+    "deregister": "would_deregister",
+    "adopt": "would_adopt",
+}
+
+
+@dataclass
+class Decision:
+    """What a reconcile does to one step, read before anything is done: the dry
+    run reports it and the reconcile carries it out, so the two can't differ.
+
+    ``outcome``: live, noop, adopt (stamp a live registration the record lacks),
+    register, reregister (tear down then register), deregister, refused (setup
+    unfinished), unregistered (no usable account), provider_refused (refused
+    before at these settings, nothing changed since), inactive (a start or
+    replacement a sweep holds back), cannot_judge or failed. ``held``: something
+    is live now (a refusal or a missing account tears it down first).
+    ``held_back``: the outcome an ``inactive`` one stands for."""
+
+    outcome: str
+    reason: str
+    fingerprint: Optional[str] = None
+    held: bool = False
+    stamp: Dict[str, Any] = field(default_factory=dict)
+    refusal: Optional[BaseException] = None
+    held_back: Optional[str] = None
+    error: Optional[str] = None
+
+    def plan(self) -> Dict[str, Any]:
+        state = PLAN_STATES.get(self.outcome, self.outcome)
+        if self.outcome in ("refused", "unregistered", "provider_refused") and self.held:
+            state = "would_deregister"
+        result: Dict[str, Any] = {"state": state, "outcome": self.outcome, "reason": REASONS[self.reason]}
+        for key in ("fingerprint", "held_back", "error"):
+            if getattr(self, key) is not None:
+                result[key] = getattr(self, key)
+        return result
+
+    def done(self, state: str, *, outcome: Optional[str] = None, reason: Optional[str] = None,
+             **extra) -> Dict[str, Any]:
+        """A reconcile's answer. Registering finds for itself what a dry run predicts (an
+        unusable credential, unfinished setup), and says so as the dry run would have."""
+        return {"state": state, "outcome": outcome or self.outcome, "reason": REASONS[reason or self.reason], **extra}
+
+
+def _held_back(decision: Decision, hold_starts: bool) -> Decision:
+    """A start or replacement a sweep keeps from an inactive workflow."""
+    if hold_starts and decision.outcome in ("register", "reregister"):
+        return Decision("inactive", "inactive", fingerprint=decision.fingerprint, held=decision.held,
+                        held_back=decision.outcome)
+    return decision
+
+
+async def _refused_before(pool, row, fingerprint: str, credential_id: Optional[str]) -> Optional[str]:
+    """Why a registration refused at ``fingerprint`` would be refused again, or None:
+    the refusal stands while the account wasn't saved since (a rejected credential)
+    or the holder's registration is still live (a one-address resource)."""
+    if not row or not row.get("refused_fingerprint") or row["refused_fingerprint"] != fingerprint:
+        return None
+    from nodes.core.webhook_trigger import RegistrationRefused
+
+    kind = row["refused_kind"]
+    async with pool.acquire() as conn:
+        if kind == RegistrationRefused.CREDENTIAL_REJECTED:
+            version = await conn.fetchval(
+                "SELECT token_version FROM credentials WHERE id::text = $1", str(credential_id or ""))
+            return kind if version is not None and version == row["refused_credential_version"] else None
+        if kind == RegistrationRefused.HELD_ELSEWHERE:
+            live = await conn.fetchval(
+                "SELECT is_active FROM webhooks WHERE id = $1", row["refused_holder_id"])
+            return kind if live else None
+    return None
+
+
+async def _record_refusal(pool, webhook_id, refusal, fingerprint: str,
+                          credential_id: Optional[str]) -> None:
+    """Keep a refused registration's settings, so nothing tries it again until they change."""
+    async with pool.acquire() as conn:
+        await conn.execute(
+            """
+            UPDATE webhooks
+            SET refused_fingerprint = $2, refused_kind = $3, refused_holder_id = $4::uuid, refused_at = now(),
+                refused_credential_version = (SELECT token_version FROM credentials WHERE id::text = $5)
+            WHERE id = $1
+            """,
+            UUID(str(webhook_id)), fingerprint, refusal.kind, refusal.holder_webhook_id, str(credential_id or ""),
+        )
+
+
+async def _observed_schedules(wf_uuid, node_id: str) -> Optional[List[Dict[str, Any]]]:
+    """The scheduler's own enabled schedules for a step, or None when it can't say."""
+    from utils.cron_scheduler_client import list_schedules
+
+    listed = await list_schedules(workflow_id=str(wf_uuid), timeout=5.0)
+    if not isinstance(listed, list):
+        return None
+    return [s for s in listed if s.get("node_id") == node_id and s.get("enabled") in (1, True)]
+
+
+def _schedules_match(schedules: List[Dict[str, Any]], spec, row_id) -> bool:
+    """Whether the scheduler fires the step exactly as its settings ask, at its row's address."""
+    return bool(schedules) and (
+        sorted(s.get("cron_expression") for s in schedules) == sorted(spec.expressions)
+        and all((s.get("timezone") or "UTC") == spec.timezone for s in schedules)
+        and all(str(row_id) in (s.get("webhook_url") or "") for s in schedules)
+    )
 
 
 def _reported_kind(node: Optional[Dict[str, Any]]) -> Tuple[str, Optional[str]]:
@@ -680,6 +850,8 @@ class WebhookManager:
                     registered_operation = $3,
                     registered_credential_id = $4,
                     registered_fingerprint = $5,
+                    refused_fingerprint = NULL, refused_kind = NULL, refused_holder_id = NULL,
+                    refused_credential_version = NULL, refused_at = NULL,
                     updated_at = now()
                 WHERE id = $6
                 """,
@@ -1395,10 +1567,20 @@ class WebhookManager:
             return True
 
         except Exception as e:
+            from nodes.core.webhook_trigger import RegistrationRefused
+
             logger.warning(
                 f"[WEBHOOK] Failed to register external webhook for "
                 f"{node_type}:{node_id}: {e}"
             )
+            if isinstance(e, RegistrationRefused):
+                try:
+                    await _record_refusal(
+                        pool, webhook_id, e,
+                        registration_fingerprint(node_class, current_op, credential_id, node_config), credential_id,
+                    )
+                except Exception:
+                    logger.warning(f"[WEBHOOK] Could not record the refusal on {node_type}:{node_id}", exc_info=True)
             # The step says why, as a panel open would: a headless caller (the
             # platform's triggers, a restore) reads it back as the reason.
             try:
@@ -1420,6 +1602,8 @@ class WebhookManager:
         nodes_override: Optional[List[Dict[str, Any]]] = None,
         plan_only: bool = False,
         refresh_next_run: bool = True,
+        hold_starts: bool = False,
+        observe: bool = False,
     ) -> Dict[str, Any]:
         """THE level-triggered converger for a trigger node's external
         registration. Compares DESIRED state (computed purely from the node's
@@ -1445,27 +1629,34 @@ class WebhookManager:
         NOT depend on it (each reconcile reads current state, and
         replace-stale/sweep-by-URL registration is itself convergent).
 
-        Returns ``{"state": ..., "fingerprint": ...?}``; states: no_workflow,
-        noop, live, deregistered, registered, unregistered (no credential),
-        failed.
+        Each family first DECIDES (``Decision``: reads only) and then APPLIES
+        that decision, so ``plan_only``, which stops after deciding, reports
+        exactly what a reconcile does: no write, no customer's provider called,
+        no credential decrypted or refreshed, no lock. ``observe`` (the sweep
+        and its dry run) also reads NoClick's own sources beside the row: the
+        scheduler's schedules for a step, and a class's
+        ``observe_registration`` (WhatsApp's webhooks on NoClick's WAHooks
+        account), so a live registration the row doesn't record is adopted
+        (the row stamped), never taken for none. A mutation surface's
+        reconcile judges by the row, as its change rotates the fingerprint
+        anyway. A registration a
+        provider refused for good (``RegistrationRefused``) isn't tried again
+        at the same settings until its account is saved again or the holder
+        lets go (``provider_refused``).
 
-        ``plan_only`` walks the same decisions and stops where one would act:
-        no write, no provider call, no credential decrypted or refreshed, no
-        lock. It answers ``would_register`` (nothing live now),
-        ``would_reregister`` (a live registration replaced),
-        ``would_deregister``, ``would_adopt``, ``refused`` (unfinished setup,
-        which stays unregistered) or ``cannot_judge`` (the scheduler isn't
-        configured here), beside the states above that involve no action. It
-        can't know what only the provider can say, so a ``would_register`` may
-        still fail when tried.
+        Returns ``{"state", "outcome", "reason", "fingerprint"?}``; states:
+        no_workflow, noop, live (``adopted`` when stamped), deregistered,
+        registered, unregistered (no credential), refused, provider_refused,
+        inactive, failed. A plan answers ``would_register``,
+        ``would_reregister``, ``would_deregister`` or ``would_adopt`` where a
+        reconcile would act, and the rest as they are; ``outcome`` is the same
+        word in both. ``hold_starts`` (a sweep over an inactive workflow) turns
+        a start or replacement into ``inactive``; a teardown is never held.
         ``refresh_next_run=False`` leaves a converged schedule's mirror as it
         is (a sweep: that write reads as an edit of the workflow).
         """
         from nodes.core.registry import NODE_REGISTRY
         from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
-        from utils.credential_loader import credential_usable
-        from utils.credentials import extract_credential_ids
-        from utils.workflow_readiness import WorkflowNotReadyError
 
         wf_uuid = UUID(workflow_id) if isinstance(workflow_id, str) else workflow_id
 
@@ -1521,6 +1712,7 @@ class WebhookManager:
                     pool, wf_uuid, node_id,
                     owner_id=owner_id, node=node, node_class=node_class,
                     node_config=node_config, current_op=current_op, plan_only=plan_only,
+                    hold_starts=hold_starts,
                 )
 
             # Family dispatch: cron-schedule triggers (poll mixin, cron node,
@@ -1532,176 +1724,235 @@ class WebhookManager:
                     owner_id=owner_id, user_id=user_id, node=node,
                     node_class=node_class, node_config=node_config,
                     current_op=current_op, plan_only=plan_only,
-                    refresh_next_run=refresh_next_run,
+                    refresh_next_run=refresh_next_run, hold_starts=hold_starts, observe=observe,
                 )
 
-            # Node gone from the saved graph: clear any orphaned app-event
-            # subscription rows (dead rows would fan out to a missing node
-            # forever, and Discord's provider union would keep stale event
-            # types), and best-effort prune any cron schedules still ticking
-            # at the missing node (a deactivated row 410s deliveries forever
-            # without ever hitting the tick-time orphan cleanup). The external
-            # family's row handling follows below.
-            orphan_cleaned = False
-            if node is None and plan_only:
-                from nodes.core.webhook_subscriptions import get_node_subscriptions
-
-                orphan_cleaned = bool(await get_node_subscriptions(pool, str(wf_uuid), node_id))
-            elif node is None:
-                orphan_cleaned = (
-                    await WebhookManager._cleanup_orphaned_app_event_rows(
-                        pool, wf_uuid, node_id
-                    )
-                )
-                try:
-                    from utils.cron_scheduler_client import delete_schedules_for_nodes
-
-                    await delete_schedules_for_nodes(str(wf_uuid), [node_id])
-                except Exception:
-                    logger.debug(
-                        f"[WEBHOOK] Orphan schedule prune failed for {node_id}",
-                        exc_info=True,
-                    )
-
-            # A trigger its own loader registers (WhatsApp's messages on a QR
-            # session) is desired while the node holds a credential the loader
-            # registers its operation with, and converges through that loader.
-            loader_registered = bool(
-                node and not is_mixin and _loader_registers(node_type, node, node_config)
+            row = await _webhook_row(pool, wf_uuid, node_id)
+            decision = await WebhookManager._decide_push(
+                pool, wf_uuid, node_id, owner_id=owner_id, node=node, node_class=node_class,
+                node_type=node_type, node_config=node_config, current_op=current_op, row=row,
+                is_mixin=is_mixin, hold_starts=hold_starts, observe=observe, predict=plan_only,
             )
-            desired = loader_registered or bool(
-                node and is_mixin
-                and WebhookManager.operation_requires_webhook(node_type, current_op)
-            )
-
-            async with pool.acquire() as conn:
-                row = await conn.fetchrow(
-                    "SELECT id, is_active, external_webhook_id, registered_operation, "
-                    "registered_credential_id, registered_fingerprint "
-                    "FROM webhooks WHERE workflow_id = $1 AND node_id = $2",
-                    wf_uuid, node_id,
-                )
-
-            if not desired:
-                # Teardown when the row is live, or when a failed teardown left
-                # a recorded provider endpoint behind (retry until clean).
-                if row and (
-                    (row["is_active"] and row["registered_operation"])
-                    or (row["registered_operation"] and row["external_webhook_id"])
-                ):
-                    if plan_only:
-                        return {"state": "would_deregister"}
-                    await WebhookManager.deregister_node_webhooks(
-                        pool, str(workflow_id), [node_id],
-                        node_overrides=[node] if node else None,
-                        requesting_user_id=user_id or owner_id,
-                        org_id=org_id,
-                    )
-                    return {"state": "deregistered"}
-                if orphan_cleaned:
-                    return {"state": "would_deregister" if plan_only else "deregistered"}
-                return {"state": "noop"}
-
-            credential_id = _extract_node_credential_id(node, node_config)
-            desired_fp = registration_fingerprint(
-                node_class, current_op, credential_id, node_config
-            )
-            if row and row["is_active"] and row["registered_fingerprint"] == desired_fp:
-                return {"state": "live", "fingerprint": desired_fp}
-
-            # Pre-migration adoption: a NULL-fingerprint row whose operation +
-            # credential still match IS the live registration under the old
-            # liveness definition — stamp the fingerprint instead of rotating
-            # the provider endpoint (the first resync would otherwise churn
-            # every pre-existing trigger). A node-declared staleness signal
-            # (webhook_registration_stale, e.g. PostHog's registered_event_name
-            # mirror) vetoes adoption: it means the provider registration
-            # predates the current config, so stamping would bless the drift.
-            if (
-                row and row["is_active"]
-                and row["registered_fingerprint"] is None
-                and row["registered_operation"] == current_op
-                and (row["registered_credential_id"] or None) == (credential_id or None)
-                and not (is_mixin and node_class.webhook_registration_stale(node_config, dict(row)))
-            ):
-                if plan_only:
-                    return {"state": "would_adopt", "fingerprint": desired_fp}
-                async with pool.acquire() as conn:
-                    await conn.execute(
-                        "UPDATE webhooks SET registered_fingerprint = $1, updated_at = now() "
-                        "WHERE id = $2",
-                        desired_fp, row["id"],
-                    )
-                return {"state": "live", "fingerprint": desired_fp, "adopted": True}
-
             if plan_only:
-                # Below, a stale registration goes first, whatever comes of the new one.
-                held = bool(row and row["is_active"] and row["registered_operation"])
-                if not await credential_usable(pool, owner_id, credential_id):
-                    return {"state": "would_deregister" if held else "unregistered", "error": "credential unavailable"}
-                if await _activation_refused(pool, wf_uuid, node_id):
-                    return {"state": "would_deregister" if held else "refused"}
-                return {"state": "would_reregister" if held else "would_register"}
-
-            # Converge: drop a live-but-stale registration first (the row's
-            # registered_credential_id backs provider teardown even after a
-            # credential swap), then register the desired state.
-            if row and row["registered_operation"] and (
-                row["is_active"] or row["external_webhook_id"]
-            ):
-                await WebhookManager.deregister_node_webhooks(
-                    pool, str(workflow_id), [node_id],
-                    requesting_user_id=user_id or owner_id,
-                    org_id=org_id,
-                )
-
-            try:
-                if loader_registered:
-                    values = await WebhookManager._provision_node_webhook(
-                        pool, user_id=user_id or owner_id, workflow_id=wf_uuid, node_id=node_id,
-                        node_type=node_type, operation=current_op, config=node_config,
-                    ) or {}
-                    await WebhookManager.merge_node_config_patch(pool, wf_uuid, node_id, values)
-                    return {
-                        "state": "registered" if values.get("trigger_registered") is True else "failed",
-                        "fingerprint": desired_fp,
-                    }
-
-                cred_ids = extract_credential_ids(node_config)
-                if not cred_ids and isinstance(node.get("data"), dict):
-                    cred_ids = extract_credential_ids(node["data"])
-                credential = await node_class._resolve_trigger_credential(
-                    pool, owner_id, cred_ids
-                )
-                if not credential:
-                    return {"state": "unregistered", "error": "credential unavailable"}
-
-                ok = await WebhookManager._register_single_node(
-                    pool, wf_uuid=wf_uuid, user_id=user_id or owner_id,
-                    node_class=node_class, node_type=node_type, node_id=node_id,
-                    node_config=node_config, credential=credential,
-                    credential_id=credential_id, current_op=current_op,
-                )
-                return {
-                    "state": "registered" if ok else "failed",
-                    "fingerprint": desired_fp,
-                }
-            except WorkflowNotReadyError as refused:
-                # The saved config can't activate: the registration an earlier
-                # config made was torn down above, and the step says why. The
-                # refusal still reaches the caller.
-                if row and row["registered_operation"]:
-                    await WebhookManager.merge_node_config_patch(
-                        pool, wf_uuid, node_id,
-                        {"trigger_registered": False, "trigger_error": str(refused)},
-                    )
-                raise
+                return decision.plan()
+            return await WebhookManager._apply_push(
+                pool, decision, workflow_id=workflow_id, wf_uuid=wf_uuid, node_id=node_id,
+                user_id=user_id, org_id=org_id, owner_id=owner_id, node=node, node_class=node_class,
+                node_type=node_type, node_config=node_config, current_op=current_op, row=row, is_mixin=is_mixin,
+            )
         finally:
             if have_lock and redis is not None:
                 try:
                     await redis.delete(lock_key)
                 except Exception:
                     pass
+
+    @staticmethod
+    async def _decide_push(
+        pool, wf_uuid, node_id: str, *, owner_id: str, node: Optional[Dict[str, Any]], node_class,
+        node_type: Optional[str], node_config: Dict[str, Any], current_op: Optional[str],
+        row: Optional[Dict[str, Any]], is_mixin: bool, hold_starts: bool, observe: bool = False,
+        predict: bool = False,
+    ) -> Decision:
+        """The push family's decision (a provider endpoint per step, or a
+        trigger its own loader registers). DESIRED: the step's operation needs
+        a webhook, or its loader registers it. OBSERVED: the row, and where the
+        class can see it (``observe_registration``), the registration itself.
+        ``predict`` (a dry run) also reads what registering would find for
+        itself: whether the credential is usable and the setup finished."""
+        from nodes.core.webhook_subscriptions import get_node_subscriptions
+        from utils.credential_loader import credential_usable
+        from utils.webhook_delivery import get_webhook_url
+
+        recorded = _recorded(row)
+        if node is None:
+            # Subscription rows a removed step left would fan out to it forever.
+            orphaned = bool(await get_node_subscriptions(pool, str(wf_uuid), node_id))
+            return Decision("deregister" if recorded or orphaned else "noop", "step_removed", held=recorded)
+
+        # A trigger its own loader registers (WhatsApp's messages on a QR
+        # session) is desired while the node holds a credential the loader
+        # registers its operation with, and converges through that loader.
+        loader_registered = not is_mixin and _loader_registers(node_type, node, node_config)
+        desired = loader_registered or bool(
+            is_mixin and WebhookManager.operation_requires_webhook(node_type, current_op)
+        )
+        if not desired:
+            return Decision("deregister" if recorded else "noop", "nothing_desired", held=recorded)
+
+        credential_id = _extract_node_credential_id(node, node_config)
+        fingerprint = registration_fingerprint(node_class, current_op, credential_id, node_config)
+        if row and row["is_active"] and row["registered_fingerprint"] == fingerprint:
+            return Decision("live", "converged", fingerprint=fingerprint, held=True)
+
+        # Pre-migration adoption: a NULL-fingerprint row whose operation +
+        # credential still match IS the live registration under the old
+        # liveness definition — stamp the fingerprint instead of rotating
+        # the provider endpoint (the first resync would otherwise churn
+        # every pre-existing trigger). A node-declared staleness signal
+        # (webhook_registration_stale, e.g. PostHog's registered_event_name
+        # mirror) vetoes adoption: it means the provider registration
+        # predates the current config, so stamping would bless the drift.
+        if (
+            row and row["is_active"]
+            and row["registered_fingerprint"] is None
+            and row["registered_operation"] == current_op
+            and (row["registered_credential_id"] or None) == (credential_id or None)
+            and not (is_mixin and node_class.webhook_registration_stale(node_config, dict(row)))
+        ):
+            return Decision("adopt", "unrecorded", fingerprint=fingerprint, held=True)
+
+        refused = await _refused_before(pool, row, fingerprint, credential_id)
+        if refused:
+            return Decision("provider_refused", refused, fingerprint=fingerprint, held=recorded)
+
+        # What the provider holds, where the class can see it without the
+        # customer's credential: live as asked, the row is only stamped.
+        observed = None
+        observer = getattr(node_class, "observe_registration", None) if observe else None
+        if observer is not None and row is not None:
+            observed = await observer(
+                pool, webhook_url=get_webhook_url(str(row["id"])), credential_id=credential_id, config=node_config,
+            )
+        if observed and row["is_active"]:
+            return Decision("adopt", "seen_live", fingerprint=fingerprint, held=True, stamp={
+                "registered_operation": current_op, "registered_credential_id": credential_id, **observed,
+            })
+        held = recorded
+
+        if predict:
+            if not await credential_usable(pool, owner_id, credential_id):
+                return Decision("unregistered", "no_credential", fingerprint=fingerprint, held=held)
+            refusal = await _activation_refusal(pool, wf_uuid, node_id)
+            if refusal is not None:
+                return Decision("refused", "setup_unfinished", fingerprint=fingerprint, held=held, refusal=refusal)
+        if held:
+            reason = "settings_changed"
+        elif observed is False and row and row["is_active"]:
+            reason = "taken_down"
+        else:
+            reason = "taken_down" if row and row["registered_operation"] else "never_registered"
+        return _held_back(Decision(
+            "reregister" if held else "register", reason, fingerprint=fingerprint, held=held,
+        ), hold_starts)
+
+    @staticmethod
+    async def _apply_push(
+        pool, decision: Decision, *, workflow_id, wf_uuid, node_id: str, user_id: Optional[str],
+        org_id: Optional[str], owner_id: str, node: Optional[Dict[str, Any]], node_class,
+        node_type: Optional[str], node_config: Dict[str, Any], current_op: Optional[str],
+        row: Optional[Dict[str, Any]], is_mixin: bool,
+    ) -> Dict[str, Any]:
+        """Carry out ``_decide_push``'s decision."""
+        from utils.credentials import extract_credential_ids
+        from utils.workflow_readiness import WorkflowNotReadyError
+
+        outcome = decision.outcome
+        if node is None:
+            # Node gone from the saved graph: clear any orphaned app-event
+            # subscription rows (dead rows would fan out to a missing node
+            # forever, and Discord's provider union would keep stale event
+            # types), and best-effort prune any cron schedules still ticking
+            # at the missing node (a deactivated row 410s deliveries forever
+            # without ever hitting the tick-time orphan cleanup).
+            orphaned = await WebhookManager._cleanup_orphaned_app_event_rows(pool, wf_uuid, node_id)
+            try:
+                from utils.cron_scheduler_client import delete_schedules_for_nodes
+
+                await delete_schedules_for_nodes(str(wf_uuid), [node_id])
+            except Exception:
+                logger.debug(f"[WEBHOOK] Orphan schedule prune failed for {node_id}", exc_info=True)
+            if _recorded(row):
+                await WebhookManager.deregister_node_webhooks(
+                    pool, str(workflow_id), [node_id], requesting_user_id=user_id or owner_id, org_id=org_id,
+                )
+                return decision.done("deregistered")
+            return decision.done("deregistered" if orphaned else "noop")
+
+        if outcome in ("noop", "inactive"):
+            return decision.done(outcome)
+        if outcome == "live":
+            return decision.done("live", fingerprint=decision.fingerprint)
+        if outcome == "adopt":
+            await WebhookManager._stamp_row(pool, row["id"], decision)
+            return decision.done("live", fingerprint=decision.fingerprint, adopted=True)
+        if outcome == "deregister":
+            # Teardown when the row is live, or when a failed teardown left
+            # a recorded provider endpoint behind (retry until clean).
+            await WebhookManager.deregister_node_webhooks(
+                pool, str(workflow_id), [node_id],
+                node_overrides=[node], requesting_user_id=user_id or owner_id, org_id=org_id,
+            )
+            return decision.done("deregistered")
+
+        # Converge: drop a live-but-stale registration first (the row's
+        # registered_credential_id backs provider teardown even after a
+        # credential swap), whatever comes of the new one.
+        if _recorded(row):
+            await WebhookManager.deregister_node_webhooks(
+                pool, str(workflow_id), [node_id], requesting_user_id=user_id or owner_id, org_id=org_id,
+            )
+        if outcome == "unregistered":
+            return decision.done("unregistered", error="credential unavailable")
+        if outcome == "provider_refused":
+            return decision.done("provider_refused", error=REASONS[decision.reason])
+        if outcome == "refused":
+            # The saved config can't activate: the registration an earlier
+            # config made was torn down above, and the step says why.
+            if row and row["registered_operation"]:
+                await WebhookManager.merge_node_config_patch(
+                    pool, wf_uuid, node_id,
+                    {"trigger_registered": False, "trigger_error": str(decision.refusal)},
+                )
+            raise decision.refusal
+
+        try:
+            if not is_mixin and _loader_registers(node_type, node, node_config):
+                values = await WebhookManager._provision_node_webhook(
+                    pool, user_id=user_id or owner_id, workflow_id=wf_uuid, node_id=node_id,
+                    node_type=node_type, operation=current_op, config=node_config,
+                ) or {}
+                await WebhookManager.merge_node_config_patch(pool, wf_uuid, node_id, values)
+                return decision.done(
+                    "registered" if values.get("trigger_registered") is True else "failed",
+                    fingerprint=decision.fingerprint,
+                )
+
+            cred_ids = extract_credential_ids(node_config)
+            if not cred_ids and isinstance(node.get("data"), dict):
+                cred_ids = extract_credential_ids(node["data"])
+            credential = await node_class._resolve_trigger_credential(pool, owner_id, cred_ids)
+            if not credential:
+                return decision.done("unregistered", outcome="unregistered", reason="no_credential",
+                                     error="credential unavailable")
+
+            ok = await WebhookManager._register_single_node(
+                pool, wf_uuid=wf_uuid, user_id=user_id or owner_id,
+                node_class=node_class, node_type=node_type, node_id=node_id,
+                node_config=node_config, credential=credential,
+                credential_id=_extract_node_credential_id(node, node_config), current_op=current_op,
+            )
+            return decision.done("registered" if ok else "failed", fingerprint=decision.fingerprint)
+        except WorkflowNotReadyError as refused:
+            # Refused between deciding and registering: as above.
+            if row and row["registered_operation"]:
+                await WebhookManager.merge_node_config_patch(
+                    pool, wf_uuid, node_id,
+                    {"trigger_registered": False, "trigger_error": str(refused)},
+                )
+            raise
+
+    @staticmethod
+    async def _stamp_row(pool, webhook_id, decision: Decision) -> None:
+        """Adopt a live registration: the row records it, and nothing else is touched (the workflow isn't edited)."""
+        stamp = {"registered_fingerprint": decision.fingerprint, **decision.stamp}
+        columns = ["registered_fingerprint"] + sorted(c for c in stamp if c != "registered_fingerprint")
+        assignments = ", ".join(f"{column} = ${index + 1}" for index, column in enumerate(columns))
+        async with pool.acquire() as conn:
+            await conn.execute(
+                f"UPDATE webhooks SET {assignments}, updated_at = now() WHERE id = ${len(columns) + 1}",
+                *(None if stamp[c] is None else str(stamp[c]) for c in columns), webhook_id,
+            )
 
     @staticmethod
     async def _reconcile_app_event_node(
@@ -1715,6 +1966,7 @@ class WebhookManager:
         node_config: Dict[str, Any],
         current_op: Optional[str],
         plan_only: bool = False,
+        hold_starts: bool = False,
     ) -> Dict[str, Any]:
         """App-event family arm of ``reconcile_node`` (same contract/states).
 
@@ -1736,55 +1988,82 @@ class WebhookManager:
         )
         from utils.credential_loader import credential_usable
         from utils.credentials import extract_credential_ids
+        from utils.workflow_readiness import WorkflowNotReadyError, require_activation_ready
 
         desired_events = (
             node_class.subscription_events_for_config(current_op, node_config) if node else []
         )
         rows = await get_node_subscriptions(pool, str(wf_uuid), node_id)
-
-        if not desired_events:
-            # Definitive: the saved graph says no trigger op here (node gone
-            # or operation changed away) — tear down via the node class so
-            # provider-side state (Discord's event union) converges too.
-            if rows:
-                if plan_only:
-                    return {"state": "would_deregister"}
-                await node_class.cleanup_external_webhook(
-                    pool, str(wf_uuid), node_id, node_config, None
-                )
-                return {"state": "deregistered"}
-            return {"state": "noop"}
-
         cred_ids = extract_credential_ids(node_config)
         if not cred_ids and node and isinstance(node.get("data"), dict):
             cred_ids = extract_credential_ids(node["data"])
-        credential_id = node_class._pick_trigger_credential_id(cred_ids)
+        credential_id = node_class._pick_trigger_credential_id(cred_ids) if desired_events else None
 
-        if node_class.subscription_matches_config(rows, node_config) and subscription_rows_match(
+        # ── decide ──
+        if not desired_events:
+            # Definitive: the saved graph says no trigger op here (node gone
+            # or operation changed away).
+            decision = Decision("deregister" if rows else "noop",
+                                "step_removed" if node is None else "nothing_desired", held=bool(rows))
+        elif node_class.subscription_matches_config(rows, node_config) and subscription_rows_match(
             rows,
             event_types=desired_events,
             credential_id=credential_id,
             user_id=owner_id,
         ) and not _failure_on_record(node_config):
-            return {"state": "live"}
-
-        if not credential_id:
-            return {"state": "unregistered", "error": "credential unavailable"}
-
+            decision = Decision("live", "converged", held=True)
+        elif not credential_id or (plan_only and not await credential_usable(pool, owner_id, credential_id)):
+            # Fan-out doesn't need the credential, so a live registration keeps
+            # working through provider blips and credential detaches: never torn down for this.
+            decision = Decision("unregistered", "no_credential")
+        elif plan_only and (refusal := await _activation_refusal(pool, wf_uuid, node_id)) is not None:
+            # Registering checks the setup itself (below); a dry run reads ahead.
+            decision = Decision("refused", "setup_unfinished", held=bool(rows), refusal=refusal)
+        else:
+            decision = _held_back(Decision(
+                "reregister" if rows else "register",
+                "settings_changed" if rows else "never_registered", held=bool(rows),
+            ), hold_starts)
         if plan_only:
-            if not await credential_usable(pool, owner_id, credential_id):
-                return {"state": "unregistered", "error": "credential unavailable"}
-            if await _activation_refused(pool, wf_uuid, node_id):
-                return {"state": "would_deregister" if rows else "refused"}
-            return {"state": "would_reregister" if rows else "would_register"}
+            return decision.plan()
+
+        # ── apply ──
+        outcome = decision.outcome
+        if outcome in ("noop", "live", "inactive"):
+            return decision.done(outcome)
+        if outcome == "unregistered":
+            return decision.done("unregistered", error="credential unavailable")
+        if outcome == "deregister":
+            # Through the node class, so provider-side state (Discord's event union) converges too.
+            await node_class.cleanup_external_webhook(pool, str(wf_uuid), node_id, node_config, None)
+            return decision.done("deregistered")
+
+        async def unregistrable(refused: BaseException) -> Dict[str, Any]:
+            # The saved config can't activate (a restore or an edit made it
+            # unrunnable): the subscriptions an earlier config registered stop
+            # fanning out to it, and the step says why.
+            if rows:
+                await node_class.cleanup_external_webhook(
+                    pool, str(wf_uuid), node_id, node_config, None
+                )
+            await WebhookManager.merge_node_config_patch(
+                pool, wf_uuid, node_id,
+                {"trigger_registered": False, "trigger_error": str(refused),
+                 "subscription_status": f"⚠ Not registered: {refused}",
+                 "trigger_action": None},
+            )
+            return decision.done("deregistered" if rows else "refused", outcome="refused", reason="setup_unfinished",
+                                 error=str(refused))
+
+        if outcome == "refused":
+            return await unregistrable(decision.refusal)
 
         _, credential = await node_class._resolve_trigger_credential(
             pool, owner_id, cred_ids
         )
         if not credential:
-            return {"state": "unregistered", "error": "credential unavailable"}
-
-        from utils.workflow_readiness import WorkflowNotReadyError, require_activation_ready
+            return decision.done("unregistered", outcome="unregistered", reason="no_credential",
+                                 error="credential unavailable")
 
         try:
             await require_activation_ready(pool, wf_uuid, node_id)
@@ -1799,20 +2078,7 @@ class WebhookManager:
                 config=node_config,
             )
         except WorkflowNotReadyError as refused:
-            # The saved config can't activate (a restore or an edit made it
-            # unrunnable): the subscriptions an earlier config registered stop
-            # fanning out to it, and the step says why.
-            if rows:
-                await node_class.cleanup_external_webhook(
-                    pool, str(wf_uuid), node_id, node_config, None
-                )
-            await WebhookManager.merge_node_config_patch(
-                pool, wf_uuid, node_id,
-                {"trigger_registered": False, "trigger_error": str(refused),
-                 "subscription_status": f"⚠ Not registered: {refused}",
-                 "trigger_action": None},
-            )
-            return {"state": "deregistered" if rows else "failed", "error": str(refused)}
+            return await unregistrable(refused)
         except Exception as e:
             logger.warning(
                 f"[WEBHOOK] App-event registration failed for "
@@ -1824,11 +2090,11 @@ class WebhookManager:
                  "subscription_status": f"⚠ Not registered: {e}",
                  "trigger_action": None},
             )
-            return {"state": "failed", "error": str(e)}
+            return decision.done("failed", error=str(e))
         # Mirror the outcome into the config blob so panels/builder snapshots
         # that read the stored graph don't show a stale failure after a heal.
         await WebhookManager.merge_node_config_patch(pool, wf_uuid, node_id, mirrors)
-        return {"state": "registered"}
+        return decision.done("registered")
 
     @staticmethod
     async def _refresh_schedule_next_run(
@@ -1874,6 +2140,8 @@ class WebhookManager:
         current_op: Optional[str],
         plan_only: bool = False,
         refresh_next_run: bool = True,
+        hold_starts: bool = False,
+        observe: bool = False,
     ) -> Dict[str, Any]:
         """Cron-schedule family arm of ``reconcile_node`` (same contract).
 
@@ -1881,7 +2149,9 @@ class WebhookManager:
         the saved config, empty when the config can't run yet (validity gate).
         OBSERVED: the webhooks row's ``registered_fingerprint`` (stamped by
         this arm on success), so the live fast path is one SELECT with zero
-        Cloudflare calls. Convergence goes through the
+        Cloudflare calls; past it, the scheduler's own schedules for the step
+        (``_decide_schedule``), so a schedule the row never recorded is adopted
+        or replaced, never taken for none. Convergence goes through the
         ``register_node_schedules`` chokepoint (deterministic ids + upsert +
         prune — inherently idempotent, so there is no adoption subtlety:
         legacy NULL-fingerprint registrations converge via one harmless
@@ -1912,50 +2182,40 @@ class WebhookManager:
                     f"{node_class.__name__}:{node_id}",
                     exc_info=True,
                 )
-                return {"state": "failed", "error": "schedule spec unavailable"}
+                return Decision("failed", "unreadable", error="schedule spec unavailable").done(
+                    "failed", error="schedule spec unavailable")
 
-        async with pool.acquire() as conn:
-            row = await conn.fetchrow(
-                "SELECT id, is_active, registered_operation, registered_fingerprint "
-                "FROM webhooks WHERE workflow_id = $1 AND node_id = $2",
-                wf_uuid, node_id,
-            )
+        row = await _webhook_row(pool, wf_uuid, node_id)
+        scheduler = is_cron_scheduler_enabled()
+        decision = await WebhookManager._decide_schedule(
+            pool, wf_uuid, node_id, node=node, node_class=node_class, node_config=node_config,
+            current_op=current_op, spec=spec, row=row, scheduler=scheduler, observe=observe,
+            hold_starts=hold_starts, predict=plan_only,
+        )
+        if plan_only:
+            return decision.plan()
 
-        # A node of both families on a push operation (Atlas's, Cloudflare's):
-        # the row is its webhook's, which a lack of schedule says nothing about.
-        if spec is None and node is not None and current_op and row and row["registered_operation"] == current_op:
-            return {"state": "noop"}
-
-        # A disabled trigger is not desired either: the disabled flag IS the
-        # pause primitive (the panel toggle, the builder's <disable_node>, the
-        # failure breaker in webhook_routes), and this is the one place that
-        # turns it into a pruned schedule.
-        paused = node is not None and node_disabled(node)
-
-        if paused or not (spec and spec.expressions):
-            # NOT desired: node gone, operation changed away, disabled, or
-            # config not runnable yet. Scheduler-disabled is different — we
-            # can't judge, so never tear down (local dev without the CF scheduler).
-            if spec is not None and not is_cron_scheduler_enabled():
-                return {"state": "cannot_judge" if plan_only else "noop"}
+        # ── apply ──
+        outcome = decision.outcome
+        unschedule_error = f"Schedule not registered: {spec.config_error}" if spec and spec.config_error else None
+        # Can't judge a step that isn't desired: never torn down. One that is still gets its row below.
+        if outcome == "noop" or (outcome == "cannot_judge" and decision.fingerprint is None):
+            return decision.done("noop")
+        if outcome == "inactive":
+            return decision.done("inactive")
+        if outcome == "deregister":
+            paused = node is not None and node_disabled(node)
             return await WebhookManager._unschedule(
                 pool, wf_uuid, node_id, node=node, node_config=node_config, row=row, paused=paused,
-                error=f"Schedule not registered: {spec.config_error}" if spec and spec.config_error else None,
-                plan_only=plan_only,
+                error=unschedule_error, decision=decision,
             )
-
-        scope = node_class.schedule_poll_scope(node_config)
-        credential_id = _extract_node_credential_id(node, node_config)
-        desired_fp = _schedule_registration_fingerprint(
-            current_op, spec, scope, credential_id
-        )
-        if row and row["is_active"] and row["registered_fingerprint"] == desired_fp:
+        if outcome == "live":
             # Converged — but "next run" moves on every tick, and the config
             # mirror only captured it at registration. The panel refetches
             # through here when its countdown expires; with nothing fresh it
             # showed "Running…" forever after the first tick.
-            result: Dict[str, Any] = {"state": "live", "fingerprint": desired_fp}
-            if plan_only or not refresh_next_run:
+            result = decision.done("live", fingerprint=decision.fingerprint)
+            if not refresh_next_run:
                 return result
             refreshed = await WebhookManager._refresh_schedule_next_run(
                 pool, wf_uuid, node_id, node_config, persist=node is not None,
@@ -1963,36 +2223,36 @@ class WebhookManager:
             if refreshed:
                 result["values"] = refreshed
             return result
-
-        if plan_only:
-            if not is_cron_scheduler_enabled():
-                return {"state": "cannot_judge"}
-            if await _activation_refused(pool, wf_uuid, node_id):
-                gone = await WebhookManager._unschedule(
+        if outcome == "adopt":
+            await WebhookManager._stamp_row(pool, row["id"], decision)
+            return decision.done("live", fingerprint=decision.fingerprint, adopted=True)
+        if outcome == "refused":
+            # The saved config can't activate (a restore or an edit made it
+            # unrunnable): a schedule an earlier config registered doesn't stay
+            # live, and the step says why. The refusal still reaches the caller.
+            if decision.held and scheduler:
+                await WebhookManager._unschedule(
                     pool, wf_uuid, node_id, node=node, node_config=node_config, row=row, paused=False,
-                    error=None, plan_only=True,
+                    error=str(decision.refusal), decision=decision,
                 )
-                return {"state": "would_deregister" if gone["state"] == "would_deregister" else "refused"}
-            held = bool(row and row["is_active"] and row["registered_operation"])
-            return {"state": "would_reregister" if held else "would_register"}
+            raise decision.refusal
 
+        desired_fp = decision.fingerprint
         try:
             webhook = await WebhookManager.get_or_create_webhook(
                 pool, user_id or owner_id, wf_uuid, node_id
             )
         except WorkflowNotReadyError as refused:
-            # The saved config can't activate (a restore or an edit made it
-            # unrunnable): a schedule an earlier config registered doesn't stay
-            # live, and the step says why. The refusal still reaches the caller.
-            if is_cron_scheduler_enabled():
+            # Refused between deciding and registering: as above.
+            if scheduler:
                 await WebhookManager._unschedule(
                     pool, wf_uuid, node_id, node=node, node_config=node_config, row=row, paused=False,
-                    error=str(refused),
+                    error=str(refused), decision=decision,
                 )
             raise
         webhook_url = webhook.get("webhook_url")
-        if not (is_cron_scheduler_enabled() and webhook_url):
-            return {"state": "noop"}
+        if not (scheduler and webhook_url):
+            return decision.done("noop")
 
         reg = await register_node_schedules(
             user_id=owner_id,
@@ -2023,7 +2283,7 @@ class WebhookManager:
             await WebhookManager.merge_node_config_patch(
                 pool, wf_uuid, node_id, values
             )
-            return {"state": "failed", "values": values}
+            return decision.done("failed", values=values)
 
         await WebhookManager.persist_registration_state(
             pool, webhook["webhook_id"],
@@ -2040,37 +2300,101 @@ class WebhookManager:
             ),
             name=f"schedule-arm:{node_id}",
         )
-        return {"state": "registered", "fingerprint": desired_fp, "values": values}
+        return decision.done("registered", fingerprint=desired_fp, values=values)
+
+    @staticmethod
+    async def _decide_schedule(
+        pool, wf_uuid, node_id: str, *, node: Optional[Dict[str, Any]], node_class,
+        node_config: Dict[str, Any], current_op: Optional[str], spec, row: Optional[Dict[str, Any]],
+        scheduler: bool, hold_starts: bool, observe: bool = False, predict: bool = False,
+    ) -> Decision:
+        """The schedule family's decision. DESIRED: the step's
+        ``cron_schedule_spec``. OBSERVED: the row's fingerprint (the fast path:
+        no scheduler call), else, with ``observe``, the scheduler's own
+        schedules for the step, which settle what the row can't (a schedule
+        registered before the row recorded one, or one the row says it holds)."""
+        # A node of both families on a push operation (Atlas's, Cloudflare's):
+        # the row is its webhook's, which a lack of schedule says nothing about.
+        if spec is None and node is not None and current_op and row and row["registered_operation"] == current_op:
+            return Decision("noop", "nothing_desired")
+
+        # A disabled trigger is not desired either: the disabled flag IS the
+        # pause primitive (the panel toggle, the builder's <disable_node>, the
+        # failure breaker in webhook_routes), and this is the one place that
+        # turns it into a pruned schedule.
+        paused = node is not None and node_disabled(node)
+        if paused or not (spec and spec.expressions):
+            reason = ("step_removed" if node is None else "switched_off" if paused
+                      else "not_runnable" if spec and spec.config_error else "nothing_desired")
+            # Scheduler-disabled is different — we can't judge, so never tear
+            # down (local dev without the CF scheduler).
+            if spec is not None and not scheduler:
+                return Decision("cannot_judge", "no_scheduler")
+            # Only when something says schedules may exist, so sweeps over
+            # converged steps stay cheap: the row, a mirror, or, for a step with
+            # a row (an address a schedule could fire at), the scheduler.
+            may_have = bool(
+                (row and row["registered_operation"])
+                or node_config.get("schedule_id")
+                or node_config.get("next_run")
+                or node_config.get("trigger_registered")
+            ) or (scheduler and observe and row is not None and bool(await _observed_schedules(wf_uuid, node_id)))
+            return Decision("deregister" if may_have else "noop", reason, held=may_have)
+
+        scope = node_class.schedule_poll_scope(node_config)
+        credential_id = _extract_node_credential_id(node, node_config)
+        fingerprint = _schedule_registration_fingerprint(current_op, spec, scope, credential_id)
+        if row and row["is_active"] and row["registered_fingerprint"] == fingerprint:
+            return Decision("live", "converged", fingerprint=fingerprint, held=True)
+        if not scheduler:
+            return Decision("cannot_judge", "no_scheduler", fingerprint=fingerprint)
+
+        schedules = await _observed_schedules(wf_uuid, node_id) if observe else None
+        if row and row["is_active"] and schedules is not None and _schedules_match(schedules, spec, row["id"]):
+            return Decision("adopt", "seen_live", fingerprint=fingerprint, held=True,
+                            stamp={"registered_operation": current_op or "__schedule__"})
+        if schedules is None:
+            held = bool(row and row["is_active"] and row["registered_operation"])
+        else:
+            held = bool(schedules)
+
+        # Registering checks the setup itself (get_or_create_webhook); a dry run reads ahead.
+        refusal = await _activation_refusal(pool, wf_uuid, node_id) if predict else None
+        if refusal is not None:
+            may_have = held or bool(
+                (row and row["registered_operation"])
+                or node_config.get("schedule_id")
+                or node_config.get("next_run")
+                or node_config.get("trigger_registered")
+            )
+            return Decision("refused", "setup_unfinished", fingerprint=fingerprint, held=may_have, refusal=refusal)
+        if schedules:
+            reason = "seen_other"
+        elif row and row["registered_operation"]:
+            reason = "settings_changed" if held else "taken_down"
+        else:
+            reason = "never_registered"
+        return _held_back(Decision(
+            "reregister" if held else "register", reason, fingerprint=fingerprint, held=held,
+        ), hold_starts)
 
     @staticmethod
     async def _unschedule(
         pool, wf_uuid, node_id: str, *, node: Optional[Dict[str, Any]], node_config: Dict[str, Any],
-        row, paused: bool, error: Optional[str], plan_only: bool = False,
+        row, paused: bool, error: Optional[str], decision: Decision,
     ) -> Dict[str, Any]:
         """The schedule arm's teardown: prune the node's schedules and mirror
         that it has none, with ``error`` (why it can't run) as its
-        ``trigger_error``. Only when something suggests schedules may exist
-        (a family-registered row or legacy config mirrors), so sweep passes
-        over converged nodes stay Cloudflare-free."""
+        ``trigger_error``."""
         from utils.cron_scheduler_client import delete_schedules_for_nodes
 
-        may_have_schedules = bool(
-            (row and row["registered_operation"])
-            or node_config.get("schedule_id")
-            or node_config.get("next_run")
-            or node_config.get("trigger_registered")
-        )
-        if not may_have_schedules:
-            return {"state": "noop"}
-        if plan_only:
-            return {"state": "would_deregister", "paused": paused}
         try:
             await delete_schedules_for_nodes(str(wf_uuid), [node_id])
         except Exception as e:
             logger.warning(
                 f"[WEBHOOK] Schedule prune failed for {node_id}: {e}"
             )
-            return {"state": "failed", "error": str(e)}
+            return decision.done("failed", error=str(e))
         if row and row["registered_operation"]:
             await WebhookManager.deactivate_webhook(
                 pool, str(wf_uuid), node_id, clear_registration=False,
@@ -2084,7 +2408,7 @@ class WebhookManager:
             await WebhookManager.merge_node_config_patch(
                 pool, wf_uuid, node_id, teardown_values
             )
-        return {"state": "deregistered", "paused": paused, "values": teardown_values}
+        return decision.done("deregistered", paused=paused, values=teardown_values)
 
     @staticmethod
     async def _cleanup_orphaned_app_event_rows(pool, wf_uuid, node_id: str) -> bool:
@@ -2283,7 +2607,11 @@ class WebhookManager:
         in months, spending its owner's money, so until a person has read
         ``plan_trigger_resync`` and thrown the switch
         (``trigger_resync.set_registers``) a pass only reports it: no write, no
-        provider call, and the lap stays where it is.
+        provider call, and the lap stays where it is. Switched on, it still
+        starts or replaces a registration only for a workflow in use within
+        ``RESYNC_ACTIVE_WITHIN`` (a run, a person's edit, its owner back:
+        ``trigger_resync.is_active``), and holds the rest as ``inactive``;
+        teardowns, adoptions and refusals aren't held.
 
         A pass visits at most ``limit`` workflows, in id order, from where the
         last one reached (``trigger_resync_state``), and stops starting them
@@ -2313,7 +2641,7 @@ class WebhookManager:
         rows = await trigger_resync.candidates(pool, registerable_types, after=after, limit=limit + 1)
         stats: Dict[str, Any] = {
             "registers": True, "workflows": 0, "checked": 0, "converged": 0, "adopted": 0, "refused": 0,
-            "failed": 0, "no_graph": 0, "lap_finished": False, "stopped": None,
+            "provider_refused": 0, "inactive": 0, "failed": 0, "no_graph": 0, "lap_finished": False, "stopped": None,
         }
         for index, wf_row in enumerate(rows[:limit]):
             if monotonic() >= deadline:
@@ -2349,10 +2677,13 @@ class WebhookManager:
         """One workflow of a pass that acts. False when ``deadline`` came before its last step."""
         from utils.workflow_readiness import WorkflowNotReadyError
 
+        from repositories import trigger_resync
+
         wf_id = wf_row["id"]
         if not wf_row["has_graph"]:
             stats["no_graph"] += 1
             return True
+        hold_starts = not trigger_resync.is_active(wf_row, datetime.now(timezone.utc), RESYNC_ACTIVE_WITHIN)
         try:
             _, node_ids = await WebhookManager._resync_steps(pool, wf_id, registerable_types)
         except Exception:
@@ -2372,7 +2703,7 @@ class WebhookManager:
             stats["checked"] += 1
             try:
                 result = await WebhookManager.reconcile_node(
-                    pool, str(wf_id), node_id, refresh_next_run=False
+                    pool, str(wf_id), node_id, refresh_next_run=False, hold_starts=hold_starts, observe=True,
                 )
                 state = result.get("state")
                 if result.get("adopted"):
@@ -2383,8 +2714,8 @@ class WebhookManager:
                         f"[WEBHOOK] Resync converged {wf_id}:{node_id} "
                         f"({state}) — a mutation surface missed a reconcile"
                     )
-                elif state == "failed":
-                    stats["failed"] += 1
+                elif state in ("failed", "provider_refused", "inactive", "refused"):
+                    stats[state] += 1
             except WorkflowNotReadyError:
                 stats["refused"] += 1
             except Exception:
@@ -2397,15 +2728,18 @@ class WebhookManager:
 
     @staticmethod
     async def plan_trigger_resync(pool, *, budget_s: Optional[float] = None) -> Dict[str, Any]:
-        """What a pass that acts would do to every workflow it may visit, read
-        with ``reconcile_node``'s ``plan_only``: nothing is written, no provider
-        is called, and the lap doesn't move.
+        """What a pass that acts would do to every workflow it may visit: the
+        same decisions ``reconcile_node`` acts on, read with ``plan_only``, so
+        nothing is written, no customer's provider is called, and the lap
+        doesn't move. Workflows are read ``RESYNC_PLAN_CONCURRENCY`` at a time.
 
-        It's read by people, so it holds no customer content: workflow ids, the
-        time since each was edited, and node types and operation names NoClick
-        defined. ``listed`` has one entry per step for every outcome but the
-        two that do nothing, ``counts`` the same by type and operation, and
-        ``complete`` says whether ``budget_s`` let it reach them all."""
+        It's read by people, so it holds no customer content: workflow ids,
+        days since each was last in use (run, edited by a person, its owner
+        back), node types and operation names NoClick defined, and each
+        decision's reason in NoClick's words. ``listed`` has one entry per step
+        for every outcome but the two that do nothing, ``counts`` the same by
+        type and operation, and ``complete`` says whether ``budget_s`` let it
+        reach them all."""
         from repositories import trigger_resync
 
         deadline = None if budget_s is None else monotonic() + budget_s
@@ -2414,19 +2748,29 @@ class WebhookManager:
         now = datetime.now(timezone.utc)
         states: Counter = Counter()
         listed: Dict[str, List[Dict[str, Any]]] = {}
-        plan: Dict[str, Any] = {"complete": True, "workflows": 0, "checked": 0, "no_graph": 0}
+        plan: Dict[str, Any] = {"complete": True, "workflows": 0, "checked": 0, "no_graph": 0,
+                                "active_within_days": RESYNC_ACTIVE_WITHIN.days}
 
-        def note(state: str, wf_row, node: Optional[Dict[str, Any]], error: Optional[BaseException] = None) -> None:
+        def days(at) -> Optional[int]:
+            return (now - at).days if at is not None else None
+
+        def note(state: str, wf_row, node: Optional[Dict[str, Any]], result: Optional[Dict[str, Any]] = None,
+                 error: Optional[BaseException] = None) -> None:
             states[state] += 1
             if state in ("live", "noop", "no_workflow"):
                 return
             kind, operation = _reported_kind(node)
             entry = {
                 "workflow_id": str(wf_row["id"]),
-                "edited_days_ago": (now - wf_row["updated_at"]).days if wf_row["updated_at"] else None,
                 "type": kind,
                 "operation": operation,
+                "reason": (result or {}).get("reason"),
+                "last_active_days_ago": days(trigger_resync.last_active(wf_row)),
+                "last_run_days_ago": days(wf_row["last_run_at"]),
+                "owner_seen_days_ago": days(wf_row["owner_seen_at"]),
             }
+            if (result or {}).get("held_back"):
+                entry["held_back"] = PLAN_STATES.get(result["held_back"], result["held_back"])
             if error is not None:
                 entry["error"] = type(error).__name__
             listed.setdefault(state, []).append(entry)
@@ -2436,38 +2780,50 @@ class WebhookManager:
                 plan["complete"] = False
             return not plan["complete"]
 
-        for wf_row in rows:
+        async def read(wf_row) -> None:
             if out_of_time():
-                break
+                return
             if not wf_row["has_graph"]:
                 plan["no_graph"] += 1
-                continue
+                return
             try:
                 steps, node_ids = await WebhookManager._resync_steps(pool, wf_row["id"], registerable_types)
             except Exception as e:
-                note("failed", wf_row, None, e)
-                continue
+                note("failed", wf_row, None, error=e)
+                return
             if not node_ids:
-                continue
+                return
             plan["workflows"] += 1
+            hold_starts = not trigger_resync.is_active(wf_row, now, RESYNC_ACTIVE_WITHIN)
             for node_id in sorted(node_ids):
                 if out_of_time():
-                    break
+                    return
                 plan["checked"] += 1
                 node = steps.get(node_id)
                 try:
                     result = await asyncio.wait_for(
                         WebhookManager.reconcile_node(
                             pool, str(wf_row["id"]), node_id, nodes_override=list(steps.values()), plan_only=True,
+                            hold_starts=hold_starts, observe=True,
                         ),
                         RESYNC_PLAN_STEP_TIMEOUT_S,
                     )
                 except Exception as e:
                     logger.warning(f"[WEBHOOK] Resync plan failed for {wf_row['id']}:{node_id}", exc_info=True)
-                    note("failed", wf_row, node, e)
+                    note("failed", wf_row, node, error=e)
                 else:
-                    note(result["state"], wf_row, node)
+                    note(result["state"], wf_row, node, result)
 
+        gate = asyncio.Semaphore(RESYNC_PLAN_CONCURRENCY)
+
+        async def bounded(wf_row) -> None:
+            async with gate:
+                await read(wf_row)
+
+        await asyncio.gather(*(bounded(wf_row) for wf_row in rows))
+
+        for entries in listed.values():
+            entries.sort(key=lambda e: (e["workflow_id"], e["type"], str(e["operation"])))
         plan["states"] = dict(states)
         plan["listed"] = listed
         plan["counts"] = {

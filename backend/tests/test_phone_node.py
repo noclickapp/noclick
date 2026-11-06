@@ -6,6 +6,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from utils.webhook_manager import Holder
+
 from nodes.agent.node_op_tools import is_trigger_operation, node_supports_op_tools
 from nodes.core.registry import NODE_REGISTRY
 from nodes.phone_node import PhoneNode
@@ -103,13 +105,13 @@ async def test_a_number_rings_one_agent(monkeypatch):
 
     numbers = MagicMock(); numbers.route = AsyncMock()
     provide(PHONE_NUMBERS, numbers)
-    monkeypatch.setattr("nodes.phone_node._number_holder", AsyncMock(return_value='"Support line"'))
+    monkeypatch.setattr("nodes.phone_node._number_holder", AsyncMock(return_value=Holder('"Support line"', "wh-holder")))
     with pytest.raises(RuntimeError, match='already answers calls for "Support line"'):
         await PhoneNode._register_external_webhook(webhook_url="https://x", credential=CRED, config={"webhook_id": "wh2"}, node_id="n2")
     numbers.route.assert_not_awaited()
 
     # The lookup excludes the node's own row, so a re-registration is not its own conflict.
-    monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: MockNativePool({"FROM webhooks w": {"workflow_id": "wf1", "name": "Support line"}}))
+    monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: MockNativePool({"FROM webhooks w": {"id": "wh-holder", "workflow_id": "wf1", "name": "Support line"}}))
     assert await _number_holder("PN123", except_webhook_id="wh2") == '"Support line"'
     monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: MockNativePool({}))
     assert await _number_holder("PN123", except_webhook_id="wh2") is None
