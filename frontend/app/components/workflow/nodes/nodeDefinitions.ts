@@ -147,6 +147,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-brandfetch', 'BrandfetchNode'],
     ['automation-recurly', 'RecurlyNode'],
     ['automation-findymail', 'FindymailNode'],
+    ['automation-clay', 'ClayNode'],
     ['automation-beehiiv', 'BeehiivNode'],
     ['automation-hex', 'HexNode'],
     ['automation-clickhouse', 'ClickHouseNode'],

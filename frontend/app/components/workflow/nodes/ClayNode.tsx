@@ -1,7 +1,7 @@
-import { forwardRef, memo } from 'react';
+import { memo } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
-import type { NodeDefinition, SvgIconComponent } from './types';
+import type { NodeDefinition } from './types';
 
 
 // Unmodified compact brand asset from https://www.clay.com/
@@ -10,21 +10,6 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
     <img src="/icons/clay-brand.png" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
-
-const ClayIcon: SvgIconComponent = forwardRef<
-    HTMLImageElement,
-    React.ImgHTMLAttributes<HTMLImageElement>
->(({ className, style, ...props }, ref) => (
-    <img
-        ref={ref}
-        src="/icons/clay.svg"
-        alt=""
-        className={className}
-        style={style}
-        {...props}
-    />
-));
-ClayIcon.displayName = 'ClayIcon';
 
 export const ClayNode: NodeDefinition = {
     type: 'automation-clay',

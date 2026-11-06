@@ -178,6 +178,12 @@
       "sha256": "8f974475eb5d856e62220e1db6aa00312445176a3b59447c810687feecf3ab93"
     },
     {
+      "path": "frontend/public/icons/clay-brand.png",
+      "source": "https://cdn.prod.website-files.com/61477f2c24a826836f969afe/6a3a92ab2ebcb50096cbd51a_dot-com_favicon_2026_512.png (unmodified Clay brand mark from https://www.clay.com/; byte-for-byte verified)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "9b58d69fd3686ab080b990fcf417caa579a7d5bca197976aa70c8b9c7c3426b6"
+    },
+    {
       "path": "frontend/public/icons/clickhouse.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
