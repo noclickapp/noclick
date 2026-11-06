@@ -21,8 +21,6 @@ from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
 
-CURRENT_ORGANIZATION = object()
-
 
 class StreamChatCredentialUnavailable(ValueError):
     pass
@@ -31,9 +29,8 @@ class StreamChatCredentialUnavailable(ValueError):
 class _StoredCredential:
     """Recheck staging's resolver and the saved row around each provider call."""
 
-    def __init__(self, pool, user_id, credential_id, *, organization_id, workflow_id):
+    def __init__(self, pool, user_id, credential_id):
         self.pool, self.user_id, self.credential_id = pool, user_id, credential_id
-        self.organization_id, self.workflow_id = organization_id, workflow_id
         self.current = None
 
     async def load(self):
@@ -45,8 +42,6 @@ class _StoredCredential:
             self.pool = get_native_pool()
         async with self.pool.acquire() as conn:
             org = await get_user_org_context(conn, self.user_id)
-        if self.organization_id is not CURRENT_ORGANIZATION and org != self.organization_id:
-            raise ValueError("Stream Chat credential access context changed.")
         async with self.pool.acquire() as conn:
             row = await conn.fetchrow(
                 "SELECT owner_id, credential_type, token_version, updated_at, revoked_at "
@@ -56,7 +51,7 @@ class _StoredCredential:
                 or type(row["token_version"]) is not int or row["token_version"] < 1):
             raise ValueError("Stream Chat saved credential is unavailable.")
         data = await resolve_credential_with_owner_fallback(
-            self.credential_id, self.user_id, self.pool, org_id=org, workflow_id=self.workflow_id,
+            self.credential_id, self.user_id, self.pool, org_id=org,
         )
         shaped = _shape(data)
         self.current = (org, *(row[k] for k in ("owner_id", "credential_type", "token_version", "updated_at")))
@@ -64,7 +59,7 @@ class _StoredCredential:
                 "updated_at": row["updated_at"].isoformat() if row["updated_at"] else None}
 
 NODE = "automation-stream-chat"
-FAMILY = "stream_chat_server_key"
+FAMILY = "stream_chat_api_key"
 BASE = "https://chat.stream-io-api.com"
 _ID = re.compile(r"[A-Za-z0-9_@.-]{1,64}\Z")
 _PRIVATE_REQUEST = ContextVar("stream_chat_private_request", default=False)
@@ -88,7 +83,7 @@ def _id(value):
 
 
 class StreamChatServerCredential(BaseModel):
-    credential_type: Literal["stream_chat_server_key"] = Field(FAMILY, json_schema_extra={"ui:hidden": True})
+    credential_type: Literal["stream_chat_api_key"] = Field(FAMILY, json_schema_extra={"ui:hidden": True})
     api_key: str = Field(..., title="API Key", json_schema_extra={"ui:widget": "password"})
     api_secret: str = Field(..., title="API Secret", description="Server secret from the same Stream Chat application.", json_schema_extra={"ui:widget": "password"})
     model_config = ConfigDict(title="Stream Chat Server Key", extra="ignore", hide_input_in_errors=True,
@@ -602,16 +597,14 @@ class StreamChatNode(WorkflowNode):
         return StreamChatNodeConfig
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None,
-                                 organization_id=CURRENT_ORGANIZATION, workflow_id=None):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
         shaped = _shape(credential_data)
         if not credential_id:
             return shaped
         if not user_id:
             raise StreamChatCredentialUnavailable("Stream Chat credential caller is unavailable.")
         try:
-            store = _StoredCredential(pool, user_id, credential_id,
-                organization_id=organization_id, workflow_id=workflow_id)
+            store = _StoredCredential(pool, user_id, credential_id)
             current = await store.load()
             if shaped != _shape(current) or any(k in credential_data and credential_data[k] != current.get(k) for k in ("token_version", "updated_at")):
                 raise ValueError("changed")
@@ -633,8 +626,7 @@ class StreamChatNode(WorkflowNode):
         raw = (self.node_data["credentials"] if "credentials" in self.node_data else
                self.config.credentials.model_dump() if self.config.credentials is not None else None)
         data = await self.freshen_credential(raw, pool=self.node_data.get("_approval_pool"),
-            user_id=self.user_id, credential_id=self.node_data.get("credential_id"),
-            organization_id=self.organization_id, workflow_id=self.workflow_id)
+            user_id=self.user_id, credential_id=self.node_data.get("credential_id"))
         client = _Client(data)
         result = await client.run(self.config.config)
         await client.current()

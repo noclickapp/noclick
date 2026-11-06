@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { methodFromRequirement, requirementsFromSchema } from '~/components/credential/credentialMethods';
 import schema from '~/schemas/nodes/stream-chat.json';
 import meta from '~/schemas/nodeMeta.json';
 import { NODE_SCHEMAS, getAgentToolOperations, loadNodeSchemas } from '~/utils/nodeSchemas';
@@ -25,8 +26,11 @@ describe('native Stream Chat source and generated UI', () => {
         expect(JSON.stringify(schema)).not.toContain('x-is-trigger');
     });
     it('maps the explicit server key family and preserves the reviewed display label', () => {
-        expect(CREDENTIAL_TYPE_MAP['Stream Chat Server Key']).toBe('stream_chat_server_key');
-        expect(CREDENTIAL_TYPE_MAP.StreamChatServerCredential).toBe('stream_chat_server_key');
+        expect(CREDENTIAL_TYPE_MAP['Stream Chat Server Key']).toBe('stream_chat_api_key');
+        expect(CREDENTIAL_TYPE_MAP.StreamChatServerCredential).toBe('stream_chat_api_key');
+        const requirements = requirementsFromSchema(schema);
+        expect(requirements.map(req => req.credential_type)).toEqual(['stream_chat_api_key']);
+        expect(methodFromRequirement(requirements[0]).method_kind).toBe('api_key');
         expect(humanizeCredentialLabel(defs.StreamChatServerCredential.title)).toBe('Stream Chat Server Key');
         for (const field of ['api_key', 'api_secret']) expect(defs.StreamChatServerCredential.properties[field]['ui:widget']).toBe('password');
         expect(JSON.stringify(defs.StreamChatServerCredential)).not.toContain('x-oauth');

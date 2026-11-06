@@ -444,3 +444,17 @@ async def test_staging_validation_hook_reports_provider_access(api, status, vali
     result = await StreamChatNode.validate_credential_access(CREDENTIAL)
     assert result["valid"] is valid
     assert result.get("identity_verified", False) is False
+
+
+@pytest.mark.asyncio
+async def test_freshening_uses_base_hook_contract_and_recognized_api_key_family():
+    import inspect
+    from nodes.core.base import WorkflowNode
+
+    own = inspect.signature(StreamChatNode.freshen_credential).parameters
+    base = inspect.signature(WorkflowNode.freshen_credential).parameters
+    assert [(name, p.kind, p.default) for name, p in own.items()] == [
+        (name, p.kind, p.default) for name, p in base.items()
+    ]
+    assert FAMILY == "stream_chat_api_key"
+    assert await StreamChatNode.freshen_credential(CREDENTIAL, pool=None, user_id=USER, credential_id=None) == CREDENTIAL

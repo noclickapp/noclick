@@ -467,8 +467,8 @@
     "StreamChatServerCredential": {
       "properties": {
         "credential_type": {
-          "const": "stream_chat_server_key",
-          "default": "stream_chat_server_key",
+          "const": "stream_chat_api_key",
+          "default": "stream_chat_api_key",
           "title": "Credential Type",
           "type": "string",
           "ui:hidden": true
