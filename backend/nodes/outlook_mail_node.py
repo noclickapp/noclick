@@ -6269,7 +6269,7 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
         payload = {
             "attendees": attendees_list,
             "timeConstraint": {
-                "timeslots": [
+                "timeSlots": [
                     {
                         "start": {"dateTime": config.start_time, "timeZone": "UTC"},
                         "end": {"dateTime": config.end_time, "timeZone": "UTC"},

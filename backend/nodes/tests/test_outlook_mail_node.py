@@ -2325,6 +2325,13 @@ class TestAdvancedCalendar:
 
         assert result["status"] == "success"
         assert result["operation"] == "find_available_meeting_times"
+        payload = mock_client.return_value.post.call_args.kwargs["json"]
+        assert payload["timeConstraint"] == {
+            "timeSlots": [{
+                "start": {"dateTime": "2024-01-15T09:00:00", "timeZone": "UTC"},
+                "end": {"dateTime": "2024-01-15T17:00:00", "timeZone": "UTC"},
+            }]
+        }
 
     @pytest.mark.asyncio
     async def test_get_schedule_success(self):
