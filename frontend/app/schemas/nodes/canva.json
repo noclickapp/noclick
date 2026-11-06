@@ -1394,7 +1394,9 @@
         "brandtemplate:meta:read",
         "brandtemplate:content:read",
         "comment:read",
-        "comment:write"
+        "comment:write",
+        "openid",
+        "profile"
       ]
     },
     "CanvaRevokeTokenConfig": {

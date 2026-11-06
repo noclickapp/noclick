@@ -166,8 +166,9 @@ class TestResizeOperations:
             assert call_args.kwargs["method"] == "POST"
             assert call_args.kwargs["endpoint"] == "/v1/resizes"
             assert call_args.kwargs["json_body"]["design_id"] == "test-design-123"
-            assert call_args.kwargs["json_body"]["width"] == 1920
-            assert call_args.kwargs["json_body"]["height"] == 1080
+            assert call_args.kwargs["json_body"]["design_type"] == {
+                "type": "custom", "width": 1920, "height": 1080
+            }
             assert result["status"] == "success"
 
     @pytest.mark.asyncio

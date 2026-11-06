@@ -35,7 +35,12 @@ import httpx
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.media_resolver import resolve_media_input
-from nodes.oauth.canva_oauth import is_token_expired, refresh_access_token
+from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
+from nodes.oauth.canva_oauth import (
+    get_canva_client_config,
+    is_token_expired,
+    refresh_access_token,
+)
 from nodes.scopes.content_storage import CANVA_SCOPES
 
 logger = logging.getLogger(__name__)
@@ -45,6 +50,7 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 
 CANVA_API_BASE = "https://api.canva.com/rest"
+CANVA_AUTH_BASE = "https://api.canva.com/auth"
 
 # ============================================================================
 # Credential Schema
@@ -103,6 +109,8 @@ class CanvaOAuthCredential(BaseModel):
             "brandtemplate:content:read",
             "comment:read",
             "comment:write",
+            "openid",
+            "profile",
         ],
     })
 
@@ -1354,7 +1362,15 @@ class CanvaNode(WorkflowNode):
         "Get current user capabilities and check available tier features",
     ]
 
-    scope_registry = CANVA_SCOPES
+    scope_registry = ScopeRegistry(
+        provider="canva",
+        requirements={
+            **{operation: CANVA_SCOPES.require(operation) for operation in CANVA_SCOPES},
+            "fetch_current_user_oidc_claims": ScopeRequirement(("openid", "profile")),
+        },
+        enforcement=CANVA_SCOPES.enforcement,
+        unmapped=CANVA_SCOPES.unmapped - {"fetch_current_user_oidc_claims"},
+    )
     connection_evidence = ConnectionEvidence(
         operation="list_user_designs",
         noun="designs",
@@ -1522,6 +1538,9 @@ class CanvaNode(WorkflowNode):
         action_name: str = "request",
         binary_body: Optional[bytes] = None,
         upload_metadata: Optional[Dict[str, str]] = None,
+        form_body: Optional[Dict[str, str]] = None,
+        auth_mode: Literal["bearer", "client", "none"] = "bearer",
+        base_url: str = CANVA_API_BASE,
     ) -> Dict[str, Any]:
         """
         Make an HTTP request to the Canva API.
@@ -1535,26 +1554,39 @@ class CanvaNode(WorkflowNode):
             action_name: Name of the action (for response metadata)
             binary_body: Raw bytes for upload/import endpoints
             upload_metadata: Documented upload/import headers
+            form_body: Form-encoded OAuth token-management parameters
+            auth_mode: Bearer token, OAuth client credentials, or public endpoint
+            base_url: API server for this endpoint
 
         Returns:
             Dict with status, action, data, status_code, and timing
         """
-        url = f"{CANVA_API_BASE}{endpoint}"
+        url = f"{base_url}{endpoint}"
 
-        if binary_body is not None and json_body is not None:
-            raise ValueError("Canva requests cannot contain both JSON and binary bodies")
-
-        # Get access token (handles refresh)
-        access_token = await self._get_access_token(credentials)
+        if sum(body is not None for body in (binary_body, json_body, form_body)) > 1:
+            raise ValueError(
+                "Canva requests cannot contain both JSON and binary bodies "
+                "or combine them with form data"
+            )
 
         headers = {
-            "Authorization": f"Bearer {access_token}",
             "Content-Type": (
                 "application/octet-stream"
                 if binary_body is not None
+                else "application/x-www-form-urlencoded"
+                if form_body is not None
                 else "application/json"
             ),
         }
+        if auth_mode == "bearer":
+            access_token = await self._get_access_token(credentials)
+            headers["Authorization"] = f"Bearer {access_token}"
+        elif auth_mode == "client":
+            client_id, client_secret = get_canva_client_config()
+            basic = base64.b64encode(
+                f"{client_id}:{client_secret}".encode()
+            ).decode("ascii")
+            headers["Authorization"] = f"Basic {basic}"
         if upload_metadata:
             headers.update(upload_metadata)
 
@@ -1573,6 +1605,7 @@ class CanvaNode(WorkflowNode):
                     params=params,
                     json=json_body,
                     content=binary_body,
+                    data=form_body,
                 )
 
                 api_time = (time.time() - start_time) * 1000
@@ -1994,8 +2027,11 @@ class CanvaNode(WorkflowNode):
         """Create async job to resize a design to new dimensions."""
         body: Dict[str, Any] = {
             "design_id": config.design_id,
-            "width": config.width,
-            "height": config.height,
+            "design_type": {
+                "type": "custom",
+                "width": config.width,
+                "height": config.height,
+            },
         }
         if config.title:
             body["title"] = config.title
@@ -2255,7 +2291,8 @@ class CanvaNode(WorkflowNode):
             method="POST",
             endpoint="/v1/oauth/introspect",
             credentials=credentials,
-            json_body=body,
+            form_body=body,
+            auth_mode="client",
             action_name="verify_token_validity",
         )
 
@@ -2274,7 +2311,8 @@ class CanvaNode(WorkflowNode):
             method="POST",
             endpoint="/v1/oauth/revoke",
             credentials=credentials,
-            json_body=body,
+            form_body=body,
+            auth_mode="client",
             action_name="revoke_access_or_refresh_token",
         )
 
@@ -2305,6 +2343,8 @@ class CanvaNode(WorkflowNode):
             method="GET",
             endpoint="/v1/oidc/jwks",
             credentials=credentials,
+            base_url=CANVA_AUTH_BASE,
+            auth_mode="none",
             action_name="get_openid_connect_jwks",
         )
 
@@ -2316,6 +2356,7 @@ class CanvaNode(WorkflowNode):
             method="GET",
             endpoint="/v1/oidc/userinfo",
             credentials=credentials,
+            base_url=CANVA_AUTH_BASE,
             action_name="fetch_current_user_oidc_claims",
         )
 
