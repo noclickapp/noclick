@@ -806,10 +806,32 @@ class GoogleContactsNode(WorkflowNode):
 
             # Build update fields
             update_person: Dict[str, Any] = {"etag": etag}
+            # Google requires the source etag, not just the merged person's etag.
+            # Source timestamps and profile metadata are output-only.
+            sources = existing.get("metadata", {}).get("sources", [])
+            if sources:
+                update_person["metadata"] = {
+                    "sources": [
+                        {
+                            key: source[key]
+                            for key in ("type", "id", "etag")
+                            if key in source
+                        }
+                        for source in sources
+                    ]
+                }
             update_fields = []
 
             if config.given_name or config.family_name:
-                update_person["names"] = existing.get("names", [{}])
+                # Preserve editable name components without replaying output-only
+                # display names or field metadata from the GET response.
+                update_person["names"] = [
+                    {
+                        key: value for key, value in name.items()
+                        if key not in {"displayName", "displayNameLastFirst", "metadata"}
+                    }
+                    for name in existing.get("names", [{}])
+                ]
                 if not update_person["names"]:
                     update_person["names"] = [{}]
                 if config.given_name:
@@ -827,7 +849,13 @@ class GoogleContactsNode(WorkflowNode):
                 update_fields.append("phoneNumbers")
 
             if config.organization or config.job_title:
-                update_person["organizations"] = existing.get("organizations", [{}])
+                update_person["organizations"] = [
+                    {
+                        key: value for key, value in organization.items()
+                        if key not in {"formattedType", "metadata"}
+                    }
+                    for organization in existing.get("organizations", [{}])
+                ]
                 if not update_person["organizations"]:
                     update_person["organizations"] = [{}]
                 if config.organization:

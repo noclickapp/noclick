@@ -8,6 +8,8 @@ Tests Google Contacts operations with mocked HTTP responses:
 Uses httpx mocking to simulate Google People API responses without real credentials.
 """
 
+import copy
+
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 import httpx
@@ -252,6 +254,53 @@ class TestUpdateContact:
 
             assert result["status"] == "success"
             assert result["operation"] == "update_contact"
+
+
+    @pytest.mark.asyncio
+    async def test_update_preserves_source_etag_and_omits_output_only_fields(self):
+        # See https://developers.google.com/people/api/rest/v1/people/updateContact
+        # and the Name, Organization, FieldMetadata and Source resource schemas.
+        node = create_node(GoogleContactsUpdateContactConfig(
+            resource_name="people/c1234567890", given_name="Jane", job_title="Lead"
+        ))
+        current = {
+            "etag": "person-etag",
+            "metadata": {
+                "deleted": False,
+                "sources": [{"type": "CONTACT", "id": "1234567890",
+                             "etag": "source-etag", "updateTime": "2024-01-01T00:00:00Z"},
+                            {"type": "PROFILE", "id": "profile-id",
+                             "profileMetadata": {"objectType": "PERSON"}}],
+            },
+            "names": [{"givenName": "John", "familyName": "Doe", "middleName": "M",
+                       "displayName": "John M Doe", "displayNameLastFirst": "Doe, John M",
+                       "metadata": {"primary": True, "verified": True}}],
+            "organizations": [{"name": "Acme", "title": "Engineer", "department": "R&D",
+                               "type": "work", "formattedType": "Work",
+                               "metadata": {"primary": True, "source": {"type": "CONTACT"}}}],
+        }
+        original = copy.deepcopy(current)
+        with patch("httpx.AsyncClient") as mock_client:
+            client = AsyncMock()
+            mock_client.return_value.__aenter__.return_value = client
+            client.get.return_value = mock_response(200, current)
+            client.patch.return_value = mock_response(200, current)
+
+            result = await node.execute({})
+
+        assert result["status"] == "success"
+        request = client.patch.call_args.kwargs
+        assert request["params"] == {"updatePersonFields": "names,organizations"}
+        assert request["json"] == {
+            "etag": "person-etag",
+            "metadata": {"sources": [
+                {"type": "CONTACT", "id": "1234567890", "etag": "source-etag"},
+                {"type": "PROFILE", "id": "profile-id"},
+            ]},
+            "names": [{"givenName": "Jane", "familyName": "Doe", "middleName": "M"}],
+            "organizations": [{"name": "Acme", "title": "Lead", "department": "R&D", "type": "work"}],
+        }
+        assert current == original
 
 
 class TestDeleteContact:
