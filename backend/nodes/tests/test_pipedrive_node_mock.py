@@ -491,3 +491,29 @@ class TestPipedriveDeleteFieldOptions:
             with pytest.raises(ValueError):
                 await node.execute({})
         client.assert_not_called()
+
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("saved_values", [{}, {"ids": None}])
+    async def test_legacy_deal_option_configs_load_and_validate_on_execution(
+        self, credentials, saved_values
+    ):
+        saved_config = {
+            "operation": "delete_deal_field_options_v2",
+            "field_code": "custom_field",
+            **saved_values,
+        }
+        config = PipedriveNodeConfig.model_validate({
+            "config": saved_config, "credentials": credentials.model_dump(),
+        })
+        assert config.config.ids is None
+        reloaded = PipedriveNodeConfig.model_validate_json(config.model_dump_json())
+        assert reloaded.config.ids is None
+        assert reloaded.config.operation == saved_config["operation"]
+        assert reloaded.config.field_code == saved_config["field_code"]
+
+        node = create_pipedrive_node(reloaded)
+        with patch("nodes.pipedrive_node.httpx.AsyncClient") as client:
+            with pytest.raises(ValueError, match="At least one option ID is required"):
+                await node.execute({})
+        client.assert_not_called()

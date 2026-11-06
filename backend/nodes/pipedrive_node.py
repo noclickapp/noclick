@@ -657,7 +657,7 @@ OP_SPECS: List[Dict[str, Any]] = [
  'path_params': ['field_code'],
  'list': False,
  'query': [],
- 'body': [['ids', True, 'string', 'Comma-separated option IDs to delete']]},
+ 'body': [['ids', False, 'string', 'Comma-separated option IDs to delete']]},
     {'operation': 'get_deal_fields',
  'display': 'Get All Deal Fields (v1)',
  'category': 'Deals',

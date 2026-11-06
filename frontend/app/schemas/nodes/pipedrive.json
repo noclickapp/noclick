@@ -4316,14 +4316,21 @@
           "type": "string"
         },
         "ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
           "description": "Comma-separated option IDs to delete",
-          "title": "Ids",
-          "type": "string"
+          "title": "Ids"
         }
       },
       "required": [
-        "field_code",
-        "ids"
+        "field_code"
       ],
       "title": "Pipedrive_delete_deal_field_options_v2_Config",
       "type": "object"
