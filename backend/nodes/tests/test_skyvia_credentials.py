@@ -85,8 +85,8 @@ def provider(monkeypatch):
     return calls
 
 
-async def read_fresh(store, **context):
-    fresh = await p.SkyviaNode.freshen_credential(KEY, pool=store, user_id=USER, credential_id=CID, **context)
+async def read_fresh(store):
+    fresh = await p.SkyviaNode.freshen_credential(KEY, pool=store, user_id=USER, credential_id=CID)
     await fresh["_skyvia_reader"].read()
     return fresh
 
@@ -156,14 +156,16 @@ async def test_trusted_workflow_owner_fallback_is_current_and_revocable(storage,
     owner, allowed = AsyncMock(return_value=OWNER), AsyncMock(return_value=True)
     monkeypatch.setattr(credentials, "get_workflow_owner_id", owner)
     monkeypatch.setattr(credentials, "is_credential_authorized_for_workflow", allowed)
-    fresh = await read_fresh(store, organization_id=ORG, workflow_id=WORKFLOW)
+    fresh = await p.SkyviaNode.freshen_credential(KEY, pool=store, user_id=USER, credential_id=CID)
+    fresh["_skyvia_reader"].workflow_id = WORKFLOW
+    await fresh["_skyvia_reader"].read()
     owner.assert_awaited_once_with(store, WORKFLOW)
     allowed.assert_awaited_once_with(store, WORKFLOW, CID)
     sql, args = store.calls[-1]
     assert "workflow_authorized_credentials" in sql and "w.owner_id = $2" in sql and args == (CID, OWNER, ORG, WORKFLOW)
     allowed.return_value = False
     with pytest.raises(ValueError): await fresh["_skyvia_reader"].read()
-    with pytest.raises(ValueError): await read_fresh(store, organization_id=ORG)
+    with pytest.raises(ValueError): await read_fresh(store)
 
 
 @pytest.mark.asyncio

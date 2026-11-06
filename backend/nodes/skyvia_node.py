@@ -313,23 +313,27 @@ class SkyviaNode(WorkflowNode):
         return SkyviaNodeConfig
 
     @classmethod
-    def parse_config(cls, data):
-        if isinstance(data, dict) and data.get("credentials"):
-            data = {**data, "credentials": guard(data["credentials"]).model_dump()}
-        return super().parse_config(data)
+    def parse_config(cls, config_data):
+        if isinstance(config_data, dict) and config_data.get("credentials"):
+            config_data = {**config_data, "credentials": guard(config_data["credentials"]).model_dump()}
+        return super().parse_config(config_data)
 
     @classmethod
-    def validate_config(cls, data):
-        if isinstance(data, dict) and data.get("credentials"):
+    def validate_config(cls, config_data):
+        if isinstance(config_data, dict) and config_data.get("credentials"):
             try:
-                data = {**data, "credentials": guard(data["credentials"]).model_dump()}
+                config_data = {**config_data, "credentials": guard(config_data["credentials"]).model_dump()}
             except ValueError as error:
                 return {"valid": False, "errors": [str(error)], "satisfied_set": None}
-        return super().validate_config(data)
+        return super().validate_config(config_data)
 
     @classmethod
-    async def freshen_credential(cls, data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=None, **_kwargs):
-        value = guard(data)
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        return cls._bind_credential(credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
+
+    @staticmethod
+    def _bind_credential(credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=None):
+        value = guard(credential_data)
         if credential_id:
             reader = Reader(credential_id, user_id, organization_id, workflow_id, pool, expected=authority(value))
             return {**value.model_dump(), "_skyvia_reader": reader}
@@ -422,7 +426,7 @@ class SkyviaNode(WorkflowNode):
     async def execute(self, inputs):
         cfg = self.config.config
         raw = self.node_data.get("credentials") or (self.config.credentials.model_dump() if self.config.credentials is not None else None)
-        data = await self.freshen_credential(raw, credential_id=self.node_data.get("credential_id"), user_id=self.user_id, workflow_id=self.workflow_id, organization_id=self.organization_id, pool=self.node_data.get("_approval_pool"))
+        data = self._bind_credential(raw, credential_id=self.node_data.get("credential_id"), user_id=self.user_id, workflow_id=self.workflow_id, organization_id=self.organization_id, pool=self.node_data.get("_approval_pool"))
         value, reader = guard(data), reader_from(data)
         try:
             catalog = await self._catalog(value, reader)
