@@ -43,7 +43,7 @@ def secret(value):
 
 class HetrixToolsAPIKeyCredential(BaseModel):
     model_config = ConfigDict(extra="ignore", hide_input_in_errors=True, json_schema_extra={
-        "x-credential-type": TYPE, "x-credential-url": "https://docs.hetrixtools.com/api-key-scope/",
+        "x-credential-url": "https://docs.hetrixtools.com/api-key-scope/",
         "x-credential-instructions": "Supply an existing v3 API key. Bearer headers go only to api.hetrixtools.com/v3. Connection reads GET /account/api/scope: actual permitted calls/assets, not principal or tenant identity. This node does not use legacy key-in-path APIs or issue keys. Monitor child reads additionally require GET Uptime Monitors for an independent parent witness. The provider enforces endpoint and asset permissions; scope names are not guessed.",
     })
     credential_type: Literal["hetrixtools_api_key"] = Field(TYPE, json_schema_extra={"ui:hidden": True})
@@ -516,18 +516,18 @@ class HetrixToolsNode(WorkflowNode):
         return HetrixToolsNodeConfig
 
     @classmethod
-    def parse_config(cls, data):
-        raw_guard(data)
-        return super().parse_config(data)
+    def parse_config(cls, config_data):
+        raw_guard(config_data)
+        return super().parse_config(config_data)
 
     @classmethod
-    def validate_config(cls, data):
-        raw_guard(data)
-        return super().validate_config(data)
+    def validate_config(cls, config_data):
+        raw_guard(config_data)
+        return super().validate_config(config_data)
 
     @classmethod
-    async def freshen_credential(cls, raw, *, pool=None, user_id=None, credential_id=None, organization_id=CURRENT_ORGANIZATION, workflow_id=None):
-        auth = await Authority.create(raw, pool=pool, user_id=user_id, credential_id=credential_id, organization_id=organization_id, workflow_id=workflow_id)
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        auth = await Authority.create(credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
         return {**auth.credential.model_dump(), AUTH_KEY: auth}
 
     @classmethod

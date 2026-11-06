@@ -191,6 +191,7 @@ def stored(monkeypatch):
         return state["row"]
     monkeypatch.setattr("utils.credentials.get_credential", get_credential)
     monkeypatch.setattr(native, "fetch_credential_authority", fetch)
+    monkeypatch.setattr(native.Authority, "current_organization", AsyncMock(return_value=None))
     monkeypatch.setattr(native, "get_encryption", lambda: SimpleNamespace(decrypt_credential=lambda raw: deepcopy(raw)))
     return state
 
@@ -220,7 +221,7 @@ async def test_actual_saved_execute_discards_racing_response(stored, transport, 
 
 @pytest.mark.asyncio
 async def test_saved_actor_picker_one_page_and_current_access(stored, transport):
-    fresh = await native.HetrixToolsNode.freshen_credential(KEY, pool=object(), user_id=USER, credential_id=CID, organization_id=None)
+    fresh = await native.HetrixToolsNode.freshen_credential(KEY, pool=object(), user_id=USER, credential_id=CID)
     transport[1].append(page(current=2, last=3, next_page=3))
     result = await native.HetrixToolsNode.load_field_options(field_name="monitor_id", credential_data=fresh, context={"_user_id": USER}, page_token="2")
     assert result == {"options": [{"value": MID, "label": MID}], "next_page_token": "3"}
