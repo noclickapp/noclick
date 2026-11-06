@@ -133,6 +133,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-datadog', 'DatadogNode'],
     ['automation-loops', 'LoopsNode'],
     ['automation-exa', 'ExaNode'],
+    ['automation-tavily', 'TavilyNode'],
     ['automation-reducto', 'ReductoNode'],
     ['automation-fal', 'FalNode'],
     ['automation-brandfetch', 'BrandfetchNode'],
