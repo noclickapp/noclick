@@ -661,8 +661,13 @@ class OpenStatusNode(WorkflowNode):
         return super().validate_config(config_data)
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None,
-            workflow_id=None, organization_id=_ORG_OMITTED, require_owner=False, **kwargs):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        return await cls._freshen_credential(credential_data, pool=pool, user_id=user_id,
+            credential_id=credential_id)
+
+    @classmethod
+    async def _freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None,
+            workflow_id=None, organization_id=_ORG_OMITTED, require_owner=False):
         initial = credential(credential_data)
         if not credential_id:
             if "_openstatus_saved_authority_required" in credential_data:
@@ -732,7 +737,7 @@ class OpenStatusNode(WorkflowNode):
         if not isinstance(self.config, OpenStatusNodeConfig) or self.config.credentials is None:
             raise ValueError("Connect the native OpenStatus supplied API key")
         raw = (self.node_data or {}).get("credentials")
-        data = await self.freshen_credential(raw if raw is not None else self.config.credentials.model_dump(),
+        data = await self._freshen_credential(raw if raw is not None else self.config.credentials.model_dump(),
             pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id,
             credential_id=(self.node_data or {}).get("credential_id"), workflow_id=self.workflow_id, organization_id=self.organization_id)
         return await records(data, self.config.config.model_dump())

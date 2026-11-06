@@ -86,7 +86,7 @@ async def test_current_row_refuses_before_decrypt_or_http(storage,world,bad):
     elif bad=="timestamp": storage.row["updated_at"]="invalid"
     else: storage.access.clear()
     with pytest.raises(ValueError):
-        await R.OpenStatusNode.freshen_credential(AUTH,pool=storage,user_id=USER,credential_id=CID,organization_id=ORG)
+        await R.OpenStatusNode._freshen_credential(AUTH,pool=storage,user_id=USER,credential_id=CID,organization_id=ORG)
     storage.crypto.decrypt_credential.assert_not_called()
     assert world.calls==[]
 
@@ -94,7 +94,7 @@ async def test_current_row_refuses_before_decrypt_or_http(storage,world,bad):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("change",["owner","org","version","timestamp","revocation","access","key","family"])
 async def test_current_authority_race_blocks_output_without_write(storage,world,change):
-    bound=await R.OpenStatusNode.freshen_credential(AUTH,pool=storage,user_id=USER,credential_id=CID)
+    bound=await R.OpenStatusNode._freshen_credential(AUTH,pool=storage,user_id=USER,credential_id=CID)
     def after(_):
         world.after_request=None
         if change=="owner": storage.row["owner_id"]=USER
@@ -113,19 +113,19 @@ async def test_current_authority_race_blocks_output_without_write(storage,world,
 
 @pytest.mark.asyncio
 async def test_personal_none_owner_policy_and_saved_wrapper(storage,world):
-    bound=await R.OpenStatusNode.freshen_credential(AUTH,pool=storage,user_id=USER,credential_id=CID,organization_id=None)
+    bound=await R.OpenStatusNode._freshen_credential(AUTH,pool=storage,user_id=USER,credential_id=CID,organization_id=None)
     assert bound.snapshot[0].organization_id is None and bound.snapshot[0].current_organization is False
     with pytest.raises(ValueError): await R.records(dict(bound),{"operation":"list_status_pages"})
-    with pytest.raises(ValueError): await R.OpenStatusNode.freshen_credential(AUTH,pool=storage,user_id=USER,credential_id=CID,organization_id=ORG,require_owner=True)
+    with pytest.raises(ValueError): await R.OpenStatusNode._freshen_credential(AUTH,pool=storage,user_id=USER,credential_id=CID,organization_id=ORG,require_owner=True)
     assert world.calls==[]
 
 
 @pytest.mark.asyncio
 async def test_version_bound_page_invalidated_before_http(storage,world):
-    old=await R.OpenStatusNode.freshen_credential(AUTH,pool=storage,user_id=USER,credential_id=CID,organization_id=ORG)
+    old=await R.OpenStatusNode._freshen_credential(AUTH,pool=storage,user_id=USER,credential_id=CID,organization_id=ORG)
     token=R.seal_page(old,"page",None,50,50)
     storage.row["token_version"]+=1
-    current=await R.OpenStatusNode.freshen_credential(AUTH,pool=storage,user_id=USER,credential_id=CID,organization_id=ORG)
+    current=await R.OpenStatusNode._freshen_credential(AUTH,pool=storage,user_id=USER,credential_id=CID,organization_id=ORG)
     with pytest.raises(ValueError): await R.records(current,{"operation":"list_status_pages","page_token":token})
     assert world.calls==[]
 
@@ -163,7 +163,7 @@ async def test_native_picker_and_validation_preserve_unknown(storage,world,regis
 async def test_storage_uncertainty_is_sanitized_unknown(storage,world):
     storage.fetchrow=AsyncMock(side_effect=ConnectionError("private-storage-diagnostic"))
     with pytest.raises(RuntimeError) as caught:
-        await R.OpenStatusNode.freshen_credential(AUTH,pool=storage,user_id=USER,credential_id=CID)
+        await R.OpenStatusNode._freshen_credential(AUTH,pool=storage,user_id=USER,credential_id=CID)
     assert "private-storage-diagnostic" not in str(caught.value) and world.calls==[]
 
 
