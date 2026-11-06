@@ -2731,10 +2731,6 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                             node_type=node_type,
                             node_operation=node_config.get('operation') or 'default',
                             output=resolved,
-                            # Strip runtime _-prefixed keys before recording — _triggerPayload
-                            # holds the raw inbound payload (e.g. the full email content), which
-                            # must not be persisted as sample_config.
-                            config={k: v for k, v in node_config.items() if not k.startswith('_')},
                             delivered=True,
                             workflow_id=workflow_id,
                         )
@@ -3906,7 +3902,6 @@ class WorkflowExecutionHandler(DatabasePoolMixin, SocketIOHandler):
                 node_type=node_type,
                 node_operation=node_config.get('operation') or 'default',
                 output=output,
-                config=node_config,
                 workflow_id=workflow_id,
             )
 

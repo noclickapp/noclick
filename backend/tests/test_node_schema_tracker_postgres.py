@@ -1,7 +1,9 @@
 """What ``workflow_node_output_schemas`` says taught each shape, what its reads serve, and what each account keeps as
 its own (``account_node_output_schemas``), against real Postgres."""
 
+import json
 import uuid
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -18,6 +20,7 @@ from utils.node_schema_tracker import (
     track_node_schema,
 )
 
+REAL_GENERATE = node_schema_tracker._generate_suggested_refs
 TRIGGER = ("automation-exa", "on_monitor_results")
 ACTION = ("automation-exa", "search")
 
@@ -155,12 +158,45 @@ async def test_a_workspaces_members_read_the_shapes_its_workflows_taught(pool):
         assert (await get_own_schema_with_suggestions(member, *ACTION))["schema"] == extract_schema(CUSTOM)
 
 
-async def test_an_accounts_record_failing_still_fills_the_pooled_row(pool):
+async def test_an_accounts_record_failing_still_writes_the_pooled_rows_references(pool, monkeypatch):
+    refs = [{"path": "results[].url", "label": "URL", "description": "The result's address."}]
+
+    async def some_refs(*args):
+        return refs
+
+    monkeypatch.setattr(node_schema_tracker, "_generate_suggested_refs", some_refs)
     _, a_workflow = await _account(pool)
     with patch.object(node_output_schemas, "record", AsyncMock(side_effect=RuntimeError("no such table"))):
         await track_node_schema(*ACTION, CUSTOM, workflow_id=a_workflow)
-    assert await pool.fetchval("SELECT sample_output_clipped IS NOT NULL FROM workflow_node_output_schemas "
-                               "WHERE schema_hash = $1", compute_schema_hash(*ACTION, extract_schema(CUSTOM)))
+    assert await pool.fetchval("SELECT suggested_refs FROM workflow_node_output_schemas WHERE schema_hash = $1",
+                               compute_schema_hash(*ACTION, extract_schema(CUSTOM))) == refs
+
+
+async def test_an_outputs_values_reach_neither_the_table_nor_the_model(pool, monkeypatch):
+    """Every account reads this table, and the model's references go to every account: only names and types may
+    reach either."""
+    secret = "jane.doe+private@example.org says the vault code is 4417"
+    output = {"results": [{"url": secret, "title": secret}], "query": secret}
+    asked = []
+
+    async def model(**kwargs):
+        asked.append(kwargs["messages"])
+        return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps(
+            {"refs": [{"path": "query", "label": "Query", "description": "What was searched for."}]})))])
+
+    monkeypatch.delenv("NOCLICK_LOCAL", raising=False)
+    monkeypatch.setattr(node_schema_tracker, "_generate_suggested_refs", REAL_GENERATE)
+    monkeypatch.setattr(node_schema_tracker.litellm, "acompletion", model)
+    _, a_workflow = await _account(pool)
+    await track_node_schema(*ACTION, output, workflow_id=a_workflow)
+
+    assert asked and all(secret not in json.dumps(messages) for messages in asked)
+    stored = await pool.fetch("SELECT row_to_json(w)::text AS row FROM workflow_node_output_schemas w "
+                              "WHERE node_type = $1", ACTION[0])
+    own = await pool.fetch("SELECT row_to_json(a)::text AS row FROM account_node_output_schemas a "
+                           "WHERE node_type = $1", ACTION[0])
+    assert stored and own and all(secret not in r["row"] for r in [*stored, *own])
+    assert all("4417" not in r["row"] and "jane.doe" not in r["row"] for r in [*stored, *own])
 
 
 async def test_an_own_shape_carries_the_references_curated_for_it(pool):

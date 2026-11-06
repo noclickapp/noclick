@@ -1,6 +1,6 @@
 """Unit tests for helpers in utils/node_schema_tracker.py.
 
-Covers schema extraction, value clipping, the suggested-refs validator, and
+Covers schema extraction, the suggested-refs validator and its messages, and
 the deterministic hash. The suggested-refs tests cover the edition/credential
 boundary; DB upserts are exercised via integration flows.
 """
@@ -13,8 +13,8 @@ import pytest
 
 from utils import node_schema_tracker
 from utils.node_schema_tracker import (
+    _build_suggested_refs_messages,
     _generate_suggested_refs,
-    clip_values,
     compute_schema_hash,
     extract_schema,
     infer_type,
@@ -54,23 +54,6 @@ class TestExtractSchema:
         assert extract_schema([["a", "b"], ["c", "d"]]) == [[]]
 
 
-class TestClipValues:
-    def test_clips_long_strings(self):
-        clipped = clip_values({"text": "a" * 200}, max_string=10)
-        assert clipped["text"] == "a" * 10 + "…"
-
-    def test_keeps_short_strings(self):
-        assert clip_values({"name": "hi"}) == {"name": "hi"}
-
-    def test_sample_array_to_first_non_null(self):
-        # Sampling lets the LLM see what's inside without paying for the whole list.
-        assert clip_values([None, {"a": 1}, {"a": 2}]) == [{"a": 1}]
-
-    def test_recurses_into_nested(self):
-        data = {"user": {"name": "alice", "tags": ["x", "y"]}}
-        assert clip_values(data) == {"user": {"name": "alice", "tags": ["x"]}}
-
-
 class TestComputeSchemaHash:
     def test_deterministic(self):
         schema = {"a": "string", "b": "integer"}
@@ -87,6 +70,14 @@ class TestComputeSchemaHash:
     def test_different_inputs_differ(self):
         assert compute_schema_hash("t", "op", {"a": "string"}) != \
             compute_schema_hash("t", "op", {"b": "string"})
+
+
+class TestSuggestedRefsMessages:
+    def test_the_model_reads_names_and_types_and_is_told_to_give_no_example(self):
+        [system, user] = _build_suggested_refs_messages("automation-gmail", "read", {"from": "string", "n": "integer"})
+        assert '"from": "string"' in user["content"] and '"n": "integer"' in user["content"]
+        assert "sample" not in (system["content"] + user["content"]).lower()
+        assert "Never give an example value" in system["content"]
 
 
 class TestValidateSuggestedRefs:
@@ -187,7 +178,6 @@ class TestGenerateSuggestedRefsCredentialGate:
             "automation-test",
             "read",
             {"name": "string"},
-            {"name": "Ada"},
         )
 
         assert result is None
@@ -206,7 +196,6 @@ class TestGenerateSuggestedRefsCredentialGate:
             "automation-test",
             "read",
             {"name": "string"},
-            {"name": "Ada"},
         )
 
         assert result == [
@@ -230,7 +219,6 @@ class TestGenerateSuggestedRefsCredentialGate:
             "automation-test",
             "read",
             {"name": "string"},
-            {"name": "Ada"},
         )
 
         assert result is not None
