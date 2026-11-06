@@ -154,4 +154,3 @@ class FormBuilder123AuthorityRepo:
             if not isinstance(stamp, datetime) or stamp.tzinfo is None:
                 raise ValueError("123FormBuilder saved credential timestamp is invalid")
         return row, organization_id
-
