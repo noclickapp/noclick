@@ -96,7 +96,7 @@ class _Config(BaseModel):
 
     @field_validator("name", check_fields=False)
     @classmethod
-    def name(cls, value):
+    def validate_project_name(cls, value):
         if not value.strip():
             raise ValueError("Use a nonblank project name")
         return value
@@ -448,7 +448,7 @@ def _ack(raw, expected, *, folder=False):
 
 class SingleStoreNode(WorkflowNode):
     workflow_credential_refresh = True
-    connection_evidence = ConnectionEvidence(noun="organization", operation="get_organization", label_keys=("name", "orgID"), proves="account")
+    connection_evidence = ConnectionEvidence(noun="organization", identity_operation="get_organization", identity_keys=("name", "orgID"), proves="account")
 
     @classmethod
     def get_config_model(cls):

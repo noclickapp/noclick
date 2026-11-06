@@ -46,7 +46,9 @@ def provider(monkeypatch):
             ipaddress.ip_address(host)
         except ValueError:
             assert host == "api.singlestore.com"
-            return ["127.0.0.1" if state.private_dns else "93.184.216.34"]
+            address = "127.0.0.1" if state.private_dns else "93.184.216.34"
+            ssrf._assert_ip_allowed(address)
+            return [address]
         return await original_dns(host, port, **kwargs)
     monkeypatch.setattr(ssrf, "_resolve_host_addresses", public_dns)
     async def respond(request):
@@ -174,12 +176,18 @@ def test_real_catalog_factory_and_generated_schema_scope():
     assert isinstance(instance.config, native.SingleStoreNodeConfig)
     assert native.SingleStoreNode.get_config_schema()["$defs"]["SingleStoreManagementCredential"]["properties"]["credential_type"]["const"] == FAMILY
 
+@pytest.mark.parametrize("name", ["", "   "])
+def test_rename_project_rejects_blank_names(name):
+    with pytest.raises(ValueError):
+        native.RenameProject(project_id=PROJECT, name=name)
+
 @pytest.mark.asyncio
 async def test_manual_connect_and_current_organization_evidence(provider):
     verdict = await validate_for_connect(credential_type=FAMILY, credential_data=CREDS, user_id=USER)
-    assert verdict.ok and verdict.evidence.samples[0].label == "Fixture organization"
+    assert verdict.ok and verdict.evidence.account_label == "Fixture organization"
     evidence = await collect_evidence(node_type=NODE, credential_data=CREDS, user_id=USER)
     assert evidence.reachable is True and evidence.proves == "account"
+    assert evidence.account_label == "Fixture organization"
     provider.foreign_org = True
     with pytest.raises(ValueError): await run("get_organization")
 
@@ -385,7 +393,7 @@ async def test_inaccessible_revoked_and_invalid_plaintext_before_http(stored, pr
         stored.storage.access = kind != "inaccessible"
         stored.storage.row["revoked_at"] = UPDATED if kind == "revoked" else None
         stored.crypto.decrypt_credential.side_effect = lambda _: {**CREDS, "api_key": "bad header"} if kind == "invalid" else dict(CREDS)
-        with pytest.raises(ValueError):
+        with pytest.raises(PermissionError if kind == "revoked" else ValueError):
             await run("get_organization", credential_id=CID, pool=stored.storage, organization_id=ORG)
         assert provider.requests == []
 @pytest.mark.asyncio
