@@ -1817,10 +1817,22 @@ class BeehiivNode(ExternalWebhookTriggerMixin, WorkflowNode):
         )
 
     async def _get_post_stats(self, c: BeehiivGetPostStatsConfig, api_key: str) -> Dict[str, Any]:
-        return await _beehiiv_request(
+        result = await _beehiiv_request(
             api_key, "GET", f"/publications/{c.publication_id}/posts/{c.post_id}",
-            params={"expand[]": ["stats"]}, action_name="get_post_stats"
+            params={"expand": json.dumps(["stats"])}, action_name="get_post_stats"
         )
+        data = result.get("data")
+        if isinstance(data, dict):
+            stats = data.get("stats")
+            email_stats = stats.get("email") if isinstance(stats, dict) else None
+            if isinstance(email_stats, dict):
+                # Saved workflows use these flat rates as fractions. Beehiiv's
+                # expanded Post keeps the original percentages under stats.email.
+                for metric in ("open_rate", "click_rate"):
+                    value = email_stats.get(metric)
+                    if isinstance(value, (int, float)) and not isinstance(value, bool):
+                        data[metric] = value / 100
+        return result
 
     # ------------------------------------------------------------------
     # Handlers — Segments

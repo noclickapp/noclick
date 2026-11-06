@@ -384,9 +384,12 @@ class TestBeehiivPostsMock:
 
         def respond(request):
             requests.append(request)
+            # Require the documented query before supplying expanded statistics.
+            assert request.url.params.get_list("expand") == ['["stats"]']
+            assert "expand[]" not in request.url.params
             return httpx.Response(200, json=_envelope({
                 "id": "post_1",
-                "stats": {"email": {"open_rate": 45, "click_rate": 8}},
+                "stats": {"email": {"open_rate": 50, "click_rate": 10}},
             }))
 
         original_client = httpx.AsyncClient
@@ -401,10 +404,14 @@ class TestBeehiivPostsMock:
         assert len(requests) == 1
         assert requests[0].method == "GET"
         assert requests[0].url.path == f"/v2/publications/{PUB}/posts/post_1"
-        assert requests[0].url.params.get_list("expand[]") == ["stats"]
+        assert requests[0].url.params.get_list("expand") == ['["stats"]']
+        assert "expand[]" not in requests[0].url.params
         assert result["status"] == "success"
         assert result["action"] == "get_post_stats"
-        assert result["data"]["stats"]["email"]["open_rate"] == 45
+        assert result["data"]["stats"]["email"]["open_rate"] == 50
+        assert result["data"]["stats"]["email"]["click_rate"] == 10
+        assert result["data"]["open_rate"] == 0.5
+        assert result["data"]["click_rate"] == 0.1
 
 
 # ============================================================================
