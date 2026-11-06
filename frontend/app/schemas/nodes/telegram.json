@@ -2115,7 +2115,7 @@
           "type": "string"
         },
         "options": {
-          "description": "JSON array of answer strings (2\u201310)",
+          "description": "JSON array of 1\u201312 answer strings or InputPollOption objects with a text field",
           "placeholder": "[\"Red\", \"Green\", \"Blue\"]",
           "title": "Options (JSON)",
           "type": "string",

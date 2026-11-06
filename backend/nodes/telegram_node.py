@@ -1278,7 +1278,7 @@ class TelegramSendPollConfig(BaseModel):
     )
     options: str = Field(
         title="Options (JSON)",
-        description="JSON array of answer strings (2–10)",
+        description="JSON array of 1–12 answer strings or InputPollOption objects with a text field",
         json_schema_extra={
             "ui:widget": "textarea",
             "placeholder": '["Red", "Green", "Blue"]',
@@ -3585,6 +3585,17 @@ class TelegramNode(ExternalWebhookTriggerMixin, WorkflowNode):
             options = json.loads(config.options)
         except json.JSONDecodeError as e:
             raise ValueError(f"Invalid options JSON: {e}")
+        if not isinstance(options, list) or not 1 <= len(options) <= 12:
+            raise ValueError("options must be a JSON array with 1–12 items")
+        # The current Bot API requires InputPollOption objects on the wire.
+        options = [{"text": option} if isinstance(option, str) else option for option in options]
+        if any(
+            not isinstance(option, dict)
+            or not isinstance(option.get("text"), str)
+            or not 1 <= len(option["text"]) <= 100
+            for option in options
+        ):
+            raise ValueError("Each poll option must have text with 1–100 characters")
         payload: Dict[str, Any] = {
             "chat_id": chat_id,
             "question": config.question,
@@ -3594,7 +3605,7 @@ class TelegramNode(ExternalWebhookTriggerMixin, WorkflowNode):
             "allows_multiple_answers": config.allows_multiple_answers == "true",
         }
         if config.poll_type == "quiz" and config.correct_option_id:
-            payload["correct_option_id"] = int(config.correct_option_id)
+            payload["correct_option_ids"] = [int(config.correct_option_id)]
         if config.explanation:
             payload["explanation"] = config.explanation
         result = await self._make_request("POST", "sendPoll", creds, payload)
