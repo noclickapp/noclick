@@ -19,6 +19,8 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'RipplingAPITokenCredential': 'rippling_api_token',
     'Rippling API Token': 'rippling_api_token',
     'AccuLynxAPIKeyCredential': 'acculynx_api_key',
+    'MindbodyAPIKeyCredential': 'mindbody_api_key',
+    'Mindbody Public API': 'mindbody_api_key',
     'FormBuilder123TokenCredential': '123formbuilder_v2_token',
     'PorkbunCredential': 'porkbun_api_key',
     'HetrixToolsAPIKeyCredential': 'hetrixtools_api_key',

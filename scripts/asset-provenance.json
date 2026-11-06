@@ -1064,6 +1064,18 @@
       "source": "https://www.cliniko.com/ (Cliniko brand artwork published by the service)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "a8064e4770cac77b1a2cebb0f156480fbc160585bbd742eda7d8590e62c61fff"
+    },
+    {
+      "path": "frontend/public/icons/mindbody.svg",
+      "source": "https://www.mindbodyonline.com/themes/mindbody/dist/patterns/images/global/mindbody-logos/mb-logo.svg (unmodified provider-published SVG; byte-for-byte verified)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "afa6ada776545ce8839f278ff2877a285b07643b55b6ef5796550013faa497a8"
+    },
+    {
+      "path": "frontend/public/icons/mindbody-brand.svg",
+      "source": "https://www.mindbodyonline.com/themes/mindbody/images/icons/favicons/mindbody-favicon.svg (unmodified provider-published SVG; byte-for-byte verified)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "272cc5f021c2df86f0fa9868c79c09e447257c426e5c686b4c85b8d5b965bab6"
     }
   ],
   "excludedSourceAssets": [
