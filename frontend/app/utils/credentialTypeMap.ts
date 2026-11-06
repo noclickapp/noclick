@@ -87,6 +87,10 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'StatuspageAPIKeyCredential': 'statuspage_api_key',
     'Statuspage API Key': 'statuspage_api_key',
 
+    // Auth0
+    'Auth0TokenCredential': 'auth0_token',
+    'Auth0 Token': 'auth0_token',
+
     // Apollo
     'ApolloAPIKeyCredential': 'apollo_api_key',
 
