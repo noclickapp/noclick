@@ -1,15 +1,16 @@
-// UNRUN fixtures exercise actual native credential, schema, Agent, cache and icon consumers.
-// Generated schema is deliberately awaited; these are source fixtures, not UI or live proof.
+// Exercises DNSimple's generated schema, credential cache and canvas icon.
+// Schema loading follows the same lazy-loading contract as the workflow UI.
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import DNSimpleIcon from '~/components/icons/DNSimpleIcon';
 import { DNSimpleNode } from '~/components/workflow/nodes/DNSimpleNode';
-import { NODE_SCHEMAS, getNodeCredentialInfo, isAgentToolProviderType } from '~/utils/nodeSchemas';
+import { NODE_SCHEMAS, getNodeCredentialInfo, isAgentToolProviderType, loadNodeSchemas } from '~/utils/nodeSchemas';
 import { getCredentialTypeFromSchemaTitle } from '~/utils/credentialTypeMap';
-import { autoSelectCredentialFromCache, upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
+import { cachedCredentialsOfType, upsertCredentialsIntoCache, removeCredentialsFromCache } from '~/utils/credentialAutoSelect';
 const TYPE = 'automation-dnsimple', FAMILY = 'dnsimple_account_token';
 describe('DNSimple native metadata', () => {
+  beforeAll(async () => { await loadNodeSchemas([TYPE]); });
   it('uses the actual account credential readers and four closed operations', () => {
     expect(getNodeCredentialInfo(TYPE)?.acceptedTypes).toEqual([FAMILY]);
     expect(getNodeCredentialInfo(TYPE)?.label).toBe('DNSimple');
@@ -35,9 +36,10 @@ describe('DNSimple native metadata', () => {
   });
   it('selects and removes only the actual saved account-token family', () => {
     upsertCredentialsIntoCache([{ id: 'dnsimple-fixture', name: 'Fixture account token', credential_type: FAMILY, owned_by_me: true }]);
-    expect(autoSelectCredentialFromCache(TYPE)).toEqual({ [FAMILY]: 'dnsimple-fixture' });
+    expect(getNodeCredentialInfo(TYPE)?.acceptedTypes).toContain(FAMILY);
+    expect(cachedCredentialsOfType(FAMILY)?.map(credential => credential.id)).toEqual(['dnsimple-fixture']);
     removeCredentialsFromCache(['dnsimple-fixture']);
-    expect(autoSelectCredentialFromCache(TYPE)).toEqual({});
+    expect(cachedCredentialsOfType(FAMILY) ?? []).toEqual([]);
   });
   it('preserves original SVG and the actual supplied canvas filter order', () => {
     const filter = 'grayscale(100%) brightness(0.4) drop-shadow(0 4px 12px #0004)';

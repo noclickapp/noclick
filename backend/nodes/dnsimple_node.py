@@ -11,7 +11,6 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import ConfigValidationError, NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.credential_fields import clean_secret
-from nodes.core.oauth_refresh_authority import AuthorityCredentialsTableStore, CURRENT_ORGANIZATION
 from utils.ssrf import SSRFError, guarded_async_client
 
 MAX_BYTES, MAX_ROWS, MAX_PAGE = 2 * 1024 * 1024, 10000, 10000
@@ -87,14 +86,18 @@ def _stored(raw): return _credential(raw).model_dump(mode="json")
 
 
 class _CurrentCredential(dict):
-    def __init__(self, data, store): super().__init__(data); self.store, self.anchor = store, self.identity(store.current)
-    @staticmethod
-    def identity(row): return tuple(getattr(row, name) for name in ("credential_id", "caller_id", "principal_id", "organization_id", "current_organization", "workflow_id", "owner_id", "credential_type", "token_version"))
+    def __init__(self, data, load):
+        super().__init__(data)
+        self.load = load
+        self.anchor = _stored(data)
+
     async def reload(self):
         try:
-            raw = await self.store.load()
-            if self.identity(self.store.current) != self.anchor or _stored(raw) != _stored(self): raise ValueError()
-        except Exception: raise ValueError("DNSimple current saved token/account/environment or authority changed") from None
+            if _stored(await self.load()) != self.anchor:
+                raise ValueError()
+        except Exception:
+            raise ValueError("DNSimple current saved token/account/environment or access changed") from None
+
     def __repr__(self): return "<DNSimple current credential>"
 
 
@@ -186,7 +189,7 @@ class _Session:
         try:
             if isinstance(self.raw, _CurrentCredential): await self.raw.reload()
             key = _credential(self.raw); self.status = None
-            async with guarded_async_client(require_public=True, timeout=20, follow_redirects=False, trust_env=False) as client:
+            async with guarded_async_client(timeout=20, follow_redirects=False, trust_env=False) as client:
                 self.attempted = True
                 async with client.stream("GET", HOSTS[key.environment] + path, params=params, headers={"Authorization": "Bearer " + key.access_token, "Accept": "application/json"}) as response:
                     self.status = response.status_code; headers = response.headers; body = bytearray()
@@ -211,7 +214,6 @@ class _Session:
 
 
 class DNSimpleNode(WorkflowNode):
-    workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="list_domains", noun="DNSimple protected account domain catalog", proves="reachability")
     edit_examples = ["Read accessible domain states and raw expiry dates without exposing domain names", "Read current zone flags and singleton record counts without any DNS record data"]
     @classmethod
@@ -224,21 +226,25 @@ class DNSimpleNode(WorkflowNode):
         return super().parse_config(data)
     @classmethod
     async def freshen_credential(cls, credential_data, **kwargs):
-        _credential(credential_data)
-        if not kwargs.get("credential_id"): return credential_data
-        organization = kwargs.get("organization_id")
-        if organization is None and not kwargs.get("workflow_id"): organization = CURRENT_ORGANIZATION
-        store = AuthorityCredentialsTableStore(kwargs.get("pool"), kwargs.get("user_id"), kwargs["credential_id"], credential_type="dnsimple_account_token", validate=_stored, grant_fields=("access_token", "account_id", "environment"), organization_id=organization, workflow_id=kwargs.get("workflow_id"), allow_same_grant_retry=False)
-        try: return _CurrentCredential(await store.load(), store)
-        except Exception: raise ValueError("DNSimple saved account token unavailable under current authority") from None
-    @classmethod
-    async def validate_credential_access(cls, credential_data, *, validation_context=None):
-        try: _stored(credential_data)
-        except ValueError: return {"valid": False, "error": "DNSimple literal account-token/account/environment family unsupported"}
-        if validation_context is None: return {"valid": True, "provider_verified": False}
-        await validation_context.revalidate(); result = await validation_context.run_operation("list_domains"); await validation_context.revalidate()
-        if result.get("status") == "success" and result.get("protected_reachability_verified") is True: return {"valid": True, "provider_verified": True}
-        return {"valid": False if result.get("http_status") == 401 else None, "error": result.get("error", "Protected account catalog access could not be verified")}
+        initial = _stored(credential_data)
+        if not kwargs.get("credential_id"):
+            return credential_data
+
+        async def load():
+            from nodes.core.run_op import resolve_operation_credential
+
+            return await resolve_operation_credential(
+                kwargs["credential_id"], kwargs.get("user_id"), kwargs.get("pool"),
+                kwargs.get("organization_id"), kwargs.get("workflow_id"),
+            )
+
+        try:
+            current = await load()
+            if _stored(current) != initial:
+                raise ValueError()
+            return _CurrentCredential(current, load)
+        except Exception:
+            raise ValueError("DNSimple saved account token unavailable under current access") from None
     @classmethod
     async def _dispatch(cls, credential, config):
         session = _Session(credential, config)

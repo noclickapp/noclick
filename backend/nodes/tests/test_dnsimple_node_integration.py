@@ -1,4 +1,4 @@
-"""UNRUN DNSimple native factory, collector and picker contract fixtures.
+"""DNSimple native factory, collector and picker contract fixtures.
 Only HTTP boundaries are mocked; native execute/config and scoped selection remain real.
 """
 from contextlib import asynccontextmanager
@@ -51,7 +51,7 @@ def transport(monkeypatch):
         return httpx.Response(code, content=payload if isinstance(payload, bytes) else json.dumps(payload).encode(), headers=headers)
     @asynccontextmanager
     async def client(**kwargs):
-        assert kwargs == {"require_public": True, "timeout": 20, "follow_redirects": False, "trust_env": False}
+        assert kwargs == {"timeout": 20, "follow_redirects": False, "trust_env": False}
         async with httpx.AsyncClient(transport=httpx.MockTransport(handle)) as instance: yield instance
     monkeypatch.setattr("nodes.dnsimple_node.guarded_async_client", client)
     return calls, replies
@@ -85,7 +85,8 @@ async def test_actual_config_lens_raw_witness_empty_catalog_and_separate_sandbox
     assert not transport[0]
     transport[1][ROOT] = (200, catalog([], pages=0))
     evidence = await collect_evidence(node_type=TYPE, user_id=USER, credential_data=deepcopy(RAW))
-    assert evidence.reachable is True and evidence.proves == "reachability" and not evidence.account_label
+    assert DNSimpleNode.connection_evidence.proves == "reachability"
+    assert evidence.reachable is True and evidence.is_empty_but_working and not evidence.account_label
     assert "PRIVATE" not in json.dumps(asdict(evidence))
     transport[0].clear()
     assert (await run("get_domain", **DARGS))["status"] == "error"

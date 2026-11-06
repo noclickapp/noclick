@@ -272,7 +272,7 @@
   "required": [
     "config"
   ],
-  "title": "DNSimple Node Configuration",
+  "title": "Dnsimple Node Configuration",
   "type": "object",
   "x-edit-examples": [
     "Read accessible domain states and raw expiry dates without exposing domain names",
