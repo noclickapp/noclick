@@ -1,5 +1,6 @@
 """Mock-based unit tests for the fal node — no live API calls."""
 
+import httpx
 import pytest
 from unittest.mock import AsyncMock, patch, MagicMock
 
@@ -29,6 +30,41 @@ SUCCESS = {"status": "success", "action": "test", "data": {}, "status_code": 200
 def mock_fal(return_value=None):
     return patch("nodes.fal_node._fal_request", new_callable=AsyncMock,
                  return_value=return_value or SUCCESS)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("config, method, url", [
+    (FalGetStatusConfig(model_id="fal-ai/flux/dev", request_id="req_123", logs="true"),
+     "GET", "https://queue.fal.run/fal-ai/flux/requests/req_123/status?logs=1"),
+    (FalGetResultConfig(model_id="fal-ai/flux/dev", request_id="req_123"),
+     "GET", "https://queue.fal.run/fal-ai/flux/requests/req_123"),
+    (FalCancelRequestConfig(model_id="fal-ai/flux/dev", request_id="req_123"),
+     "PUT", "https://queue.fal.run/fal-ai/flux/requests/req_123/cancel"),
+    (FalSearchModelsConfig(query="text to image", limit="50"),
+     "GET", "https://api.fal.ai/v1/models?q=text+to+image&limit=50"),
+    (FalUsageConfig(start_date="2025-01-01T00:00:00Z", end_date="2025-02-01T00:00:00Z"),
+     "GET", "https://api.fal.ai/v1/models/usage?start=2025-01-01T00%3A00%3A00Z&end=2025-02-01T00%3A00%3A00Z"),
+])
+async def test_documented_requests_on_the_wire(config, method, url):
+    """Exercise the real helper and serialization without a fabricated response."""
+    requests = []
+
+    def transport(request):
+        requests.append(request)
+        raise httpx.ConnectError("offline", request=request)
+
+    client = httpx.AsyncClient
+    with patch("nodes.fal_node.httpx.AsyncClient", side_effect=lambda **kwargs: client(
+        **kwargs, transport=httpx.MockTransport(transport), trust_env=False
+    )):
+        result = await make_node(config).execute({})
+
+    assert result["status"] == "error"
+    assert len(requests) == 1
+    assert requests[0].method == method
+    assert str(requests[0].url) == url
+    assert requests[0].headers["Authorization"] == "Key test-key-123"
+    assert requests[0].content == b""
 
 
 # ── Model Run ──────────────────────────────────────────────────────────────────
@@ -91,16 +127,21 @@ class TestFalModelRunMock:
 
 class TestFalQueueMock:
     @pytest.mark.asyncio
-    async def test_get_status_uses_post(self):
-        """get_status must use POST — was incorrectly GET (returned 405)."""
+    @pytest.mark.parametrize("model_id", ["fal-ai/flux", "fal-ai/flux/dev", " /fal-ai/flux/dev/ "])
+    async def test_get_status_uses_app_url_and_get(self, model_id):
+        """Queue follow-ups use owner/app, excluding the submission subpath.
+
+        https://fal.ai/docs/api-reference/inference-api/queue/status
+        """
         resp = {**SUCCESS, "data": {"status": "IN_PROGRESS", "logs": []}}
         with mock_fal(resp) as m:
             result = await make_node(FalGetStatusConfig(
-                model_id="fal-ai/flux/dev", request_id="req_123", logs="false"
+                model_id=model_id, request_id="req_123", logs="false"
             )).execute({})
         assert result["status"] == "success"
-        assert m.call_args.args[1] == "POST"
-        assert "req_123/status" in m.call_args.args[2]
+        assert m.call_args.args[1] == "GET"
+        assert m.call_args.args[2] == "https://queue.fal.run/fal-ai/flux/requests/req_123/status"
+        assert m.call_args.kwargs["params"] is None
 
     @pytest.mark.asyncio
     async def test_get_status_with_logs(self):
@@ -112,28 +153,30 @@ class TestFalQueueMock:
         assert params.get("logs") == "1"
 
     @pytest.mark.asyncio
-    async def test_get_result_uses_post(self):
-        """get_result must use POST — was incorrectly GET (returned 405)."""
+    @pytest.mark.parametrize("model_id", ["fal-ai/flux", "fal-ai/flux/dev", " /fal-ai/flux/dev/ "])
+    async def test_get_result_uses_app_url_and_get(self, model_id):
+        """https://fal.ai/docs/api-reference/inference-api/queue/result"""
         resp = {**SUCCESS, "data": {"images": [{"url": "https://cdn.fal.ai/result.png"}]}}
         with mock_fal(resp) as m:
             result = await make_node(FalGetResultConfig(
-                model_id="fal-ai/flux/dev", request_id="req_123"
+                model_id=model_id, request_id="req_123"
             )).execute({})
         assert result["status"] == "success"
-        assert m.call_args.args[1] == "POST"
-        assert "req_123" in m.call_args.args[2]
+        assert m.call_args.args[1] == "GET"
+        assert m.call_args.args[2] == "https://queue.fal.run/fal-ai/flux/requests/req_123"
 
     @pytest.mark.asyncio
-    async def test_cancel_request_uses_post(self):
-        """cancel_request must use POST — was incorrectly PUT (returned 405)."""
+    @pytest.mark.parametrize("model_id", ["fal-ai/flux", "fal-ai/flux/dev", " /fal-ai/flux/dev/ "])
+    async def test_cancel_request_uses_app_url_and_put(self, model_id):
+        """https://fal.ai/docs/api-reference/inference-api/queue/cancel"""
         resp = {**SUCCESS, "data": {"status": "CANCELLED"}}
         with mock_fal(resp) as m:
             result = await make_node(FalCancelRequestConfig(
-                model_id="fal-ai/flux/dev", request_id="req_123"
+                model_id=model_id, request_id="req_123"
             )).execute({})
         assert result["status"] == "success"
-        assert m.call_args.args[1] == "POST"
-        assert "req_123/cancel" in m.call_args.args[2]
+        assert m.call_args.args[1] == "PUT"
+        assert m.call_args.args[2] == "https://queue.fal.run/fal-ai/flux/requests/req_123/cancel"
 
 
 # ── Storage ────────────────────────────────────────────────────────────────────
@@ -173,14 +216,22 @@ class TestFalModelsMock:
             result = await make_node(FalSearchModelsConfig(query="flux", limit="10")).execute({})
         assert result["status"] == "success"
         assert FAL_PLATFORM_BASE in m.call_args.args[2]
+        # https://fal.ai/docs/platform-apis/v1/models
+        assert m.call_args.kwargs["params"] == {"q": "flux", "limit": "10"}
 
     @pytest.mark.asyncio
     async def test_get_usage(self):
         resp = {**SUCCESS, "data": {"time_series": [], "next_cursor": None}}
         with mock_fal(resp) as m:
-            result = await make_node(FalUsageConfig(start_date="2026-06-01")).execute({})
+            result = await make_node(FalUsageConfig(
+                start_date="2025-01-01T00:00:00Z", end_date="2025-02-01T00:00:00Z"
+            )).execute({})
         assert result["status"] == "success"
         assert "/models/usage" in m.call_args.args[2]
+        # https://fal.ai/docs/platform-apis/v1/models/usage
+        assert m.call_args.kwargs["params"] == {
+            "start": "2025-01-01T00:00:00Z", "end": "2025-02-01T00:00:00Z"
+        }
 
     @pytest.mark.asyncio
     async def test_list_requests(self):

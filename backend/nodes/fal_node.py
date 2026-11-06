@@ -13,7 +13,7 @@ Authentication: API Key (custom `Authorization: Key <FAL_KEY>` scheme — NOT Be
 API Base URLs:
 - Sync run:    https://fal.run
 - Queue:       https://queue.fal.run
-- Platform:    https://api.fal.ai/platform-apis/v1
+- Platform:    https://api.fal.ai/v1
 - Storage:     https://rest.fal.ai
 Documentation: https://docs.fal.ai
 
@@ -829,17 +829,24 @@ class FalNode(WorkflowNode):
         )
 
     async def _get_status(self, c: FalGetStatusConfig, api_key: str) -> Dict[str, Any]:
-        url = f"{FAL_QUEUE_BASE}/{c.model_id.strip().strip('/')}/requests/{c.request_id}/status"
+        url = f"{self._queue_request_url(c.model_id, c.request_id)}/status"
         params = {"logs": "1"} if c.logs == "true" else None
-        return await _fal_request(api_key, "POST", url, params=params, action_name="get_status")
+        return await _fal_request(api_key, "GET", url, params=params, action_name="get_status")
 
     async def _get_result(self, c: FalGetResultConfig, api_key: str) -> Dict[str, Any]:
-        url = f"{FAL_QUEUE_BASE}/{c.model_id.strip().strip('/')}/requests/{c.request_id}"
-        return await _fal_request(api_key, "POST", url, action_name="get_result")
+        url = self._queue_request_url(c.model_id, c.request_id)
+        return await _fal_request(api_key, "GET", url, action_name="get_result")
 
     async def _cancel_request(self, c: FalCancelRequestConfig, api_key: str) -> Dict[str, Any]:
-        url = f"{FAL_QUEUE_BASE}/{c.model_id.strip().strip('/')}/requests/{c.request_id}/cancel"
-        return await _fal_request(api_key, "POST", url, action_name="cancel_request")
+        url = f"{self._queue_request_url(c.model_id, c.request_id)}/cancel"
+        return await _fal_request(api_key, "PUT", url, action_name="cancel_request")
+
+    def _queue_request_url(self, model_id: str, request_id: str) -> str:
+        # Queue follow-ups address the owner/app, without the model's endpoint
+        # path (e.g. /dev). Including that path returns 405, even with GET/PUT.
+        # https://fal.ai/docs/documentation/model-apis/inference/queue
+        app = "/".join(model_id.strip().strip("/").split("/")[:2])
+        return f"{FAL_QUEUE_BASE}/{app}/requests/{request_id}"
 
     async def _initiate_upload(self, c: FalInitiateUploadConfig, api_key: str) -> Dict[str, Any]:
         url = f"{FAL_REST_BASE}/storage/upload/initiate"
@@ -855,13 +862,13 @@ class FalNode(WorkflowNode):
         )
 
     async def _search_models(self, c: FalSearchModelsConfig, api_key: str) -> Dict[str, Any]:
-        params = {"query": c.query, "limit": c.limit}
+        params = {"q": c.query, "limit": c.limit}
         return await _fal_request(
             api_key, "GET", f"{FAL_PLATFORM_BASE}/models", params=params, action_name="search_models"
         )
 
     async def _get_usage(self, c: FalUsageConfig, api_key: str) -> Dict[str, Any]:
-        params = {"start_date": c.start_date, "end_date": c.end_date}
+        params = {"start": c.start_date, "end": c.end_date}
         return await _fal_request(
             api_key, "GET", f"{FAL_PLATFORM_BASE}/models/usage", params=params,
             action_name="get_usage",
