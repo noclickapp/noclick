@@ -92,6 +92,15 @@ async def test_current_rows_refuse_before_decrypt_and_provider(storage, provider
 
 
 @pytest.mark.asyncio
+async def test_class_hook_loads_current_credential_with_base_arguments(storage):
+    store, crypto = storage
+    fresh = await p.LinkwardenNode.freshen_credential(KEY, pool=store, user_id=USER, credential_id=CID)
+    assert p.guard(fresh).model_dump() == KEY
+    assert await fresh["_linkwarden_reader"].read() == p.guard(KEY)
+    assert crypto.decrypt_credential.call_count == 2
+
+
+@pytest.mark.asyncio
 async def test_actual_factory_saved_id_without_caller_never_uses_cached_pair(storage, provider):
     store, crypto = storage
     node = NodeFactory.create_node("fixture", "automation-linkwarden", {"config": {"operation": "list_collections"}, "credentials": KEY, "credential_id": CID, "_approval_pool": store})
@@ -146,14 +155,14 @@ async def test_trusted_workflow_owner_fallback_is_current_and_revocable(storage,
     owner, allowed = AsyncMock(return_value=OWNER), AsyncMock(return_value=True)
     monkeypatch.setattr(credentials, "get_workflow_owner_id", owner)
     monkeypatch.setattr(credentials, "is_credential_authorized_for_workflow", allowed)
-    fresh = await p.LinkwardenNode.freshen_credential(KEY, pool=store, user_id=USER, credential_id=CID, organization_id=ORG, workflow_id=WORKFLOW)
+    fresh = await p.freshen_linkwarden_credential(KEY, pool=store, user_id=USER, credential_id=CID, organization_id=ORG, workflow_id=WORKFLOW)
     owner.assert_awaited_once_with(store, WORKFLOW)
     allowed.assert_awaited_once_with(store, WORKFLOW, CID)
     sql, args = store.calls[-1]
     assert "workflow_authorized_credentials" in sql and "w.owner_id = $2" in sql and args == (CID, OWNER, ORG, WORKFLOW)
     allowed.return_value = False
     with pytest.raises(ValueError): await fresh["_linkwarden_reader"].read()
-    with pytest.raises(ValueError): await p.LinkwardenNode.freshen_credential(KEY, pool=store, user_id=USER, credential_id=CID, organization_id=ORG)
+    with pytest.raises(ValueError): await p.freshen_linkwarden_credential(KEY, pool=store, user_id=USER, credential_id=CID, organization_id=ORG)
 
 
 @pytest.mark.asyncio

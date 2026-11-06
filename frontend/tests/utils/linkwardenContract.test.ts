@@ -19,6 +19,7 @@ describe('Linkwarden scoped metadata', () => {
         expect(credential.required).toEqual(expect.arrayContaining(['instance_origin', 'access_token']));
         expect(credential.properties.access_token['ui:widget']).toBe('password');
         expect(credential['x-oauth-provider']).toBeUndefined();
+        expect(credential['x-credential-type']).toBe('linkwarden_access_token');
         const refs = native.properties.config.oneOf ?? native.properties.config.anyOf;
         const definitions = refs.map((r: any) => native.$defs[r.$ref.split('/').pop()]);
         expect(definitions.map((d: any) => d.properties.operation.const).sort()).toEqual(['get_collection', 'list_collections', 'list_tags']);

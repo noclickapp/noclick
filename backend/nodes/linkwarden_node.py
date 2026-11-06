@@ -37,7 +37,7 @@ def scalar_text(value):
 
 
 class LinkwardenAccessTokenCredential(BaseModel):
-    model_config = ConfigDict(extra="forbid", hide_input_in_errors=True, title="Linkwarden Access Token", json_schema_extra={"x-credential-url": "https://docs.linkwarden.app/usage/profile-settings"})
+    model_config = ConfigDict(extra="forbid", hide_input_in_errors=True, title="Linkwarden Access Token", json_schema_extra={"x-credential-type": TYPE, "x-credential-url": "https://docs.linkwarden.app/usage/profile-settings"})
     credential_type: Literal["linkwarden_access_token"] = Field(TYPE, json_schema_extra={"ui:hidden": True})
     instance_origin: str = Field(..., repr=False, title="Instance HTTPS Origin", description="One public HTTPS origin, with no credentials/path/query/fragment. API paths are fixed /api/v1. Hosted/self-hosted instance version parity is unverified.")
     access_token: str = Field(..., min_length=1, max_length=8192, repr=False, title="Existing Access Token", description="Supplied existing access token, Authorization Bearer header only. No login, JWT parsing, token mint/refresh or alternate auth.", json_schema_extra={"ui:widget": "password"})
@@ -248,6 +248,15 @@ def result_page(payload, kind, *, names=False):
     return {"items": [record(r, kind, names=names) for r in rows[:MAX_OUTPUT]], "count": min(len(rows), MAX_OUTPUT), "total": None, "has_more": None, "completion_verified": False, "truncated": truncated, "local_output_limit": MAX_OUTPUT, "snapshot_verified": False, "principal_identity_verified": False, "ownership_verified": False, **cursor_witness}
 
 
+async def freshen_linkwarden_credential(credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=None):
+    value = guard(credential_data)
+    if not credential_id: return value.model_dump()
+    if not user_id: raise ValueError("Stored Linkwarden credentials require a caller")
+    reader = Reader(credential_id, user_id, organization_id, workflow_id, pool, expected=authority(value))
+    fresh = await reader.read()
+    return {**fresh.model_dump(), "_linkwarden_reader": reader}
+
+
 class LinkwardenNode(WorkflowNode):
     workflow_credential_refresh = True
     connection_evidence = ConnectionEvidence(operation="list_collections", noun="token-visible collections catalog metadata", proves="reachability")
@@ -256,13 +265,8 @@ class LinkwardenNode(WorkflowNode):
     def get_config_model(cls): return LinkwardenNodeConfig
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=None, **_kwargs):
-        value = guard(credential_data)
-        if not credential_id: return value.model_dump()
-        if not user_id: raise ValueError("Stored Linkwarden credentials require a caller")
-        reader = Reader(credential_id, user_id, organization_id, workflow_id, pool, expected=authority(value))
-        fresh = await reader.read()
-        return {**fresh.model_dump(), "_linkwarden_reader": reader}
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        return await freshen_linkwarden_credential(credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
 
     @classmethod
     async def load_field_options(cls, field_name, credential_data, context=None, search=None, page_token=None):
@@ -286,7 +290,7 @@ class LinkwardenNode(WorkflowNode):
     async def execute(self, inputs):
         cfg = self.config.config
         raw = self.node_data.get("credentials") or (self.config.credentials.model_dump() if self.config.credentials is not None else None)
-        data = await self.freshen_credential(raw, credential_id=self.node_data.get("credential_id"), user_id=self.user_id, workflow_id=self.workflow_id, organization_id=self.organization_id, pool=self.node_data.get("_approval_pool"))
+        data = await freshen_linkwarden_credential(raw, credential_id=self.node_data.get("credential_id"), user_id=self.user_id, workflow_id=self.workflow_id, organization_id=self.organization_id, pool=self.node_data.get("_approval_pool"))
         value, reader = guard(data), data.get("_linkwarden_reader")
         try:
             if cfg.operation == "list_collections": return result_page(await request(value, "/collections", reader=reader), "collection", names=cfg.include_names)

@@ -70,6 +70,7 @@
       ],
       "title": "Linkwarden Access Token",
       "type": "object",
+      "x-credential-type": "linkwarden_access_token",
       "x-credential-url": "https://docs.linkwarden.app/usage/profile-settings"
     },
     "ListCollections": {
