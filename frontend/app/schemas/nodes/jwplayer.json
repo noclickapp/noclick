@@ -238,7 +238,7 @@
   "required": [
     "config"
   ],
-  "title": "JWX (JW Player) Node Configuration",
+  "title": "Jwplayer Node Configuration",
   "type": "object",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "x-agent-tool-provider": true

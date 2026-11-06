@@ -1,20 +1,22 @@
-// Actual native frontend seams, prepared UNRUN. No provider calls.
+// Native JWX palette, credential, operation and logo checks. No provider calls.
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { JWPlayerNode } from '~/components/workflow/nodes/JWPlayerNode';
-import { AVAILABLE_NODES } from '~/components/workflow/nodes/nodeRegistry';
+import { NODE_DEFINITION_FILES } from '~/components/workflow/nodes/nodeDefinitions';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
-import { filterConfigForExecution, getAgentToolOperations, getNodeCredentialInfo } from '~/utils/nodeSchemas';
-import { autoSelectCredentialFromCache, removeCredentialsFromCache, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
+import { filterConfigForExecution, getAgentToolOperations, getNodeCredentialInfo, loadNodeSchemas } from '~/utils/nodeSchemas';
+import { removeCredentialsFromCache, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
 import fixture from '../fixtures/jwplayer-native.json';
 
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn() }));
 vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: vi.fn(), set: vi.fn(), delete: vi.fn() } }));
 
 describe('JWX native property metadata', () => {
+    beforeAll(() => loadNodeSchemas([fixture.type]));
     it('is discoverable in the registry used by both native palettes', () => {
-        expect(AVAILABLE_NODES.some(node => node.type === fixture.type)).toBe(true);
+        expect(NODE_DEFINITION_FILES.some(([type, module]) => type === fixture.type && module === 'JWPlayerNode')).toBe(true);
         expect(JWPlayerNode.label).toBe('JWX (JW Player)');
         expect(JWPlayerNode.keywords).toContain('jwp');
     });

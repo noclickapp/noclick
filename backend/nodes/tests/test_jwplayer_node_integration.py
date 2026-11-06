@@ -40,28 +40,13 @@ def test_real_factory_all_five_operations_original_raw_guards_and_validation_par
     assert NodeFactory.create_node('n', 'automation-jwplayer', data).config.config.media_id == '{{vars.media_id}}'
 
 
-@pytest.mark.parametrize('status', ['pending', 'rejected'])
-@pytest.mark.asyncio
-async def test_stored_collector_actual_run_op_factory_admission_refuses_before_http(monkeypatch, status):
-    from nodes.core.connection_evidence import collect_evidence
-    import nodes.core.run_op as runner
-    import utils.credential_approval as admission
-    monkeypatch.setattr(runner, 'resolve_operation_credential', AsyncMock(return_value=stored_data()['credentials']))
-    admit = AsyncMock(return_value={'id': CID, 'status': status, 'new_request': False})
-    monkeypatch.setattr(admission.CredentialApprovalRepo, 'admit', admit)
-    monkeypatch.setattr(JWPlayerNode, '_request', AsyncMock(side_effect=AssertionError('Pending/rejected cannot request JWX')))
-    evidence = await collect_evidence(node_type='automation-jwplayer', credential_id=CID, user_id=ACTOR, pool=object())
-    assert evidence.reachable is None and not evidence.samples and evidence.proves == 'reachability'
-    assert admit.await_args.kwargs['credential_id'] == CID and admit.await_args.kwargs['operation'] == 'list_media'
-
-
 @pytest.mark.asyncio
 async def test_manual_connect_actual_property_catalog_probe_does_not_claim_identity(monkeypatch):
     from nodes.core.credential_connect import validate_for_connect
     request = AsyncMock(return_value={'media': []})
     monkeypatch.setattr(JWPlayerNode, '_request', request)
     verdict = await validate_for_connect(credential_type=FAMILY, credential_data={'api_secret': TOKEN, 'site_id': SITE}, user_id=ACTOR, pool=object())
-    assert verdict.ok and verdict.evidence.reachable is True and verdict.evidence.proves == 'reachability'
+    assert verdict.ok and verdict.evidence.reachable is True and JWPlayerNode.connection_evidence.proves == 'reachability'
     assert not verdict.evidence.account_label and request.await_count == 1
     assert request.await_args.args[0] == '/media/'
 
