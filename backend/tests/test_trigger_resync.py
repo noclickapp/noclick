@@ -48,8 +48,8 @@ async def _owner(db) -> str:
     return owner
 
 
-async def _workflow(db, owner, nodes, *, edited_days_ago: int = 0) -> str:
-    workflow_id = str(uuid.uuid4())
+async def _workflow(db, owner, nodes, *, edited_days_ago: int = 0, workflow_id: str | None = None) -> str:
+    workflow_id = workflow_id or str(uuid.uuid4())
     await db.execute("INSERT INTO workflows (id, owner_id, name, workflow) VALUES ($1, $2, $3, $4::jsonb)",
                      workflow_id, owner, LABEL, {"nodes": nodes, "edges": []})
     if edited_days_ago:
@@ -165,8 +165,9 @@ async def test_a_pass_out_of_time_picks_up_where_it_stopped(db):
     clock = iter(range(1000))
 
     with patch.object(webhook_manager, "monotonic", lambda: next(clock)):
-        # The deadline is taken at 0, the first workflow is judged at 1, the second at 2, so 2 seconds is one visit.
-        first, stats = await _pass_visits(db, limit=100, budget_s=2)
+        # The deadline is taken at 0, the first workflow is judged at 1 and its step at 2, the second at 3,
+        # so 3 seconds is one visit.
+        first, stats = await _pass_visits(db, limit=100, budget_s=3)
     assert len(first) == 1 and stats["stopped"] == "out of time" and not stats["lap_finished"]
 
     rest, stats = await _pass_visits(db, limit=10_000)
@@ -210,22 +211,99 @@ async def test_a_pass_killed_inside_a_workflow_goes_on_past_it_and_the_next_lap_
     assert visited.count(victim) == 2, "the next lap reaches it"
 
 
-async def test_a_step_that_hangs_is_counted_and_the_pass_goes_on(db):
-    seeded = await _cron_workflows(db, 3)
+async def _adjacent_workflows(db, *step_counts: int) -> list[str]:
+    """Workflows next to each other in the lap, each with that many schedules, and the lap just before them."""
+    owner = await _owner(db)
+    first = uuid.uuid4().int
+    ids = [str(uuid.UUID(int=first + n)) for n in range(len(step_counts))]
+    for workflow_id, count in zip(ids, step_counts):
+        await _workflow(db, owner, [_step(CRON, HOURLY, node_id=f"s{n}") for n in range(count)], workflow_id=workflow_id)
     await trigger_resync.set_registers(db.pool, True)
-    visited = []
+    await db.execute("UPDATE trigger_resync_state SET after_workflow_id = $1", uuid.UUID(int=first - 1))
+    return ids
 
-    async def hangs_on_one(pool, workflow_id, node_id, **kwargs):
-        visited.append(workflow_id)
-        if workflow_id == seeded[0]:
-            await asyncio.sleep(60)
+
+def _visits_steps(reached):
+    async def visit(pool, workflow_id, node_id, **kwargs):
+        reached.append((workflow_id, node_id))
         return {"state": "live"}
 
-    with patch.object(WebhookManager, "reconcile_node", hangs_on_one), \
-            patch.object(webhook_manager, "RESYNC_NODE_TIMEOUT_S", 0.05):
+    return patch.object(WebhookManager, "reconcile_node", visit)
+
+
+async def test_time_is_judged_before_each_step_and_the_next_pass_starts_with_the_workflow_it_stopped_in(db):
+    """Judged only between workflows, one with many triggers ran the pass past the daily job's end."""
+    one, many = await _adjacent_workflows(db, 1, 3)
+    clock = iter(range(1000))
+    reached = []
+
+    with _visits_steps(reached), patch.object(webhook_manager, "monotonic", lambda: next(clock)):
+        # Deadline at 0, the first workflow at 1 and its step at 2, the second at 3 and its steps at 4 and 5.
+        stats = await WebhookManager.resync_trigger_registrations(db.pool, limit=100, budget_s=5)
+    assert reached == [(one, "s0"), (many, "s0")] and stats["stopped"] == "out of time"
+    assert (await trigger_resync.read_state(db.pool)).after_workflow_id == uuid.UUID(one)
+
+    reached.clear()
+    with _visits_steps(reached):
+        await WebhookManager.resync_trigger_registrations(db.pool, limit=1)
+    assert reached == [(many, "s0"), (many, "s1"), (many, "s2")], "the next pass reaches every step of it"
+
+
+async def test_a_workflow_too_long_for_any_pass_doesnt_hold_the_lap(db):
+    many, after_it = await _adjacent_workflows(db, 3, 1)
+    clock = iter(range(1000))
+    reached = []
+
+    with _visits_steps(reached), patch.object(webhook_manager, "monotonic", lambda: next(clock)):
+        # Deadline at 0, the workflow at 1, its steps at 2 and 3.
+        stats = await WebhookManager.resync_trigger_registrations(db.pool, limit=100, budget_s=3)
+    assert reached == [(many, "s0")] and stats["stopped"] == "out of time"
+    assert (await trigger_resync.read_state(db.pool)).after_workflow_id == uuid.UUID(many)
+
+    reached.clear()
+    with _visits_steps(reached):
+        await WebhookManager.resync_trigger_registrations(db.pool, limit=1)
+    assert reached == [(after_it, "s0")], "the lap goes on, and its next lap reaches the rest"
+
+
+async def test_a_step_that_acts_is_never_cut_off(db):
+    """Cut off between the provider's registration and its record, the next pass would register a second hook,
+    and every event would fire twice."""
+    seeded = await _cron_workflows(db, 1)
+    await trigger_resync.set_registers(db.pool, True)
+    done = []
+
+    async def slow(pool, workflow_id, node_id, **kwargs):
+        if workflow_id == seeded[0]:
+            done.append("registered with the provider")
+            await asyncio.sleep(0.3)
+            done.append("recorded")
+        return {"state": "registered"}
+
+    with patch.object(WebhookManager, "reconcile_node", slow), \
+            patch.object(webhook_manager, "RESYNC_PLAN_STEP_TIMEOUT_S", 0.05):
         stats = await WebhookManager.resync_trigger_registrations(db.pool, limit=10_000)
-    assert stats["failed"] == 1 and stats["lap_finished"]
-    assert set(seeded) <= set(visited)
+    assert done == ["registered with the provider", "recorded"]
+    assert stats["failed"] == 0 and stats["lap_finished"]
+
+
+async def test_a_dry_run_step_that_hangs_is_counted_and_the_plan_goes_on(db):
+    seeded = await _cron_workflows(db, 3)
+    reached = []
+
+    async def hangs_on_one(pool, workflow_id, node_id, **kwargs):
+        assert kwargs["plan_only"]
+        reached.append(workflow_id)
+        if workflow_id == seeded[0]:
+            await asyncio.sleep(60)
+        return {"state": "would_register"}
+
+    with patch.object(WebhookManager, "reconcile_node", hangs_on_one), \
+            patch.object(webhook_manager, "RESYNC_PLAN_STEP_TIMEOUT_S", 0.05):
+        plan = await WebhookManager.plan_trigger_resync(db.pool)
+    assert plan["complete"] and set(seeded) <= set(reached)
+    [failed] = plan["listed"]["failed"]
+    assert failed["workflow_id"] == seeded[0] and failed["error"] == "TimeoutError"
 
 
 async def test_a_step_that_fails_doesnt_stop_the_pass(db):
@@ -456,6 +534,18 @@ async def test_a_credential_id_that_was_never_saved_is_no_credential(db, provide
     result = await WebhookManager.reconcile_node(db.pool, workflow_id, NODE, plan_only=True)
 
     assert result["state"] == "unregistered"
+
+
+async def test_a_workflow_with_no_edit_time_is_listed_without_one(db, provider, nothing_leaves):
+    [workflow_id] = await _cron_workflows(db, 1)
+    await db.execute("ALTER TABLE workflows DISABLE TRIGGER update_workflows_updated_at")
+    await db.execute("UPDATE workflows SET updated_at = NULL WHERE id = $1", workflow_id)
+    await db.execute("ALTER TABLE workflows ENABLE TRIGGER update_workflows_updated_at")
+
+    plan = await WebhookManager.plan_trigger_resync(db.pool)
+
+    [entry] = [e for e in plan["listed"]["would_register"] if e["workflow_id"] == workflow_id]
+    assert entry["edited_days_ago"] is None
 
 
 async def test_a_plan_out_of_time_says_so(db, provider, nothing_leaves):

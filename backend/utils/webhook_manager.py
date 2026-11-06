@@ -392,10 +392,11 @@ def _app_event_class_for_provider(provider: str):
     return None
 
 
-# How long one nightly resync pass may keep starting workflows, and how long one
-# step of it may take (a reconcile holds no transaction, and the next lap heals one cut off).
+# How long one nightly resync pass may keep starting steps, and how long one step of
+# its dry run may take. A step that acts is never cut off: stopped between a provider's
+# registration and its record, the next pass would register a second hook.
 RESYNC_BUDGET_S = 600
-RESYNC_NODE_TIMEOUT_S = 90
+RESYNC_PLAN_STEP_TIMEOUT_S = 90
 
 
 def _reported_kind(node: Optional[Dict[str, Any]]) -> Tuple[str, Optional[str]]:
@@ -2286,9 +2287,11 @@ class WebhookManager:
 
         A pass visits at most ``limit`` workflows, in id order, from where the
         last one reached (``trigger_resync_state``), and stops starting them
-        past ``budget_s``; the next picks up there, and the lap wraps at the
-        end. The lap moves before each visit: a workflow that kills the pass
-        can't stop the rotation, and the next lap reaches it. Turning the
+        past ``budget_s``, judged before each step and never by cutting one off;
+        the next picks up there, and the lap wraps at the end. The lap moves
+        before each visit: a workflow that kills the pass can't stop the
+        rotation, and the next lap reaches it. A workflow time stopped partway
+        is where the next pass starts, unless it was this pass's first. Turning the
         switch off stops a pass at its next workflow, and of two passes at once
         the one that finds the lap moved stops.
 
@@ -2312,15 +2315,24 @@ class WebhookManager:
             "registers": True, "workflows": 0, "checked": 0, "converged": 0, "adopted": 0, "refused": 0,
             "failed": 0, "no_graph": 0, "lap_finished": False, "stopped": None,
         }
-        for wf_row in rows[:limit]:
+        for index, wf_row in enumerate(rows[:limit]):
             if monotonic() >= deadline:
                 stats["stopped"] = "out of time"
                 break
             if not await trigger_resync.advance(pool, expected=after, to=wf_row["id"]):
                 stats["stopped"] = "turned off, or another pass took the lap over"
                 break
-            after = wf_row["id"]
-            await WebhookManager._resync_workflow(pool, wf_row, registerable_types, stats)
+            before, after = after, wf_row["id"]
+            checked = stats["checked"]
+            if not await WebhookManager._resync_workflow(pool, wf_row, registerable_types, stats, deadline):
+                stats["stopped"] = "out of time"
+                # The next pass starts with it, unless it was this one's first and got a step done:
+                # one too long for any pass can't hold the lap.
+                if (index or stats["checked"] == checked) and await trigger_resync.advance(
+                    pool, expected=after, to=before
+                ):
+                    after = before
+                break
         else:
             if len(rows) <= limit:
                 stats["lap_finished"] = await trigger_resync.advance(
@@ -2331,14 +2343,16 @@ class WebhookManager:
         return stats
 
     @staticmethod
-    async def _resync_workflow(pool, wf_row, registerable_types: List[str], stats: Dict[str, Any]) -> None:
-        """One workflow of a pass that acts."""
+    async def _resync_workflow(
+        pool, wf_row, registerable_types: List[str], stats: Dict[str, Any], deadline: float
+    ) -> bool:
+        """One workflow of a pass that acts. False when ``deadline`` came before its last step."""
         from utils.workflow_readiness import WorkflowNotReadyError
 
         wf_id = wf_row["id"]
         if not wf_row["has_graph"]:
             stats["no_graph"] += 1
-            return
+            return True
         try:
             _, node_ids = await WebhookManager._resync_steps(pool, wf_id, registerable_types)
         except Exception:
@@ -2347,17 +2361,18 @@ class WebhookManager:
                 f"[WEBHOOK] Resync candidate scan failed for {wf_id}",
                 exc_info=True,
             )
-            return
+            return True
         if not node_ids:
-            return
+            return True
 
         stats["workflows"] += 1
         for node_id in sorted(node_ids):
+            if monotonic() >= deadline:
+                return False
             stats["checked"] += 1
             try:
-                result = await asyncio.wait_for(
-                    WebhookManager.reconcile_node(pool, str(wf_id), node_id, refresh_next_run=False),
-                    RESYNC_NODE_TIMEOUT_S,
+                result = await WebhookManager.reconcile_node(
+                    pool, str(wf_id), node_id, refresh_next_run=False
                 )
                 state = result.get("state")
                 if result.get("adopted"):
@@ -2378,6 +2393,7 @@ class WebhookManager:
                     f"[WEBHOOK] Resync reconcile failed for {wf_id}:{node_id}",
                     exc_info=True,
                 )
+        return True
 
     @staticmethod
     async def plan_trigger_resync(pool, *, budget_s: Optional[float] = None) -> Dict[str, Any]:
@@ -2407,7 +2423,7 @@ class WebhookManager:
             kind, operation = _reported_kind(node)
             entry = {
                 "workflow_id": str(wf_row["id"]),
-                "edited_days_ago": (now - wf_row["updated_at"]).days,
+                "edited_days_ago": (now - wf_row["updated_at"]).days if wf_row["updated_at"] else None,
                 "type": kind,
                 "operation": operation,
             }
@@ -2415,9 +2431,13 @@ class WebhookManager:
                 entry["error"] = type(error).__name__
             listed.setdefault(state, []).append(entry)
 
-        for wf_row in rows:
+        def out_of_time() -> bool:
             if deadline is not None and monotonic() >= deadline:
                 plan["complete"] = False
+            return not plan["complete"]
+
+        for wf_row in rows:
+            if out_of_time():
                 break
             if not wf_row["has_graph"]:
                 plan["no_graph"] += 1
@@ -2431,11 +2451,16 @@ class WebhookManager:
                 continue
             plan["workflows"] += 1
             for node_id in sorted(node_ids):
+                if out_of_time():
+                    break
                 plan["checked"] += 1
                 node = steps.get(node_id)
                 try:
-                    result = await WebhookManager.reconcile_node(
-                        pool, str(wf_row["id"]), node_id, nodes_override=list(steps.values()), plan_only=True,
+                    result = await asyncio.wait_for(
+                        WebhookManager.reconcile_node(
+                            pool, str(wf_row["id"]), node_id, nodes_override=list(steps.values()), plan_only=True,
+                        ),
+                        RESYNC_PLAN_STEP_TIMEOUT_S,
                     )
                 except Exception as e:
                     logger.warning(f"[WEBHOOK] Resync plan failed for {wf_row['id']}:{node_id}", exc_info=True)
