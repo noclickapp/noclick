@@ -832,6 +832,18 @@
       "sha256": "6d61eb7a90ca76d212e13fbabf8127541a31932f800c53c88dc1be553388a82c"
     },
     {
+      "path": "frontend/public/icons/adapty-brand.svg",
+      "source": "https://adapty.io (official Adapty brand mark, sourced by the integration PR)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "de176a8a9fc9178148c57e334d9866054c4349316735921cbe65c0242609076b"
+    },
+    {
+      "path": "frontend/public/icons/adapty.svg",
+      "source": "https://adapty.io (official Adapty brand mark, sourced by the integration PR)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "ff7d99453d56547d87bd0d64907067753e68ff2a09dff81787775f4848023afe"
+    },
+    {
       "path": "frontend/public/icons/porkbun-brand-vector.svg",
       "source": "https://porkbun.com/",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
