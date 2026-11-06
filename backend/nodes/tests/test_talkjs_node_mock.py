@@ -260,3 +260,24 @@ async def test_message_required_nullable_fields_and_picker_cap_are_honest(wire):
         wire.responses.append({"data": [{**USER, "id": "u" + str(index)}]})
     with pytest.raises(tn.TalkJSAPIError, match="bounded search"):
         await tn.TalkJSNode.load_field_options("user_id", CREDS, context={"_user_id": "actor"}, search="unmatched")
+
+
+@pytest.mark.asyncio
+async def test_freshen_hook_binds_saved_authority_with_base_signature(monkeypatch, wire):
+    pool = object()
+    fresh = await tn.TalkJSNode.freshen_credential(
+        CREDS, pool=pool, user_id="actor", credential_id="saved"
+    )
+    assert fresh["_talkjs_authority"] == tn._LookupAuthority(pool, "actor", "saved", None, None)
+    resolve = AsyncMock(return_value=tn._shape(CREDS))
+    monkeypatch.setattr(tn, "_current_data", resolve)
+    wire.responses.append({"data": []})
+    await tn.TalkJSNode.load_field_options(
+        "user_id", fresh, context={"_user_id": "actor", "_workflow_id": "flow"}
+    )
+    assert resolve.await_args_list[0].kwargs == {
+        "pool": pool, "user_id": "actor", "credential_id": "saved",
+        "organization_id": None, "workflow_id": "flow",
+    }
+    with pytest.raises(ValueError, match="actor"):
+        await tn.TalkJSNode.load_field_options("user_id", fresh, context={"_user_id": "other"})

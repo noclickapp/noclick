@@ -596,11 +596,11 @@ class TalkJSNode(WorkflowNode):
         return TalkJSNodeConfig
 
     @classmethod
-    def parse_config(cls, data):
-        _original_family(data)
-        shaped = dict(data)
-        if data.get("credentials") is not None:
-            shaped["credentials"] = _shape(data["credentials"])
+    def parse_config(cls, config_data):
+        _original_family(config_data)
+        shaped = dict(config_data)
+        if config_data.get("credentials") is not None:
+            shaped["credentials"] = _shape(config_data["credentials"])
         try:
             TalkJSNodeConfig.model_validate(runtime_config_view(shaped, TalkJSNodeConfig))
         except ValueError:
@@ -608,25 +608,25 @@ class TalkJSNode(WorkflowNode):
         return super().parse_config(shaped)
 
     @classmethod
-    def validate_config(cls, data):
+    def validate_config(cls, config_data):
         try:
-            _original_family(data)
-            shaped = dict(data)
-            if data.get("credentials") is not None:
-                shaped["credentials"] = _shape(data["credentials"])
+            _original_family(config_data)
+            shaped = dict(config_data)
+            if config_data.get("credentials") is not None:
+                shaped["credentials"] = _shape(config_data["credentials"])
             TalkJSNodeConfig.model_validate(runtime_config_view(shaped, TalkJSNodeConfig))
         except (ValueError, TypeError):
             return ValidationResult(valid=False, errors=["TalkJS native configuration or credential family is invalid"], satisfied_set=None)
         return super().validate_config(shaped)
 
     @classmethod
-    async def freshen_credential(cls, data, **context):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
         # Lookup callers pass workflow scope to load_field_options, after this
         # hook. Bind only the trusted identifiers here; re-resolve with that
         # scope in the loader before any provider request.
-        shaped = _shape(data)
-        if context.get("credential_id"):
-            shaped["_talkjs_authority"] = _LookupAuthority(context.get("pool"), context.get("user_id"), context["credential_id"], context.get("organization_id"), context.get("workflow_id"))
+        shaped = _shape(credential_data)
+        if credential_id:
+            shaped["_talkjs_authority"] = _LookupAuthority(pool, user_id, credential_id, None, None)
         return shaped
 
     @classmethod
