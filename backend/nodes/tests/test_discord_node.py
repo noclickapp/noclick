@@ -1542,6 +1542,34 @@ class TestMockAPIOperations:
             assert result["action"] == "ban_member_from_guild"
             assert result["success"] is True
 
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("regions", [[], [{
+        "id": "us-west", "name": "US West", "optimal": True,
+        "deprecated": False, "custom": False,
+    }]])
+    async def test_list_voice_regions_request(self, regions):
+        node = create_mock_node(DiscordListVoiceRegionsConfig())
+        requests = []
+
+        def transport(request):
+            requests.append(request)
+            return httpx.Response(200, json=regions)
+
+        original_client = httpx.AsyncClient
+        def client(**kwargs):
+            return original_client(**kwargs, transport=httpx.MockTransport(transport))
+
+        with patch("httpx.AsyncClient", side_effect=client):
+            result = await node.execute({})
+
+        assert len(requests) == 1
+        assert requests[0].method == "GET"
+        assert str(requests[0].url) == "https://discord.com/api/v10/voice/regions"
+        assert requests[0].headers["Authorization"] == "Bot mock_token_123"
+        assert result["action"] == "list_available_voice_regions"
+        assert result["regions"] == regions
+        assert result["count"] == len(regions)
+
     # Soundboard Mock Tests
     @pytest.mark.asyncio
     async def test_list_guild_soundboard_sounds_mock(self):

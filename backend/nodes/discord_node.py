@@ -7017,6 +7017,15 @@ class DiscordNode(AppEventTriggerMixin, WorkflowNode):
             "success": True,
         }
 
+    async def _list_voice_regions(self, auth_header: str) -> Dict[str, Any]:
+        """List available voice regions."""
+        result = await self._make_request("GET", "/voice/regions", auth_header)
+        return {
+            "action": "list_available_voice_regions",
+            "regions": result,
+            "count": len(result),
+        }
+
     async def _get_poll_answer_voters(self, config: DiscordGetPollAnswerVotersConfig, auth_header: str) -> Dict[str, Any]:
         """Get voters for a poll answer"""
         params = {"limit": min(config.limit or 25, 100)}
