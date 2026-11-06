@@ -1016,6 +1016,24 @@
       "source": "https://acculynx.com/wp-content/uploads/2023/05/acculynx-logo-navy-orange-gray.svg (brand symbol cropped from the official wordmark and placed on a white rounded background)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "36aa0f55bc9345e504fb2a5850c3679f4359b9f1815dcb8390ec0f10d2222078"
+    },
+    {
+      "path": "frontend/public/icons/cliniko-brand-vector.svg",
+      "source": "https://www.cliniko.com/ (Cliniko brand artwork published by the service)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "dc2757f6d0819ebd6f754e1e16a460e4e9256ca798d71999e33d0cb0765d1e8b"
+    },
+    {
+      "path": "frontend/public/icons/cliniko-brand.png",
+      "source": "https://www.cliniko.com/ (Cliniko brand artwork published by the service)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "d0d35c9757c76fd3b2c3036f96299fe358fecc8c718501d0fc8d08f64d99cf18"
+    },
+    {
+      "path": "frontend/public/icons/cliniko.svg",
+      "source": "https://www.cliniko.com/ (Cliniko brand artwork published by the service)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "a8064e4770cac77b1a2cebb0f156480fbc160585bbd742eda7d8590e62c61fff"
     }
   ],
   "excludedSourceAssets": [
