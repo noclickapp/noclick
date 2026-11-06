@@ -796,6 +796,24 @@
       "sha256": "833cfb801057dc7985c8c8e28606d35ee3ffe0bf2f7988d2eaf3cfd3301b851c"
     },
     {
+      "path": "frontend/public/icons/123formbuilder-brand-vector.svg",
+      "source": "123FormBuilder brand artwork from https://www.123formbuilder.com/brand-guidelines/; retained from the integration artwork",
+      "license": "Vendor brand mark shown nominatively to identify the integration; no trademark rights claimed",
+      "sha256": "935f692ac7ab879c1bc9784ee4f2835bb47ad96229d37e42ce54d5a55d4f8e4b"
+    },
+    {
+      "path": "frontend/public/icons/123formbuilder-brand.png",
+      "source": "123FormBuilder brand artwork from https://www.123formbuilder.com/brand-guidelines/; retained from the integration artwork",
+      "license": "Vendor brand mark shown nominatively to identify the integration; no trademark rights claimed",
+      "sha256": "6774432d6c604175c3a5d6d44f29554c05eb4ca00fb1d34851a51b42c6bcc3b6"
+    },
+    {
+      "path": "frontend/public/icons/123formbuilder.svg",
+      "source": "Exact official vendor vector, referenced by the public homepage header stylesheet: https://cdn.marketing123.123formbuilder.com/wp-content/themes/marketing123/assets/images/123FormBuilder-KiteWorks.svg",
+      "license": "Vendor brand mark shown nominatively to identify the integration; no trademark rights claimed",
+      "sha256": "6d61eb7a90ca76d212e13fbabf8127541a31932f800c53c88dc1be553388a82c"
+    },
+    {
       "path": "frontend/public/icons/porkbun-brand-vector.svg",
       "source": "https://porkbun.com/",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
