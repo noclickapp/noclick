@@ -16,7 +16,7 @@ vi.mock('~/components/shared/popups/DeleteConfirmPopup', () => ({ DeleteConfirmP
 vi.mock('~/components/shared/popups/ShareDialog', () => ({ ShareDialog: () => null }));
 vi.mock('~/components/utils/UpgradePopup', () => ({ UpgradePopup: () => null }));
 const { NodeCredentials } = await import('~/components/workflow/NodeCredentials');
-const { NODE_SCHEMAS, loadNodeSchemas } = await import('~/utils/nodeSchemas');
+const { loadNodeSchemas } = await import('~/utils/nodeSchemas');
 beforeAll(() => loadNodeSchemas(['automation-123formbuilder']));
 beforeEach(() => { state.send.mockClear(); state.connect.mockClear(); });
 afterEach(cleanup);
@@ -29,13 +29,12 @@ it('mounts the native token family without OAuth', async () => {
 });
 
 it('uses the actual shared/public form and submits the selected region with the token', () => {
-    const schema: any = (NODE_SCHEMAS['automation-123formbuilder'] as any).$defs.FormBuilder123TokenCredential;
     const save = vi.fn(async () => null);
     const fields = [
         { name: 'region', label: 'Account Region', type: 'select', required: true, options: [{ value: '', label: 'Choose region' }, { value: 'us', label: 'US' }, { value: 'eu', label: 'EU' }] },
         { name: 'token', label: 'API v2 Token', type: 'password', required: true },
     ];
-    const { container } = render(<CredentialCreatePanel label="123FormBuilder" schema={schema} fields={fields} hideName onSave={save} saveLabel="Provide" />);
+    const { container } = render(<CredentialCreatePanel app="123FormBuilder" fields={fields} onSave={save} saveLabel="Provide" />);
     fireEvent.change(container.querySelector('[data-field="region"] select')!, { target: { value: 'eu' } });
     const input = container.querySelector('[data-field="token"] input') as HTMLInputElement;
     fireEvent.change(input, { target: { value: 'synthetic-private-token' } });
