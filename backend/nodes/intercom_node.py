@@ -859,8 +859,18 @@ class IntercomUpdateTicketConfig(BaseModel):
     ticket_id: str = Field(..., title="Ticket ID", description="The ticket ID to update")
     state: Optional[str] = Field(
         None,
+        title="State",
+        description="New ticket state category; resolved to a state belonging to this ticket's type",
+        json_schema_extra={
+            "enum": ["", "submitted", "in_progress", "waiting_on_customer", "resolved"],
+            "enumNames": ["Unchanged", "Submitted", "In Progress", "Waiting on Customer", "Resolved"],
+            "x-enum-searchable": True,
+        },
+    )
+    ticket_state_id: Optional[str] = Field(
+        None,
         title="Ticket State ID",
-        description="ID of the state associated with this ticket's type, not its display name",
+        description="Optional exact state ID associated with this ticket's type; overrides State",
     )
     assignee_id: Optional[str] = Field(
         None, title="Assignee ID", description="Admin or team ID to assign the ticket to"
@@ -1215,7 +1225,7 @@ class IntercomCreateArticleConfig(BaseModel):
     operation: Literal["create_article"] = Field("create_article", json_schema_extra={"const": "create_article", "ui:hidden": True, "x-category": "Help Center", "x-is-trigger": False, "x-display-name": "Create Article"}, title="Create Article")
     title: str = Field(..., title="Title", description="The article title")
     body: Optional[str] = Field(None, title="Body (HTML)", description="The article body in HTML", json_schema_extra={"ui:widget": "textarea"})
-    author_id: str = Field(..., title="Author Admin", description="The admin who authors the article", json_schema_extra={"x-dynamic-options": {"field_name": "admin_id", "placeholder": "Select an admin...", "searchable": True, "allow_custom": True, "custom_placeholder": "Or paste admin ID"}})
+    author_id: Optional[str] = Field(None, title="Author Admin", description="The admin who authors the article; defaults to the authenticated admin when omitted", json_schema_extra={"x-dynamic-options": {"field_name": "admin_id", "placeholder": "Select an admin...", "searchable": True, "allow_custom": True, "custom_placeholder": "Or paste admin ID"}})
     state: Optional[str] = Field("draft", title="State", description="Article state", json_schema_extra={"enum": ["draft", "published"], "enumNames": ["Draft", "Published"], "x-enum-searchable": True})
 
 
@@ -2138,8 +2148,26 @@ class IntercomNode(WorkflowNode):
         return await _intercom_request(token, base, "GET", f"/tickets/{c.ticket_id}", action_name="get_ticket")
 
     async def _update_ticket(self, c: IntercomUpdateTicketConfig, token: str, base: str) -> Dict[str, Any]:
+        state_id = c.ticket_state_id or c.state or None
+        if not c.ticket_state_id and c.state in (
+            "submitted", "in_progress", "waiting_on_customer", "resolved"
+        ):
+            # Saved workflows store a category, not a workspace-specific ID.
+            ticket = await _intercom_request(token, base, "GET", f"/tickets/{c.ticket_id}", action_name="update_ticket")
+            if ticket["status"] != "success":
+                return ticket
+            ticket_type_id = ((ticket.get("data") or {}).get("ticket_type") or {}).get("id")
+            if not ticket_type_id:
+                raise ValueError("Cannot resolve ticket state: ticket has no ticket type ID")
+            ticket_type = await _intercom_request(token, base, "GET", f"/ticket_types/{ticket_type_id}", action_name="update_ticket")
+            if ticket_type["status"] != "success":
+                return ticket_type
+            states = ((ticket_type.get("data") or {}).get("ticket_states") or {}).get("data") or []
+            state_id = next((s["id"] for s in states if s.get("category") == c.state and s.get("id")), None)
+            if not state_id:
+                raise ValueError(f"Ticket type has no state in category {c.state!r}; provide a Ticket State ID")
         body: Dict[str, Any] = {
-            "ticket_state_id": c.state or None,
+            "ticket_state_id": state_id,
             "ticket_attributes": _parse_json_field(c.ticket_attributes),
         }
         if c.assignee_id:
@@ -2245,7 +2273,16 @@ class IntercomNode(WorkflowNode):
         return await _intercom_request(token, base, "GET", f"/articles/{c.article_id}", action_name="get_article")
 
     async def _create_article(self, c, token, base):
-        body = {"title": c.title, "body": c.body, "author_id": int(c.author_id), "state": c.state}
+        author_id = c.author_id
+        if not author_id:
+            # Intercom's article guide uses /me to find the default author.
+            admin = await _intercom_request(token, base, "GET", "/me", action_name="create_article")
+            if admin["status"] != "success":
+                return admin
+            author_id = (admin.get("data") or {}).get("id")
+            if not author_id:
+                raise ValueError("Cannot identify the article author; provide an Author Admin ID")
+        body = {"title": c.title, "body": c.body, "author_id": int(author_id), "state": c.state}
         return await _intercom_request(token, base, "POST", "/articles", json_body=body, action_name="create_article")
 
     async def _update_article(self, c, token, base):

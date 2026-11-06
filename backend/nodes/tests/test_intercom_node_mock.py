@@ -925,11 +925,6 @@ class TestIntercomArticlesMock:
         assert args[3] == "/articles"
         assert kwargs["json_body"]["author_id"] == 1295
 
-    def test_create_article_requires_author(self):
-        from pydantic import ValidationError
-
-        with pytest.raises(ValidationError, match="author_id"):
-            IntercomCreateArticleConfig(title="Getting Started")
 
     @pytest.mark.asyncio
     async def test_update_article(self, credentials):
@@ -965,7 +960,7 @@ class TestIntercomArticlesMock:
     "config, endpoint, expected_body",
     [
         (
-            IntercomUpdateTicketConfig(ticket_id="1295", state="123", assignee_id="456"),
+            IntercomUpdateTicketConfig(ticket_id="1295", ticket_state_id="123", assignee_id="456"),
             "/tickets/1295",
             {"ticket_state_id": "123", "assignee_id": "456"},
         ),
@@ -1000,3 +995,135 @@ async def test_intercom_serialized_request(config, endpoint, expected_body, cred
     assert len(requests) == 1
     assert requests[0].url.path == endpoint
     assert json.loads(requests[0].content) == expected_body
+
+
+# Load previously persisted shapes and capture the real HTTP serialization.
+def _mock_intercom_transport(handler):
+    client_type = httpx.AsyncClient
+    return patch(
+        "nodes.intercom_node.httpx.AsyncClient",
+        side_effect=lambda **kwargs: client_type(transport=httpx.MockTransport(handler), **kwargs),
+    )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("category,state_id", [
+    ("submitted", "8353"), ("in_progress", "8354"),
+    ("waiting_on_customer", "8355"), ("resolved", "8356"),
+])
+async def test_saved_ticket_category_resolves_for_ticket_type(category, state_id, credentials):
+    config = IntercomNodeConfig.model_validate({
+        "config": {"operation": "update_ticket", "ticket_id": "631", "state": category},
+        "credentials": credentials.model_dump(),
+    })
+    requests = []
+    # Category/ID pairs from the provider's retrieveTicketType example:
+    # https://raw.githubusercontent.com/intercom/Intercom-OpenAPI/main/descriptions/2.14/api.intercom.io.yaml
+    states = [
+        {"category": "submitted", "id": "8353"},
+        {"category": "in_progress", "id": "8354"},
+        {"category": "waiting_on_customer", "id": "8355"},
+        {"category": "resolved", "id": "8356"},
+    ]
+
+    def transport(request):
+        requests.append(request)
+        if request.method == "GET":
+            data = {"ticket_type": {"id": "72"}} if request.url.path == "/tickets/631" else {"ticket_states": {"data": states}}
+            return httpx.Response(200, json=data)
+        assert request.method == "PUT"
+        assert json.loads(request.content) == {"ticket_state_id": state_id}
+        return httpx.Response(200, json={"id": "631"})
+
+    with _mock_intercom_transport(transport):
+        result = await create_intercom_node(config).execute({})
+    assert [(r.method, r.url.path) for r in requests] == [
+        ("GET", "/tickets/631"), ("GET", "/ticket_types/72"), ("PUT", "/tickets/631")
+    ]
+    assert result["status"] == "success" and result["action"] == "update_ticket"
+    assert result["data"] == {"id": "631"}
+
+
+@pytest.mark.asyncio
+async def test_exact_ticket_state_overrides_saved_category(credentials):
+    config = IntercomNodeConfig(
+        config=IntercomUpdateTicketConfig(ticket_id="631", state="resolved", ticket_state_id="8356"),
+        credentials=credentials,
+    )
+    requests = []
+
+    def transport(request):
+        requests.append(request)
+        assert request.method == "PUT"
+        assert json.loads(request.content) == {"ticket_state_id": "8356"}
+        return httpx.Response(200, json={"id": "631"})
+
+    with _mock_intercom_transport(transport):
+        await create_intercom_node(config).execute({})
+    assert len(requests) == 1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("author_fields", [{}, {"author_id": None}, {"author_id": ""}])
+async def test_saved_article_without_author_uses_authenticated_admin(author_fields, credentials):
+    config = IntercomNodeConfig.model_validate({
+        "config": {"operation": "create_article", "title": "Getting Started", **author_fields},
+        "credentials": credentials.model_dump(),
+    })
+    requests = []
+
+    def transport(request):
+        requests.append(request)
+        if request.url.path == "/me":
+            return httpx.Response(200, json={"type": "admin", "id": "991267459"})
+        assert request.method == "POST" and request.url.path == "/articles"
+        assert json.loads(request.content) == {
+            "title": "Getting Started", "author_id": 991267459, "state": "draft"
+        }
+        return httpx.Response(200, json={"id": "1295"})
+
+    with _mock_intercom_transport(transport):
+        result = await create_intercom_node(config).execute({})
+    assert [r.url.path for r in requests] == ["/me", "/articles"]
+    assert result["status"] == "success" and result["action"] == "create_article"
+    assert result["data"] == {"id": "1295"}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation,fields,path", [
+    ("update_ticket", {"ticket_id": "631", "state": "resolved"}, "/tickets/631"),
+    ("create_article", {"title": "Getting Started", "author_id": None}, "/me"),
+])
+async def test_compatibility_lookup_failure_does_not_write(operation, fields, path, credentials):
+    config = IntercomNodeConfig.model_validate({
+        "config": {"operation": operation, **fields}, "credentials": credentials.model_dump(),
+    })
+    requests = []
+
+    def transport(request):
+        requests.append(request)
+        return httpx.Response(403, json={"errors": [{"message": "Access denied"}]})
+
+    with _mock_intercom_transport(transport):
+        result = await create_intercom_node(config).execute({})
+    assert [(r.method, r.url.path) for r in requests] == [("GET", path)]
+    assert result["status"] == "error" and result["status_code"] == 403
+    assert result["action"] == operation
+
+
+@pytest.mark.asyncio
+async def test_missing_ticket_category_does_not_send_category_as_id(credentials):
+    config = IntercomNodeConfig(
+        config=IntercomUpdateTicketConfig(ticket_id="631", state="resolved"), credentials=credentials,
+    )
+    requests = []
+
+    def transport(request):
+        requests.append(request)
+        assert request.method == "GET"
+        data = {"ticket_type": {"id": "72"}} if request.url.path == "/tickets/631" else {"ticket_states": {"data": []}}
+        return httpx.Response(200, json=data)
+
+    with _mock_intercom_transport(transport), pytest.raises(ValueError, match="no state in category"):
+        await create_intercom_node(config).execute({})
+    assert len(requests) == 2

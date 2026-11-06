@@ -556,16 +556,23 @@
           "ui:widget": "textarea"
         },
         "author_id": {
-          "description": "The admin who authors the article",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The admin who authors the article; defaults to the authenticated admin when omitted",
           "title": "Author Admin",
-          "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
             "custom_placeholder": "Or paste admin ID",
             "field_name": "admin_id",
             "placeholder": "Select an admin...",
-            "searchable": true,
-            "auto_select_sole_option": true
+            "searchable": true
           }
         },
         "state": {
@@ -592,8 +599,7 @@
         }
       },
       "required": [
-        "title",
-        "author_id"
+        "title"
       ],
       "title": "IntercomCreateArticleConfig",
       "type": "object"
@@ -2863,7 +2869,35 @@
             }
           ],
           "default": null,
-          "description": "ID of the state associated with this ticket's type, not its display name",
+          "description": "New ticket state category; resolved to a state belonging to this ticket's type",
+          "enum": [
+            "",
+            "submitted",
+            "in_progress",
+            "waiting_on_customer",
+            "resolved"
+          ],
+          "enumNames": [
+            "Unchanged",
+            "Submitted",
+            "In Progress",
+            "Waiting on Customer",
+            "Resolved"
+          ],
+          "title": "State",
+          "x-enum-searchable": true
+        },
+        "ticket_state_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional exact state ID associated with this ticket's type; overrides State",
           "title": "Ticket State ID"
         },
         "assignee_id": {
