@@ -255,13 +255,20 @@ class KeilaNode(WorkflowNode):
         except (ValueError, TypeError): return ValidationResult(valid=False, errors=["Keila native configuration or credential family is invalid"], satisfied_set=None)
         return super().validate_config(shaped)
     @classmethod
-    async def freshen_credential(cls, data, **context):
-        # Staging supplies the workflow at the loader, after this refresh hook.
-        if context.get("credential_id") and "workflow_id" not in context and "organization_id" not in context:
-            return {**_shape(data), "_keila_authority": _LookupAuthority(
-                context.get("pool"), context.get("user_id"), context["credential_id"], None, None,
+    async def freshen_credential(
+        cls,
+        credential_data: Optional[Dict[str, Any]],
+        *,
+        pool=None,
+        user_id: Optional[str] = None,
+        credential_id: Optional[str] = None,
+    ) -> Optional[Dict[str, Any]]:
+        # Staging supplies trusted workflow context at the loader after this hook.
+        if credential_id:
+            return {**_shape(credential_data), "_keila_authority": _LookupAuthority(
+                pool, user_id, credential_id, None, None,
             )}
-        return await _current_data(data, **context)
+        return await _current_data(credential_data, pool=pool, user_id=user_id)
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         if not isinstance(self.config, KeilaNodeConfig) or self.config.credentials is None: raise ValueError("Keila requires an existing key and fixed instance origin")
         node_data = self.node_data or {}; raw = node_data.get("credentials"); data = _shape(raw if isinstance(raw, dict) else self.config.credentials.model_dump())

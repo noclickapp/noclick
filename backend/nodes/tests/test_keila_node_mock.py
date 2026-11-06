@@ -185,7 +185,7 @@ async def test_current_canonical_row_stored_picker_actor_binding(monkeypatch, wi
     monkeypatch.setattr(credentials, "resolve_credential_with_owner_fallback", resolve)
     monkeypatch.setattr(credential_loader, "load_credential", AsyncMock(return_value=raw))
     monkeypatch.setattr(CredentialApprovalRepo, "policy", AsyncMock(return_value={"credential_type": fn.FAMILIES[0], "owner_id": "owner", "approval_revision": 1}))
-    fresh = await fn.KeilaNode.freshen_credential(CREDS, pool=pool, user_id="actor", credential_id="saved", organization_id="org", workflow_id="wf")
+    fresh = await fn._current_data(CREDS, pool=pool, user_id="actor", credential_id="saved", organization_id="org", workflow_id="wf")
     assert fresh["owner_id"] == "owner" and fresh["token_version"] == 2 and fresh["approval_revision"] == 1
     context = fn._context(fresh, {"_user_id": "actor", "_approval_pool": "forged", "_credential_id": "forged"})
     assert context["_approval_pool"] is pool and context["_credential_id"] == "saved"
@@ -207,7 +207,7 @@ async def test_current_denial_before_client(monkeypatch, wire, state):
     current = None if state == "revoked" else {**CREDS, "api_key": "changed" if state == "changed" else CREDS["api_key"]}
     monkeypatch.setattr(credential_loader, "load_credential", AsyncMock(return_value=current))
     with pytest.raises(ValueError):
-        await fn.KeilaNode.freshen_credential(CREDS, pool=object(), user_id="actor", credential_id="saved", organization_id="org")
+        await fn._current_data(CREDS, pool=object(), user_id="actor", credential_id="saved", organization_id="org")
     assert wire.calls == []
 
 @pytest.mark.asyncio
@@ -266,3 +266,13 @@ async def test_staging_saved_lookup_preserves_trusted_workflow(monkeypatch, wire
     result = await run_node_lookup(node_type=fn.NODE_TYPE, field_name="campaign_id", credential_id="saved", user_id="actor", pool=pool, workflow_id="wf", context={"_workflow_id": "forged"})
     assert result["options"] == [{"value": C, "label": C}]
     assert all(call.kwargs["workflow_id"] == "wf" and call.kwargs["credential_id"] == "saved" and call.kwargs["pool"] is pool for call in current.call_args_list)
+
+
+@pytest.mark.asyncio
+async def test_refresh_hook_binds_saved_authority_until_trusted_lookup():
+    pool = object()
+    fresh = await fn.KeilaNode.freshen_credential(
+        CREDS, pool=pool, user_id="actor", credential_id="saved",
+    )
+    assert fresh["_keila_authority"] == fn._LookupAuthority(pool, "actor", "saved", None, None)
+    assert await fn.KeilaNode.freshen_credential(CREDS) == fn._shape(CREDS)
