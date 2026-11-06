@@ -832,6 +832,36 @@
       "sha256": "6d61eb7a90ca76d212e13fbabf8127541a31932f800c53c88dc1be553388a82c"
     },
     {
+      "path": "frontend/public/icons/cloudzero-brand-vector.svg",
+      "source": "https://www.cloudzero.com/ (CloudZero published brand artwork)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "4d0b6fd6c2a6b392cf5c96df8e326b21d936e790121719ce27e49a2826e51242"
+    },
+    {
+      "path": "frontend/public/icons/cloudzero-brand.png",
+      "source": "https://www.cloudzero.com/ (CloudZero published brand artwork)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "84c578f3fc83168e53c1842dc58ae5767996559d047aae6a0565237fcb02c339"
+    },
+    {
+      "path": "frontend/public/icons/cloudzero-preferred-brand.svg",
+      "source": "https://www.cloudzero.com/ (CloudZero published brand artwork)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "ddbabc01ecfcaa2d3ea2cf0e4dd588e4e31cdf120169e2dbbb8379e1b8d7c885"
+    },
+    {
+      "path": "frontend/public/icons/cloudzero.svg",
+      "source": "https://www.cloudzero.com/wp-content/themes/cloudzero/assets/favicon/safari-pinned-tab.svg (official pinned-tab artwork and its provenance)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "5edfe52d2301f1ade88478ef8ff50492a906105b07c295931cc20344b51a6ed6"
+    },
+    {
+      "path": "frontend/public/icons/cloudzero.svg.provenance.md",
+      "source": "https://www.cloudzero.com/wp-content/themes/cloudzero/assets/favicon/safari-pinned-tab.svg (official pinned-tab artwork and its provenance)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "c832eaf7bd643bd5170e83054f85bf92a6c8b5c240eea10b1aa41001c1d0b2d6"
+    },
+    {
       "path": "frontend/public/icons/porkbun-brand-vector.svg",
       "source": "https://porkbun.com/",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
