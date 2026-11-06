@@ -62,7 +62,7 @@ class JWPlayerAPISecretCredential(BaseModel):
     api_secret: str = Field(..., description="Existing Management API v2 secret, sent only in the Bearer header. Player license keys are different.", json_schema_extra={"ui:widget": "password"})
     site_id: str = Field(..., description="Exact eight-character property ID that bounds every read. This is not an account or principal identity.")
     model_config = ConfigDict(title="JWX Management API Secret", extra="ignore", json_schema_extra={
-        "x-credential-type": "api_key", "x-credential-url": "https://dashboard.jwplayer.com/account/developer-tools/management-api",
+        "x-credential-url": "https://dashboard.jwplayer.com/account/developer-tools/management-api",
         "x-credential-instructions": "Supply an existing Management API v2 secret and property ID. NoClick does not issue, rotate or exchange tokens. API entitlement must be confirmed with your JWX account.",
     })
 

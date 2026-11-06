@@ -89,7 +89,6 @@
       "title": "JWX Management API Secret",
       "type": "object",
       "x-credential-instructions": "Supply an existing Management API v2 secret and property ID. NoClick does not issue, rotate or exchange tokens. API entitlement must be confirmed with your JWX account.",
-      "x-credential-type": "api_key",
       "x-credential-url": "https://dashboard.jwplayer.com/account/developer-tools/management-api"
     },
     "ListContentTypesConfig": {
