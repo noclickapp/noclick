@@ -102,6 +102,26 @@ async def execute(args, data=None):
 
 
 @pytest.mark.asyncio
+async def test_preparsed_credentials_execute_documented_subscription_without_raw_node_data(wire):
+    # ApiSubscription.example from https://docs.predictleads.com/schemas/open_api_schema.json
+    wire.queue = [{"data": [{"id": "ea20b0c1-3427-4004-91e6-59a27be0c9ed", "type": "api_subscription",
+        "attributes": {"status": "active", "display_name": "HubSpot enrichment",
+            "monthly_credits_quota": 100, "monthly_credits_used": 42}}],
+        "included": [], "meta": {"schema_version": "3.1"}}]
+    config = p.PredictLeadsNodeConfig.model_validate({"config": {"operation": "check_connection"}, "credentials": blob()})
+    node = p.PredictLeadsNode(node_id="fixture", node_type=p.NODE_TYPE, node_data={}, config=config, sio=None)
+    result = await node.execute({})
+    assert result["witness_verified"] is True
+    assert result["data"][0]["attributes"]["monthly_credits_used"] == 42
+    assert wire.calls[0][2]["headers"]["X-Api-Key"] == blob()["api_key"]
+    # Explicit removal must not resurrect a credential from the parsed config.
+    node.node_data["credentials"] = None
+    with pytest.raises(ValueError, match="Connect a native"):
+        await node.execute({})
+    assert len(wire.calls) == 1
+
+
+@pytest.mark.asyncio
 async def test_real_registered_factory_dispatcher_execute_inputs_config_and_header_transport(wire):
     assert NODE_REGISTRY[p.NODE_TYPE] is p.PredictLeadsNode
     wire.queue = [company()]

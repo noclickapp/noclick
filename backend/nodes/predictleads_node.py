@@ -580,7 +580,10 @@ class PredictLeadsNode(WorkflowNode):
         await current_credential(credential_data)
         return {"options": options, "has_more": False, "next_page_token": None}
     async def execute(self, inputs: dict) -> dict:
-        data = await self.freshen_credential(self.node_data.get("credentials"), pool=self.node_data.get("_approval_pool"),
+        supplied = self.node_data.get("credentials")
+        if "credentials" not in self.node_data and self.config.credentials is not None:
+            supplied = self.config.credentials.model_dump()
+        data = await self.freshen_credential(supplied, pool=self.node_data.get("_approval_pool"),
             user_id=self.user_id, credential_id=self.node_data.get("credential_id"), organization_id=self.organization_id, workflow_id=self.workflow_id)
         cfg = self.config.config
         if isinstance(cfg, CheckConnection): return await check_subscription(data)
