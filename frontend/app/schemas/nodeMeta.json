@@ -7,6 +7,9 @@
     "automation-123formbuilder": {
       "agentToolProvider": true
     },
+    "automation-acculynx": {
+      "agentToolProvider": true
+    },
     "automation-adapty": {
       "agentToolProvider": true
     },
@@ -925,6 +928,9 @@
       ]
     },
     "automation-powerdns": {
+      "agentToolProvider": true
+    },
+    "automation-predictleads": {
       "agentToolProvider": true
     },
     "automation-qdrant": {
