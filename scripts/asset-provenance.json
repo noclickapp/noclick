@@ -10,22 +10,10 @@
   "generatedMonograms": [],
   "reviewedCustomAssets": [
     {
-      "path": "frontend/public/icons/botpress-brand-vector.svg",
-      "source": "https://botpress.com (provider brand artwork; source recorded in the integration commits)",
+      "path": "frontend/public/icons/ringcentral.svg",
+      "source": "https://www.ringcentral.com/whyringcentral/pressimages.html → https://assets.ringcentral.com/us/brand-library/logos/ringcentral-logo.zip (SVG/RingCentral logo fullcolor.svg; unmodified)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "684b9b465b0458bda4c33001a0429438d80531249e1bf3dccbc98aad8e429634"
-    },
-    {
-      "path": "frontend/public/icons/botpress-brand.png",
-      "source": "https://botpress.com (provider brand artwork; source recorded in the integration commits)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "5c433936f9bdfa116610d7cbd836e6614d73cf25f45f74d1e1116f866dfc8b99"
-    },
-    {
-      "path": "frontend/public/icons/botpress.svg",
-      "source": "https://botpress.com (provider brand artwork; source recorded in the integration commits)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "25dcaff883191529549d37262e8678315169fd49c8c5c01a633eca17f9651a8c"
+      "sha256": "2d5e096c5c3a2caaa2504f13e3b91680a98434a60416cdb433b45830b619a9d7"
     },
     {
       "path": "frontend/public/icons/ashby-brand-vector.svg",
@@ -254,12 +242,6 @@
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "00ea931ab69dd5397150ed2d50815fb9d2a7c87886e3f36d7b362fbe4f4fa517"
-    },
-    {
-      "path": "frontend/public/icons/doppler.svg",
-      "source": "https://cdn.sanity.io/images/q3zajrd2/production/01ad0eb786c8260c4daa709fe8a6f57fb063655e-101x100.svg (Doppler brand mark published on https://www.doppler.com/)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "ab093dca219fd5b980124b4f2c8b18a76bd96687abbf1231a588a96dfe9512d9"
     },
     {
       "path": "frontend/public/icons/dropbox.svg",
@@ -862,6 +844,48 @@
       "sha256": "1fc2ad79a30861fe490d7ebe914aafd61299758f647390ce138c1847599052f6"
     },
     {
+      "path": "frontend/public/icons/okta-brand.png",
+      "source": "https://www.okta.com/newsroom/ → https://www.okta.com/sites/default/files/2026-09/logos-09-2026.zip → Logos & boileplates/Okta Logos/Okta Aura Stack/Okta_Aura Stack_Black_RGB.png",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "853fb0f369e38c6ef598d5c2de1a2b7c0649671604150924db936ade7deab38c"
+    },
+    {
+      "path": "frontend/public/icons/rippling.svg",
+      "source": "https://www.rippling.com/company/newsroom — https://assets.ctfassets.net/k0itp0ir7ty4/3E4spjZts7XCMtyaT2mHHj/20a9ea4e44ec7d760f6e108c1cc0fafb/Rippling-Logos.zip (Full/SVG/Rippling Logo black.svg; unmodified)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "e7b0a052281be8b93a2c660a62f23e5594367b9087bc86a25c790384e1c587d8"
+    },
+    {
+      "path": "frontend/public/icons/statuspage.svg",
+      "source": "https://atlassian.design/assets/d7aacc201c59/logos/statuspage_app.zip (statuspage/SVG/Statuspage_icon.svg, unmodified; linked from https://atlassian.design/foundations/logos)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "814223e3696215b7d329378c9f7b42b0ae9f3b06d6e1db63402002e37487e508"
+    },
+    {
+      "path": "frontend/public/icons/botpress-brand-vector.svg",
+      "source": "https://botpress.com (provider brand artwork; source recorded in the integration commits)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "684b9b465b0458bda4c33001a0429438d80531249e1bf3dccbc98aad8e429634"
+    },
+    {
+      "path": "frontend/public/icons/botpress-brand.png",
+      "source": "https://botpress.com (provider brand artwork; source recorded in the integration commits)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "5c433936f9bdfa116610d7cbd836e6614d73cf25f45f74d1e1116f866dfc8b99"
+    },
+    {
+      "path": "frontend/public/icons/botpress.svg",
+      "source": "https://botpress.com (provider brand artwork; source recorded in the integration commits)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "25dcaff883191529549d37262e8678315169fd49c8c5c01a633eca17f9651a8c"
+    },
+    {
+      "path": "frontend/public/icons/doppler.svg",
+      "source": "https://cdn.sanity.io/images/q3zajrd2/production/01ad0eb786c8260c4daa709fe8a6f57fb063655e-101x100.svg (Doppler brand mark published on https://www.doppler.com/)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "ab093dca219fd5b980124b4f2c8b18a76bd96687abbf1231a588a96dfe9512d9"
+    },
+    {
       "path": "frontend/public/icons/hetrixtools-brand-vector.svg",
       "source": "https://hetrixtools.com",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
@@ -896,12 +920,6 @@
       "source": "https://www.nylas.com/ (provider-published brand artwork, cropped to the mark)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "4c3c0e4ecb6ac496dc8a40f9897539f1ab56c3863afffade0208222c51980d6a"
-    },
-    {
-      "path": "frontend/public/icons/openstatus.svg",
-      "source": "https://www.openstatus.dev/assets/landing/openstatus-logo.svg (unaltered vector linked by the official OpenStatus homepage)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "54885f9c3b5df28aa980ebf557206dc6601730fda4b384ff9a2e9739aed149ea"
     },
     {
       "path": "frontend/public/icons/powerdns-brand-vector.svg",

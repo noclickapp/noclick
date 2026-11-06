@@ -87,6 +87,10 @@ from nodes.resend_node import ResendNode
 from nodes.rippling_node import RipplingNode
 from nodes.ahrefs_node import AhrefsNode
 from nodes.botpress_node import BotpressNode
+from nodes.okta_node import OktaNode
+from nodes.ramp_node import RampNode
+from nodes.ringcentral_node import RingCentralNode
+from nodes.statuspage_node import StatuspageNode
 from nodes.phantombuster_node import PhantomBusterNode
 from nodes.cal_com_node import CalComNode
 from nodes.calendly_node import CalendlyNode
@@ -245,6 +249,10 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-rippling': RipplingNode,
     'automation-ahrefs': AhrefsNode,
     'automation-botpress': BotpressNode,
+    'automation-okta': OktaNode,
+    'automation-ramp': RampNode,
+    'automation-ringcentral': RingCentralNode,
+    'automation-statuspage': StatuspageNode,
     'automation-threads': ThreadsNode,
     'automation-phantombuster': PhantomBusterNode,
     'automation-cal-com': CalComNode,

@@ -764,6 +764,9 @@
     "automation-nylas": {
       "agentToolProvider": true
     },
+    "automation-okta": {
+      "agentToolProvider": true
+    },
     "automation-onedrive": {
       "agentToolProvider": true
     },
