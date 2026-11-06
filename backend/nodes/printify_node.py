@@ -507,17 +507,17 @@ class PrintifyNode(WorkflowNode):
             raise ValueError("Use typed Printify fields; arbitrary API controls and brand overrides are unsupported")
 
     @classmethod
-    def parse_config(cls, raw):
-        cls._require_raw(raw)
-        return super().parse_config(raw)
+    def parse_config(cls, config_data):
+        cls._require_raw(config_data)
+        return super().parse_config(config_data)
 
     @classmethod
-    def validate_config(cls, raw):
+    def validate_config(cls, config_data):
         try:
-            cls._require_raw(raw)
+            cls._require_raw(config_data)
         except ValueError:
             return {"valid": False, "errors": ["Use a typed Printify credential and native fields"], "satisfied_set": None}
-        return super().validate_config(raw)
+        return super().validate_config(config_data)
 
     @classmethod
     async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
