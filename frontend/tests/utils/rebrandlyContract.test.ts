@@ -1,16 +1,20 @@
 // UNRUN actual generated-schema/editor registration fixtures; no provider calls.
 import { describe, expect, it } from 'vitest';
 import schema from '../../app/schemas/nodes/rebrandly.json';
-import { NODE_SCHEMAS } from '../../app/utils/nodeSchemas';
+import { NODE_SCHEMAS, loadNodeSchemas, getNodeCredentialInfo } from '../../app/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '../../app/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '../../app/utils/credentialLabels';
-import { AVAILABLE_NODES } from '../../app/components/workflow/nodes/nodeRegistry';
+import { NODE_DEFINITION_FILES } from '../../app/components/workflow/nodes/nodeDefinitions';
 
 describe('Rebrandly explicit workspace metadata', () => {
-    it('registers the manual header credential and five closed reads', () => {
+    it('registers the manual header credential and five closed reads', async () => {
+        await loadNodeSchemas(['automation-rebrandly']);
         expect(NODE_SCHEMAS['automation-rebrandly']).toBe(schema);
-        expect(AVAILABLE_NODES.filter(node => node.type === 'automation-rebrandly')).toHaveLength(1);
+        expect(NODE_DEFINITION_FILES.filter(([type]) => type === 'automation-rebrandly')).toEqual([
+            ['automation-rebrandly', 'RebrandlyNode'],
+        ]);
         expect(CREDENTIAL_TYPE_MAP.RebrandlyAPIKeyCredential).toBe('rebrandly_api_key');
+        expect(getNodeCredentialInfo('automation-rebrandly')?.acceptedTypes).toEqual(['rebrandly_api_key']);
         expect(humanizeCredentialLabel('RebrandlyAPIKey')).toBe('Rebrandly API Key');
         const native = schema as any;
         const credential = native.$defs.RebrandlyAPIKeyCredential;

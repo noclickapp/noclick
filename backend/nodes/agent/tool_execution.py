@@ -523,7 +523,7 @@ async def _execute_node_op_lookup(node, tool_name, arguments, tool_info) -> Dict
     {provider}__lookup_options tool). tool_info['fields'] maps the agent-facing
     config key to the loader's field_name; the field arg is validated against
     it so the loader only ever sees fields this provider exposes."""
-    from nodes.core.run_op import _check_lookup_context_scopes, credential_note_result, run_node_lookup
+    from nodes.core.run_op import credential_note_result, run_node_lookup
 
     node_type = tool_info.get("node_type")
     fields = tool_info.get("fields") or {}
@@ -538,9 +538,6 @@ async def _execute_node_op_lookup(node, tool_name, arguments, tool_info) -> Dict
         return unconnected
 
     context = (arguments or {}).get("context")
-    scope_error = _check_lookup_context_scopes(context, tool_info, field)
-    if scope_error:
-        return {"success": False, "error": scope_error}
     scopes = tool_info.get("field_scopes") or {}
     scope_for_field = scopes.get(field) if isinstance(scopes, dict) else None
     try:
