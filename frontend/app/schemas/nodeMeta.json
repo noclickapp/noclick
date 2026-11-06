@@ -1081,9 +1081,6 @@
     "automation-ramp": {
       "agentToolProvider": true
     },
-    "automation-ramp": {
-      "agentToolProvider": true
-    },
     "automation-recurly": {
       "agentToolProvider": true
     },
