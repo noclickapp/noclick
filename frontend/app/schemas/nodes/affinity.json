@@ -2024,7 +2024,7 @@
           "type": "integer"
         },
         "fields": {
-          "description": "JSON array of field updates, e.g. [{\"id\": 123, \"value\": \"new_value\"}]",
+          "description": "JSON array of field updates, e.g. [{\"id\": \"field-13\", \"value\": {\"type\": \"text\", \"data\": \"Some new text\"}}]",
           "title": "Fields",
           "type": "string",
           "ui:widget": "textarea"

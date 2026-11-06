@@ -29,8 +29,11 @@ Operations tested:
 Run: pytest nodes/tests/test_affinity_node_mock.py -v
 """
 
-import pytest
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
+
+import httpx
+import pytest
 
 from nodes.affinity_node import (
     AffinityNode,
@@ -829,7 +832,7 @@ class TestAffinityWebhookOps:
             mock.return_value = expected
             node = create_node(AffinityListWebhooksConfig())
             result = await node.execute({})
-        assert "/webhook-subscriptions" in mock.call_args.args[1]
+        assert mock.call_args.args[1] == "/webhook"
 
     @pytest.mark.asyncio
     async def test_get_webhook(self):
@@ -840,7 +843,7 @@ class TestAffinityWebhookOps:
             mock.return_value = expected
             node = create_node(AffinityGetWebhookConfig(webhook_id=2))
             result = await node.execute({})
-        assert "/webhook-subscriptions/2" in mock.call_args.args[1]
+        assert mock.call_args.args[1] == "/webhook/2"
 
     @pytest.mark.asyncio
     async def test_create_webhook(self):
@@ -856,6 +859,7 @@ class TestAffinityWebhookOps:
                 )
             )
             result = await node.execute({})
+        assert mock.call_args.args[:2] == ("POST", "/webhook/subscribe")
         body = mock.call_args.kwargs["json_body"]
         assert body["webhook_url"] == "https://example.com/hook"
         assert isinstance(body["subscriptions"], list)
@@ -873,7 +877,7 @@ class TestAffinityWebhookOps:
                 )
             )
             result = await node.execute({})
-        assert mock.call_args.args[0] == "PUT"
+        assert mock.call_args.args[:2] == ("PUT", "/webhook/2")
 
     @pytest.mark.asyncio
     async def test_delete_webhook(self):
@@ -884,7 +888,7 @@ class TestAffinityWebhookOps:
             mock.return_value = expected
             node = create_node(AffinityDeleteWebhookConfig(webhook_id=2))
             result = await node.execute({})
-        assert mock.call_args.args[0] == "DELETE"
+        assert mock.call_args.args[:2] == ("DELETE", "/webhook/2")
 
 
 class TestAffinityFileOps:
@@ -897,6 +901,7 @@ class TestAffinityFileOps:
             mock.return_value = expected
             node = create_node(AffinityListFilesConfig(organization_id=99))
             result = await node.execute({})
+        assert mock.call_args.args[:2] == ("GET", "/entity-files")
         assert mock.call_args.kwargs["params"]["organization_id"] == 99
 
     @pytest.mark.asyncio
@@ -908,7 +913,7 @@ class TestAffinityFileOps:
             mock.return_value = expected
             node = create_node(AffinityGetFileConfig(file_id=15))
             result = await node.execute({})
-        assert "/files/15" in mock.call_args.args[1]
+        assert mock.call_args.args[1] == "/entity-files/15"
 
     @pytest.mark.asyncio
     async def test_download_file(self):
@@ -921,7 +926,7 @@ class TestAffinityFileOps:
             mock.return_value = expected
             node = create_node(AffinityDownloadFileConfig(file_id=15))
             result = await node.execute({})
-        assert "/files/15/download" in mock.call_args.args[1]
+        assert mock.call_args.args[1] == "/entity-files/download/15"
 
     @pytest.mark.asyncio
     async def test_upload_file(self):
@@ -947,6 +952,49 @@ class TestAffinityFileOps:
             result = await node.execute({})
         assert result["status"] == "success"
         assert result["action"] == "upload_file"
+
+    @pytest.mark.asyncio
+    async def test_upload_file_uses_entity_files_endpoint(self):
+        requests = []
+
+        def transport(request):
+            requests.append(request)
+            return httpx.Response(204)
+
+        client = httpx.AsyncClient(transport=httpx.MockTransport(transport))
+        resolved = SimpleNamespace(data=b"document", mime_type="text/plain")
+        node = create_node(AffinityUploadFileConfig(
+            file_url="https://example.com/file.txt", file_name="file.txt", person_id=1
+        ))
+        with patch("nodes.core.media_resolver.resolve_media_input", AsyncMock(return_value=resolved)), patch(
+            "nodes.affinity_node.httpx.AsyncClient", return_value=client
+        ):
+            result = await node.execute({})
+        assert result["status"] == "success"
+        assert len(requests) == 1
+        assert requests[0].method == "POST"
+        assert str(requests[0].url) == "https://api.affinity.co/entity-files"
+        assert requests[0].headers["content-type"].startswith("multipart/form-data;")
+        assert b'document' in requests[0].content
+
+    @pytest.mark.asyncio
+    async def test_download_file_follows_provider_redirect(self):
+        # https://api-docs.affinity.co/#download-file requires following the redirect.
+        urls = []
+
+        def transport(request):
+            urls.append(str(request.url))
+            if request.url.host == "api.affinity.co":
+                return httpx.Response(302, headers={"Location": "https://example.com/file.txt"})
+            return httpx.Response(200, text="document")
+
+        client = httpx.AsyncClient(transport=httpx.MockTransport(transport))
+        node = create_node(AffinityDownloadFileConfig(file_id=12345))
+        with patch("nodes.affinity_node.httpx.AsyncClient", return_value=client):
+            result = await node.execute({})
+        assert urls == ["https://api.affinity.co/entity-files/download/12345", "https://example.com/file.txt"]
+        assert result["status"] == "success"
+        assert result["data"] == {"raw": "document"}
 
 
 class TestAffinityV2CompanyOps:
@@ -1021,14 +1069,16 @@ class TestAffinityV2ListEntryFieldOps:
                 AffinityUpdateListEntryFieldsV2Config(
                     list_id=3,
                     entry_id=55,
-                    fields='[{"id": 10, "value": "new"}]',
+                    fields='[{"id": "field-13", "value": {"type": "text", "data": "Some new text"}}]',
                 )
             )
             result = await node.execute({})
         assert mock.call_args.args[0] == "PATCH"
         body = mock.call_args.kwargs["json_body"]
-        assert isinstance(body["fields"], list)
-        assert body["fields"][0]["id"] == 10
+        assert body == {
+            "operation": "update-fields",
+            "updates": [{"id": "field-13", "value": {"type": "text", "data": "Some new text"}}],
+        }
 
 
 class TestAffinityAuthHeaders:

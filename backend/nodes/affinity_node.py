@@ -1455,7 +1455,7 @@ class AffinityUpdateListEntryFieldsV2Config(BaseModel):
     fields: str = Field(
         ...,
         title="Fields",
-        description='JSON array of field updates, e.g. [{"id": 123, "value": "new_value"}]',
+        description='JSON array of field updates, e.g. [{"id": "field-13", "value": {"type": "text", "data": "Some new text"}}]',
         json_schema_extra={"ui:widget": "textarea"},
     )
 
@@ -1620,6 +1620,7 @@ class AffinityNode(WorkflowNode):
         params: Optional[Dict[str, Any]] = None,
         json_body: Optional[Dict[str, Any]] = None,
         action_name: str = "request",
+        follow_redirects: bool = False,
     ) -> Dict[str, Any]:
         """Make an authenticated HTTP request to the Affinity API."""
         url = f"{AFFINITY_API_BASE}{endpoint}"
@@ -1639,6 +1640,7 @@ class AffinityNode(WorkflowNode):
                     headers=headers,
                     params=params if params else None,
                     json=json_body,
+                    follow_redirects=follow_redirects,
                 )
                 api_time = (time.time() - start_time) * 1000
 
@@ -2462,7 +2464,7 @@ class AffinityNode(WorkflowNode):
     async def _handle_list_webhooks(self, config, credentials):
         return await self._make_request(
             "GET",
-            "/webhook-subscriptions",
+            "/webhook",
             credentials.api_key,
             action_name="list_webhooks",
         )
@@ -2470,7 +2472,7 @@ class AffinityNode(WorkflowNode):
     async def _handle_get_webhook(self, config: AffinityGetWebhookConfig, credentials):
         return await self._make_request(
             "GET",
-            f"/webhook-subscriptions/{config.webhook_id}",
+            f"/webhook/{config.webhook_id}",
             credentials.api_key,
             action_name="get_webhook_by_id",
         )
@@ -2490,7 +2492,7 @@ class AffinityNode(WorkflowNode):
         }
         return await self._make_request(
             "POST",
-            "/webhook-subscriptions",
+            "/webhook/subscribe",
             credentials.api_key,
             json_body=body,
             action_name="create_webhook",
@@ -2511,7 +2513,7 @@ class AffinityNode(WorkflowNode):
                 body["subscriptions"] = config.subscriptions
         return await self._make_request(
             "PUT",
-            f"/webhook-subscriptions/{config.webhook_id}",
+            f"/webhook/{config.webhook_id}",
             credentials.api_key,
             json_body=body,
             action_name="update_webhook",
@@ -2522,7 +2524,7 @@ class AffinityNode(WorkflowNode):
     ):
         return await self._make_request(
             "DELETE",
-            f"/webhook-subscriptions/{config.webhook_id}",
+            f"/webhook/{config.webhook_id}",
             credentials.api_key,
             action_name="delete_webhook",
         )
@@ -2539,7 +2541,7 @@ class AffinityNode(WorkflowNode):
         }
         return await self._make_request(
             "GET",
-            "/files",
+            "/entity-files",
             credentials.api_key,
             params=params,
             action_name="list_files",
@@ -2548,7 +2550,7 @@ class AffinityNode(WorkflowNode):
     async def _handle_get_file(self, config: AffinityGetFileConfig, credentials):
         return await self._make_request(
             "GET",
-            f"/files/{config.file_id}",
+            f"/entity-files/{config.file_id}",
             credentials.api_key,
             action_name="get_file_by_id",
         )
@@ -2558,9 +2560,10 @@ class AffinityNode(WorkflowNode):
     ):
         return await self._make_request(
             "GET",
-            f"/files/{config.file_id}/download",
+            f"/entity-files/download/{config.file_id}",
             credentials.api_key,
             action_name="download_file",
+            follow_redirects=True,
         )
 
     async def _handle_upload_file(self, config: AffinityUploadFileConfig, credentials):
@@ -2589,7 +2592,7 @@ class AffinityNode(WorkflowNode):
                     data_payload["opportunity_id"] = config.opportunity_id
 
                 response = await client.post(
-                    f"{AFFINITY_API_BASE}/files",
+                    f"{AFFINITY_API_BASE}/entity-files",
                     headers=headers_auth,
                     files=files_payload,
                     data=data_payload,
@@ -2709,7 +2712,7 @@ class AffinityNode(WorkflowNode):
             fields = json_mod.loads(config.fields)
         except (json_mod.JSONDecodeError, TypeError):
             fields = config.fields
-        body: Dict[str, Any] = {"fields": fields}
+        body: Dict[str, Any] = {"operation": "update-fields", "updates": fields}
         return await self._make_request(
             "PATCH",
             f"/v2/lists/{config.list_id}/list-entries/{config.entry_id}/fields",
