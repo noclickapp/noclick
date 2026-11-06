@@ -856,6 +856,18 @@
       "sha256": "6d61eb7a90ca76d212e13fbabf8127541a31932f800c53c88dc1be553388a82c"
     },
     {
+      "path": "frontend/public/icons/dropcontact-brand-vector.svg",
+      "source": "https://www.dropcontact.com/ (official compact brand vector, sourced in commit 82e438ff028ddf7a4007cdb968d312e96985f8b9)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "9bcb8a947da7be101ec8b41ecbd90248d2fb6aae053317ae902f10aa9dc73c88"
+    },
+    {
+      "path": "frontend/public/icons/dropcontact.svg",
+      "source": "https://cdn.prod.website-files.com/655b8092803c160e897db876/655b8092803c160e897db898_logo-black-color.svg",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "29c9b5a76080c60328a68c3a33f3e33f6497f4d1c60468e63a6728546cb7caa1"
+    },
+    {
       "path": "frontend/public/icons/porkbun-brand-vector.svg",
       "source": "https://porkbun.com/",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
