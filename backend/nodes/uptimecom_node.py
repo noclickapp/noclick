@@ -562,17 +562,18 @@ class UptimeComNode(WorkflowNode):
     @classmethod
     def get_config_model(cls): return UptimeComNodeConfig
     @classmethod
-    def parse_config(cls, data):
-        if data.get("credentials") is not None: credential(data["credentials"])
-        return super().parse_config(data)
+    def parse_config(cls, config_data):
+        if config_data.get("credentials") is not None: credential(config_data["credentials"])
+        return super().parse_config(config_data)
     @classmethod
-    def validate_config(cls, data):
-        if data.get("credentials") is not None:
-            try: credential(data["credentials"])
+    def validate_config(cls, config_data):
+        if config_data.get("credentials") is not None:
+            try: credential(config_data["credentials"])
             except ValueError: return {"valid": False, "errors": ["Complete the native Uptime.com credential form"], "satisfied_set": None}
-        return super().validate_config(data)
+        return super().validate_config(config_data)
     @classmethod
-    async def freshen_credential(cls, data, *, pool=None, user_id=None, credential_id=None, organization_id=None, workflow_id=None, **kwargs):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        data = credential_data
         credential(data)
         if isinstance(data, BoundCredential):
             await current_credential(data)
@@ -583,12 +584,10 @@ class UptimeComNode(WorkflowNode):
         if pool is None:
             from utils.database_pool import get_native_pool
             pool = get_native_pool()
-        organization_derived = organization_id is None
-        if organization_derived:
-            from wss.handlers.workflow_handler import get_user_org_context
-            async with pool.acquire() as conn: organization_id = await get_user_org_context(conn, user_id)
+        from wss.handlers.workflow_handler import get_user_org_context
+        async with pool.acquire() as conn: organization_id = await get_user_org_context(conn, user_id)
         return await bind_current(data, pool=pool, user_id=user_id, credential_id=credential_id,
-            organization_id=organization_id, workflow_id=workflow_id, organization_derived=organization_derived)
+            organization_id=organization_id, workflow_id=None, organization_derived=True)
     @classmethod
     async def validate_credential_access(cls, data):
         # Staging passes the decrypted accessible credential to this hook.
@@ -627,7 +626,7 @@ class UptimeComNode(WorkflowNode):
         if supplied is None and self.config.credentials is not None:
             supplied = self.config.credentials.model_dump()
         data = await self.freshen_credential(supplied, pool=self.node_data.get("_approval_pool"),
-            user_id=self.user_id, credential_id=self.node_data.get("credential_id"), organization_id=self.organization_id, workflow_id=self.workflow_id)
+            user_id=self.user_id, credential_id=self.node_data.get("credential_id"))
         cfg = self.config.config
         now = await current_credential(data)
         if isinstance(cfg, (ListChecks, ListTags, ListStatusPages)):
