@@ -314,17 +314,17 @@ class AprimoNode(WorkflowNode):
         return AprimoNodeConfig
 
     @classmethod
-    def parse_config(cls, data):
-        _raw_guard(data)
-        return super().parse_config(data)
+    def parse_config(cls, config_data):
+        _raw_guard(config_data)
+        return super().parse_config(config_data)
 
     @classmethod
-    def validate_config(cls, data):
+    def validate_config(cls, config_data):
         try:
-            _raw_guard(data)
+            _raw_guard(config_data)
         except ValueError as error:
             return {"valid": False, "errors": [str(error)], "satisfied_set": None}
-        return super().validate_config(data)
+        return super().validate_config(config_data)
 
     def _context(self):
         payload = {key: self.node_data.get(key) for key in ("credentialIds", "credential_id", "config", "credentials")}

@@ -45,15 +45,18 @@ def transport(monkeypatch, handler):
 
 def test_actual_factory_native_schema_and_raw_types():
     assert make().config.config.operation == "get_classification"
+    config_data = {"config": {"operation": "get_classification"}, "credentials": CREDENTIAL}
+    assert AprimoNode.parse_config(config_data=config_data).config.operation == "get_classification"
+    assert AprimoNode.validate_config(config_data=config_data)["valid"] is True
     schema = AprimoNode.get_config_schema()
     actual = {v["properties"]["operation"]["const"] for v in schema["$defs"].values() if "operation" in v.get("properties", {})}
     assert actual == set(OPERATIONS) and len(actual) == 8
     for args in ({"take": True}, {"skip": "0"}, {"include_names": "false"}, {"record_id": 4}):
         operation = "get_record" if "record_id" in args else "list_records"
         data = {"config": {"operation": operation, **args}, "credentials": CREDENTIAL}
-        assert AprimoNode.validate_config(data)["valid"] is False
+        assert AprimoNode.validate_config(config_data=data)["valid"] is False
         with pytest.raises(ValueError):
-            AprimoNode.parse_config(data)
+            AprimoNode.parse_config(config_data=data)
 
 
 @pytest.mark.parametrize("credential", [
