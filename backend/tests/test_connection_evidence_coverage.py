@@ -26,6 +26,7 @@ operations to ``_UNVERIFIED = frozenset()``:
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import pytest
@@ -360,11 +361,7 @@ def test_evidence_operations_are_read_only(node_type, node_cls):
         name = getattr(spec, attr)
         if not name:
             continue
-        # Ahrefs' existing operation name predates this naming rule. Its
-        # documented GET /subscription-info/limits-and-usage is authenticated
-        # and consumes zero units; keep saved configs intact.
-        is_ahrefs_usage_read = node_type == "automation-ahrefs" and name == "limits_and_usage"
-        assert name.startswith(_READ_ONLY_PREFIXES) or is_ahrefs_usage_read, (
+        assert name.startswith(_READ_ONLY_PREFIXES), (
             f"{node_type}.connection_evidence.{attr}={name!r} is not provably "
             f"read-only. Evidence runs the moment a user connects an account; "
             f"name a listing or lookup operation instead."

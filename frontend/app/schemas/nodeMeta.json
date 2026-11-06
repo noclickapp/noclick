@@ -7,9 +7,6 @@
     "automation-affinity": {
       "agentToolProvider": true
     },
-    "automation-ahrefs": {
-      "agentToolProvider": true
-    },
     "automation-airtable": {
       "agentToolProvider": true
     },
