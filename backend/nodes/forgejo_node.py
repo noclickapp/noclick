@@ -263,11 +263,11 @@ class ForgejoNode(WorkflowNode):
     @classmethod
     def get_config_model(cls): return ForgejoNodeConfig
     @classmethod
-    def parse_config(cls, data):
-        if data.get("credentials") is not None:
-            try: _stored(data["credentials"])
+    def parse_config(cls, config_data):
+        if config_data.get("credentials") is not None:
+            try: _stored(config_data["credentials"])
             except ValueError as error: raise ConfigValidationError(str(error)) from None
-        return super().parse_config(data)
+        return super().parse_config(config_data)
     @classmethod
     async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
         return await cls._load_current_credential(credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
