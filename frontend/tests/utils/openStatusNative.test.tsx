@@ -34,7 +34,8 @@ vi.mock('~/components/shared/popups/DeleteConfirmPopup', () => ({ DeleteConfirmP
 vi.mock('~/components/shared/popups/ShareDialog', () => ({ ShareDialog: () => null }));
 vi.mock('~/components/utils/UpgradePopup', () => ({ UpgradePopup: () => null }));
 const { NodeCredentials } = await import('~/components/workflow/NodeCredentials');
-const { cachedCredentialsOfType, invalidateCredentialsCache, upsertCredentialsIntoCache, removeCredentialsFromCache } = await import('~/utils/credentialAutoSelect');
+const { invalidateCredentialsCache, upsertCredentialsIntoCache, removeCredentialsFromCache } = await import('~/utils/credentialAutoSelect');
+const { autoSelectCredentialFromCache } = await import('~/utils/credentialAutoSelectForNode');
 await loadAllNodeSchemas();
 afterEach(() => { cleanup(); removeCredentialsFromCache(['synthetic-openstatus-own', 'synthetic-openstatus-other']); invalidateCredentialsCache(); vi.clearAllMocks(); });
 
@@ -63,12 +64,12 @@ it('renders the unchanged official checked-in vector asset', () => {
     expect(container.querySelector('img')?.getAttribute('src')).toBe('/icons/openstatus.svg');
 });
 
-it('keeps the native key family separate in the actual cache', () => {
+it('selects only the owned current native key family through the actual cache', () => {
     invalidateCredentialsCache();
     upsertCredentialsIntoCache([{ id: 'synthetic-openstatus-other', name: 'Other', credential_type: 'slack_oauth', owned_by_me: true }]);
-    expect(cachedCredentialsOfType('openstatus_api_key')).toBeUndefined();
+    expect(autoSelectCredentialFromCache('automation-openstatus')).toEqual({});
     upsertCredentialsIntoCache([{ id: 'synthetic-openstatus-own', name: 'Native', credential_type: 'openstatus_api_key', owned_by_me: true }]);
-    expect(cachedCredentialsOfType('openstatus_api_key')?.map((c) => c.id)).toEqual(['synthetic-openstatus-own']);
+    expect(autoSelectCredentialFromCache('automation-openstatus')).toEqual({ openstatus_api_key: 'synthetic-openstatus-own' });
     expect(boundary.send).not.toHaveBeenCalled();
 });
 

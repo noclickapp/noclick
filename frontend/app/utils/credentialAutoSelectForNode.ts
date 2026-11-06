@@ -33,6 +33,7 @@ const AUTO_SELECT_TYPES: ReadonlySet<string> = new Set([
     'automation-stripe',
     'automation-github-rest',
     'automation-apify',
+    'automation-openstatus',
     'automation-ahrefs',
     'automation-apollo',
     'automation-bluesky',
