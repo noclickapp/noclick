@@ -5712,22 +5712,15 @@ class OutlookMailNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         mime_content = self._resolve_template(config.mime_content, inputs)
 
-        payload = {
-            "message": {
-                "@odata.type": "#microsoft.graph.message",
-                "mimeContent": mime_content,
-            }
-        }
-
         try:
             async with _graph_client() as client:
                 response = await client.post(
                     url,
                     headers={
                         "Authorization": f"Bearer {access_token}",
-                        "Content-Type": "application/json",
+                        "Content-Type": "text/plain",
                     },
-                    json=payload,
+                    content=base64.b64encode(mime_content.encode("utf-8")),
                 )
 
                 if response.status_code not in [200, 202]:

@@ -13,7 +13,9 @@ Operations covered:
 - Settings: 4 operations (mailbox settings, auto-reply, etc.)
 """
 
+import base64
 import time
+import httpx
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from datetime import datetime, timezone
@@ -1977,26 +1979,36 @@ class TestMimeOperations:
         assert "mime_content" in result
 
     @pytest.mark.asyncio
-    async def test_send_mime_success(self):
-        """Test sending a MIME formatted message."""
-        config = OutlookSendMimeConfig(
-            mime_content="From: sender@example.com\r\nTo: recipient@example.com\r\nSubject: Test\r\n\r\nBody"
-        )
+    @pytest.mark.parametrize("body, inputs, expected", [
+        ("Body", {}, "Body"),
+        ("{{input.source.message}}", {"source": {"message": "Café"}}, "Café"),
+    ])
+    async def test_send_mime_success(self, body, inputs, expected):
+        """Graph expects base64 MIME bytes as text/plain, without a JSON wrapper."""
+        headers = "From: sender@example.com\r\nTo: recipient@example.com\r\nSubject: Test\r\n\r\n"
+        config = OutlookSendMimeConfig(mime_content=headers + body)
         node = create_node(config)
 
-        mock_response = create_mock_response(202, {})
+        requests = []
 
-        with patch("httpx.AsyncClient") as mock_client:
-            mock_client.return_value.__aenter__ = AsyncMock(
-                return_value=mock_client.return_value
-            )
-            mock_client.return_value.__aexit__ = AsyncMock(return_value=None)
-            mock_client.return_value.post = AsyncMock(return_value=mock_response)
+        def transport(request):
+            requests.append(request)
+            return httpx.Response(202)
 
-            result = await node.execute({})
+        client = httpx.AsyncClient(transport=httpx.MockTransport(transport))
+        with patch("nodes.outlook_mail_node._graph_client", return_value=client):
+            result = await node.execute(inputs)
 
         assert result["status"] == "success"
         assert result["operation"] == "send_mime_message"
+        assert result["mime_length"] == len(headers + expected)
+        assert len(requests) == 1
+        request = requests[0]
+        assert request.method == "POST"
+        assert str(request.url) == "https://graph.microsoft.com/v1.0/me/sendMail"
+        assert request.headers["authorization"] == f"Bearer {MOCK_CREDENTIALS.access_token}"
+        assert request.headers["content-type"] == "text/plain"
+        assert base64.b64decode(request.content, validate=True).decode("utf-8") == headers + expected
 
 
 # ============================================================================
