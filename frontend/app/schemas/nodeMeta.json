@@ -849,6 +849,9 @@
         "receive_webhook"
       ]
     },
+    "automation-pdfco": {
+      "agentToolProvider": true
+    },
     "automation-perplexity": {
       "agentToolProvider": true,
       "platformVendorOperations": [
