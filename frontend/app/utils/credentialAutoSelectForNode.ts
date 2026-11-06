@@ -38,6 +38,7 @@ const AUTO_SELECT_TYPES: ReadonlySet<string> = new Set([
     'automation-ahrefs',
     'automation-apollo',
     'automation-bluesky',
+    'automation-botpress',
     'automation-canva',
     'automation-discord',
     'automation-google-calendar',

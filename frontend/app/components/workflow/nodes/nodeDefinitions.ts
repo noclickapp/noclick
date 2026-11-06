@@ -71,6 +71,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-salesforce', 'SalesforceNode'],
     ['automation-affinity', 'AffinityNode'],
     ['automation-ahrefs', 'AhrefsNode'],
+    ['automation-botpress', 'BotpressNode'],
     ['automation-nocodb', 'NocoDBNode'],
     ['automation-basedash', 'BasedashNode'],
     ['automation-semrush', 'SemrushNode'],

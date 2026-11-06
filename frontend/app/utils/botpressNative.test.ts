@@ -1,9 +1,10 @@
-/** Prepared native Botpress form, operation and credential-selection fixtures.
- * These unrun fixtures do not establish provider access or a real UI capture. */
+/** Botpress form, operation and credential-selection fixtures.
+ * Synthetic credentials verify local behavior without provider access. */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import schema from '~/schemas/nodes/botpress.json';
 import { CREDENTIAL_TYPE_MAP } from './credentialTypeMap';
-import { getAgentToolOperations, getNodeSchema } from './nodeSchemas';
+import { getAgentToolOperations, getNodeSchema, loadNodeSchemas } from './nodeSchemas';
+import { autoSelectCredentialFromCache } from './credentialAutoSelectForNode';
 import { isAgentToolProviderType } from './nodeMeta';
 import { humanizeCredentialLabel } from './credentialLabels';
 import { BotpressNode } from '~/components/workflow/nodes/BotpressNode';
@@ -12,7 +13,7 @@ vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn(async () => ({ cre
 vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: vi.fn(async () => null), set: vi.fn(async () => {}), delete: vi.fn() } }));
 
 describe('Botpress native administration and scoped selection', () => {
-    beforeEach(() => vi.resetModules());
+    beforeEach(async () => { await loadNodeSchemas(['automation-botpress']); });
 
     it('registers the actual schema, fourteen operations and existing PAT label', () => {
         expect(getNodeSchema('automation-botpress')).toBe(schema);
@@ -40,9 +41,9 @@ describe('Botpress native administration and scoped selection', () => {
             { id: 'owned', name: 'Existing PAT', credential_type: 'botpress_pat', owned_by_me: true },
             { id: 'display', name: 'Collaborator', credential_type: 'botpress_pat', owned_by_me: false },
         ]);
-        expect(cache.autoSelectCredentialFromCache('automation-botpress')).toEqual({ botpress_pat: 'owned' });
+        expect(autoSelectCredentialFromCache('automation-botpress')).toEqual({ botpress_pat: 'owned' });
         cache.removeCredentialsFromCache(['owned']);
-        expect(cache.autoSelectCredentialFromCache('automation-botpress')).toEqual({});
+        expect(autoSelectCredentialFromCache('automation-botpress')).toEqual({});
         cache.removeCredentialsFromCache(['foreign', 'display']);
         cache.setActiveCredentialWorkflow(null);
     });

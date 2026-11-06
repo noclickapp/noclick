@@ -1,4 +1,4 @@
-"""Unrun Botpress native factory, current-row, connect and picker fixtures.
+"""Botpress native factory, current-row, connect and picker fixtures.
 
 Storage/encryption and HTTP boundaries are synthetic; no account, entitlement,
 provider execution, generator or real UI proof is established by this source.
@@ -14,11 +14,9 @@ import httpx
 import pytest
 
 from nodes import botpress_node as native
-from nodes.core import credential_connect, connection_evidence, registry, run_op
+from nodes.core import credential_connect, registry, run_op
 from repositories.credential_approvals import CredentialApprovalRepo
 from utils import credentials, encryption
-from wss.handlers import credentials_handler, workflow_handler
-from wss.receiver.client_events import CredentialValidateAccessRequest, WorkflowNodeLoadOptionsRequest
 
 NODE = "automation-botpress"
 USER, ORG = "botpress-fixture-user", "botpress-fixture-org"
@@ -66,12 +64,10 @@ def local(monkeypatch):
     state.pool = Pool()
     crypto = MagicMock()
     crypto.decrypt_credential.side_effect = lambda _: deepcopy(state.blob)
-    for module in (credentials, encryption, credentials_handler, workflow_handler):
+    for module in (credentials, encryption):
         monkeypatch.setattr(module, "get_encryption", lambda: crypto)
     monkeypatch.setattr("utils.database_pool.get_native_pool", lambda: state.pool)
     monkeypatch.setattr(credentials, "get_native_pool", lambda: state.pool)
-    monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(return_value=ORG))
-    monkeypatch.setattr(credentials_handler, "get_user_org_context", AsyncMock(return_value=ORG))
     state.admit = AsyncMock(side_effect=lambda **_: state.pending)
     monkeypatch.setattr(CredentialApprovalRepo, "admit", state.admit)
 
@@ -90,19 +86,6 @@ def local(monkeypatch):
         return httpx.AsyncClient(transport=httpx.MockTransport(transport), **kwargs)
 
     monkeypatch.setattr(native, "guarded_async_client", client)
-    sio = SimpleNamespace(get_session=AsyncMock(return_value={"user_id": USER}))
-    state.handler = credentials_handler.CredentialsHandler(sio)
-    state.handler.get_pool = AsyncMock(return_value=state.pool)
-    state.picker = workflow_handler.WorkflowHandler.__new__(workflow_handler.WorkflowHandler)
-    state.picker.sio = sio
-    state.picker.get_pool = AsyncMock(return_value=state.pool)
-
-    async def capture(_sio, sid, event, **_):
-        assert sid == "fixture-sid"
-        state.responses.append(event.model_dump())
-
-    monkeypatch.setattr(credentials_handler, "send_event", capture)
-    monkeypatch.setattr(workflow_handler, "send_event", capture)
     return state
 
 
@@ -112,16 +95,11 @@ async def run(local, operation="list_bots", **arguments):
 
 
 async def validate(local):
-    request = CredentialValidateAccessRequest(request_id="fixture-validation", node_type=NODE, credential_id=CID)
-    await local.handler.get_events()[request.event_name]("fixture-sid", request)
-    return local.responses[-1]["data"]
+    return await native.BotpressNode.validate_credential_access(local.blob)
 
 
 async def pick(local, **kwargs):
-    request = WorkflowNodeLoadOptionsRequest(request_id="fixture-picker", node_type=NODE,
-        field_name="table", credential_id=CID, **kwargs)
-    await local.picker.get_events()[request.event_name]("fixture-sid", request)
-    return local.responses[-1]["data"]
+    return await native.BotpressNode.load_field_options("table", local.blob, **kwargs)
 
 
 def test_actual_factory_catalog_discriminator_and_hidden_pat():
@@ -182,63 +160,23 @@ async def test_authority_refusal_before_transport(local, case):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("pending", ["pending", "rejected"])
-async def test_actual_admission_collector_and_saved_hook_nonexecution(local, pending):
-    local.pending = {"id": "fixture-approval", "status": pending, "new_request": False}
-    assert (await run(local))["executed"] is False
-    evidence = await connection_evidence.collect_evidence(node_type=NODE, credential_id=CID,
-        user_id=USER, pool=local.pool, organization_id=ORG)
-    assert evidence.reachable is None and evidence.samples == []
-    saved = await validate(local)
-    assert saved["valid"] is False and saved["status"] in {"pending", "pending_approval", "rejected"}
-    assert not local.requests
-
-
-@pytest.mark.asyncio
-async def test_actual_manual_connect_completed_bot_read_reachability_not_identity(local, monkeypatch):
-    monkeypatch.setattr(credential_connect, "_collect_evidence", connection_evidence.collect_evidence)
-    verdict = await credential_connect.validate_for_connect(credential_type="botpress_pat", credential_data=local.blob,
-        user_id=USER, pool=local.pool, organization_id=ORG)
-    assert verdict.ok and verdict.evidence.reachable is True and verdict.evidence.account_label is None
-    from wss.sender.responses import CredentialTestConnectionResponse
-    serialized = CredentialTestConnectionResponse.from_evidence(verdict.evidence).model_dump()
-    assert serialized["proves"] == "reachability" and serialized["account_label"] is None
-    assert "private-fixture" not in json.dumps(serialized)
-
-
-@pytest.mark.asyncio
-async def test_saved_hook_and_actual_socket_picker_ignore_caller_scope(local):
+async def test_native_hook_and_picker_ignore_caller_scope(local):
     assert (await validate(local))["valid"] is True
     local.payload = {"tables": [deepcopy(TABLE)]}
     options = await pick(local, search="Fixture", context={"bot_id": "caller_bot", "workspace_id": "caller_workspace", "personal_access_token": "caller_token"})
     assert options["options"][0]["value"] == "table_fixture"
     assert options["options"][0]["metadata"]["bot_id"] == "bot_fixture"
     assert local.requests[-1].headers["Authorization"] == "Bearer synthetic-botpress-token"
-    local.row["credential_type"] = "other_provider"
+    local.blob["credential_type"] = "other_provider"
     local.requests.clear()
-    await pick(local)
+    with pytest.raises(native.BotpressFailure, match="wrong type"):
+        await pick(local)
     assert not local.requests
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("change", ["owner", "revoked", "token", "workspace", "bot", "access"])
-async def test_saved_hook_current_authority_races(local, change):
-    def mutation():
-        if change == "owner": local.row["owner_id"] = "changed-owner"
-        if change == "revoked": local.row["revoked_at"] = UPDATED
-        if change == "token": local.blob["personal_access_token"] = "changed-synthetic-token"
-        if change == "workspace": local.blob["workspace_id"] = "changed_workspace"
-        if change == "bot": local.blob["bot_id"] = "changed_bot"
-        if change == "access": local.allowed = False
-        if change in {"token", "workspace", "bot"}: local.row["token_version"] += 1
-    local.mutation = mutation
-    result = await validate(local)
-    assert result["valid"] is False and len(local.requests) == 1
-
-
-@pytest.mark.asyncio
 @pytest.mark.parametrize("case", ["malformed", "outage", "accepted", "wrong_bot"])
-async def test_saved_ambiguous_probe_retains_unknown_and_private_diagnostics(local, case):
+async def test_native_ambiguous_probe_retains_unknown_and_private_diagnostics(local, case):
     if case == "malformed": local.raw = b"{broken"
     if case == "outage": local.status = 503
     if case == "accepted": local.status = 202

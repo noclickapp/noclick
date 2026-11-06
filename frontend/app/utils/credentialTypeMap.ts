@@ -14,6 +14,7 @@
  * Example: 'GoogleSheetsOAuthCredential' -> 'google_sheets_oauth'
  */
 export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
+    'BotpressPATCredential': 'botpress_pat',
     'FormBuilder123TokenCredential': '123formbuilder_v2_token',
     'PorkbunCredential': 'porkbun_api_key',
     'HetrixToolsAPIKeyCredential': 'hetrixtools_api_key',

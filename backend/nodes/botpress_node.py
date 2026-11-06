@@ -467,11 +467,15 @@ class BotpressNode(WorkflowNode):
         return BotpressNodeConfig
 
     @classmethod
-    async def validate_credential_access(cls, credential_data, *, validation_context=None):
-        if validation_context is None:
-            return {"valid": None, "error": "Validate the saved Botpress credential"}
-        result = await validation_context.run_operation("get_bound_bot", {})
-        return {"valid": True} if result.get("status") == "success" else {"valid": None}
+    async def validate_credential_access(cls, credential_data):
+        try:
+            credential = _credential(credential_data)
+            result = await _request(credential, "GET", "/v1/admin/bots/" + credential.bot_id)
+            _project(result.get("bot"), "bot", selected_id=credential.bot_id)
+            return {"valid": True}
+        except BotpressFailure as exc:
+            rejected = exc.category in {"authority", "authentication", "permission"}
+            return {"valid": False if rejected else None, "error": str(exc)}
 
     async def _current_credential(self):
         supplied = self.config.credentials

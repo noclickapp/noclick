@@ -63,7 +63,6 @@ from nodes.salesforce_node import SalesforceNode
 from nodes.semrush_node import SemrushNode
 from nodes.serverless_function_node import ServerlessFunctionNode
 from nodes.shopify_node import ShopifyNode
-from nodes.botpress_node import BotpressNode
 from nodes.slack_node import SlackNode
 from nodes.supabase_node import SupabaseNode
 from nodes.tool_node import ToolNode
@@ -86,6 +85,7 @@ from nodes.mailchimp_node import MailchimpNode
 from nodes.pipedrive_node import PipedriveNode
 from nodes.resend_node import ResendNode
 from nodes.ahrefs_node import AhrefsNode
+from nodes.botpress_node import BotpressNode
 from nodes.phantombuster_node import PhantomBusterNode
 from nodes.cal_com_node import CalComNode
 from nodes.calendly_node import CalendlyNode
@@ -237,12 +237,12 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-salesforce': SalesforceNode,
     'automation-semrush': SemrushNode,
     'automation-shopify': ShopifyNode,
-    'automation-botpress': BotpressNode,
     'automation-slack': SlackNode,
     'automation-mailchimp': MailchimpNode,
     'automation-pipedrive': PipedriveNode,
     'automation-resend': ResendNode,
     'automation-ahrefs': AhrefsNode,
+    'automation-botpress': BotpressNode,
     'automation-threads': ThreadsNode,
     'automation-phantombuster': PhantomBusterNode,
     'automation-cal-com': CalComNode,
