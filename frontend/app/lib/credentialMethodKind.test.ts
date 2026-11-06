@@ -17,6 +17,7 @@ const KNOWN_KINDS: CredentialMethodKind[] = ['api_key', 'oauth', 'agent_oauth', 
 // (e.g. Reddit's "script": client_id/secret/username/password) resolve to api_key.
 const KNOWN_DISCRIMINATORS = ['oauth', 'qr_scan', 'purchase', 'script'];
 KNOWN_DISCRIMINATORS.push('porkbun_api_key');
+KNOWN_DISCRIMINATORS.push('kajabi_access_token');
 
 const schemasDir = join(dirname(fileURLToPath(import.meta.url)), '../schemas/nodes');
 
