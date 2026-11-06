@@ -10,6 +10,7 @@
 // (used on the snake_case path, where tokens arrive whole).
 const WORD_CASING: Record<string, string> = {
   hetrixtools: 'HetrixTools',
+  predictleads: 'PredictLeads',
   qr: 'QR', api: 'API', oauth: 'OAuth', pat: 'PAT', id: 'ID', url: 'URL',
   sso: 'SSO', ai: 'AI', whatsapp: 'WhatsApp', github: 'GitHub',
   gitlab: 'GitLab', hubspot: 'HubSpot', linkedin: 'LinkedIn',
@@ -28,6 +29,7 @@ const WORD_CASING: Record<string, string> = {
 const COMPOUND_BRANDS = [
   'HetrixTools',
   'AccuLynx',
+  'PredictLeads',
   'WhatsApp', 'GitHub', 'GitLab', 'HubSpot', 'LinkedIn', 'PayPal', 'TikTok',
   'YouTube', 'PostHog', 'OpenAI', 'ClickUp', 'PagerDuty', 'BambooHR',
   'BigCommerce',

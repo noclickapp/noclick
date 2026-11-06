@@ -24,6 +24,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-adapty', 'AdaptyNode'],
     ['automation-porkbun', 'PorkbunNode'],
     ['automation-hetrixtools', 'HetrixToolsNode'],
+    ['automation-predictleads', 'PredictLeadsNode'],
     ['automation-telegram', 'TelegramNode'],
     ['automation-google-sheets', 'GoogleSheetsNode'],
     ['automation-google-drive', 'GoogleDriveNode'],

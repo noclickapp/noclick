@@ -1076,6 +1076,24 @@
       "source": "https://www.mindbodyonline.com/themes/mindbody/images/icons/favicons/mindbody-favicon.svg (unmodified provider-published SVG; byte-for-byte verified)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "272cc5f021c2df86f0fa9868c79c09e447257c426e5c686b4c85b8d5b965bab6"
+    },
+    {
+      "path": "frontend/public/icons/predictleads.svg",
+      "source": "https://docs.predictleads.com/vite/assets/predictleads-favicon-9dD7SpqR.svg (unmodified official developer-docs favicon; byte-for-byte verified)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "144e9db69930bf23e38852aa1ba574bb7acbb046f6f59ad10711344145961c98"
+    },
+    {
+      "path": "frontend/public/icons/predictleads-preferred-brand.svg",
+      "source": "https://logos.composio.dev/api/predict_leads (brand path verified against source; white rounded background and inset canvas)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "d4fc0fe2098f6406268163dd8f641c1e8d86a35a8e6d3041f294d3af6fd742ab"
+    },
+    {
+      "path": "frontend/public/icons/predictleads.provenance.json",
+      "source": "NoClick PredictLeads integration provenance record for https://docs.predictleads.com/vite/assets/predictleads-favicon-9dD7SpqR.svg",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "8e183b294bc5ee0b9a78e5b056a50fcad797ca348c0e8a13eece4040760be476"
     }
   ],
   "excludedSourceAssets": [

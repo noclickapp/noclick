@@ -21,6 +21,7 @@ import { NODE_SCHEMAS, loadNodeSchemas, nodeSchemasLoaded } from '~/utils/nodeSc
 const AUTO_SELECT_TYPES: ReadonlySet<string> = new Set([
     'automation-adapty',
     'automation-mindbody',
+    'automation-predictleads',
     'automation-porkbun',
     'automation-hetrixtools',
     'automation-acculynx',
