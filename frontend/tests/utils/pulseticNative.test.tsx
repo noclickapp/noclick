@@ -1,20 +1,27 @@
-// Actual native frontend seams, prepared UNRUN. No provider calls.
+// Pulsetic discovery, credential selection and config filtering against the native frontend.
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { PulseticNode } from '~/components/workflow/nodes/PulseticNode';
-import { AVAILABLE_NODES } from '~/components/workflow/nodes/nodeRegistry';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
-import { filterConfigForExecution, getAgentToolOperations, getNodeCredentialInfo } from '~/utils/nodeSchemas';
-import { autoSelectCredentialFromCache, removeCredentialsFromCache, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
+import { filterConfigForExecution, getAgentToolOperations, getNodeCredentialInfo, loadNodeSchemas } from '~/utils/nodeSchemas';
+import { removeCredentialsFromCache, upsertCredentialsIntoCache } from '~/utils/credentialAutoSelect';
+import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
+import { NODE_DEFINITION_FILES, getNodeDefinition, loadNodeDefinitions } from '~/components/workflow/nodes/nodeDefinitions';
 import fixture from '../fixtures/pulsetic-native.json';
 
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn() }));
 vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: vi.fn(), set: vi.fn(), delete: vi.fn() } }));
 
+beforeAll(async () => {
+    await loadNodeSchemas([fixture.type]);
+    await loadNodeDefinitions([fixture.type]);
+});
+
 describe('Pulsetic native protected metadata', () => {
     it('is discoverable in the registry used by both native palettes', () => {
-        expect(AVAILABLE_NODES.some(node => node.type === fixture.type)).toBe(true);
+        expect(NODE_DEFINITION_FILES).toContainEqual([fixture.type, 'PulseticNode']);
+        expect(getNodeDefinition(fixture.type)).toBe(PulseticNode);
         expect(PulseticNode.label).toBe('Pulsetic');
         expect(PulseticNode.keywords).toContain('uptime');
     });
