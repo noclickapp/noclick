@@ -15,6 +15,9 @@ Exercises every operation with mocked HTTP responses (no live API calls):
 
 import hashlib
 import hmac
+import json
+
+import httpx
 
 import pytest
 from unittest.mock import Mock, patch
@@ -204,9 +207,23 @@ class TestIntercomContactsMock:
             config=IntercomMergeContactsConfig(contact_id="lead_1", into_contact_id="user_1"),
             credentials=credentials,
         )
-        result = await _run(create_intercom_node(config), 200, {"id": "user_1"})
+        requests = []
+
+        def transport(request):
+            requests.append(request)
+            return httpx.Response(200, json={"id": "user_1"})
+
+        client = httpx.AsyncClient(transport=httpx.MockTransport(transport))
+        with patch("nodes.intercom_node.httpx.AsyncClient", return_value=client):
+            result = await create_intercom_node(config).execute({})
+
+        assert len(requests) == 1
+        assert requests[0].method == "POST"
+        assert str(requests[0].url) == "https://api.intercom.io/contacts/merge"
+        assert json.loads(requests[0].content) == {"from": "lead_1", "into": "user_1"}
         assert result["status"] == "success"
         assert result["action"] == "merge_contacts"
+        assert result["data"]["id"] == "user_1"
 
     @pytest.mark.asyncio
     async def test_create_note(self, credentials):
@@ -323,7 +340,7 @@ class TestIntercomTicketsMock:
     @pytest.mark.asyncio
     async def test_update_ticket(self, credentials):
         config = IntercomNodeConfig(
-            config=IntercomUpdateTicketConfig(ticket_id="tk_1", state="resolved", assignee_id="a_1"),
+            config=IntercomUpdateTicketConfig(ticket_id="tk_1", state="123", assignee_id="456"),
             credentials=credentials,
         )
         result = await _run(create_intercom_node(config), 200, {"id": "tk_1", "state": "resolved"})
@@ -378,7 +395,7 @@ class TestIntercomMessagingMock:
     async def test_send_message(self, credentials):
         config = IntercomNodeConfig(
             config=IntercomSendMessageConfig(
-                message_type="inapp", contact_id="c_1", admin_id="a_1", body="Welcome!"
+                message_type="inapp", contact_id="c_1", admin_id="394051", body="Welcome!"
             ),
             credentials=credentials,
         )
@@ -867,7 +884,7 @@ class TestIntercomArticlesMock:
     @pytest.mark.asyncio
     async def test_create_article(self, credentials):
         node = create_intercom_node(IntercomNodeConfig(
-            config=IntercomCreateArticleConfig(title="Getting Started", body="<p>Welcome!</p>", state="draft"),
+            config=IntercomCreateArticleConfig(title="Getting Started", body="<p>Welcome!</p>", author_id="1295", state="draft"),
             credentials=credentials,
         ))
         with patch("nodes.intercom_node._intercom_request", return_value={"status": "success", "action": "create_article", "data": {"id": "art_2", "title": "Getting Started"}}) as mock_req:
@@ -877,6 +894,13 @@ class TestIntercomArticlesMock:
         args, kwargs = mock_req.call_args
         assert args[2] == "POST"
         assert args[3] == "/articles"
+        assert kwargs["json_body"]["author_id"] == 1295
+
+    def test_create_article_requires_author(self):
+        from pydantic import ValidationError
+
+        with pytest.raises(ValidationError, match="author_id"):
+            IntercomCreateArticleConfig(title="Getting Started")
 
     @pytest.mark.asyncio
     async def test_update_article(self, credentials):
@@ -905,3 +929,44 @@ class TestIntercomArticlesMock:
         args, kwargs = mock_req.call_args
         assert args[2] == "DELETE"
         assert "/articles/art_1" in args[3]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "config, endpoint, expected_body",
+    [
+        (
+            IntercomUpdateTicketConfig(ticket_id="1295", state="123", assignee_id="456"),
+            "/tickets/1295",
+            {"ticket_state_id": "123", "assignee_id": "456"},
+        ),
+        (
+            IntercomSendMessageConfig(
+                contact_id="536e564f316c83104c000020", admin_id="394051", body="Hello there"
+            ),
+            "/messages",
+            {
+                "message_type": "in_app",
+                "body": "Hello there",
+                "from": {"type": "admin", "id": 394051},
+                "to": {"type": "user", "id": "536e564f316c83104c000020"},
+            },
+        ),
+    ],
+)
+async def test_intercom_serialized_request(config, endpoint, expected_body, credentials):
+    requests = []
+
+    def transport(request):
+        requests.append(request)
+        return httpx.Response(200, json={})
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(transport))
+    node = create_intercom_node(IntercomNodeConfig(config=config, credentials=credentials))
+    with patch("nodes.intercom_node.httpx.AsyncClient", return_value=client):
+        result = await node.execute({})
+
+    assert result["status"] == "success"
+    assert len(requests) == 1
+    assert requests[0].url.path == endpoint
+    assert json.loads(requests[0].content) == expected_body

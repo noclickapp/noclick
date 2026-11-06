@@ -859,13 +859,8 @@ class IntercomUpdateTicketConfig(BaseModel):
     ticket_id: str = Field(..., title="Ticket ID", description="The ticket ID to update")
     state: Optional[str] = Field(
         None,
-        title="State",
-        description="New ticket state",
-        json_schema_extra={
-            "enum": ["", "submitted", "in_progress", "waiting_on_customer", "resolved"],
-            "enumNames": ["Unchanged", "Submitted", "In Progress", "Waiting on Customer", "Resolved"],
-            "x-enum-searchable": True,
-        },
+        title="Ticket State ID",
+        description="ID of the state associated with this ticket's type, not its display name",
     )
     assignee_id: Optional[str] = Field(
         None, title="Assignee ID", description="Admin or team ID to assign the ticket to"
@@ -1014,11 +1009,11 @@ class IntercomSendMessageConfig(BaseModel):
         title="Send Message",
     )
     message_type: str = Field(
-        "inapp",
+        "in_app",
         title="Message Type",
         description="Whether to send an in-app or email message",
         json_schema_extra={
-            "enum": ["inapp", "email"],
+            "enum": ["in_app", "email"],
             "enumNames": ["In-App", "Email"],
             "x-enum-searchable": True,
         },
@@ -1220,7 +1215,7 @@ class IntercomCreateArticleConfig(BaseModel):
     operation: Literal["create_article"] = Field("create_article", json_schema_extra={"const": "create_article", "ui:hidden": True, "x-category": "Help Center", "x-is-trigger": False, "x-display-name": "Create Article"}, title="Create Article")
     title: str = Field(..., title="Title", description="The article title")
     body: Optional[str] = Field(None, title="Body (HTML)", description="The article body in HTML", json_schema_extra={"ui:widget": "textarea"})
-    author_id: Optional[str] = Field(None, title="Author Admin", description="The admin who authors the article", json_schema_extra={"x-dynamic-options": {"field_name": "admin_id", "placeholder": "Select an admin...", "searchable": True, "allow_custom": True, "custom_placeholder": "Or paste admin ID"}})
+    author_id: str = Field(..., title="Author Admin", description="The admin who authors the article", json_schema_extra={"x-dynamic-options": {"field_name": "admin_id", "placeholder": "Select an admin...", "searchable": True, "allow_custom": True, "custom_placeholder": "Or paste admin ID"}})
     state: Optional[str] = Field("draft", title="State", description="Article state", json_schema_extra={"enum": ["draft", "published"], "enumNames": ["Draft", "Published"], "x-enum-searchable": True})
 
 
@@ -2037,7 +2032,7 @@ class IntercomNode(WorkflowNode):
 
     async def _merge_contacts(self, c: IntercomMergeContactsConfig, token: str, base: str) -> Dict[str, Any]:
         body = {"from": c.contact_id, "into": c.into_contact_id}
-        return await _intercom_request(token, base, "POST", f"/contacts/{c.contact_id}/merge", json_body=body, action_name="merge_contacts")
+        return await _intercom_request(token, base, "POST", "/contacts/merge", json_body=body, action_name="merge_contacts")
 
     async def _create_note(self, c: IntercomCreateNoteConfig, token: str, base: str) -> Dict[str, Any]:
         body = {"body": c.body, "admin_id": c.admin_id}
@@ -2144,11 +2139,11 @@ class IntercomNode(WorkflowNode):
 
     async def _update_ticket(self, c: IntercomUpdateTicketConfig, token: str, base: str) -> Dict[str, Any]:
         body: Dict[str, Any] = {
-            "state": c.state or None,
+            "ticket_state_id": c.state or None,
             "ticket_attributes": _parse_json_field(c.ticket_attributes),
         }
         if c.assignee_id:
-            body["assignment"] = {"assignee_id": c.assignee_id}
+            body["assignee_id"] = c.assignee_id
         return await _intercom_request(token, base, "PUT", f"/tickets/{c.ticket_id}", json_body=body, action_name="update_ticket")
 
     async def _search_tickets(self, c: IntercomSearchTicketsConfig, token: str, base: str) -> Dict[str, Any]:
@@ -2195,10 +2190,10 @@ class IntercomNode(WorkflowNode):
     # ------------------------------------------------------------------
     async def _send_message(self, c: IntercomSendMessageConfig, token: str, base: str) -> Dict[str, Any]:
         body = {
-            "message_type": c.message_type,
+            "message_type": "in_app" if c.message_type == "inapp" else c.message_type,
             "subject": c.subject,
             "body": c.body,
-            "from": {"type": "admin", "id": c.admin_id},
+            "from": {"type": "admin", "id": int(c.admin_id)},
             "to": {"type": "user", "id": c.contact_id},
         }
         return await _intercom_request(token, base, "POST", "/messages", json_body=body, action_name="send_message")
@@ -2250,7 +2245,7 @@ class IntercomNode(WorkflowNode):
         return await _intercom_request(token, base, "GET", f"/articles/{c.article_id}", action_name="get_article")
 
     async def _create_article(self, c, token, base):
-        body = {"title": c.title, "body": c.body, "author_id": c.author_id, "state": c.state}
+        body = {"title": c.title, "body": c.body, "author_id": int(c.author_id), "state": c.state}
         return await _intercom_request(token, base, "POST", "/articles", json_body=body, action_name="create_article")
 
     async def _update_article(self, c, token, base):
