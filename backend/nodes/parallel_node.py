@@ -574,9 +574,9 @@ class ParallelExtendFindAllConfig(BaseModel):
         title="Extend FindAll Run",
     )
     findall_id: str = Field(..., title="FindAll Run ID", description="The FindAll run id")
-    match_limit: str = Field(
-        ..., title="Additional Match Limit", description="Positive additional number of entities to find",
-        pattern=r"^[1-9][0-9]*$",
+    match_limit: Optional[str] = Field(
+        None, title="Additional Match Limit",
+        description="Positive additional number of entities to find. Saved workflows without a limit remain loadable; set a limit before executing this action.",
     )
 
 
@@ -848,6 +848,28 @@ class ParallelCancelMonitorConfig(BaseModel):
     )
 
 
+class ParallelSimulateMonitorEventConfig(BaseModel):
+    """Deprecated saved-workflow compatibility for the retired simulation endpoint."""
+
+    model_config = ConfigDict(json_schema_extra={"deprecated": True})
+
+    operation: Literal["simulate_monitor_event"] = Field(
+        "simulate_monitor_event",
+        json_schema_extra={
+            "const": "simulate_monitor_event",
+            "ui:hidden": True,
+            "x-category": "Monitors",
+            "x-is-trigger": False,
+            "x-display-name": "Simulate Monitor Event (Retired)",
+        },
+        title="Simulate Monitor Event",
+    )
+    monitor_id: str = Field(
+        ..., title="Monitor ID", description="The monitor to simulate an event for",
+        json_schema_extra={"x-dynamic-options": {"field_name": "monitor_id", "placeholder": "Select a monitor...", "searchable": True}, "x-resource-type": "parallel_monitor"},
+    )
+
+
 # ============================================================================
 # Operation Configs — Chat
 # ============================================================================
@@ -974,6 +996,7 @@ ParallelConfig = Annotated[
         ParallelListMonitorEventsConfig,
         ParallelTriggerMonitorConfig,
         ParallelCancelMonitorConfig,
+        ParallelSimulateMonitorEventConfig,
         ParallelChatCompletionsConfig,
         ParallelReceiveWebhookConfig,
     ],
@@ -1265,9 +1288,12 @@ class ParallelNode(WorkflowNode):
             }
 
         credentials = config.credentials
-        if not credentials:
+        if isinstance(op, ParallelSimulateMonitorEventConfig):
+            # Retirement is local and must not require reconnecting an old workflow.
+            api_key = ""
+        elif not credentials:
             raise ValueError("Credentials are required. Add your Parallel API key or connect via OAuth.")
-        if isinstance(credentials, ParallelOAuthCredential):
+        elif isinstance(credentials, ParallelOAuthCredential):
             api_key = credentials.access_token
         else:
             api_key = credentials.api_key
@@ -1301,6 +1327,7 @@ class ParallelNode(WorkflowNode):
             "list_monitor_events": self._list_monitor_events,
             "trigger_monitor": self._trigger_monitor,
             "cancel_monitor": self._cancel_monitor,
+            "simulate_monitor_event": self._simulate_monitor_event,
             "chat_completions": self._chat_completions,
         }
         handler = handlers.get(op.operation)
@@ -1609,7 +1636,21 @@ class ParallelNode(WorkflowNode):
         )
 
     async def _extend_findall(self, c: ParallelExtendFindAllConfig, api_key: str) -> Dict[str, Any]:
-        body = {"additional_match_limit": int(c.match_limit)}
+        # Keep optional/null legacy configs loadable, but never guess a paid increment.
+        value = c.match_limit.strip() if c.match_limit else ""
+        try:
+            limit = int(value) if value.isdigit() else 0
+        except ValueError:
+            limit = 0
+        if limit <= 0:
+            return {
+                "status": "error",
+                "action": "extend_findall",
+                "error": "Set match_limit (Additional Match Limit) to a positive integer before running this saved action; no default increment is applied.",
+                "status_code": 422,
+                "timing_ms": {"api_request": 0},
+            }
+        body = {"additional_match_limit": limit}
         return await _parallel_request(
             api_key,
             "POST",
@@ -1724,6 +1765,18 @@ class ParallelNode(WorkflowNode):
             f"/v1/monitors/{c.monitor_id}/cancel",
             action_name="cancel_monitor",
         )
+
+    async def _simulate_monitor_event(
+        self, c: ParallelSimulateMonitorEventConfig, api_key: str
+    ) -> Dict[str, Any]:
+        """Keep saved actions loadable without calling the retired API or a real run."""
+        return {
+            "status": "error",
+            "action": "simulate_monitor_event",
+            "error": "Parallel retired the monitor simulation endpoint. This saved action made no request. To run a real monitor execution, explicitly replace it with trigger_monitor. See https://docs.parallel.ai/monitor-api/monitor-migration-guide#simulate-event",
+            "status_code": 410,
+            "timing_ms": {"api_request": 0},
+        }
 
     # ------------------------------------------------------------------
     # Handlers — Chat

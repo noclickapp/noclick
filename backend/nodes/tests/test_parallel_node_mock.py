@@ -622,8 +622,13 @@ class TestParallelErrorHandlingMock:
 
 class TestParallelConformanceRegressions:
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("operation", ["enrich_findall", "extend_findall"])
-    async def test_findall_wire_contract(self, api_key_credentials, operation):
+    @pytest.mark.parametrize("operation, limit", [
+        ("enrich_findall", None),
+        ("extend_findall", "40"),
+        ("extend_findall", "040"),
+        ("extend_findall", " 040 "),
+    ])
+    async def test_findall_wire_contract(self, api_key_credentials, operation, limit):
         import json
         import httpx
 
@@ -649,7 +654,7 @@ class TestParallelConformanceRegressions:
         else:
             config = ParallelExtendFindAllConfig(
                 findall_id="findall_40e0ab8c10754be0b7a16477abb38a2f",
-                match_limit="40",
+                match_limit=limit,
             )
         node = create_parallel_node(ParallelNodeConfig(
             config=config, credentials=api_key_credentials,
@@ -680,18 +685,54 @@ class TestParallelConformanceRegressions:
             assert request.url.path.endswith("/extend")
             assert body == {"additional_match_limit": 40}
 
-    @pytest.mark.parametrize("limit", [None, "", "0", "-1", "1.5", "many"])
-    def test_extend_requires_positive_integer(self, limit):
-        from pydantic import ValidationError
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("legacy_fields", [
+        {}, {"match_limit": None}, {"match_limit": ""}, {"match_limit": "0"},
+        {"match_limit": "-1"}, {"match_limit": "1.5"}, {"match_limit": "many"},
+    ])
+    async def test_legacy_extension_loads_and_requests_explicit_limit(
+        self, api_key_credentials, legacy_fields
+    ):
+        config = ParallelNodeConfig.model_validate({
+            "config": {"operation": "extend_findall", "findall_id": "fa_1", **legacy_fields},
+            "credentials": api_key_credentials.model_dump(),
+        })
+        # A persisted workflow can be loaded and serialized again, even without a limit.
+        reloaded = ParallelNodeConfig.model_validate(config.model_dump())
+        node = create_parallel_node(reloaded)
+        with patch("nodes.parallel_node.httpx.AsyncClient") as client:
+            result = await node.execute({})
+        client.assert_not_called()
+        assert result["status"] == "error"
+        assert result["action"] == "extend_findall"
+        assert result["status_code"] == 422
+        assert "Set match_limit" in result["error"]
+        assert "no default increment" in result["error"]
 
-        with pytest.raises(ValidationError):
-            ParallelExtendFindAllConfig(findall_id="fa_1", match_limit=limit)
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("with_credentials", [True, False])
+    async def test_saved_simulation_returns_retirement_without_http(
+        self, api_key_credentials, with_credentials
+    ):
+        config = ParallelNodeConfig.model_validate({
+            "config": {"operation": "simulate_monitor_event", "monitor_id": "monitor_1"},
+            "credentials": api_key_credentials.model_dump() if with_credentials else None,
+        })
+        reloaded = ParallelNodeConfig.model_validate(config.model_dump())
+        node = create_parallel_node(reloaded)
+        with patch("nodes.parallel_node.httpx.AsyncClient") as client:
+            result = await node.execute({})
+        client.assert_not_called()
+        assert result["status"] == "error"
+        assert result["action"] == "simulate_monitor_event"
+        assert result["status_code"] == 410
+        assert "retired" in result["error"]
+        assert "explicitly replace" in result["error"]
+        assert result["timing_ms"]["api_request"] == 0
 
-    def test_removed_simulation_is_not_available(self, api_key_credentials):
-        from pydantic import ValidationError
-
-        with pytest.raises(ValidationError):
-            ParallelNodeConfig(
-                config={"operation": "simulate_monitor_event", "monitor_id": "monitor_1"},
-                credentials=api_key_credentials,
-            )
+    def test_schema_preserves_legacy_configurations(self):
+        schema = ParallelNode.get_config_schema()
+        extension = schema["$defs"]["ParallelExtendFindAllConfig"]
+        assert "match_limit" not in extension["required"]
+        assert extension["properties"]["match_limit"]["default"] is None
+        assert schema["$defs"]["ParallelSimulateMonitorEventConfig"]["deprecated"] is True

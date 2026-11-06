@@ -558,15 +558,21 @@
           "type": "string"
         },
         "match_limit": {
-          "description": "Positive additional number of entities to find",
-          "pattern": "^[1-9][0-9]*$",
-          "title": "Additional Match Limit",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Positive additional number of entities to find. Saved workflows without a limit remain loadable; set a limit before executing this action.",
+          "title": "Additional Match Limit"
         }
       },
       "required": [
-        "findall_id",
-        "match_limit"
+        "findall_id"
       ],
       "title": "ParallelExtendFindAllConfig",
       "type": "object"
@@ -1265,6 +1271,39 @@
       "title": "ParallelSearchConfig",
       "type": "object"
     },
+    "ParallelSimulateMonitorEventConfig": {
+      "deprecated": true,
+      "description": "Deprecated saved-workflow compatibility for the retired simulation endpoint.",
+      "properties": {
+        "operation": {
+          "const": "simulate_monitor_event",
+          "default": "simulate_monitor_event",
+          "title": "Simulate Monitor Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "Simulate Monitor Event (Retired)",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor to simulate an event for",
+          "title": "Monitor ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "parallel_monitor"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ParallelSimulateMonitorEventConfig",
+      "type": "object"
+    },
     "ParallelTriggerMonitorConfig": {
       "description": "Manually trigger a monitor check now.",
       "properties": {
@@ -1408,6 +1447,7 @@
           "list_monitors": "#/$defs/ParallelListMonitorsConfig",
           "receive_webhook": "#/$defs/ParallelReceiveWebhookConfig",
           "search": "#/$defs/ParallelSearchConfig",
+          "simulate_monitor_event": "#/$defs/ParallelSimulateMonitorEventConfig",
           "trigger_monitor": "#/$defs/ParallelTriggerMonitorConfig",
           "update_monitor": "#/$defs/ParallelUpdateMonitorConfig"
         },
@@ -1497,6 +1537,9 @@
         },
         {
           "$ref": "#/$defs/ParallelCancelMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelSimulateMonitorEventConfig"
         },
         {
           "$ref": "#/$defs/ParallelChatCompletionsConfig"
