@@ -112,6 +112,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
 
     // Kajabi
     'KajabiAccessTokenCredential': 'kajabi_access_token',
+    'PDFCoAPIKeyCredential': 'pdfco_api_key',
 
     // Apollo
     'ApolloAPIKeyCredential': 'apollo_api_key',
