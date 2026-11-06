@@ -79,6 +79,16 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
 
     // Ahrefs
     'AhrefsAPIKeyCredential': 'ahrefs_api_key',
+    'BigCommerceAPITokenCredential': 'bigcommerce_api_token',
+
+    // Auth0
+    'Auth0TokenCredential': 'auth0_token',
+    'Auth0 Token': 'auth0_token',
+    'EtsyTokenCredential': 'etsy_token',
+
+    // Gusto
+    'GustoAccessTokenCredential': 'gusto_access_token',
+    'Gusto Access Token': 'gusto_access_token',
     'OktaAPITokenCredential': 'okta_api_token',
     'RampAccessTokenCredential': 'ramp_access_token',
 
@@ -95,6 +105,13 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Gusto
     'GustoAccessTokenCredential': 'gusto_access_token',
     'Gusto Access Token': 'gusto_access_token',
+    'OktaAPITokenCredential': 'okta_api_token',
+    'RampAccessTokenCredential': 'ramp_access_token',
+
+    // RingCentral
+    'RingCentralAccessTokenCredential': 'ringcentral_access_token',
+    'StatuspageAPIKeyCredential': 'statuspage_api_key',
+    'Statuspage API Key': 'statuspage_api_key',
 
     // Apollo
     'ApolloAPIKeyCredential': 'apollo_api_key',
