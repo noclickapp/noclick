@@ -23,7 +23,7 @@
           "title": "Organization Id",
           "type": "string",
           "x-dynamic-options": {
-            "field": "organization_id",
+            "field_name": "organization_id",
             "auto_select_sole_option": true
           }
         },
@@ -34,7 +34,7 @@
           "type": "string",
           "x-dynamic-options": {
             "depends_on": "organization_id",
-            "field": "project_id"
+            "field_name": "project_id"
           }
         },
         "operation": {
@@ -75,7 +75,7 @@
           "title": "Organization Id",
           "type": "string",
           "x-dynamic-options": {
-            "field": "organization_id",
+            "field_name": "organization_id",
             "auto_select_sole_option": true
           }
         },
@@ -86,7 +86,7 @@
           "type": "string",
           "x-dynamic-options": {
             "depends_on": "organization_id",
-            "field": "project_id"
+            "field_name": "project_id"
           }
         },
         "operation": {
@@ -155,7 +155,7 @@
           "title": "Organization Id",
           "type": "string",
           "x-dynamic-options": {
-            "field": "organization_id",
+            "field_name": "organization_id",
             "auto_select_sole_option": true
           }
         },
@@ -166,7 +166,7 @@
           "type": "string",
           "x-dynamic-options": {
             "depends_on": "organization_id",
-            "field": "project_id"
+            "field_name": "project_id"
           }
         },
         "operation": {
@@ -183,7 +183,7 @@
           "type": "string",
           "x-dynamic-options": {
             "depends_on": "project_id",
-            "field": "backup_id"
+            "field_name": "backup_id"
           }
         }
       },
@@ -218,7 +218,7 @@
           "title": "Organization Id",
           "type": "string",
           "x-dynamic-options": {
-            "field": "organization_id",
+            "field_name": "organization_id",
             "auto_select_sole_option": true
           }
         },
@@ -259,7 +259,7 @@
           "title": "Organization Id",
           "type": "string",
           "x-dynamic-options": {
-            "field": "organization_id",
+            "field_name": "organization_id",
             "auto_select_sole_option": true
           }
         },
@@ -270,7 +270,7 @@
           "type": "string",
           "x-dynamic-options": {
             "depends_on": "organization_id",
-            "field": "project_id"
+            "field_name": "project_id"
           }
         },
         "operation": {
@@ -395,7 +395,7 @@
           "title": "Organization Id",
           "type": "string",
           "x-dynamic-options": {
-            "field": "organization_id",
+            "field_name": "organization_id",
             "auto_select_sole_option": true
           }
         },

@@ -1,10 +1,11 @@
 // Prepared actual frontend schema-consumer cases; runtime remains ungranted.
-import { describe, expect, it } from 'vitest';
-import { NODE_SCHEMAS, filterConfigForExecution, isTriggerSource } from '~/utils/nodeSchemas';
+import { beforeAll, describe, expect, it } from 'vitest';
+import { NODE_SCHEMAS, loadNodeSchemas, filterConfigForExecution, isTriggerSource } from '~/utils/nodeSchemas';
 import { CREDENTIAL_TYPE_MAP } from '~/utils/credentialTypeMap';
 import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 
 describe('Xata current issued OAuth metadata', () => {
+    beforeAll(() => loadNodeSchemas(['automation-xata']));
     it('requires the existing token and grant metadata without a fictitious connect popup', () => {
         const schema = NODE_SCHEMAS['automation-xata'];
         const cred = schema.$defs.XataIssuedOAuthCredential;
@@ -21,13 +22,16 @@ describe('Xata current issued OAuth metadata', () => {
         expect(defs.XataGetBackupConfig.required).toEqual(['organization_id', 'project_id', 'backup_id']);
         expect(defs.XataGetBackupConfig.properties.project_id['x-dynamic-options'].depends_on).toBe('organization_id');
         expect(defs.XataGetBackupConfig.properties.backup_id['x-dynamic-options'].depends_on).toBe('project_id');
+        expect(defs.XataGetBackupConfig.properties.backup_id['x-dynamic-options'].field_name).toBe('backup_id');
+        expect(defs.XataGetProjectConfig.properties.page_token).toBeUndefined();
+        expect(defs.XataGetProjectConfig.properties.connectionString).toBeUndefined();
         expect(defs.XataBranchesConfig.properties.max_items.maximum).toBe(1000);
         expect(defs.XataBranchesConfig.properties.include_names.default).toBe(false);
         expect(isTriggerSource('automation-xata', 'list_branches')).toBe(false);
     });
-    it('filters obsolete paging and legacy branch-detail fields', () => {
+    it('filters backup fields when switching to project detail', () => {
         expect(filterConfigForExecution('automation-xata', { operation: 'get_project', organization_id: 'org-a',
-            project_id: 'project-a', include_names: false, page_token: 'old', connectionString: 'private' }))
+            project_id: 'project-a', include_names: false, backup_id: 'backup-a' }))
             .toEqual({ operation: 'get_project', organization_id: 'org-a', project_id: 'project-a', include_names: false });
     });
 });

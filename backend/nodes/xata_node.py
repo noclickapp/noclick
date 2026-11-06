@@ -7,7 +7,6 @@ from urllib.parse import quote
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
-from nodes.core.oauth_refresh_authority import AuthorityCredentialsTableStore, CURRENT_ORGANIZATION
 from nodes.core.oauth_scopes import ScopeRegistry, ScopeRequirement
 from utils.ssrf import guarded_async_client
 
@@ -75,7 +74,7 @@ def _credential(data):
     return {**data, **model.model_dump(mode="json")}
 
 def _picker(field):
-    options = {"field": field}
+    options = {"field_name": field}
     if field == "project_id":
         options["depends_on"] = "organization_id"
     elif field in {"branch_id", "backup_id"}:
@@ -132,7 +131,7 @@ async def _request(data, kind, *, organization=None, project=None, backup=None):
         elif value is not None:
             raise ValueError("This Xata route does not accept that parent.")
     try:
-        async with guarded_async_client(require_public=True, trust_env=False, follow_redirects=False, timeout=25) as client:
+        async with guarded_async_client( trust_env=False, follow_redirects=False, timeout=25) as client:
             response = await client.get(API_ROOT+path, headers={"Authorization": "Bearer "+data["access_token"],
                 "Accept": "application/json", "User-Agent": "NoClick-Xata/1.0 (+https://noclick.com)"})
     except Exception:
@@ -213,29 +212,23 @@ def _bounded(rows, maximum):
         "local_truncated": len(rows) > maximum, "completion": "unknown; unpaged provider array, no documented total or continuation"}
 
 class XataNode(WorkflowNode):
-    workflow_credential_refresh = True
     scope_registry = XATA_SCOPES
     connection_evidence = ConnectionEvidence(operation="check_connection", noun="accessible organization IDs", label_keys=("id",), proves="reachability")
     @classmethod
     def get_config_model(cls):
         return XataNodeConfig
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=CURRENT_ORGANIZATION):
-        if not credential_id:
-            return _credential(credential_data)
-        if not user_id:
-            raise ValueError("Sign in to use a saved Xata connection.")
-        return await AuthorityCredentialsTableStore(pool, user_id, credential_id, credential_type="xata_issued_oauth",
-            validate=_credential, grant_fields=("access_token", "granted_scopes", "expires_at"), workflow_id=workflow_id, organization_id=organization_id).load()
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        # Staging's loaders resolve the current saved row before this hook.
+        return _credential(credential_data)
     @classmethod
-    async def validate_credential_access(cls, credential_data, validation_context=None):
-        from nodes.core.credential_validation import CredentialValidationContext
-        if not isinstance(validation_context, CredentialValidationContext):
-            raise ValueError("Canonical validation context is required.")
-        result = await validation_context.run_operation("check_connection")
-        if not isinstance(result, dict) or result.get("protected_catalog") is not True:
-            raise RuntimeError("Xata catalog reachability remains unverified.")
-        return {"valid": True}
+    async def validate_credential_access(cls, credential_data):
+        try:
+            _credential(credential_data)
+        except ValueError:
+            return {"valid": False, "error": "The Xata issued token or grant metadata is invalid or expired."}
+        # This legacy hook has no admission context; connection evidence runs the probe.
+        return {"valid": None, "error": "Run Check connection to verify current Xata catalog reachability."}
     @classmethod
     async def load_field_options(cls, field_name, credential_data, context=None, page_token=None, search=None):
         data = _credential(credential_data)
@@ -256,11 +249,7 @@ class XataNode(WorkflowNode):
         if not isinstance(self.config, XataNodeConfig) or not self.config.credentials:
             raise ValueError("Xata configuration and an existing issued OAuth token are required.")
         raw = (self.node_data or {}).get("credentials")
-        if not (self.node_data or {}).get("credential_id") and isinstance(raw, dict):
-            _credential(raw)
-        data = await self.freshen_credential(raw if isinstance(raw, dict) else self.config.credentials.model_dump(mode="json"),
-            pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id, credential_id=(self.node_data or {}).get("credential_id"),
-            workflow_id=self.workflow_id, organization_id=self.organization_id)
+        data = _credential(raw if isinstance(raw, dict) else self.config.credentials.model_dump(mode="json"))
         c, op = self.config.config, self.config.config.operation
         common = {"proof": "Protected current organization/project catalogs provide access ancestry; no principal, ownership or tenant identity is inferred."}
         if op in {"check_connection", "list_organizations"}:

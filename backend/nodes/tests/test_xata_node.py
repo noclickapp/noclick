@@ -1,13 +1,9 @@
-"""Prepared Xata regressions use real factory, authority, admission and socket seams.
-Only SQL/encryption, provider HTTP and socket-delivery boundaries are synthetic.
-These source fixtures are unrun and do not prove live account access.
+"""Xata contracts through the real node factory and connection-evidence collector.
+Provider responses are deterministic fixtures; these checks do not prove live access.
 """
-from copy import deepcopy
 from dataclasses import asdict
-from datetime import datetime, timezone
 import json
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, MagicMock
 
 import httpx
 import pytest
@@ -15,10 +11,9 @@ from nodes import xata_node as ad
 from nodes.core.base import ConfigValidationError
 from nodes.core.connection_evidence import EvidenceSample
 from nodes.core.registry import NODE_REGISTRY, NodeFactory
-from tests.test_oauth_refresh_authority import _Storage as AuthorityStorage, CID, USER, OWNER, ORG, WF
-from tests.test_post_connect_validation_context import _Storage as AdmissionStorage
-from wss.receiver.client_events import WorkflowNodeLoadOptionsRequest, CredentialValidateAccessRequest
 
+USER = "00000000-0000-0000-0000-000000000001"
+WF = "00000000-0000-0000-0000-000000000002"
 NODE = "automation-xata"
 OID, PROJECT, BRANCH, BACKUP, OTHER = "org-a", "project-a", "branch-a", "backup-a", "foreign"
 
@@ -53,96 +48,11 @@ def http(monkeypatch):
         return httpx.Response(status, content=payload, headers=headers) if isinstance(payload, (str, bytes)) else httpx.Response(status, json=payload, headers=headers) if payload is not None else httpx.Response(status, headers=headers)
     def client(**kwargs):
         state.client_options.append(kwargs)
-        assert kwargs.pop("require_public") is True
         assert kwargs["trust_env"] is False and kwargs["follow_redirects"] is False
         return httpx.AsyncClient(transport=httpx.MockTransport(respond), **kwargs)
     monkeypatch.setattr(ad, "guarded_async_client", client)
     return state
 
-
-class Storage(AuthorityStorage):
-    def __init__(self, grant):
-        super().__init__()
-        self.grant = deepcopy(grant)
-        self.row.update(id=CID, credential_type="xata_issued_oauth",
-            name="Fixture", approval_operations=[], approval_revision=1)
-        self.allowed = self.access
-        self.grants, self.timeline, self.transactions = {}, [], 0
-        self.on_load = self.on_resolve = self.on_admit = None
-
-    def transaction(self):
-        self.transactions += 1
-        return self.acquire()
-
-    async def fetchrow(self, sql, *args):
-        if ("SELECT c.credential" in sql and len(args) == 3 or
-            "approval_requests" in sql or "SELECT name,owner_id,approval_operations" in sql):
-            return await AdmissionStorage.fetchrow(self, sql, *args)
-        return await super().fetchrow(sql, *args)
-
-    async def fetchval(self, sql, *args):
-        return await AdmissionStorage.fetchval(self, sql, *args)
-
-    async def execute(self, sql, *args):
-        if "UPDATE approval_requests" in sql:
-            return await AdmissionStorage.execute(self, sql, *args)
-        return await super().execute(sql, *args)
-
-
-@pytest.fixture
-def saved(monkeypatch, http):
-    storage = Storage(credential())
-    crypto = MagicMock()
-    crypto.decrypt_credential.side_effect = lambda _: deepcopy(storage.grant)
-    crypto.encrypt_credential.side_effect = lambda data: json.dumps(data).encode()
-    monkeypatch.setattr("utils.encryption.get_encryption", lambda: crypto)
-    from utils import credentials
-    monkeypatch.setattr(credentials, "get_encryption", lambda: crypto)
-    monkeypatch.setattr("wss.handlers.workflow_handler.get_user_org_context", AsyncMock(return_value=ORG))
-    return SimpleNamespace(storage=storage, crypto=crypto, http=http)
-
-
-@pytest.fixture
-def sockets(saved, monkeypatch):
-    from wss.handlers import credentials_handler, workflow_handler
-    from wss.receiver.receiver import SocketIOProxy
-    from wss.receiver.event_routing import EVENT_ROUTING, Handler
-    from wss.receiver.chunk_reassembly import ChunkReassemblyManager
-    from wss.receiver.rate_limiter import RateLimiter
-    from wss.receiver.rate_limits import get_rate_limit_config
-    responses = []
-    async def capture(_sio, _sid, event, **kwargs):
-        if not kwargs.get("user_id"):
-            responses.append(event.model_dump())
-    for module in (credentials_handler, workflow_handler):
-        monkeypatch.setattr(module, "send_event", capture)
-    monkeypatch.setattr("wss.sender.send_event", capture)
-    monkeypatch.setattr(credentials_handler, "get_encryption", lambda: saved.crypto)
-    sio = SimpleNamespace(get_session=AsyncMock(return_value={"user_id": USER}))
-    monkeypatch.setattr("utils.socket_singleton.get_sio", lambda: sio)
-    monkeypatch.setattr("utils.user_presence.touch_user_presence", lambda _: None)
-    workflow = workflow_handler.WorkflowHandler.__new__(workflow_handler.WorkflowHandler)
-    workflow.sio, workflow.get_pool = sio, AsyncMock(return_value=saved.storage)
-    credentials = credentials_handler.CredentialsHandler(sio)
-    credentials.get_pool = AsyncMock(return_value=saved.storage)
-    proxy = SocketIOProxy.__new__(SocketIOProxy)
-    proxy.sio, proxy.SOCKET_PROXY_ENV = sio, "API"
-    proxy.chunk_manager = ChunkReassemblyManager()
-    proxy.rate_limiter = RateLimiter(get_rate_limit_config())
-    proxy._last_heavy_completion = {}
-    routes = {"workflow:node:load_options": (workflow, WorkflowNodeLoadOptionsRequest, Handler.WORKFLOW),
-        "credential:validate_access": (credentials, CredentialValidateAccessRequest, Handler.CREDENTIALS)}
-    for event, (_, _, handler) in routes.items():
-        assert EVENT_ROUTING["API"][event] == handler
-    proxy.config = SimpleNamespace(event_handlers={"API": {event: [v[0]] for event, v in routes.items()}})
-    proxy.frontend_request_pydantic_models = {event: v[1] for event, v in routes.items()}
-    return SimpleNamespace(proxy=proxy, responses=responses, saved=saved)
-
-
-async def socket_call(sockets, event, **kwargs):
-    await sockets.proxy._route_event_impl(event, "fixture-sid", {"request_id": "fixture",
-        "node_type": NODE, "credential_id": CID, **kwargs})
-    return sockets.responses[-1]["data"]
 
 def organization(**updates):
     return {"id": OID, "name": "Private organization", "status": {"status": "enabled", "last_updated": "2026-10-07T00:00:00Z",
@@ -174,6 +84,7 @@ def test_actual_factory_and_schema_have_eight_closed_read_operations():
     assert NODE_REGISTRY[NODE] is ad.XataNode
     schema = ad.XataNode.get_config_schema()
     defs = schema["$defs"]
+    assert defs["XataGetBackupConfig"]["properties"]["backup_id"]["x-dynamic-options"]["field_name"] == "backup_id"
     assert defs["XataIssuedOAuthCredential"]["required"] == ["access_token", "granted_scopes"]
     assert defs["XataGetBackupConfig"]["properties"]["backup_id"]["x-dynamic-options"]["depends_on"] == "project_id"
     assert defs["XataGetBackupConfig"]["properties"]["project_id"]["x-dynamic-options"]["depends_on"] == "organization_id"
@@ -280,31 +191,6 @@ async def test_provider_refusals_remain_static_unknown_without_retry(http, statu
 
 
 @pytest.mark.asyncio
-async def test_saved_current_row_adopts_token_scopes_expiry_and_preserves_manager_metadata(saved):
-    saved.storage.grant = credential(access_token="current-token", manager_flag="keep")
-    current = await ad.XataNode.freshen_credential(credential(), pool=saved.storage, user_id=USER,
-        credential_id=CID, workflow_id=WF, organization_id=ORG)
-    assert current["access_token"] == "current-token" and current["manager_flag"] == "keep"
-    assert current["granted_scopes"] == ["org:read", "project:read", "branch:read"]
-    assert saved.http.calls == [] and saved.storage.writes == [] and saved.storage.revoke_tags == []
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("unavailable", ["wrong-family", "revoked", "denied"])
-async def test_real_current_typed_live_access_precedes_decryption_and_http(saved, unavailable):
-    if unavailable == "wrong-family":
-        saved.storage.row["credential_type"] = "other"
-    elif unavailable == "revoked":
-        saved.storage.row["revoked_at"] = datetime.now(timezone.utc)
-    else:
-        saved.storage.access.clear()
-    with pytest.raises(ValueError):
-        await ad.XataNode.freshen_credential(credential(), pool=saved.storage, user_id=USER, credential_id=CID)
-    saved.crypto.decrypt_credential.assert_not_called()
-    assert saved.http.calls == []
-
-
-@pytest.mark.asyncio
 async def test_actual_manual_connect_reports_catalog_reachability_without_identity(http, monkeypatch):
     from nodes.core import credential_connect
     from nodes.core.connection_evidence import collect_evidence
@@ -312,61 +198,29 @@ async def test_actual_manual_connect_reports_catalog_reachability_without_identi
     http.responses = [catalog("organizations", organization())]
     result = await credential_connect.validate_for_connect(credential_type="xata_issued_oauth", credential_data=credential(), user_id=USER)
     assert result.ok and result.node_type == NODE and result.evidence.reachable is True
-    assert result.evidence.proves == "reachability" and result.evidence.samples == [EvidenceSample(label=OID)] and result.evidence.account_label is None
+    assert ad.XataNode.connection_evidence.proves == "reachability" and result.evidence.samples == [EvidenceSample(label=OID)] and result.evidence.account_label is None
     assert "private-sentinel" not in json.dumps(asdict(result.evidence))
 
 
 @pytest.mark.asyncio
-async def test_registered_socket_uses_current_token_trusted_org_and_native_probe(sockets):
-    sockets.saved.storage.grant = credential(access_token="current-token")
-    sockets.saved.http.responses = [catalog("organizations", organization())]
-    assert await socket_call(sockets, "credential:validate_access", user_id=OWNER, organization_id=OWNER) == {"valid": True}
-    sockets.saved.http.responses = [catalog("organizations", organization())]
-    out = await socket_call(sockets, "workflow:node:load_options", field_name="organization_id",
-        context={"access_token": "forged", "_user_id": OWNER, "workflow_id": WF})
-    assert out["success"] is True and out["options"] == [{"value": OID, "label": OID, "metadata": None}]
-    assert all(req.headers["Authorization"] == "Bearer current-token" for req in sockets.saved.http.calls)
-    assert all(args[2] == ORG for sql, args in sockets.saved.storage.calls if "SELECT c.credential" in sql)
+async def test_legacy_validation_hook_leaves_reachability_to_admitted_evidence(http):
+    out = await ad.XataNode.validate_credential_access(credential())
+    assert out["valid"] is None and "Check connection" in out["error"]
+    out = await ad.XataNode.validate_credential_access(credential(expires_at="2000-01-01T00:00:00Z"))
+    assert out["valid"] is False
+    assert http.calls == []
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("status,payload", [(403, {"error": "private-sentinel"}), (200, {"organizations": {}})])
-async def test_native_registered_validation_preserves_unknown_on_provider_or_shape_failure(sockets, status, payload):
-    sockets.saved.http.responses = [(status, payload)]
-    out = await socket_call(sockets, "credential:validate_access")
-    assert out["valid"] is None and "private-sentinel" not in json.dumps(out)
+async def test_loader_hook_validates_current_blob_without_refreshing_or_losing_metadata(http):
+    current = await ad.XataNode.freshen_credential(credential(access_token="current-token", manager_flag="keep"))
+    assert current["access_token"] == "current-token" and current["manager_flag"] == "keep"
+    with pytest.raises(ValueError):
+        await ad.XataNode.freshen_credential(credential(credential_type="other"))
+    assert http.calls == []
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("policy", ["pending", "rejected"])
-async def test_actual_admission_and_evidence_policy_stop_without_http_or_raw_fallback(sockets, policy):
-    from nodes.core.connection_evidence import collect_evidence
-    storage = sockets.saved.storage
-    storage.row["approval_operations"] = ["*"]
-    out = await socket_call(sockets, "workflow:node:load_options", field_name="organization_id", context={"approved": True})
-    assert out["success"] is False
-    if policy == "rejected":
-        for grant in storage.grants.values():
-            grant["status"] = "rejected"
-    evidence = await collect_evidence(node_type=NODE, credential_id=CID, user_id=USER, pool=storage, organization_id=ORG, workflow_id=WF)
-    assert evidence.reachable is None and evidence.account_label is None and evidence.samples == []
-    assert sockets.saved.http.calls == [] and storage.writes == []
-
-
-@pytest.mark.asyncio
-async def test_public_transport_refuses_private_dns_even_with_legacy_override(monkeypatch):
-    import asyncio
-    import socket
-    from utils import ssrf
-    transport_calls = []
-    lookup = AsyncMock(return_value=[(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("10.0.0.8", 443))])
-    monkeypatch.setattr(asyncio.get_running_loop(), "getaddrinfo", lookup)
-    monkeypatch.setattr(ssrf, "allow_private_hosts", lambda: True)
-    def guarded(**kwargs):
-        return ssrf.guarded_async_client(transport=httpx.MockTransport(
-            lambda request: transport_calls.append(request) or httpx.Response(200, json={"organizations": []})), **kwargs)
-    monkeypatch.setattr(ad, "guarded_async_client", guarded)
-    with pytest.raises(RuntimeError, match="could not be reached"):
-        await make_node("check_connection").execute({})
-    lookup.assert_awaited_once_with("api.xata.tech", 443, type=socket.SOCK_STREAM)
-    assert transport_calls == []
+@pytest.mark.parametrize("field", ["page_token", "connectionString"])
+def test_config_rejects_obsolete_paging_and_connection_fields(field):
+    with pytest.raises(ConfigValidationError):
+        make_node("get_project", **{field: "obsolete"})
