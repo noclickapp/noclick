@@ -2134,7 +2134,7 @@ class FirecrawlNode(WorkflowNode):
     async def _search_research_github(
         self, c: FirecrawlSearchResearchGithubConfig, api_key: str
     ) -> Dict[str, Any]:
-        return await _firecrawl_request(
+        response = await _firecrawl_request(
             api_key,
             "GET",
             "/search/developer",
@@ -2145,6 +2145,18 @@ class FirecrawlNode(WorkflowNode):
             },
             action_name="search_research_github",
         )
+        if response["status"] == "success":
+            for result in response["data"].get("results", []):
+                # Saved workflows reference the retired endpoint's snippet field.
+                result.setdefault(
+                    "snippet",
+                    "\n\n".join(
+                        passage["text"]
+                        for passage in result.get("passages", [])
+                        if "text" in passage
+                    ),
+                )
+        return response
 
     async def _search_research_papers(
         self, c: FirecrawlSearchResearchPapersConfig, api_key: str
