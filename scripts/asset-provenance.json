@@ -676,6 +676,12 @@
       "sha256": "db6fe559fde944a7f0254d03ca7a640aecf3c4eff7276d8d6dedeb18c165b775"
     },
     {
+      "path": "frontend/public/icons/ramp.svg",
+      "source": "https://ramp.com/about-us (official press kit: https://assets.ramp.com/nextjs/ramp_september_2026_media_kit.zip; logos/ramp-logo-black.svg, unmodified)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "5b770d1951f8cb006dac3dd5597420cb079a6a6f2afa6c3687aa5060dc5b7106"
+    },
+    {
       "path": "frontend/public/icons/recurly.svg",
       "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
