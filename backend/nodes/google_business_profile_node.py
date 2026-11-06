@@ -868,8 +868,7 @@ class GBPListPlaceActionLinksConfig(BaseModel):
 
 _PLACE_ACTION_TYPES = [
     "APPOINTMENT", "ONLINE_APPOINTMENT", "DINING_RESERVATION",
-    "FOOD_ORDERING_DELIVERY", "FOOD_ORDERING_TAKEOUT", "FOOD_ORDERING",
-    "SHOPPING_DELIVERY", "SHOPPING_CURBSIDE", "SHOPPING_IN_STORE", "ORDER_ONLINE",
+    "FOOD_ORDERING", "FOOD_DELIVERY", "FOOD_TAKEOUT", "SHOP_ONLINE",
 ]
 
 
@@ -901,8 +900,7 @@ class GBPCreatePlaceActionLinkConfig(BaseModel):
             "enum": _PLACE_ACTION_TYPES,
             "enumNames": [
                 "Appointment", "Online Appointment", "Dining Reservation",
-                "Food Delivery", "Food Takeout", "Food Ordering",
-                "Shopping Delivery", "Shopping Curbside", "Shopping In-Store", "Order Online",
+                "Food Ordering", "Food Delivery", "Food Takeout", "Shop Online",
             ],
             "x-enum-searchable": True,
         },

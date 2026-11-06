@@ -325,25 +325,19 @@
             "APPOINTMENT",
             "ONLINE_APPOINTMENT",
             "DINING_RESERVATION",
-            "FOOD_ORDERING_DELIVERY",
-            "FOOD_ORDERING_TAKEOUT",
             "FOOD_ORDERING",
-            "SHOPPING_DELIVERY",
-            "SHOPPING_CURBSIDE",
-            "SHOPPING_IN_STORE",
-            "ORDER_ONLINE"
+            "FOOD_DELIVERY",
+            "FOOD_TAKEOUT",
+            "SHOP_ONLINE"
           ],
           "enumNames": [
             "Appointment",
             "Online Appointment",
             "Dining Reservation",
+            "Food Ordering",
             "Food Delivery",
             "Food Takeout",
-            "Food Ordering",
-            "Shopping Delivery",
-            "Shopping Curbside",
-            "Shopping In-Store",
-            "Order Online"
+            "Shop Online"
           ],
           "title": "Action Type",
           "type": "string",

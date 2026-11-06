@@ -566,6 +566,15 @@ class TestAnalytics:
 # ============================================================================
 
 class TestPlaceActionLinks:
+    def test_create_action_choices_match_provider_enum(self):
+        # https://developers.google.com/my-business/reference/placeactions/rest/v1/locations.placeActionLinks#PlaceActionType
+        field = GBPCreatePlaceActionLinkConfig.model_json_schema()["properties"]["place_action_type"]
+        assert field["enum"] == [
+            "APPOINTMENT", "ONLINE_APPOINTMENT", "DINING_RESERVATION",
+            "FOOD_ORDERING", "FOOD_DELIVERY", "FOOD_TAKEOUT", "SHOP_ONLINE",
+        ]
+        assert len(field["enumNames"]) == len(field["enum"])
+
     @pytest.mark.asyncio
     async def test_list(self, creds):
         node = make_node(GBPListPlaceActionLinksConfig(location_id=LOCATION_ID), creds)
