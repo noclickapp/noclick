@@ -70,7 +70,7 @@ OPERATIONS: Dict[str, Operation] = {
     "update_subscription": Operation("PUT", "/subscriptions/{subscription_id}", "Subscriptions", "Update Subscription", "update_subscription", json_body=True),
     "preview_subscription_change": Operation("POST", "/subscriptions/{subscription_id}/change/preview", "Subscriptions", "Preview Subscription Change", "preview_subscription_change", json_body=True),
     "create_subscription_change": Operation("POST", "/subscriptions/{subscription_id}/change", "Subscriptions", "Create Subscription Change", "create_subscription_change", json_body=True),
-    "cancel_subscription": Operation("POST", "/subscriptions/{subscription_id}/cancel", "Subscriptions", "Cancel Subscription", "cancel_subscription"),
+    "cancel_subscription": Operation("PUT", "/subscriptions/{subscription_id}/cancel", "Subscriptions", "Cancel Subscription", "cancel_subscription"),
     "get_renewal_preview": Operation("GET", "/subscriptions/{subscription_id}/preview_renewal", "Subscriptions", "Get Renewal Preview", "get_preview_renewal"),
     "list_invoices": Operation("GET", "/invoices", "Invoices", "List Invoices", "list_invoices", True),
     "get_invoice": Operation("GET", "/invoices/{invoice_id}", "Invoices", "Get Invoice", "get_invoice"),

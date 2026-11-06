@@ -76,6 +76,9 @@ async def test_each_operation_sends_documented_contract(monkeypatch, name):
     elif spec.json_body:
         assert isinstance(json.loads(request.content), dict)
     elif name == "cancel_subscription":
+        # Recurly's cancel endpoint is PUT with an optional request body.
+        assert request.method == "PUT"
+        assert request.url.path == "/subscriptions/code-sample/cancel"
         assert request.content == b""
 
 
