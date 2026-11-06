@@ -4057,17 +4057,20 @@ class GoogleDriveNode(WatchChannelTriggerMixin, WorkflowNode):
             current_parents = metadata.get("parents", [])
 
             # Move by updating parents
+            params = {
+                "addParents": config.destination_folder_id,
+                "fields": "id,name,parents",
+            }
+            if current_parents:
+                params["removeParents"] = ",".join(current_parents)
+
             response = await client.patch(
                 f"{GOOGLE_DRIVE_API_BASE}/files/{config.file_id}",
                 headers={
                     "Authorization": f"Bearer {access_token}",
                     "Content-Type": "application/json",
                 },
-                params={
-                    "addParents": config.destination_folder_id,
-                    "removeParents": ",".join(current_parents),
-                    "fields": "id,name,parents",
-                },
+                params=params,
             )
 
             if response.status_code != 200:

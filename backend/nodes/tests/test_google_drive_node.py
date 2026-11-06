@@ -524,6 +524,37 @@ class TestCopyOperation:
 class TestMoveOperation:
     """Test Google Drive move operation."""
 
+    @pytest.mark.parametrize("parent_metadata", [{}, {"parents": []}])
+    @pytest.mark.asyncio
+    async def test_move_file_without_parents(
+        self, mock_credentials, mock_httpx_response, parent_metadata
+    ):
+        """A file without visible parents must not send an empty removeParents."""
+        config = GoogleDriveMoveConfig(
+            file_id="file123", destination_folder_id="folder456"
+        )
+        node = create_node(config, mock_credentials)
+        get_response = mock_httpx_response(
+            200, {"id": "file123", "name": "file.txt", **parent_metadata}
+        )
+        patch_response = mock_httpx_response(
+            200, {"id": "file123", "name": "file.txt", "parents": ["folder456"]}
+        )
+
+        with patch("httpx.AsyncClient") as mock_client:
+            mock_instance = mock_client.return_value.__aenter__.return_value
+            mock_instance.get = AsyncMock(return_value=get_response)
+            mock_instance.patch = AsyncMock(return_value=patch_response)
+
+            result = await node.execute({})
+
+            assert result["status"] == "success"
+            assert result["from_folders"] == []
+            assert mock_instance.patch.call_args.kwargs["params"] == {
+                "addParents": "folder456",
+                "fields": "id,name,parents",
+            }
+
     @pytest.mark.asyncio
     async def test_move_file_success(self, mock_credentials, mock_httpx_response):
         """Test moving a file to another folder."""
@@ -551,6 +582,10 @@ class TestMoveOperation:
             assert result["operation"] == "move_file"
             assert result["file_id"] == "file123"
             assert result["to_folder"] == "folder456"
+            assert (
+                mock_instance.patch.call_args.kwargs["params"]["removeParents"]
+                == "old_folder"
+            )
 
 
 # ============================================================================
