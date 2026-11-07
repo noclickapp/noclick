@@ -16,6 +16,7 @@ from nodes.bunnycdn_node import (
     BunnyNodeConfig,
     BunnyStreamCredential,
 )
+from tests.utils.sweep import check_each
 
 
 def _node(operation, *, credential=None, **fields):
@@ -47,12 +48,7 @@ async def _execute(node, handler):
         return await node.execute({})
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize(
-    "operation",
-    sorted(name for name in BUNNY_OPERATIONS if name != "list_connection_resources"),
-)
-async def test_every_action_routes_to_fixed_host_with_correct_method_fields_and_key(
+async def _every_action_routes_to_fixed_host_with_correct_method_fields_and_key(
     operation,
 ):
     spec = BUNNY_OPERATIONS[operation]
@@ -107,6 +103,11 @@ async def test_every_action_routes_to_fixed_host_with_correct_method_fields_and_
     assert result["data"]["items"] == [{"id": 123}]
     assert "next" in result["pagination_link"]
     assert result["timing_ms"]["api_request"] >= 0
+
+
+@pytest.mark.asyncio
+async def test_every_action_routes_to_fixed_host_with_correct_method_fields_and_key():
+    await check_each(sorted(name for name in BUNNY_OPERATIONS if name != "list_connection_resources"), _every_action_routes_to_fixed_host_with_correct_method_fields_and_key)
 
 
 @pytest.mark.asyncio

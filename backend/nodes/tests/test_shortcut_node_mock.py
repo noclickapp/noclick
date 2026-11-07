@@ -14,6 +14,7 @@ from nodes.shortcut_node import (
     ShortcutNodeConfig,
 )
 from nodes.shortcut_node import OPERATIONS
+from tests.utils.sweep import check_each
 
 
 def make_node(action: str, **fields) -> ShortcutNode:
@@ -49,9 +50,7 @@ def _required_fields(contract):
     return fields
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("action", sorted(OPERATIONS))
-async def test_every_published_operation_uses_its_documented_route(action, monkeypatch):
+async def _every_published_operation_uses_its_documented_route(action, monkeypatch):
     """Each of the 143 actions must dispatch to its pinned method and safe path."""
     contract = OPERATIONS[action]
     fields = _required_fields(contract)
@@ -85,6 +84,16 @@ async def test_every_published_operation_uses_its_documented_route(action, monke
             )
     assert request.url.path == "/api/v3" + expected_path
     assert request.headers["Shortcut-Token"] == "secret-test-token"
+
+
+@pytest.mark.asyncio
+async def test_every_published_operation_uses_its_documented_route():
+    async def one(action):
+        # Each case patches what it needs afresh, undone before the next, as its own test once did.
+        with pytest.MonkeyPatch.context() as monkeypatch:
+            await _every_published_operation_uses_its_documented_route(action, monkeypatch)
+
+    await check_each(sorted(OPERATIONS), one)
 
 
 @pytest.mark.asyncio

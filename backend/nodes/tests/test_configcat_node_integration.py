@@ -15,6 +15,7 @@ from nodes.configcat_node import (
     ConfigCatNodeConfig,
     _path_field,
 )
+from tests.utils.sweep import check_each
 
 
 def _node(operation: str, **values):
@@ -27,9 +28,7 @@ def _node(operation: str, **values):
     return ConfigCatNode("test", "automation-configcat", {}, config=config)
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("operation", OPERATIONS)
-async def test_official_operation_routes_send_authenticated_requests(
+async def _official_operation_routes_send_authenticated_requests(
     monkeypatch, operation
 ):
     """Each documented route is reachable through its generated config model."""
@@ -71,6 +70,16 @@ async def test_official_operation_routes_send_authenticated_requests(
     assert result["status"] == "success"
     assert result["data"] == {"route": operation}
     assert result["timing_ms"]["api_request"] >= 0
+
+
+@pytest.mark.asyncio
+async def test_official_operation_routes_send_authenticated_requests():
+    async def one(operation):
+        # Each case patches what it needs afresh, undone before the next, as its own test once did.
+        with pytest.MonkeyPatch.context() as monkeypatch:
+            await _official_operation_routes_send_authenticated_requests(monkeypatch, operation)
+
+    await check_each(OPERATIONS, one)
 
 
 def test_catalog_covers_management_api_and_excludes_sdk_key_auth():

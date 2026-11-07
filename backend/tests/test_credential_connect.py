@@ -132,18 +132,22 @@ def test_shape_refuses_a_key_holding_a_character_no_key_has():
     )}
 
 
-@pytest.mark.parametrize("credential_type", sorted(cc._class_index()))
-def test_every_issued_key_is_ascii_and_every_password_may_hold_any_character(credential_type):
+def _every_issued_key_is_ascii_and_every_password_may_hold_any_character(credential_type):
     from nodes.core.credential_fields import looks_like_key_field
 
     _, cls = cc._class_index()[credential_type]
     secrets = cc._secret_fields(cls)
     if not secrets:
-        pytest.skip("no secret-shaped field")
+        return  # no secret-shaped field: nothing to refuse
     _, errors, _ = cc.shape_credential(credential_type, {name: "s3crét​value" for name in secrets})
     for name in secrets:
         refused = "which no key has" in errors.get(name, "")
         assert refused == looks_like_key_field(name), (credential_type, name, errors)
+
+
+@pytest.mark.asyncio
+async def test_every_issued_key_is_ascii_and_every_password_may_hold_any_character():
+    await check_each(sorted(cc._class_index()), _every_issued_key_is_ascii_and_every_password_may_hold_any_character)
 
 
 def test_unknown_types_pass_through_stripped():
@@ -151,18 +155,22 @@ def test_unknown_types_pass_through_stripped():
     assert (data, errors, resolved) == ({"k": "v"}, {}, None)
 
 
-@pytest.mark.parametrize("credential_type", sorted(cc._class_index()))
-def test_every_credential_class_refuses_an_address_in_its_secret_fields(credential_type):
+def _every_credential_class_refuses_an_address_in_its_secret_fields(credential_type):
     """The generic layer, not per-node code, covers every manual credential:
     a URL pasted into any password/key/token/secret field is refused."""
     _, cls = cc._class_index()[credential_type]
     secrets = cc._secret_fields(cls)
     if not secrets:
-        pytest.skip("no secret-shaped field")
+        return  # no secret-shaped field: nothing to refuse
     blob = {name: "https://example.com/settings/tokens" for name in secrets}
     _, errors, _ = cc.shape_credential(credential_type, blob)
     for name in secrets:
         assert "web address" in errors.get(name, ""), (credential_type, name, errors)
+
+
+@pytest.mark.asyncio
+async def test_every_credential_class_refuses_an_address_in_its_secret_fields():
+    await check_each(sorted(cc._class_index()), _every_credential_class_refuses_an_address_in_its_secret_fields)
 
 
 # ------------------------------------------------------------------- probe
@@ -200,6 +208,7 @@ def probe_registry(monkeypatch):
 
 from pydantic import BaseModel, Field  # noqa: E402
 from typing import Literal  # noqa: E402
+from tests.utils.sweep import check_each
 
 
 class _Cred(BaseModel):

@@ -1092,6 +1092,7 @@ from nodes.pagerduty_node import (
     PagerDutyUpdateUserConfig,
     PagerDutyUpdateWebhookSubscriptionConfig,
 )
+from tests.utils.sweep import check_each
 
 _PD_COVERAGE_PARAMS = [
     # incidents-extended
@@ -1454,13 +1455,16 @@ _PD_COVERAGE_PARAMS = [
 ]
 
 
-@pytest.mark.parametrize("cfg,action,payload", _PD_COVERAGE_PARAMS)
-@pytest.mark.asyncio
-async def test_expanded_operation(api_key_credentials, cfg, action, payload):
+async def _expanded_operation(api_key_credentials, cfg, action, payload):
     node = create_pagerduty_node(PagerDutyNodeConfig(config=cfg, credentials=api_key_credentials))
     result = await _run(node, 200, payload)
     assert result["status"] == "success", result
     assert result["action"] == action
+
+
+@pytest.mark.asyncio
+async def test_expanded_operation(api_key_credentials):
+    await check_each(_PD_COVERAGE_PARAMS, lambda case: _expanded_operation(api_key_credentials, case[0], case[1], case[2]), name=lambda case: case[1])
 
 
 @pytest.mark.asyncio

@@ -14,6 +14,7 @@ from nodes.postman_node import (
     PostmanNodeConfig,
 )
 from nodes.postman_node import OPERATIONS
+from tests.utils.sweep import check_each
 
 
 def node_for(operation: str, **fields) -> PostmanNode:
@@ -27,9 +28,7 @@ def node_for(operation: str, **fields) -> PostmanNode:
     return node
 
 
-@pytest.mark.parametrize("name", OPERATIONS)
-@pytest.mark.asyncio
-async def test_every_documented_action_can_dispatch(name):
+async def _every_documented_action_can_dispatch(name):
     op = OPERATIONS[name]
     fields = {parameter: "a/b" for parameter in re.findall(r"\{([^}]+)\}", op.path)}
     if op.body_type != "none":
@@ -47,6 +46,11 @@ async def test_every_documented_action_can_dispatch(name):
     assert params == {}
     assert body == ({"example": "value"} if op.body_type != "none" else None)
     assert result == {"status": "success", "operation": name, "data": {"ok": True}}
+
+
+@pytest.mark.asyncio
+async def test_every_documented_action_can_dispatch():
+    await check_each(OPERATIONS, _every_documented_action_can_dispatch)
 
 
 def test_catalog_covers_core_postman_resources():

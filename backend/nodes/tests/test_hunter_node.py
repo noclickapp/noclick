@@ -10,6 +10,7 @@ import pytest
 from nodes.hunter_node import (
     API_BASE, OPERATIONS, HunterApiKeyCredential, HunterNode, HunterNodeConfig,
 )
+from tests.utils.sweep import check_each
 
 
 def sample_value(kind):
@@ -48,9 +49,7 @@ def node(operation, **values):
                       config=config, sio=Mock(), sid="sid", workflow_id="wf", user_id="user")
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("operation", sorted(OPERATIONS))
-async def test_every_official_operation_uses_documented_method_and_path(operation):
+async def _every_official_operation_uses_documented_method_and_path(operation):
     spec = OPERATIONS[operation]
     calls = []
 
@@ -75,6 +74,11 @@ async def test_every_official_operation_uses_documented_method_and_path(operatio
     assert url == API_BASE + expected_path
     assert kwargs["headers"]["X-API-KEY"] == "test-key"
     assert "api_key" not in (kwargs["params"] or {})
+
+
+@pytest.mark.asyncio
+async def test_every_official_operation_uses_documented_method_and_path():
+    await check_each(sorted(OPERATIONS), _every_official_operation_uses_documented_method_and_path)
 
 
 def test_catalog_matches_distinct_official_method_paths_and_schema():

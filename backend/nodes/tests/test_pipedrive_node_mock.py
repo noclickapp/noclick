@@ -28,6 +28,7 @@ from nodes.pipedrive_node import (
     _REQUIRED_QUERY,
     _ONE_OF_REQUIRED,
 )
+from tests.utils.sweep import check_each
 
 
 @pytest.fixture
@@ -130,9 +131,7 @@ class TestPipedriveOperationContracts:
             assert r["version"] in ("v1", "v2")
             assert r["path"].startswith("/")
 
-    @pytest.mark.asyncio
-    @pytest.mark.parametrize("spec", OP_SPECS, ids=[s["operation"] for s in OP_SPECS])
-    async def test_operation_dispatch(self, spec, credentials):
+    async def _operation_dispatch(self, spec, credentials):
         captured = {}
 
         async def fake_request(company_domain, api_token, method, endpoint, version="v2",
@@ -172,6 +171,11 @@ class TestPipedriveOperationContracts:
                 api, required, _ftype, _desc = bf
                 if required:
                     assert api in body, f"{spec['operation']} missing required body {api}"
+
+
+    @pytest.mark.asyncio
+    async def test_operation_dispatch(self, credentials):
+        await check_each(OP_SPECS, lambda spec: self._operation_dispatch(spec, credentials), name=lambda spec: spec["operation"])
 
 
 # ============================================================================

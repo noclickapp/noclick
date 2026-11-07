@@ -735,6 +735,7 @@ class TestZoomErrorHandlingMock:
 from typing import get_args
 import nodes.zoom_node as _zmod
 from nodes.zoom_node import ZoomConfig
+from tests.utils.sweep import check_each
 
 _MEMBERS = {m.model_fields["operation"].default: m for m in get_args(get_args(ZoomConfig)[0])}
 _ACTION_OPS = [op for op in _MEMBERS if op not in _zmod.ZOOM_TRIGGER_CONFIGS]
@@ -753,9 +754,7 @@ def _build_min(model):
     return model(**kwargs)
 
 
-@pytest.mark.parametrize("op", _ACTION_OPS)
-@pytest.mark.asyncio
-async def test_zoom_operation_dispatches(op, tmp_path):
+async def _zoom_operation_dispatches(op, tmp_path):
     captured = {}
 
     async def fake_request(token, method, endpoint, params=None, json_body=None, action_name="request", files=None):
@@ -774,6 +773,11 @@ async def test_zoom_operation_dispatches(op, tmp_path):
     assert result["action"] == op
     assert captured.get("endpoint", "").startswith("/"), f"{op}: bad endpoint {captured.get('endpoint')}"
     assert "{" not in captured["endpoint"], f"{op}: unresolved path {captured['endpoint']}"
+
+
+@pytest.mark.asyncio
+async def test_zoom_operation_dispatches(tmp_path):
+    await check_each(_ACTION_OPS, lambda op: _zoom_operation_dispatches(op, tmp_path))
 
 
 def test_zoom_full_coverage_op_count():

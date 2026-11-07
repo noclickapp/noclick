@@ -18,6 +18,7 @@ from nodes.paddle_node import (
     _field_name,
     _catalog,
 )
+from tests.utils.sweep import check_each
 
 
 def _action(op: dict) -> dict:
@@ -60,9 +61,7 @@ def _node(action: dict, environment: str = "sandbox", key: str = "test-api-key")
     )
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("op", OPERATIONS.values(), ids=lambda op: op["name"])
-async def test_every_action_uses_documented_method_path_and_auth(op):
+async def _every_action_uses_documented_method_path_and_auth(op):
     captured = []
 
     def respond(request: httpx.Request) -> httpx.Response:
@@ -92,6 +91,11 @@ async def test_every_action_uses_documented_method_path_and_auth(op):
     assert result["data"] == [{"id": "ok"}]
     assert result["meta"] == {"has_more": False}
     assert result["timing_ms"]["api_request"] >= 0
+
+
+@pytest.mark.asyncio
+async def test_every_action_uses_documented_method_path_and_auth():
+    await check_each(OPERATIONS.values(), _every_action_uses_documented_method_path_and_auth, name=lambda op: op["name"])
 
 
 def test_catalog_schema_and_permission_metadata_match():

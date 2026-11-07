@@ -656,6 +656,7 @@ class TestDatabricksDynamicOptionsMock:
 from typing import get_args
 import nodes.databricks_node as _dbx
 from nodes.databricks_node import DatabricksConfig, DatabricksTokenCredential, DATABRICKS_TRIGGER_CONFIGS
+from tests.utils.sweep import check_each
 
 _MEMBERS = {m.model_fields["operation"].default: m for m in get_args(get_args(DatabricksConfig)[0])}
 _ACTION_OPS = [op for op in _MEMBERS if op not in DATABRICKS_TRIGGER_CONFIGS]
@@ -673,9 +674,7 @@ def _build_min_config(model):
     return model(**kwargs)
 
 
-@pytest.mark.parametrize("op", _ACTION_OPS)
-@pytest.mark.asyncio
-async def test_operation_dispatches(op):
+async def _operation_dispatches(op):
     captured = {}
 
     async def fake_request(host, token, method, endpoint, params=None, json_body=None,
@@ -695,6 +694,11 @@ async def test_operation_dispatches(op):
     assert result["action"] == op
     assert captured.get("endpoint", "").startswith("/api/"), f"{op}: bad endpoint {captured.get('endpoint')}"
     assert "{" not in captured["endpoint"], f"{op}: unresolved path template {captured['endpoint']}"
+
+
+@pytest.mark.asyncio
+async def test_operation_dispatches():
+    await check_each(_ACTION_OPS, _operation_dispatches)
 
 
 def test_full_coverage_op_count():

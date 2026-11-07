@@ -8,6 +8,7 @@ import httpx
 import pytest
 
 from nodes.neon_node import NEON_ENDPOINTS, NeonNode, NeonNodeConfig
+from tests.utils.sweep import check_each
 
 
 def make_node(config):
@@ -31,9 +32,7 @@ def config_for(action):
     return data
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("action", sorted(NEON_ENDPOINTS))
-async def test_every_documented_operation_routes_through_authenticated_api(action):
+async def _every_documented_operation_routes_through_authenticated_api(action):
     method, path, _, _, body_requirement, required_query, _ = NEON_ENDPOINTS[action]
     seen = []
 
@@ -61,6 +60,11 @@ async def test_every_documented_operation_routes_through_authenticated_api(actio
         assert json.loads(request.content) == {"example": "value"}
     else:
         assert request.content == b""
+
+
+@pytest.mark.asyncio
+async def test_every_documented_operation_routes_through_authenticated_api():
+    await check_each(sorted(NEON_ENDPOINTS), _every_documented_operation_routes_through_authenticated_api)
 
 
 @pytest.mark.asyncio

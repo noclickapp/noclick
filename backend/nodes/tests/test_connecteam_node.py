@@ -16,6 +16,7 @@ from nodes.connecteam_node import (
     ConnecteamNodeConfig,
     ConnecteamOAuthClientCredential,
 )
+from tests.utils.sweep import check_each
 
 
 def _node(operation: str, credential=None, **values):
@@ -43,9 +44,7 @@ def _required_values(spec):
     return values
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("operation", CONNECTEAM_OPERATIONS)
-async def test_documented_operation_routes_to_its_method_path_and_auth(
+async def _documented_operation_routes_to_its_method_path_and_auth(
     operation, monkeypatch
 ):
     spec = CONNECTEAM_OPERATIONS[operation]
@@ -84,6 +83,16 @@ async def test_documented_operation_routes_to_its_method_path_and_auth(
     if spec["body_required"]:
         assert json.loads(request.content) == {"example": True}
     assert operation in CONNECTEAM_CONFIGS
+
+
+@pytest.mark.asyncio
+async def test_documented_operation_routes_to_its_method_path_and_auth():
+    async def one(operation):
+        # Each case patches what it needs afresh, undone before the next, as its own test once did.
+        with pytest.MonkeyPatch.context() as monkeypatch:
+            await _documented_operation_routes_to_its_method_path_and_auth(operation, monkeypatch)
+
+    await check_each(CONNECTEAM_OPERATIONS, one)
 
 
 @pytest.mark.asyncio

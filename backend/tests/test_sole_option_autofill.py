@@ -19,6 +19,7 @@ from pathlib import Path
 import pytest
 
 from nodes.core.registry import NODE_REGISTRY
+from tests.utils.sweep import check_each
 
 # Read the GENERATED schema files rather than calling get_config_schema(): those
 # files are what the frontend renders from, and several nodes (Zendesk, Discord,
@@ -52,8 +53,7 @@ def _dynamic_fields(node_cls):
 ALL_NODES = sorted(NODE_REGISTRY.items())
 
 
-@pytest.mark.parametrize("node_type,node_cls", ALL_NODES)
-def test_sole_option_autofill_never_lands_on_a_dependent_field(node_type, node_cls):
+def _sole_option_autofill_never_lands_on_a_dependent_field(node_type, node_cls):
     """A dependent field has nothing to resolve until its parent is chosen.
 
     Auto-filling a Sheets tab before a spreadsheet exists would either fill from
@@ -71,8 +71,12 @@ def test_sole_option_autofill_never_lands_on_a_dependent_field(node_type, node_c
     )
 
 
-@pytest.mark.parametrize("node_type,node_cls", ALL_NODES)
-def test_sole_option_autofill_never_lands_on_an_optional_field(node_type, node_cls):
+@pytest.mark.asyncio
+async def test_sole_option_autofill_never_lands_on_a_dependent_field():
+    await check_each(ALL_NODES, lambda case: _sole_option_autofill_never_lands_on_a_dependent_field(case[0], case[1]), name=lambda case: case[0])
+
+
+def _sole_option_autofill_never_lands_on_an_optional_field(node_type, node_cls):
     """An empty optional field MEANS something; a required one does not.
 
     Leaving an optional filter blank says "no filter". Auto-filling it with the
@@ -92,8 +96,12 @@ def test_sole_option_autofill_never_lands_on_an_optional_field(node_type, node_c
     )
 
 
-@pytest.mark.parametrize("node_type,node_cls", ALL_NODES)
-def test_every_required_independent_picker_auto_answers(node_type, node_cls):
+@pytest.mark.asyncio
+async def test_sole_option_autofill_never_lands_on_an_optional_field():
+    await check_each(ALL_NODES, lambda case: _sole_option_autofill_never_lands_on_an_optional_field(case[0], case[1]), name=lambda case: case[0])
+
+
+def _every_required_independent_picker_auto_answers(node_type, node_cls):
     """The whole catalogue gets this, including nodes nobody has written yet.
 
     Stamped centrally in `_mark_sole_option_autofill` rather than declared per
@@ -111,6 +119,11 @@ def test_every_required_independent_picker_auto_answers(node_type, node_cls):
         f"autofill: {missing}. This is stamped automatically — if it is absent, "
         f"the central pass in nodes/core/base.py has regressed."
     )
+
+
+@pytest.mark.asyncio
+async def test_every_required_independent_picker_auto_answers():
+    await check_each(ALL_NODES, lambda case: _every_required_independent_picker_auto_answers(case[0], case[1]), name=lambda case: case[0])
 
 
 def test_the_catalogue_actually_benefits():

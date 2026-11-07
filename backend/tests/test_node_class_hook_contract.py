@@ -27,6 +27,7 @@ import pytest
 
 from nodes.core.base import WorkflowNode
 from nodes.core.registry import NODE_REGISTRY
+from tests.utils.sweep import check_each
 
 # Hooks the base declares as classmethods — the contract every override inherits.
 CLASS_LEVEL_HOOKS = sorted(
@@ -44,8 +45,7 @@ def test_base_declares_the_hooks_this_suite_guards():
     assert "verify_webhook_signature" in CLASS_LEVEL_HOOKS
 
 
-@pytest.mark.parametrize("node_cls", REGISTERED, ids=lambda c: c.__name__)
-def test_class_level_hooks_are_bound_to_the_class(node_cls):
+def _class_level_hooks_are_bound_to_the_class(node_cls):
     """Every override of a base classmethod must itself be a classmethod with
     the base's parameter names — the runtime only ever has the class."""
     for hook in CLASS_LEVEL_HOOKS:
@@ -69,6 +69,11 @@ def test_class_level_hooks_are_bound_to_the_class(node_cls):
         )
 
 
+@pytest.mark.asyncio
+async def test_class_level_hooks_are_bound_to_the_class():
+    await check_each(REGISTERED, _class_level_hooks_are_bound_to_the_class, name=lambda c: c.__name__)
+
+
 TRIGGER_OUTPUT = {
     "status": "success",
     "action": "on_event",
@@ -76,8 +81,7 @@ TRIGGER_OUTPUT = {
 }
 
 
-@pytest.mark.parametrize("node_cls", REGISTERED, ids=lambda c: c.__name__)
-def test_resolve_agent_event_survives_the_call_the_agent_makes(node_cls):
+def _resolve_agent_event_survives_the_call_the_agent_makes(node_cls):
     """AgentNode._resolve_trigger_event calls this on the class with the fired
     trigger's output and reads ``text``/``conversation_key`` off the result."""
     event = node_cls.resolve_agent_event(TRIGGER_OUTPUT)
@@ -91,11 +95,20 @@ def test_resolve_agent_event_survives_the_call_the_agent_makes(node_cls):
     assert ck is None or isinstance(ck, str)
 
 
-@pytest.mark.parametrize("node_cls", REGISTERED, ids=lambda c: c.__name__)
-def test_verify_webhook_signature_survives_the_call_the_receiver_makes(node_cls):
+@pytest.mark.asyncio
+async def test_resolve_agent_event_survives_the_call_the_agent_makes():
+    await check_each(REGISTERED, _resolve_agent_event_survives_the_call_the_agent_makes, name=lambda c: c.__name__)
+
+
+def _verify_webhook_signature_survives_the_call_the_receiver_makes(node_cls):
     """_apply_trigger_node_hooks calls this on the class with (raw body,
     lowercased headers, config dict) and treats a raise as a 500."""
     verdict = node_cls.verify_webhook_signature(b"{}", {}, {})
     assert isinstance(verdict, bool), (
         f"{node_cls.__name__}.verify_webhook_signature returned {type(verdict)}"
     )
+
+
+@pytest.mark.asyncio
+async def test_verify_webhook_signature_survives_the_call_the_receiver_makes():
+    await check_each(REGISTERED, _verify_webhook_signature_survives_the_call_the_receiver_makes, name=lambda c: c.__name__)

@@ -14,6 +14,7 @@ from nodes.exa_node import ExaMonitorTriggerConfig, ExaNode, ExaNodeConfig
 from nodes.posthog_node import PostHogNode
 from nodes.webhook_trigger_node import WebhookTriggerNode
 from wss.handlers.workflow_execution_handler import WorkflowExecutionHandler
+from tests.utils.sweep import check_each
 
 OTHER_STEPS = {"another_step": {"its_field": "its value"}, "vars": {"a_variable": 1}}
 
@@ -36,8 +37,7 @@ def _bare(node_cls, node_type, operation):
 TRIGGERS = sorted(t for t, c in NODE_REGISTRY.items() if t.startswith("trigger-") or _iter_operation_defs(c, triggers=True))
 
 
-@pytest.mark.parametrize("node_type", TRIGGERS)
-async def test_no_trigger_of_any_node_type_is_handed_the_runs_other_outputs(node_type, monkeypatch):
+async def _no_trigger_of_any_node_type_is_handed_the_runs_other_outputs(node_type, monkeypatch):
     node_cls = NODE_REGISTRY[node_type]
     received = []
 
@@ -50,6 +50,16 @@ async def test_no_trigger_of_any_node_type_is_handed_the_runs_other_outputs(node
     for operation in operations:
         await _bare(node_cls, node_type, operation).run(dict(OTHER_STEPS))
     assert received == [{}] * len(operations)
+
+
+@pytest.mark.asyncio
+async def test_no_trigger_of_any_node_type_is_handed_the_runs_other_outputs():
+    async def one(node_type):
+        # Each case patches what it needs afresh, undone before the next, as its own test once did.
+        with pytest.MonkeyPatch.context() as monkeypatch:
+            await _no_trigger_of_any_node_type_is_handed_the_runs_other_outputs(node_type, monkeypatch)
+
+    await check_each(TRIGGERS, one)
 
 
 async def test_a_step_that_isnt_a_trigger_still_reads_what_came_before(monkeypatch):

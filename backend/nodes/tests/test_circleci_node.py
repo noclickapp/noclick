@@ -13,6 +13,7 @@ import pytest
 from nodes.circleci_node import (
     CONFIG_MODELS, OPERATIONS, CircleCINode, CircleCINodeConfig, _catalog, _field_name, _NATIVE_BODY_FIELDS,
 )
+from tests.utils.sweep import check_each
 
 
 def _action(op: dict) -> dict:
@@ -53,9 +54,7 @@ def _node(action: dict, *, token: str = "test-personal-token") -> CircleCINode:
     )
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("op", OPERATIONS.values(), ids=lambda op: op["name"])
-async def test_every_openapi_action_uses_documented_method_path_and_bearer_token(op):
+async def _every_openapi_action_uses_documented_method_path_and_bearer_token(op):
     requests = []
 
     def respond(request: httpx.Request) -> httpx.Response:
@@ -86,6 +85,11 @@ async def test_every_openapi_action_uses_documented_method_path_and_bearer_token
             }
         else:
             assert json.loads(request.content) == json.loads(_action(op)["body_json"])
+
+
+@pytest.mark.asyncio
+async def test_every_openapi_action_uses_documented_method_path_and_bearer_token():
+    await check_each(OPERATIONS.values(), _every_openapi_action_uses_documented_method_path_and_bearer_token, name=lambda op: op["name"])
 
 
 def test_catalog_and_frontend_schema_cover_the_same_official_operations():

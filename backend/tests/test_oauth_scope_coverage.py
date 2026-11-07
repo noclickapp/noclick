@@ -28,6 +28,7 @@ import pytest
 
 from nodes.core.oauth_scopes import Enforcement, ScopeRegistry
 from nodes.core.registry import NODE_REGISTRY
+from tests.utils.sweep import check_each
 
 BACKEND = Path(__file__).resolve().parents[1]
 NODES_DIR = BACKEND / "nodes"
@@ -164,12 +165,7 @@ def _registry_nodes():
     ]
 
 
-@pytest.mark.parametrize(
-    "node_type,node_cls",
-    _registry_nodes(),
-    ids=lambda v: v if isinstance(v, str) else "",
-)
-def test_requested_scopes_cover_requirements(node_type, node_cls):
+def _requested_scopes_cover_requirements(node_type, node_cls):
     registry: ScopeRegistry = node_cls.scope_registry
     schema = node_cls.get_config_schema()
 
@@ -194,12 +190,12 @@ def test_requested_scopes_cover_requirements(node_type, node_cls):
             )
 
 
-@pytest.mark.parametrize(
-    "node_type,node_cls",
-    _registry_nodes(),
-    ids=lambda v: v if isinstance(v, str) else "",
-)
-def test_elevated_scopes_are_never_requested_at_connect(node_type, node_cls):
+@pytest.mark.asyncio
+async def test_requested_scopes_cover_requirements():
+    await check_each(_registry_nodes(), lambda case: _requested_scopes_cover_requirements(case[0], case[1]), name=lambda case: case[0])
+
+
+def _elevated_scopes_are_never_requested_at_connect(node_type, node_cls):
     """Non-standard-tier scopes must stay out of the connect request.
 
     Slack refuses to install an app requesting `admin.*` scopes outside
@@ -222,6 +218,11 @@ def test_elevated_scopes_are_never_requested_at_connect(node_type, node_cls):
                 f"connect request. Elevated scopes must be satisfied by a "
                 f"user-supplied credential, not requested for everyone."
             )
+
+
+@pytest.mark.asyncio
+async def test_elevated_scopes_are_never_requested_at_connect():
+    await check_each(_registry_nodes(), lambda case: _elevated_scopes_are_never_requested_at_connect(case[0], case[1]), name=lambda case: case[0])
 
 
 # ---------------------------------------------------------------------------

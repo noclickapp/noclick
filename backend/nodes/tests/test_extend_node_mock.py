@@ -17,6 +17,7 @@ from unittest.mock import Mock, patch, AsyncMock
 
 from nodes import extend_node as E
 from nodes.extend_node import ExtendNode, ExtendNodeConfig, ExtendApiKeyCredential
+from tests.utils.sweep import check_each
 
 
 # ── harness ──────────────────────────────────────────────────────────────────
@@ -177,10 +178,7 @@ CASES = [
 ]
 
 
-@pytest.mark.parametrize("cls,kw,method,path,body,params", CASES,
-                         ids=[c[0].__name__ for c in CASES])
-@pytest.mark.asyncio
-async def test_operation_contract(cls, kw, method, path, body, params):
+async def _operation_contract(cls, kw, method, path, body, params):
     call = await run_op(cls(**kw))
     assert call["method"] == method, f"method for {cls.__name__}"
     assert call["endpoint"] == path, f"path for {cls.__name__}"
@@ -190,6 +188,11 @@ async def test_operation_contract(cls, kw, method, path, body, params):
     if params is not None:
         for k, v in params.items():
             assert (call["params"] or {}).get(k) == v, f"params[{k}] for {cls.__name__}: {call['params']}"
+
+
+@pytest.mark.asyncio
+async def test_operation_contract():
+    await check_each(CASES, lambda case: _operation_contract(case[0], case[1], case[2], case[3], case[4], case[5]), name=lambda case: case[0].__name__)
 
 
 @pytest.mark.parametrize("config_cls,kwargs", [

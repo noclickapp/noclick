@@ -14,6 +14,7 @@ from nodes.meta_node import (
     MetaConfig, MetaNode, MetaNodeConfig, MetaAccessTokenCredential,
     META_TRIGGER_CONFIGS, META_TRIGGER_EVENT,
 )
+from tests.utils.sweep import check_each
 
 _MEMBERS = {m.model_fields["operation"].default: m for m in get_args(get_args(MetaConfig)[0])}
 _ACTION_OPS = [op for op in _MEMBERS if op not in META_TRIGGER_CONFIGS]
@@ -36,9 +37,7 @@ def _node(cfg):
                     config=cfg, sio=Mock(), sid="s", workflow_id="w", user_id="u")
 
 
-@pytest.mark.parametrize("op", _ACTION_OPS)
-@pytest.mark.asyncio
-async def test_meta_operation_dispatches(op):
+async def _meta_operation_dispatches(op):
     captured = {}
 
     async def fake(token, method, endpoint, params=None, data=None, app_secret=None, action_name="request"):
@@ -54,6 +53,11 @@ async def test_meta_operation_dispatches(op):
     assert captured["endpoint"].startswith("/"), f"{op}: bad endpoint {captured['endpoint']}"
     assert "{" not in captured["endpoint"], f"{op}: unresolved path {captured['endpoint']}"
     assert captured["app_secret"] == "s3cr3t", f"{op}: appsecret_proof secret not threaded"
+
+
+@pytest.mark.asyncio
+async def test_meta_operation_dispatches():
+    await check_each(_ACTION_OPS, _meta_operation_dispatches)
 
 
 def test_op_surface():

@@ -101,9 +101,20 @@ _BACKEND_TEXT = _side_text(BACKEND, ("*.py", "*.sh"))
 _FRONTEND_TEXT = _side_text(REPO / "frontend", ("*.ts", "*.tsx", "*.js", "*.sh"))
 
 
+def _words(text: str) -> frozenset[str]:
+    """Every whole word in ``text``: a name is in it exactly when ``\\bNAME\\b`` would match,
+    read once instead of searching megabytes of source again for each name."""
+    return frozenset(re.findall(r"\w+", text))
+
+
+_CONSUMER_WORDS = _words(_CONSUMERS)
+_BACKEND_WORDS = _words(_BACKEND_TEXT)
+_FRONTEND_WORDS = _words(_FRONTEND_TEXT)
+
+
 @pytest.mark.parametrize("name", sorted(_documented_vars() - NOT_READ_ANYWHERE))
 def test_documented_env_var_is_read_somewhere(name: str):
-    assert re.search(rf"\b{re.escape(name)}\b", _CONSUMERS), (
+    assert name in _CONSUMER_WORDS, (
         f"{name} is named in .env.example or the self-hosting guide, and nothing "
         f"in the backend, the frontend or the compose file reads it. Either the "
         f"code reads a different name — the operator then sets something inert — "
@@ -116,7 +127,7 @@ def test_documented_env_var_is_read_somewhere(name: str):
     sorted(_compose_service_env("backend")),
 )
 def test_compose_backend_env_is_read_by_backend(name: str):
-    assert re.search(rf"\b{re.escape(name)}\b", _BACKEND_TEXT), (
+    assert name in _BACKEND_WORDS, (
         f"docker-compose passes {name} to the backend, but backend code does not "
         "read it; remove the inert knob or implement it"
     )
@@ -127,7 +138,7 @@ def test_compose_backend_env_is_read_by_backend(name: str):
     sorted(_compose_service_env("frontend") - {"PORT", "NODE_ENV"}),
 )
 def test_compose_frontend_env_is_read_by_frontend(name: str):
-    assert re.search(rf"\b{re.escape(name)}\b", _FRONTEND_TEXT), (
+    assert name in _FRONTEND_WORDS, (
         f"docker-compose passes {name} to the frontend, but frontend code does "
         "not read it; remove the inert knob or implement it"
     )

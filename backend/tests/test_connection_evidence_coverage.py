@@ -33,6 +33,7 @@ import pytest
 
 from nodes.core.connection_evidence import ConnectionEvidence, EvidenceSample
 from nodes.core.registry import NODE_REGISTRY
+from tests.utils.sweep import check_each
 
 BACKEND = Path(__file__).resolve().parents[1]
 
@@ -198,15 +199,7 @@ def test_no_evidence_allowlist_only_shrinks():
 # ------------------------------------------------------------ 2. resolvable
 
 
-@pytest.mark.parametrize(
-    "node_type,node_cls",
-    sorted(
-        (t, c)
-        for t, c in NODE_REGISTRY.items()
-        if getattr(c, "connection_evidence", None) is not None
-    ),
-)
-def test_declared_evidence_points_at_something_real(node_type, node_cls):
+def _declared_evidence_points_at_something_real(node_type, node_cls):
     """A declaration that names a nonexistent operation proves nothing at runtime."""
     spec: ConnectionEvidence = node_cls.connection_evidence
     ops = _operations(node_cls)
@@ -242,15 +235,16 @@ def test_declared_evidence_points_at_something_real(node_type, node_cls):
     )
 
 
-@pytest.mark.parametrize(
-    "node_type,node_cls",
-    sorted(
+@pytest.mark.asyncio
+async def test_declared_evidence_points_at_something_real():
+    await check_each(sorted(
         (t, c)
         for t, c in NODE_REGISTRY.items()
         if getattr(c, "connection_evidence", None) is not None
-    ),
-)
-def test_evidence_needs_nothing_but_the_credential(node_type, node_cls):
+    ), lambda case: _declared_evidence_points_at_something_real(case[0], case[1]), name=lambda case: case[0])
+
+
+def _evidence_needs_nothing_but_the_credential(node_type, node_cls):
     """Evidence runs with a credential and nothing else — no config exists yet.
 
     Two ways to get this wrong, both of which look fine until someone connects an
@@ -283,6 +277,15 @@ def test_evidence_needs_nothing_but_the_credential(node_type, node_cls):
         )
 
 
+@pytest.mark.asyncio
+async def test_evidence_needs_nothing_but_the_credential():
+    await check_each(sorted(
+        (t, c)
+        for t, c in NODE_REGISTRY.items()
+        if getattr(c, "connection_evidence", None) is not None
+    ), lambda case: _evidence_needs_nothing_but_the_credential(case[0], case[1]), name=lambda case: case[0])
+
+
 # --------------------------------------------------------- 3. not generic
 
 # Catalogues that are byte-identical for every account with that provider.
@@ -305,15 +308,7 @@ _STATIC_CATALOGUE_PATTERNS = (
 )
 
 
-@pytest.mark.parametrize(
-    "node_type,node_cls",
-    sorted(
-        (t, c)
-        for t, c in NODE_REGISTRY.items()
-        if getattr(c, "connection_evidence", None) is not None
-    ),
-)
-def test_evidence_is_not_a_static_catalogue(node_type, node_cls):
+def _evidence_is_not_a_static_catalogue(node_type, node_cls):
     """Evidence must be the user's OWN data, or admit that it is not."""
     spec: ConnectionEvidence = node_cls.connection_evidence
     if spec.proves == "reachability":
@@ -331,6 +326,15 @@ def test_evidence_is_not_a_static_catalogue(node_type, node_cls):
     )
 
 
+@pytest.mark.asyncio
+async def test_evidence_is_not_a_static_catalogue():
+    await check_each(sorted(
+        (t, c)
+        for t, c in NODE_REGISTRY.items()
+        if getattr(c, "connection_evidence", None) is not None
+    ), lambda case: _evidence_is_not_a_static_catalogue(case[0], case[1]), name=lambda case: case[0])
+
+
 def test_proves_is_a_known_value():
     """A typo here would silently disable the generic-evidence guard."""
     for node_type, node_cls in NODE_REGISTRY.items():
@@ -346,15 +350,7 @@ def test_proves_is_a_known_value():
 # ------------------------------------------------------------- 4. read-only
 
 
-@pytest.mark.parametrize(
-    "node_type,node_cls",
-    sorted(
-        (t, c)
-        for t, c in NODE_REGISTRY.items()
-        if getattr(c, "connection_evidence", None) is not None
-    ),
-)
-def test_evidence_operations_are_read_only(node_type, node_cls):
+def _evidence_operations_are_read_only(node_type, node_cls):
     """Evidence runs on connect, so it must never be able to change anything."""
     spec: ConnectionEvidence = node_cls.connection_evidence
     for attr in ("operation", "identity_operation"):
@@ -366,6 +362,15 @@ def test_evidence_operations_are_read_only(node_type, node_cls):
             f"read-only. Evidence runs the moment a user connects an account; "
             f"name a listing or lookup operation instead."
         )
+
+
+@pytest.mark.asyncio
+async def test_evidence_operations_are_read_only():
+    await check_each(sorted(
+        (t, c)
+        for t, c in NODE_REGISTRY.items()
+        if getattr(c, "connection_evidence", None) is not None
+    ), lambda case: _evidence_operations_are_read_only(case[0], case[1]), name=lambda case: case[0])
 
 
 # --------------------------------------------------------- 4. the seam runs

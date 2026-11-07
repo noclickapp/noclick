@@ -27,6 +27,7 @@ from nodes.stripe_node import (
     _PATH_FIELDS,
     _to_form,
 )
+from tests.utils.sweep import check_each
 
 API_BASE = sn.STRIPE_API_BASE
 API_KEY = "sk_test_123"
@@ -180,8 +181,7 @@ _ROUTED_MEMBERS = [
 # --------------------------------------------------------------------------- #
 
 
-@pytest.mark.parametrize("member", _ROUTED_MEMBERS, ids=lambda m: _op_of(m))
-async def test_operation_dispatch(member):
+async def _operation_dispatch(member):
     op = _op_of(member)
     method, path_template = _OPERATIONS[op]
     op_dict = _build_op_dict(member)
@@ -208,6 +208,11 @@ async def test_operation_dispatch(member):
         assert captured["content"] is None or isinstance(captured["content"], str)
     else:
         assert captured["content"] is None
+
+
+@pytest.mark.asyncio
+async def test_operation_dispatch():
+    await check_each(_ROUTED_MEMBERS, _operation_dispatch, name=_op_of)
 
 
 def test_all_operations_have_configs():
