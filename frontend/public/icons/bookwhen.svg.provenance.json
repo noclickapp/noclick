@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/bookwhen.svg",
+  "source": "https://api.bookwhen.com/v2/openapi.yaml (info.x-logo.url: https://api.bookwhen.com/images/svg/bookwhen_api_logo.svg)",
+  "license": "Bookwhen brand mark, used nominatively to identify the connected service; trademark rights remain with Bookwhen.",
+  "sha256": "3f747e2f72eea03a99feb9785c30f3217c15308567917e9e2b8f2ca84a4be90e"
+}
