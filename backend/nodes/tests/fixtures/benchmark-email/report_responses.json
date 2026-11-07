@@ -1,0 +1,90 @@
+{
+  "dashboard_report": {
+    "campaign": {
+      "sent": {
+        "count": 2379,
+        "diff": 0.76
+      },
+      "delivered": {
+        "count": 2203,
+        "diff": 11.3
+      },
+      "uniqueOpens": {
+        "count": {
+          "value": 733,
+          "diff": -23.41
+        },
+        "rate": {
+          "value": 33.27,
+          "diff": -22.41
+        }
+      },
+      "uniqueClicks": {
+        "count": {
+          "value": 569,
+          "diff": -21.52
+        },
+        "rate": {
+          "value": 25.83,
+          "diff": 20.47
+        }
+      }
+    },
+    "contact": {
+      "count": {
+        "value": 5900,
+        "diff": 29.55
+      },
+      "histogram": {
+        "start": "2026-02-28T00:00:00.000Z",
+        "end": "2026-03-30T00:00:00.000Z",
+        "histogram": [
+          {
+            "date": "2026-02-28T00:00:00.000Z",
+            "total": 5420
+          },
+          {
+            "date": "2026-03-07T00:00:00.000Z",
+            "total": 5580
+          },
+          {
+            "date": "2026-03-14T00:00:00.000Z",
+            "total": 5710
+          },
+          {
+            "date": "2026-03-21T00:00:00.000Z",
+            "total": 5850
+          },
+          {
+            "date": "2026-03-28T00:00:00.000Z",
+            "total": 5900
+          }
+        ],
+        "peak": {
+          "date": "2026-03-28T00:00:00.000Z",
+          "total": 5900
+        }
+      }
+    }
+  },
+  "email_overall_report": {
+    "sent": 8450,
+    "delivered": 8120,
+    "opens": {
+      "unique": 2890,
+      "rate": 35.59
+    },
+    "clicks": {
+      "unique": 1150,
+      "rate": 14.16
+    },
+    "bounces": {
+      "total": 330,
+      "hard": 145,
+      "soft": 185,
+      "rate": 3.91
+    },
+    "unsubscribes": 42,
+    "complaints": 3
+  }
+}
