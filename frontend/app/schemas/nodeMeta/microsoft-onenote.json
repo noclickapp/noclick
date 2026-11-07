@@ -9,7 +9,7 @@
     "OneNoteOAuthCredential": "microsoft_oauth"
   },
   "providerLabels": {
-    "microsoft": "Microsoft OneNote OAuth"
+    "microsoft": "Microsoft Account"
   },
   "autoSelectCredential": true
 }
