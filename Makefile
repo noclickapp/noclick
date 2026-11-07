@@ -25,7 +25,9 @@ test-backend-community:
 	# DB-backed items are placed in one xdist group by tests/conftest.py. This
 	# keeps one shared PostgreSQL testcontainer instead of starting one per CPU,
 	# while the much larger unit-test lane still uses all available workers.
-	cd backend && python -m pytest tests nodes/tests --tb=short -n auto --dist loadgroup
+	# Compiled first, across all CPUs: on a fresh tree each worker otherwise
+	# compiles the same modules as it imports them, one file at a time.
+	cd backend && python -m compileall -q -j 0 . > /dev/null && python -m pytest tests nodes/tests --tb=short -n auto --dist loadgroup
 
 test-frontend:
 	cd frontend && pnpm test
