@@ -29,6 +29,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-sematext', 'SematextNode'],
     ['automation-singlestore', 'SingleStoreNode'],
     ['automation-statuspal', 'StatusPalNode'],
+    ['automation-talkjs', 'TalkJSNode'],
     ['automation-telegram', 'TelegramNode'],
     ['automation-google-sheets', 'GoogleSheetsNode'],
     ['automation-google-drive', 'GoogleDriveNode'],
