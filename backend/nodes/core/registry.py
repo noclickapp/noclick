@@ -33,6 +33,7 @@ from nodes.forgejo_node import ForgejoNode
 from nodes.affinity_node import AffinityNode
 from nodes.aprimo_node import AprimoNode
 from nodes.bloomerang_node import BloomerangNode
+from nodes.printify_node import PrintifyNode
 from nodes.nocodb_node import NocoDBNode
 from nodes.airtable_node import AirtableNode
 from nodes.nylas_node import NylasNode
@@ -259,6 +260,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-affinity': AffinityNode,
     'automation-aprimo': AprimoNode,
     'automation-bloomerang': BloomerangNode,
+    'automation-printify': PrintifyNode,
     'automation-nocodb': NocoDBNode,
     'automation-airtable': AirtableNode,
     'automation-nylas': NylasNode,

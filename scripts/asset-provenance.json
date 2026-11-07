@@ -1406,6 +1406,24 @@
       "source": "https://cdn.prod.website-files.com/618f03f7132898049f978506/6ab56cbc77c14933a4e7d900_MediaSilo%20by%20Editshare%20Black.svg (unaltered official MediaSilo asset)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "62c83daf9e3a7128e6d477645056d2f68b32d078218ee834ab59c31c0b0a444c"
+    },
+    {
+      "path": "frontend/public/icons/printify-brand-vector.svg",
+      "source": "https://printify.com/press-kit/ (Printify published vector brand artwork; source recorded in commit 8327e07ad)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "1f08f05dc16d0571f17dbc4011375c2965a44ed92b532209746577727608b54a"
+    },
+    {
+      "path": "frontend/public/icons/printify-brand.png",
+      "source": "https://printify.com (Printify published brand mark; source recorded in commit 35e4de7c9)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "6b8ff17cecec4b3a7e4ce6e7019797f2d3de30268cf9816657c1c721170777f2"
+    },
+    {
+      "path": "frontend/public/icons/printify.svg",
+      "source": "https://printify.com/press-kit/ (Printify published wordmark)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "e3be5fca387756026b562e19d4cace456cf8c0a5eeda0935d65e70780a254242"
     }
   ],
   "excludedSourceAssets": [
