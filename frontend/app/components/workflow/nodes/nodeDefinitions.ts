@@ -30,6 +30,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-singlestore', 'SingleStoreNode'],
     ['automation-statuspal', 'StatusPalNode'],
     ['automation-talkjs', 'TalkJSNode'],
+    ['automation-uptimecom', 'UptimeComNode'],
     ['automation-telegram', 'TelegramNode'],
     ['automation-google-sheets', 'GoogleSheetsNode'],
     ['automation-google-drive', 'GoogleDriveNode'],
