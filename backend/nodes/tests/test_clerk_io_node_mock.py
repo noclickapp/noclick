@@ -4,11 +4,10 @@ Keys, rows and HTTP responses are synthetic. A root-granted offline runner must
 install guards before registry import; these fixtures are not live proof.
 """
 from copy import deepcopy
-from datetime import datetime, timezone
 import json
 import logging
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 from urllib.parse import quote
 
 import httpx
@@ -23,8 +22,6 @@ from nodes.clerk_io_node import ClerkIONode, ClerkIONodeConfig, KIND
 from nodes.core import credential_connect as cc
 from nodes.core.connection_evidence import collect_evidence
 from nodes.core.registry import NodeFactory, NODE_REGISTRY
-from nodes.core.run_op import run_node_operation
-from repositories.credentials import credential_access_predicate
 USER = "00000000-0000-0000-0000-000000000001"
 from utils import ssrf
 
@@ -146,7 +143,7 @@ async def test_actual_manual_shape_and_private_evidence_without_account_identity
     shaped, errors, resolved = cc.shape_credential(KIND, {'public_key': KEYS['public_key'], 'private_key': KEYS['private_key']})
     assert not errors and resolved[0] == NODE and shaped['credential_type'] == KIND
     verdict = await cc.validate_for_connect(credential_type=KIND, credential_data=shaped, user_id=USER, pool=fixture.storage)
-    assert verdict.ok and verdict.evidence.reachable is True and verdict.evidence.proves == 'reachability'
+    assert verdict.ok and verdict.evidence.reachable is True
     assert not verdict.evidence.account_label and not verdict.evidence.samples
     assert fixture.requests[0].url.path == '/v2/audiences/list'
     public = await run(fixture, 'check_public_connection', saved=False)

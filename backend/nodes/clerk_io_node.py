@@ -274,9 +274,6 @@ def acknowledged(data):
     return {"acknowledged": True, "applied": None, "readback_verified": False}
 
 
-import sys
-api = sys.modules[__name__]
-
 """Native Clerk.io ecommerce catalog and recommendation actions.
 
 This provider uses store public/private keys, independently of Clerk identity.
@@ -608,12 +605,12 @@ class ClerkIONode(WorkflowNode):
         return ClerkIONodeConfig
 
     @classmethod
-    def parse_config(cls, data):
-        supplied = data.get("credentials") if isinstance(data, dict) else None
+    def parse_config(cls, config_data):
+        supplied = config_data.get("credentials") if isinstance(config_data, dict) else None
         if isinstance(supplied, dict):
             credential(supplied)  # Reject foreign tags before shared reconciliation.
         try:
-            return TypeAdapter(ClerkIONodeConfig).validate_python(runtime_config_view(data, ClerkIONodeConfig))
+            return TypeAdapter(ClerkIONodeConfig).validate_python(runtime_config_view(config_data, ClerkIONodeConfig))
         except Exception:
             raise ValueError("Invalid Clerk.io operation, bounds or store credential; check the selected action fields.") from None
 
@@ -631,8 +628,8 @@ class ClerkIONode(WorkflowNode):
         current = credential(raw)
         operation = cfg.operation
         values = cfg.model_dump(exclude={"operation"}, exclude_none=True)
-        if operation in api.WRITES and api.WRITES[operation][0] == "PATCH":
-            resource = api.WRITES[operation][2]
+        if operation in WRITES and WRITES[operation][0] == "PATCH":
+            resource = WRITES[operation][2]
             values[resource] = [row.model_dump(exclude_unset=True, exclude_none=True) for row in getattr(cfg, resource)]
         # Batch selectors stay typed and bounded; duplicate writes are refused.
         for field in ("products", "categories", "customers", "orders"):
@@ -642,23 +639,23 @@ class ClerkIONode(WorkflowNode):
                 if len(set(identities)) != len(identities):
                     raise ValueError("Clerk.io batches cannot repeat a resource identifier.")
         if operation == "check_public_connection":
-            values = {"limit": 1, "attributes": list(api.ATTRIBUTES)}
-        elif operation in api.PUBLIC_READS and operation != "search_categories":
-            values["attributes"] = list(api.ATTRIBUTES)
-        data = await api.request(current, operation, values)
+            values = {"limit": 1, "attributes": list(ATTRIBUTES)}
+        elif operation in PUBLIC_READS and operation != "search_categories":
+            values["attributes"] = list(ATTRIBUTES)
+        data = await request(current, operation, values)
         if operation == "check_connection":
-            api.acknowledged(data)
+            acknowledged(data)
             return {"private_key_accepted": True, "public_key_accepted": True,
                     "verified_endpoint": "/audiences/list", "proves": "reachability", "identity_verified": False,
                     "write_permissions_verified": False}
         if operation == "get_products":
-            rows = api.products(data, requested=cfg.products, limit=len(cfg.products))
-            found = {api._identity(row["id"]) for row in rows}
+            rows = products(data, requested=cfg.products, limit=len(cfg.products))
+            found = {_identity(row["id"]) for row in rows}
             return {"products": rows, "requested_count": len(cfg.products), "returned_count": len(rows),
-                    "missing_ids": [v for v in cfg.products if api._identity(v) not in found],
+                    "missing_ids": [v for v in cfg.products if _identity(v) not in found],
                     "private_key_verified": False}
-        if operation in api.PUBLIC_READS:
-            output = api.results(data, limit=values["limit"], categories=operation == "search_categories",
+        if operation in PUBLIC_READS:
+            output = results(data, limit=values["limit"], categories=operation == "search_categories",
                                  search=operation == "search_products")
             output["private_key_verified"] = False
             if "offset" in values:
@@ -669,7 +666,7 @@ class ClerkIONode(WorkflowNode):
                 return {"public_key_accepted": True, "private_key_accepted": None, "identity_verified": False,
                         "proves": "reachability", "returned_count": output["returned_count"]}
             return output
-        output = api.acknowledged(data)
-        _, _, resource = api.WRITES[operation]
+        output = acknowledged(data)
+        _, _, resource = WRITES[operation]
         return {**output, "resource": resource, "submitted_count": len(values[resource]),
                 "effect": "Personalization catalog, audience or order analytics data may have changed."}
