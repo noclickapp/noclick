@@ -16,6 +16,7 @@
 export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'BytescaleSecretAPIKeyCredential': 'bytescale_secret_api_key',
     'LinkwardenAccessTokenCredential': 'linkwarden_access_token',
+    'DocspellAuthTokenCredential': 'docspell_auth_token',
     'AdaptyAPIKeyCredential': 'adapty_api_key',
     'BotpressPATCredential': 'botpress_pat',
     'RipplingAPITokenCredential': 'rippling_api_token',
@@ -230,9 +231,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'AffinityAPIKeyCredential': 'affinity_api_key',
     'AprimoBearerCredential': 'aprimo_bearer',
     'Aprimo DAM Bearer Token': 'aprimo_bearer',
-
-    // NocoDB
-    'NocoDBTokenCredential': 'nocodb_api_token',
 
     // NocoDB
     'NocoDBTokenCredential': 'nocodb_api_token',

@@ -1232,6 +1232,12 @@
       "source": "https://getsling.com/wp-content/uploads/2017/11/cropped-icon-192x192.png (unmodified Sling brand mark; byte-for-byte verified)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "f5ece502a60db5270405145fbe22380da114e49b03428610c8d6b3f149d4a461"
+    },
+    {
+      "path": "frontend/public/icons/docspell.svg",
+      "source": "https://docspell.org/icons/logo-only-36.svg (unmodified official Docspell logo; byte-for-byte verified)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "d105cef6ef8fded268f382ee7f3b1fbcc2937d72e1795b162fb7453a64e69d4c"
     }
   ],
   "excludedSourceAssets": [
