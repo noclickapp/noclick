@@ -174,10 +174,12 @@ class TestDeepNesting:
         by recursively json.loads-ing chunk bytes — no nested chunk may be
         missing from the flat set (the store refs list(chunks), so a missing
         nested hash would orphan a still-referenced chunk)."""
-        inner = list(range(2000))
-        mid = {f"m{i}": inner for i in range(60)}
-        top = {f"t{i}": mid for i in range(60)}
-        manifest, chunks = decompose(top, threshold=4096)
+        # Each level just over the threshold: the inner list alone, each reduced
+        # level as its placeholders (60x60x2000 at 4096 took 25s for the same check).
+        inner = list(range(300))
+        mid = {f"m{i}": inner for i in range(14)}
+        top = {f"t{i}": mid for i in range(14)}
+        manifest, chunks = decompose(top, threshold=1024)
 
         assert reassemble(manifest, _store_fetch(chunks)) == top
         assert len(chunks) >= 3  # distinct chunks at the three structural levels
