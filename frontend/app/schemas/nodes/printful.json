@@ -1,0 +1,929 @@
+{
+  "$defs": {
+    "CreateDraftOrder": {
+      "properties": {
+        "operation": {
+          "const": "create_draft_order",
+          "default": "create_draft_order",
+          "title": "Create Unsubmitted Draft Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Draft Writes",
+          "x-display-name": "Create Unsubmitted Draft Order",
+          "x-is-trigger": false
+        },
+        "allow_writes": {
+          "default": false,
+          "description": "Creates an actual recipient-bearing order draft. Confirmation is always false. This is not a sandbox or a fulfillment action.",
+          "title": "Allow Draft Creation",
+          "type": "boolean"
+        },
+        "external_id": {
+          "title": "Unique External Reference",
+          "type": "string"
+        },
+        "recipient": {
+          "$ref": "#/$defs/DraftRecipient"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/DraftItem"
+          },
+          "maxItems": 50,
+          "minItems": 1,
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "external_id",
+        "recipient",
+        "items"
+      ],
+      "title": "CreateDraftOrder",
+      "type": "object"
+    },
+    "DraftItem": {
+      "additionalProperties": false,
+      "properties": {
+        "sync_product_id": {
+          "description": "Local parent check; never sent in the order item.",
+          "title": "Sync Product Id",
+          "type": "integer"
+        },
+        "sync_variant_id": {
+          "title": "Sync Variant Id",
+          "type": "integer"
+        },
+        "quantity": {
+          "default": 1,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Quantity",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sync_product_id",
+        "sync_variant_id"
+      ],
+      "title": "DraftItem",
+      "type": "object"
+    },
+    "DraftRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "address1": {
+          "title": "Address1",
+          "type": "string"
+        },
+        "city": {
+          "title": "City",
+          "type": "string"
+        },
+        "country_code": {
+          "title": "Country Code",
+          "type": "string"
+        },
+        "zip": {
+          "title": "Zip",
+          "type": "string"
+        },
+        "state_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State Code"
+        }
+      },
+      "required": [
+        "name",
+        "address1",
+        "city",
+        "country_code",
+        "zip"
+      ],
+      "title": "DraftRecipient",
+      "type": "object"
+    },
+    "GetCatalogCategory": {
+      "properties": {
+        "operation": {
+          "const": "get_catalog_category",
+          "default": "get_catalog_category",
+          "title": "Get Catalog Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "Get Catalog Category",
+          "x-is-trigger": false
+        },
+        "category_id": {
+          "title": "Category",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "category_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "printful_category_id"
+        }
+      },
+      "required": [
+        "category_id"
+      ],
+      "title": "GetCatalogCategory",
+      "type": "object"
+    },
+    "GetCatalogProduct": {
+      "properties": {
+        "catalog_product_id": {
+          "title": "Catalog Product",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "catalog_product_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "printful_catalog_product_id"
+        },
+        "operation": {
+          "const": "get_catalog_product",
+          "default": "get_catalog_product",
+          "title": "Get Catalog Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "Get Catalog Product",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "catalog_product_id"
+      ],
+      "title": "GetCatalogProduct",
+      "type": "object"
+    },
+    "GetCatalogVariant": {
+      "properties": {
+        "catalog_product_id": {
+          "title": "Catalog Product",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "catalog_product_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "printful_catalog_product_id"
+        },
+        "operation": {
+          "const": "get_catalog_variant",
+          "default": "get_catalog_variant",
+          "title": "Get Product Variant",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "Get Product Variant",
+          "x-is-trigger": false
+        },
+        "catalog_variant_id": {
+          "title": "Catalog Variant",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "catalog_product_id",
+            "field_name": "catalog_variant_id",
+            "searchable": true
+          },
+          "x-resource-type": "printful_catalog_variant_id"
+        }
+      },
+      "required": [
+        "catalog_product_id",
+        "catalog_variant_id"
+      ],
+      "title": "GetCatalogVariant",
+      "type": "object"
+    },
+    "GetManualProduct": {
+      "properties": {
+        "manual_product_id": {
+          "title": "Manual Store Product",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "manual_product_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "printful_manual_product_id"
+        },
+        "operation": {
+          "const": "get_manual_product",
+          "default": "get_manual_product",
+          "title": "Get Manual Store Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Manual Store",
+          "x-display-name": "Get Manual Store Product",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "manual_product_id"
+      ],
+      "title": "GetManualProduct",
+      "type": "object"
+    },
+    "GetOrder": {
+      "properties": {
+        "order_id": {
+          "title": "Order",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "order_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "printful_order_id"
+        },
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Get Order Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Get Order Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "GetOrder",
+      "type": "object"
+    },
+    "GetOrderStatus": {
+      "properties": {
+        "order_id": {
+          "title": "Order",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "order_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "printful_order_id"
+        },
+        "operation": {
+          "const": "get_order_status",
+          "default": "get_order_status",
+          "title": "Get Order Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Get Order Status",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "GetOrderStatus",
+      "type": "object"
+    },
+    "GetStore": {
+      "properties": {
+        "operation": {
+          "const": "get_store",
+          "default": "get_store",
+          "title": "Get Bound Store",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Store",
+          "x-display-name": "Get Bound Store",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetStore",
+      "type": "object"
+    },
+    "GetSyncProduct": {
+      "properties": {
+        "sync_product_id": {
+          "title": "Ecommerce Sync Product",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "sync_product_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "printful_sync_product_id"
+        },
+        "operation": {
+          "const": "get_sync_product",
+          "default": "get_sync_product",
+          "title": "Get Ecommerce Sync Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce Sync",
+          "x-display-name": "Get Ecommerce Sync Product",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "sync_product_id"
+      ],
+      "title": "GetSyncProduct",
+      "type": "object"
+    },
+    "GetTokenScopes": {
+      "properties": {
+        "operation": {
+          "const": "get_token_scopes",
+          "default": "get_token_scopes",
+          "title": "Get Token Scopes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Access",
+          "x-display-name": "Get Token Scopes",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetTokenScopes",
+      "type": "object"
+    },
+    "ListCatalogCategories": {
+      "properties": {
+        "operation": {
+          "const": "list_catalog_categories",
+          "default": "list_catalog_categories",
+          "title": "List Catalog Categories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "List Catalog Categories",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListCatalogCategories",
+      "type": "object"
+    },
+    "ListCatalogProducts": {
+      "properties": {
+        "operation": {
+          "const": "list_catalog_products",
+          "default": "list_catalog_products",
+          "title": "List Catalog Products",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "List Catalog Products",
+          "x-is-trigger": false
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "category_id",
+            "searchable": true
+          },
+          "x-resource-type": "printful_category_id"
+        }
+      },
+      "title": "ListCatalogProducts",
+      "type": "object"
+    },
+    "ListCatalogVariants": {
+      "properties": {
+        "catalog_product_id": {
+          "title": "Catalog Product",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "catalog_product_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "printful_catalog_product_id"
+        },
+        "operation": {
+          "const": "list_catalog_variants",
+          "default": "list_catalog_variants",
+          "title": "List Product Variants",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "List Product Variants",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "catalog_product_id"
+      ],
+      "title": "ListCatalogVariants",
+      "type": "object"
+    },
+    "ListManualProducts": {
+      "properties": {
+        "operation": {
+          "const": "list_manual_products",
+          "default": "list_manual_products",
+          "title": "List Manual Store Products",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Manual Store",
+          "x-display-name": "List Manual Store Products",
+          "x-is-trigger": false
+        },
+        "status": {
+          "default": "all",
+          "enum": [
+            "all",
+            "synced",
+            "unsynced",
+            "ignored",
+            "imported",
+            "discontinued",
+            "out_of_stock"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "title": "ListManualProducts",
+      "type": "object"
+    },
+    "ListOrders": {
+      "properties": {
+        "offset": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "List Order Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "List Order Metadata",
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "failed",
+                "inreview",
+                "pending",
+                "canceled",
+                "onhold",
+                "inprocess",
+                "partial",
+                "fulfilled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "draft",
+            "failed",
+            "inreview",
+            "pending",
+            "canceled",
+            "onhold",
+            "inprocess",
+            "partial",
+            "fulfilled"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListOrders",
+      "type": "object"
+    },
+    "ListStores": {
+      "properties": {
+        "operation": {
+          "const": "list_stores",
+          "default": "list_stores",
+          "title": "List Bound Store",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Store",
+          "x-display-name": "List Bound Store",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListStores",
+      "type": "object"
+    },
+    "ListSyncProducts": {
+      "properties": {
+        "offset": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_sync_products",
+          "default": "list_sync_products",
+          "title": "List Ecommerce Sync Products",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce Sync",
+          "x-display-name": "List Ecommerce Sync Products",
+          "x-is-trigger": false
+        },
+        "status": {
+          "default": "all",
+          "enum": [
+            "all",
+            "synced",
+            "unsynced",
+            "ignored",
+            "imported",
+            "discontinued",
+            "out_of_stock"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "title": "ListSyncProducts",
+      "type": "object"
+    },
+    "ListSyncVariants": {
+      "properties": {
+        "sync_product_id": {
+          "title": "Ecommerce Sync Product",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "sync_product_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "printful_sync_product_id"
+        },
+        "operation": {
+          "const": "list_sync_variants",
+          "default": "list_sync_variants",
+          "title": "List Ecommerce Sync Variants",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce Sync",
+          "x-display-name": "List Ecommerce Sync Variants",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "sync_product_id"
+      ],
+      "title": "ListSyncVariants",
+      "type": "object"
+    },
+    "PrintfulOAuthAccessTokenCredential": {
+      "properties": {
+        "store_id": {
+          "description": "The explicitly selected store authorized by this token. This binding cannot be overridden by operation inputs.",
+          "title": "Bound Store ID",
+          "type": "integer"
+        },
+        "credential_type": {
+          "const": "printful_oauth_access_token",
+          "default": "printful_oauth_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Already Issued Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "token_type": {
+          "const": "bearer",
+          "title": "Issued Token Type",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "Public App access tokens expire after one hour. This manual credential does not exchange or refresh them.",
+          "title": "Issued Expiry (UNIX seconds)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "store_id",
+        "access_token",
+        "token_type",
+        "expires_at"
+      ],
+      "title": "Printful Issued OAuth Access Token",
+      "type": "object",
+      "x-credential-instructions": "Manual already-issued store-level Public App access only. Copy actual bearer token type and expires_at. OAuth installation, client credentials and rotating refresh are not implemented here.",
+      "x-credential-url": "https://developers.printful.com/apps"
+    },
+    "PrintfulPrivateTokenCredential": {
+      "properties": {
+        "store_id": {
+          "description": "The explicitly selected store authorized by this token. This binding cannot be overridden by operation inputs.",
+          "title": "Bound Store ID",
+          "type": "integer"
+        },
+        "credential_type": {
+          "const": "printful_private_token",
+          "default": "printful_private_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "private_token": {
+          "title": "Private Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "access_level": {
+          "description": "Use the actual token access level. Account tokens send X-PF-Store-Id; store tokens use their issued store context.",
+          "enum": [
+            "store",
+            "account"
+          ],
+          "title": "Issued Access Level",
+          "type": "string"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Private tokens cannot refresh. If known, supply the actual expiry; absent means unknown, not perpetual.",
+          "title": "Issued Expiry (UNIX seconds)"
+        }
+      },
+      "required": [
+        "store_id",
+        "private_token",
+        "access_level"
+      ],
+      "title": "Printful Private Token",
+      "type": "object",
+      "x-credential-instructions": "Use an already issued traditional Printful token with the required scopes. Store metadata requires stores_list. Read scopes do not authorize writes. No token is created here.",
+      "x-credential-url": "https://developers.printful.com/tokens"
+    },
+    "UpdateDraftReference": {
+      "properties": {
+        "order_id": {
+          "title": "Order",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "order_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "printful_order_id"
+        },
+        "operation": {
+          "const": "update_draft_reference",
+          "default": "update_draft_reference",
+          "title": "Update Draft External Reference",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Draft Writes",
+          "x-display-name": "Update Draft External Reference",
+          "x-is-trigger": false
+        },
+        "allow_writes": {
+          "default": false,
+          "title": "Allow Draft Metadata Update",
+          "type": "boolean"
+        },
+        "external_id": {
+          "title": "External Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id",
+        "external_id"
+      ],
+      "title": "UpdateDraftReference",
+      "type": "object"
+    },
+    "UpdateManualProductName": {
+      "properties": {
+        "manual_product_id": {
+          "title": "Manual Store Product",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "manual_product_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "printful_manual_product_id"
+        },
+        "operation": {
+          "const": "update_manual_product_name",
+          "default": "update_manual_product_name",
+          "title": "Update Manual Product Name",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Manual Store",
+          "x-display-name": "Update Manual Product Name",
+          "x-is-trigger": false
+        },
+        "allow_writes": {
+          "default": false,
+          "description": "Changes an existing native/API store product name. No variant, file, price or fulfillment update is submitted.",
+          "title": "Allow Product Metadata Update",
+          "type": "boolean"
+        },
+        "name": {
+          "title": "Product Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "manual_product_id",
+        "name"
+      ],
+      "title": "UpdateManualProductName",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_draft_order": "#/$defs/CreateDraftOrder",
+          "get_catalog_category": "#/$defs/GetCatalogCategory",
+          "get_catalog_product": "#/$defs/GetCatalogProduct",
+          "get_catalog_variant": "#/$defs/GetCatalogVariant",
+          "get_manual_product": "#/$defs/GetManualProduct",
+          "get_order": "#/$defs/GetOrder",
+          "get_order_status": "#/$defs/GetOrderStatus",
+          "get_store": "#/$defs/GetStore",
+          "get_sync_product": "#/$defs/GetSyncProduct",
+          "get_token_scopes": "#/$defs/GetTokenScopes",
+          "list_catalog_categories": "#/$defs/ListCatalogCategories",
+          "list_catalog_products": "#/$defs/ListCatalogProducts",
+          "list_catalog_variants": "#/$defs/ListCatalogVariants",
+          "list_manual_products": "#/$defs/ListManualProducts",
+          "list_orders": "#/$defs/ListOrders",
+          "list_stores": "#/$defs/ListStores",
+          "list_sync_products": "#/$defs/ListSyncProducts",
+          "list_sync_variants": "#/$defs/ListSyncVariants",
+          "update_draft_reference": "#/$defs/UpdateDraftReference",
+          "update_manual_product_name": "#/$defs/UpdateManualProductName"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetTokenScopes"
+        },
+        {
+          "$ref": "#/$defs/ListStores"
+        },
+        {
+          "$ref": "#/$defs/GetStore"
+        },
+        {
+          "$ref": "#/$defs/ListCatalogProducts"
+        },
+        {
+          "$ref": "#/$defs/GetCatalogProduct"
+        },
+        {
+          "$ref": "#/$defs/ListCatalogVariants"
+        },
+        {
+          "$ref": "#/$defs/GetCatalogVariant"
+        },
+        {
+          "$ref": "#/$defs/ListCatalogCategories"
+        },
+        {
+          "$ref": "#/$defs/GetCatalogCategory"
+        },
+        {
+          "$ref": "#/$defs/ListSyncProducts"
+        },
+        {
+          "$ref": "#/$defs/GetSyncProduct"
+        },
+        {
+          "$ref": "#/$defs/ListSyncVariants"
+        },
+        {
+          "$ref": "#/$defs/ListManualProducts"
+        },
+        {
+          "$ref": "#/$defs/GetManualProduct"
+        },
+        {
+          "$ref": "#/$defs/ListOrders"
+        },
+        {
+          "$ref": "#/$defs/GetOrder"
+        },
+        {
+          "$ref": "#/$defs/GetOrderStatus"
+        },
+        {
+          "$ref": "#/$defs/CreateDraftOrder"
+        },
+        {
+          "$ref": "#/$defs/UpdateDraftReference"
+        },
+        {
+          "$ref": "#/$defs/UpdateManualProductName"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PrintfulPrivateTokenCredential"
+        },
+        {
+          "$ref": "#/$defs/PrintfulOAuthAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Printful Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
