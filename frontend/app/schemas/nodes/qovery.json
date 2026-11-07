@@ -1,0 +1,893 @@
+{
+  "$defs": {
+    "ClusterStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "cluster_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Organization Cluster",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "cluster_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qovery_cluster"
+        },
+        "operation": {
+          "const": "get_cluster_status",
+          "default": "get_cluster_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Status",
+          "x-display-name": "Get Cluster Status",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "cluster_id"
+      ],
+      "title": "ClusterStatus",
+      "type": "object"
+    },
+    "CreateEnvironment": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qovery_project"
+        },
+        "operation": {
+          "const": "create_empty_environment",
+          "default": "create_empty_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "Create Empty Environment",
+          "x-is-trigger": false
+        },
+        "cluster_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Existing Organization Cluster",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "cluster_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qovery_cluster"
+        },
+        "name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Environment Name",
+          "type": "string"
+        },
+        "mode": {
+          "default": "DEVELOPMENT",
+          "description": "Metadata mode only; no services, cloning or deployment request. Existing project rules may affect later behavior.",
+          "enum": [
+            "DEVELOPMENT",
+            "PRODUCTION",
+            "STAGING"
+          ],
+          "title": "Environment Mode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "cluster_id",
+        "name"
+      ],
+      "title": "CreateEnvironment",
+      "type": "object"
+    },
+    "CreateProject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_empty_project",
+          "default": "create_empty_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Create Empty Project",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Project Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional plain metadata, without secrets. No environment or service is created.",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateProject",
+      "type": "object"
+    },
+    "EnvironmentDeployments": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qovery_project"
+        },
+        "environment_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "environment_id",
+            "searchable": true
+          },
+          "x-resource-type": "qovery_environment"
+        },
+        "operation": {
+          "const": "list_environment_deployments",
+          "default": "list_environment_deployments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deployments",
+          "x-display-name": "List Environment Deployment Metadata",
+          "x-is-trigger": false
+        },
+        "start_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented startId cursor. Omit for the first page; a full page does not prove another page exists.",
+          "title": "Start After Deployment UUID"
+        }
+      },
+      "required": [
+        "project_id",
+        "environment_id"
+      ],
+      "title": "EnvironmentDeployments",
+      "type": "object"
+    },
+    "EnvironmentStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qovery_project"
+        },
+        "environment_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "environment_id",
+            "searchable": true
+          },
+          "x-resource-type": "qovery_environment"
+        },
+        "operation": {
+          "const": "get_environment_status",
+          "default": "get_environment_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Status",
+          "x-display-name": "Get Environment Deployment Status",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "project_id",
+        "environment_id"
+      ],
+      "title": "EnvironmentStatus",
+      "type": "object"
+    },
+    "GetCluster": {
+      "additionalProperties": false,
+      "properties": {
+        "cluster_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Organization Cluster",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "cluster_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qovery_cluster"
+        },
+        "operation": {
+          "const": "get_cluster",
+          "default": "get_cluster",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Clusters",
+          "x-display-name": "Get Organization Cluster Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "cluster_id"
+      ],
+      "title": "GetCluster",
+      "type": "object"
+    },
+    "GetEnvironment": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qovery_project"
+        },
+        "environment_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "environment_id",
+            "searchable": true
+          },
+          "x-resource-type": "qovery_environment"
+        },
+        "operation": {
+          "const": "get_environment",
+          "default": "get_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "Get Environment Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "project_id",
+        "environment_id"
+      ],
+      "title": "GetEnvironment",
+      "type": "object"
+    },
+    "GetOrganization": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Get Authorized Organization",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetOrganization",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qovery_project"
+        },
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Project Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GetProject",
+      "type": "object"
+    },
+    "ListClusters": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_clusters",
+          "default": "list_clusters",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Clusters",
+          "x-display-name": "List Organization Cluster Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListClusters",
+      "type": "object"
+    },
+    "ListEnvironments": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qovery_project"
+        },
+        "operation": {
+          "const": "list_environments",
+          "default": "list_environments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "List Project Environments",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ListEnvironments",
+      "type": "object"
+    },
+    "ListProjects": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Organization Projects",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "ListServices": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qovery_project"
+        },
+        "environment_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "environment_id",
+            "searchable": true
+          },
+          "x-resource-type": "qovery_environment"
+        },
+        "operation": {
+          "const": "list_services",
+          "default": "list_services",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Services",
+          "x-display-name": "List Environment Service Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "project_id",
+        "environment_id"
+      ],
+      "title": "ListServices",
+      "type": "object"
+    },
+    "QoveryAPITokenCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "qovery_api_token",
+          "default": "qovery_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "organization_id": {
+          "description": "Exact organization approved for this machine API token. Parent records must belong to this organization.",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Authorized Organization UUID",
+          "type": "string"
+        },
+        "api_token": {
+          "description": "Supply only the machine API token, without a prefix. Sent as Authorization: Token. Human OIDC Bearer tokens, scope discovery and token creation are not implemented.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Machine API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "organization_id",
+        "api_token"
+      ],
+      "title": "Qovery API Token",
+      "type": "object",
+      "x-credential-url": "https://www.qovery.com/docs/api-reference/authentication"
+    },
+    "RenameEnvironment": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qovery_project"
+        },
+        "environment_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "environment_id",
+            "searchable": true
+          },
+          "x-resource-type": "qovery_environment"
+        },
+        "operation": {
+          "const": "rename_empty_environment",
+          "default": "rename_empty_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "Rename Empty Environment",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "New Name",
+          "type": "string"
+        },
+        "expected_snapshot": {
+          "description": "From Get Environment. Requires an empty service inventory; this preflight is not an atomic server condition.",
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Expected Environment Snapshot",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "environment_id",
+        "name",
+        "expected_snapshot"
+      ],
+      "title": "RenameEnvironment",
+      "type": "object"
+    },
+    "ServiceDeployments": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qovery_project"
+        },
+        "environment_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "environment_id",
+            "searchable": true
+          },
+          "x-resource-type": "qovery_environment"
+        },
+        "service_kind": {
+          "description": "Status/history routes are supported only for these five documented kinds. The selected service's actual kind is checked before the route is called.",
+          "enum": [
+            "application",
+            "container",
+            "database",
+            "helm",
+            "job"
+          ],
+          "title": "Service Kind",
+          "type": "string"
+        },
+        "service_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Service",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "environment_id",
+            "field_name": "service_id",
+            "searchable": true
+          },
+          "x-resource-type": "qovery_service"
+        },
+        "operation": {
+          "const": "list_service_deployments",
+          "default": "list_service_deployments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deployments",
+          "x-display-name": "List Service Deployment Metadata",
+          "x-is-trigger": false
+        },
+        "start_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented startId cursor for this exact service. One page per run; no automatic traversal.",
+          "title": "Start After Deployment UUID"
+        }
+      },
+      "required": [
+        "project_id",
+        "environment_id",
+        "service_kind",
+        "service_id"
+      ],
+      "title": "ServiceDeployments",
+      "type": "object"
+    },
+    "ServiceStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qovery_project"
+        },
+        "environment_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "environment_id",
+            "searchable": true
+          },
+          "x-resource-type": "qovery_environment"
+        },
+        "service_kind": {
+          "description": "Status/history routes are supported only for these five documented kinds. The selected service's actual kind is checked before the route is called.",
+          "enum": [
+            "application",
+            "container",
+            "database",
+            "helm",
+            "job"
+          ],
+          "title": "Service Kind",
+          "type": "string"
+        },
+        "service_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Service",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "environment_id",
+            "field_name": "service_id",
+            "searchable": true
+          },
+          "x-resource-type": "qovery_service"
+        },
+        "operation": {
+          "const": "get_service_status",
+          "default": "get_service_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Status",
+          "x-display-name": "Get Service Deployment Status",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "project_id",
+        "environment_id",
+        "service_kind",
+        "service_id"
+      ],
+      "title": "ServiceStatus",
+      "type": "object"
+    },
+    "UpdateProject": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qovery_project"
+        },
+        "operation": {
+          "const": "update_empty_project",
+          "default": "update_empty_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Update Empty Project Metadata",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Project Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omitted text preserves the current description. Use Clear Description to send an explicit empty string.",
+          "title": "New Description"
+        },
+        "clear_description": {
+          "default": false,
+          "title": "Clear Description",
+          "type": "boolean"
+        },
+        "expected_snapshot": {
+          "description": "From Get Project. The empty check is a local preflight, not an atomic provider lock.",
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Expected Project Snapshot",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "name",
+        "expected_snapshot"
+      ],
+      "title": "UpdateProject",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_empty_environment": "#/$defs/CreateEnvironment",
+          "create_empty_project": "#/$defs/CreateProject",
+          "get_cluster": "#/$defs/GetCluster",
+          "get_cluster_status": "#/$defs/ClusterStatus",
+          "get_environment": "#/$defs/GetEnvironment",
+          "get_environment_status": "#/$defs/EnvironmentStatus",
+          "get_organization": "#/$defs/GetOrganization",
+          "get_project": "#/$defs/GetProject",
+          "get_service_status": "#/$defs/ServiceStatus",
+          "list_clusters": "#/$defs/ListClusters",
+          "list_environment_deployments": "#/$defs/EnvironmentDeployments",
+          "list_environments": "#/$defs/ListEnvironments",
+          "list_projects": "#/$defs/ListProjects",
+          "list_service_deployments": "#/$defs/ServiceDeployments",
+          "list_services": "#/$defs/ListServices",
+          "rename_empty_environment": "#/$defs/RenameEnvironment",
+          "update_empty_project": "#/$defs/UpdateProject"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetOrganization"
+        },
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/CreateProject"
+        },
+        {
+          "$ref": "#/$defs/UpdateProject"
+        },
+        {
+          "$ref": "#/$defs/ListEnvironments"
+        },
+        {
+          "$ref": "#/$defs/GetEnvironment"
+        },
+        {
+          "$ref": "#/$defs/CreateEnvironment"
+        },
+        {
+          "$ref": "#/$defs/RenameEnvironment"
+        },
+        {
+          "$ref": "#/$defs/EnvironmentStatus"
+        },
+        {
+          "$ref": "#/$defs/ListClusters"
+        },
+        {
+          "$ref": "#/$defs/GetCluster"
+        },
+        {
+          "$ref": "#/$defs/ClusterStatus"
+        },
+        {
+          "$ref": "#/$defs/ListServices"
+        },
+        {
+          "$ref": "#/$defs/ServiceStatus"
+        },
+        {
+          "$ref": "#/$defs/EnvironmentDeployments"
+        },
+        {
+          "$ref": "#/$defs/ServiceDeployments"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QoveryAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Qovery Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
