@@ -1,0 +1,897 @@
+{
+  "$defs": {
+    "BokunAppTokenCredential": {
+      "properties": {
+        "environment": {
+          "default": "sandbox",
+          "description": "Use the environment belonging to this existing credential; the node never changes it automatically.",
+          "enum": [
+            "sandbox",
+            "production"
+          ],
+          "title": "Environment",
+          "type": "string"
+        },
+        "credential_type": {
+          "const": "bokun_app_token",
+          "default": "bokun_app_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tenant": {
+          "description": "The existing vendor's single subdomain label, without a URL or suffix.",
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Vendor Tenant",
+          "type": "string"
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "App Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "tenant",
+        "access_token"
+      ],
+      "title": "B\u00f3kun Existing App Token",
+      "type": "object",
+      "x-credential-instructions": "Supply an already issued App Store access token and its vendor tenant label. GraphQL uses X-Bokun-App-Access-Token on that tenant's host. Catalog reads require the actual PRODUCTS_READ grant; booking reads require BOOKINGS_READ. Installation/consent, callback verification, REST-secret retrieval and token issuance are not performed by this supplied-token method. Keep the token private; no token is sent in provider URLs or output.",
+      "x-credential-url": "https://bokun.dev/"
+    },
+    "BokunRESTHMACCredential": {
+      "properties": {
+        "environment": {
+          "default": "sandbox",
+          "description": "Use the environment belonging to this existing credential; the node never changes it automatically.",
+          "enum": [
+            "sandbox",
+            "production"
+          ],
+          "title": "Environment",
+          "type": "string"
+        },
+        "credential_type": {
+          "const": "bokun_rest_hmac",
+          "default": "bokun_rest_hmac",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "REST Access Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "secret_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "REST Secret Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_key",
+        "secret_key"
+      ],
+      "title": "B\u00f3kun REST HMAC Key Pair",
+      "type": "object",
+      "x-credential-instructions": "Existing direct REST key pair for B\u00f3kun's documented X-Bokun-Date/AccessKey/Signature HmacSHA1 scheme. The signature covers UTC date, access key, verb and encoded path including query. The current schema also documents direct key headers; choose the family actually enabled for your key. No automatic authentication fallback.",
+      "x-credential-url": "https://bokun.dev/"
+    },
+    "BokunRESTKeysCredential": {
+      "properties": {
+        "environment": {
+          "default": "sandbox",
+          "description": "Use the environment belonging to this existing credential; the node never changes it automatically.",
+          "enum": [
+            "sandbox",
+            "production"
+          ],
+          "title": "Environment",
+          "type": "string"
+        },
+        "credential_type": {
+          "const": "bokun_rest_keys",
+          "default": "bokun_rest_keys",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "REST Access Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "secret_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "REST Secret Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_key",
+        "secret_key"
+      ],
+      "title": "B\u00f3kun REST Key Pair",
+      "type": "object",
+      "x-credential-instructions": "Existing REST API access-key and secret-key pair documented by B\u00f3kun's current publisher schema. These keys are distinct from App Store GraphQL access tokens. Match sandbox/production; actual vendor permissions and API entitlement must be verified. No key creation or secret retrieval is performed.",
+      "x-credential-url": "https://bokun.dev/"
+    },
+    "CheckConnection": {
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "DeleteUnusedPricingCategory": {
+      "properties": {
+        "pricing_category_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Pricing Category",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "pricing_category_id",
+            "placeholder": "Choose an accessible record or enter its exact ID",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_unused_pricing_category",
+          "default": "delete_unused_pricing_category",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "acknowledge_deletion": {
+          "const": true,
+          "description": "Deletes the selected category. B\u00f3kun refuses categories still linked to any product. Use only an owned disposable unused category.",
+          "title": "Confirm Deletion",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "pricing_category_id",
+        "acknowledge_deletion"
+      ],
+      "title": "DeleteUnusedPricingCategory",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "REST Key Pair"
+    },
+    "GetActivity": {
+      "properties": {
+        "language": {
+          "default": "EN",
+          "pattern": "^[A-Z]{2}(?:_[A-Z]{2})?$",
+          "title": "Language",
+          "type": "string"
+        },
+        "activity_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Activity ID",
+          "type": "integer"
+        },
+        "currency": {
+          "description": "Explicit currency; no implicit ISK default.",
+          "pattern": "^[A-Z]{3}$",
+          "title": "Currency",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_activity",
+          "default": "get_activity",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "activity_id",
+        "currency"
+      ],
+      "title": "GetActivity",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "REST Key Pair"
+    },
+    "GetActivityAvailability": {
+      "properties": {
+        "language": {
+          "default": "EN",
+          "pattern": "^[A-Z]{2}(?:_[A-Z]{2})?$",
+          "title": "Language",
+          "type": "string"
+        },
+        "activity_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Activity ID",
+          "type": "integer"
+        },
+        "currency": {
+          "description": "Explicit currency; no implicit ISK default.",
+          "pattern": "^[A-Z]{3}$",
+          "title": "Currency",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_activity_availability",
+          "default": "get_activity_availability",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start": {
+          "format": "date",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end": {
+          "format": "date",
+          "title": "End Date",
+          "type": "string"
+        },
+        "include_sold_out": {
+          "default": false,
+          "title": "Include Sold Out",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "activity_id",
+        "currency",
+        "start",
+        "end"
+      ],
+      "title": "GetActivityAvailability",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "REST Key Pair"
+    },
+    "GetBookingStatus": {
+      "properties": {
+        "language": {
+          "default": "EN",
+          "pattern": "^[A-Z]{2}(?:_[A-Z]{2})?$",
+          "title": "Language",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_booking_status",
+          "default": "get_booking_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "booking_id": {
+          "description": "Reads status only; customer, invoices, payment records and confirmation codes are omitted.",
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Existing Booking ID",
+          "type": "integer"
+        },
+        "currency": {
+          "pattern": "^[A-Z]{3}$",
+          "title": "Currency",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_id",
+        "currency"
+      ],
+      "title": "GetBookingStatus",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "REST Key Pair"
+    },
+    "GetExperienceMetadata": {
+      "properties": {
+        "experience_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Owned Experience",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "experience_id",
+            "placeholder": "Choose an accessible record or enter its exact ID",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_experience_metadata",
+          "default": "get_experience_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "experience_id"
+      ],
+      "title": "GetExperienceMetadata",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "REST Key Pair"
+    },
+    "GetGraphQLBooking": {
+      "properties": {
+        "resource_id": {
+          "description": "Exact opaque GraphQL ID; REST integer IDs are a different wire type.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "GraphQL Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_graphql_booking",
+          "default": "get_graphql_booking",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetGraphQLBooking",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "Existing App Token"
+    },
+    "GetGraphQLExperience": {
+      "properties": {
+        "resource_id": {
+          "description": "Exact opaque GraphQL ID; REST integer IDs are a different wire type.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "GraphQL Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_graphql_experience",
+          "default": "get_graphql_experience",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetGraphQLExperience",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "Existing App Token"
+    },
+    "GetGraphQLVendor": {
+      "properties": {
+        "operation": {
+          "const": "get_graphql_vendor",
+          "default": "get_graphql_vendor",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetGraphQLVendor",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "Existing App Token"
+    },
+    "GetPricingCategory": {
+      "properties": {
+        "pricing_category_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Pricing Category",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "pricing_category_id",
+            "placeholder": "Choose an accessible record or enter its exact ID",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_pricing_category",
+          "default": "get_pricing_category",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "pricing_category_id"
+      ],
+      "title": "GetPricingCategory",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "REST Key Pair"
+    },
+    "GetProductList": {
+      "properties": {
+        "language": {
+          "default": "EN",
+          "pattern": "^[A-Z]{2}(?:_[A-Z]{2})?$",
+          "title": "Language",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_product_list",
+          "default": "get_product_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "product_list_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Product List",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "product_list_id",
+            "placeholder": "Choose an accessible record or enter its exact ID",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "product_list_id"
+      ],
+      "title": "GetProductList",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "REST Key Pair"
+    },
+    "ListCategories": {
+      "properties": {
+        "language": {
+          "default": "EN",
+          "pattern": "^[A-Z]{2}(?:_[A-Z]{2})?$",
+          "title": "Language",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "product_type": {
+          "description": "Exact product-type value for your B\u00f3kun catalog; the reference does not enumerate this path parameter.",
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Z_]+$",
+          "title": "Product Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "product_type"
+      ],
+      "title": "ListCategories",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "REST Key Pair"
+    },
+    "ListGraphQLExperiences": {
+      "properties": {
+        "first": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use this node's signed continuation from the same credential and operation.",
+          "title": "Next Page Token"
+        },
+        "operation": {
+          "const": "list_graphql_experiences",
+          "default": "list_graphql_experiences",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListGraphQLExperiences",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "Existing App Token"
+    },
+    "ListGraphQLProductLists": {
+      "properties": {
+        "first": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use this node's signed continuation from the same credential and operation.",
+          "title": "Next Page Token"
+        },
+        "operation": {
+          "const": "list_graphql_product_lists",
+          "default": "list_graphql_product_lists",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListGraphQLProductLists",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "Existing App Token"
+    },
+    "ListOwnedExperiences": {
+      "properties": {
+        "operation": {
+          "const": "list_owned_experience_ids",
+          "default": "list_owned_experience_ids",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "activated": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omitted reads both activated and deactivated owned IDs.",
+          "title": "Activated Filter"
+        }
+      },
+      "title": "ListOwnedExperiences",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "REST Key Pair"
+    },
+    "ListPricingCategories": {
+      "properties": {
+        "operation": {
+          "const": "list_pricing_categories",
+          "default": "list_pricing_categories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_no": {
+          "default": 0,
+          "description": "B\u00f3kun's documented zero-based page.",
+          "maximum": 100000,
+          "minimum": 0,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "ListPricingCategories",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "REST Key Pair"
+    },
+    "ListProductLists": {
+      "properties": {
+        "language": {
+          "default": "EN",
+          "pattern": "^[A-Z]{2}(?:_[A-Z]{2})?$",
+          "title": "Language",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_product_lists",
+          "default": "list_product_lists",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListProductLists",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "REST Key Pair"
+    },
+    "UpdateExperienceMetadata": {
+      "properties": {
+        "experience_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Owned Experience",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "experience_id",
+            "placeholder": "Choose an accessible record or enter its exact ID",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_experience_metadata",
+          "default": "update_experience_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 140,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omitted leaves it unchanged. This changes existing product metadata and may affect published product presentation.",
+          "title": "New Title"
+        },
+        "short_description": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omitted or blank leaves it unchanged. Use Clear Short Description to remove the existing text.",
+          "title": "New Short Description",
+          "ui:widget": "textarea"
+        },
+        "clear_short_description": {
+          "default": false,
+          "description": "Explicitly replace the existing short description with an empty string. Leave New Short Description blank when clearing.",
+          "title": "Clear Short Description",
+          "type": "boolean"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 50,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omitted leaves keywords unchanged; an empty list explicitly clears them.",
+          "title": "New Keywords"
+        }
+      },
+      "required": [
+        "experience_id"
+      ],
+      "title": "UpdateExperienceMetadata",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "REST Key Pair"
+    },
+    "UpdatePricingCategoryTitle": {
+      "properties": {
+        "pricing_category_id": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Pricing Category",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "pricing_category_id",
+            "placeholder": "Choose an accessible record or enter its exact ID",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_pricing_category_title",
+          "default": "update_pricing_category_title",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "description": "Read-modify-write of the existing category. Seat/age/dependency constraints are preserved; no amount or product linkage is changed.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "New Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pricing_category_id",
+        "title"
+      ],
+      "title": "UpdatePricingCategoryTitle",
+      "type": "object",
+      "x-requires-tier": true,
+      "x-tier-label": "REST Key Pair"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_connection": "#/$defs/CheckConnection",
+          "delete_unused_pricing_category": "#/$defs/DeleteUnusedPricingCategory",
+          "get_activity": "#/$defs/GetActivity",
+          "get_activity_availability": "#/$defs/GetActivityAvailability",
+          "get_booking_status": "#/$defs/GetBookingStatus",
+          "get_experience_metadata": "#/$defs/GetExperienceMetadata",
+          "get_graphql_booking": "#/$defs/GetGraphQLBooking",
+          "get_graphql_experience": "#/$defs/GetGraphQLExperience",
+          "get_graphql_vendor": "#/$defs/GetGraphQLVendor",
+          "get_pricing_category": "#/$defs/GetPricingCategory",
+          "get_product_list": "#/$defs/GetProductList",
+          "list_categories": "#/$defs/ListCategories",
+          "list_graphql_experiences": "#/$defs/ListGraphQLExperiences",
+          "list_graphql_product_lists": "#/$defs/ListGraphQLProductLists",
+          "list_owned_experience_ids": "#/$defs/ListOwnedExperiences",
+          "list_pricing_categories": "#/$defs/ListPricingCategories",
+          "list_product_lists": "#/$defs/ListProductLists",
+          "update_experience_metadata": "#/$defs/UpdateExperienceMetadata",
+          "update_pricing_category_title": "#/$defs/UpdatePricingCategoryTitle"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/ListOwnedExperiences"
+        },
+        {
+          "$ref": "#/$defs/GetExperienceMetadata"
+        },
+        {
+          "$ref": "#/$defs/UpdateExperienceMetadata"
+        },
+        {
+          "$ref": "#/$defs/ListPricingCategories"
+        },
+        {
+          "$ref": "#/$defs/GetPricingCategory"
+        },
+        {
+          "$ref": "#/$defs/UpdatePricingCategoryTitle"
+        },
+        {
+          "$ref": "#/$defs/DeleteUnusedPricingCategory"
+        },
+        {
+          "$ref": "#/$defs/ListProductLists"
+        },
+        {
+          "$ref": "#/$defs/GetProductList"
+        },
+        {
+          "$ref": "#/$defs/ListCategories"
+        },
+        {
+          "$ref": "#/$defs/GetActivity"
+        },
+        {
+          "$ref": "#/$defs/GetActivityAvailability"
+        },
+        {
+          "$ref": "#/$defs/GetBookingStatus"
+        },
+        {
+          "$ref": "#/$defs/ListGraphQLProductLists"
+        },
+        {
+          "$ref": "#/$defs/ListGraphQLExperiences"
+        },
+        {
+          "$ref": "#/$defs/GetGraphQLExperience"
+        },
+        {
+          "$ref": "#/$defs/GetGraphQLBooking"
+        },
+        {
+          "$ref": "#/$defs/GetGraphQLVendor"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BokunRESTHMACCredential"
+        },
+        {
+          "$ref": "#/$defs/BokunRESTKeysCredential"
+        },
+        {
+          "$ref": "#/$defs/BokunAppTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Select an existing B\u00f3kun credential. No environment fallback or token issuance is performed.",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bokun Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
