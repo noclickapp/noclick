@@ -1214,6 +1214,18 @@
       "source": "https://www.bytescale.com/ (source record for the Bytescale brand artwork)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "ae8c102daa4e360952e9e994793a4c2c12aab259a2b9dcb89f6fe5480eb21209"
+    },
+    {
+      "path": "frontend/public/icons/pulsetic.svg",
+      "source": "https://pulsetic.com/favicon.svg?v=2 (official favicon published by https://pulsetic.com/)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "c009b86daa5a6d615f0faa0523f20a668c9d489e32e17c8286827ab6512312d9"
+    },
+    {
+      "path": "frontend/public/icons/pulsetic.provenance.md",
+      "source": "https://github.com/noclickapp/noclick-cloud/commit/407abd723 (Pulsetic integration asset provenance note)",
+      "license": "NoClick integration documentation",
+      "sha256": "e829ba921a46b7b9e3e0e592db119ce2da04989316b054ff59a3be293e4ca521"
     }
   ],
   "excludedSourceAssets": [
