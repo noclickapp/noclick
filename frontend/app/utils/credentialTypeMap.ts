@@ -231,6 +231,8 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'AffinityAPIKeyCredential': 'affinity_api_key',
     'AprimoBearerCredential': 'aprimo_bearer',
     'Aprimo DAM Bearer Token': 'aprimo_bearer',
+    'BloomerangPrivateApiKeyCredential': 'bloomerang_private_api_key',
+    'Bloomerang Private CRM API Key': 'bloomerang_private_api_key',
 
     // NocoDB
     'NocoDBTokenCredential': 'nocodb_api_token',

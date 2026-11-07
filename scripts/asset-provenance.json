@@ -1238,6 +1238,24 @@
       "source": "https://docspell.org/icons/logo-only-36.svg (unmodified official Docspell logo; byte-for-byte verified)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "d105cef6ef8fded268f382ee7f3b1fbcc2937d72e1795b162fb7453a64e69d4c"
+    },
+    {
+      "path": "frontend/public/icons/bloomerang-brand-vector.svg",
+      "source": "https://cdn.prod.website-files.com/696e28ecf85c5265341ed1b9/69709ec3c394cccfa4f30325_logo.svg (official Bloomerang artwork linked by https://bloomerang.com/api/rest-api; integration-cropped vector)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "140dbc50e73718f5a5b6094bfeb796f8936f6718f9af28aac66845a88340f91c"
+    },
+    {
+      "path": "frontend/public/icons/bloomerang-brand.png",
+      "source": "https://cdn.prod.website-files.com/696e28ecf85c5265341ed1b9/69709ec3c394cccfa4f30325_logo.svg (official Bloomerang artwork linked by https://bloomerang.com/api/rest-api; integration raster rendering)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "e50336c0d12c318f0df2e352bb467bc49cb8d65f31dce413418f46f8b5d2d103"
+    },
+    {
+      "path": "frontend/public/icons/bloomerang.svg",
+      "source": "https://cdn.prod.website-files.com/696e28ecf85c5265341ed1b9/69709ec3c394cccfa4f30325_logo.svg (official Bloomerang artwork linked by https://bloomerang.com/api/rest-api)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "d1758235f3bd938e2ffd11a4b9ac91c57e06b8d702a253959c63b3b1a73caf6e"
     }
   ],
   "excludedSourceAssets": [

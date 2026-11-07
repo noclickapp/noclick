@@ -78,6 +78,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-salesforce', 'SalesforceNode'],
     ['automation-affinity', 'AffinityNode'],
     ['automation-rippling', 'RipplingNode'],
+    ['automation-bloomerang', 'BloomerangNode'],
     ['automation-ahrefs', 'AhrefsNode'],
     ['automation-deel', 'DeelNode'],
     ['automation-invoiceninja', 'InvoiceNinjaNode'],
