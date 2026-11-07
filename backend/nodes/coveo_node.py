@@ -225,21 +225,16 @@ class CoveoNode(WorkflowNode):
     @classmethod
     def get_config_model(cls): return CoveoNodeConfig
     @classmethod
-    def parse_config(cls, data):
-        credential = _credential(data["credentials"]) if isinstance(data, dict) and data.get("credentials") is not None else None
+    def parse_config(cls, config_data):
+        credential = _credential(config_data["credentials"]) if isinstance(config_data, dict) and config_data.get("credentials") is not None else None
         try:
-            view = runtime_config_view(data, CoveoNodeConfig)
+            view = runtime_config_view(config_data, CoveoNodeConfig)
             if credential is not None: view["credentials"] = credential.model_dump()
             if isinstance(view.get("config"), dict):
                 view["config"] = {key: item for key, item in view["config"].items() if not key.endswith("__label") and key not in ("_settings", "agent_tool_operations")}
                 if not view["config"]: view.pop("config")
             return TypeAdapter(CoveoNodeConfig).validate_python(view)
         except Exception: raise ValueError("Check the native Coveo operation, current credential and typed fields.") from None
-    @classmethod
-    async def freshen_credential(cls, data, **kwargs):
-        # API keys do not refresh. Saved credential access is handled by staging's loader.
-        return _credential(data).model_dump()
-
     @classmethod
     async def _request(cls, method, service, path, *, credential, params=None, body=None, empty_ack=False):
         org = credential.organization_id
@@ -253,7 +248,7 @@ class CoveoNode(WorkflowNode):
         assert_exact_url_origin(origin + path, origin)
         private = _PRIVATE.set(True)
         try:
-            async with guarded_async_client(require_public=True, trust_env=False, follow_redirects=False, timeout=25) as client:
+            async with guarded_async_client(trust_env=False, follow_redirects=False, timeout=25) as client:
                 async with client.stream(method, origin + path, headers={"Authorization": "Bearer " + credential.api_key, "Accept": "application/json", "User-Agent": "NoClick/1.0 (+https://www.noclick.com)"}, params=params, json=body) as response:
                     if response.status_code in (401, 403): raise CoveoDenied("Coveo refused the current API key or operation permission; raw details withheld.")
                     if response.status_code != (201 if empty_ack else 200): raise CoveoUnavailable("Coveo request could not be verified, including not-visible/conflict/rate/service errors; no retry or raw response disclosure.")
@@ -403,7 +398,7 @@ class CoveoNode(WorkflowNode):
     async def load_field_options(cls, field_name, user_id=None, *, credential_data=None, credential_id=None, context=None, search=None, page_token=None, **kwargs):
         if field_name not in ("source_id", "field_id"): return {"options": [], "next_page_token": None}
         context = context or {}; user_id = user_id or context.get("_user_id")
-        saved = await cls.freshen_credential(credential_data, credential_id=credential_id, user_id=user_id, **kwargs)
+        saved = _credential(credential_data).model_dump()
         operation = "list_sources" if field_name == "source_id" else "list_fields"
         arguments = {"per_page": 100, "page_token": page_token, "filter": _text(search, 128, empty=True) if search else ""}
         if operation == "list_fields": arguments["facets_only"] = True

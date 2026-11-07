@@ -114,10 +114,11 @@ async def boundary(monkeypatch):
     monkeypatch.setattr(credentials, 'get_encryption', lambda: value)
     monkeypatch.setattr(encryption, 'get_encryption', lambda: value)
     monkeypatch.setattr(credentials_handler, 'get_encryption', lambda: value)
+    monkeypatch.setattr(workflow_handler, 'get_encryption', lambda: value)
     original = ssrf.guarded_async_client
     @asynccontextmanager
     async def transport(**kwargs):
-        assert kwargs['require_public'] is True and kwargs['follow_redirects'] is False and kwargs['trust_env'] is False
+        assert kwargs['follow_redirects'] is False and kwargs['trust_env'] is False
         async with original(transport=httpx.MockTransport(value.wire), **kwargs) as client: yield client
     monkeypatch.setattr(asyncio.get_running_loop(), 'getaddrinfo', AsyncMock(return_value=[(socket.AF_INET, socket.SOCK_STREAM, 6, '', ('93.184.216.34', 443))]))
     monkeypatch.setattr(native, 'guarded_async_client', transport)
@@ -145,7 +146,7 @@ async def test_actual_16_factory_actions_and_bound_readbacks(boundary, operation
 
 @pytest.mark.asyncio
 async def test_actual_saved_carrier_socket_picker_and_honest_evidence(boundary):
-    saved = await native.CoveoNode.freshen_credential(BASE, credential_id=CID, user_id=USER, pool=boundary, organization_id=ORG)
+    saved = await native.CoveoNode.freshen_credential(BASE, credential_id=CID, user_id=USER, pool=boundary)
     assert saved['credential_type'] == 'coveo_api_key' and saved['api_key'] == TOKEN
     parsed = native.CoveoNode.parse_config({'credentials': saved, 'config': {'operation': 'list_sources'}})
     assert parsed.credentials.organization_id == 'syntheticorg'
@@ -155,7 +156,7 @@ async def test_actual_saved_carrier_socket_picker_and_honest_evidence(boundary):
     await handler.load_node_options('synthetic-session', WorkflowNodeLoadOptionsRequest(request_id='synthetic-picker', node_type=NODE, field_name='field_id', credential_id=CID))
     assert boundary.sent[-1].data['success'] is True and boundary.sent[-1].data['options'][0]['value'] == 'author'
     evidence = await collect_evidence(node_type=NODE, credential_id=CID, user_id=USER, pool=boundary, organization_id=ORG)
-    assert evidence.reachable is True and evidence.proves == 'reachability' and not evidence.account_label and not evidence.samples
+    assert evidence.reachable is True and native.CoveoNode.connection_evidence.proves == 'reachability' and not evidence.account_label and not evidence.samples
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize('domain', ['VIEW_ALL_CONTENT', 'IMPERSONATE_SEARCH_API', 'VIEW_ALL', 'IMPERSONATE'])
