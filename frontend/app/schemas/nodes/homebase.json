@@ -1,0 +1,196 @@
+{
+  "$defs": {
+    "GetCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Read Current Company Metadata",
+          "type": "string",
+          "x-operation-group": "Protected Metadata Reads"
+        }
+      },
+      "title": "GetCompany",
+      "type": "object"
+    },
+    "GetEmployee": {
+      "additionalProperties": false,
+      "properties": {
+        "location_uuid": {
+          "format": "uuid",
+          "title": "Allowed Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "location_uuid",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "homebase_location"
+        },
+        "operation": {
+          "const": "get_employee",
+          "default": "get_employee",
+          "title": "Get Employee Metadata in Selected Location",
+          "type": "string",
+          "x-operation-group": "Protected Metadata Reads"
+        },
+        "employee_id": {
+          "description": "Actual known ID under this location; the undocumented employee-list envelope is not guessed.",
+          "title": "Employee ID",
+          "type": "integer",
+          "x-resource-type": "homebase_employee"
+        }
+      },
+      "required": [
+        "location_uuid",
+        "employee_id"
+      ],
+      "title": "GetEmployee",
+      "type": "object"
+    },
+    "GetLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "location_uuid": {
+          "format": "uuid",
+          "title": "Allowed Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "location_uuid",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "homebase_location"
+        },
+        "operation": {
+          "const": "get_location",
+          "default": "get_location",
+          "title": "Get Selected Location Metadata",
+          "type": "string",
+          "x-operation-group": "Protected Metadata Reads"
+        }
+      },
+      "required": [
+        "location_uuid"
+      ],
+      "title": "GetLocation",
+      "type": "object"
+    },
+    "HomebaseApiKeyCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "homebase_api_key",
+          "default": "homebase_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Existing Homebase API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expected_company_name": {
+          "description": "Match the current /company response; a name is not a unique company identity.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Expected Company Name",
+          "type": "string"
+        },
+        "expected_company_owner_id": {
+          "description": "The company owner's documented user ID, not a claim about the API key's principal.",
+          "title": "Expected Company Owner ID",
+          "type": "integer"
+        },
+        "allowed_location_uuids": {
+          "description": "Only these explicit locations may be read or selected; each is checked through its documented protected resource.",
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Allowed Location UUIDs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "api_key",
+        "expected_company_name",
+        "expected_company_owner_id",
+        "allowed_location_uuids"
+      ],
+      "title": "Homebase API Key",
+      "type": "object",
+      "x-credential-url": "https://docs.joinhomebase.com/reference/authentication-1"
+    },
+    "ListConfiguredLocations": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_configured_locations",
+          "default": "list_configured_locations",
+          "title": "Read Configured Location Metadata",
+          "type": "string",
+          "x-operation-group": "Protected Metadata Reads"
+        }
+      },
+      "title": "ListConfiguredLocations",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_company": "#/$defs/GetCompany",
+          "get_employee": "#/$defs/GetEmployee",
+          "get_location": "#/$defs/GetLocation",
+          "list_configured_locations": "#/$defs/ListConfiguredLocations"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCompany"
+        },
+        {
+          "$ref": "#/$defs/ListConfiguredLocations"
+        },
+        {
+          "$ref": "#/$defs/GetLocation"
+        },
+        {
+          "$ref": "#/$defs/GetEmployee"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HomebaseApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Homebase Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
