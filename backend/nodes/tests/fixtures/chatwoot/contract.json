@@ -1,0 +1,34 @@
+{
+  "spec": {
+    "file": "openapi.json",
+    "sha256": "dd3d3505922d992e46095a244a105e41a1a7a7a85f19e6c586cc91eb460fecc7",
+    "version": "1.1.0",
+    "source_url": "https://raw.githubusercontent.com/chatwoot/chatwoot/515f9e09b7a2160d99454b6852154509c1a2cf1a/swagger/tag_groups/application_swagger.json",
+    "node_type": "automation-chatwoot",
+    "credential": {
+      "credential_type": "chatwoot_api_token",
+      "api_token": "<token>",
+      "account_id": 1,
+      "base_url": "https://app.chatwoot.com"
+    }
+  },
+  "verdict": {
+    "provider": "chatwoot",
+    "ready": true,
+    "blocking": [],
+    "advisory": [],
+    "stats": {
+      "operations": 20,
+      "skipped": 0,
+      "request_ok": 20,
+      "authored_parser_ok": 18,
+      "generated_only": 2
+    }
+  },
+  "notes": [
+    "All 20 request methods, paths, parameters, bodies and authentication were checked against the pinned official OpenAPI 3.1 spec.",
+    "18 responses use the official reference pages displayed JSON examples. The two label responses use the full pinned schema witness in the harness: its source auditor does not HTML-unescape the displayed <string> placeholder. Unmodified documented label bodies and source URLs are covered by the mock fixtures.",
+    "No live account or provider writes were used.",
+    "The api_access_token header supports existing Chatwoot releases; the latest spec also offers Bearer authentication starting with v4.19.0."
+  ]
+}

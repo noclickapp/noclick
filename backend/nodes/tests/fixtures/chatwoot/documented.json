@@ -1,0 +1,1282 @@
+{
+  "get_profile": {
+    "config": {},
+    "source": "https://developers.chatwoot.com/api-reference/profile/fetch-user-profile",
+    "method": "GET",
+    "path": "/api/v1/profile",
+    "params": {},
+    "body": null,
+    "response": {
+      "id": 123,
+      "access_token": "<string>",
+      "account_id": 123,
+      "available_name": "<string>",
+      "avatar_url": "<string>",
+      "confirmed": true,
+      "display_name": "<string>",
+      "message_signature": "<string>",
+      "email": "<string>",
+      "hmac_identifier": "<string>",
+      "inviter_id": 123,
+      "name": "<string>",
+      "provider": "<string>",
+      "pubsub_token": "<string>",
+      "role": "agent",
+      "ui_settings": {},
+      "uid": "<string>",
+      "type": "<string>",
+      "custom_attributes": {},
+      "accounts": [
+        {
+          "id": 123,
+          "name": "<string>",
+          "status": "<string>",
+          "active_at": "2023-11-07T05:31:56Z",
+          "role": "administrator",
+          "permissions": [
+            "<string>"
+          ],
+          "availability": "<string>",
+          "availability_status": "<string>",
+          "auto_offline": true,
+          "custom_role_id": 123,
+          "custom_role": {}
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  "list_inboxes": {
+    "config": {},
+    "source": "https://developers.chatwoot.com/api-reference/inboxes/list-all-inboxes",
+    "method": "GET",
+    "path": "/api/v1/accounts/1/inboxes",
+    "params": {},
+    "body": null,
+    "response": {
+      "payload": [
+        {
+          "id": 123,
+          "name": "<string>",
+          "website_url": "<string>",
+          "page_id": "<string>",
+          "instagram_id": "<string>",
+          "business_id": "<string>",
+          "provider_name": "<string>",
+          "profile_id": "<string>",
+          "line_channel_id": "<string>",
+          "email": "<string>",
+          "bot_name": "<string>",
+          "inbox_identifier": "<string>",
+          "channel_type": "<string>",
+          "avatar_url": "<string>",
+          "widget_color": "<string>",
+          "website_token": "<string>",
+          "enable_auto_assignment": true,
+          "web_widget_script": "<string>",
+          "welcome_title": "<string>",
+          "welcome_tagline": "<string>",
+          "greeting_enabled": true,
+          "greeting_message": "<string>",
+          "channel_id": 123,
+          "working_hours_enabled": true,
+          "enable_email_collect": true,
+          "csat_survey_enabled": true,
+          "auto_assignment_config": {},
+          "out_of_office_message": "<string>",
+          "working_hours": [
+            {
+              "day_of_week": 123,
+              "closed_all_day": true,
+              "open_hour": 123,
+              "open_minutes": 123,
+              "close_hour": 123,
+              "close_minutes": 123,
+              "open_all_day": true
+            }
+          ],
+          "timezone": "<string>",
+          "callback_webhook_url": "<string>",
+          "allow_messages_after_resolved": true,
+          "lock_to_single_conversation": true,
+          "sender_name_type": "<string>",
+          "business_name": "<string>",
+          "branded_email_layout": "<string>",
+          "hmac_mandatory": true,
+          "selected_feature_flags": [
+            "<string>"
+          ],
+          "reply_time": "<string>",
+          "messaging_service_sid": "<string>",
+          "phone_number": "<string>",
+          "medium": "<string>",
+          "provider": "<string>"
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  "list_agents": {
+    "config": {},
+    "source": "https://developers.chatwoot.com/api-reference/agents/list-agents-in-account",
+    "method": "GET",
+    "path": "/api/v1/accounts/1/agents",
+    "params": {},
+    "body": null,
+    "response": [
+      {
+        "id": 123,
+        "account_id": 123,
+        "availability_status": "online",
+        "auto_offline": true,
+        "confirmed": true,
+        "email": "<string>",
+        "available_name": "<string>",
+        "name": "<string>",
+        "role": "agent",
+        "thumbnail": "<string>",
+        "custom_role_id": 123
+      }
+    ],
+    "response_status": 200
+  },
+  "list_teams": {
+    "config": {},
+    "source": "https://developers.chatwoot.com/api-reference/teams/list-all-teams",
+    "method": "GET",
+    "path": "/api/v1/accounts/1/teams",
+    "params": {},
+    "body": null,
+    "response": [
+      {
+        "id": 123,
+        "name": "<string>",
+        "description": "<string>",
+        "allow_auto_assign": true,
+        "icon": "<string>",
+        "icon_color": "<string>",
+        "account_id": 123,
+        "is_member": true
+      }
+    ],
+    "response_status": 200
+  },
+  "list_contacts": {
+    "config": {
+      "page": 1
+    },
+    "source": "https://developers.chatwoot.com/api-reference/contacts/list-contacts",
+    "method": "GET",
+    "path": "/api/v1/accounts/1/contacts",
+    "params": {
+      "page": 1
+    },
+    "body": null,
+    "response": {
+      "meta": {
+        "count": 123,
+        "current_page": "<string>"
+      },
+      "payload": [
+        {
+          "additional_attributes": {
+            "city": "<string>",
+            "country": "<string>",
+            "country_code": "<string>",
+            "created_at_ip": "<string>"
+          },
+          "availability_status": "online",
+          "email": "<string>",
+          "id": 123,
+          "name": "<string>",
+          "phone_number": "<string>",
+          "blocked": true,
+          "identifier": "<string>",
+          "thumbnail": "<string>",
+          "custom_attributes": {},
+          "last_activity_at": 123,
+          "created_at": 123,
+          "contact_inboxes": [
+            {
+              "source_id": "<string>",
+              "inbox": {
+                "id": 123,
+                "avatar_url": "<string>",
+                "channel_id": 123,
+                "name": "<string>",
+                "channel_type": "<string>",
+                "provider": "<string>"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  "search_contacts": {
+    "config": {
+      "query": "alice@acme.inc",
+      "page": 1
+    },
+    "source": "https://developers.chatwoot.com/api-reference/contacts/search-contacts",
+    "method": "GET",
+    "path": "/api/v1/accounts/1/contacts/search",
+    "params": {
+      "q": "alice@acme.inc",
+      "page": 1
+    },
+    "body": null,
+    "response": {
+      "meta": {
+        "count": 123,
+        "current_page": "<string>"
+      },
+      "payload": [
+        {
+          "additional_attributes": {
+            "city": "<string>",
+            "country": "<string>",
+            "country_code": "<string>",
+            "created_at_ip": "<string>"
+          },
+          "availability_status": "online",
+          "email": "<string>",
+          "id": 123,
+          "name": "<string>",
+          "phone_number": "<string>",
+          "blocked": true,
+          "identifier": "<string>",
+          "thumbnail": "<string>",
+          "custom_attributes": {},
+          "last_activity_at": 123,
+          "created_at": 123,
+          "contact_inboxes": [
+            {
+              "source_id": "<string>",
+              "inbox": {
+                "id": 123,
+                "avatar_url": "<string>",
+                "channel_id": 123,
+                "name": "<string>",
+                "channel_type": "<string>",
+                "provider": "<string>"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  "get_contact": {
+    "config": {
+      "contact_id": 123
+    },
+    "source": "https://developers.chatwoot.com/api-reference/contacts/show-contact",
+    "method": "GET",
+    "path": "/api/v1/accounts/1/contacts/123",
+    "params": {},
+    "body": null,
+    "response": {
+      "payload": {
+        "additional_attributes": {
+          "city": "<string>",
+          "country": "<string>",
+          "country_code": "<string>",
+          "created_at_ip": "<string>"
+        },
+        "availability_status": "online",
+        "email": "<string>",
+        "id": 123,
+        "name": "<string>",
+        "phone_number": "<string>",
+        "blocked": true,
+        "identifier": "<string>",
+        "thumbnail": "<string>",
+        "custom_attributes": {},
+        "last_activity_at": 123,
+        "created_at": 123,
+        "contact_inboxes": [
+          {
+            "source_id": "<string>",
+            "inbox": {
+              "id": 123,
+              "avatar_url": "<string>",
+              "channel_id": 123,
+              "name": "<string>",
+              "channel_type": "<string>",
+              "provider": "<string>"
+            }
+          }
+        ]
+      }
+    },
+    "response_status": 200
+  },
+  "create_contact": {
+    "config": {
+      "inbox_id": 1,
+      "name": "Alice",
+      "email": "alice@acme.inc",
+      "blocked": false,
+      "phone_number": "+123456789",
+      "identifier": "1234567890",
+      "additional_attributes": "{\"type\":\"customer\",\"age\":30}",
+      "custom_attributes": "{}"
+    },
+    "source": "https://developers.chatwoot.com/api-reference/contacts/create-contact",
+    "method": "POST",
+    "path": "/api/v1/accounts/1/contacts",
+    "params": {},
+    "body": {
+      "inbox_id": 1,
+      "name": "Alice",
+      "email": "alice@acme.inc",
+      "blocked": false,
+      "phone_number": "+123456789",
+      "identifier": "1234567890",
+      "additional_attributes": {
+        "type": "customer",
+        "age": 30
+      },
+      "custom_attributes": {}
+    },
+    "response": {
+      "payload": [
+        {
+          "additional_attributes": {},
+          "availability_status": "<string>",
+          "email": "<string>",
+          "id": 123,
+          "name": "<string>",
+          "phone_number": "<string>",
+          "blocked": true,
+          "identifier": "<string>",
+          "thumbnail": "<string>",
+          "custom_attributes": {
+            "attribute_key": "attribute_value",
+            "signed_up_at": "dd/mm/yyyy"
+          },
+          "last_activity_at": 123,
+          "created_at": 123,
+          "contact_inboxes": [
+            {
+              "source_id": "<string>",
+              "inbox": {
+                "id": 123,
+                "avatar_url": "<string>",
+                "channel_id": 123,
+                "name": "<string>",
+                "channel_type": "<string>",
+                "provider": "<string>"
+              }
+            }
+          ]
+        }
+      ],
+      "id": 123,
+      "availability_status": "online"
+    },
+    "response_status": 200
+  },
+  "update_contact": {
+    "config": {
+      "contact_id": 123,
+      "name": "Alice",
+      "email": "alice@acme.inc",
+      "blocked": false,
+      "custom_attributes": "{}"
+    },
+    "source": "https://developers.chatwoot.com/api-reference/contacts/update-contact",
+    "method": "PUT",
+    "path": "/api/v1/accounts/1/contacts/123",
+    "params": {},
+    "body": {
+      "name": "Alice",
+      "email": "alice@acme.inc",
+      "blocked": false,
+      "custom_attributes": {}
+    },
+    "response": {
+      "id": 123,
+      "payload": [
+        {
+          "additional_attributes": {},
+          "availability_status": "<string>",
+          "email": "<string>",
+          "id": 123,
+          "name": "<string>",
+          "phone_number": "<string>",
+          "blocked": true,
+          "identifier": "<string>",
+          "thumbnail": "<string>",
+          "custom_attributes": {
+            "attribute_key": "attribute_value",
+            "signed_up_at": "dd/mm/yyyy"
+          },
+          "last_activity_at": 123,
+          "created_at": 123,
+          "contact_inboxes": [
+            {
+              "source_id": "<string>",
+              "inbox": {
+                "id": 123,
+                "avatar_url": "<string>",
+                "channel_id": 123,
+                "name": "<string>",
+                "channel_type": "<string>",
+                "provider": "<string>"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "response_status": 204
+  },
+  "list_contact_conversations": {
+    "config": {
+      "contact_id": 123
+    },
+    "source": "https://developers.chatwoot.com/api-reference/contacts/contact-conversations",
+    "method": "GET",
+    "path": "/api/v1/accounts/1/contacts/123/conversations",
+    "params": {},
+    "body": null,
+    "response": {
+      "payload": [
+        {
+          "id": 123,
+          "messages": [
+            {
+              "id": 123,
+              "content": "<string>",
+              "account_id": 123,
+              "inbox_id": 123,
+              "conversation_id": 123,
+              "message_type": 0,
+              "created_at": 123,
+              "updated_at": 123,
+              "private": true,
+              "status": "sent",
+              "source_id": "<string>",
+              "content_type": "text",
+              "content_attributes": {},
+              "sender_type": "Contact",
+              "sender_id": 123,
+              "external_source_ids": {},
+              "additional_attributes": {},
+              "processed_message_content": "<string>",
+              "sentiment": {},
+              "conversation": {},
+              "attachment": {},
+              "sender": {}
+            }
+          ],
+          "account_id": 123,
+          "uuid": "<string>",
+          "additional_attributes": {},
+          "agent_last_seen_at": 123,
+          "assignee_last_seen_at": 123,
+          "can_reply": true,
+          "contact_last_seen_at": 123,
+          "custom_attributes": {},
+          "inbox_id": 123,
+          "labels": [
+            "<string>"
+          ],
+          "muted": true,
+          "snoozed_until": 123,
+          "status": "open",
+          "created_at": 123,
+          "updated_at": 123,
+          "timestamp": 123,
+          "first_reply_created_at": 123,
+          "unread_count": 123,
+          "last_non_activity_message": {
+            "id": 123,
+            "content": "<string>",
+            "account_id": 123,
+            "inbox_id": 123,
+            "conversation_id": 123,
+            "message_type": 0,
+            "created_at": 123,
+            "updated_at": 123,
+            "private": true,
+            "status": "sent",
+            "source_id": "<string>",
+            "content_type": "text",
+            "content_attributes": {},
+            "sender_type": "Contact",
+            "sender_id": 123,
+            "external_source_ids": {},
+            "additional_attributes": {},
+            "processed_message_content": "<string>",
+            "sentiment": {},
+            "conversation": {},
+            "attachment": {},
+            "sender": {}
+          },
+          "last_activity_at": 123,
+          "priority": "<string>",
+          "waiting_since": 123,
+          "sla_policy_id": 123,
+          "applied_sla": {},
+          "sla_events": [
+            {}
+          ],
+          "meta": {
+            "sender": {
+              "additional_attributes": {},
+              "availability_status": "<string>",
+              "email": "<string>",
+              "id": 123,
+              "name": "<string>",
+              "phone_number": "<string>",
+              "blocked": true,
+              "identifier": "<string>",
+              "thumbnail": "<string>",
+              "custom_attributes": {},
+              "last_activity_at": 123,
+              "created_at": 123
+            },
+            "channel": "<string>",
+            "assignee": {
+              "id": 123,
+              "access_token": "<string>",
+              "account_id": 123,
+              "available_name": "<string>",
+              "avatar_url": "<string>",
+              "confirmed": true,
+              "display_name": "<string>",
+              "message_signature": "<string>",
+              "email": "<string>",
+              "hmac_identifier": "<string>",
+              "inviter_id": 123,
+              "name": "<string>",
+              "provider": "<string>",
+              "pubsub_token": "<string>",
+              "role": "agent",
+              "ui_settings": {},
+              "uid": "<string>",
+              "type": "<string>",
+              "custom_attributes": {},
+              "accounts": [
+                {
+                  "id": 123,
+                  "name": "<string>",
+                  "status": "<string>",
+                  "active_at": "2023-11-07T05:31:56Z",
+                  "role": "administrator",
+                  "permissions": [
+                    "<string>"
+                  ],
+                  "availability": "<string>",
+                  "availability_status": "<string>",
+                  "auto_offline": true,
+                  "custom_role_id": 123,
+                  "custom_role": {}
+                }
+              ]
+            },
+            "hmac_verified": true
+          }
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  "list_conversations": {
+    "config": {
+      "page": 1,
+      "status": "open",
+      "assignee_type": "all"
+    },
+    "source": "https://developers.chatwoot.com/api-reference/conversations/conversations-list",
+    "method": "GET",
+    "path": "/api/v1/accounts/1/conversations",
+    "params": {
+      "page": 1,
+      "status": "open",
+      "assignee_type": "all"
+    },
+    "body": null,
+    "response": {
+      "data": {
+        "meta": {
+          "mine_count": 123,
+          "unassigned_count": 123,
+          "assigned_count": 123,
+          "all_count": 123
+        },
+        "payload": [
+          {
+            "id": 123,
+            "messages": [
+              {
+                "id": 123,
+                "content": "<string>",
+                "account_id": 123,
+                "inbox_id": 123,
+                "conversation_id": 123,
+                "message_type": 0,
+                "created_at": 123,
+                "updated_at": 123,
+                "private": true,
+                "status": "sent",
+                "source_id": "<string>",
+                "content_type": "text",
+                "content_attributes": {},
+                "sender_type": "Contact",
+                "sender_id": 123,
+                "external_source_ids": {},
+                "additional_attributes": {},
+                "processed_message_content": "<string>",
+                "sentiment": {},
+                "conversation": {},
+                "attachment": {},
+                "sender": {}
+              }
+            ],
+            "account_id": 123,
+            "uuid": "<string>",
+            "additional_attributes": {},
+            "agent_last_seen_at": 123,
+            "assignee_last_seen_at": 123,
+            "can_reply": true,
+            "contact_last_seen_at": 123,
+            "custom_attributes": {},
+            "inbox_id": 123,
+            "labels": [
+              "<string>"
+            ],
+            "muted": true,
+            "snoozed_until": 123,
+            "status": "open",
+            "created_at": 123,
+            "updated_at": 123,
+            "timestamp": 123,
+            "first_reply_created_at": 123,
+            "unread_count": 123,
+            "last_non_activity_message": {
+              "id": 123,
+              "content": "<string>",
+              "account_id": 123,
+              "inbox_id": 123,
+              "conversation_id": 123,
+              "message_type": 0,
+              "created_at": 123,
+              "updated_at": 123,
+              "private": true,
+              "status": "sent",
+              "source_id": "<string>",
+              "content_type": "text",
+              "content_attributes": {},
+              "sender_type": "Contact",
+              "sender_id": 123,
+              "external_source_ids": {},
+              "additional_attributes": {},
+              "processed_message_content": "<string>",
+              "sentiment": {},
+              "conversation": {},
+              "attachment": {},
+              "sender": {}
+            },
+            "last_activity_at": 123,
+            "priority": "<string>",
+            "waiting_since": 123,
+            "sla_policy_id": 123,
+            "applied_sla": {},
+            "sla_events": [
+              {}
+            ],
+            "meta": {
+              "sender": {
+                "additional_attributes": {},
+                "availability_status": "<string>",
+                "email": "<string>",
+                "id": 123,
+                "name": "<string>",
+                "phone_number": "<string>",
+                "blocked": true,
+                "identifier": "<string>",
+                "thumbnail": "<string>",
+                "custom_attributes": {},
+                "last_activity_at": 123,
+                "created_at": 123
+              },
+              "channel": "<string>",
+              "assignee": {
+                "id": 123,
+                "access_token": "<string>",
+                "account_id": 123,
+                "available_name": "<string>",
+                "avatar_url": "<string>",
+                "confirmed": true,
+                "display_name": "<string>",
+                "message_signature": "<string>",
+                "email": "<string>",
+                "hmac_identifier": "<string>",
+                "inviter_id": 123,
+                "name": "<string>",
+                "provider": "<string>",
+                "pubsub_token": "<string>",
+                "role": "agent",
+                "ui_settings": {},
+                "uid": "<string>",
+                "type": "<string>",
+                "custom_attributes": {},
+                "accounts": [
+                  {
+                    "id": 123,
+                    "name": "<string>",
+                    "status": "<string>",
+                    "active_at": "2023-11-07T05:31:56Z",
+                    "role": "administrator",
+                    "permissions": [
+                      "<string>"
+                    ],
+                    "availability": "<string>",
+                    "availability_status": "<string>",
+                    "auto_offline": true,
+                    "custom_role_id": 123,
+                    "custom_role": {}
+                  }
+                ]
+              },
+              "hmac_verified": true
+            }
+          }
+        ]
+      }
+    },
+    "response_status": 200
+  },
+  "get_conversation": {
+    "config": {
+      "conversation_id": 123
+    },
+    "source": "https://developers.chatwoot.com/api-reference/conversations/conversation-details",
+    "method": "GET",
+    "path": "/api/v1/accounts/1/conversations/123",
+    "params": {},
+    "body": null,
+    "response": {
+      "id": 123,
+      "messages": [
+        {
+          "id": 123,
+          "content": "<string>",
+          "account_id": 123,
+          "inbox_id": 123,
+          "conversation_id": 123,
+          "message_type": 0,
+          "created_at": 123,
+          "updated_at": 123,
+          "private": true,
+          "status": "sent",
+          "source_id": "<string>",
+          "content_type": "text",
+          "content_attributes": {},
+          "sender_type": "Contact",
+          "sender_id": 123,
+          "external_source_ids": {},
+          "additional_attributes": {},
+          "processed_message_content": "<string>",
+          "sentiment": {},
+          "conversation": {},
+          "attachment": {},
+          "sender": {}
+        }
+      ],
+      "account_id": 123,
+      "uuid": "<string>",
+      "additional_attributes": {},
+      "agent_last_seen_at": 123,
+      "assignee_last_seen_at": 123,
+      "can_reply": true,
+      "contact_last_seen_at": 123,
+      "custom_attributes": {},
+      "inbox_id": 123,
+      "labels": [
+        "<string>"
+      ],
+      "muted": true,
+      "snoozed_until": 123,
+      "status": "open",
+      "created_at": 123,
+      "updated_at": 123,
+      "timestamp": 123,
+      "first_reply_created_at": 123,
+      "unread_count": 123,
+      "last_non_activity_message": {
+        "id": 123,
+        "content": "<string>",
+        "account_id": 123,
+        "inbox_id": 123,
+        "conversation_id": 123,
+        "message_type": 0,
+        "created_at": 123,
+        "updated_at": 123,
+        "private": true,
+        "status": "sent",
+        "source_id": "<string>",
+        "content_type": "text",
+        "content_attributes": {},
+        "sender_type": "Contact",
+        "sender_id": 123,
+        "external_source_ids": {},
+        "additional_attributes": {},
+        "processed_message_content": "<string>",
+        "sentiment": {},
+        "conversation": {},
+        "attachment": {},
+        "sender": {}
+      },
+      "last_activity_at": 123,
+      "priority": "<string>",
+      "waiting_since": 123,
+      "sla_policy_id": 123,
+      "applied_sla": {},
+      "sla_events": [
+        {}
+      ],
+      "meta": {
+        "sender": {
+          "additional_attributes": {},
+          "availability_status": "<string>",
+          "email": "<string>",
+          "id": 123,
+          "name": "<string>",
+          "phone_number": "<string>",
+          "blocked": true,
+          "identifier": "<string>",
+          "thumbnail": "<string>",
+          "custom_attributes": {},
+          "last_activity_at": 123,
+          "created_at": 123
+        },
+        "channel": "<string>",
+        "assignee": {
+          "id": 123,
+          "access_token": "<string>",
+          "account_id": 123,
+          "available_name": "<string>",
+          "avatar_url": "<string>",
+          "confirmed": true,
+          "display_name": "<string>",
+          "message_signature": "<string>",
+          "email": "<string>",
+          "hmac_identifier": "<string>",
+          "inviter_id": 123,
+          "name": "<string>",
+          "provider": "<string>",
+          "pubsub_token": "<string>",
+          "role": "agent",
+          "ui_settings": {},
+          "uid": "<string>",
+          "type": "<string>",
+          "custom_attributes": {},
+          "accounts": [
+            {
+              "id": 123,
+              "name": "<string>",
+              "status": "<string>",
+              "active_at": "2023-11-07T05:31:56Z",
+              "role": "administrator",
+              "permissions": [
+                "<string>"
+              ],
+              "availability": "<string>",
+              "availability_status": "<string>",
+              "auto_offline": true,
+              "custom_role_id": 123,
+              "custom_role": {}
+            }
+          ]
+        },
+        "hmac_verified": true
+      }
+    },
+    "response_status": 200
+  },
+  "create_conversation": {
+    "config": {
+      "source_id": "1234567890",
+      "inbox_id": 1,
+      "contact_id": 1,
+      "status": "open",
+      "content": "Hello, how can I help you?",
+      "assignee_id": 1,
+      "team_id": 1,
+      "custom_attributes": "{\"attribute_key\":\"attribute_value\",\"priority_conversation_number\":3}"
+    },
+    "source": "https://developers.chatwoot.com/api-reference/conversations/create-new-conversation.md",
+    "method": "POST",
+    "path": "/api/v1/accounts/1/conversations",
+    "params": {},
+    "body": {
+      "source_id": "1234567890",
+      "inbox_id": 1,
+      "contact_id": 1,
+      "custom_attributes": {
+        "attribute_key": "attribute_value",
+        "priority_conversation_number": 3
+      },
+      "status": "open",
+      "assignee_id": 1,
+      "team_id": 1,
+      "message": {
+        "content": "Hello, how can I help you?"
+      }
+    },
+    "response": {
+      "id": 123,
+      "account_id": 123,
+      "inbox_id": 123
+    },
+    "response_status": 200
+  },
+  "assign_conversation": {
+    "config": {
+      "conversation_id": 123,
+      "team_id": 1
+    },
+    "source": "https://developers.chatwoot.com/api-reference/conversation-assignments/assign-conversation",
+    "method": "POST",
+    "path": "/api/v1/accounts/1/conversations/123/assignments",
+    "params": {},
+    "body": {
+      "team_id": 1
+    },
+    "response": {
+      "id": 123,
+      "access_token": "<string>",
+      "account_id": 123,
+      "available_name": "<string>",
+      "avatar_url": "<string>",
+      "confirmed": true,
+      "display_name": "<string>",
+      "message_signature": "<string>",
+      "email": "<string>",
+      "hmac_identifier": "<string>",
+      "inviter_id": 123,
+      "name": "<string>",
+      "provider": "<string>",
+      "pubsub_token": "<string>",
+      "role": "agent",
+      "ui_settings": {},
+      "uid": "<string>",
+      "type": "<string>",
+      "custom_attributes": {},
+      "accounts": [
+        {
+          "id": 123,
+          "name": "<string>",
+          "status": "<string>",
+          "active_at": "2023-11-07T05:31:56Z",
+          "role": "administrator",
+          "permissions": [
+            "<string>"
+          ],
+          "availability": "<string>",
+          "availability_status": "<string>",
+          "auto_offline": true,
+          "custom_role_id": 123,
+          "custom_role": {}
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  "set_conversation_status": {
+    "config": {
+      "conversation_id": 123,
+      "status": "snoozed",
+      "snoozed_until": 1757506877
+    },
+    "source": "https://developers.chatwoot.com/api-reference/conversations/toggle-status",
+    "method": "POST",
+    "path": "/api/v1/accounts/1/conversations/123/toggle_status",
+    "params": {},
+    "body": {
+      "status": "snoozed",
+      "snoozed_until": 1757506877
+    },
+    "response": {
+      "meta": {},
+      "payload": {
+        "success": true,
+        "current_status": "open",
+        "conversation_id": 123
+      }
+    },
+    "response_status": 200
+  },
+  "set_conversation_priority": {
+    "config": {
+      "conversation_id": 123,
+      "priority": "high"
+    },
+    "source": "https://developers.chatwoot.com/api-reference/conversations/update-conversation",
+    "method": "PATCH",
+    "path": "/api/v1/accounts/1/conversations/123",
+    "params": {},
+    "body": {
+      "priority": "high"
+    },
+    "response": {
+      "id": 123,
+      "messages": [
+        {
+          "id": 123,
+          "content": "<string>",
+          "account_id": 123,
+          "inbox_id": 123,
+          "conversation_id": 123,
+          "message_type": 0,
+          "created_at": 123,
+          "updated_at": 123,
+          "private": true,
+          "status": "sent",
+          "source_id": "<string>",
+          "content_type": "text",
+          "content_attributes": {},
+          "sender_type": "Contact",
+          "sender_id": 123,
+          "external_source_ids": {},
+          "additional_attributes": {},
+          "processed_message_content": "<string>",
+          "sentiment": {},
+          "conversation": {},
+          "attachment": {},
+          "sender": {}
+        }
+      ],
+      "account_id": 123,
+      "uuid": "<string>",
+      "additional_attributes": {},
+      "agent_last_seen_at": 123,
+      "assignee_last_seen_at": 123,
+      "can_reply": true,
+      "contact_last_seen_at": 123,
+      "custom_attributes": {},
+      "inbox_id": 123,
+      "labels": [
+        "<string>"
+      ],
+      "muted": true,
+      "snoozed_until": 123,
+      "status": "open",
+      "created_at": 123,
+      "updated_at": 123,
+      "timestamp": 123,
+      "first_reply_created_at": 123,
+      "unread_count": 123,
+      "last_non_activity_message": {
+        "id": 123,
+        "content": "<string>",
+        "account_id": 123,
+        "inbox_id": 123,
+        "conversation_id": 123,
+        "message_type": 0,
+        "created_at": 123,
+        "updated_at": 123,
+        "private": true,
+        "status": "sent",
+        "source_id": "<string>",
+        "content_type": "text",
+        "content_attributes": {},
+        "sender_type": "Contact",
+        "sender_id": 123,
+        "external_source_ids": {},
+        "additional_attributes": {},
+        "processed_message_content": "<string>",
+        "sentiment": {},
+        "conversation": {},
+        "attachment": {},
+        "sender": {}
+      },
+      "last_activity_at": 123,
+      "priority": "<string>",
+      "waiting_since": 123,
+      "sla_policy_id": 123,
+      "applied_sla": {},
+      "sla_events": [
+        {}
+      ]
+    },
+    "response_status": 200
+  },
+  "list_conversation_labels": {
+    "config": {
+      "conversation_id": 123
+    },
+    "source": "https://developers.chatwoot.com/api-reference/conversations/list-labels",
+    "method": "GET",
+    "path": "/api/v1/accounts/1/conversations/123/labels",
+    "params": {},
+    "body": null,
+    "response": {
+      "payload": [
+        "<string>"
+      ]
+    },
+    "response_status": 200
+  },
+  "set_conversation_labels": {
+    "config": {
+      "conversation_id": 123,
+      "labels": [
+        "support",
+        "billing"
+      ]
+    },
+    "source": "https://developers.chatwoot.com/api-reference/conversations/add-labels",
+    "method": "POST",
+    "path": "/api/v1/accounts/1/conversations/123/labels",
+    "params": {},
+    "body": {
+      "labels": [
+        "support",
+        "billing"
+      ]
+    },
+    "response": {
+      "payload": [
+        "<string>"
+      ]
+    },
+    "response_status": 200
+  },
+  "list_messages": {
+    "config": {
+      "conversation_id": 123
+    },
+    "source": "https://developers.chatwoot.com/api-reference/messages/get-messages",
+    "method": "GET",
+    "path": "/api/v1/accounts/1/conversations/123/messages",
+    "params": {},
+    "body": null,
+    "response": {
+      "meta": {
+        "labels": [
+          "<string>"
+        ],
+        "additional_attributes": {},
+        "contact": {
+          "payload": [
+            {
+              "additional_attributes": {},
+              "availability_status": "<string>",
+              "email": "<string>",
+              "id": 123,
+              "name": "<string>",
+              "phone_number": "<string>",
+              "blocked": true,
+              "identifier": "<string>",
+              "thumbnail": "<string>",
+              "custom_attributes": {
+                "attribute_key": "attribute_value",
+                "signed_up_at": "dd/mm/yyyy"
+              },
+              "last_activity_at": 123,
+              "created_at": 123,
+              "contact_inboxes": [
+                {
+                  "source_id": "<string>",
+                  "inbox": {
+                    "id": 123,
+                    "avatar_url": "<string>",
+                    "channel_id": 123,
+                    "name": "<string>",
+                    "channel_type": "<string>",
+                    "provider": "<string>"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "assignee": {
+          "id": 123,
+          "account_id": 123,
+          "availability_status": "online",
+          "auto_offline": true,
+          "confirmed": true,
+          "email": "<string>",
+          "available_name": "<string>",
+          "name": "<string>",
+          "role": "agent",
+          "thumbnail": "<string>",
+          "custom_role_id": 123
+        },
+        "agent_last_seen_at": "2023-11-07T05:31:56Z",
+        "assignee_last_seen_at": "2023-11-07T05:31:56Z"
+      },
+      "payload": [
+        {
+          "id": 123,
+          "content": "<string>",
+          "account_id": 123,
+          "inbox_id": 123,
+          "conversation_id": 123,
+          "message_type": 0,
+          "created_at": 123,
+          "updated_at": 123,
+          "private": true,
+          "status": "sent",
+          "source_id": "<string>",
+          "content_type": "text",
+          "content_attributes": {},
+          "sender_type": "Contact",
+          "sender_id": 123,
+          "external_source_ids": {},
+          "additional_attributes": {},
+          "processed_message_content": "<string>",
+          "sentiment": {},
+          "conversation": {},
+          "attachment": {},
+          "sender": {}
+        }
+      ]
+    },
+    "response_status": 200
+  },
+  "send_message": {
+    "config": {
+      "conversation_id": 123,
+      "content": "Hello, how can I help you?",
+      "private": false
+    },
+    "source": "https://developers.chatwoot.com/api-reference/messages/create-new-message",
+    "method": "POST",
+    "path": "/api/v1/accounts/1/conversations/123/messages",
+    "params": {},
+    "body": {
+      "content": "Hello, how can I help you?",
+      "message_type": "outgoing",
+      "private": false,
+      "content_type": "text"
+    },
+    "response": {
+      "content": "Hi your order 121212 is confirmed. Please wait for further updates",
+      "template_params": {
+        "name": "order_confirmation",
+        "category": "MARKETING",
+        "language": "en",
+        "processed_params": {
+          "body": {
+            "1": "121212"
+          },
+          "header": {
+            "media_url": "https://picsum.photos/200/300",
+            "media_type": "image"
+          }
+        }
+      }
+    },
+    "response_status": 200
+  }
+}
