@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/audiobookshelf.png",
+  "source": "https://audiobookshelf.org/img/Logo48.png",
+  "license": "GPL-3.0 (Audiobookshelf project artwork)",
+  "sha256": "8e16c33c13bc95fefc613630bc738e5afedf31714201bdfb89c96f6f9459cc6b",
+  "license_source": "https://github.com/advplyr/audiobookshelf/blob/master/LICENSE"
+}

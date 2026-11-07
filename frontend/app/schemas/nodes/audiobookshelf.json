@@ -1,0 +1,242 @@
+{
+  "$defs": {
+    "AudiobookshelfAPIKeyCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "audiobookshelf_api_key",
+          "default": "audiobookshelf_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_origin": {
+          "description": "One public HTTPS origin, with no credentials/path/query/fragment. API paths are fixed /api. Hosted/self-hosted instance version parity is unverified.",
+          "title": "Instance HTTPS Origin",
+          "type": "string"
+        },
+        "api_key": {
+          "description": "Supplied server API key from server 2.26.0 or later, Bearer header only. No legacy user API token, login, parsing, issuance or refresh.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Existing Server API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "instance_origin",
+        "api_key"
+      ],
+      "title": "Audiobookshelf API Key",
+      "type": "object",
+      "x-credential-url": "https://audiobookshelf.org/docs/documentation/server-management/api-keys/"
+    },
+    "GetAuthor": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to library/author names. Media, filesystem paths, author identifiers, images and permission metadata are omitted.",
+          "title": "Include Names",
+          "type": "boolean"
+        },
+        "library_id": {
+          "description": "Exact UUID from the current key-visible library catalog; access does not prove ownership.",
+          "maxLength": 36,
+          "minLength": 36,
+          "title": "Library",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "library_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "audiobookshelf_library"
+        },
+        "operation": {
+          "const": "get_author",
+          "default": "get_author",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Get Author Metadata",
+          "x-is-trigger": false
+        },
+        "author_id": {
+          "description": "Exact UUID witnessed in the selected library's current author catalog. Author responses do not contain a library parent ID.",
+          "maxLength": 36,
+          "minLength": 36,
+          "title": "Author",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "library_id",
+            "field_name": "author_id",
+            "searchable": true
+          },
+          "x-resource-type": "audiobookshelf_author"
+        }
+      },
+      "required": [
+        "library_id",
+        "author_id"
+      ],
+      "title": "GetAuthor",
+      "type": "object"
+    },
+    "GetLibrary": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to library/author names. Media, filesystem paths, author identifiers, images and permission metadata are omitted.",
+          "title": "Include Names",
+          "type": "boolean"
+        },
+        "library_id": {
+          "description": "Exact UUID from the current key-visible library catalog; access does not prove ownership.",
+          "maxLength": 36,
+          "minLength": 36,
+          "title": "Library",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "library_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "audiobookshelf_library"
+        },
+        "operation": {
+          "const": "get_library",
+          "default": "get_library",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Get Library Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "library_id"
+      ],
+      "title": "GetLibrary",
+      "type": "object"
+    },
+    "ListLibraries": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to library/author names. Media, filesystem paths, author identifiers, images and permission metadata are omitted.",
+          "title": "Include Names",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_libraries",
+          "default": "list_libraries",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List Library Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListLibraries",
+      "type": "object"
+    },
+    "ListLibraryAuthors": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to library/author names. Media, filesystem paths, author identifiers, images and permission metadata are omitted.",
+          "title": "Include Names",
+          "type": "boolean"
+        },
+        "library_id": {
+          "description": "Exact UUID from the current key-visible library catalog; access does not prove ownership.",
+          "maxLength": 36,
+          "minLength": 36,
+          "title": "Library",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "library_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "audiobookshelf_library"
+        },
+        "operation": {
+          "const": "list_library_authors",
+          "default": "list_library_authors",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List Library Author Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "library_id"
+      ],
+      "title": "ListLibraryAuthors",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_author": "#/$defs/GetAuthor",
+          "get_library": "#/$defs/GetLibrary",
+          "list_libraries": "#/$defs/ListLibraries",
+          "list_library_authors": "#/$defs/ListLibraryAuthors"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListLibraries"
+        },
+        {
+          "$ref": "#/$defs/GetLibrary"
+        },
+        {
+          "$ref": "#/$defs/ListLibraryAuthors"
+        },
+        {
+          "$ref": "#/$defs/GetAuthor"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AudiobookshelfAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Audiobookshelf Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
