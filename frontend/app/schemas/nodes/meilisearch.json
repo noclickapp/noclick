@@ -1,0 +1,1048 @@
+{
+  "$defs": {
+    "AddDocuments": {
+      "properties": {
+        "operation": {
+          "const": "add_documents",
+          "default": "add_documents",
+          "title": "Add or Replace Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Add or Replace Documents",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index UID",
+            "field_name": "index_uid",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "meilisearch_index"
+        },
+        "documents_json": {
+          "description": "Array of document objects; existing documents are replaced",
+          "title": "Documents (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "primary_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used if the index has no primary key",
+          "title": "Primary Key"
+        }
+      },
+      "required": [
+        "index_uid",
+        "documents_json"
+      ],
+      "title": "AddDocuments",
+      "type": "object"
+    },
+    "CreateIndex": {
+      "properties": {
+        "operation": {
+          "const": "create_index",
+          "default": "create_index",
+          "title": "Create Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "Create Index",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "New Index UID",
+          "type": "string"
+        },
+        "primary_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Primary Key"
+        }
+      },
+      "required": [
+        "index_uid"
+      ],
+      "title": "CreateIndex",
+      "type": "object"
+    },
+    "DeleteAllDocuments": {
+      "properties": {
+        "operation": {
+          "const": "delete_all_documents",
+          "default": "delete_all_documents",
+          "title": "Delete All Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Delete All Documents",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index UID",
+            "field_name": "index_uid",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "meilisearch_index"
+        }
+      },
+      "required": [
+        "index_uid"
+      ],
+      "title": "DeleteAllDocuments",
+      "type": "object"
+    },
+    "DeleteDocument": {
+      "properties": {
+        "operation": {
+          "const": "delete_document",
+          "default": "delete_document",
+          "title": "Delete Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Delete Document",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index UID",
+            "field_name": "index_uid",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "meilisearch_index"
+        },
+        "document_id": {
+          "title": "Document ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index_uid",
+        "document_id"
+      ],
+      "title": "DeleteDocument",
+      "type": "object"
+    },
+    "DeleteDocumentsBatch": {
+      "properties": {
+        "operation": {
+          "const": "delete_documents_batch",
+          "default": "delete_documents_batch",
+          "title": "Delete Documents by ID",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Delete Documents by ID",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index UID",
+            "field_name": "index_uid",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "meilisearch_index"
+        },
+        "ids_json": {
+          "description": "Array of document IDs",
+          "title": "Document IDs (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "index_uid",
+        "ids_json"
+      ],
+      "title": "DeleteDocumentsBatch",
+      "type": "object"
+    },
+    "DeleteDocumentsByFilter": {
+      "properties": {
+        "operation": {
+          "const": "delete_documents_by_filter",
+          "default": "delete_documents_by_filter",
+          "title": "Delete Documents by Filter",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Delete Documents by Filter",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index UID",
+            "field_name": "index_uid",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "meilisearch_index"
+        },
+        "filter_json": {
+          "description": "A filter string or array, such as \"genre = Horror\"",
+          "title": "Filter (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "index_uid",
+        "filter_json"
+      ],
+      "title": "DeleteDocumentsByFilter",
+      "type": "object"
+    },
+    "DeleteIndex": {
+      "properties": {
+        "operation": {
+          "const": "delete_index",
+          "default": "delete_index",
+          "title": "Delete Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "Delete Index",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index UID",
+            "field_name": "index_uid",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "meilisearch_index"
+        }
+      },
+      "required": [
+        "index_uid"
+      ],
+      "title": "DeleteIndex",
+      "type": "object"
+    },
+    "GetDocument": {
+      "properties": {
+        "operation": {
+          "const": "get_document",
+          "default": "get_document",
+          "title": "Get Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Get Document",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index UID",
+            "field_name": "index_uid",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "meilisearch_index"
+        },
+        "document_id": {
+          "title": "Document ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index_uid",
+        "document_id"
+      ],
+      "title": "GetDocument",
+      "type": "object"
+    },
+    "GetIndex": {
+      "properties": {
+        "operation": {
+          "const": "get_index",
+          "default": "get_index",
+          "title": "Get Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "Get Index",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index UID",
+            "field_name": "index_uid",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "meilisearch_index"
+        }
+      },
+      "required": [
+        "index_uid"
+      ],
+      "title": "GetIndex",
+      "type": "object"
+    },
+    "GetIndexStats": {
+      "properties": {
+        "operation": {
+          "const": "get_index_stats",
+          "default": "get_index_stats",
+          "title": "Get Index Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "Get Index Stats",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index UID",
+            "field_name": "index_uid",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "meilisearch_index"
+        }
+      },
+      "required": [
+        "index_uid"
+      ],
+      "title": "GetIndexStats",
+      "type": "object"
+    },
+    "GetSettings": {
+      "properties": {
+        "operation": {
+          "const": "get_settings",
+          "default": "get_settings",
+          "title": "Get Settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Settings",
+          "x-display-name": "Get Settings",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index UID",
+            "field_name": "index_uid",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "meilisearch_index"
+        }
+      },
+      "required": [
+        "index_uid"
+      ],
+      "title": "GetSettings",
+      "type": "object"
+    },
+    "GetTask": {
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Task",
+          "x-is-trigger": false
+        },
+        "task_uid": {
+          "minimum": 0,
+          "title": "Task UID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "task_uid"
+      ],
+      "title": "GetTask",
+      "type": "object"
+    },
+    "ListDocuments": {
+      "properties": {
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "List Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "List Documents",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index UID",
+            "field_name": "index_uid",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "meilisearch_index"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated attributes to return",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "index_uid"
+      ],
+      "title": "ListDocuments",
+      "type": "object"
+    },
+    "ListIndexes": {
+      "properties": {
+        "operation": {
+          "const": "list_indexes",
+          "default": "list_indexes",
+          "title": "List Indexes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "List Indexes",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "ListIndexes",
+      "type": "object"
+    },
+    "ListTasks": {
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "List Tasks",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "from_uid": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Task UID"
+        },
+        "statuses": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated statuses",
+          "title": "Statuses"
+        },
+        "index_uids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated index UIDs",
+          "title": "Index UIDs"
+        }
+      },
+      "title": "ListTasks",
+      "type": "object"
+    },
+    "MeilisearchCredential": {
+      "description": "HTTPS instance URL and an API key with the required action permissions.",
+      "properties": {
+        "credential_type": {
+          "const": "meilisearch_api_key",
+          "default": "meilisearch_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "description": "The HTTPS origin of your Meilisearch Cloud or self-hosted instance",
+          "title": "Instance URL",
+          "type": "string"
+        },
+        "api_key": {
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "url",
+        "api_key"
+      ],
+      "title": "Meilisearch API Key",
+      "type": "object",
+      "x-credential-url": "https://cloud.meilisearch.com/"
+    },
+    "MultiSearch": {
+      "properties": {
+        "operation": {
+          "const": "multi_search",
+          "default": "multi_search",
+          "title": "Multi-search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Multi-search",
+          "x-is-trigger": false
+        },
+        "queries_json": {
+          "description": "Array such as [{\"indexUid\":\"movies\",\"q\":\"alien\"}]",
+          "title": "Queries (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "federation_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional federation object for merged hits",
+          "title": "Federation (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "queries_json"
+      ],
+      "title": "MultiSearch",
+      "type": "object"
+    },
+    "ResetSettings": {
+      "properties": {
+        "operation": {
+          "const": "reset_settings",
+          "default": "reset_settings",
+          "title": "Reset Settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Settings",
+          "x-display-name": "Reset Settings",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index UID",
+            "field_name": "index_uid",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "meilisearch_index"
+        }
+      },
+      "required": [
+        "index_uid"
+      ],
+      "title": "ResetSettings",
+      "type": "object"
+    },
+    "Search": {
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Search Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Search Documents",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index UID",
+            "field_name": "index_uid",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "meilisearch_index"
+        },
+        "query": {
+          "default": "",
+          "description": "Leave empty for a placeholder search",
+          "title": "Query",
+          "type": "string"
+        },
+        "filter_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A filter string or array, such as \"genre = Horror\"",
+          "title": "Filter (JSON)",
+          "ui:widget": "textarea"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated sort rules, e.g. price:asc,rating:desc",
+          "title": "Sort"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "attributes_to_retrieve": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated field names",
+          "title": "Attributes to Retrieve"
+        }
+      },
+      "required": [
+        "index_uid"
+      ],
+      "title": "Search",
+      "type": "object"
+    },
+    "SwapIndexes": {
+      "properties": {
+        "operation": {
+          "const": "swap_indexes",
+          "default": "swap_indexes",
+          "title": "Swap Indexes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "Swap Indexes",
+          "x-is-trigger": false
+        },
+        "swaps_json": {
+          "description": "Array such as [{\"indexes\":[\"products\",\"products_new\"]}]",
+          "title": "Swaps (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "swaps_json"
+      ],
+      "title": "SwapIndexes",
+      "type": "object"
+    },
+    "UpdateDocuments": {
+      "properties": {
+        "operation": {
+          "const": "update_documents",
+          "default": "update_documents",
+          "title": "Update Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Update Documents",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index UID",
+            "field_name": "index_uid",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "meilisearch_index"
+        },
+        "documents_json": {
+          "description": "Array of document objects with primary keys; attributes are merged",
+          "title": "Documents (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "primary_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Used if the index has no primary key",
+          "title": "Primary Key"
+        }
+      },
+      "required": [
+        "index_uid",
+        "documents_json"
+      ],
+      "title": "UpdateDocuments",
+      "type": "object"
+    },
+    "UpdateIndex": {
+      "properties": {
+        "operation": {
+          "const": "update_index",
+          "default": "update_index",
+          "title": "Update Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "Update Index",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index UID",
+            "field_name": "index_uid",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "meilisearch_index"
+        },
+        "primary_key": {
+          "description": "Can only be set if the index has none",
+          "title": "Primary Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index_uid",
+        "primary_key"
+      ],
+      "title": "UpdateIndex",
+      "type": "object"
+    },
+    "UpdateSettings": {
+      "properties": {
+        "operation": {
+          "const": "update_settings",
+          "default": "update_settings",
+          "title": "Update Settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Settings",
+          "x-display-name": "Update Settings",
+          "x-is-trigger": false
+        },
+        "index_uid": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index UID",
+            "field_name": "index_uid",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "meilisearch_index"
+        },
+        "settings_json": {
+          "description": "Object such as {\"filterableAttributes\":[\"genre\"]}",
+          "title": "Settings (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "index_uid",
+        "settings_json"
+      ],
+      "title": "UpdateSettings",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_documents": "#/$defs/AddDocuments",
+          "create_index": "#/$defs/CreateIndex",
+          "delete_all_documents": "#/$defs/DeleteAllDocuments",
+          "delete_document": "#/$defs/DeleteDocument",
+          "delete_documents_batch": "#/$defs/DeleteDocumentsBatch",
+          "delete_documents_by_filter": "#/$defs/DeleteDocumentsByFilter",
+          "delete_index": "#/$defs/DeleteIndex",
+          "get_document": "#/$defs/GetDocument",
+          "get_index": "#/$defs/GetIndex",
+          "get_index_stats": "#/$defs/GetIndexStats",
+          "get_settings": "#/$defs/GetSettings",
+          "get_task": "#/$defs/GetTask",
+          "list_documents": "#/$defs/ListDocuments",
+          "list_indexes": "#/$defs/ListIndexes",
+          "list_tasks": "#/$defs/ListTasks",
+          "multi_search": "#/$defs/MultiSearch",
+          "reset_settings": "#/$defs/ResetSettings",
+          "search": "#/$defs/Search",
+          "swap_indexes": "#/$defs/SwapIndexes",
+          "update_documents": "#/$defs/UpdateDocuments",
+          "update_index": "#/$defs/UpdateIndex",
+          "update_settings": "#/$defs/UpdateSettings"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListIndexes"
+        },
+        {
+          "$ref": "#/$defs/GetIndex"
+        },
+        {
+          "$ref": "#/$defs/CreateIndex"
+        },
+        {
+          "$ref": "#/$defs/UpdateIndex"
+        },
+        {
+          "$ref": "#/$defs/DeleteIndex"
+        },
+        {
+          "$ref": "#/$defs/SwapIndexes"
+        },
+        {
+          "$ref": "#/$defs/ListDocuments"
+        },
+        {
+          "$ref": "#/$defs/GetDocument"
+        },
+        {
+          "$ref": "#/$defs/AddDocuments"
+        },
+        {
+          "$ref": "#/$defs/UpdateDocuments"
+        },
+        {
+          "$ref": "#/$defs/DeleteDocument"
+        },
+        {
+          "$ref": "#/$defs/DeleteDocumentsBatch"
+        },
+        {
+          "$ref": "#/$defs/DeleteDocumentsByFilter"
+        },
+        {
+          "$ref": "#/$defs/DeleteAllDocuments"
+        },
+        {
+          "$ref": "#/$defs/Search"
+        },
+        {
+          "$ref": "#/$defs/MultiSearch"
+        },
+        {
+          "$ref": "#/$defs/GetSettings"
+        },
+        {
+          "$ref": "#/$defs/UpdateSettings"
+        },
+        {
+          "$ref": "#/$defs/ResetSettings"
+        },
+        {
+          "$ref": "#/$defs/GetIndexStats"
+        },
+        {
+          "$ref": "#/$defs/GetTask"
+        },
+        {
+          "$ref": "#/$defs/ListTasks"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MeilisearchCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Meilisearch Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Search the product index for running shoes",
+    "Add new documents to the knowledge base index",
+    "Set genre as a filterable attribute before running filtered searches",
+    "Check whether an indexing task has finished",
+    "Swap a newly built index into production"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
