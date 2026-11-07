@@ -1135,6 +1135,9 @@
     "automation-ramp": {
       "agentToolProvider": true
     },
+    "automation-rebrandly": {
+      "agentToolProvider": true
+    },
     "automation-recurly": {
       "agentToolProvider": true
     },
@@ -1231,6 +1234,9 @@
     "automation-singlestore": {
       "agentToolProvider": true
     },
+    "automation-skyvia": {
+      "agentToolProvider": true
+    },
     "automation-slack": {
       "agentToolProvider": true,
       "triggerOperations": [
@@ -1251,7 +1257,16 @@
         "on_query_results"
       ]
     },
+    "automation-stackitdns": {
+      "agentToolProvider": true
+    },
     "automation-statuspage": {
+      "agentToolProvider": true
+    },
+    "automation-statuspal": {
+      "agentToolProvider": true
+    },
+    "automation-stream-chat": {
       "agentToolProvider": true
     },
     "automation-stripe": {
@@ -1322,6 +1337,9 @@
     "automation-supabase": {
       "agentToolProvider": true
     },
+    "automation-supernormal": {
+      "agentToolProvider": true
+    },
     "automation-table": {
       "agentToolProvider": true
     },
@@ -1349,6 +1367,9 @@
         "on_site_deleted",
         "on_user_deleted"
       ]
+    },
+    "automation-talkjs": {
+      "agentToolProvider": true
     },
     "automation-tavily": {
       "agentToolProvider": true
