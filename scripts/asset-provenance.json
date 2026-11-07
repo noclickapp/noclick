@@ -1274,6 +1274,12 @@
       "source": "https://www.exoscale.com/press/ (source recorded in commit f85702910)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "f6cdc801de57ea0227a910debfb14dd8e0cf36c671f573b0a1871bb6fe497155"
+    },
+    {
+      "path": "frontend/public/icons/forgejo.svg",
+      "source": "https://forgejo.org/favicon.svg",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "acfeda65446d1c17c5d8e62e18b70a6616ef20df81e7de93ff791a3b11d4be28"
     }
   ],
   "excludedSourceAssets": [
