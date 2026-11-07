@@ -14,6 +14,7 @@
  * Example: 'GoogleSheetsOAuthCredential' -> 'google_sheets_oauth'
  */
 export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
+    'BytescaleSecretAPIKeyCredential': 'bytescale_secret_api_key',
     'AdaptyAPIKeyCredential': 'adapty_api_key',
     'BotpressPATCredential': 'botpress_pat',
     'RipplingAPITokenCredential': 'rippling_api_token',

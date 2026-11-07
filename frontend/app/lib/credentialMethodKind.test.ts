@@ -18,6 +18,7 @@ const KNOWN_KINDS: CredentialMethodKind[] = ['api_key', 'oauth', 'agent_oauth', 
 const KNOWN_DISCRIMINATORS = ['oauth', 'qr_scan', 'purchase', 'script'];
 KNOWN_DISCRIMINATORS.push('porkbun_api_key');
 KNOWN_DISCRIMINATORS.push('kajabi_access_token');
+KNOWN_DISCRIMINATORS.push('bytescale_secret_api_key');
 
 const schemasDir = join(dirname(fileURLToPath(import.meta.url)), '../schemas/nodes');
 

@@ -1166,6 +1166,30 @@
       "source": "https://sematext.com (provider artwork cropped to the Sematext symbol; sourced in commit c418fb1a5)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "8b437d4bdc7b49a53ec1211528c129fd4d0d9577dd33409723b2187fb777dbd7"
+    },
+    {
+      "path": "frontend/public/icons/bytescale-brand-vector.svg",
+      "source": "https://www.bytescale.com/ (Bytescale published wordmark adapted to a square icon)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "dead4574b448e346464396568366460fa2c7dc1f68402fc536451aa02f47a470"
+    },
+    {
+      "path": "frontend/public/icons/bytescale-brand.png",
+      "source": "https://www.bytescale.com/ (raster rendering of Bytescale published brand artwork)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "18f26ce0b35f57fe8c2ed32a93cee0df972bcebc7550f82a95485f2182d7aa54"
+    },
+    {
+      "path": "frontend/public/icons/bytescale.svg",
+      "source": "https://www.bytescale.com/ (Bytescale published brand artwork; see bytescale.svg.provenance.json)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "20388b8e595b1ebae45fcf68bd0483627a5d1e48ee48199ef300ad705af83154"
+    },
+    {
+      "path": "frontend/public/icons/bytescale.svg.provenance.json",
+      "source": "https://www.bytescale.com/ (source record for the Bytescale brand artwork)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "ae8c102daa4e360952e9e994793a4c2c12aab259a2b9dcb89f6fe5480eb21209"
     }
   ],
   "excludedSourceAssets": [
