@@ -149,6 +149,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-cloudzero', 'CloudZeroNode'],
     ['automation-keila', 'KeilaNode'],
     ['automation-mediasilo', 'MediaSiloNode'],
+    ['automation-productplan', 'ProductPlanNode'],
     ['automation-pinecone', 'PineconeNode'],
     ['automation-qdrant', 'QdrantNode'],
     ['automation-upstash-vector', 'UpstashVectorNode'],

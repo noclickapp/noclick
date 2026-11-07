@@ -1424,6 +1424,12 @@
       "source": "https://printify.com/press-kit/ (Printify published wordmark)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "e3be5fca387756026b562e19d4cace456cf8c0a5eeda0935d65e70780a254242"
+    },
+    {
+      "path": "frontend/public/icons/productplan-brand-vector.svg",
+      "source": "https://www.productplan.com/ (ProductPlan published brand artwork, sourced in commit e5df5a916)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "d719dd0341b970e837c04c9291c5eff81cc14b21ee4762938dea9135cef43ae1"
     }
   ],
   "excludedSourceAssets": [
