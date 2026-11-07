@@ -31,8 +31,8 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
-            "field_name": "list_id"
+            "field_name": "list_id",
+            "auto_select_sole_option": true
           },
           "x-resource-type": "list_id"
         }
@@ -104,8 +104,8 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
-            "field_name": "tag_id"
+            "field_name": "tag_id",
+            "auto_select_sole_option": true
           },
           "x-resource-type": "tag_id"
         }

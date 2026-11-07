@@ -105,7 +105,7 @@ class LinkAceListsConfig(_Catalog):
 
 class LinkAceListConfig(_Catalog):
     operation: Literal["get_list"] = _op("get_list", "Get Current List Metadata")
-    list_id: str = Field(..., title="Current List ID", json_schema_extra={"x-resource-type": "list_id", "x-dynamic-options": {"field_name": "list_id", "allow_custom": True, "auto_select_sole_option": False}})
+    list_id: str = Field(..., title="Current List ID", json_schema_extra={"x-resource-type": "list_id", "x-dynamic-options": {"field_name": "list_id", "allow_custom": True}})
     @field_validator("list_id", mode="before")
     @classmethod
     def selected_list(cls, value): return _selected_id(value)
@@ -117,7 +117,7 @@ class LinkAceTagsConfig(_Catalog):
 
 class LinkAceTagConfig(_Catalog):
     operation: Literal["get_tag"] = _op("get_tag", "Get Current Tag Metadata")
-    tag_id: str = Field(..., title="Current Tag ID", json_schema_extra={"x-resource-type": "tag_id", "x-dynamic-options": {"field_name": "tag_id", "allow_custom": True, "auto_select_sole_option": False}})
+    tag_id: str = Field(..., title="Current Tag ID", json_schema_extra={"x-resource-type": "tag_id", "x-dynamic-options": {"field_name": "tag_id", "allow_custom": True}})
     @field_validator("tag_id", mode="before")
     @classmethod
     def selected_tag(cls, value): return _selected_id(value)
