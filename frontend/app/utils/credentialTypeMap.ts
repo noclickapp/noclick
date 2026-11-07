@@ -107,12 +107,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'SlingUserTokenCredential': 'sling_user_token',
     'ClinikoApiKeyCredential': 'cliniko_api_key',
 
-    // Cyclr accepts a supplied console token with a saved account and region.
-    // Account-level DataOnDemand tokens have a different documented purpose.
-    'CyclrOAuthTokenCredential': 'cyclr_oauth_token',
-    'SlingUserTokenCredential': 'sling_user_token',
-    'ClinikoApiKeyCredential': 'cliniko_api_key',
-
     // GitHub
     'GithubPATCredential': 'github_pat',
     'ForgejoPATCredential': 'forgejo_pat',
@@ -279,9 +273,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'Bloomerang Private CRM API Key': 'bloomerang_private_api_key',
     'PrintifyPATCredential': 'printify_pat',
     'PrintifyOAuthAccessTokenCredential': 'printify_oauth_access_token',
-
-    // NocoDB
-    'NocoDBTokenCredential': 'nocodb_api_token',
 
     // NocoDB
     'NocoDBTokenCredential': 'nocodb_api_token',

@@ -665,6 +665,9 @@
     "automation-ilert": {
       "agentToolProvider": true
     },
+    "automation-immich": {
+      "agentToolProvider": true
+    },
     "automation-instagram": {
       "agentToolProvider": true,
       "triggerOperations": [
