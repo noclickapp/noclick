@@ -906,10 +906,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "string"
+              "type": "integer"
             },
             {
-              "type": "integer"
+              "type": "string"
             },
             {
               "type": "null"
@@ -7197,10 +7197,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "string"
+              "type": "integer"
             },
             {
-              "type": "integer"
+              "type": "string"
             },
             {
               "type": "null"
@@ -10824,10 +10824,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "string"
+              "type": "integer"
             },
             {
-              "type": "integer"
+              "type": "string"
             },
             {
               "type": "null"
@@ -23504,10 +23504,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "string"
+              "type": "integer"
             },
             {
-              "type": "integer"
+              "type": "string"
             },
             {
               "type": "null"
@@ -23686,10 +23686,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "string"
+              "type": "integer"
             },
             {
-              "type": "integer"
+              "type": "string"
             },
             {
               "type": "null"
@@ -24301,10 +24301,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "string"
+              "type": "integer"
             },
             {
-              "type": "integer"
+              "type": "string"
             },
             {
               "type": "null"
@@ -27524,10 +27524,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "string"
+              "type": "integer"
             },
             {
-              "type": "integer"
+              "type": "string"
             },
             {
               "type": "null"
@@ -27865,10 +27865,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "string"
+              "type": "integer"
             },
             {
-              "type": "integer"
+              "type": "string"
             },
             {
               "type": "null"
@@ -28199,10 +28199,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "string"
+              "type": "integer"
             },
             {
-              "type": "integer"
+              "type": "string"
             },
             {
               "type": "null"
@@ -34037,10 +34037,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "string"
+              "type": "integer"
             },
             {
-              "type": "integer"
+              "type": "string"
             },
             {
               "type": "null"
@@ -34217,10 +34217,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "string"
+              "type": "integer"
             },
             {
-              "type": "integer"
+              "type": "string"
             },
             {
               "type": "null"
@@ -34642,10 +34642,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "string"
+              "type": "integer"
             },
             {
-              "type": "integer"
+              "type": "string"
             },
             {
               "type": "null"

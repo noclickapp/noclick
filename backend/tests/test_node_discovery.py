@@ -7,6 +7,7 @@ import uuid
 
 import pytest
 
+from nodes.core import discovery
 from nodes.core.discovery import discover_nodes, merge_node_entries
 from nodes.core.registry import DISCOVERED_NODE_ENTRIES, NODE_REGISTRY, _NODE_REGISTRY_ENTRIES
 
@@ -101,3 +102,15 @@ def test_config_fields_are_not_node_registration(package):
         'class Config(BaseModel): integration_type: str\n'
     )
     assert discover_nodes(root, name) == {}
+
+
+def test_files_without_marker_are_never_parsed_or_imported(package, monkeypatch):
+    root, name = package
+    path = root / 'legacy_node.py'
+    path.write_text('this is deliberately invalid Python!')
+    def unexpected(*args, **kwargs):
+        pytest.fail('Unmarked node must not be parsed or imported')
+    monkeypatch.setattr(discovery.ast, 'parse', unexpected)
+    monkeypatch.setattr(discovery.importlib, 'import_module', unexpected)
+    assert discover_nodes(root, name) == {}
+    assert name + '.legacy_node' not in sys.modules

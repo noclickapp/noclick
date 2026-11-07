@@ -17,7 +17,10 @@ from nodes.core.base import WorkflowNode
 def discover_nodes(directory: Path, package: str = "nodes") -> dict[str, type[WorkflowNode]]:
     entries: dict[str, type[WorkflowNode]] = {}
     for path in sorted(directory.glob("*_node.py")):
-        tree = ast.parse(path.read_text(), filename=str(path))
+        source = path.read_text()
+        if "integration_type" not in source:
+            continue
+        tree = ast.parse(source, filename=str(path))
         declarations = [
             cls.name for cls in tree.body if isinstance(cls, ast.ClassDef)
             and any(

@@ -6,11 +6,13 @@ and handles instantiation of nodes based on type.
 """
 
 import logging
+from pathlib import Path
 from typing import Dict, Optional, Type, Any
 from nodes.adapty_node import AdaptyNode
 from nodes.sematext_node import SematextNode
 from nodes.statuspal_node import StatusPalNode
 from nodes.core.base import WorkflowNode
+from nodes.core.discovery import discover_nodes, merge_node_entries
 from nodes.singlestore_node import SingleStoreNode
 from nodes.uptimecom_node import UptimeComNode
 from nodes.fountain_node import FountainNode
@@ -572,9 +574,6 @@ class _NodeRegistry(Dict[str, Type[WorkflowNode]]):
         alias = LEGACY_NODE_TYPE_ALIASES.get(key)
         return alias is not None and dict.__contains__(self, alias)
 
-
-from pathlib import Path
-from nodes.core.discovery import discover_nodes, merge_node_entries
 
 DISCOVERED_NODE_ENTRIES = discover_nodes(Path(__file__).resolve().parents[1])
 NODE_REGISTRY: Dict[str, Type[WorkflowNode]] = _NodeRegistry(
