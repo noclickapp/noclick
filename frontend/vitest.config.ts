@@ -8,6 +8,7 @@
  */
 
 import { defineConfig } from 'vitest/config';
+import { availableParallelism } from 'os';
 import { resolve } from 'path';
 
 export default defineConfig({
@@ -22,6 +23,9 @@ export default defineConfig({
       'tests/integration',
     ],
     testTimeout: 10000,
+    // Vitest leaves a CPU to its main process, so a two-CPU CI runner would get one
+    // worker; two finish the suite there about a tenth sooner.
+    maxWorkers: availableParallelism() <= 2 ? 2 : undefined,
   },
   resolve: {
     alias: {
