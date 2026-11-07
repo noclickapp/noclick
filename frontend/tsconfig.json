@@ -31,7 +31,8 @@
         "allowJs": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "baseUrl": ".",
+        // Fontsource packages are CSS: their bare side-effect imports have no types.
+        "noUncheckedSideEffectImports": false,
         "paths": {
             "~/*": ["./app/*"]
         },
