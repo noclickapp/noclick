@@ -198,3 +198,17 @@ async def test_http_error_redacts_key_echoed_by_provider():
             KEY, "GET", "/users", params=[], body=None, operation="get_user"
         )
     assert result["error"] == "Invalid token [redacted]"
+
+
+@pytest.mark.asyncio
+async def test_structured_workflow_request_body_preserves_json_types():
+    node = make_node(RenderCreateDeployConfig(service_id="srv-1", body={"clearCache": "clear"}))
+    with patch("nodes.render_node._render_request", new_callable=AsyncMock) as request:
+        await node.execute({})
+    assert request.await_args.kwargs["body"] == {"clearCache": "clear"}
+    from nodes.render_node import RenderUpdateEnvVarsForServiceConfig
+    config = RenderUpdateEnvVarsForServiceConfig(service_id="srv-1", body=[{"key": "FLAG", "generateValue": True}])
+    node = make_node(config)
+    with patch("nodes.render_node._render_request", new_callable=AsyncMock) as request:
+        await node.execute({})
+    assert request.await_args.kwargs["body"] == [{"key": "FLAG", "generateValue": True}]

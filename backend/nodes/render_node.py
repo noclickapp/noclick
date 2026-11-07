@@ -15,7 +15,7 @@ from typing import Annotated, Any, Dict, Literal, Optional, Union
 from urllib.parse import quote
 
 import httpx
-from pydantic import BaseModel, ConfigDict, Discriminator, Field
+from pydantic import BaseModel, ConfigDict, Discriminator, Field, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
@@ -40,6 +40,17 @@ class RenderAPIKeyCredential(BaseModel):
             "x-credential-instructions": "In Render, open Account Settings and create an API key.",
         }
     )
+
+
+class RenderRequestBodyConfig(BaseModel):
+    """Accept structured workflow JSON as well as the editor's JSON text."""
+
+    @field_validator("body", mode="before", check_fields=False)
+    @classmethod
+    def encode_structured_body(cls, value):
+        if isinstance(value, (dict, list)):
+            return json.dumps(value)
+        return value
 
 
 class RenderListBlueprintsConfig(BaseModel):
@@ -72,7 +83,7 @@ class RenderListBlueprintsConfig(BaseModel):
     )
 
 
-class RenderUpdateWorkspaceMemberConfig(BaseModel):
+class RenderUpdateWorkspaceMemberConfig(RenderRequestBodyConfig):
     """Update workspace member role."""
 
     operation: Literal["update_workspace_member"] = Field(
@@ -143,7 +154,7 @@ class RenderRetrieveBlueprintConfig(BaseModel):
     )
 
 
-class RenderUpdateBlueprintConfig(BaseModel):
+class RenderUpdateBlueprintConfig(RenderRequestBodyConfig):
     """Update Blueprint."""
 
     operation: Literal["update_blueprint"] = Field(
@@ -234,7 +245,7 @@ class RenderListDedicatedIpsConfig(BaseModel):
     )
 
 
-class RenderCreateDedicatedIpConfig(BaseModel):
+class RenderCreateDedicatedIpConfig(RenderRequestBodyConfig):
     """Create dedicated IP set."""
 
     operation: Literal["create_dedicated_ip"] = Field(
@@ -271,7 +282,7 @@ class RenderRetrieveDedicatedIpConfig(BaseModel):
     )
 
 
-class RenderUpdateDedicatedIpConfig(BaseModel):
+class RenderUpdateDedicatedIpConfig(RenderRequestBodyConfig):
     """Update dedicated IP set."""
 
     operation: Literal["update_dedicated_ip"] = Field(
@@ -379,7 +390,7 @@ class RenderListDisksConfig(BaseModel):
     )
 
 
-class RenderAddDiskConfig(BaseModel):
+class RenderAddDiskConfig(RenderRequestBodyConfig):
     """Add disk."""
 
     operation: Literal["add_disk"] = Field(
@@ -414,7 +425,7 @@ class RenderRetrieveDiskConfig(BaseModel):
     disk_id: str = Field(..., title="diskId", description="The ID of the disk")
 
 
-class RenderUpdateDiskConfig(BaseModel):
+class RenderUpdateDiskConfig(RenderRequestBodyConfig):
     """Update disk."""
 
     operation: Literal["update_disk"] = Field(
@@ -465,7 +476,7 @@ class RenderListSnapshotsConfig(BaseModel):
     disk_id: str = Field(..., title="diskId", description="The ID of the disk")
 
 
-class RenderRestoreSnapshotConfig(BaseModel):
+class RenderRestoreSnapshotConfig(RenderRequestBodyConfig):
     """Restore snapshot."""
 
     operation: Literal["restore_snapshot"] = Field(
@@ -675,7 +686,7 @@ class RenderRetrieveOwnerNotificationSettingsConfig(BaseModel):
     )
 
 
-class RenderPatchOwnerNotificationSettingsConfig(BaseModel):
+class RenderPatchOwnerNotificationSettingsConfig(RenderRequestBodyConfig):
     """Update notification settings."""
 
     operation: Literal["patch_owner_notification_settings"] = Field(
@@ -770,7 +781,7 @@ class RenderRetrieveServiceNotificationOverridesConfig(BaseModel):
     )
 
 
-class RenderPatchServiceNotificationOverridesConfig(BaseModel):
+class RenderPatchServiceNotificationOverridesConfig(RenderRequestBodyConfig):
     """Update notification override."""
 
     operation: Literal["patch_service_notification_overrides"] = Field(
@@ -872,7 +883,7 @@ class RenderListRegistryCredentialsConfig(BaseModel):
     )
 
 
-class RenderCreateRegistryCredentialConfig(BaseModel):
+class RenderCreateRegistryCredentialConfig(RenderRequestBodyConfig):
     """Create registry credential."""
 
     operation: Literal["create_registry_credential"] = Field(
@@ -911,7 +922,7 @@ class RenderRetrieveRegistryCredentialConfig(BaseModel):
     )
 
 
-class RenderUpdateRegistryCredentialConfig(BaseModel):
+class RenderUpdateRegistryCredentialConfig(RenderRequestBodyConfig):
     """Update registry credential."""
 
     operation: Literal["update_registry_credential"] = Field(
@@ -1044,7 +1055,7 @@ class RenderListServicesConfig(BaseModel):
     )
 
 
-class RenderCreateServiceConfig(BaseModel):
+class RenderCreateServiceConfig(RenderRequestBodyConfig):
     """Create service."""
 
     operation: Literal["create_service"] = Field(
@@ -1092,7 +1103,7 @@ class RenderRetrieveServiceConfig(BaseModel):
     )
 
 
-class RenderUpdateServiceConfig(BaseModel):
+class RenderUpdateServiceConfig(RenderRequestBodyConfig):
     """Update service."""
 
     operation: Literal["update_service"] = Field(
@@ -1256,7 +1267,7 @@ class RenderListDeploysConfig(BaseModel):
     )
 
 
-class RenderCreateDeployConfig(BaseModel):
+class RenderCreateDeployConfig(RenderRequestBodyConfig):
     """Trigger deploy."""
 
     operation: Literal["create_deploy"] = Field(
@@ -1348,7 +1359,7 @@ class RenderCancelDeployConfig(BaseModel):
     deploy_id: str = Field(..., title="deployId", description="The ID of the deploy")
 
 
-class RenderRollbackDeployConfig(BaseModel):
+class RenderRollbackDeployConfig(RenderRequestBodyConfig):
     """Roll back deploy."""
 
     operation: Literal["rollback_deploy"] = Field(
@@ -1420,7 +1431,7 @@ class RenderGetEnvVarsForServiceConfig(BaseModel):
     )
 
 
-class RenderUpdateEnvVarsForServiceConfig(BaseModel):
+class RenderUpdateEnvVarsForServiceConfig(RenderRequestBodyConfig):
     """Update environment variables."""
 
     operation: Literal["update_env_vars_for_service"] = Field(
@@ -1485,7 +1496,7 @@ class RenderRetrieveEnvVarConfig(BaseModel):
     )
 
 
-class RenderUpdateEnvVarConfig(BaseModel):
+class RenderUpdateEnvVarConfig(RenderRequestBodyConfig):
     """Add or update environment variable."""
 
     operation: Literal["update_env_var"] = Field(
@@ -1591,7 +1602,7 @@ class RenderListSecretFilesForServiceConfig(BaseModel):
     )
 
 
-class RenderUpdateSecretFilesForServiceConfig(BaseModel):
+class RenderUpdateSecretFilesForServiceConfig(RenderRequestBodyConfig):
     """Update secret files."""
 
     operation: Literal["update_secret_files_for_service"] = Field(
@@ -1656,7 +1667,7 @@ class RenderRetrieveSecretFileConfig(BaseModel):
     )
 
 
-class RenderAddOrUpdateSecretFileConfig(BaseModel):
+class RenderAddOrUpdateSecretFileConfig(RenderRequestBodyConfig):
     """Add or update secret file."""
 
     operation: Literal["add_or_update_secret_file"] = Field(
@@ -1831,7 +1842,7 @@ class RenderListHeadersConfig(BaseModel):
     )
 
 
-class RenderAddHeadersConfig(BaseModel):
+class RenderAddHeadersConfig(RenderRequestBodyConfig):
     """Add header rule."""
 
     operation: Literal["add_headers"] = Field(
@@ -1865,7 +1876,7 @@ class RenderAddHeadersConfig(BaseModel):
     )
 
 
-class RenderUpdateHeadersConfig(BaseModel):
+class RenderUpdateHeadersConfig(RenderRequestBodyConfig):
     """Replace header rules."""
 
     operation: Literal["update_headers"] = Field(
@@ -1984,7 +1995,7 @@ class RenderListRoutesConfig(BaseModel):
     )
 
 
-class RenderAddRouteConfig(BaseModel):
+class RenderAddRouteConfig(RenderRequestBodyConfig):
     """Add redirect/rewrite rules."""
 
     operation: Literal["add_route"] = Field(
@@ -2018,7 +2029,7 @@ class RenderAddRouteConfig(BaseModel):
     )
 
 
-class RenderPutRoutesConfig(BaseModel):
+class RenderPutRoutesConfig(RenderRequestBodyConfig):
     """Update redirect/rewrite rules."""
 
     operation: Literal["put_routes"] = Field(
@@ -2052,7 +2063,7 @@ class RenderPutRoutesConfig(BaseModel):
     )
 
 
-class RenderPatchRouteConfig(BaseModel):
+class RenderPatchRouteConfig(RenderRequestBodyConfig):
     """Update redirect/rewrite rule priority."""
 
     operation: Literal["patch_route"] = Field(
@@ -2182,7 +2193,7 @@ class RenderListCustomDomainsConfig(BaseModel):
     )
 
 
-class RenderCreateCustomDomainConfig(BaseModel):
+class RenderCreateCustomDomainConfig(RenderRequestBodyConfig):
     """Add custom domain."""
 
     operation: Literal["create_custom_domain"] = Field(
@@ -2399,7 +2410,7 @@ class RenderRestartServiceConfig(BaseModel):
     )
 
 
-class RenderScaleServiceConfig(BaseModel):
+class RenderScaleServiceConfig(RenderRequestBodyConfig):
     """Scale instance count."""
 
     operation: Literal["scale_service"] = Field(
@@ -2433,7 +2444,7 @@ class RenderScaleServiceConfig(BaseModel):
     )
 
 
-class RenderAutoscaleServiceConfig(BaseModel):
+class RenderAutoscaleServiceConfig(RenderRequestBodyConfig):
     """Update autoscaling config."""
 
     operation: Literal["autoscale_service"] = Field(
@@ -2495,7 +2506,7 @@ class RenderDeleteAutoscalingConfigConfig(BaseModel):
     )
 
 
-class RenderPreviewServiceConfig(BaseModel):
+class RenderPreviewServiceConfig(RenderRequestBodyConfig):
     """Create service preview (image-backed)."""
 
     operation: Literal["preview_service"] = Field(
@@ -2603,7 +2614,7 @@ class RenderListJobConfig(BaseModel):
     )
 
 
-class RenderPostJobConfig(BaseModel):
+class RenderPostJobConfig(RenderRequestBodyConfig):
     """Create job."""
 
     operation: Literal["post_job"] = Field(
@@ -3049,7 +3060,7 @@ class RenderGetOwnerLogStreamConfig(BaseModel):
     )
 
 
-class RenderUpdateOwnerLogStreamConfig(BaseModel):
+class RenderUpdateOwnerLogStreamConfig(RenderRequestBodyConfig):
     """Update log stream."""
 
     operation: Literal["update_owner_log_stream"] = Field(
@@ -3160,7 +3171,7 @@ class RenderGetResourceLogStreamConfig(BaseModel):
     )
 
 
-class RenderUpdateResourceLogStreamConfig(BaseModel):
+class RenderUpdateResourceLogStreamConfig(RenderRequestBodyConfig):
     """Update log stream override."""
 
     operation: Literal["update_resource_log_stream"] = Field(
@@ -3223,7 +3234,7 @@ class RenderGetOwnerMetricsStreamConfig(BaseModel):
     )
 
 
-class RenderUpsertOwnerMetricsStreamConfig(BaseModel):
+class RenderUpsertOwnerMetricsStreamConfig(RenderRequestBodyConfig):
     """Create or update metrics stream."""
 
     operation: Literal["upsert_owner_metrics_stream"] = Field(
@@ -4189,7 +4200,7 @@ class RenderListKeyValueConfig(BaseModel):
     )
 
 
-class RenderCreateKeyValueConfig(BaseModel):
+class RenderCreateKeyValueConfig(RenderRequestBodyConfig):
     """Create Key Value instance."""
 
     operation: Literal["create_key_value"] = Field(
@@ -4224,7 +4235,7 @@ class RenderRetrieveKeyValueConfig(BaseModel):
     redis_id: str = Field(..., title="redisId", description="redisId path parameter.")
 
 
-class RenderUpdateKeyValueConfig(BaseModel):
+class RenderUpdateKeyValueConfig(RenderRequestBodyConfig):
     """Update Key Value instance."""
 
     operation: Literal["update_key_value"] = Field(
@@ -4382,7 +4393,7 @@ class RenderListPostgresConfig(BaseModel):
     )
 
 
-class RenderCreatePostgresConfig(BaseModel):
+class RenderCreatePostgresConfig(RenderRequestBodyConfig):
     """Create Postgres instance."""
 
     operation: Literal["create_postgres"] = Field(
@@ -4419,7 +4430,7 @@ class RenderRetrievePostgresConfig(BaseModel):
     )
 
 
-class RenderUpdatePostgresConfig(BaseModel):
+class RenderUpdatePostgresConfig(RenderRequestBodyConfig):
     """Update Postgres instance."""
 
     operation: Literal["update_postgres"] = Field(
@@ -4493,7 +4504,7 @@ class RenderRetrievePostgresRecoveryInfoConfig(BaseModel):
     )
 
 
-class RenderRecoverPostgresConfig(BaseModel):
+class RenderRecoverPostgresConfig(RenderRequestBodyConfig):
     """Trigger point-in-time recovery."""
 
     operation: Literal["recover_postgres"] = Field(
@@ -4635,7 +4646,7 @@ class RenderListPostgresUsersConfig(BaseModel):
     )
 
 
-class RenderCreatePostgresUserConfig(BaseModel):
+class RenderCreatePostgresUserConfig(RenderRequestBodyConfig):
     """Create PostgreSQL User."""
 
     operation: Literal["create_postgres_user"] = Field(
@@ -4800,7 +4811,7 @@ class RenderListProjectsConfig(BaseModel):
     )
 
 
-class RenderCreateProjectConfig(BaseModel):
+class RenderCreateProjectConfig(RenderRequestBodyConfig):
     """Create project."""
 
     operation: Literal["create_project"] = Field(
@@ -4837,7 +4848,7 @@ class RenderRetrieveProjectConfig(BaseModel):
     )
 
 
-class RenderUpdateProjectConfig(BaseModel):
+class RenderUpdateProjectConfig(RenderRequestBodyConfig):
     """Update project."""
 
     operation: Literal["update_project"] = Field(
@@ -4877,7 +4888,7 @@ class RenderDeleteProjectConfig(BaseModel):
     )
 
 
-class RenderCreateEnvironmentConfig(BaseModel):
+class RenderCreateEnvironmentConfig(RenderRequestBodyConfig):
     """Create environment."""
 
     operation: Literal["create_environment"] = Field(
@@ -4982,7 +4993,7 @@ class RenderRetrieveEnvironmentConfig(BaseModel):
     )
 
 
-class RenderUpdateEnvironmentConfig(BaseModel):
+class RenderUpdateEnvironmentConfig(RenderRequestBodyConfig):
     """Update environment."""
 
     operation: Literal["update_environment"] = Field(
@@ -5022,7 +5033,7 @@ class RenderDeleteEnvironmentConfig(BaseModel):
     )
 
 
-class RenderAddResourcesToEnvironmentConfig(BaseModel):
+class RenderAddResourcesToEnvironmentConfig(RenderRequestBodyConfig):
     """Add resources to environment."""
 
     operation: Literal["add_resources_to_environment"] = Field(
@@ -5144,7 +5155,7 @@ class RenderListEnvGroupsConfig(BaseModel):
     )
 
 
-class RenderCreateEnvGroupConfig(BaseModel):
+class RenderCreateEnvGroupConfig(RenderRequestBodyConfig):
     """Create environment group."""
 
     operation: Literal["create_env_group"] = Field(
@@ -5183,7 +5194,7 @@ class RenderRetrieveEnvGroupConfig(BaseModel):
     )
 
 
-class RenderUpdateEnvGroupConfig(BaseModel):
+class RenderUpdateEnvGroupConfig(RenderRequestBodyConfig):
     """Update environment group."""
 
     operation: Literal["update_env_group"] = Field(
@@ -5325,7 +5336,7 @@ class RenderRetrieveEnvGroupEnvVarConfig(BaseModel):
     )
 
 
-class RenderUpdateEnvGroupEnvVarConfig(BaseModel):
+class RenderUpdateEnvGroupEnvVarConfig(RenderRequestBodyConfig):
     """Add or update environment variable."""
 
     operation: Literal["update_env_group_env_var"] = Field(
@@ -5403,7 +5414,7 @@ class RenderRetrieveEnvGroupSecretFileConfig(BaseModel):
     )
 
 
-class RenderUpdateEnvGroupSecretFileConfig(BaseModel):
+class RenderUpdateEnvGroupSecretFileConfig(RenderRequestBodyConfig):
     """Add or update secret file."""
 
     operation: Literal["update_env_group_secret_file"] = Field(
@@ -5516,7 +5527,7 @@ class RenderRetrieveMaintenanceConfig(BaseModel):
     )
 
 
-class RenderUpdateMaintenanceConfig(BaseModel):
+class RenderUpdateMaintenanceConfig(RenderRequestBodyConfig):
     """Update maintenance run."""
 
     operation: Literal["update_maintenance"] = Field(
@@ -5556,7 +5567,7 @@ class RenderTriggerMaintenanceConfig(BaseModel):
     )
 
 
-class RenderCreateBuildSourceConfig(BaseModel):
+class RenderCreateBuildSourceConfig(RenderRequestBodyConfig):
     """Create a build source."""
 
     operation: Literal["create_build_source"] = Field(
@@ -5655,7 +5666,7 @@ class RenderGetBuildSourceConfig(BaseModel):
     )
 
 
-class RenderUpdateBuildSourceConfig(BaseModel):
+class RenderUpdateBuildSourceConfig(RenderRequestBodyConfig):
     """Update a build source."""
 
     operation: Literal["update_build_source"] = Field(
@@ -5766,7 +5777,7 @@ class RenderGetEnvVarsForBuildSourceConfig(BaseModel):
     )
 
 
-class RenderUpdateEnvVarsForBuildSourceConfig(BaseModel):
+class RenderUpdateEnvVarsForBuildSourceConfig(RenderRequestBodyConfig):
     """Update environment variables."""
 
     operation: Literal["update_env_vars_for_build_source"] = Field(
@@ -5817,7 +5828,7 @@ class RenderRetrieveBuildSourceEnvVarConfig(BaseModel):
     )
 
 
-class RenderUpdateBuildSourceEnvVarConfig(BaseModel):
+class RenderUpdateBuildSourceEnvVarConfig(RenderRequestBodyConfig):
     """Add or update environment variable."""
 
     operation: Literal["update_build_source_env_var"] = Field(
@@ -5898,7 +5909,7 @@ class RenderListSecretFilesForBuildSourceConfig(BaseModel):
     )
 
 
-class RenderUpdateSecretFilesForBuildSourceConfig(BaseModel):
+class RenderUpdateSecretFilesForBuildSourceConfig(RenderRequestBodyConfig):
     """Update secret files."""
 
     operation: Literal["update_secret_files_for_build_source"] = Field(
@@ -5949,7 +5960,7 @@ class RenderRetrieveBuildSourceSecretFileConfig(BaseModel):
     )
 
 
-class RenderAddOrUpdateBuildSourceSecretFileConfig(BaseModel):
+class RenderAddOrUpdateBuildSourceSecretFileConfig(RenderRequestBodyConfig):
     """Add or update secret file."""
 
     operation: Literal["add_or_update_build_source_secret_file"] = Field(
@@ -6056,7 +6067,7 @@ class RenderUnlinkEnvGroupFromBuildSourceConfig(BaseModel):
     )
 
 
-class RenderCreateWebhookConfig(BaseModel):
+class RenderCreateWebhookConfig(RenderRequestBodyConfig):
     """Create a webhook."""
 
     operation: Literal["create_webhook"] = Field(
@@ -6123,7 +6134,7 @@ class RenderRetrieveWebhookConfig(BaseModel):
     )
 
 
-class RenderUpdateWebhookConfig(BaseModel):
+class RenderUpdateWebhookConfig(RenderRequestBodyConfig):
     """Update a webhook."""
 
     operation: Literal["update_webhook"] = Field(
@@ -6248,7 +6259,7 @@ class RenderListWorkflowsConfig(BaseModel):
     )
 
 
-class RenderCreateWorkflowConfig(BaseModel):
+class RenderCreateWorkflowConfig(RenderRequestBodyConfig):
     """Create a workflow."""
 
     operation: Literal["create_workflow"] = Field(
@@ -6285,7 +6296,7 @@ class RenderGetWorkflowConfig(BaseModel):
     )
 
 
-class RenderUpdateWorkflowConfig(BaseModel):
+class RenderUpdateWorkflowConfig(RenderRequestBodyConfig):
     """Update workflow."""
 
     operation: Literal["update_workflow"] = Field(
@@ -6367,7 +6378,7 @@ class RenderListWorkflowVersionsConfig(BaseModel):
     )
 
 
-class RenderCreateWorkflowVersionConfig(BaseModel):
+class RenderCreateWorkflowVersionConfig(RenderRequestBodyConfig):
     """Deploy a workflow version."""
 
     operation: Literal["create_workflow_version"] = Field(
@@ -6521,7 +6532,7 @@ class RenderListTaskRunsConfig(BaseModel):
     )
 
 
-class RenderCreateTaskConfig(BaseModel):
+class RenderCreateTaskConfig(RenderRequestBodyConfig):
     """Run task."""
 
     operation: Literal["create_task"] = Field(
