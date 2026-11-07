@@ -1,0 +1,592 @@
+{
+  "$defs": {
+    "AppendTags": {
+      "additionalProperties": false,
+      "properties": {
+        "video_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Video",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "video_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "vdocipher_video"
+        },
+        "tags": {
+          "items": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 50,
+          "minItems": 1,
+          "title": "Tags to Append",
+          "type": "array"
+        },
+        "operation": {
+          "const": "append_video_tags",
+          "default": "append_video_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Append Video Tags",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "video_id",
+        "tags"
+      ],
+      "title": "AppendTags",
+      "type": "object"
+    },
+    "CreateUpload": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_upload_policy",
+          "default": "create_upload_policy",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Upload Metadata",
+          "x-display-name": "Create Video Upload Policy",
+          "x-is-trigger": false
+        },
+        "title": {
+          "description": "This call immediately creates an empty pre-upload asset. It does not upload media or complete encoding.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "New Video Title",
+          "type": "string"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional exact dashboard folder ID. Omit for the documented top-level root default. The node performs no file transfer or remote URL import.",
+          "title": "Folder ID"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateUpload",
+      "type": "object"
+    },
+    "DeleteVideo": {
+      "additionalProperties": false,
+      "properties": {
+        "video_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Video",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "video_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "vdocipher_video"
+        },
+        "operation": {
+          "const": "delete_video",
+          "default": "delete_video",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Videos",
+          "x-display-name": "Delete Video and Files",
+          "x-is-trigger": false
+        },
+        "expected_snapshot": {
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Expected Metadata Snapshot",
+          "type": "string"
+        },
+        "expected_title": {
+          "description": "Confirm the exact owned disposable asset. Deletion may leave cached playback briefly available; it is not immediate erasure.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Expected Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id",
+        "expected_snapshot",
+        "expected_title"
+      ],
+      "title": "DeleteVideo",
+      "type": "object"
+    },
+    "GetVideo": {
+      "additionalProperties": false,
+      "properties": {
+        "video_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Video",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "video_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "vdocipher_video"
+        },
+        "operation": {
+          "const": "get_video",
+          "default": "get_video",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Videos",
+          "x-display-name": "Get Video Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "GetVideo",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "List Tags",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "description": "The tag endpoint always returns up to 10 tags; a full page needs a further read.",
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag Search"
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "ListVideos": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_videos",
+          "default": "list_videos",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Videos",
+          "x-display-name": "List Videos",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "The current listing guide documents a maximum of 40; returns one page, newest first.",
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "ID or Title Search"
+        },
+        "tags": {
+          "description": "Case-sensitive AND filter. Commas inside tags are rejected.",
+          "items": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 50,
+          "title": "Required Tags",
+          "type": "array"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional exact folder from your dashboard; root denotes the top level. This filter does not prove account identity.",
+          "title": "Folder ID"
+        }
+      },
+      "title": "ListVideos",
+      "type": "object"
+    },
+    "Playback": {
+      "additionalProperties": false,
+      "properties": {
+        "video_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Video",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "video_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "vdocipher_video"
+        },
+        "operation": {
+          "const": "create_playback_authorization",
+          "default": "create_playback_authorization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Playback",
+          "x-display-name": "Create Playback Authorization",
+          "x-is-trigger": false
+        },
+        "ttl": {
+          "default": 300,
+          "description": "Local range: 5 minutes to 6 hours. This is validity before playback starts, not the playback duration. Advanced watermark/IP/offline controls are excluded.",
+          "maximum": 21600,
+          "minimum": 300,
+          "title": "OTP Validity Seconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "Playback",
+      "type": "object"
+    },
+    "ReplaceUpload": {
+      "additionalProperties": false,
+      "properties": {
+        "video_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Video",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "video_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "vdocipher_video"
+        },
+        "operation": {
+          "const": "create_replacement_upload_policy",
+          "default": "create_replacement_upload_policy",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Upload Metadata",
+          "x-display-name": "Create Replacement Upload Policy",
+          "x-is-trigger": false
+        },
+        "expected_snapshot": {
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Expected Metadata Snapshot",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id",
+        "expected_snapshot"
+      ],
+      "title": "ReplaceUpload",
+      "type": "object"
+    },
+    "SetTags": {
+      "additionalProperties": false,
+      "properties": {
+        "video_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Video",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "video_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "vdocipher_video"
+        },
+        "tags": {
+          "items": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 50,
+          "title": "Tags",
+          "type": "array"
+        },
+        "operation": {
+          "const": "set_video_tags",
+          "default": "set_video_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Replace Video Tags",
+          "x-is-trigger": false
+        },
+        "expected_snapshot": {
+          "description": "Replace all current tags. An empty array clears them. Local preflight only.",
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Expected Metadata Snapshot",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id",
+        "tags",
+        "expected_snapshot"
+      ],
+      "title": "SetTags",
+      "type": "object"
+    },
+    "UpdateVideo": {
+      "additionalProperties": false,
+      "properties": {
+        "video_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Video",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "video_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "vdocipher_video"
+        },
+        "operation": {
+          "const": "update_video_metadata",
+          "default": "update_video_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Videos",
+          "x-display-name": "Update Video Metadata",
+          "x-is-trigger": false
+        },
+        "title": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "New Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to preserve it. Use Clear Description for an explicit empty value.",
+          "title": "New Description"
+        },
+        "clear_description": {
+          "default": false,
+          "title": "Clear Description",
+          "type": "boolean"
+        },
+        "expected_snapshot": {
+          "description": "From Get Video. A local preflight condition, not an atomic provider write fence.",
+          "maxLength": 64,
+          "minLength": 64,
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Expected Metadata Snapshot",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id",
+        "title",
+        "expected_snapshot"
+      ],
+      "title": "UpdateVideo",
+      "type": "object"
+    },
+    "VdoCipherAPISecretCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "vdocipher_api_secret",
+          "default": "vdocipher_api_secret",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_secret": {
+          "description": "Supplied account API secret. Sent only as Authorization: Apisecret to the fixed v3 server; no OAuth, session mint or automatic rotation.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_secret"
+      ],
+      "title": "VdoCipher API Secret",
+      "type": "object",
+      "x-credential-url": "https://www.vdocipher.com/docs/server/authorization/"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "append_video_tags": "#/$defs/AppendTags",
+          "create_playback_authorization": "#/$defs/Playback",
+          "create_replacement_upload_policy": "#/$defs/ReplaceUpload",
+          "create_upload_policy": "#/$defs/CreateUpload",
+          "delete_video": "#/$defs/DeleteVideo",
+          "get_video": "#/$defs/GetVideo",
+          "list_tags": "#/$defs/ListTags",
+          "list_videos": "#/$defs/ListVideos",
+          "set_video_tags": "#/$defs/SetTags",
+          "update_video_metadata": "#/$defs/UpdateVideo"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListVideos"
+        },
+        {
+          "$ref": "#/$defs/GetVideo"
+        },
+        {
+          "$ref": "#/$defs/UpdateVideo"
+        },
+        {
+          "$ref": "#/$defs/DeleteVideo"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/AppendTags"
+        },
+        {
+          "$ref": "#/$defs/SetTags"
+        },
+        {
+          "$ref": "#/$defs/CreateUpload"
+        },
+        {
+          "$ref": "#/$defs/ReplaceUpload"
+        },
+        {
+          "$ref": "#/$defs/Playback"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VdoCipherAPISecretCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Vdocipher Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
