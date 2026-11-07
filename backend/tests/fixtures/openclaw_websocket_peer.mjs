@@ -2,15 +2,22 @@
 // both events (Node 24), and an explicit not-yet-ready gateway handshake.
 // Scenario 'gateway': refused until the fake gateway process says it is up.
 // Scenario 'silent': accepted, then never a frame, an error or a close.
-import { existsSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
 // NOCLICK_TEST_CLOCK_SCALE runs the bridge's deadlines (Date.now) that many
 // times faster than real time, so a 60s start window elapses in moments.
+// NOCLICK_TEST_CLOCK_JUMP_FILE moves the clock on by the milliseconds a test's
+// fake process writes there, at a point the test chooses rather than a rate.
 const scale = Number(process.env.NOCLICK_TEST_CLOCK_SCALE || 1);
+const jumpFile = process.env.NOCLICK_TEST_CLOCK_JUMP_FILE;
+const jump = () => (jumpFile && existsSync(jumpFile) ? Number(readFileSync(jumpFile, 'utf8')) : 0);
 const realNow = Date.now.bind(Date);
 const t0 = realNow();
-Date.now = () => t0 + (realNow() - t0) * scale;
+Date.now = () => t0 + (realNow() - t0) * scale + jump();
+// NOCLICK_TEST_ATTEMPTS_FILE gets a line per connection attempt (the jump in
+// effect then), so a fake process can wait for the bridge's next attempt.
+const attemptsFile = process.env.NOCLICK_TEST_ATTEMPTS_FILE;
 
 let attempts = 0;
 const scenario = process.env.NOCLICK_WS_SCENARIO;
@@ -18,6 +25,7 @@ globalThis.WebSocket = class extends EventTarget {
   constructor() {
     super();
     this.attempt = ++attempts;
+    if (attemptsFile) appendFileSync(attemptsFile, `${jump()}\n`);
     queueMicrotask(() => {
       if (scenario === 'silent') return;
       if (scenario === 'gateway' && !existsSync(process.env.NOCLICK_TEST_GATEWAY_UP)) {

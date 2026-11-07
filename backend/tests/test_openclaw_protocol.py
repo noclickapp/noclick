@@ -7,7 +7,7 @@ import shutil
 import sys
 
 import pytest
-from nodes.agent.openclaw_protocol import BRIDGE_READY_S, DENIED_TOOLS, OpenClawReceipts, bridge_env
+from nodes.agent.openclaw_protocol import BRIDGE_READY_S, DENIED_TOOLS, GATEWAY_START_S, OpenClawReceipts, bridge_env
 
 KEY = 'agent:main:test'
 
@@ -92,7 +92,21 @@ import os, pathlib, sys, time
 state = pathlib.Path(os.environ["FAKE_OPENCLAW_STATE"])
 with (state / "calls").open("a") as log:
     log.write(" ".join(sys.argv[1:]) + " skip_cron=" + os.environ.get("OPENCLAW_SKIP_CRON", "") + "\\n")
+def attempts(jump=None):
+    path = state / "attempts"
+    lines = path.read_text().splitlines() if path.exists() else []
+    return len(lines) if jump is None else lines.count(jump)
+def wait_for(done):
+    deadline = time.monotonic() + 15
+    while not done() and time.monotonic() < deadline:
+        time.sleep(0.02)
 if sys.argv[1] == "doctor":
+    jump = os.environ.get("FAKE_DOCTOR_JUMP_MS")
+    if jump:
+        # Past the bridge's whole start window, then two more tries of the gateway:
+        # it tries again only while the repair holds that window open.
+        (state / "jump").write_text(jump)
+        wait_for(lambda: attempts(jump) >= 2)
     time.sleep(float(os.environ.get("FAKE_DOCTOR_SECONDS", "0")))
     if not os.environ.get("FAKE_DOCTOR_CANNOT_FIX"):
         (state / "migrated").touch()
@@ -101,6 +115,10 @@ if not (state / "migrated").exists():
     sys.stderr.write("Gateway failed to start: Legacy workspace setup state requires migration "
                      "for /workspace; run openclaw doctor --fix.\\n")
     sys.exit(1)
+if os.environ.get("FAKE_GATEWAY_WAITS_FOR_ATTEMPT"):
+    # Up only after the bridge has tried it once more, which it does only on a fresh window.
+    seen = attempts()
+    wait_for(lambda: attempts() > seen)
 (state / "up").touch()
 time.sleep(30)
 '''
@@ -122,6 +140,7 @@ async def _bridge_over_fake_gateway(tmp_path, **extra_env):
         env={**os.environ, **bridge_env(), 'OPENCLAW_CONFIG_PATH': str(tmp_path / 'openclaw.json'), **extra_env,
              'NOCLICK_WS_SCENARIO': 'gateway', 'FAKE_OPENCLAW_STATE': str(tmp_path),
              'NOCLICK_TEST_GATEWAY_UP': str(tmp_path / 'up'),
+             'NOCLICK_TEST_CLOCK_JUMP_FILE': str(tmp_path / 'jump'), 'NOCLICK_TEST_ATTEMPTS_FILE': str(tmp_path / 'attempts'),
              'NOCLICK_OPENCLAW_COMMAND': json.dumps([str(binary), 'gateway', '--port', '1']),
              'NOCLICK_OPENCLAW_URL': 'ws://127.0.0.1:1', 'OPENCLAW_GATEWAY_TOKEN': 'test-only'},
         stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
@@ -185,9 +204,12 @@ async def test_bridge_repairs_at_most_once(tmp_path):
 async def test_bridge_gives_a_repair_its_own_time_then_a_fresh_start_window(tmp_path):
     """A large state migration outlasts the gateway's start window. The repair
     has a bound of its own, and the gateway gets a whole window again after it,
-    or the repair is cut short on every cold start and never finishes. The clock
-    here runs 100x: the 60s window passes during this 1.5s repair."""
-    proc, calls = await _bridge_over_fake_gateway(tmp_path, NOCLICK_TEST_CLOCK_SCALE='100', FAKE_DOCTOR_SECONDS='1.5')
+    or the repair is cut short on every cold start and never finishes. While the
+    repair runs, its fake moves the bridge's clock past two whole windows and waits
+    for two more connection attempts; the gateway after it comes up only once the
+    bridge has tried it again. Each step waits on the bridge, never on a rate."""
+    proc, calls = await _bridge_over_fake_gateway(
+        tmp_path, FAKE_DOCTOR_JUMP_MS=str(2 * GATEWAY_START_S * 1000 + 1000), FAKE_GATEWAY_WAITS_FOR_ATTEMPT='1')
     try:
         ready = json.loads(await asyncio.wait_for(proc.stdout.readline(), 15))
         assert ready['method'] == 'bridge/ready'
