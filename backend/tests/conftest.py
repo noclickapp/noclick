@@ -15,6 +15,8 @@ and test isolation, regardless of which base class they inherit from.
 import authlib.integrations.httpx_client.oauth2_client  # noqa: F401
 
 import pytest
+
+from nodes.tests.param_ids import pytest_make_parametrize_id  # noqa: F401
 import pytest_asyncio
 import asyncio
 import logging

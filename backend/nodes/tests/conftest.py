@@ -11,6 +11,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from nodes.tests.param_ids import pytest_make_parametrize_id  # noqa: F401
+
 
 # Node code resolves the DB via ``get_native_pool()``, which fail-fasts when the
 # pool was never initialized (in prod that happens in ``app_lifespan``). Reuse
