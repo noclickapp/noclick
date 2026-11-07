@@ -1,6 +1,5 @@
 """Postman API workflow actions for collections, workspaces, specs, and more."""
 
-import base64
 import json
 import re
 from typing import Annotated, Any, Literal, Optional, Union
@@ -10,6 +9,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 """Postman API action catalog from the official Postman API reference.
 
@@ -391,10 +391,11 @@ class PostmanNode(WorkflowNode):
                 return response.json()
             except ValueError as exc:
                 raise ValueError("Postman returned invalid JSON") from exc
-        return {
-            "content_type": content_type or "application/octet-stream",
-            "base64": base64.b64encode(response.content).decode("ascii"),
-        }
+        return BinaryOutput(
+            data=response.content,
+            content_type=content_type or "application/octet-stream",
+            filename="postman-response",
+        )
 
     async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(self.config, PostmanNodeConfig):

@@ -6,6 +6,7 @@ from unittest.mock import AsyncMock, patch
 import httpx
 import pytest
 
+from nodes.core.binary_output import BinaryOutput, resolve_binary_outputs
 from nodes.postman_node import (
     CONFIG_MODELS,
     PostmanApiKeyCredential,
@@ -126,7 +127,53 @@ async def test_provider_errors_redact_key_and_binary_response_is_bounded():
     with patch("nodes.postman_node.httpx.AsyncClient", side_effect=lambda **kw: original_client(
             transport=httpx.MockTransport(binary), **kw)):
         data = await PostmanNode._request(op, "/me", credential, {}, None)
-    assert data == {"content_type": "application/octet-stream", "base64": "YWJj"}
+    assert isinstance(data, BinaryOutput)
+    assert data.data == b"abc"
+    assert data.content_type == "application/octet-stream"
+    assert data.filename == "postman-response"
+
+    with patch("nodes.postman_node._MAX_RESPONSE_BYTES", 2), patch(
+        "nodes.postman_node.httpx.AsyncClient", side_effect=lambda **kw: original_client(
+            transport=httpx.MockTransport(binary), **kw)
+    ):
+        with pytest.raises(ValueError, match="Postman response exceeds the 20 MB workflow limit"):
+            await PostmanNode._request(op, "/me", credential, {}, None)
+
+
+@pytest.mark.parametrize("content_type", ["application/octet-stream", ""])
+@pytest.mark.asyncio
+async def test_binary_response_resolves_to_a_usable_file_reference(content_type):
+    original_client = httpx.AsyncClient
+
+    def binary(_request):
+        return httpx.Response(200, content=b"abc", headers={"content-type": content_type})
+
+    with patch("nodes.postman_node.httpx.AsyncClient", side_effect=lambda **kw: original_client(
+            transport=httpx.MockTransport(binary), **kw)):
+        output = await node_for("get_authenticated_user").execute({})
+    assert isinstance(output["data"], BinaryOutput)
+    assert output["data"].data == b"abc"
+    assert output["data"].content_type == "application/octet-stream"
+
+    with patch("nodes.core.binary_output.create_resource_from_bytes", new_callable=AsyncMock) as store:
+        store.return_value = {
+            "download_url": "https://assets.test/postman-response",
+            "mime_type": "application/octet-stream",
+            "name": "postman-response",
+            "size_bytes": 3,
+        }
+        resolved = await resolve_binary_outputs(output, user_id="user", workflow_id="workflow")
+    store.assert_awaited_once_with(
+        user_id="user", workflow_id="workflow", node_id=None, organization_id=None,
+        body=b"abc", content_type="application/octet-stream", filename="postman-response",
+    )
+    assert resolved == {
+        "status": "success", "operation": "get_authenticated_user",
+        "data": {
+            "url": "https://assets.test/postman-response",
+            "mime_type": "application/octet-stream", "name": "postman-response", "size_bytes": 3,
+        },
+    }
 
 
 def test_invalid_credential_region_rejected():
