@@ -16,9 +16,11 @@ a single mocked Bearer token.
 """
 
 import json
+from pathlib import Path
 
 import httpx
 import pytest
+from jsonschema import Draft202012Validator
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
 from nodes.sigma_node import (
@@ -132,6 +134,19 @@ async def _run(node, status_code=200, json_data=None):
 # ============================================================================
 # Token cache
 # ============================================================================
+
+
+def test_legacy_create_connection_config_matches_frontend_schema(credentials):
+    legacy = {"operation": "create_connection", "name": "Snowflake", "connection_type": "snowflake"}
+    saved = {"config": legacy, "credentials": credentials.model_dump()}
+    loaded = SigmaNodeConfig.model_validate(saved)
+    assert loaded.config.name == "Snowflake"
+    assert loaded.config.connection_type == "snowflake"
+    assert loaded.config.details == {}
+
+    schema_path = Path(__file__).resolve().parents[3] / "frontend/app/schemas/nodes/sigma.json"
+    schema = json.loads(schema_path.read_text())
+    Draft202012Validator(schema).validate(saved)
 
 
 @pytest.mark.asyncio
