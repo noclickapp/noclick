@@ -49,17 +49,20 @@ class RegistrationRefused(RuntimeError):
     """A registration the provider will refuse again until something changes:
     ``credential_rejected`` (the provider says the account's key is no good)
     lasts until the credential is saved again; ``held_elsewhere`` (a resource
-    with one address, already another workflow's) until that workflow's
-    registration ``holder_webhook_id`` lets go. Its message is the step's
-    ``trigger_error``. Anything else a registration raises is worth retrying."""
+    with one address, ``resource_id``, already another workflow's) until that
+    workflow's registration ``holder_webhook_id`` lets go of it. Its message is
+    the step's ``trigger_error``. Anything else a registration raises is worth
+    retrying."""
 
     CREDENTIAL_REJECTED = "credential_rejected"
     HELD_ELSEWHERE = "held_elsewhere"
 
-    def __init__(self, message: str, *, kind: str, holder_webhook_id: Optional[str] = None):
+    def __init__(self, message: str, *, kind: str, holder_webhook_id: Optional[str] = None,
+                 resource_id: Optional[str] = None):
         super().__init__(message)
         self.kind = kind
         self.holder_webhook_id = holder_webhook_id
+        self.resource_id = resource_id
 
 
 class WebhookTriggerConfigBase(BaseModel):
@@ -101,6 +104,31 @@ class ExternalWebhookTriggerMixin:
     Mix in *before* ``WorkflowNode`` so its ``cleanup_external_webhook`` and
     ``load_field_value`` take precedence in the MRO.
     """
+
+    @classmethod
+    def legacy_registration(cls, config: Dict[str, Any], row: Dict[str, Any], webhook_url: str) -> Optional[Dict[str, Any]]:
+        """A registration from before the row recorded them, which only the
+        config's mirrors still describe: the row's fields to stamp it with, or
+        None. The panel's loader and the reconciler both adopt it instead of
+        registering a second provider endpoint."""
+        secret_required = not (
+            getattr(cls, "webhook_signing_secret_is_async", False)
+            or getattr(cls, "webhook_signing_secret_not_issued", False)
+        )
+        url_changed = bool(config.get("webhook_url")) and config.get("webhook_url") != webhook_url
+        if not (
+            row.get("is_active")
+            and row.get("registered_operation") is None
+            and config.get("trigger_registered") is True
+            and (config.get("signing_secret") or not secret_required)
+            and config.get("external_webhook_id")
+            and not url_changed
+        ):
+            return None
+        fields = {"external_webhook_id": str(config["external_webhook_id"])}
+        if config.get("signing_secret"):
+            fields["secret"] = config["signing_secret"]
+        return fields
 
     @classmethod
     async def _register_external_webhook(
@@ -290,15 +318,7 @@ class ExternalWebhookTriggerMixin:
         # claims a live registration (pre-row-era). Adopt it into the row once
         # instead of re-registering (which would needlessly rotate the provider
         # secret for every pre-existing trigger).
-        legacy_registered = (
-            webhook_data.get("is_active")
-            and webhook_data.get("registered_operation") is None
-            and ctx.get("trigger_registered") is True
-            and (ctx.get("signing_secret") or not secret_required)
-            and ctx.get("external_webhook_id")
-            and not url_changed
-        )
-        if legacy_registered:
+        if cls.legacy_registration(ctx, webhook_data, values["webhook_url"]) is not None:
             try:
                 await WebhookManager.persist_registration_state(
                     pool, values["webhook_id"],

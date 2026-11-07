@@ -687,22 +687,27 @@ async def _cron_disabled_unrecorded_schedule(db, owner, node_type, config, provi
     return workflow_id
 
 
-async def _refused(db, owner, node_type, config, operation, *, kind, holder_live=True, saved_again=False, **_):
+async def _refused(db, owner, node_type, config, operation, *, kind, holder_live=True, holder_moved=False,
+                   saved_again=False, **_):
     """A registration the provider refused at these very settings."""
     workflow_id = await _workflow(db, owner, [_step(node_type, config)])
     credential_id = config["credentialIds"]["stripe_api"]
     await _row(db, workflow_id, operation=None, fingerprint=None, active=False)
     holder = None
+    bot = f"bot-{uuid.uuid4().hex[:8]}"  # a bot's id is unique, as Telegram's are
     if kind == "held_elsewhere":
         other = await _workflow(db, owner, [_step(node_type, config)])
         await _row(db, other, operation=operation, fingerprint="f", active=holder_live)
         holder = await db.fetchval("SELECT id FROM webhooks WHERE workflow_id = $1", other)
+        await db.execute("UPDATE webhooks SET external_webhook_id = $2 WHERE id = $1", holder,
+                         f"{bot}-another" if holder_moved else bot)
     await db.execute(
         "UPDATE webhooks SET refused_fingerprint = $2, refused_kind = $3, refused_holder_id = $4, "
+        "refused_resource = $6, "
         "refused_credential_version = (SELECT token_version FROM credentials WHERE id = $5), refused_at = now() "
         "WHERE workflow_id = $1",
         workflow_id, registration_fingerprint(StripeNode, operation, credential_id, {"label": LABEL, **config}),
-        kind, holder, credential_id)
+        kind, holder, credential_id, bot if kind == "held_elsewhere" else None)
     if saved_again:
         await db.execute("UPDATE credentials SET credential = $2 WHERE id = $1", credential_id,
                          get_encryption().encrypt_credential({"api_key": "sk_test_new"}))
@@ -723,6 +728,29 @@ async def _held_elsewhere(db, owner, node_type, config, operation, **_):
 
 async def _held_elsewhere_let_go(db, owner, node_type, config, operation, **_):
     return await _refused(db, owner, node_type, config, operation, kind="held_elsewhere", holder_live=False)
+
+
+async def _held_elsewhere_holder_moved_on(db, owner, node_type, config, operation, **_):
+    """The holder is still live, on another bot now: this one is free, though nothing of this step changed."""
+    return await _refused(db, owner, node_type, config, operation, kind="held_elsewhere", holder_moved=True)
+
+
+async def _stale_with_a_dead_credential(db, owner, node_type, config, operation, provider, **_):
+    workflow_id = await _stale(db, owner, node_type, config, operation, provider)
+    await db.execute("UPDATE credentials SET revoked_at = now() WHERE id = $1", config["credentialIds"]["stripe_api"])
+    return workflow_id
+
+
+async def _recorded_only_in_its_config(db, owner, node_type, config, operation, **_):
+    """Registered before rows recorded registrations: only the step's mirrors say the provider holds an endpoint."""
+    workflow_id = await _workflow(db, owner, [_step(node_type, config)])
+    await _row(db, workflow_id, operation=None, fingerprint=None)
+    url = await _row_url(db, workflow_id)
+    graph = await db.fetchval("SELECT workflow FROM workflows WHERE id = $1", workflow_id)
+    graph["nodes"][0]["config"].update({"trigger_registered": True, "external_webhook_id": "we_legacy",
+                                        "signing_secret": "whsec_legacy", "webhook_url": url})
+    await db.execute("UPDATE workflows SET workflow = $2::jsonb WHERE id = $1", workflow_id, graph)
+    return workflow_id
 
 
 async def _torn_down_row(db, owner, node_type, config, operation, **_):
@@ -856,6 +884,8 @@ SCENARIOS = [
     (_rejected_then_saved_again, STRIPE, ON_EVENT, "would_register", "registered", False),
     (_held_elsewhere, STRIPE, ON_EVENT, "provider_refused", "provider_refused", False),
     (_held_elsewhere_let_go, STRIPE, ON_EVENT, "would_register", "registered", False),
+    (_held_elsewhere_holder_moved_on, STRIPE, ON_EVENT, "would_register", "registered", False),
+    (_recorded_only_in_its_config, STRIPE, ON_EVENT, "would_adopt", "live", False),
     (_never_registered, SLACK, MENTION, "would_register", "registered", False),
     (_slack_rows, SLACK, MENTION, "live", "live", False),
     (_slack_moved_off, SLACK, MENTION, "would_deregister", "deregistered", False),
@@ -869,6 +899,10 @@ SCENARIOS = [
     (_cron_disabled_with_a_schedule, CRON, HOURLY, "would_deregister", "deregistered", True),
     (_cron_unrecorded_live, CRON, HOURLY, "would_adopt", "live", True),
     (_moved_off_its_trigger, STRIPE, ON_EVENT, "would_deregister", "deregistered", True),
+    # What registering would find for itself (a dead credential, unfinished setup) isn't asked of a step held back.
+    (_stale_with_a_dead_credential, STRIPE, ON_EVENT, "inactive", "inactive", True),
+    (_unfinished_setup, STRIPE, ON_EVENT, "inactive", "inactive", True),
+    (_recorded_only_in_its_config, STRIPE, ON_EVENT, "would_adopt", "live", True),
 ]
 
 

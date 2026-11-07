@@ -156,7 +156,8 @@ class PhoneNode(ExternalWebhookTriggerMixin, WorkflowNode):
         holder = await _number_holder(credential["number_sid"], except_webhook_id=webhook_id)
         if holder is not None:
             raise RegistrationRefused(already_answers(credential.get("phone_number"), holder),
-                                      kind=RegistrationRefused.HELD_ELSEWHERE, holder_webhook_id=holder.webhook_id)
+                                      kind=RegistrationRefused.HELD_ELSEWHERE, holder_webhook_id=holder.webhook_id,
+                                      resource_id=credential["number_sid"])
         await numbers.route(credential["number_sid"], webhook_id=webhook_id)
         return {"external_webhook_id": credential["number_sid"]}
 

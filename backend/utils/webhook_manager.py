@@ -391,7 +391,7 @@ async def _activation_refusal(pool, wf_uuid, node_id: str):
 
 _ROW_COLUMNS = (
     "id, is_active, external_webhook_id, registered_operation, registered_credential_id, registered_fingerprint, "
-    "refused_fingerprint, refused_kind, refused_holder_id, refused_credential_version"
+    "refused_fingerprint, refused_kind, refused_holder_id, refused_resource, refused_credential_version"
 )
 
 
@@ -447,6 +447,7 @@ REASONS = {
     "taken_down": "its registration was taken down",
     "settings_changed": "its settings changed since it registered",
     "unrecorded": "it's live, and the record of it predates what's kept now",
+    "recorded_in_config": "it's live, and only its settings' copy records it, from before the record was kept",
     "seen_live": "the scheduler or provider holds it as its settings ask, and the record lacks it",
     "seen_other": "the scheduler or provider holds something its settings don't ask for",
     "no_credential": "no usable account is attached",
@@ -529,9 +530,17 @@ async def _refused_before(pool, row, fingerprint: str, credential_id: Optional[s
                 "SELECT token_version FROM credentials WHERE id::text = $1", str(credential_id or ""))
             return kind if version is not None and version == row["refused_credential_version"] else None
         if kind == RegistrationRefused.HELD_ELSEWHERE:
-            live = await conn.fetchval(
-                "SELECT is_active FROM webhooks WHERE id = $1", row["refused_holder_id"])
-            return kind if live else None
+            # Still held: the holder is live and hasn't moved to another resource, or another live
+            # registration has the resource now.
+            held = await conn.fetchval(
+                """
+                SELECT EXISTS (SELECT 1 FROM webhooks WHERE id = $1 AND is_active
+                               AND (external_webhook_id IS NULL OR $2::text IS NULL OR external_webhook_id = $2))
+                    OR ($2::text IS NOT NULL AND EXISTS (
+                        SELECT 1 FROM webhooks WHERE is_active AND external_webhook_id = $2 AND id <> $3))
+                """,
+                row["refused_holder_id"], row.get("refused_resource"), row["id"])
+            return kind if held else None
     return None
 
 
@@ -542,11 +551,13 @@ async def _record_refusal(pool, webhook_id, refusal, fingerprint: str,
         await conn.execute(
             """
             UPDATE webhooks
-            SET refused_fingerprint = $2, refused_kind = $3, refused_holder_id = $4::uuid, refused_at = now(),
+            SET refused_fingerprint = $2, refused_kind = $3, refused_holder_id = $4::uuid, refused_resource = $6,
+                refused_at = now(),
                 refused_credential_version = (SELECT token_version FROM credentials WHERE id::text = $5)
             WHERE id = $1
             """,
             UUID(str(webhook_id)), fingerprint, refusal.kind, refusal.holder_webhook_id, str(credential_id or ""),
+            refusal.resource_id,
         )
 
 
@@ -558,6 +569,17 @@ async def _observed_schedules(wf_uuid, node_id: str) -> Optional[List[Dict[str, 
     if not isinstance(listed, list):
         return None
     return [s for s in listed if s.get("node_id") == node_id and s.get("enabled") in (1, True)]
+
+
+def _may_have_schedules(row: Optional[Dict[str, Any]], node_config: Dict[str, Any]) -> bool:
+    """Whether the row or a mirror says a step may hold schedules: a teardown with
+    nothing to say so stays a no-op, with no scheduler call and no mirror written."""
+    return bool(
+        (row and row.get("registered_operation"))
+        or node_config.get("schedule_id")
+        or node_config.get("next_run")
+        or node_config.get("trigger_registered")
+    )
 
 
 def _schedules_match(schedules: List[Dict[str, Any]], spec, row_id) -> bool:
@@ -851,7 +873,7 @@ class WebhookManager:
                     registered_credential_id = $4,
                     registered_fingerprint = $5,
                     refused_fingerprint = NULL, refused_kind = NULL, refused_holder_id = NULL,
-                    refused_credential_version = NULL, refused_at = NULL,
+                    refused_resource = NULL, refused_credential_version = NULL, refused_at = NULL,
                     updated_at = now()
                 WHERE id = $6
                 """,
@@ -1801,6 +1823,14 @@ class WebhookManager:
             and not (is_mixin and node_class.webhook_registration_stale(node_config, dict(row)))
         ):
             return Decision("adopt", "unrecorded", fingerprint=fingerprint, held=True)
+        # Older still: a row from before registrations were recorded at all, which only the config's mirrors
+        # describe. Registering would add a second provider endpoint beside the live one.
+        legacy = is_mixin and row is not None and node_class.legacy_registration(
+            node_config, row, get_webhook_url(str(row["id"])))
+        if legacy:
+            return Decision("adopt", "recorded_in_config", fingerprint=fingerprint, held=True, stamp={
+                "registered_operation": current_op, "registered_credential_id": credential_id, **legacy,
+            })
 
         refused = await _refused_before(pool, row, fingerprint, credential_id)
         if refused:
@@ -1820,7 +1850,8 @@ class WebhookManager:
             })
         held = recorded
 
-        if predict:
+        # A sweep holding back an inactive workflow does nothing here, whatever registering would find.
+        if predict and not hold_starts:
             if not await credential_usable(pool, owner_id, credential_id):
                 return Decision("unregistered", "no_credential", fingerprint=fingerprint, held=held)
             refusal = await _activation_refusal(pool, wf_uuid, node_id)
@@ -2012,11 +2043,12 @@ class WebhookManager:
             user_id=owner_id,
         ) and not _failure_on_record(node_config):
             decision = Decision("live", "converged", held=True)
-        elif not credential_id or (plan_only and not await credential_usable(pool, owner_id, credential_id)):
+        elif not credential_id or (plan_only and not hold_starts
+                                   and not await credential_usable(pool, owner_id, credential_id)):
             # Fan-out doesn't need the credential, so a live registration keeps
             # working through provider blips and credential detaches: never torn down for this.
             decision = Decision("unregistered", "no_credential")
-        elif plan_only and (refusal := await _activation_refusal(pool, wf_uuid, node_id)) is not None:
+        elif plan_only and not hold_starts and (refusal := await _activation_refusal(pool, wf_uuid, node_id)) is not None:
             # Registering checks the setup itself (below); a dry run reads ahead.
             decision = Decision("refused", "setup_unfinished", held=bool(rows), refusal=refusal)
         else:
@@ -2243,8 +2275,9 @@ class WebhookManager:
                 pool, user_id or owner_id, wf_uuid, node_id
             )
         except WorkflowNotReadyError as refused:
-            # Refused between deciding and registering: as above.
-            if scheduler:
+            # Refused between deciding and registering: as above, only where a schedule may exist (a trigger
+            # never registered gets no prune and no mirror).
+            if scheduler and (decision.held or _may_have_schedules(row, node_config)):
                 await WebhookManager._unschedule(
                     pool, wf_uuid, node_id, node=node, node_config=node_config, row=row, paused=False,
                     error=str(refused), decision=decision,
@@ -2333,12 +2366,8 @@ class WebhookManager:
             # Only when something says schedules may exist, so sweeps over
             # converged steps stay cheap: the row, a mirror, or, for a step with
             # a row (an address a schedule could fire at), the scheduler.
-            may_have = bool(
-                (row and row["registered_operation"])
-                or node_config.get("schedule_id")
-                or node_config.get("next_run")
-                or node_config.get("trigger_registered")
-            ) or (scheduler and observe and row is not None and bool(await _observed_schedules(wf_uuid, node_id)))
+            may_have = _may_have_schedules(row, node_config) or (
+                scheduler and observe and row is not None and bool(await _observed_schedules(wf_uuid, node_id)))
             return Decision("deregister" if may_have else "noop", reason, held=may_have)
 
         scope = node_class.schedule_poll_scope(node_config)
@@ -2359,14 +2388,9 @@ class WebhookManager:
             held = bool(schedules)
 
         # Registering checks the setup itself (get_or_create_webhook); a dry run reads ahead.
-        refusal = await _activation_refusal(pool, wf_uuid, node_id) if predict else None
+        refusal = await _activation_refusal(pool, wf_uuid, node_id) if predict and not hold_starts else None
         if refusal is not None:
-            may_have = held or bool(
-                (row and row["registered_operation"])
-                or node_config.get("schedule_id")
-                or node_config.get("next_run")
-                or node_config.get("trigger_registered")
-            )
+            may_have = held or _may_have_schedules(row, node_config)
             return Decision("refused", "setup_unfinished", fingerprint=fingerprint, held=may_have, refusal=refusal)
         if schedules:
             reason = "seen_other"

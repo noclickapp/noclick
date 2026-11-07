@@ -2478,7 +2478,7 @@ class TelegramNode(ExternalWebhookTriggerMixin, WorkflowNode):
             raise RegistrationRefused(
                 f"This bot already sends its messages to {holder}. Telegram gives a bot one webhook, so it "
                 "wakes one trigger: remove that trigger first, or make another bot with @BotFather for this one.",
-                kind=RegistrationRefused.HELD_ELSEWHERE, holder_webhook_id=holder.webhook_id,
+                kind=RegistrationRefused.HELD_ELSEWHERE, holder_webhook_id=holder.webhook_id, resource_id=bot,
             )
         secret = secrets.token_urlsafe(32)
         result = await set_telegram_webhook(token, webhook_url, secret)

@@ -73,6 +73,7 @@ async def _reconcile(
     register_active=True,
     scheduler_enabled=True,
     node_present=True,
+    webhook_error=None,
 ):
     world = World()
 
@@ -118,7 +119,7 @@ async def _reconcile(
         patch("utils.cron_scheduler_client.is_cron_scheduler_enabled",
               return_value=scheduler_enabled),
         patch.object(WebhookManager, "get_or_create_webhook",
-                     AsyncMock(return_value=webhook)),
+                     AsyncMock(return_value=webhook, side_effect=webhook_error)),
         patch.object(WebhookManager, "persist_registration_state", fake_persist),
         patch.object(WebhookManager, "deactivate_webhook", fake_deactivate),
         patch.object(WebhookManager, "merge_node_config_patch", fake_patch),
@@ -625,3 +626,33 @@ async def test_disable_toggle_is_a_registration_field():
     on = cls.registration_fingerprint_fields(COMPLETE_FORMS_CONFIG)
     off = cls.registration_fingerprint_fields({**COMPLETE_FORMS_CONFIG, "disabled": True})
     assert on != off and off["disabled"] is True
+
+
+async def test_the_save_paths_refusal_prunes_only_what_may_exist():
+    """A save while another step lacks setup: the refusal reaches the caller, a trigger that never registered gets
+    no schedule prune (a scheduler round trip on the save) and no mirror (an edit of the workflow), and one that did
+    is taken down and says why."""
+    from utils.workflow_readiness import WorkflowNotReadyError
+
+    refused = WorkflowNotReadyError("Finish setup before activation: Agent: Model")
+    worlds = []
+    original = World.__init__
+
+    def keep(self):
+        original(self)
+        worlds.append(self)
+
+    with patch.object(World, "__init__", keep):
+        with pytest.raises(WorkflowNotReadyError):
+            await _reconcile("trigger-cron", {"schedules": [{"frequency": "hours", "interval": 1}]},
+                             webhook_error=refused)
+        never = worlds[-1]
+        with pytest.raises(WorkflowNotReadyError):
+            await _reconcile("trigger-cron", {"schedules": [{"frequency": "hours", "interval": 1}]},
+                             row=_row(fingerprint="sched:old", registered_operation="__schedule__"),
+                             webhook_error=refused)
+        registered_before = worlds[-1]
+
+    assert never.pruned == [] and never.patches == [], "never registered: nothing to prune or say"
+    assert registered_before.pruned and registered_before.patches[0]["trigger_error"] == str(refused)
+

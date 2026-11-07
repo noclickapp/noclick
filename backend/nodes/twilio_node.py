@@ -1851,7 +1851,8 @@ class TwilioNode(ExternalWebhookTriggerMixin, WorkflowNode):
             holder = await number_holder(phone_sid, except_webhook_id=webhook_id)
             if holder is not None:
                 raise RegistrationRefused(already_answers(phone_sid, holder),
-                                          kind=RegistrationRefused.HELD_ELSEWHERE, holder_webhook_id=holder.webhook_id)
+                                          kind=RegistrationRefused.HELD_ELSEWHERE, holder_webhook_id=holder.webhook_id,
+                                          resource_id=phone_sid)
             await set_twilio_voice_webhook(account_sid, auth_token, phone_sid, calls.receiver_url(webhook_id))
             return {"external_webhook_id": phone_sid, "signing_secret": auth_token}
         await set_twilio_sms_webhook(account_sid, auth_token, phone_sid, webhook_url)

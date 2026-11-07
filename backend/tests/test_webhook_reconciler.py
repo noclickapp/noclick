@@ -14,6 +14,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
+from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 from utils.webhook_manager import WebhookManager, registration_fingerprint
 
 pytestmark = pytest.mark.asyncio
@@ -36,6 +37,9 @@ class _FakeTrigger:
         # stale iff a mirror exists and disagrees with the config field.
         mirror = (config or {}).get("registered_repository")
         return mirror is not None and mirror != (config or {}).get("repository")
+
+    # The mixin's own rule for a registration only the config's mirrors describe.
+    legacy_registration = classmethod(ExternalWebhookTriggerMixin.legacy_registration.__func__)
 
 
 class World:
