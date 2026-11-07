@@ -102,12 +102,15 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Stripe
     'StripeOAuthCredential': 'stripe_oauth',
     'StripeApiKeyCredential': 'stripe_api_key',
+    'CyclrOAuthTokenCredential': 'cyclr_oauth_token',
     'SlingUserTokenCredential': 'sling_user_token',
     'ClinikoApiKeyCredential': 'cliniko_api_key',
 
     // Cyclr accepts a supplied console token with a saved account and region.
     // Account-level DataOnDemand tokens have a different documented purpose.
     'CyclrOAuthTokenCredential': 'cyclr_oauth_token',
+    'SlingUserTokenCredential': 'sling_user_token',
+    'ClinikoApiKeyCredential': 'cliniko_api_key',
 
     // GitHub
     'GithubPATCredential': 'github_pat',
