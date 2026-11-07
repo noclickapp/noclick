@@ -10,6 +10,36 @@
   "generatedMonograms": [],
   "reviewedCustomAssets": [
     {
+      "path": "frontend/public/icons/linkwarden.png.provenance.json",
+      "source": "https://docs.linkwarden.app/img/linkwarden_light.png (integration-authored provenance metadata for the official wordmark)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "4c56f3b5e5d352176e6201c514c847bc51afe7b843879aa6652a185196c5e626"
+    },
+    {
+      "path": "frontend/public/icons/linkwarden-brand-vector.svg",
+      "source": "https://linkwarden.app (Linkwarden published vector artwork; source recorded in commit 845edf9c9)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "7e7e9bab70b67b2a40b7211640234d8b0302c2f1a9606eaffb9405ad60c5abff"
+    },
+    {
+      "path": "frontend/public/icons/linkwarden-brand.png",
+      "source": "https://linkwarden.app (Linkwarden published brand artwork; source recorded in commit 3874580f5)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "41e7a258d7c029c821e7bf80309dfb4d2d1b98be234f71823a7fc2203831edbd"
+    },
+    {
+      "path": "frontend/public/icons/linkwarden.png",
+      "source": "https://docs.linkwarden.app/img/linkwarden_light.png (unchanged official navbar wordmark)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "0f906f619421c6b7097d5d8dceb1e44e29e3bcfadad38c3e9137c143a4a625e1"
+    },
+    {
+      "path": "frontend/public/icons/ringcentral.svg",
+      "source": "https://www.ringcentral.com/whyringcentral/pressimages.html → https://assets.ringcentral.com/us/brand-library/logos/ringcentral-logo.zip (SVG/RingCentral logo fullcolor.svg; unmodified)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "2d5e096c5c3a2caaa2504f13e3b91680a98434a60416cdb433b45830b619a9d7"
+    },
+    {
       "path": "frontend/public/icons/ringcentral.svg",
       "source": "https://www.ringcentral.com/whyringcentral/pressimages.html → https://assets.ringcentral.com/us/brand-library/logos/ringcentral-logo.zip (SVG/RingCentral logo fullcolor.svg; unmodified)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
