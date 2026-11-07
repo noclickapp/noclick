@@ -1,0 +1,989 @@
+{
+  "get_account": {
+    "config": {},
+    "method": "GET",
+    "path": "/account",
+    "body": null,
+    "response": {
+      "created_at": "2026-03-13T07:15:36.216Z",
+      "uid": "6kgYGrJEVk2m5KX1W3",
+      "plan": "Bannerbear Scale 10K",
+      "quota": {
+        "max": 10000,
+        "current": 4,
+        "remaining": 9996
+      },
+      "workspace": "My Workspace",
+      "api_key": {
+        "name": "Production Key",
+        "scopes": [
+          "images:write",
+          "image_templates:read"
+        ],
+        "allowed_origins": [
+          "https://mysite.com"
+        ]
+      }
+    },
+    "status_code": 200,
+    "source": "https://developers.bannerbear.com/v5/#account",
+    "input_source": "https://developers.bannerbear.com/v5/#account"
+  },
+  "list_images": {
+    "config": {},
+    "method": "GET",
+    "path": "/images",
+    "body": null,
+    "response": [
+      {
+        "uid": "672PdQlVyD1ynEKGOL",
+        "status": "completed",
+        "template": "6EZ9nQX0lzpWwqAgzB",
+        "files": {
+          "png": "https://images.bannerbear.com/V5/zNXJedjEbo2K1wyMmB/672PdQlVyD1ynEKGOL/80424300-804c-4799-bb59-c7ec814fe720.png",
+          "pdf": "https://images.bannerbear.com/V5/zNXJedjEbo2K1wyMmB/672PdQlVyD1ynEKGOL/80424300-804c-4799-bb59-c7ec814fe720.pdf"
+        },
+        "metadata": null,
+        "self": "https://api.bannerbear.com/v5/images/672PdQlVyD1ynEKGOL",
+        "created_at": "2026-03-15T04:51:17.550Z",
+        "completed_at": "2026-03-15T04:51:20.574Z"
+      }
+    ],
+    "status_code": 200,
+    "source": "https://developers.bannerbear.com/v5/#image-object",
+    "input_source": "https://developers.bannerbear.com/v5/#image-object"
+  },
+  "get_image": {
+    "config": {
+      "uid": "672PdQlVyD1ynEKGOL"
+    },
+    "method": "GET",
+    "path": "/images/{uid}",
+    "body": null,
+    "response": {
+      "uid": "672PdQlVyD1ynEKGOL",
+      "status": "completed",
+      "template": "6EZ9nQX0lzpWwqAgzB",
+      "files": {
+        "png": "https://images.bannerbear.com/V5/zNXJedjEbo2K1wyMmB/672PdQlVyD1ynEKGOL/80424300-804c-4799-bb59-c7ec814fe720.png",
+        "pdf": "https://images.bannerbear.com/V5/zNXJedjEbo2K1wyMmB/672PdQlVyD1ynEKGOL/80424300-804c-4799-bb59-c7ec814fe720.pdf"
+      },
+      "metadata": null,
+      "self": "https://api.bannerbear.com/v5/images/672PdQlVyD1ynEKGOL",
+      "created_at": "2026-03-15T04:51:17.550Z",
+      "completed_at": "2026-03-15T04:51:20.574Z"
+    },
+    "status_code": 200,
+    "source": "https://developers.bannerbear.com/v5/#image-object",
+    "input_source": "https://developers.bannerbear.com/v5/#image-object"
+  },
+  "create_image": {
+    "config": {
+      "template": "abc123def456ghij",
+      "formats": [
+        "png",
+        "jpg",
+        "pdf",
+        "webp"
+      ],
+      "scale": 2,
+      "metadata": "campaign_id:12345",
+      "modifications": {
+        "template": {
+          "width": 1200,
+          "height": 630,
+          "transparent": true
+        },
+        "objects": [
+          {
+            "name": "title",
+            "text": "Hello World",
+            "color": "#FF5733"
+          },
+          {
+            "name": "avatar",
+            "background-image": "https://example.com/photo.jpg"
+          },
+          {
+            "name": "background",
+            "background-color": "#1a1a2e"
+          }
+        ]
+      }
+    },
+    "method": "POST",
+    "path": "/images",
+    "body": {
+      "template": "abc123def456ghij",
+      "formats": [
+        "png",
+        "jpg",
+        "pdf",
+        "webp"
+      ],
+      "scale": 2,
+      "metadata": "campaign_id:12345",
+      "modifications": {
+        "template": {
+          "width": 1200,
+          "height": 630,
+          "transparent": true
+        },
+        "objects": [
+          {
+            "name": "title",
+            "text": "Hello World",
+            "color": "#FF5733"
+          },
+          {
+            "name": "avatar",
+            "background-image": "https://example.com/photo.jpg"
+          },
+          {
+            "name": "background",
+            "background-color": "#1a1a2e"
+          }
+        ]
+      }
+    },
+    "response": {
+      "uid": "672PdQlVyD1ynEKGOL",
+      "status": "completed",
+      "template": "6EZ9nQX0lzpWwqAgzB",
+      "files": {
+        "png": "https://images.bannerbear.com/V5/zNXJedjEbo2K1wyMmB/672PdQlVyD1ynEKGOL/80424300-804c-4799-bb59-c7ec814fe720.png",
+        "pdf": "https://images.bannerbear.com/V5/zNXJedjEbo2K1wyMmB/672PdQlVyD1ynEKGOL/80424300-804c-4799-bb59-c7ec814fe720.pdf"
+      },
+      "metadata": null,
+      "self": "https://api.bannerbear.com/v5/images/672PdQlVyD1ynEKGOL",
+      "created_at": "2026-03-15T04:51:17.550Z",
+      "completed_at": "2026-03-15T04:51:20.574Z"
+    },
+    "status_code": 202,
+    "source": "https://developers.bannerbear.com/v5/#image-object",
+    "input_source": "https://developers.bannerbear.com/v5/#post-v5-images"
+  },
+  "list_animations": {
+    "config": {},
+    "method": "GET",
+    "path": "/animations",
+    "body": null,
+    "response": [
+      {
+        "uid": "yD1ynEKGOL672PdQlV",
+        "status": "completed",
+        "template": "6EZ9nQX0lzpWwqAgzB",
+        "files": {
+          "mp4": "https://animations.bannerbear.com/V5/yD1ynEKGOL672PdQlV/output.mp4"
+        },
+        "progress": 100,
+        "metadata": null,
+        "error": null,
+        "self": "https://api.bannerbear.com/v5/animations/yD1ynEKGOL672PdQlV",
+        "created_at": "2026-08-16T05:30:19.568Z",
+        "completed_at": "2026-08-16T05:30:26.104Z"
+      }
+    ],
+    "status_code": 200,
+    "source": "https://developers.bannerbear.com/v5/#animation-object",
+    "input_source": "https://developers.bannerbear.com/v5/#animation-object"
+  },
+  "get_animation": {
+    "config": {
+      "uid": "yD1ynEKGOL672PdQlV"
+    },
+    "method": "GET",
+    "path": "/animations/{uid}",
+    "body": null,
+    "response": {
+      "uid": "yD1ynEKGOL672PdQlV",
+      "status": "completed",
+      "template": "6EZ9nQX0lzpWwqAgzB",
+      "files": {
+        "mp4": "https://animations.bannerbear.com/V5/yD1ynEKGOL672PdQlV/output.mp4"
+      },
+      "progress": 100,
+      "metadata": null,
+      "error": null,
+      "self": "https://api.bannerbear.com/v5/animations/yD1ynEKGOL672PdQlV",
+      "created_at": "2026-08-16T05:30:19.568Z",
+      "completed_at": "2026-08-16T05:30:26.104Z"
+    },
+    "status_code": 200,
+    "source": "https://developers.bannerbear.com/v5/#animation-object",
+    "input_source": "https://developers.bannerbear.com/v5/#animation-object"
+  },
+  "create_animation": {
+    "config": {
+      "template": "6EZ9nQX0lzpWwqAgzB",
+      "modifications": {
+        "objects": [
+          {
+            "id": "obj_001",
+            "name": "logo",
+            "type": "image",
+            "left": 340,
+            "top": 340,
+            "width": 400,
+            "height": 400
+          }
+        ]
+      },
+      "metadata": "campaign_id:12345"
+    },
+    "method": "POST",
+    "path": "/animations",
+    "body": {
+      "template": "6EZ9nQX0lzpWwqAgzB",
+      "modifications": {
+        "objects": [
+          {
+            "id": "obj_001",
+            "name": "logo",
+            "type": "image",
+            "left": 340,
+            "top": 340,
+            "width": 400,
+            "height": 400
+          }
+        ]
+      },
+      "metadata": "campaign_id:12345"
+    },
+    "response": {
+      "uid": "yD1ynEKGOL672PdQlV",
+      "status": "completed",
+      "template": "6EZ9nQX0lzpWwqAgzB",
+      "files": {
+        "mp4": "https://animations.bannerbear.com/V5/yD1ynEKGOL672PdQlV/output.mp4"
+      },
+      "progress": 100,
+      "metadata": null,
+      "error": null,
+      "self": "https://api.bannerbear.com/v5/animations/yD1ynEKGOL672PdQlV",
+      "created_at": "2026-08-16T05:30:19.568Z",
+      "completed_at": "2026-08-16T05:30:26.104Z"
+    },
+    "status_code": 202,
+    "source": "https://developers.bannerbear.com/v5/#animation-object",
+    "input_source": "https://developers.bannerbear.com/v5/#animation_template-object"
+  },
+  "list_batches": {
+    "config": {},
+    "method": "GET",
+    "path": "/batches",
+    "body": null,
+    "response": [
+      {
+        "uid": "8bKmPqR3xYwZ5nAJeL",
+        "type": "images",
+        "status": "completed",
+        "total": 3,
+        "counts": {
+          "completed": 3,
+          "failed": 0,
+          "invalid": 0,
+          "pending": 0
+        },
+        "errors": [],
+        "items": [
+          {
+            "uid": "672PdQlVyD1ynEKGOL",
+            "status": "completed",
+            "template": "6EZ9nQX0lzpWwqAgzB",
+            "files": {
+              "png": "https://images.bannerbear.com/..."
+            },
+            "metadata": null,
+            "error": null,
+            "self": "https://api.bannerbear.com/v5/images/672PdQlVyD1ynEKGOL",
+            "created_at": "2026-03-15T04:51:17.550Z",
+            "completed_at": "2026-03-15T04:51:20.574Z"
+          }
+        ],
+        "self": "https://api.bannerbear.com/v5/batches/8bKmPqR3xYwZ5nAJeL",
+        "created_at": "2026-03-15T04:51:15.000Z",
+        "completed_at": "2026-03-15T04:51:25.000Z"
+      }
+    ],
+    "status_code": 200,
+    "source": "https://developers.bannerbear.com/v5/#batch-object",
+    "input_source": "https://developers.bannerbear.com/v5/#batch-object"
+  },
+  "get_batch": {
+    "config": {
+      "uid": "8bKmPqR3xYwZ5nAJeL"
+    },
+    "method": "GET",
+    "path": "/batches/{uid}",
+    "body": null,
+    "response": {
+      "uid": "8bKmPqR3xYwZ5nAJeL",
+      "type": "images",
+      "status": "completed",
+      "total": 3,
+      "counts": {
+        "completed": 3,
+        "failed": 0,
+        "invalid": 0,
+        "pending": 0
+      },
+      "errors": [],
+      "items": [
+        {
+          "uid": "672PdQlVyD1ynEKGOL",
+          "status": "completed",
+          "template": "6EZ9nQX0lzpWwqAgzB",
+          "files": {
+            "png": "https://images.bannerbear.com/..."
+          },
+          "metadata": null,
+          "error": null,
+          "self": "https://api.bannerbear.com/v5/images/672PdQlVyD1ynEKGOL",
+          "created_at": "2026-03-15T04:51:17.550Z",
+          "completed_at": "2026-03-15T04:51:20.574Z"
+        }
+      ],
+      "self": "https://api.bannerbear.com/v5/batches/8bKmPqR3xYwZ5nAJeL",
+      "created_at": "2026-03-15T04:51:15.000Z",
+      "completed_at": "2026-03-15T04:51:25.000Z"
+    },
+    "status_code": 200,
+    "source": "https://developers.bannerbear.com/v5/#batch-object",
+    "input_source": "https://developers.bannerbear.com/v5/#batch-object"
+  },
+  "create_batch": {
+    "config": {
+      "type": "images",
+      "items": [
+        {
+          "template": "abc123def456ghij",
+          "modifications": {
+            "objects": [
+              {
+                "name": "title",
+                "text": "Image 1"
+              }
+            ]
+          }
+        },
+        {
+          "template": "abc123def456ghij",
+          "modifications": {
+            "objects": [
+              {
+                "name": "title",
+                "text": "Image 2"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "method": "POST",
+    "path": "/batches",
+    "body": {
+      "type": "images",
+      "items": [
+        {
+          "template": "abc123def456ghij",
+          "modifications": {
+            "objects": [
+              {
+                "name": "title",
+                "text": "Image 1"
+              }
+            ]
+          }
+        },
+        {
+          "template": "abc123def456ghij",
+          "modifications": {
+            "objects": [
+              {
+                "name": "title",
+                "text": "Image 2"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "response": {
+      "uid": "8bKmPqR3xYwZ5nAJeL",
+      "type": "images",
+      "status": "completed",
+      "total": 3,
+      "counts": {
+        "completed": 3,
+        "failed": 0,
+        "invalid": 0,
+        "pending": 0
+      },
+      "errors": [],
+      "items": [
+        {
+          "uid": "672PdQlVyD1ynEKGOL",
+          "status": "completed",
+          "template": "6EZ9nQX0lzpWwqAgzB",
+          "files": {
+            "png": "https://images.bannerbear.com/..."
+          },
+          "metadata": null,
+          "error": null,
+          "self": "https://api.bannerbear.com/v5/images/672PdQlVyD1ynEKGOL",
+          "created_at": "2026-03-15T04:51:17.550Z",
+          "completed_at": "2026-03-15T04:51:20.574Z"
+        }
+      ],
+      "self": "https://api.bannerbear.com/v5/batches/8bKmPqR3xYwZ5nAJeL",
+      "created_at": "2026-03-15T04:51:15.000Z",
+      "completed_at": "2026-03-15T04:51:25.000Z"
+    },
+    "status_code": 202,
+    "source": "https://developers.bannerbear.com/v5/#batch-object",
+    "input_source": "https://developers.bannerbear.com/v5/#post-v5-batches"
+  },
+  "list_image_templates": {
+    "config": {},
+    "method": "GET",
+    "path": "/image_templates",
+    "body": null,
+    "response": [
+      {
+        "uid": "6EZ9nQX0lzpWwqAgzB",
+        "name": "Social Media Banner",
+        "description": "Wide banner for social posts",
+        "tags": [
+          "social",
+          "banner"
+        ],
+        "width": 1200,
+        "height": 630,
+        "responsive": false,
+        "preview": "https://images.bannerbear.com/V5/previews/6EZ9nQX0lzpWwqAgzB.png",
+        "ui_write_access": "owner_only",
+        "api_write_access": "team",
+        "config": {
+          "objects": [
+            {
+              "id": "obj_001",
+              "name": "title",
+              "type": "text",
+              "left": 100,
+              "top": 60,
+              "width": 1000,
+              "height": 120,
+              "text": "Hello World",
+              "font-family": "Inter",
+              "font-size": 64,
+              "font-weight": "700",
+              "color": "#111111",
+              "text-align": "center",
+              "line-height": 1.2,
+              "opacity": 1
+            },
+            {
+              "id": "obj_002",
+              "name": "avatar",
+              "type": "rectangle_image_container",
+              "left": 40,
+              "top": 40,
+              "width": 160,
+              "height": 160,
+              "background-image": "https://cdn.bannerbear.com/sample_images/welcome_bear_photo.jpg",
+              "background-size": "cover",
+              "border-radius": 80,
+              "opacity": 1
+            }
+          ]
+        },
+        "created_at": "2026-03-10T02:15:30.000Z"
+      }
+    ],
+    "status_code": 200,
+    "source": "https://developers.bannerbear.com/v5/#image_template-object",
+    "input_source": "https://developers.bannerbear.com/v5/#image_template-object"
+  },
+  "get_image_template": {
+    "config": {
+      "uid": "6EZ9nQX0lzpWwqAgzB"
+    },
+    "method": "GET",
+    "path": "/image_templates/{uid}",
+    "body": null,
+    "response": {
+      "uid": "6EZ9nQX0lzpWwqAgzB",
+      "name": "Social Media Banner",
+      "description": "Wide banner for social posts",
+      "tags": [
+        "social",
+        "banner"
+      ],
+      "width": 1200,
+      "height": 630,
+      "responsive": false,
+      "preview": "https://images.bannerbear.com/V5/previews/6EZ9nQX0lzpWwqAgzB.png",
+      "ui_write_access": "owner_only",
+      "api_write_access": "team",
+      "config": {
+        "objects": [
+          {
+            "id": "obj_001",
+            "name": "title",
+            "type": "text",
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 120,
+            "text": "Hello World",
+            "font-family": "Inter",
+            "font-size": 64,
+            "font-weight": "700",
+            "color": "#111111",
+            "text-align": "center",
+            "line-height": 1.2,
+            "opacity": 1
+          },
+          {
+            "id": "obj_002",
+            "name": "avatar",
+            "type": "rectangle_image_container",
+            "left": 40,
+            "top": 40,
+            "width": 160,
+            "height": 160,
+            "background-image": "https://cdn.bannerbear.com/sample_images/welcome_bear_photo.jpg",
+            "background-size": "cover",
+            "border-radius": 80,
+            "opacity": 1
+          }
+        ]
+      },
+      "created_at": "2026-03-10T02:15:30.000Z"
+    },
+    "status_code": 200,
+    "source": "https://developers.bannerbear.com/v5/#image_template-object",
+    "input_source": "https://developers.bannerbear.com/v5/#image_template-object"
+  },
+  "create_image_template": {
+    "config": {
+      "name": "Social Media Banner",
+      "description": "Wide banner for social posts",
+      "tags": [
+        "social",
+        "banner"
+      ],
+      "width": 1200,
+      "height": 630
+    },
+    "method": "POST",
+    "path": "/image_templates",
+    "body": {
+      "name": "Social Media Banner",
+      "description": "Wide banner for social posts",
+      "tags": [
+        "social",
+        "banner"
+      ],
+      "width": 1200,
+      "height": 630
+    },
+    "response": {
+      "uid": "6EZ9nQX0lzpWwqAgzB",
+      "name": "Social Media Banner",
+      "description": "Wide banner for social posts",
+      "tags": [
+        "social",
+        "banner"
+      ],
+      "width": 1200,
+      "height": 630,
+      "responsive": false,
+      "preview": "https://images.bannerbear.com/V5/previews/6EZ9nQX0lzpWwqAgzB.png",
+      "ui_write_access": "owner_only",
+      "api_write_access": "team",
+      "config": {
+        "objects": [
+          {
+            "id": "obj_001",
+            "name": "title",
+            "type": "text",
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 120,
+            "text": "Hello World",
+            "font-family": "Inter",
+            "font-size": 64,
+            "font-weight": "700",
+            "color": "#111111",
+            "text-align": "center",
+            "line-height": 1.2,
+            "opacity": 1
+          },
+          {
+            "id": "obj_002",
+            "name": "avatar",
+            "type": "rectangle_image_container",
+            "left": 40,
+            "top": 40,
+            "width": 160,
+            "height": 160,
+            "background-image": "https://cdn.bannerbear.com/sample_images/welcome_bear_photo.jpg",
+            "background-size": "cover",
+            "border-radius": 80,
+            "opacity": 1
+          }
+        ]
+      },
+      "created_at": "2026-03-10T02:15:30.000Z"
+    },
+    "status_code": 201,
+    "source": "https://developers.bannerbear.com/v5/#image_template-object",
+    "input_source": "https://developers.bannerbear.com/v5/#post-v5-image_templates"
+  },
+  "update_image_template": {
+    "config": {
+      "uid": "6EZ9nQX0lzpWwqAgzB",
+      "name": "Updated Template Name",
+      "tags": [
+        "social",
+        "updated"
+      ]
+    },
+    "method": "PATCH",
+    "path": "/image_templates/{uid}",
+    "body": {
+      "name": "Updated Template Name",
+      "tags": [
+        "social",
+        "updated"
+      ]
+    },
+    "response": {
+      "uid": "6EZ9nQX0lzpWwqAgzB",
+      "name": "Social Media Banner",
+      "description": "Wide banner for social posts",
+      "tags": [
+        "social",
+        "banner"
+      ],
+      "width": 1200,
+      "height": 630,
+      "responsive": false,
+      "preview": "https://images.bannerbear.com/V5/previews/6EZ9nQX0lzpWwqAgzB.png",
+      "ui_write_access": "owner_only",
+      "api_write_access": "team",
+      "config": {
+        "objects": [
+          {
+            "id": "obj_001",
+            "name": "title",
+            "type": "text",
+            "left": 100,
+            "top": 60,
+            "width": 1000,
+            "height": 120,
+            "text": "Hello World",
+            "font-family": "Inter",
+            "font-size": 64,
+            "font-weight": "700",
+            "color": "#111111",
+            "text-align": "center",
+            "line-height": 1.2,
+            "opacity": 1
+          },
+          {
+            "id": "obj_002",
+            "name": "avatar",
+            "type": "rectangle_image_container",
+            "left": 40,
+            "top": 40,
+            "width": 160,
+            "height": 160,
+            "background-image": "https://cdn.bannerbear.com/sample_images/welcome_bear_photo.jpg",
+            "background-size": "cover",
+            "border-radius": 80,
+            "opacity": 1
+          }
+        ]
+      },
+      "created_at": "2026-03-10T02:15:30.000Z"
+    },
+    "status_code": 200,
+    "source": "https://developers.bannerbear.com/v5/#image_template-object",
+    "input_source": "https://developers.bannerbear.com/v5/#patch-v5-image_templates-uid"
+  },
+  "delete_image_template": {
+    "config": {
+      "uid": "6EZ9nQX0lzpWwqAgzB"
+    },
+    "method": "DELETE",
+    "path": "/image_templates/{uid}",
+    "body": null,
+    "response": null,
+    "status_code": 200,
+    "source": "https://developers.bannerbear.com/v5/#delete-v5-image_templates-uid",
+    "input_source": "https://developers.bannerbear.com/v5/#delete-v5-image_templates-uid"
+  },
+  "list_animation_templates": {
+    "config": {},
+    "method": "GET",
+    "path": "/animation_templates",
+    "body": null,
+    "response": [
+      {
+        "uid": "6EZ9nQX0lzpWwqAgzB",
+        "name": "Logo Reveal",
+        "description": "Animated logo intro",
+        "tags": [
+          "intro"
+        ],
+        "width": 1080,
+        "height": 1080,
+        "frame_rate": 30,
+        "duration_seconds": 4.0,
+        "preview": "https://images.bannerbear.com/V5/previews/6EZ9nQX0lzpWwqAgzB.png",
+        "ui_write_access": "owner_only",
+        "api_write_access": "team",
+        "config": {
+          "objects": [
+            {
+              "id": "obj_001",
+              "name": "logo",
+              "type": "image",
+              "left": 340,
+              "top": 340,
+              "width": 400,
+              "height": 400
+            }
+          ],
+          "keyframes": {
+            "obj_001": [
+              {
+                "duration": 800,
+                "opacity": 0,
+                "scale": 0.6
+              },
+              {
+                "duration": 800,
+                "opacity": 1,
+                "scale": 1,
+                "easing": "easeOutBack"
+              }
+            ]
+          }
+        },
+        "created_at": "2026-08-15T02:15:30.000Z"
+      }
+    ],
+    "status_code": 200,
+    "source": "https://developers.bannerbear.com/v5/#animation_template-object",
+    "input_source": "https://developers.bannerbear.com/v5/#animation_template-object"
+  },
+  "get_animation_template": {
+    "config": {
+      "uid": "6EZ9nQX0lzpWwqAgzB"
+    },
+    "method": "GET",
+    "path": "/animation_templates/{uid}",
+    "body": null,
+    "response": {
+      "uid": "6EZ9nQX0lzpWwqAgzB",
+      "name": "Logo Reveal",
+      "description": "Animated logo intro",
+      "tags": [
+        "intro"
+      ],
+      "width": 1080,
+      "height": 1080,
+      "frame_rate": 30,
+      "duration_seconds": 4.0,
+      "preview": "https://images.bannerbear.com/V5/previews/6EZ9nQX0lzpWwqAgzB.png",
+      "ui_write_access": "owner_only",
+      "api_write_access": "team",
+      "config": {
+        "objects": [
+          {
+            "id": "obj_001",
+            "name": "logo",
+            "type": "image",
+            "left": 340,
+            "top": 340,
+            "width": 400,
+            "height": 400
+          }
+        ],
+        "keyframes": {
+          "obj_001": [
+            {
+              "duration": 800,
+              "opacity": 0,
+              "scale": 0.6
+            },
+            {
+              "duration": 800,
+              "opacity": 1,
+              "scale": 1,
+              "easing": "easeOutBack"
+            }
+          ]
+        }
+      },
+      "created_at": "2026-08-15T02:15:30.000Z"
+    },
+    "status_code": 200,
+    "source": "https://developers.bannerbear.com/v5/#animation_template-object",
+    "input_source": "https://developers.bannerbear.com/v5/#animation_template-object"
+  },
+  "create_animation_template": {
+    "config": {
+      "name": "Logo Reveal",
+      "description": "Animated logo intro",
+      "tags": [
+        "intro"
+      ],
+      "width": 1080,
+      "height": 1080,
+      "frame_rate": 30
+    },
+    "method": "POST",
+    "path": "/animation_templates",
+    "body": {
+      "name": "Logo Reveal",
+      "description": "Animated logo intro",
+      "tags": [
+        "intro"
+      ],
+      "width": 1080,
+      "height": 1080,
+      "frame_rate": 30
+    },
+    "response": {
+      "uid": "6EZ9nQX0lzpWwqAgzB",
+      "name": "Logo Reveal",
+      "description": "Animated logo intro",
+      "tags": [
+        "intro"
+      ],
+      "width": 1080,
+      "height": 1080,
+      "frame_rate": 30,
+      "duration_seconds": 4.0,
+      "preview": "https://images.bannerbear.com/V5/previews/6EZ9nQX0lzpWwqAgzB.png",
+      "ui_write_access": "owner_only",
+      "api_write_access": "team",
+      "config": {
+        "objects": [
+          {
+            "id": "obj_001",
+            "name": "logo",
+            "type": "image",
+            "left": 340,
+            "top": 340,
+            "width": 400,
+            "height": 400
+          }
+        ],
+        "keyframes": {
+          "obj_001": [
+            {
+              "duration": 800,
+              "opacity": 0,
+              "scale": 0.6
+            },
+            {
+              "duration": 800,
+              "opacity": 1,
+              "scale": 1,
+              "easing": "easeOutBack"
+            }
+          ]
+        }
+      },
+      "created_at": "2026-08-15T02:15:30.000Z"
+    },
+    "status_code": 201,
+    "source": "https://developers.bannerbear.com/v5/#animation_template-object",
+    "input_source": "https://developers.bannerbear.com/v5/#post-v5-animation_templates"
+  },
+  "update_animation_template": {
+    "config": {
+      "uid": "6EZ9nQX0lzpWwqAgzB",
+      "name": "Logo Reveal",
+      "description": "Animated logo intro",
+      "tags": [
+        "intro"
+      ]
+    },
+    "method": "PATCH",
+    "path": "/animation_templates/{uid}",
+    "body": {
+      "name": "Logo Reveal",
+      "description": "Animated logo intro",
+      "tags": [
+        "intro"
+      ]
+    },
+    "response": {
+      "uid": "6EZ9nQX0lzpWwqAgzB",
+      "name": "Logo Reveal",
+      "description": "Animated logo intro",
+      "tags": [
+        "intro"
+      ],
+      "width": 1080,
+      "height": 1080,
+      "frame_rate": 30,
+      "duration_seconds": 4.0,
+      "preview": "https://images.bannerbear.com/V5/previews/6EZ9nQX0lzpWwqAgzB.png",
+      "ui_write_access": "owner_only",
+      "api_write_access": "team",
+      "config": {
+        "objects": [
+          {
+            "id": "obj_001",
+            "name": "logo",
+            "type": "image",
+            "left": 340,
+            "top": 340,
+            "width": 400,
+            "height": 400
+          }
+        ],
+        "keyframes": {
+          "obj_001": [
+            {
+              "duration": 800,
+              "opacity": 0,
+              "scale": 0.6
+            },
+            {
+              "duration": 800,
+              "opacity": 1,
+              "scale": 1,
+              "easing": "easeOutBack"
+            }
+          ]
+        }
+      },
+      "created_at": "2026-08-15T02:15:30.000Z"
+    },
+    "status_code": 200,
+    "source": "https://developers.bannerbear.com/v5/#animation_template-object",
+    "input_source": "https://developers.bannerbear.com/v5/#animation_template-object"
+  },
+  "delete_animation_template": {
+    "config": {
+      "uid": "6EZ9nQX0lzpWwqAgzB"
+    },
+    "method": "DELETE",
+    "path": "/animation_templates/{uid}",
+    "body": null,
+    "response": null,
+    "status_code": 204,
+    "source": "https://developers.bannerbear.com/v5/#delete-v5-animation_templates-uid",
+    "input_source": "https://developers.bannerbear.com/v5/#delete-v5-animation_templates-uid"
+  }
+}
