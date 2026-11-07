@@ -1,0 +1,646 @@
+{
+  "$defs": {
+    "GetCall": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_call_log",
+          "default": "get_call_log",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Voice",
+          "x-display-name": "Get call log"
+        },
+        "call_id": {
+          "title": "Voice Log ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste a native SignalWire ID",
+            "field_name": "call_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "signalwire_call_id"
+        }
+      },
+      "required": [
+        "call_id"
+      ],
+      "title": "GetCall",
+      "type": "object",
+      "x-category": "Voice",
+      "x-display-name": "Get call log",
+      "x-is-trigger": false
+    },
+    "GetMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_message_log",
+          "default": "get_message_log",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "Get message log"
+        },
+        "message_id": {
+          "title": "Message Log ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste a native SignalWire ID",
+            "field_name": "message_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "signalwire_message_id"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "GetMessage",
+      "type": "object",
+      "x-category": "Messaging",
+      "x-display-name": "Get message log",
+      "x-is-trigger": false
+    },
+    "GetNumber": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_phone_number",
+          "default": "get_phone_number",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Phone numbers",
+          "x-display-name": "Get owned phone number"
+        },
+        "phone_number_id": {
+          "title": "Phone Number ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste a native SignalWire ID",
+            "field_name": "phone_number_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "signalwire_phone_number_id"
+        }
+      },
+      "required": [
+        "phone_number_id"
+      ],
+      "title": "GetNumber",
+      "type": "object",
+      "x-category": "Phone numbers",
+      "x-display-name": "Get owned phone number",
+      "x-is-trigger": false
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Project",
+          "x-display-name": "Get connected project"
+        }
+      },
+      "title": "GetProject",
+      "type": "object",
+      "x-category": "Project",
+      "x-display-name": "Get connected project",
+      "x-is-trigger": false
+    },
+    "GetResource": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_resource",
+          "default": "get_resource",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Resources",
+          "x-display-name": "Get Fabric resource metadata"
+        },
+        "resource_id": {
+          "title": "Resource ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste a native SignalWire ID",
+            "field_name": "resource_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "signalwire_resource_id"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GetResource",
+      "type": "object",
+      "x-category": "Resources",
+      "x-display-name": "Get Fabric resource metadata",
+      "x-is-trigger": false
+    },
+    "ListCalls": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 50,
+          "description": "A bounded subset of the provider's 1\u20131000 range. One page per invocation.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use the continuation returned by this node; not a URL or a raw provider token.",
+          "title": "Next Page Token"
+        },
+        "created_on": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created On"
+        },
+        "created_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created After"
+        },
+        "created_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created Before"
+        },
+        "operation": {
+          "const": "list_call_logs",
+          "default": "list_call_logs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Voice",
+          "x-display-name": "List call logs"
+        }
+      },
+      "title": "ListCalls",
+      "type": "object",
+      "x-category": "Voice",
+      "x-display-name": "List call logs",
+      "x-is-trigger": false
+    },
+    "ListMessages": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 50,
+          "description": "A bounded subset of the provider's 1\u20131000 range. One page per invocation.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use the continuation returned by this node; not a URL or a raw provider token.",
+          "title": "Next Page Token"
+        },
+        "created_on": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created On"
+        },
+        "created_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created After"
+        },
+        "created_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created Before"
+        },
+        "operation": {
+          "const": "list_message_logs",
+          "default": "list_message_logs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "List message logs"
+        }
+      },
+      "title": "ListMessages",
+      "type": "object",
+      "x-category": "Messaging",
+      "x-display-name": "List message logs",
+      "x-is-trigger": false
+    },
+    "ListNumbers": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 50,
+          "description": "A bounded subset of the provider's 1\u20131000 range. One page per invocation.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use the continuation returned by this node; not a URL or a raw provider token.",
+          "title": "Next Page Token"
+        },
+        "operation": {
+          "const": "list_phone_numbers",
+          "default": "list_phone_numbers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Phone numbers",
+          "x-display-name": "List owned phone numbers"
+        }
+      },
+      "title": "ListNumbers",
+      "type": "object",
+      "x-category": "Phone numbers",
+      "x-display-name": "List owned phone numbers",
+      "x-is-trigger": false
+    },
+    "ListResources": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 50,
+          "description": "A bounded subset of the provider's 1\u20131000 range. One page per invocation.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use the continuation returned by this node; not a URL or a raw provider token.",
+          "title": "Next Page Token"
+        },
+        "operation": {
+          "const": "list_resources",
+          "default": "list_resources",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Resources",
+          "x-display-name": "List Fabric resource metadata"
+        }
+      },
+      "title": "ListResources",
+      "type": "object",
+      "x-category": "Resources",
+      "x-display-name": "List Fabric resource metadata",
+      "x-is-trigger": false
+    },
+    "RedactMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "redact_message",
+          "default": "redact_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "Redact message body"
+        },
+        "message_id": {
+          "description": "The segment UUID returned by sending or message logs; not a Compatibility SID.",
+          "title": "Message Segment ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste a native SignalWire ID",
+            "field_name": "message_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "signalwire_message_id"
+        },
+        "confirm_redact": {
+          "const": true,
+          "title": "Confirm Irreversible Body Redaction",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "message_id",
+        "confirm_redact"
+      ],
+      "title": "RedactMessage",
+      "type": "object",
+      "x-category": "Messaging",
+      "x-display-name": "Redact message body",
+      "x-is-trigger": false,
+      "x-operation-effect": "Irreversibly clears only the body of a terminal message. queued/initiated messages are ineligible. Metadata/logs remain; no message deletion, arbitrary update or automatic retry."
+    },
+    "RenameNumber": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "rename_phone_number",
+          "default": "rename_phone_number",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Phone numbers",
+          "x-display-name": "Rename owned phone number"
+        },
+        "phone_number_id": {
+          "title": "Phone Number ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste a native SignalWire ID",
+            "field_name": "phone_number_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "signalwire_phone_number_id"
+        },
+        "name": {
+          "description": "Changes the project's number label only, not caller ID/CNAM, routing, ownership or carrier settings.",
+          "maxLength": 128,
+          "title": "Display Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phone_number_id",
+        "name"
+      ],
+      "title": "RenameNumber",
+      "type": "object",
+      "x-category": "Phone numbers",
+      "x-display-name": "Rename owned phone number",
+      "x-is-trigger": false,
+      "x-operation-effect": "Updates only the existing number's display name. Does not purchase, release, port, reroute or change caller ID/E911 settings."
+    },
+    "SendSMS": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "Send SMS"
+        },
+        "from_number": {
+          "description": "An existing SMS-capable number owned by this project; verified caller IDs are unsupported.",
+          "pattern": "^\\+[1-9][0-9]{4,16}$",
+          "title": "From Number",
+          "type": "string"
+        },
+        "to_number": {
+          "description": "Explicit E.164 recipient. Provider consent, registration, geographic and account restrictions still apply.",
+          "pattern": "^\\+[1-9][0-9]{4,16}$",
+          "title": "Recipient Number",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 1600,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "confirm_send": {
+          "const": true,
+          "title": "Confirm Sending This SMS",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "from_number",
+        "to_number",
+        "message",
+        "confirm_send"
+      ],
+      "title": "SendSMS",
+      "type": "object",
+      "x-category": "Messaging",
+      "x-display-name": "Send SMS",
+      "x-is-trigger": false,
+      "x-operation-effect": "Queues a real outbound SMS and may incur charges. 201 means queued, not delivered. No retry, receipt polling, WhatsApp, MMS, callback or consent provisioning."
+    },
+    "SignalWireProjectTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "signalwire_project_token",
+          "default": "signalwire_project_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "space_url": {
+          "description": "Your exact HTTPS <space>.signalwire.com origin. Custom domains, API routes and private hosts are unsupported.",
+          "title": "SignalWire Space URL",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "The UUID of the project that issued this API token; not a Compatibility SID or personal user ID.",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "api_token": {
+          "maxLength": 6000,
+          "minLength": 1,
+          "title": "Project API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "space_url",
+        "project_id",
+        "api_token"
+      ],
+      "title": "SignalWire Project Token",
+      "type": "object",
+      "x-credential-instructions": "Supply a Project ID and its API token. Management is needed for the connection project probe; Messaging, Voice, Numbers or the documented Fabric scopes are required for their operations. Actual enabled token scopes remain provider authoritative. Personal pat_ and subscriber/guest Bearer tokens are separate unsupported families. Paste the opaque token only, including legacy PT tokens; no OAuth, minting, rotation or SDK default credential chain is performed.",
+      "x-credential-url": "https://signalwire.com/docs/platform/your-signalwire-api-space"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_call_log": "#/$defs/GetCall",
+          "get_message_log": "#/$defs/GetMessage",
+          "get_phone_number": "#/$defs/GetNumber",
+          "get_project": "#/$defs/GetProject",
+          "get_resource": "#/$defs/GetResource",
+          "list_call_logs": "#/$defs/ListCalls",
+          "list_message_logs": "#/$defs/ListMessages",
+          "list_phone_numbers": "#/$defs/ListNumbers",
+          "list_resources": "#/$defs/ListResources",
+          "redact_message": "#/$defs/RedactMessage",
+          "rename_phone_number": "#/$defs/RenameNumber",
+          "send_sms": "#/$defs/SendSMS"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/ListMessages"
+        },
+        {
+          "$ref": "#/$defs/GetMessage"
+        },
+        {
+          "$ref": "#/$defs/ListCalls"
+        },
+        {
+          "$ref": "#/$defs/GetCall"
+        },
+        {
+          "$ref": "#/$defs/ListNumbers"
+        },
+        {
+          "$ref": "#/$defs/GetNumber"
+        },
+        {
+          "$ref": "#/$defs/ListResources"
+        },
+        {
+          "$ref": "#/$defs/GetResource"
+        },
+        {
+          "$ref": "#/$defs/SendSMS"
+        },
+        {
+          "$ref": "#/$defs/RedactMessage"
+        },
+        {
+          "$ref": "#/$defs/RenameNumber"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SignalWireProjectTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Signalwire Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
