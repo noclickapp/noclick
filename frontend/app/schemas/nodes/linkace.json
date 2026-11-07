@@ -1,0 +1,230 @@
+{
+  "$defs": {
+    "LinkAceListConfig": {
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Names are opt-in. IDs remain available for independent current catalog selection; links and user IDs are always excluded.",
+          "title": "Include Private List and Tag Names",
+          "type": "boolean"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Only per_page is sent. Default20 and bound1..100 are local; server defaults/caps unknown. Unlimited -1, undeclared page and ordering are excluded.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Local Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "LinkAce Metadata",
+          "x-display-name": "Get Current List Metadata",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "title": "Current List ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "auto_select_sole_option": false,
+            "field_name": "list_id"
+          },
+          "x-resource-type": "list_id"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "LinkAceListConfig",
+      "type": "object"
+    },
+    "LinkAceListsConfig": {
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Names are opt-in. IDs remain available for independent current catalog selection; links and user IDs are always excluded.",
+          "title": "Include Private List and Tag Names",
+          "type": "boolean"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Only per_page is sent. Default20 and bound1..100 are local; server defaults/caps unknown. Unlimited -1, undeclared page and ordering are excluded.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Local Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "LinkAce Metadata",
+          "x-display-name": "Read Accessible List Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "LinkAceListsConfig",
+      "type": "object"
+    },
+    "LinkAceTagConfig": {
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Names are opt-in. IDs remain available for independent current catalog selection; links and user IDs are always excluded.",
+          "title": "Include Private List and Tag Names",
+          "type": "boolean"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Only per_page is sent. Default20 and bound1..100 are local; server defaults/caps unknown. Unlimited -1, undeclared page and ordering are excluded.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Local Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_tag",
+          "default": "get_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "LinkAce Metadata",
+          "x-display-name": "Get Current Tag Metadata",
+          "x-is-trigger": false
+        },
+        "tag_id": {
+          "title": "Current Tag ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "auto_select_sole_option": false,
+            "field_name": "tag_id"
+          },
+          "x-resource-type": "tag_id"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "LinkAceTagConfig",
+      "type": "object"
+    },
+    "LinkAceTagsConfig": {
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Names are opt-in. IDs remain available for independent current catalog selection; links and user IDs are always excluded.",
+          "title": "Include Private List and Tag Names",
+          "type": "boolean"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Only per_page is sent. Default20 and bound1..100 are local; server defaults/caps unknown. Unlimited -1, undeclared page and ordering are excluded.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Local Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "LinkAce Metadata",
+          "x-display-name": "Read Accessible Tag Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "LinkAceTagsConfig",
+      "type": "object"
+    },
+    "LinkAceUserTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "linkace_user_token",
+          "default": "linkace_user_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Existing User API Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "instance_url": {
+          "title": "Public HTTPS LinkAce Instance Origin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "instance_url"
+      ],
+      "title": "LinkAce User API Token",
+      "type": "object",
+      "x-credential-instructions": "Supply an existing USER API token and one public HTTPS instance. Bearer header only, fixed /api/v2. No system/admin token, user lookup, token issue/refresh, Basic/OAuth or host fallback. User-token kind is a supplied declaration, not introspected identity; list access proves reachability only. Permissions, entitlement and installed v2 compatibility are unknown.",
+      "x-credential-url": "https://www.linkace.org/docs/v2/configuration/user-api-tokens/"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_list": "#/$defs/LinkAceListConfig",
+          "get_tag": "#/$defs/LinkAceTagConfig",
+          "list_lists": "#/$defs/LinkAceListsConfig",
+          "list_tags": "#/$defs/LinkAceTagsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LinkAceListsConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkAceListConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkAceTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkAceTagConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LinkAceUserTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Linkace Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Read current list visibility and timestamps without any bookmarked links",
+    "Read independent tag metadata without revealing private names or user IDs"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
