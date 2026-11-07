@@ -1,0 +1,15 @@
+{
+  "server_send_email_with_template": {
+    "config": {
+      "body_json": "{\"From\": \"sender@example.com\", \"To\": \"receiver@example.com\", \"TemplateId\": 1234, \"TemplateModel\": {\"user_name\": \"John Smith\"}}"
+    },
+    "source": "https://postmarkapp.com/developer/api/templates-api"
+  },
+  "server_update_template": {
+    "config": {
+      "body_json": "{\"Name\": \"Onboarding Email\", \"Subject\": \"Hello from {{company.name}}!\", \"TextBody\": \"Hello, {{name}}!\", \"HtmlBody\": \"<html><body>Hello, {{name}}!</body></html>\", \"Alias\": \"welcome-v1\"}",
+      "path_templateidoralias": "1234"
+    },
+    "source": "https://postmarkapp.com/developer/api/templates-api"
+  }
+}

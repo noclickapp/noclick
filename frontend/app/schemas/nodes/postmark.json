@@ -1,0 +1,3110 @@
+{
+  "$defs": {
+    "PostmarkAccountCreateDataRemovalConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_create_data_removal",
+          "default": "account_create_data_removal",
+          "description": "Create Data Removal using Postmark's current API.",
+          "title": "Create Data Removal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Data Removals",
+          "x-display-name": "Create Data Removal",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "PostmarkAccountCreateDataRemovalConfig",
+      "type": "object"
+    },
+    "PostmarkAccountCreateDomainConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_create_domain",
+          "default": "account_create_domain",
+          "description": "Create a Domain",
+          "title": "Create a Domain",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domains",
+          "x-display-name": "Create a Domain",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Documented keys include: Name, ReturnPathDomain.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "PostmarkAccountCreateDomainConfig",
+      "type": "object"
+    },
+    "PostmarkAccountCreateSenderSignatureConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_create_sender_signature",
+          "default": "account_create_sender_signature",
+          "description": "Create a Sender Signature",
+          "title": "Create a Sender Signature",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sender Signatures",
+          "x-display-name": "Create a Sender Signature",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Documented keys include: FromEmail, Name, ReplyToEmail, ReturnPathDomain.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "PostmarkAccountCreateSenderSignatureConfig",
+      "type": "object"
+    },
+    "PostmarkAccountCreateServerConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_create_server",
+          "default": "account_create_server",
+          "description": "Create a Server",
+          "title": "Create a Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Server Management",
+          "x-display-name": "Create a Server",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Documented keys include: BounceHookUrl, ClickHookUrl, Color, DeliveryHookUrl, InboundDomain, InboundHookUrl, InboundSpamThreshold, Name, OpenHookUrl, PostFirstOpenOnly, RawEmailEnabled, SmtpApiActivated, TrackLinks, TrackOpens.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "PostmarkAccountCreateServerConfig",
+      "type": "object"
+    },
+    "PostmarkAccountDeleteDomainConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_delete_domain",
+          "default": "account_delete_domain",
+          "description": "Delete a Domain",
+          "title": "Delete a Domain",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domains",
+          "x-display-name": "Delete a Domain",
+          "x-is-trigger": false
+        },
+        "path_domainid": {
+          "title": "Domainid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_domainid"
+      ],
+      "title": "PostmarkAccountDeleteDomainConfig",
+      "type": "object"
+    },
+    "PostmarkAccountDeleteSenderSignatureConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_delete_sender_signature",
+          "default": "account_delete_sender_signature",
+          "description": "Delete a Sender Signature",
+          "title": "Delete a Sender Signature",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sender Signatures",
+          "x-display-name": "Delete a Sender Signature",
+          "x-is-trigger": false
+        },
+        "path_signatureid": {
+          "title": "Signatureid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_signatureid"
+      ],
+      "title": "PostmarkAccountDeleteSenderSignatureConfig",
+      "type": "object"
+    },
+    "PostmarkAccountDeleteServerConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_delete_server",
+          "default": "account_delete_server",
+          "description": "Delete a Server",
+          "title": "Delete a Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Server Management",
+          "x-display-name": "Delete a Server",
+          "x-is-trigger": false
+        },
+        "path_serverid": {
+          "title": "Serverid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_serverid"
+      ],
+      "title": "PostmarkAccountDeleteServerConfig",
+      "type": "object"
+    },
+    "PostmarkAccountEditDomainConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_edit_domain",
+          "default": "account_edit_domain",
+          "description": "Update a Domain",
+          "title": "Update a Domain",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domains",
+          "x-display-name": "Update a Domain",
+          "x-is-trigger": false
+        },
+        "path_domainid": {
+          "title": "Domainid",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Documented keys include: ReturnPathDomain.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_domainid",
+        "body_json"
+      ],
+      "title": "PostmarkAccountEditDomainConfig",
+      "type": "object"
+    },
+    "PostmarkAccountEditSenderSignatureConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_edit_sender_signature",
+          "default": "account_edit_sender_signature",
+          "description": "Update a Sender Signature",
+          "title": "Update a Sender Signature",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sender Signatures",
+          "x-display-name": "Update a Sender Signature",
+          "x-is-trigger": false
+        },
+        "path_signatureid": {
+          "title": "Signatureid",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Documented keys include: Name, ReplyToEmail, ReturnPathDomain.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_signatureid",
+        "body_json"
+      ],
+      "title": "PostmarkAccountEditSenderSignatureConfig",
+      "type": "object"
+    },
+    "PostmarkAccountEditServerInformationConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_edit_server_information",
+          "default": "account_edit_server_information",
+          "description": "Edit a Server",
+          "title": "Edit a Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Server Management",
+          "x-display-name": "Edit a Server",
+          "x-is-trigger": false
+        },
+        "path_serverid": {
+          "title": "Serverid",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Documented keys include: BounceHookUrl, ClickHookUrl, Color, DeliveryHookUrl, InboundDomain, InboundHookUrl, InboundSpamThreshold, Name, OpenHookUrl, PostFirstOpenOnly, RawEmailEnabled, SmtpApiActivated, TrackLinks, TrackOpens.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_serverid",
+        "body_json"
+      ],
+      "title": "PostmarkAccountEditServerInformationConfig",
+      "type": "object"
+    },
+    "PostmarkAccountGetDataRemovalConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_get_data_removal",
+          "default": "account_get_data_removal",
+          "description": "Get Data Removal using Postmark's current API.",
+          "title": "Get Data Removal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Data Removals",
+          "x-display-name": "Get Data Removal",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_id"
+      ],
+      "title": "PostmarkAccountGetDataRemovalConfig",
+      "type": "object"
+    },
+    "PostmarkAccountGetDomainConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_get_domain",
+          "default": "account_get_domain",
+          "description": "Get a Domain",
+          "title": "Get a Domain",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domains",
+          "x-display-name": "Get a Domain",
+          "x-is-trigger": false
+        },
+        "path_domainid": {
+          "title": "Domainid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_domainid"
+      ],
+      "title": "PostmarkAccountGetDomainConfig",
+      "type": "object"
+    },
+    "PostmarkAccountGetSenderSignatureConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_get_sender_signature",
+          "default": "account_get_sender_signature",
+          "description": "Get a Sender Signature",
+          "title": "Get a Sender Signature",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sender Signatures",
+          "x-display-name": "Get a Sender Signature",
+          "x-is-trigger": false
+        },
+        "path_signatureid": {
+          "title": "Signatureid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_signatureid"
+      ],
+      "title": "PostmarkAccountGetSenderSignatureConfig",
+      "type": "object"
+    },
+    "PostmarkAccountGetServerInformationConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_get_server_information",
+          "default": "account_get_server_information",
+          "description": "Get a Server",
+          "title": "Get a Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Server Management",
+          "x-display-name": "Get a Server",
+          "x-is-trigger": false
+        },
+        "path_serverid": {
+          "title": "Serverid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_serverid"
+      ],
+      "title": "PostmarkAccountGetServerInformationConfig",
+      "type": "object"
+    },
+    "PostmarkAccountListDomainsConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_list_domains",
+          "default": "account_list_domains",
+          "description": "List Domains",
+          "title": "List Domains",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domains",
+          "x-display-name": "List Domains",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: count, offset. Required: count, offset",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkAccountListDomainsConfig",
+      "type": "object"
+    },
+    "PostmarkAccountListSenderSignaturesConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_list_sender_signatures",
+          "default": "account_list_sender_signatures",
+          "description": "List Sender Signatures",
+          "title": "List Sender Signatures",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sender Signatures",
+          "x-display-name": "List Sender Signatures",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: count, offset. Required: count, offset",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkAccountListSenderSignaturesConfig",
+      "type": "object"
+    },
+    "PostmarkAccountListServersConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_list_servers",
+          "default": "account_list_servers",
+          "description": "List servers",
+          "title": "List servers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Server Management",
+          "x-display-name": "List servers",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: count, name, offset. Required: count, offset",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkAccountListServersConfig",
+      "type": "object"
+    },
+    "PostmarkAccountPushTemplatesConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_push_templates",
+          "default": "account_push_templates",
+          "description": "Push templates from one server to another",
+          "title": "Push templates from one server to another",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Push templates from one server to another",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Documented keys include: DestinationServerId, PerformChanges, SourceServerId.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "PostmarkAccountPushTemplatesConfig",
+      "type": "object"
+    },
+    "PostmarkAccountRequestDkimVerificationForDomainConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_request_dkim_verification_for_domain",
+          "default": "account_request_dkim_verification_for_domain",
+          "description": "Request DNS Verification for DKIM",
+          "title": "Request DNS Verification for DKIM",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domains",
+          "x-display-name": "Request DNS Verification for DKIM",
+          "x-is-trigger": false
+        },
+        "path_domainid": {
+          "title": "Domainid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_domainid"
+      ],
+      "title": "PostmarkAccountRequestDkimVerificationForDomainConfig",
+      "type": "object"
+    },
+    "PostmarkAccountRequestNewDKIMKeyForSenderSignatureConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_request_new_d_k_i_m_key_for_sender_signature",
+          "default": "account_request_new_d_k_i_m_key_for_sender_signature",
+          "description": "Requests a new DKIM key to be created. Until the DNS entries are confirmed,",
+          "title": "Request a new DKIM Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sender Signatures",
+          "x-display-name": "Request a new DKIM Key",
+          "x-is-trigger": false
+        },
+        "path_signatureid": {
+          "title": "Signatureid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_signatureid"
+      ],
+      "title": "PostmarkAccountRequestNewDKIMKeyForSenderSignatureConfig",
+      "type": "object"
+    },
+    "PostmarkAccountRequestReturnPathVerificationForDomainConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_request_return_path_verification_for_domain",
+          "default": "account_request_return_path_verification_for_domain",
+          "description": "Request DNS Verification for Return-Path",
+          "title": "Request DNS Verification for Return-Path",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domains",
+          "x-display-name": "Request DNS Verification for Return-Path",
+          "x-is-trigger": false
+        },
+        "path_domainid": {
+          "title": "Domainid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_domainid"
+      ],
+      "title": "PostmarkAccountRequestReturnPathVerificationForDomainConfig",
+      "type": "object"
+    },
+    "PostmarkAccountRequestSPFVerificationForDomainConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_request_s_p_f_verification_for_domain",
+          "default": "account_request_s_p_f_verification_for_domain",
+          "description": "Request DNS Verification for SPF",
+          "title": "Request DNS Verification for SPF",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domains",
+          "x-display-name": "Request DNS Verification for SPF",
+          "x-is-trigger": false
+        },
+        "path_domainid": {
+          "title": "Domainid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_domainid"
+      ],
+      "title": "PostmarkAccountRequestSPFVerificationForDomainConfig",
+      "type": "object"
+    },
+    "PostmarkAccountRequestSPFVerificationForSenderSignatureConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_request_s_p_f_verification_for_sender_signature",
+          "default": "account_request_s_p_f_verification_for_sender_signature",
+          "description": "Request DNS Verification for SPF",
+          "title": "Request DNS Verification for SPF",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sender Signatures",
+          "x-display-name": "Request DNS Verification for SPF",
+          "x-is-trigger": false
+        },
+        "path_signatureid": {
+          "title": "Signatureid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_signatureid"
+      ],
+      "title": "PostmarkAccountRequestSPFVerificationForSenderSignatureConfig",
+      "type": "object"
+    },
+    "PostmarkAccountResendSenderSignatureConfirmationEmailConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_resend_sender_signature_confirmation_email",
+          "default": "account_resend_sender_signature_confirmation_email",
+          "description": "Resend Signature Confirmation Email",
+          "title": "Resend Signature Confirmation Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sender Signatures",
+          "x-display-name": "Resend Signature Confirmation Email",
+          "x-is-trigger": false
+        },
+        "path_signatureid": {
+          "title": "Signatureid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_signatureid"
+      ],
+      "title": "PostmarkAccountResendSenderSignatureConfirmationEmailConfig",
+      "type": "object"
+    },
+    "PostmarkAccountRotateDKIMKeyForDomainConfig": {
+      "properties": {
+        "operation": {
+          "const": "account_rotate_d_k_i_m_key_for_domain",
+          "default": "account_rotate_d_k_i_m_key_for_domain",
+          "description": "Creates a new DKIM key to replace your current key. Until the DNS entries are confirmed,",
+          "title": "Rotate DKIM Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domains",
+          "x-display-name": "Rotate DKIM Key",
+          "x-is-trigger": false
+        },
+        "path_domainid": {
+          "title": "Domainid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_domainid"
+      ],
+      "title": "PostmarkAccountRotateDKIMKeyForDomainConfig",
+      "type": "object"
+    },
+    "PostmarkAccountTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "postmark_account_token",
+          "default": "postmark_account_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account_token": {
+          "description": "Found in Postmark Account Settings > API Tokens.",
+          "title": "Account API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "account_token"
+      ],
+      "title": "Postmark Account Token",
+      "type": "object",
+      "x-credential-instructions": "Use an Account API Token for managing servers, sender signatures, domains, template pushes, and data removals.",
+      "x-credential-url": "https://account.postmarkapp.com/account/api-tokens"
+    },
+    "PostmarkServerActivateBounceConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_activate_bounce",
+          "default": "server_activate_bounce",
+          "description": "Activate a bounce",
+          "title": "Activate a bounce",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bounces",
+          "x-display-name": "Activate a bounce",
+          "x-is-trigger": false
+        },
+        "path_bounceid": {
+          "title": "Bounceid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_bounceid"
+      ],
+      "title": "PostmarkServerActivateBounceConfig",
+      "type": "object"
+    },
+    "PostmarkServerArchiveMessageStreamConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_archive_message_stream",
+          "default": "server_archive_message_stream",
+          "description": "Archive Message Stream using Postmark's current API.",
+          "title": "Archive Message Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message Streams",
+          "x-display-name": "Archive Message Stream",
+          "x-is-trigger": false
+        },
+        "path_stream_id": {
+          "title": "Stream Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_stream_id"
+      ],
+      "title": "PostmarkServerArchiveMessageStreamConfig",
+      "type": "object"
+    },
+    "PostmarkServerBypassRulesForInboundMessageConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_bypass_rules_for_inbound_message",
+          "default": "server_bypass_rules_for_inbound_message",
+          "description": "Bypass rules for a blocked inbound message",
+          "title": "Bypass rules for a blocked inbound message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Bypass rules for a blocked inbound message",
+          "x-is-trigger": false
+        },
+        "path_messageid": {
+          "title": "Messageid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_messageid"
+      ],
+      "title": "PostmarkServerBypassRulesForInboundMessageConfig",
+      "type": "object"
+    },
+    "PostmarkServerCreateATemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_create_a_template",
+          "default": "server_create_a_template",
+          "description": "Create a Template",
+          "title": "Create a Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Create a Template",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Required keys: Name, Subject. Documented keys include: Alias, HtmlBody, Name, Subject, TextBody.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "PostmarkServerCreateATemplateConfig",
+      "type": "object"
+    },
+    "PostmarkServerCreateInboundRuleConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_create_inbound_rule",
+          "default": "server_create_inbound_rule",
+          "description": "Create an inbound rule trigger",
+          "title": "Create an inbound rule trigger",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inbound Rules",
+          "x-display-name": "Create an inbound rule trigger",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Documented keys include: Rule.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "PostmarkServerCreateInboundRuleConfig",
+      "type": "object"
+    },
+    "PostmarkServerCreateMessageStreamConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_create_message_stream",
+          "default": "server_create_message_stream",
+          "description": "Create Message Stream using Postmark's current API.",
+          "title": "Create Message Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message Streams",
+          "x-display-name": "Create Message Stream",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Required keys: ID, Name, MessageStreamType. Documented keys include: ID, Name, MessageStreamType.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "PostmarkServerCreateMessageStreamConfig",
+      "type": "object"
+    },
+    "PostmarkServerCreateSuppressionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_create_suppressions",
+          "default": "server_create_suppressions",
+          "description": "Create Suppressions using Postmark's current API.",
+          "title": "Create Suppressions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Suppressions",
+          "x-display-name": "Create Suppressions",
+          "x-is-trigger": false
+        },
+        "path_stream_id": {
+          "title": "Stream Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Required keys: Suppressions. Documented keys include: Suppressions.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_stream_id",
+        "body_json"
+      ],
+      "title": "PostmarkServerCreateSuppressionsConfig",
+      "type": "object"
+    },
+    "PostmarkServerCreateWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_create_webhook",
+          "default": "server_create_webhook",
+          "description": "Create Webhook using Postmark's current API.",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Create Webhook",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Required keys: Url, MessageStream, Triggers. Documented keys include: Url, MessageStream, Triggers.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "PostmarkServerCreateWebhookConfig",
+      "type": "object"
+    },
+    "PostmarkServerDeleteInboundRuleConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_delete_inbound_rule",
+          "default": "server_delete_inbound_rule",
+          "description": "Delete a single trigger",
+          "title": "Delete a single trigger",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inbound Rules",
+          "x-display-name": "Delete a single trigger",
+          "x-is-trigger": false
+        },
+        "path_triggerid": {
+          "title": "Triggerid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_triggerid"
+      ],
+      "title": "PostmarkServerDeleteInboundRuleConfig",
+      "type": "object"
+    },
+    "PostmarkServerDeleteSuppressionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_delete_suppressions",
+          "default": "server_delete_suppressions",
+          "description": "Delete Suppressions using Postmark's current API.",
+          "title": "Delete Suppressions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Suppressions",
+          "x-display-name": "Delete Suppressions",
+          "x-is-trigger": false
+        },
+        "path_stream_id": {
+          "title": "Stream Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Required keys: Suppressions. Documented keys include: Suppressions.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_stream_id",
+        "body_json"
+      ],
+      "title": "PostmarkServerDeleteSuppressionsConfig",
+      "type": "object"
+    },
+    "PostmarkServerDeleteTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_delete_template",
+          "default": "server_delete_template",
+          "description": "Delete a Template",
+          "title": "Delete a Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Delete a Template",
+          "x-is-trigger": false
+        },
+        "path_templateidoralias": {
+          "title": "Templateidoralias",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_templateidoralias"
+      ],
+      "title": "PostmarkServerDeleteTemplateConfig",
+      "type": "object"
+    },
+    "PostmarkServerDeleteWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_delete_webhook",
+          "default": "server_delete_webhook",
+          "description": "Delete Webhook using Postmark's current API.",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Delete Webhook",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_id"
+      ],
+      "title": "PostmarkServerDeleteWebhookConfig",
+      "type": "object"
+    },
+    "PostmarkServerEditCurrentServerConfigurationConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_edit_current_server_configuration",
+          "default": "server_edit_current_server_configuration",
+          "description": "Edit Server Configuration",
+          "title": "Edit Server Configuration",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Server Configuration",
+          "x-display-name": "Edit Server Configuration",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Documented keys include: BounceHookUrl, ClickHookUrl, Color, DeliveryHookUrl, InboundDomain, InboundHookUrl, InboundSpamThreshold, Name, OpenHookUrl, PostFirstOpenOnly, RawEmailEnabled, SmtpApiActivated, TrackLinks, TrackOpens.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "PostmarkServerEditCurrentServerConfigurationConfig",
+      "type": "object"
+    },
+    "PostmarkServerEditMessageStreamConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_edit_message_stream",
+          "default": "server_edit_message_stream",
+          "description": "Edit Message Stream using Postmark's current API.",
+          "title": "Edit Message Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message Streams",
+          "x-display-name": "Edit Message Stream",
+          "x-is-trigger": false
+        },
+        "path_stream_id": {
+          "title": "Stream Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_stream_id",
+        "body_json"
+      ],
+      "title": "PostmarkServerEditMessageStreamConfig",
+      "type": "object"
+    },
+    "PostmarkServerEditWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_edit_webhook",
+          "default": "server_edit_webhook",
+          "description": "Edit Webhook using Postmark's current API.",
+          "title": "Edit Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Edit Webhook",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_id",
+        "body_json"
+      ],
+      "title": "PostmarkServerEditWebhookConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetBounceCountsConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_bounce_counts",
+          "default": "server_get_bounce_counts",
+          "description": "Get bounce counts",
+          "title": "Get bounce counts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stats",
+          "x-display-name": "Get bounce counts",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: fromdate, tag, todate",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerGetBounceCountsConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetBounceDumpConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_bounce_dump",
+          "default": "server_get_bounce_dump",
+          "description": "Get bounce dump",
+          "title": "Get bounce dump",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bounces",
+          "x-display-name": "Get bounce dump",
+          "x-is-trigger": false
+        },
+        "path_bounceid": {
+          "title": "Bounceid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_bounceid"
+      ],
+      "title": "PostmarkServerGetBounceDumpConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetBouncesConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_bounces",
+          "default": "server_get_bounces",
+          "description": "Get bounces",
+          "title": "Get bounces",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bounces",
+          "x-display-name": "Get bounces",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: count, emailFilter, fromdate, inactive, messageID, offset, tag, todate, type. Required: count, offset",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerGetBouncesConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetClicksForSingleOutboundMessageConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_clicks_for_single_outbound_message",
+          "default": "server_get_clicks_for_single_outbound_message",
+          "description": "Retrieve Message Clicks",
+          "title": "Retrieve Message Clicks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Retrieve Message Clicks",
+          "x-is-trigger": false
+        },
+        "path_messageid": {
+          "title": "Messageid",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: count, offset. Required: count, offset",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_messageid"
+      ],
+      "title": "PostmarkServerGetClicksForSingleOutboundMessageConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetCurrentServerConfigurationConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_current_server_configuration",
+          "default": "server_get_current_server_configuration",
+          "description": "Get Server Configuration",
+          "title": "Get Server Configuration",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Server Configuration",
+          "x-display-name": "Get Server Configuration",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PostmarkServerGetCurrentServerConfigurationConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetDeliveryStatsConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_delivery_stats",
+          "default": "server_get_delivery_stats",
+          "description": "Get delivery stats",
+          "title": "Get delivery stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bounces",
+          "x-display-name": "Get delivery stats",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PostmarkServerGetDeliveryStatsConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetInboundMessageDetailsConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_inbound_message_details",
+          "default": "server_get_inbound_message_details",
+          "description": "Inbound message details",
+          "title": "Inbound message details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Inbound message details",
+          "x-is-trigger": false
+        },
+        "path_messageid": {
+          "title": "Messageid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_messageid"
+      ],
+      "title": "PostmarkServerGetInboundMessageDetailsConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetMessageStreamConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_message_stream",
+          "default": "server_get_message_stream",
+          "description": "Get Message Stream using Postmark's current API.",
+          "title": "Get Message Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message Streams",
+          "x-display-name": "Get Message Stream",
+          "x-is-trigger": false
+        },
+        "path_stream_id": {
+          "title": "Stream Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_stream_id"
+      ],
+      "title": "PostmarkServerGetMessageStreamConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetOpensForSingleOutboundMessageConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_opens_for_single_outbound_message",
+          "default": "server_get_opens_for_single_outbound_message",
+          "description": "Retrieve Message Opens",
+          "title": "Retrieve Message Opens",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Retrieve Message Opens",
+          "x-is-trigger": false
+        },
+        "path_messageid": {
+          "title": "Messageid",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: count, offset. Required: count, offset",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_messageid"
+      ],
+      "title": "PostmarkServerGetOpensForSingleOutboundMessageConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetOutboundClickCountsByBrowserFamilyConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_outbound_click_counts_by_browser_family",
+          "default": "server_get_outbound_click_counts_by_browser_family",
+          "description": "Get browser usage by family",
+          "title": "Get browser usage by family",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stats",
+          "x-display-name": "Get browser usage by family",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: fromdate, tag, todate",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerGetOutboundClickCountsByBrowserFamilyConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetOutboundClickCountsByLocationConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_outbound_click_counts_by_location",
+          "default": "server_get_outbound_click_counts_by_location",
+          "description": "Get clicks by body location",
+          "title": "Get clicks by body location",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stats",
+          "x-display-name": "Get clicks by body location",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: fromdate, tag, todate",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerGetOutboundClickCountsByLocationConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetOutboundClickCountsByPlatformConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_outbound_click_counts_by_platform",
+          "default": "server_get_outbound_click_counts_by_platform",
+          "description": "Get browser plaform usage",
+          "title": "Get browser plaform usage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stats",
+          "x-display-name": "Get browser plaform usage",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: fromdate, tag, todate",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerGetOutboundClickCountsByPlatformConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetOutboundClickCountsConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_outbound_click_counts",
+          "default": "server_get_outbound_click_counts",
+          "description": "Get click counts",
+          "title": "Get click counts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stats",
+          "x-display-name": "Get click counts",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: fromdate, tag, todate",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerGetOutboundClickCountsConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetOutboundMessageDetailsConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_outbound_message_details",
+          "default": "server_get_outbound_message_details",
+          "description": "Outbound message details",
+          "title": "Outbound message details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Outbound message details",
+          "x-is-trigger": false
+        },
+        "path_messageid": {
+          "title": "Messageid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_messageid"
+      ],
+      "title": "PostmarkServerGetOutboundMessageDetailsConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetOutboundMessageDumpConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_outbound_message_dump",
+          "default": "server_get_outbound_message_dump",
+          "description": "Outbound message dump",
+          "title": "Outbound message dump",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Outbound message dump",
+          "x-is-trigger": false
+        },
+        "path_messageid": {
+          "title": "Messageid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_messageid"
+      ],
+      "title": "PostmarkServerGetOutboundMessageDumpConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetOutboundOpenCountsByEmailClientConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_outbound_open_counts_by_email_client",
+          "default": "server_get_outbound_open_counts_by_email_client",
+          "description": "Get email client usage",
+          "title": "Get email client usage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stats",
+          "x-display-name": "Get email client usage",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: fromdate, tag, todate",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerGetOutboundOpenCountsByEmailClientConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetOutboundOpenCountsByPlatformConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_outbound_open_counts_by_platform",
+          "default": "server_get_outbound_open_counts_by_platform",
+          "description": "Get email platform usage",
+          "title": "Get email platform usage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stats",
+          "x-display-name": "Get email platform usage",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: fromdate, tag, todate",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerGetOutboundOpenCountsByPlatformConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetOutboundOpenCountsConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_outbound_open_counts",
+          "default": "server_get_outbound_open_counts",
+          "description": "Get email open counts",
+          "title": "Get email open counts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stats",
+          "x-display-name": "Get email open counts",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: fromdate, tag, todate",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerGetOutboundOpenCountsConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetOutboundOverviewStatisticsConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_outbound_overview_statistics",
+          "default": "server_get_outbound_overview_statistics",
+          "description": "Get outbound overview",
+          "title": "Get outbound overview",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stats",
+          "x-display-name": "Get outbound overview",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: fromdate, tag, todate",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerGetOutboundOverviewStatisticsConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetSentCountsConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_sent_counts",
+          "default": "server_get_sent_counts",
+          "description": "Get sent counts",
+          "title": "Get sent counts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stats",
+          "x-display-name": "Get sent counts",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: fromdate, tag, todate",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerGetSentCountsConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetSingleBounceConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_single_bounce",
+          "default": "server_get_single_bounce",
+          "description": "Get a single bounce",
+          "title": "Get a single bounce",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bounces",
+          "x-display-name": "Get a single bounce",
+          "x-is-trigger": false
+        },
+        "path_bounceid": {
+          "title": "Bounceid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_bounceid"
+      ],
+      "title": "PostmarkServerGetSingleBounceConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetSingleTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_single_template",
+          "default": "server_get_single_template",
+          "description": "Get a Template",
+          "title": "Get a Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Get a Template",
+          "x-is-trigger": false
+        },
+        "path_templateidoralias": {
+          "title": "Templateidoralias",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_templateidoralias"
+      ],
+      "title": "PostmarkServerGetSingleTemplateConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetSpamComplaintsConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_spam_complaints",
+          "default": "server_get_spam_complaints",
+          "description": "Get spam complaints",
+          "title": "Get spam complaints",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stats",
+          "x-display-name": "Get spam complaints",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: fromdate, tag, todate",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerGetSpamComplaintsConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetTrackedEmailCountsConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_tracked_email_counts",
+          "default": "server_get_tracked_email_counts",
+          "description": "Get tracked email counts",
+          "title": "Get tracked email counts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stats",
+          "x-display-name": "Get tracked email counts",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: fromdate, tag, todate",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerGetTrackedEmailCountsConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_webhook",
+          "default": "server_get_webhook",
+          "description": "Get Webhook using Postmark's current API.",
+          "title": "Get Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Get Webhook",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_id"
+      ],
+      "title": "PostmarkServerGetWebhookConfig",
+      "type": "object"
+    },
+    "PostmarkServerGetWebhookStatisticsConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_get_webhook_statistics",
+          "default": "server_get_webhook_statistics",
+          "description": "Get Webhook Statistics using Postmark's current API.",
+          "title": "Get Webhook Statistics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Get Webhook Statistics",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: FromDate, ToDate",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_id"
+      ],
+      "title": "PostmarkServerGetWebhookStatisticsConfig",
+      "type": "object"
+    },
+    "PostmarkServerListInboundRulesConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_list_inbound_rules",
+          "default": "server_list_inbound_rules",
+          "description": "List inbound rule triggers",
+          "title": "List inbound rule triggers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inbound Rules",
+          "x-display-name": "List inbound rule triggers",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: count, offset. Required: count, offset",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerListInboundRulesConfig",
+      "type": "object"
+    },
+    "PostmarkServerListMessageStreamsConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_list_message_streams",
+          "default": "server_list_message_streams",
+          "description": "List Message Streams using Postmark's current API.",
+          "title": "List Message Streams",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message Streams",
+          "x-display-name": "List Message Streams",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: MessageStreamType, IncludeArchivedStreams",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerListMessageStreamsConfig",
+      "type": "object"
+    },
+    "PostmarkServerListSuppressionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_list_suppressions",
+          "default": "server_list_suppressions",
+          "description": "List Suppressions using Postmark's current API.",
+          "title": "List Suppressions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Suppressions",
+          "x-display-name": "List Suppressions",
+          "x-is-trigger": false
+        },
+        "path_stream_id": {
+          "title": "Stream Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: SuppressionReason, Origin, todate, fromdate, EmailAddress",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_stream_id"
+      ],
+      "title": "PostmarkServerListSuppressionsConfig",
+      "type": "object"
+    },
+    "PostmarkServerListTemplatesConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_list_templates",
+          "default": "server_list_templates",
+          "description": "Get the Templates associated with this Server",
+          "title": "Get the Templates associated with this Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Get the Templates associated with this Server",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: Count, Offset. Required: Count, Offset",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerListTemplatesConfig",
+      "type": "object"
+    },
+    "PostmarkServerListWebhooksConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_list_webhooks",
+          "default": "server_list_webhooks",
+          "description": "List Webhooks using Postmark's current API.",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhooks",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: MessageStream",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerListWebhooksConfig",
+      "type": "object"
+    },
+    "PostmarkServerRetryInboundMessageProcessingConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_retry_inbound_message_processing",
+          "default": "server_retry_inbound_message_processing",
+          "description": "Retry a failed inbound message for processing",
+          "title": "Retry a failed inbound message for processing",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Retry a failed inbound message for processing",
+          "x-is-trigger": false
+        },
+        "path_messageid": {
+          "title": "Messageid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_messageid"
+      ],
+      "title": "PostmarkServerRetryInboundMessageProcessingConfig",
+      "type": "object"
+    },
+    "PostmarkServerSearchClicksForOutboundMessagesConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_search_clicks_for_outbound_messages",
+          "default": "server_search_clicks_for_outbound_messages",
+          "description": "Clicks for a all messages",
+          "title": "Clicks for a all messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Clicks for a all messages",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: city, client_company, client_family, client_name, count, country, offset, os_company, os_family, os_name, platform, recipient, region, tag. Required: count, offset",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerSearchClicksForOutboundMessagesConfig",
+      "type": "object"
+    },
+    "PostmarkServerSearchInboundMessagesConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_search_inbound_messages",
+          "default": "server_search_inbound_messages",
+          "description": "Inbound message search",
+          "title": "Inbound message search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Inbound message search",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: count, fromdate, fromemail, mailboxhash, offset, recipient, status, subject, tag, todate. Required: count, offset",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerSearchInboundMessagesConfig",
+      "type": "object"
+    },
+    "PostmarkServerSearchOpensForOutboundMessagesConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_search_opens_for_outbound_messages",
+          "default": "server_search_opens_for_outbound_messages",
+          "description": "Opens for all messages",
+          "title": "Opens for all messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Opens for all messages",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: city, client_company, client_family, client_name, count, country, offset, os_company, os_family, os_name, platform, recipient, region, tag. Required: count, offset",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerSearchOpensForOutboundMessagesConfig",
+      "type": "object"
+    },
+    "PostmarkServerSearchOutboundMessagesConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_search_outbound_messages",
+          "default": "server_search_outbound_messages",
+          "description": "Outbound message search",
+          "title": "Outbound message search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Outbound message search",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postmark parameter names: count, fromdate, fromemail, offset, recipient, status, tag, todate. Required: count, offset",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "PostmarkServerSearchOutboundMessagesConfig",
+      "type": "object"
+    },
+    "PostmarkServerSendEmailBatchConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_send_email_batch",
+          "default": "server_send_email_batch",
+          "description": "Send a batch of emails",
+          "title": "Send a batch of emails",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sending",
+          "x-display-name": "Send a batch of emails",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "description": "JSON array request body.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "PostmarkServerSendEmailBatchConfig",
+      "type": "object"
+    },
+    "PostmarkServerSendEmailBatchWithTemplatesConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_send_email_batch_with_templates",
+          "default": "server_send_email_batch_with_templates",
+          "description": "Send a batch of email using templates.",
+          "title": "Send a batch of email using templates.",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sending",
+          "x-display-name": "Send a batch of email using templates.",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Documented keys include: Messages.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "PostmarkServerSendEmailBatchWithTemplatesConfig",
+      "type": "object"
+    },
+    "PostmarkServerSendEmailConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_send_email",
+          "default": "server_send_email",
+          "description": "Send a single email",
+          "title": "Send a single email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sending",
+          "x-display-name": "Send a single email",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Documented keys include: Attachments, Bcc, Cc, From, Headers, HtmlBody, ReplyTo, Subject, Tag, TextBody, To, TrackLinks, TrackOpens.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "PostmarkServerSendEmailConfig",
+      "type": "object"
+    },
+    "PostmarkServerSendEmailWithTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_send_email_with_template",
+          "default": "server_send_email_with_template",
+          "description": "Send an email using a Template",
+          "title": "Send an email using a Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sending",
+          "x-display-name": "Send an email using a Template",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Required keys: TemplateModel, To, From. Provide TemplateId or TemplateAlias. Documented keys include: Attachments, Bcc, Cc, From, Headers, InlineCss, ReplyTo, Tag, TemplateAlias, TemplateId, TemplateModel, To, TrackLinks, TrackOpens.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "PostmarkServerSendEmailWithTemplateConfig",
+      "type": "object"
+    },
+    "PostmarkServerTestTemplateContentConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_test_template_content",
+          "default": "server_test_template_content",
+          "description": "Test Template Content",
+          "title": "Test Template Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Test Template Content",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Documented keys include: HtmlBody, InlineCssForHtmlTestRender, Subject, TestRenderModel, TextBody.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "PostmarkServerTestTemplateContentConfig",
+      "type": "object"
+    },
+    "PostmarkServerTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "postmark_server_token",
+          "default": "postmark_server_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "server_token": {
+          "description": "Found in the Postmark server's API Tokens tab.",
+          "title": "Server API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "server_token"
+      ],
+      "title": "Postmark Server Token",
+      "type": "object",
+      "x-credential-instructions": "Open a server, then API Tokens, and copy its Server API Token. This token supports sending, templates, streams, messages, webhooks, suppressions, and statistics.",
+      "x-credential-url": "https://account.postmarkapp.com/servers"
+    },
+    "PostmarkServerUnarchiveMessageStreamConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_unarchive_message_stream",
+          "default": "server_unarchive_message_stream",
+          "description": "Unarchive Message Stream using Postmark's current API.",
+          "title": "Unarchive Message Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message Streams",
+          "x-display-name": "Unarchive Message Stream",
+          "x-is-trigger": false
+        },
+        "path_stream_id": {
+          "title": "Stream Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_stream_id"
+      ],
+      "title": "PostmarkServerUnarchiveMessageStreamConfig",
+      "type": "object"
+    },
+    "PostmarkServerUpdateTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_update_template",
+          "default": "server_update_template",
+          "description": "Update a Template",
+          "title": "Update a Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Update a Template",
+          "x-is-trigger": false
+        },
+        "path_templateidoralias": {
+          "title": "Templateidoralias",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "JSON object request body. Documented keys include: Alias, HtmlBody, Name, Subject, TextBody.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_templateidoralias",
+        "body_json"
+      ],
+      "title": "PostmarkServerUpdateTemplateConfig",
+      "type": "object"
+    },
+    "PostmarkServerVerifyWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "server_verify_webhook",
+          "default": "server_verify_webhook",
+          "description": "Verify Webhook using Postmark's current API.",
+          "title": "Verify Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Verify Webhook",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_id"
+      ],
+      "title": "PostmarkServerVerifyWebhookConfig",
+      "type": "object"
+    },
+    "PostmarkTestConnectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "test_connection",
+          "default": "test_connection",
+          "description": "Check whether the Postmark server or account token works.",
+          "title": "Test Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Test Connection",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PostmarkTestConnectionConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "account_create_data_removal": "#/$defs/PostmarkAccountCreateDataRemovalConfig",
+          "account_create_domain": "#/$defs/PostmarkAccountCreateDomainConfig",
+          "account_create_sender_signature": "#/$defs/PostmarkAccountCreateSenderSignatureConfig",
+          "account_create_server": "#/$defs/PostmarkAccountCreateServerConfig",
+          "account_delete_domain": "#/$defs/PostmarkAccountDeleteDomainConfig",
+          "account_delete_sender_signature": "#/$defs/PostmarkAccountDeleteSenderSignatureConfig",
+          "account_delete_server": "#/$defs/PostmarkAccountDeleteServerConfig",
+          "account_edit_domain": "#/$defs/PostmarkAccountEditDomainConfig",
+          "account_edit_sender_signature": "#/$defs/PostmarkAccountEditSenderSignatureConfig",
+          "account_edit_server_information": "#/$defs/PostmarkAccountEditServerInformationConfig",
+          "account_get_data_removal": "#/$defs/PostmarkAccountGetDataRemovalConfig",
+          "account_get_domain": "#/$defs/PostmarkAccountGetDomainConfig",
+          "account_get_sender_signature": "#/$defs/PostmarkAccountGetSenderSignatureConfig",
+          "account_get_server_information": "#/$defs/PostmarkAccountGetServerInformationConfig",
+          "account_list_domains": "#/$defs/PostmarkAccountListDomainsConfig",
+          "account_list_sender_signatures": "#/$defs/PostmarkAccountListSenderSignaturesConfig",
+          "account_list_servers": "#/$defs/PostmarkAccountListServersConfig",
+          "account_push_templates": "#/$defs/PostmarkAccountPushTemplatesConfig",
+          "account_request_dkim_verification_for_domain": "#/$defs/PostmarkAccountRequestDkimVerificationForDomainConfig",
+          "account_request_new_d_k_i_m_key_for_sender_signature": "#/$defs/PostmarkAccountRequestNewDKIMKeyForSenderSignatureConfig",
+          "account_request_return_path_verification_for_domain": "#/$defs/PostmarkAccountRequestReturnPathVerificationForDomainConfig",
+          "account_request_s_p_f_verification_for_domain": "#/$defs/PostmarkAccountRequestSPFVerificationForDomainConfig",
+          "account_request_s_p_f_verification_for_sender_signature": "#/$defs/PostmarkAccountRequestSPFVerificationForSenderSignatureConfig",
+          "account_resend_sender_signature_confirmation_email": "#/$defs/PostmarkAccountResendSenderSignatureConfirmationEmailConfig",
+          "account_rotate_d_k_i_m_key_for_domain": "#/$defs/PostmarkAccountRotateDKIMKeyForDomainConfig",
+          "server_activate_bounce": "#/$defs/PostmarkServerActivateBounceConfig",
+          "server_archive_message_stream": "#/$defs/PostmarkServerArchiveMessageStreamConfig",
+          "server_bypass_rules_for_inbound_message": "#/$defs/PostmarkServerBypassRulesForInboundMessageConfig",
+          "server_create_a_template": "#/$defs/PostmarkServerCreateATemplateConfig",
+          "server_create_inbound_rule": "#/$defs/PostmarkServerCreateInboundRuleConfig",
+          "server_create_message_stream": "#/$defs/PostmarkServerCreateMessageStreamConfig",
+          "server_create_suppressions": "#/$defs/PostmarkServerCreateSuppressionsConfig",
+          "server_create_webhook": "#/$defs/PostmarkServerCreateWebhookConfig",
+          "server_delete_inbound_rule": "#/$defs/PostmarkServerDeleteInboundRuleConfig",
+          "server_delete_suppressions": "#/$defs/PostmarkServerDeleteSuppressionsConfig",
+          "server_delete_template": "#/$defs/PostmarkServerDeleteTemplateConfig",
+          "server_delete_webhook": "#/$defs/PostmarkServerDeleteWebhookConfig",
+          "server_edit_current_server_configuration": "#/$defs/PostmarkServerEditCurrentServerConfigurationConfig",
+          "server_edit_message_stream": "#/$defs/PostmarkServerEditMessageStreamConfig",
+          "server_edit_webhook": "#/$defs/PostmarkServerEditWebhookConfig",
+          "server_get_bounce_counts": "#/$defs/PostmarkServerGetBounceCountsConfig",
+          "server_get_bounce_dump": "#/$defs/PostmarkServerGetBounceDumpConfig",
+          "server_get_bounces": "#/$defs/PostmarkServerGetBouncesConfig",
+          "server_get_clicks_for_single_outbound_message": "#/$defs/PostmarkServerGetClicksForSingleOutboundMessageConfig",
+          "server_get_current_server_configuration": "#/$defs/PostmarkServerGetCurrentServerConfigurationConfig",
+          "server_get_delivery_stats": "#/$defs/PostmarkServerGetDeliveryStatsConfig",
+          "server_get_inbound_message_details": "#/$defs/PostmarkServerGetInboundMessageDetailsConfig",
+          "server_get_message_stream": "#/$defs/PostmarkServerGetMessageStreamConfig",
+          "server_get_opens_for_single_outbound_message": "#/$defs/PostmarkServerGetOpensForSingleOutboundMessageConfig",
+          "server_get_outbound_click_counts": "#/$defs/PostmarkServerGetOutboundClickCountsConfig",
+          "server_get_outbound_click_counts_by_browser_family": "#/$defs/PostmarkServerGetOutboundClickCountsByBrowserFamilyConfig",
+          "server_get_outbound_click_counts_by_location": "#/$defs/PostmarkServerGetOutboundClickCountsByLocationConfig",
+          "server_get_outbound_click_counts_by_platform": "#/$defs/PostmarkServerGetOutboundClickCountsByPlatformConfig",
+          "server_get_outbound_message_details": "#/$defs/PostmarkServerGetOutboundMessageDetailsConfig",
+          "server_get_outbound_message_dump": "#/$defs/PostmarkServerGetOutboundMessageDumpConfig",
+          "server_get_outbound_open_counts": "#/$defs/PostmarkServerGetOutboundOpenCountsConfig",
+          "server_get_outbound_open_counts_by_email_client": "#/$defs/PostmarkServerGetOutboundOpenCountsByEmailClientConfig",
+          "server_get_outbound_open_counts_by_platform": "#/$defs/PostmarkServerGetOutboundOpenCountsByPlatformConfig",
+          "server_get_outbound_overview_statistics": "#/$defs/PostmarkServerGetOutboundOverviewStatisticsConfig",
+          "server_get_sent_counts": "#/$defs/PostmarkServerGetSentCountsConfig",
+          "server_get_single_bounce": "#/$defs/PostmarkServerGetSingleBounceConfig",
+          "server_get_single_template": "#/$defs/PostmarkServerGetSingleTemplateConfig",
+          "server_get_spam_complaints": "#/$defs/PostmarkServerGetSpamComplaintsConfig",
+          "server_get_tracked_email_counts": "#/$defs/PostmarkServerGetTrackedEmailCountsConfig",
+          "server_get_webhook": "#/$defs/PostmarkServerGetWebhookConfig",
+          "server_get_webhook_statistics": "#/$defs/PostmarkServerGetWebhookStatisticsConfig",
+          "server_list_inbound_rules": "#/$defs/PostmarkServerListInboundRulesConfig",
+          "server_list_message_streams": "#/$defs/PostmarkServerListMessageStreamsConfig",
+          "server_list_suppressions": "#/$defs/PostmarkServerListSuppressionsConfig",
+          "server_list_templates": "#/$defs/PostmarkServerListTemplatesConfig",
+          "server_list_webhooks": "#/$defs/PostmarkServerListWebhooksConfig",
+          "server_retry_inbound_message_processing": "#/$defs/PostmarkServerRetryInboundMessageProcessingConfig",
+          "server_search_clicks_for_outbound_messages": "#/$defs/PostmarkServerSearchClicksForOutboundMessagesConfig",
+          "server_search_inbound_messages": "#/$defs/PostmarkServerSearchInboundMessagesConfig",
+          "server_search_opens_for_outbound_messages": "#/$defs/PostmarkServerSearchOpensForOutboundMessagesConfig",
+          "server_search_outbound_messages": "#/$defs/PostmarkServerSearchOutboundMessagesConfig",
+          "server_send_email": "#/$defs/PostmarkServerSendEmailConfig",
+          "server_send_email_batch": "#/$defs/PostmarkServerSendEmailBatchConfig",
+          "server_send_email_batch_with_templates": "#/$defs/PostmarkServerSendEmailBatchWithTemplatesConfig",
+          "server_send_email_with_template": "#/$defs/PostmarkServerSendEmailWithTemplateConfig",
+          "server_test_template_content": "#/$defs/PostmarkServerTestTemplateContentConfig",
+          "server_unarchive_message_stream": "#/$defs/PostmarkServerUnarchiveMessageStreamConfig",
+          "server_update_template": "#/$defs/PostmarkServerUpdateTemplateConfig",
+          "server_verify_webhook": "#/$defs/PostmarkServerVerifyWebhookConfig",
+          "test_connection": "#/$defs/PostmarkTestConnectionConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PostmarkServerSendEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerSendEmailBatchConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetDeliveryStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetBouncesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetSingleBounceConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetBounceDumpConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerActivateBounceConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerSearchOutboundMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetOutboundMessageDetailsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetOutboundMessageDumpConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerSearchInboundMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetInboundMessageDetailsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerBypassRulesForInboundMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerRetryInboundMessageProcessingConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerSearchOpensForOutboundMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetOpensForSingleOutboundMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerSearchClicksForOutboundMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetClicksForSingleOutboundMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerSendEmailWithTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerSendEmailBatchWithTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerCreateATemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetSingleTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerUpdateTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerDeleteTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerTestTemplateContentConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetOutboundOverviewStatisticsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetSentCountsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetBounceCountsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetSpamComplaintsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetTrackedEmailCountsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetOutboundOpenCountsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetOutboundOpenCountsByPlatformConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetOutboundOpenCountsByEmailClientConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetOutboundClickCountsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetOutboundClickCountsByBrowserFamilyConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetOutboundClickCountsByPlatformConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetOutboundClickCountsByLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerCreateInboundRuleConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerListInboundRulesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerDeleteInboundRuleConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetCurrentServerConfigurationConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerEditCurrentServerConfigurationConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountGetServerInformationConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountEditServerInformationConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountDeleteServerConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountListServersConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountCreateServerConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountListSenderSignaturesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountCreateSenderSignatureConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountGetSenderSignatureConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountEditSenderSignatureConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountDeleteSenderSignatureConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountResendSenderSignatureConfirmationEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountRequestSPFVerificationForSenderSignatureConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountRequestNewDKIMKeyForSenderSignatureConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountListDomainsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountCreateDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountGetDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountEditDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountDeleteDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountRequestDkimVerificationForDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountRequestReturnPathVerificationForDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountRequestSPFVerificationForDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountRotateDKIMKeyForDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountPushTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerListMessageStreamsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetMessageStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerCreateMessageStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerEditMessageStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerArchiveMessageStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerUnarchiveMessageStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerListSuppressionsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerCreateSuppressionsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerDeleteSuppressionsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerEditWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerVerifyWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerDeleteWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkServerGetWebhookStatisticsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountCreateDataRemovalConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountGetDataRemovalConfig"
+        },
+        {
+          "$ref": "#/$defs/PostmarkTestConnectionConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PostmarkServerTokenCredential"
+        },
+        {
+          "$ref": "#/$defs/PostmarkAccountTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Postmark Node Configuration",
+  "type": "object",
+  "x-agent-tool-provider": true,
+  "x-edit-examples": [
+    "List my Postmark templates",
+    "Send a transactional email",
+    "Find recent bounces",
+    "List message streams"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
