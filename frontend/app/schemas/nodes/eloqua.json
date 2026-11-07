@@ -1,0 +1,956 @@
+{
+  "$defs": {
+    "CreateAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_account",
+          "default": "create_account",
+          "title": "Create Company Account",
+          "type": "string",
+          "x-operation-group": "Company Accounts"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Company Account Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateAccount",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "x-operation-group": "Contacts"
+        },
+        "first_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email_address": {
+          "description": "Stored CRM contact data; no email deployment API is called.",
+          "maxLength": 254,
+          "minLength": 3,
+          "title": "Email Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "email_address"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateCustomObject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_custom_object",
+          "default": "create_custom_object",
+          "title": "Create Text Custom Object",
+          "type": "string",
+          "x-operation-group": "Custom Objects"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Custom Object Name",
+          "type": "string"
+        },
+        "text_field_name": {
+          "description": "Creates one ordinary text field; no linked-contact deletion option is enabled.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Text Field Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "text_field_name"
+      ],
+      "title": "CreateCustomObject",
+      "type": "object"
+    },
+    "CreateCustomObjectRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_custom_object_record",
+          "default": "create_custom_object_record",
+          "title": "Create Unlinked Text Record",
+          "type": "string",
+          "x-operation-group": "Custom Object Records"
+        },
+        "custom_object_id": {
+          "title": "Custom Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "custom_object_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "eloqua_custom_object_id"
+        },
+        "field_values": {
+          "description": "Validated against this custom object's text fields; no contact/account mapping.",
+          "items": {
+            "$ref": "#/$defs/TextFieldValue"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Text Field Values",
+          "type": "array"
+        }
+      },
+      "required": [
+        "custom_object_id",
+        "field_values"
+      ],
+      "title": "CreateCustomObjectRecord",
+      "type": "object"
+    },
+    "DeleteAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_account",
+          "default": "delete_account",
+          "title": "Delete Own Company Account",
+          "type": "string",
+          "x-operation-group": "Company Accounts"
+        },
+        "account_id": {
+          "title": "Company Account",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "account_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "eloqua_account_id"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "DeleteAccount",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Own Contact",
+          "type": "string",
+          "x-operation-group": "Contacts"
+        },
+        "contact_id": {
+          "title": "Contact",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "contact_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "eloqua_contact_id"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "DeleteCustomObject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_custom_object",
+          "default": "delete_custom_object",
+          "title": "Delete Own Empty Custom Object",
+          "type": "string",
+          "x-operation-group": "Custom Objects"
+        },
+        "custom_object_id": {
+          "title": "Custom Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "custom_object_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "eloqua_custom_object_id"
+        }
+      },
+      "required": [
+        "custom_object_id"
+      ],
+      "title": "DeleteCustomObject",
+      "type": "object"
+    },
+    "DeleteCustomObjectRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_custom_object_record",
+          "default": "delete_custom_object_record",
+          "title": "Delete Own Unlinked Record",
+          "type": "string",
+          "x-operation-group": "Custom Object Records"
+        },
+        "custom_object_id": {
+          "title": "Custom Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "custom_object_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "eloqua_custom_object_id"
+        },
+        "record_id": {
+          "title": "Record ID in This Custom Object",
+          "type": "string",
+          "x-resource-type": "eloqua_custom_object_record_id"
+        }
+      },
+      "required": [
+        "custom_object_id",
+        "record_id"
+      ],
+      "title": "DeleteCustomObjectRecord",
+      "type": "object"
+    },
+    "EloquaBasicCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_site_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Eloqua Site ID"
+        },
+        "expected_user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Eloqua User ID"
+        },
+        "credential_type": {
+          "const": "eloqua_basic",
+          "default": "eloqua_basic",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company": {
+          "description": "Eloqua login company, used as Company\\User in HTTP Basic authentication.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Company / Site Name",
+          "type": "string"
+        },
+        "username": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Eloqua Username",
+          "type": "string"
+        },
+        "password": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Eloqua Password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "company",
+        "username",
+        "password"
+      ],
+      "title": "Oracle Eloqua Basic Authentication",
+      "type": "object",
+      "x-credential-url": "https://docs.oracle.com/en/cloud/saas/marketing/eloqua-rest-api/Authentication_Basic.html"
+    },
+    "EloquaBearerTokenCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "expected_site_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Eloqua Site ID"
+        },
+        "expected_user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Eloqua User ID"
+        },
+        "credential_type": {
+          "const": "eloqua_bearer_token",
+          "default": "eloqua_bearer_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Already issued by your registered Eloqua application. NoClick does not register an app or refresh this token.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Issued OAuth Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "description": "Use the issuing response's expires_in; do not assume the documentation example is your actual lifetime.",
+          "format": "date-time",
+          "title": "Actual Token Expiry",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "expires_at"
+      ],
+      "title": "Oracle Eloqua Issued Bearer Token",
+      "type": "object",
+      "x-credential-url": "https://docs.oracle.com/en/cloud/saas/marketing/eloqua-rest-api/Authentication_Basic.html"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Company Account Metadata",
+          "type": "string",
+          "x-operation-group": "Company Accounts"
+        },
+        "account_id": {
+          "title": "Company Account",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "account_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "eloqua_account_id"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact Metadata",
+          "type": "string",
+          "x-operation-group": "Contacts"
+        },
+        "contact_id": {
+          "title": "Contact",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "contact_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "eloqua_contact_id"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetCustomObject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_custom_object",
+          "default": "get_custom_object",
+          "title": "Get Custom Object Field Metadata",
+          "type": "string",
+          "x-operation-group": "Custom Objects"
+        },
+        "custom_object_id": {
+          "title": "Custom Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "custom_object_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "eloqua_custom_object_id"
+        }
+      },
+      "required": [
+        "custom_object_id"
+      ],
+      "title": "GetCustomObject",
+      "type": "object"
+    },
+    "GetCustomObjectRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_custom_object_record",
+          "default": "get_custom_object_record",
+          "title": "Get Custom Object Record Metadata",
+          "type": "string",
+          "x-operation-group": "Custom Object Records"
+        },
+        "custom_object_id": {
+          "title": "Custom Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "custom_object_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "eloqua_custom_object_id"
+        },
+        "record_id": {
+          "title": "Record ID in This Custom Object",
+          "type": "string",
+          "x-resource-type": "eloqua_custom_object_record_id"
+        }
+      },
+      "required": [
+        "custom_object_id",
+        "record_id"
+      ],
+      "title": "GetCustomObjectRecord",
+      "type": "object"
+    },
+    "GetIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_identity",
+          "default": "get_identity",
+          "title": "Get Authenticated Site and User",
+          "type": "string",
+          "x-operation-group": "Account"
+        }
+      },
+      "title": "GetIdentity",
+      "type": "object"
+    },
+    "ListAccounts": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 18000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "List Company Account Metadata",
+          "type": "string",
+          "x-operation-group": "Company Accounts"
+        }
+      },
+      "title": "ListAccounts",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 18000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contact Metadata",
+          "type": "string",
+          "x-operation-group": "Contacts"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListCustomObjectRecords": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 18000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "list_custom_object_records",
+          "default": "list_custom_object_records",
+          "title": "List Custom Object Record Metadata",
+          "type": "string",
+          "x-operation-group": "Custom Object Records"
+        },
+        "custom_object_id": {
+          "title": "Custom Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "custom_object_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "eloqua_custom_object_id"
+        }
+      },
+      "required": [
+        "custom_object_id"
+      ],
+      "title": "ListCustomObjectRecords",
+      "type": "object"
+    },
+    "ListCustomObjects": {
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 18000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "list_custom_objects",
+          "default": "list_custom_objects",
+          "title": "List Custom Object Definitions",
+          "type": "string",
+          "x-operation-group": "Custom Objects"
+        }
+      },
+      "title": "ListCustomObjects",
+      "type": "object"
+    },
+    "TextFieldValue": {
+      "additionalProperties": false,
+      "properties": {
+        "field_id": {
+          "title": "Text Field ID",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 4000,
+          "title": "Text Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field_id",
+        "value"
+      ],
+      "title": "TextFieldValue",
+      "type": "object"
+    },
+    "UpdateAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_account",
+          "default": "update_account",
+          "title": "Rename Own Company Account",
+          "type": "string",
+          "x-operation-group": "Company Accounts"
+        },
+        "account_id": {
+          "title": "Company Account",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "account_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "eloqua_account_id"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Company Account Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id",
+        "name"
+      ],
+      "title": "UpdateAccount",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Rename Own Contact",
+          "type": "string",
+          "x-operation-group": "Contacts"
+        },
+        "contact_id": {
+          "title": "Contact",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "contact_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "eloqua_contact_id"
+        },
+        "first_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id",
+        "first_name",
+        "last_name"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateCustomObject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_custom_object",
+          "default": "update_custom_object",
+          "title": "Rename Own Custom Object",
+          "type": "string",
+          "x-operation-group": "Custom Objects"
+        },
+        "custom_object_id": {
+          "title": "Custom Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "custom_object_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "eloqua_custom_object_id"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Custom Object Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "custom_object_id",
+        "name"
+      ],
+      "title": "UpdateCustomObject",
+      "type": "object"
+    },
+    "UpdateCustomObjectRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_custom_object_record",
+          "default": "update_custom_object_record",
+          "title": "Update Own Text Record",
+          "type": "string",
+          "x-operation-group": "Custom Object Records"
+        },
+        "custom_object_id": {
+          "title": "Custom Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "custom_object_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "eloqua_custom_object_id"
+        },
+        "record_id": {
+          "title": "Record ID in This Custom Object",
+          "type": "string",
+          "x-resource-type": "eloqua_custom_object_record_id"
+        },
+        "field_values": {
+          "items": {
+            "$ref": "#/$defs/TextFieldValue"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Text Field Values",
+          "type": "array"
+        }
+      },
+      "required": [
+        "custom_object_id",
+        "record_id",
+        "field_values"
+      ],
+      "title": "UpdateCustomObjectRecord",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_account": "#/$defs/CreateAccount",
+          "create_contact": "#/$defs/CreateContact",
+          "create_custom_object": "#/$defs/CreateCustomObject",
+          "create_custom_object_record": "#/$defs/CreateCustomObjectRecord",
+          "delete_account": "#/$defs/DeleteAccount",
+          "delete_contact": "#/$defs/DeleteContact",
+          "delete_custom_object": "#/$defs/DeleteCustomObject",
+          "delete_custom_object_record": "#/$defs/DeleteCustomObjectRecord",
+          "get_account": "#/$defs/GetAccount",
+          "get_contact": "#/$defs/GetContact",
+          "get_custom_object": "#/$defs/GetCustomObject",
+          "get_custom_object_record": "#/$defs/GetCustomObjectRecord",
+          "get_identity": "#/$defs/GetIdentity",
+          "list_accounts": "#/$defs/ListAccounts",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_custom_object_records": "#/$defs/ListCustomObjectRecords",
+          "list_custom_objects": "#/$defs/ListCustomObjects",
+          "update_account": "#/$defs/UpdateAccount",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_custom_object": "#/$defs/UpdateCustomObject",
+          "update_custom_object_record": "#/$defs/UpdateCustomObjectRecord"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetIdentity"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/ListAccounts"
+        },
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/CreateAccount"
+        },
+        {
+          "$ref": "#/$defs/UpdateAccount"
+        },
+        {
+          "$ref": "#/$defs/DeleteAccount"
+        },
+        {
+          "$ref": "#/$defs/ListCustomObjects"
+        },
+        {
+          "$ref": "#/$defs/GetCustomObject"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomObject"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomObject"
+        },
+        {
+          "$ref": "#/$defs/DeleteCustomObject"
+        },
+        {
+          "$ref": "#/$defs/ListCustomObjectRecords"
+        },
+        {
+          "$ref": "#/$defs/GetCustomObjectRecord"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomObjectRecord"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomObjectRecord"
+        },
+        {
+          "$ref": "#/$defs/DeleteCustomObjectRecord"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EloquaBasicCredential"
+        },
+        {
+          "$ref": "#/$defs/EloquaBearerTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Eloqua Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
