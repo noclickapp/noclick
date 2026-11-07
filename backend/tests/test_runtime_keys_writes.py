@@ -54,33 +54,46 @@ def _sources():
         yield rel, path
 
 
-def _strings(node):
-    """The string literals in ``node`` (f-strings' literal parts too), docstrings left out."""
-    docstrings = {id(b.body[0].value) for b in ast.walk(node)
-                  if isinstance(b, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Module))
-                  and b.body and isinstance(b.body[0], ast.Expr) and isinstance(b.body[0].value, ast.Constant)}
-    for n in ast.walk(node):
-        if isinstance(n, ast.Constant) and isinstance(n.value, str) and id(n) not in docstrings:
-            yield n.value
+_FUNCTIONS = (ast.FunctionDef, ast.AsyncFunctionDef)
 
 
 def _graph_writers(tree):
     """``(function name, calls the helper)`` for each innermost function holding a graph write;
-    ``("<module>", False)`` for one outside any function."""
-    functions = [f for f in ast.walk(tree) if isinstance(f, (ast.FunctionDef, ast.AsyncFunctionDef))]
-    inner = {id(f): [g for g in ast.walk(f) if g is not f and isinstance(g, (ast.FunctionDef, ast.AsyncFunctionDef))]
-             for f in functions}
+    ``("<module>", False)`` for one outside any function.
+
+    One walk: a string literal that writes a graph (f-strings' literal parts too, docstrings left
+    out) is the function's it sits in, and nested for each function around that one. Walking every
+    function again for its own and its nested functions' literals took about 6 seconds a run."""
+    functions, own, nested, calls, writes, docstrings = [], {}, {}, {}, [], set()
+    stack = [(tree, ())]
+    while stack:
+        node, around = stack.pop()
+        # Seen before its children are, so a docstring is known before its literal comes up.
+        if isinstance(node, (*_FUNCTIONS, ast.ClassDef, ast.Module)) and node.body \
+                and isinstance(node.body[0], ast.Expr) and isinstance(node.body[0].value, ast.Constant):
+            docstrings.add(id(node.body[0].value))
+        if isinstance(node, _FUNCTIONS):
+            functions.append(node)
+            own[id(node)], nested[id(node)], calls[id(node)] = [], set(), set()
+            around = (*around, node)
+        elif isinstance(node, ast.Constant) and isinstance(node.value, str) and id(node) not in docstrings \
+                and _GRAPH_WRITE.search(node.value):
+            writes.append(node.value)
+            if around:
+                own[id(around[-1])].append(node.value)
+                for f in around[:-1]:
+                    nested[id(f)].add(node.value)
+        elif isinstance(node, ast.Call):
+            for f in around:
+                calls[id(f)].add(getattr(node.func, "id", None) or getattr(node.func, "attr", None))
+        stack.extend((child, around) for child in ast.iter_child_nodes(node))
     claimed = set()
     found = []
     for f in functions:
-        own = [s for s in _strings(f) if _GRAPH_WRITE.search(s)]
-        nested = {s for g in inner[id(f)] for s in _strings(g) if _GRAPH_WRITE.search(s)}
-        if any(s not in nested for s in own):
-            calls = {getattr(c.func, "id", None) or getattr(c.func, "attr", None)
-                     for c in ast.walk(f) if isinstance(c, ast.Call)}
-            found.append((f.name, bool(calls & HELPERS)))
-            claimed.update(own)
-    if any(_GRAPH_WRITE.search(s) and s not in claimed for s in _strings(tree)):
+        if any(s not in nested[id(f)] for s in own[id(f)]):
+            found.append((f.name, bool(calls[id(f)] & HELPERS)))
+            claimed.update(own[id(f)], nested[id(f)])
+    if any(s not in claimed for s in writes):
         found.append(("<module>", False))
     return found
 
