@@ -3257,10 +3257,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"
@@ -3416,10 +3416,10 @@
         "external_webhook_id": {
           "anyOf": [
             {
-              "type": "integer"
+              "type": "string"
             },
             {
-              "type": "string"
+              "type": "integer"
             },
             {
               "type": "null"

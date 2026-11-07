@@ -3,6 +3,7 @@
 // changed description) fails this until the wording is reviewed; fix a bad line in the schema (an
 // x-credential-instructions, a field's ui:help) or in ~/utils/credentialCopy.ts, never by hand here.
 // Bless a reviewed change with: npx vitest run -u tests/utils/credentialCopyAudit.test.ts
+import { expectCredentialSnapshots } from './credentialAuditSnapshots';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -12,12 +13,15 @@ import { fixWordCasing } from '~/utils/credentialLabels';
 
 const SCHEMAS_DIR = join(__dirname, '../../app/schemas/nodes');
 
-function audit(): string {
+const legacyTypes = new Set(Object.keys(JSON.parse(readFileSync(join(__dirname, '../../app/schemas/nodeMeta.json'), 'utf8')).types).map(type => type.replace(/^automation-/, '') + '.json'));
+
+function audit(): { legacy: string; integrations: Map<string, string> } {
     const seen = new Set<string>();
     const blocks: string[] = [];
+    const integrations = new Map<string, string>();
     // An agent's model key and an MCP server connect in their own forms, never this one.
     const custom = new Set(['agent.json', 'mcp-server.json']);
-    for (const file of readdirSync(SCHEMAS_DIR).filter((f) => f.endsWith('.json') && !custom.has(f)).sort()) {
+    for (const file of readdirSync(SCHEMAS_DIR).filter((f) => f.endsWith('.json') && !custom.has(f)).sort((a, b) => Number(legacyTypes.has(b)) - Number(legacyTypes.has(a)) || (a < b ? -1 : a > b ? 1 : 0))) {
         const schema = JSON.parse(readFileSync(join(SCHEMAS_DIR, file), 'utf8'));
         // The schema's title stands in for the app's catalog name, which only the node registry knows.
         const app = fixWordCasing(
@@ -30,7 +34,7 @@ function audit(): string {
         );
         for (const req of requirementsFromSchema(schema)) {
             if (seen.has(req.credential_type)) continue;
-            seen.add(req.credential_type);
+            if (legacyTypes.has(file)) seen.add(req.credential_type);
             const method = copyMethodOf(methodFromRequirement(req));
             const copy = methodCopy(method, app);
             const lines = [`## ${req.credential_type} (${app})`, `name: ${copy.name}`, `line: ${copy.line}`];
@@ -40,14 +44,17 @@ function audit(): string {
                 const help = fieldHelp(field, app, copy.howTo);
                 lines.push(`  ${fieldLabel(field)}${field.required ? '' : ' (optional)'}${help ? ` — ${help}` : ''}`);
             }
-            blocks.push(lines.join('\n'));
+            if (legacyTypes.has(file)) blocks.push(lines.join('\n'));
+            else integrations.set(`./__snapshots__/credentials/${file.slice(0, -5)}/${req.credential_type}.copy.snap.txt`, `${lines.join('\n')}\n`);
         }
     }
-    return `${blocks.join('\n\n')}\n`;
+    return { legacy: `${blocks.join('\n\n')}\n`, integrations };
 }
 
 describe('credential copy audit', () => {
     it('every way in reads as reviewed', async () => {
-        await expect(audit()).toMatchFileSnapshot('./__snapshots__/credential-copy.snap.txt');
+        const result = audit();
+        await expect(result.legacy).toMatchFileSnapshot('./__snapshots__/credential-copy.snap.txt');
+        await expectCredentialSnapshots('copy', result.integrations);
     });
 });

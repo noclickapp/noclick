@@ -14,7 +14,7 @@ import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './type
 type DefinitionModule = Record<string, unknown>;
 
 /** [type, its module under nodes/ without the extension], in palette order. */
-export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: string]> = [
+const LEGACY_NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: string]> = [
     ['automation-acculynx', 'AccuLynxNode'],
     ['automation-supernormal', 'SupernormalNode'],
     ['automation-fountain', 'FountainNode'],
@@ -254,12 +254,24 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['interface-file-upload', 'interface/InterfaceFileUploadNode'],
 ];
 
+// Filenames are the contract: integrations/<slug>.tsx declares automation-<slug>.
+// Glob keys are synchronous; the component modules stay lazy.
+const INTEGRATION_MODULES = import.meta.glob<DefinitionModule>('./integrations/*.tsx');
+const integrationFiles = Object.keys(INTEGRATION_MODULES).sort().map((path) => {
+    const slug = path.slice('./integrations/'.length, -'.tsx'.length);
+    if (LEGACY_NODE_DEFINITION_FILES.some(([type]) => type === `automation-${slug}`)) {
+        throw new Error(`Duplicate node definition: automation-${slug}`);
+    }
+    return [`automation-${slug}`, `integrations/${slug}`] as const;
+});
+export const NODE_DEFINITION_FILES = [...LEGACY_NODE_DEFINITION_FILES, ...integrationFiles];
+
 /** Every node type the canvas draws, in palette order. */
 export const NODE_DEFINITION_TYPES: readonly string[] = NODE_DEFINITION_FILES.map(([type]) => type);
 
 const FILE_BY_TYPE = new Map(NODE_DEFINITION_FILES);
 // One lazy chunk per node module.
-const MODULES = import.meta.glob<DefinitionModule>(['./*Node.tsx', './interface/*Node.tsx']);
+const MODULES = import.meta.glob<DefinitionModule>(['./*Node.tsx', './interface/*Node.tsx', './integrations/*.tsx']);
 
 /** The definition of `type` among a node module's exports. */
 export function definitionIn(module: DefinitionModule, type: string): NodeDefinition {

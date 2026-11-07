@@ -7,16 +7,12 @@
 
 import nodeMetaJson from '~/schemas/nodeMeta.json';
 
-interface NodeMetaEntry {
-    agentToolProvider?: boolean;
-    connectionless?: boolean;
-    triggerOperations?: string[];
-    platformVendorOperations?: string[];
-}
+import { INTEGRATION_METADATA, mergeDeclarations, type NodeMetaEntry } from './integrationMetadata';
 
-const NODE_META: Record<string, NodeMetaEntry> = (
-    nodeMetaJson as { types: Record<string, NodeMetaEntry> }
-).types;
+const NODE_META = mergeDeclarations(
+    (nodeMetaJson as { types: Record<string, NodeMetaEntry> }).types,
+    INTEGRATION_METADATA.nodeMeta,
+);
 
 /** Every node type with a generated schema (~/schemas/nodes), keyed as on the canvas ('automation-slack'). */
 export const NODE_SCHEMA_TYPES: readonly string[] = Object.keys(NODE_META);

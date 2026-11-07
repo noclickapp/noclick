@@ -74,6 +74,26 @@ const customAssets = new Map(
 const excludedSourceAssets = new Set(
   manifest.excludedSourceAssets.map((asset) => path.basename(asset.path)),
 );
+// New integrations carry their review next to the icon. Older sidecars already
+// pinned by the manifest retain that review and its historical format.
+const legacyDeclared = new Set([...customAssets.keys(), ...monogramAssets, ...Object.keys(simpleAssets)]);
+for (const filename of (await readdir(inventoryDir)).sort()) {
+  if (!filename.endsWith('.provenance.json') || legacyDeclared.has(filename)) continue;
+  const content = await readFile(path.join(inventoryDir, filename));
+  const asset = JSON.parse(content.toString('utf8'));
+  const iconName = filename.slice(0, -'.provenance.json'.length);
+  if (asset.path !== `${manifest.scope}/${iconName}` || !asset.source || !asset.license || !asset.sha256) {
+    throw new Error(`Invalid icon provenance sidecar: ${filename}`);
+  }
+  if (legacyDeclared.has(iconName)) throw new Error(`Duplicate icon review: ${iconName}`);
+  customAssets.set(iconName, asset);
+  customAssets.set(filename, {
+    path: `${manifest.scope}/${filename}`,
+    source: asset.source,
+    license: asset.license,
+    sha256: createHash('sha256').update(content).digest('hex'),
+  });
+}
 const declared = [
   ...Object.keys(simpleAssets),
   ...monogramAssets,

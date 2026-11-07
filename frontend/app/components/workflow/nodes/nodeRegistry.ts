@@ -11,7 +11,7 @@ import { nodeTypeComponent } from './nodeTypeComponent';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 import { displayStrategyOf } from './strategyDefaults';
 
-const MODULES = import.meta.glob<Record<string, unknown>>(['./*Node.tsx', './interface/*Node.tsx'], { eager: true });
+const MODULES = import.meta.glob<Record<string, unknown>>(['./*Node.tsx', './interface/*Node.tsx', './integrations/*.tsx'], { eager: true });
 
 // All available nodes — built on first access, so this module finishes evaluating
 // without reading a node module's exports: a node module whose imports lead back here

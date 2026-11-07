@@ -1,5 +1,5 @@
 // The credential schema-title -> credential_type map and its lookup, split out of
-// credentialTypes.ts into a leaf with no imports of its own.
+// credentialTypes.ts into a leaf that imports only generated integration facts.
 //
 // Why it lives here: nodeSchemas.ts needs the lookup, and credentialTypes.ts needs
 // getNodeCredentialInfo from nodeSchemas — a mutual import that Vite SSR resolves
@@ -9,11 +9,13 @@
 //
 // credentialTypes.ts re-exports both symbols, so existing importers are unaffected.
 
+import { INTEGRATION_METADATA, mergeDeclarations } from './integrationMetadata';
+
 /**
  * Maps credential schema titles (from Pydantic models) to credential_type strings (DB identifiers).
  * Example: 'GoogleSheetsOAuthCredential' -> 'google_sheets_oauth'
  */
-export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
+export const CREDENTIAL_TYPE_MAP: Record<string, string> = mergeDeclarations({
     'BytescaleSecretAPIKeyCredential': 'bytescale_secret_api_key',
     'LinkwardenAccessTokenCredential': 'linkwarden_access_token',
     'DocspellAuthTokenCredential': 'docspell_auth_token',
@@ -507,7 +509,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Google DV360
     'DV360OAuthCredential': 'dv360_oauth',
     'DV360ServiceAccountCredential': 'dv360_service_account',
-};
+}, INTEGRATION_METADATA.credentialTypes);
 
 /**
  * Get credential type from schema title.

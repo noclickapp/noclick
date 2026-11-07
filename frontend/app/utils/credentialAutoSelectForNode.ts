@@ -1,3 +1,4 @@
+import { INTEGRATION_METADATA } from './integrationMetadata';
 /**
  * Picks the credential a node starts with when it's added to a canvas (drag-drop, click-to-add, paste, import) or
  * made for a workflow arriving from a public page: the most recent of the viewer's own credentials of the type the
@@ -109,6 +110,7 @@ const AUTO_SELECT_TYPES: ReadonlySet<string> = new Set([
     'automation-connecteam',
     'automation-keila',
     'agent',
+    ...INTEGRATION_METADATA.autoSelectTypes,
 ]);
 
 /**

@@ -33,8 +33,12 @@ function staticImportSpecifiers(source: string): string[] {
 }
 
 describe('credentialTypeMap leaf', () => {
-    it('imports nothing — a leaf cannot participate in a cycle', () => {
-        expect(staticImportSpecifiers(read('credentialTypeMap.ts'))).toEqual([]);
+    it('imports only the generated metadata leaf, which imports no code', () => {
+        expect(staticImportSpecifiers(read('credentialTypeMap.ts'))).toEqual(['./integrationMetadata']);
+        const metadata = read('integrationMetadata.ts');
+        expect(staticImportSpecifiers(metadata)).toEqual([]);
+        expect(metadata).toContain("'../schemas/nodeMeta/*.json'");
+        expect(metadata).not.toMatch(/\bimport\s*\(/);
     });
 
     it('nodeSchemas does not import credentialTypes', () => {

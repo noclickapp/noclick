@@ -10,6 +10,7 @@
 // From the leaf, NOT credentialTypes: that module imports getNodeCredentialInfo
 // from this one, and the resulting cycle made module-evaluation order load-bearing
 // — any new import edge into the pair could 500 Vite SSR.
+import { INTEGRATION_METADATA, mergeDeclarations } from './integrationMetadata';
 import { getCredentialTypeFromSchemaTitle } from '~/utils/credentialTypeMap';
 import { createLazyTypeStore, type LazyTypeStore } from '~/lib/lazyTypeStore';
 // Type predicates + legacy-alias resolution live in the schema-free leaf
@@ -513,7 +514,7 @@ function extractProviderKeyFromNodeType(nodeType: string): string {
  */
 function getProviderLabel(providerKey: string): string {
     // Special cases for display names
-    const labelMap: Record<string, string> = {
+    const labelMap: Record<string, string> = mergeDeclarations({
         'predictleads': 'PredictLeads API Key and Token',
         'uptimecom': 'Uptime.com API Token',
         'google_sheets': 'Google Account',
@@ -574,7 +575,7 @@ function getProviderLabel(providerKey: string): string {
         'tiktok': 'TikTok Account',
         'bluesky': 'Bluesky Account',
         'wordpress': 'WordPress Account',
-    };
+    }, INTEGRATION_METADATA.providerLabels);
 
     if (labelMap[providerKey]) return labelMap[providerKey];
 

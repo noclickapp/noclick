@@ -52,8 +52,14 @@ cd backend && python scripts/generate_socket_types.py
 ```
 
 It reads `NODE_REGISTRY` (`backend/nodes/core/registry.py`) and calls
-`get_config_schema()` on each node class. Register a node there and its editor
-UI appears; you do not write React for it.
+`get_config_schema()` on each node class. New integrations declare
+`integration_type = "automation-<slug>"` on their `WorkflowNode` subclass in
+`backend/nodes/<slug_with_underscores>_node.py`; existing explicit entries stay.
+Generation writes their schema plus `schemas/nodeMeta/<slug>.json`, deriving
+credential aliases, provider names and auto-selection. Their canvas definition
+lives at `components/workflow/nodes/integrations/<slug>.tsx`, discovered lazily.
+Credential audits write per-type snapshots and icons carry source/license/hash
+reviews in `<icon>.provenance.json` sidecars. Do not extend shared lists.
 
 ### Schema extensions
 
