@@ -169,6 +169,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-mindbody', 'MindbodyNode'],
     ['automation-bytescale', 'BytescaleNode'],
     ['automation-linkwarden', 'LinkwardenNode'],
+    ['automation-rebrandly', 'RebrandlyNode'],
     ['automation-firestore', 'FirestoreNode'],
     ['automation-google-cloud-storage', 'GoogleCloudStorageNode'],
     ['automation-monday', 'MondayNode'],
