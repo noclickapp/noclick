@@ -185,44 +185,6 @@ def cleanup_postgres_store_state(request):
     _cleanup_postgres_store(test_name)
 
 
-@pytest_asyncio.fixture(autouse=True)
-async def cleanup_database_state(request):
-    """
-    Clean up database tables after tests that use real PostgreSQL.
-
-    This prevents database state contamination between tests when PostgresStore
-    background tasks create connections outside the test transaction.
-    """
-    # Yield to let the test run first
-    yield
-
-    # Only cleanup if test uses real database
-    if 'postgres_container' in request.fixturenames:
-        postgres_container = request.getfixturevalue('postgres_container')
-        try:
-            # Create a separate connection OUTSIDE the test transaction
-            # to clean up data written by PostgresStore background tasks
-            import asyncpg
-            conn = await asyncpg.connect(
-                host=postgres_container.get_container_host_ip(),
-                port=postgres_container.get_exposed_port(5432),
-                user=postgres_container.username,
-                password=postgres_container.password,
-                database=postgres_container.dbname,
-            )
-
-            try:
-                # Truncate tables that PostgresStore writes to
-                # Use CASCADE to handle foreign key constraints
-                await conn.execute("TRUNCATE TABLE conversation_events CASCADE")
-                await conn.execute("TRUNCATE TABLE conversations CASCADE")
-            finally:
-                await conn.close()
-        except Exception:
-            # Silently ignore errors (e.g., if tables don't exist)
-            pass
-
-
 def _cleanup_postgres_store(test_name):
     """Helper function to clean up PostgresStore state after tests.
 
