@@ -1,0 +1,1466 @@
+{
+  "$defs": {
+    "BrightcoveAddFolderVideoConfig": {
+      "additionalProperties": false,
+      "description": "Move a video into the selected folder; a video can belong to only one folder.",
+      "properties": {
+        "video_id": {
+          "title": "Video",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "video_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "brightcove_video"
+        },
+        "folder_id": {
+          "title": "Folder",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "folder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "brightcove_folder"
+        },
+        "operation": {
+          "const": "add_video_to_folder",
+          "default": "add_video_to_folder",
+          "description": "Move an account video into this folder.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Folders",
+          "x-display-name": "Add Video to Folder"
+        }
+      },
+      "required": [
+        "video_id",
+        "folder_id"
+      ],
+      "title": "BrightcoveAddFolderVideoConfig",
+      "type": "object"
+    },
+    "BrightcoveClientCredential": {
+      "additionalProperties": false,
+      "description": "Customer-created Video Cloud client credentials for one selected account.",
+      "properties": {
+        "credential_type": {
+          "const": "brightcove_client_credentials",
+          "default": "brightcove_client_credentials",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account_id": {
+          "title": "Video Cloud Account ID",
+          "type": "string"
+        },
+        "client_id": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Client ID",
+          "type": "string"
+        },
+        "client_secret": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Client Secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "permissions": {
+          "description": "Select a subset of permissions configured for this client in Brightcove Studio. This form does not grant access; Brightcove authorizes each request.",
+          "items": {
+            "enum": [
+              "video-cloud/video/read",
+              "video-cloud/video/create",
+              "video-cloud/video/update",
+              "video-cloud/video/delete",
+              "video-cloud/video/all",
+              "video-cloud/playlist/read",
+              "video-cloud/playlist/create",
+              "video-cloud/playlist/update",
+              "video-cloud/playlist/delete",
+              "video-cloud/playlist/all"
+            ],
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Local Operations Ceiling",
+          "type": "array"
+        },
+        "access_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Token",
+          "ui:hidden": true
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At",
+          "ui:hidden": true
+        },
+        "token_type": {
+          "anyOf": [
+            {
+              "const": "Bearer",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Type",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "account_id",
+        "client_id",
+        "client_secret"
+      ],
+      "title": "Brightcove API Client",
+      "type": "object",
+      "x-credential-url": "https://studio.support.brightcove.com/admin/managing-api-authentication-credentials.html"
+    },
+    "BrightcoveCountConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_catalog_counts",
+          "default": "get_catalog_counts",
+          "description": "Read current video and playlist counts; these are not playback analytics.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Catalog",
+          "x-display-name": "Get Catalog Counts"
+        }
+      },
+      "title": "BrightcoveCountConfig",
+      "type": "object"
+    },
+    "BrightcoveCreateFolderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "description": "Create an account folder with a unique name.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Folders",
+          "x-display-name": "Create Folder"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "BrightcoveCreateFolderConfig",
+      "type": "object"
+    },
+    "BrightcoveCreateLabelConfig": {
+      "additionalProperties": false,
+      "description": "Create a label path and missing ancestors; labels must be enabled on the account.",
+      "properties": {
+        "operation": {
+          "const": "create_label",
+          "default": "create_label",
+          "description": "Create a label path and missing ancestors.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Labels",
+          "x-display-name": "Create Label"
+        },
+        "path": {
+          "maxLength": 1024,
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "BrightcoveCreateLabelConfig",
+      "type": "object"
+    },
+    "BrightcoveCreatePlaylistConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "reference_id": {
+          "anyOf": [
+            {
+              "maxLength": 150,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference Id"
+        },
+        "favorite": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Favorite"
+        },
+        "video_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "title": "Video Ids",
+          "type": "array"
+        },
+        "operation": {
+          "const": "create_manual_playlist",
+          "default": "create_manual_playlist",
+          "description": "Create an explicit playlist with optional video membership.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Playlists",
+          "x-display-name": "Create Manual Playlist"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "BrightcoveCreatePlaylistConfig",
+      "type": "object"
+    },
+    "BrightcoveCreateVideoConfig": {
+      "additionalProperties": false,
+      "description": "Create an inactive metadata placeholder without ingesting media.",
+      "properties": {
+        "name": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "long_description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Long Description"
+        },
+        "reference_id": {
+          "anyOf": [
+            {
+              "maxLength": 150,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference Id"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Internal custom field names; strings or null to clear.",
+          "title": "Custom Fields"
+        },
+        "labels": {
+          "default": null,
+          "title": "Labels",
+          "type": "null",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "create_video_draft",
+          "default": "create_video_draft",
+          "description": "Create an inactive metadata placeholder without media ingest.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Videos",
+          "x-display-name": "Create Video Draft"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "BrightcoveCreateVideoConfig",
+      "type": "object"
+    },
+    "BrightcoveDeleteFolderConfig": {
+      "additionalProperties": false,
+      "description": "Delete only an empty folder after matching its current name.",
+      "properties": {
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "folder_id": {
+          "title": "Folder",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "folder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "brightcove_folder"
+        },
+        "operation": {
+          "const": "delete_empty_folder",
+          "default": "delete_empty_folder",
+          "description": "Delete only an empty folder after matching its current name.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Folders",
+          "x-display-name": "Delete Empty Folder"
+        }
+      },
+      "required": [
+        "name",
+        "folder_id"
+      ],
+      "title": "BrightcoveDeleteFolderConfig",
+      "type": "object"
+    },
+    "BrightcoveDeleteLabelConfig": {
+      "additionalProperties": false,
+      "description": "Delete a label subtree; Brightcove asynchronously removes it from videos.",
+      "properties": {
+        "label_path": {
+          "title": "Label",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "label_path",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "brightcove_label"
+        },
+        "operation": {
+          "const": "delete_label",
+          "default": "delete_label",
+          "description": "Delete a label subtree; removal from videos is asynchronous.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Labels",
+          "x-display-name": "Delete Label"
+        }
+      },
+      "required": [
+        "label_path"
+      ],
+      "title": "BrightcoveDeleteLabelConfig",
+      "type": "object"
+    },
+    "BrightcoveDeletePlaylistConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "playlist_id": {
+          "title": "Playlist",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "playlist_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "brightcove_playlist"
+        },
+        "operation": {
+          "const": "delete_playlist",
+          "default": "delete_playlist",
+          "description": "Delete a playlist in the selected account.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Playlists",
+          "x-display-name": "Delete Playlist"
+        }
+      },
+      "required": [
+        "playlist_id"
+      ],
+      "title": "BrightcoveDeletePlaylistConfig",
+      "type": "object"
+    },
+    "BrightcoveDeleteVideoConfig": {
+      "additionalProperties": false,
+      "description": "Delete a video record and its associated assets.",
+      "properties": {
+        "video_id": {
+          "title": "Video",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "video_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "brightcove_video"
+        },
+        "operation": {
+          "const": "delete_video",
+          "default": "delete_video",
+          "description": "Delete a video record and its associated assets.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Videos",
+          "x-display-name": "Delete Video"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "BrightcoveDeleteVideoConfig",
+      "type": "object"
+    },
+    "BrightcoveFieldsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_video_fields",
+          "default": "get_video_fields",
+          "description": "Read projected standard and custom field definitions.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Catalog",
+          "x-display-name": "Get Video Fields"
+        }
+      },
+      "title": "BrightcoveFieldsConfig",
+      "type": "object"
+    },
+    "BrightcoveGetFolderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "folder_id": {
+          "title": "Folder",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "folder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "brightcove_folder"
+        },
+        "operation": {
+          "const": "get_folder",
+          "default": "get_folder",
+          "description": "Read current folder metadata.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Folders",
+          "x-display-name": "Get Folder"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "BrightcoveGetFolderConfig",
+      "type": "object"
+    },
+    "BrightcoveGetPlaylistConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "playlist_id": {
+          "title": "Playlist",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "playlist_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "brightcove_playlist"
+        },
+        "operation": {
+          "const": "get_playlist",
+          "default": "get_playlist",
+          "description": "Read a playlist in the selected account.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Playlists",
+          "x-display-name": "Get Playlist"
+        }
+      },
+      "required": [
+        "playlist_id"
+      ],
+      "title": "BrightcoveGetPlaylistConfig",
+      "type": "object"
+    },
+    "BrightcoveGetVideoConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "video_id": {
+          "title": "Video",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "video_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "brightcove_video"
+        },
+        "operation": {
+          "const": "get_video",
+          "default": "get_video",
+          "description": "Read one video in the selected Video Cloud account.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Videos",
+          "x-display-name": "Get Video"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "BrightcoveGetVideoConfig",
+      "type": "object"
+    },
+    "BrightcoveListFolderVideosConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        },
+        "folder_id": {
+          "title": "Folder",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "folder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "brightcove_folder"
+        },
+        "operation": {
+          "const": "list_folder_videos",
+          "default": "list_folder_videos",
+          "description": "Read videos under the selected current folder.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Folders",
+          "x-display-name": "List Folder Videos"
+        },
+        "sort": {
+          "default": "-updated_at",
+          "enum": [
+            "name",
+            "-name",
+            "updated_at",
+            "-updated_at"
+          ],
+          "title": "Sort",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "BrightcoveListFolderVideosConfig",
+      "type": "object"
+    },
+    "BrightcoveListFoldersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        },
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "description": "Read locally paged account folder metadata.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Folders",
+          "x-display-name": "List Folders"
+        }
+      },
+      "title": "BrightcoveListFoldersConfig",
+      "type": "object"
+    },
+    "BrightcoveListLabelsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        },
+        "operation": {
+          "const": "list_labels",
+          "default": "list_labels",
+          "description": "Read account label paths when labels are enabled.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Labels",
+          "x-display-name": "List Labels"
+        }
+      },
+      "title": "BrightcoveListLabelsConfig",
+      "type": "object"
+    },
+    "BrightcoveListPlaylistVideosConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        },
+        "playlist_id": {
+          "title": "Playlist",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "playlist_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "brightcove_playlist"
+        },
+        "operation": {
+          "const": "list_playlist_videos",
+          "default": "list_playlist_videos",
+          "description": "Read video metadata under a current account playlist.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Playlists",
+          "x-display-name": "List Playlist Videos"
+        }
+      },
+      "required": [
+        "playlist_id"
+      ],
+      "title": "BrightcoveListPlaylistVideosConfig",
+      "type": "object"
+    },
+    "BrightcoveListPlaylistsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        },
+        "operation": {
+          "const": "list_playlists",
+          "default": "list_playlists",
+          "description": "Read account playlist metadata with bounded pagination.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Playlists",
+          "x-display-name": "List Playlists"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q"
+        },
+        "sort": {
+          "default": "-updated_at",
+          "enum": [
+            "name",
+            "-name",
+            "updated_at",
+            "-updated_at"
+          ],
+          "title": "Sort",
+          "type": "string"
+        }
+      },
+      "title": "BrightcoveListPlaylistsConfig",
+      "type": "object"
+    },
+    "BrightcoveListVideosConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        },
+        "operation": {
+          "const": "list_videos",
+          "default": "list_videos",
+          "description": "Read projected video metadata with bounded offset pagination.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Videos",
+          "x-display-name": "List Videos"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented CMS v1 search expression, e.g. tags:training. Offset pages are not a snapshot.",
+          "title": "Video Search"
+        },
+        "sort": {
+          "default": "-updated_at",
+          "enum": [
+            "name",
+            "-name",
+            "updated_at",
+            "-updated_at",
+            "created_at",
+            "-created_at"
+          ],
+          "title": "Sort",
+          "type": "string"
+        }
+      },
+      "title": "BrightcoveListVideosConfig",
+      "type": "object"
+    },
+    "BrightcoveRemoveFolderVideoConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "video_id": {
+          "title": "Video in Folder",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "folder_id",
+            "field_name": "folder_video_id",
+            "searchable": true
+          },
+          "x-resource-type": "brightcove_video"
+        },
+        "folder_id": {
+          "title": "Folder",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "folder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "brightcove_folder"
+        },
+        "operation": {
+          "const": "remove_video_from_folder",
+          "default": "remove_video_from_folder",
+          "description": "Remove a video only when it currently belongs to this folder.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Folders",
+          "x-display-name": "Remove Video from Folder"
+        }
+      },
+      "required": [
+        "video_id",
+        "folder_id"
+      ],
+      "title": "BrightcoveRemoveFolderVideoConfig",
+      "type": "object"
+    },
+    "BrightcoveRenameFolderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "folder_id": {
+          "title": "Folder",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "folder_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "brightcove_folder"
+        },
+        "operation": {
+          "const": "rename_folder",
+          "default": "rename_folder",
+          "description": "Rename the selected account folder.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Folders",
+          "x-display-name": "Rename Folder"
+        }
+      },
+      "required": [
+        "name",
+        "folder_id"
+      ],
+      "title": "BrightcoveRenameFolderConfig",
+      "type": "object"
+    },
+    "BrightcoveRenameLabelConfig": {
+      "additionalProperties": false,
+      "description": "Rename the last segment and affected descendant labels.",
+      "properties": {
+        "label_path": {
+          "title": "Label",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "label_path",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "brightcove_label"
+        },
+        "operation": {
+          "const": "rename_label",
+          "default": "rename_label",
+          "description": "Rename a final label segment and its descendants.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Labels",
+          "x-display-name": "Rename Label"
+        },
+        "new_label": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "New Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label_path",
+        "new_label"
+      ],
+      "title": "BrightcoveRenameLabelConfig",
+      "type": "object"
+    },
+    "BrightcoveUpdatePlaylistConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "reference_id": {
+          "anyOf": [
+            {
+              "maxLength": 150,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference Id"
+        },
+        "favorite": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Favorite"
+        },
+        "video_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Complete replacement membership for a manual playlist.",
+          "title": "Video Ids"
+        },
+        "playlist_id": {
+          "title": "Playlist",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "playlist_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "brightcove_playlist"
+        },
+        "operation": {
+          "const": "update_playlist",
+          "default": "update_playlist",
+          "description": "Update metadata or replace a manual playlist's membership.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Playlists",
+          "x-display-name": "Update Playlist"
+        }
+      },
+      "required": [
+        "playlist_id"
+      ],
+      "title": "BrightcoveUpdatePlaylistConfig",
+      "type": "object"
+    },
+    "BrightcoveUpdateVideoConfig": {
+      "additionalProperties": false,
+      "description": "Update catalog metadata. Existing Brightcove video-change subscriptions may fire.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "long_description": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Long Description"
+        },
+        "reference_id": {
+          "anyOf": [
+            {
+              "maxLength": 150,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference Id"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Internal custom field names; strings or null to clear.",
+          "title": "Custom Fields"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full existing label paths; account must have labels enabled.",
+          "title": "Labels"
+        },
+        "video_id": {
+          "title": "Video",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "video_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "brightcove_video"
+        },
+        "operation": {
+          "const": "update_video_metadata",
+          "default": "update_video_metadata",
+          "description": "Update metadata; existing video-change subscriptions may fire.",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Videos",
+          "x-display-name": "Update Video Metadata"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "BrightcoveUpdateVideoConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_video_to_folder": "#/$defs/BrightcoveAddFolderVideoConfig",
+          "create_folder": "#/$defs/BrightcoveCreateFolderConfig",
+          "create_label": "#/$defs/BrightcoveCreateLabelConfig",
+          "create_manual_playlist": "#/$defs/BrightcoveCreatePlaylistConfig",
+          "create_video_draft": "#/$defs/BrightcoveCreateVideoConfig",
+          "delete_empty_folder": "#/$defs/BrightcoveDeleteFolderConfig",
+          "delete_label": "#/$defs/BrightcoveDeleteLabelConfig",
+          "delete_playlist": "#/$defs/BrightcoveDeletePlaylistConfig",
+          "delete_video": "#/$defs/BrightcoveDeleteVideoConfig",
+          "get_catalog_counts": "#/$defs/BrightcoveCountConfig",
+          "get_folder": "#/$defs/BrightcoveGetFolderConfig",
+          "get_playlist": "#/$defs/BrightcoveGetPlaylistConfig",
+          "get_video": "#/$defs/BrightcoveGetVideoConfig",
+          "get_video_fields": "#/$defs/BrightcoveFieldsConfig",
+          "list_folder_videos": "#/$defs/BrightcoveListFolderVideosConfig",
+          "list_folders": "#/$defs/BrightcoveListFoldersConfig",
+          "list_labels": "#/$defs/BrightcoveListLabelsConfig",
+          "list_playlist_videos": "#/$defs/BrightcoveListPlaylistVideosConfig",
+          "list_playlists": "#/$defs/BrightcoveListPlaylistsConfig",
+          "list_videos": "#/$defs/BrightcoveListVideosConfig",
+          "remove_video_from_folder": "#/$defs/BrightcoveRemoveFolderVideoConfig",
+          "rename_folder": "#/$defs/BrightcoveRenameFolderConfig",
+          "rename_label": "#/$defs/BrightcoveRenameLabelConfig",
+          "update_playlist": "#/$defs/BrightcoveUpdatePlaylistConfig",
+          "update_video_metadata": "#/$defs/BrightcoveUpdateVideoConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BrightcoveListVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveGetVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveCountConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveCreateVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveUpdateVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveDeleteVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveListPlaylistsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveGetPlaylistConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveListPlaylistVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveCreatePlaylistConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveUpdatePlaylistConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveDeletePlaylistConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveListFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveGetFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveListFolderVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveCreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveRenameFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveDeleteFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveAddFolderVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveRemoveFolderVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveListLabelsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveCreateLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveRenameLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/BrightcoveDeleteLabelConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BrightcoveClientCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Brightcove Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
