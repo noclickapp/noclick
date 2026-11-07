@@ -1,0 +1,1911 @@
+{
+  "$defs": {
+    "DockerHubAuditLogsListAuditActionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "audit_logs__list_audit_actions",
+          "default": "audit_logs__list_audit_actions",
+          "description": "List audit log actions for a namespace to be used as a filter for querying audit log events.",
+          "title": "List audit log actions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audit Logs",
+          "x-display-name": "List audit log actions",
+          "x-is-trigger": false
+        },
+        "path_account": {
+          "title": "Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_account"
+      ],
+      "title": "DockerHubAuditLogsListAuditActionsConfig",
+      "type": "object"
+    },
+    "DockerHubAuditLogsListAuditLogsConfig": {
+      "properties": {
+        "operation": {
+          "const": "audit_logs__list_audit_logs",
+          "default": "audit_logs__list_audit_logs",
+          "description": "List audit log events for a given namespace.",
+          "title": "List audit log events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audit Logs",
+          "x-display-name": "List audit log events",
+          "x-is-trigger": false
+        },
+        "path_account": {
+          "title": "Account",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use Docker's exact names: action, actor, from, name, page, page_size, to",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_account"
+      ],
+      "title": "DockerHubAuditLogsListAuditLogsConfig",
+      "type": "object"
+    },
+    "DockerHubCheckRepositoryConfig": {
+      "properties": {
+        "operation": {
+          "const": "check_repository",
+          "default": "check_repository",
+          "description": "Check a repository within the specified namespace (organization or user).",
+          "title": "Check repository in a namespace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repositories",
+          "x-display-name": "Check repository in a namespace",
+          "x-is-trigger": false
+        },
+        "path_namespace": {
+          "title": "Namespace",
+          "type": "string"
+        },
+        "path_repository": {
+          "title": "Repository",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_namespace",
+        "path_repository"
+      ],
+      "title": "DockerHubCheckRepositoryConfig",
+      "type": "object"
+    },
+    "DockerHubCreateRepositoryConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_repository",
+          "default": "create_repository",
+          "description": "Creates a new repository within the specified namespace. The repository will be created",
+          "title": "Create a new repository",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repositories",
+          "x-display-name": "Create a new repository",
+          "x-is-trigger": false
+        },
+        "path_namespace": {
+          "title": "Namespace",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "JSON request body for this Docker Hub action. Required keys: name, namespace. Supported keys include: description, full_description, is_private, name, namespace, registry.",
+          "title": "Request Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_namespace",
+        "body_json"
+      ],
+      "title": "DockerHubCreateRepositoryConfig",
+      "type": "object"
+    },
+    "DockerHubCreateRepositoryGroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_repository_group",
+          "default": "create_repository_group",
+          "description": "Assigns an organization group (team) to a repository with a specified permission level.",
+          "title": "Assign a group (Team) to a repository for access",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repositories",
+          "x-display-name": "Assign a group (Team) to a repository for access",
+          "x-is-trigger": false
+        },
+        "path_namespace": {
+          "title": "Namespace",
+          "type": "string"
+        },
+        "path_repository": {
+          "title": "Repository",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "JSON request body for this Docker Hub action. Required keys: group_id, permission. Supported keys include: group_id, permission.",
+          "title": "Request Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_namespace",
+        "path_repository",
+        "body_json"
+      ],
+      "title": "DockerHubCreateRepositoryGroupConfig",
+      "type": "object"
+    },
+    "DockerHubDeleteV2AccessTokensByUuidConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_v2_access_tokens_by_uuid",
+          "default": "delete_v2_access_tokens_by_uuid",
+          "description": "Deletes a personal access token permanently. This cannot be undone.",
+          "title": "Delete personal access token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Access Tokens",
+          "x-display-name": "Delete personal access token",
+          "x-is-trigger": false
+        },
+        "path_uuid": {
+          "title": "Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_uuid"
+      ],
+      "title": "DockerHubDeleteV2AccessTokensByUuidConfig",
+      "type": "object"
+    },
+    "DockerHubDeleteV2InvitesByIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_v2_invites_by_id",
+          "default": "delete_v2_invites_by_id",
+          "description": "Mark the invite as cancelled so it doesn't show up on the list of pending invites",
+          "title": "Cancel an invite",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invites",
+          "x-display-name": "Cancel an invite",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_id"
+      ],
+      "title": "DockerHubDeleteV2InvitesByIdConfig",
+      "type": "object"
+    },
+    "DockerHubDeleteV2OrgsByOrgNameAccessTokensByAccessTokenIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_v2_orgs_by_org_name_access_tokens_by_access_token_id",
+          "default": "delete_v2_orgs_by_org_name_access_tokens_by_access_token_id",
+          "description": "Delete a specific access token for an organization. This action cannot be undone.",
+          "title": "Delete access token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Org Access Tokens",
+          "x-display-name": "Delete access token",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        },
+        "path_access_token_id": {
+          "title": "Access Token Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_org_name",
+        "path_access_token_id"
+      ],
+      "title": "DockerHubDeleteV2OrgsByOrgNameAccessTokensByAccessTokenIdConfig",
+      "type": "object"
+    },
+    "DockerHubDeleteV2OrgsByOrgNameGroupsByGroupNameConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_v2_orgs_by_org_name_groups_by_group_name",
+          "default": "delete_v2_orgs_by_org_name_groups_by_group_name",
+          "description": "Delete an organization group.",
+          "title": "Delete an organization group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Delete an organization group",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        },
+        "path_group_name": {
+          "title": "Group Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_org_name",
+        "path_group_name"
+      ],
+      "title": "DockerHubDeleteV2OrgsByOrgNameGroupsByGroupNameConfig",
+      "type": "object"
+    },
+    "DockerHubDeleteV2OrgsByOrgNameGroupsByGroupNameMembersByUsernameConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_v2_orgs_by_org_name_groups_by_group_name_members_by_username",
+          "default": "delete_v2_orgs_by_org_name_groups_by_group_name_members_by_username",
+          "description": "Remove a user from a group.",
+          "title": "Remove a user from a group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Remove a user from a group",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        },
+        "path_group_name": {
+          "title": "Group Name",
+          "type": "string"
+        },
+        "path_username": {
+          "title": "Username",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_org_name",
+        "path_group_name",
+        "path_username"
+      ],
+      "title": "DockerHubDeleteV2OrgsByOrgNameGroupsByGroupNameMembersByUsernameConfig",
+      "type": "object"
+    },
+    "DockerHubDeleteV2OrgsByOrgNameMembersByUsernameConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_v2_orgs_by_org_name_members_by_username",
+          "default": "delete_v2_orgs_by_org_name_members_by_username",
+          "description": "Removes the member from the org, ie. all groups in the org, unless they're the last owner",
+          "title": "Remove member from org",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orgs",
+          "x-display-name": "Remove member from org",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        },
+        "path_username": {
+          "title": "Username",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_org_name",
+        "path_username"
+      ],
+      "title": "DockerHubDeleteV2OrgsByOrgNameMembersByUsernameConfig",
+      "type": "object"
+    },
+    "DockerHubGetRepositoryConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_repository",
+          "default": "get_repository",
+          "description": "Returns a repository within the specified namespace (organization or user).",
+          "title": "Get repository in a namespace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repositories",
+          "x-display-name": "Get repository in a namespace",
+          "x-is-trigger": false
+        },
+        "path_namespace": {
+          "title": "Namespace",
+          "type": "string"
+        },
+        "path_repository": {
+          "title": "Repository",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_namespace",
+        "path_repository"
+      ],
+      "title": "DockerHubGetRepositoryConfig",
+      "type": "object"
+    },
+    "DockerHubGetRepositoryTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_repository_tag",
+          "default": "get_repository_tag",
+          "description": "Returns details for a specific tag in the specified repository.",
+          "title": "Read repository tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repositories",
+          "x-display-name": "Read repository tag",
+          "x-is-trigger": false
+        },
+        "path_namespace": {
+          "title": "Namespace",
+          "type": "string"
+        },
+        "path_repository": {
+          "title": "Repository",
+          "type": "string"
+        },
+        "path_tag": {
+          "title": "Tag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_namespace",
+        "path_repository",
+        "path_tag"
+      ],
+      "title": "DockerHubGetRepositoryTagConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2AccessTokensByUuidConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_access_tokens_by_uuid",
+          "default": "get_v2_access_tokens_by_uuid",
+          "description": "Returns a personal access token by UUID.",
+          "title": "Get personal access token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Access Tokens",
+          "x-display-name": "Get personal access token",
+          "x-is-trigger": false
+        },
+        "path_uuid": {
+          "title": "Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_uuid"
+      ],
+      "title": "DockerHubGetV2AccessTokensByUuidConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2AccessTokensConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_access_tokens",
+          "default": "get_v2_access_tokens",
+          "description": "Returns a paginated list of personal access tokens.",
+          "title": "List personal access tokens",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Access Tokens",
+          "x-display-name": "List personal access tokens",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use Docker's exact names: page, page_size",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "DockerHubGetV2AccessTokensConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2OrgsByNameAccessTokensConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_orgs_by_name_access_tokens",
+          "default": "get_v2_orgs_by_name_access_tokens",
+          "description": "List access tokens for an organization.",
+          "title": "List access tokens",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Org Access Tokens",
+          "x-display-name": "List access tokens",
+          "x-is-trigger": false
+        },
+        "path_name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use Docker's exact names: page, page_size",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_name"
+      ],
+      "title": "DockerHubGetV2OrgsByNameAccessTokensConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2OrgsByNameSettingsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_orgs_by_name_settings",
+          "default": "get_v2_orgs_by_name_settings",
+          "description": "Returns organization settings by name.",
+          "title": "Get organization settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Org Settings",
+          "x-display-name": "Get organization settings",
+          "x-is-trigger": false
+        },
+        "path_name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_name"
+      ],
+      "title": "DockerHubGetV2OrgsByNameSettingsConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2OrgsByOrgNameAccessTokensByAccessTokenIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_orgs_by_org_name_access_tokens_by_access_token_id",
+          "default": "get_v2_orgs_by_org_name_access_tokens_by_access_token_id",
+          "description": "Get details of a specific access token for an organization.",
+          "title": "Get access token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Org Access Tokens",
+          "x-display-name": "Get access token",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        },
+        "path_access_token_id": {
+          "title": "Access Token Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_org_name",
+        "path_access_token_id"
+      ],
+      "title": "DockerHubGetV2OrgsByOrgNameAccessTokensByAccessTokenIdConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2OrgsByOrgNameGroupsByGroupNameConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_orgs_by_org_name_groups_by_group_name",
+          "default": "get_v2_orgs_by_org_name_groups_by_group_name",
+          "description": "Get a group of an organization.",
+          "title": "Get a group of an organization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Get a group of an organization",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        },
+        "path_group_name": {
+          "title": "Group Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_org_name",
+        "path_group_name"
+      ],
+      "title": "DockerHubGetV2OrgsByOrgNameGroupsByGroupNameConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2OrgsByOrgNameGroupsByGroupNameMembersConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_orgs_by_org_name_groups_by_group_name_members",
+          "default": "get_v2_orgs_by_org_name_groups_by_group_name_members",
+          "description": "List the members (users) that are in a group.",
+          "title": "List members of a group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "List members of a group",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        },
+        "path_group_name": {
+          "title": "Group Name",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use Docker's exact names: page, page_size, search",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_org_name",
+        "path_group_name"
+      ],
+      "title": "DockerHubGetV2OrgsByOrgNameGroupsByGroupNameMembersConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2OrgsByOrgNameGroupsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_orgs_by_org_name_groups",
+          "default": "get_v2_orgs_by_org_name_groups",
+          "description": "Get groups of an organization.",
+          "title": "Get groups of an organization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Get groups of an organization",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use Docker's exact names: page, page_size, search, username",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_org_name"
+      ],
+      "title": "DockerHubGetV2OrgsByOrgNameGroupsConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2OrgsByOrgNameInvitesConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_orgs_by_org_name_invites",
+          "default": "get_v2_orgs_by_org_name_invites",
+          "description": "Return all pending invites for a given org, only team owners can call this endpoint",
+          "title": "List org invites",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invites",
+          "x-display-name": "List org invites",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_org_name"
+      ],
+      "title": "DockerHubGetV2OrgsByOrgNameInvitesConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2OrgsByOrgNameMembersConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_orgs_by_org_name_members",
+          "default": "get_v2_orgs_by_org_name_members",
+          "description": "Returns a list of members for an organization.",
+          "title": "List org members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orgs",
+          "x-display-name": "List org members",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use Docker's exact names: invites, page, page_size, role, search, type",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_org_name"
+      ],
+      "title": "DockerHubGetV2OrgsByOrgNameMembersConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2OrgsByOrgNameMembersExportConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_orgs_by_org_name_members_export",
+          "default": "get_v2_orgs_by_org_name_members_export",
+          "description": "Export members of an organization as a CSV",
+          "title": "Export org members CSV",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orgs",
+          "x-display-name": "Export org members CSV",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_org_name"
+      ],
+      "title": "DockerHubGetV2OrgsByOrgNameMembersExportConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2Scim20ResourceTypesByNameConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_scim20_resource_types_by_name",
+          "default": "get_v2_scim20_resource_types_by_name",
+          "description": "Returns a resource type by name.",
+          "title": "Get a resource type",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scim",
+          "x-display-name": "Get a resource type",
+          "x-is-trigger": false
+        },
+        "path_name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_name"
+      ],
+      "title": "DockerHubGetV2Scim20ResourceTypesByNameConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2Scim20ResourceTypesConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_scim20_resource_types",
+          "default": "get_v2_scim20_resource_types",
+          "description": "Returns all resource types supported for the SCIM configuration.",
+          "title": "List resource types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scim",
+          "x-display-name": "List resource types",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DockerHubGetV2Scim20ResourceTypesConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2Scim20SchemasByIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_scim20_schemas_by_id",
+          "default": "get_v2_scim20_schemas_by_id",
+          "description": "Returns a schema by ID.",
+          "title": "Get a schema",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scim",
+          "x-display-name": "Get a schema",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_id"
+      ],
+      "title": "DockerHubGetV2Scim20SchemasByIdConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2Scim20SchemasConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_scim20_schemas",
+          "default": "get_v2_scim20_schemas",
+          "description": "Returns all schemas supported for the SCIM configuration.",
+          "title": "List schemas",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scim",
+          "x-display-name": "List schemas",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DockerHubGetV2Scim20SchemasConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2Scim20ServiceProviderConfigConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_scim20_service_provider_config",
+          "default": "get_v2_scim20_service_provider_config",
+          "description": "Returns a service provider config for Docker's configuration.",
+          "title": "Get service provider config",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scim",
+          "x-display-name": "Get service provider config",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DockerHubGetV2Scim20ServiceProviderConfigConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2Scim20UsersByIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_scim20_users_by_id",
+          "default": "get_v2_scim20_users_by_id",
+          "description": "Returns a user by ID.",
+          "title": "Get a user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scim",
+          "x-display-name": "Get a user",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_id"
+      ],
+      "title": "DockerHubGetV2Scim20UsersByIdConfig",
+      "type": "object"
+    },
+    "DockerHubGetV2Scim20UsersConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_v2_scim20_users",
+          "default": "get_v2_scim20_users",
+          "description": "Returns paginated users for an organization. Use `startIndex` and `count` query parameters to receive paginated results.",
+          "title": "List users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scim",
+          "x-display-name": "List users",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use Docker's exact names: attributes, count, filter, sortBy, sortOrder, startIndex",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "DockerHubGetV2Scim20UsersConfig",
+      "type": "object"
+    },
+    "DockerHubHeadV2NamespacesByNamespaceRepositoriesByRepositoryTagsByTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "head_v2_namespaces_by_namespace_repositories_by_repository_tags_by_tag",
+          "default": "head_v2_namespaces_by_namespace_repositories_by_repository_tags_by_tag",
+          "description": "Checks whether the specified tag exists in the repository.",
+          "title": "Check repository tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repositories",
+          "x-display-name": "Check repository tag",
+          "x-is-trigger": false
+        },
+        "path_namespace": {
+          "title": "Namespace",
+          "type": "string"
+        },
+        "path_repository": {
+          "title": "Repository",
+          "type": "string"
+        },
+        "path_tag": {
+          "title": "Tag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_namespace",
+        "path_repository",
+        "path_tag"
+      ],
+      "title": "DockerHubHeadV2NamespacesByNamespaceRepositoriesByRepositoryTagsByTagConfig",
+      "type": "object"
+    },
+    "DockerHubHeadV2NamespacesByNamespaceRepositoriesByRepositoryTagsConfig": {
+      "properties": {
+        "operation": {
+          "const": "head_v2_namespaces_by_namespace_repositories_by_repository_tags",
+          "default": "head_v2_namespaces_by_namespace_repositories_by_repository_tags",
+          "description": "Checks whether the repository has any tags.",
+          "title": "Check repository tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repositories",
+          "x-display-name": "Check repository tags",
+          "x-is-trigger": false
+        },
+        "path_namespace": {
+          "title": "Namespace",
+          "type": "string"
+        },
+        "path_repository": {
+          "title": "Repository",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_namespace",
+        "path_repository"
+      ],
+      "title": "DockerHubHeadV2NamespacesByNamespaceRepositoriesByRepositoryTagsConfig",
+      "type": "object"
+    },
+    "DockerHubListNamespaceRepositoriesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_namespace_repositories",
+          "default": "list_namespace_repositories",
+          "description": "Returns a list of repositories within the specified namespace (organization or user).",
+          "title": "List repositories in a namespace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repositories",
+          "x-display-name": "List repositories in a namespace",
+          "x-is-trigger": false
+        },
+        "path_namespace": {
+          "title": "Namespace",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use Docker's exact names: name, ordering, page, page_size",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_namespace"
+      ],
+      "title": "DockerHubListNamespaceRepositoriesConfig",
+      "type": "object"
+    },
+    "DockerHubListRepositoryTagsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_repository_tags",
+          "default": "list_repository_tags",
+          "description": "Returns the list of tags for the specified repository.",
+          "title": "List repository tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repositories",
+          "x-display-name": "List repository tags",
+          "x-is-trigger": false
+        },
+        "path_namespace": {
+          "title": "Namespace",
+          "type": "string"
+        },
+        "path_repository": {
+          "title": "Repository",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use Docker's exact names: page, page_size",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_namespace",
+        "path_repository"
+      ],
+      "title": "DockerHubListRepositoryTagsConfig",
+      "type": "object"
+    },
+    "DockerHubPATCredential": {
+      "description": "A Docker Hub username (or organization) and scoped access token.",
+      "properties": {
+        "credential_type": {
+          "const": "docker_hub_pat",
+          "default": "docker_hub_pat",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "identifier": {
+          "description": "The username for a personal access token, or organization name for an organization access token.",
+          "title": "Docker Hub Username or Organization",
+          "type": "string"
+        },
+        "personal_access_token": {
+          "title": "Personal or Organization Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "identifier",
+        "personal_access_token"
+      ],
+      "title": "Docker Hub Access Token",
+      "type": "object",
+      "x-credential-instructions": "Create a scoped personal access token in Docker Hub Settings. Use the matching username. Organization owners may use an organization access token instead.",
+      "x-credential-url": "https://app.docker.com/settings/personal-access-tokens"
+    },
+    "DockerHubPatchV2AccessTokensByUuidConfig": {
+      "properties": {
+        "operation": {
+          "const": "patch_v2_access_tokens_by_uuid",
+          "default": "patch_v2_access_tokens_by_uuid",
+          "description": "Updates a personal access token partially. You can either update the token's label or enable/disable it.",
+          "title": "Update personal access token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Access Tokens",
+          "x-display-name": "Update personal access token",
+          "x-is-trigger": false
+        },
+        "path_uuid": {
+          "title": "Uuid",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "JSON request body for this Docker Hub action. Supported keys include: is_active, token_label.",
+          "title": "Request Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_uuid",
+        "body_json"
+      ],
+      "title": "DockerHubPatchV2AccessTokensByUuidConfig",
+      "type": "object"
+    },
+    "DockerHubPatchV2InvitesByIdResendConfig": {
+      "properties": {
+        "operation": {
+          "const": "patch_v2_invites_by_id_resend",
+          "default": "patch_v2_invites_by_id_resend",
+          "description": "Resend a pending invite to the user, any org owner can resend an invite",
+          "title": "Resend an invite",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invites",
+          "x-display-name": "Resend an invite",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_id"
+      ],
+      "title": "DockerHubPatchV2InvitesByIdResendConfig",
+      "type": "object"
+    },
+    "DockerHubPatchV2OrgsByOrgNameAccessTokensByAccessTokenIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "patch_v2_orgs_by_org_name_access_tokens_by_access_token_id",
+          "default": "patch_v2_orgs_by_org_name_access_tokens_by_access_token_id",
+          "description": "Update a specific access token for an organization.",
+          "title": "Update access token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Org Access Tokens",
+          "x-display-name": "Update access token",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        },
+        "path_access_token_id": {
+          "title": "Access Token Id",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "JSON request body for this Docker Hub action. Supported keys include: description, is_active, label, resources.",
+          "title": "Request Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_org_name",
+        "path_access_token_id",
+        "body_json"
+      ],
+      "title": "DockerHubPatchV2OrgsByOrgNameAccessTokensByAccessTokenIdConfig",
+      "type": "object"
+    },
+    "DockerHubPatchV2OrgsByOrgNameGroupsByGroupNameConfig": {
+      "properties": {
+        "operation": {
+          "const": "patch_v2_orgs_by_org_name_groups_by_group_name",
+          "default": "patch_v2_orgs_by_org_name_groups_by_group_name",
+          "description": "Update some details for an organization group.",
+          "title": "Update some details for an organization group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Update some details for an organization group",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        },
+        "path_group_name": {
+          "title": "Group Name",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON request body for this Docker Hub action. Supported keys include: description, name, role.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_org_name",
+        "path_group_name"
+      ],
+      "title": "DockerHubPatchV2OrgsByOrgNameGroupsByGroupNameConfig",
+      "type": "object"
+    },
+    "DockerHubPostV2AccessTokensConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_v2_access_tokens",
+          "default": "post_v2_access_tokens",
+          "description": "Creates and returns a personal access token.",
+          "title": "Create personal access token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Access Tokens",
+          "x-display-name": "Create personal access token",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "description": "JSON request body for this Docker Hub action. Required keys: token_label, scopes. Supported keys include: expires_at, scopes, token_label.",
+          "title": "Request Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "DockerHubPostV2AccessTokensConfig",
+      "type": "object"
+    },
+    "DockerHubPostV2InvitesBulkConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_v2_invites_bulk",
+          "default": "post_v2_invites_bulk",
+          "description": "Create multiple invites by emails or DockerIDs. Only a team owner can create invites.",
+          "title": "Bulk create invites",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invites",
+          "x-display-name": "Bulk create invites",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "description": "JSON request body for this Docker Hub action. Required keys: org, invitees. Supported keys include: dry_run, invitees, org, role, team.",
+          "title": "Request Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "DockerHubPostV2InvitesBulkConfig",
+      "type": "object"
+    },
+    "DockerHubPostV2OrgsByNameAccessTokensConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_v2_orgs_by_name_access_tokens",
+          "default": "post_v2_orgs_by_name_access_tokens",
+          "description": "Create an access token for an organization.",
+          "title": "Create access token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Org Access Tokens",
+          "x-display-name": "Create access token",
+          "x-is-trigger": false
+        },
+        "path_name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "JSON request body for this Docker Hub action. Required keys: label, resources. Supported keys include: description, expires_at, label, resources.",
+          "title": "Request Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_name",
+        "body_json"
+      ],
+      "title": "DockerHubPostV2OrgsByNameAccessTokensConfig",
+      "type": "object"
+    },
+    "DockerHubPostV2OrgsByOrgNameGroupsByGroupNameMembersConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_v2_orgs_by_org_name_groups_by_group_name_members",
+          "default": "post_v2_orgs_by_org_name_groups_by_group_name_members",
+          "description": "Add a member to a group.",
+          "title": "Add a member to a group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Add a member to a group",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        },
+        "path_group_name": {
+          "title": "Group Name",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "JSON request body for this Docker Hub action. Required keys: member. Supported keys include: member.",
+          "title": "Request Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_org_name",
+        "path_group_name",
+        "body_json"
+      ],
+      "title": "DockerHubPostV2OrgsByOrgNameGroupsByGroupNameMembersConfig",
+      "type": "object"
+    },
+    "DockerHubPostV2OrgsByOrgNameGroupsConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_v2_orgs_by_org_name_groups",
+          "default": "post_v2_orgs_by_org_name_groups",
+          "description": "Create a new group within an organization.",
+          "title": "Create a new group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Create a new group",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON request body for this Docker Hub action. Required keys: name. Supported keys include: description, name.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_org_name"
+      ],
+      "title": "DockerHubPostV2OrgsByOrgNameGroupsConfig",
+      "type": "object"
+    },
+    "DockerHubPostV2Scim20UsersConfig": {
+      "properties": {
+        "operation": {
+          "const": "post_v2_scim20_users",
+          "default": "post_v2_scim20_users",
+          "description": "Creates a user. If the user already exists by email, they are assigned to the organization on the \"company\" team.",
+          "title": "Create user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scim",
+          "x-display-name": "Create user",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "description": "JSON request body for this Docker Hub action. Required keys: schemas, userName. Supported keys include: name, schemas, userName.",
+          "title": "Request Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "DockerHubPostV2Scim20UsersConfig",
+      "type": "object"
+    },
+    "DockerHubPutV2OrgsByNameSettingsConfig": {
+      "properties": {
+        "operation": {
+          "const": "put_v2_orgs_by_name_settings",
+          "default": "put_v2_orgs_by_name_settings",
+          "description": "Updates an organization's settings. Some settings are only used when the organization is on a business subscription.",
+          "title": "Update organization settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Org Settings",
+          "x-display-name": "Update organization settings",
+          "x-is-trigger": false
+        },
+        "path_name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "JSON request body for this Docker Hub action. Required keys: restricted_images. Supported keys include: restricted_images.",
+          "title": "Request Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_name",
+        "body_json"
+      ],
+      "title": "DockerHubPutV2OrgsByNameSettingsConfig",
+      "type": "object"
+    },
+    "DockerHubPutV2OrgsByOrgNameGroupsByGroupNameConfig": {
+      "properties": {
+        "operation": {
+          "const": "put_v2_orgs_by_org_name_groups_by_group_name",
+          "default": "put_v2_orgs_by_org_name_groups_by_group_name",
+          "description": "Update the details for an organization group.",
+          "title": "Update the details for an organization group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Update the details for an organization group",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        },
+        "path_group_name": {
+          "title": "Group Name",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON request body for this Docker Hub action. Required keys: name. Supported keys include: description, name.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_org_name",
+        "path_group_name"
+      ],
+      "title": "DockerHubPutV2OrgsByOrgNameGroupsByGroupNameConfig",
+      "type": "object"
+    },
+    "DockerHubPutV2OrgsByOrgNameMembersByUsernameConfig": {
+      "properties": {
+        "operation": {
+          "const": "put_v2_orgs_by_org_name_members_by_username",
+          "default": "put_v2_orgs_by_org_name_members_by_username",
+          "description": "Updates the role of a member in the organization.",
+          "title": "Update org member (role)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orgs",
+          "x-display-name": "Update org member (role)",
+          "x-is-trigger": false
+        },
+        "path_org_name": {
+          "title": "Org Name",
+          "type": "string"
+        },
+        "path_username": {
+          "title": "Username",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "JSON request body for this Docker Hub action. Required keys: role. Supported keys include: role.",
+          "title": "Request Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_org_name",
+        "path_username",
+        "body_json"
+      ],
+      "title": "DockerHubPutV2OrgsByOrgNameMembersByUsernameConfig",
+      "type": "object"
+    },
+    "DockerHubPutV2Scim20UsersByIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "put_v2_scim20_users_by_id",
+          "default": "put_v2_scim20_users_by_id",
+          "description": "Updates a user. This route is used to change the user's name, activate, and deactivate the user.",
+          "title": "Update a user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scim",
+          "x-display-name": "Update a user",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "JSON request body for this Docker Hub action. Required keys: schemas, userName. Supported keys include: active, name, schemas, userName.",
+          "title": "Request Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_id",
+        "body_json"
+      ],
+      "title": "DockerHubPutV2Scim20UsersByIdConfig",
+      "type": "object"
+    },
+    "DockerHubSCIMCredential": {
+      "description": "An organization SCIM provisioning token for SCIM-only actions.",
+      "properties": {
+        "credential_type": {
+          "const": "docker_hub_scim",
+          "default": "docker_hub_scim",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scim_token": {
+          "title": "SCIM Provisioning Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "scim_token"
+      ],
+      "title": "Docker Hub SCIM Token",
+      "type": "object",
+      "x-credential-instructions": "Configure SCIM provisioning for a Docker organization and copy its SCIM token.",
+      "x-credential-url": "https://app.docker.com/"
+    },
+    "DockerHubTestConnectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "test_connection",
+          "default": "test_connection",
+          "description": "Confirm the token is accepted without exposing the resulting bearer token.",
+          "title": "Test Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Test Connection",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DockerHubTestConnectionConfig",
+      "type": "object"
+    },
+    "DockerHubUpdateRepositoryImmutableTagsConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_repository_immutable_tags",
+          "default": "update_repository_immutable_tags",
+          "description": "Updates the immutable tags configuration for this repository.",
+          "title": "Update repository immutable tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repositories",
+          "x-display-name": "Update repository immutable tags",
+          "x-is-trigger": false
+        },
+        "path_namespace": {
+          "title": "Namespace",
+          "type": "string"
+        },
+        "path_repository": {
+          "title": "Repository",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "JSON request body for this Docker Hub action. Required keys: immutable_tags, immutable_tags_rules. Supported keys include: immutable_tags, immutable_tags_rules.",
+          "title": "Request Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_namespace",
+        "path_repository",
+        "body_json"
+      ],
+      "title": "DockerHubUpdateRepositoryImmutableTagsConfig",
+      "type": "object"
+    },
+    "DockerHubVerifyRepositoryImmutableTagsConfig": {
+      "properties": {
+        "operation": {
+          "const": "verify_repository_immutable_tags",
+          "default": "verify_repository_immutable_tags",
+          "description": "Validates the immutable tags regex passed in the request body and returns a list of tags matching it in this repository.",
+          "title": "Verify repository immutable tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repositories",
+          "x-display-name": "Verify repository immutable tags",
+          "x-is-trigger": false
+        },
+        "path_namespace": {
+          "title": "Namespace",
+          "type": "string"
+        },
+        "path_repository": {
+          "title": "Repository",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "JSON request body for this Docker Hub action. Required keys: regex. Supported keys include: regex.",
+          "title": "Request Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_namespace",
+        "path_repository",
+        "body_json"
+      ],
+      "title": "DockerHubVerifyRepositoryImmutableTagsConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "audit_logs__list_audit_actions": "#/$defs/DockerHubAuditLogsListAuditActionsConfig",
+          "audit_logs__list_audit_logs": "#/$defs/DockerHubAuditLogsListAuditLogsConfig",
+          "check_repository": "#/$defs/DockerHubCheckRepositoryConfig",
+          "create_repository": "#/$defs/DockerHubCreateRepositoryConfig",
+          "create_repository_group": "#/$defs/DockerHubCreateRepositoryGroupConfig",
+          "delete_v2_access_tokens_by_uuid": "#/$defs/DockerHubDeleteV2AccessTokensByUuidConfig",
+          "delete_v2_invites_by_id": "#/$defs/DockerHubDeleteV2InvitesByIdConfig",
+          "delete_v2_orgs_by_org_name_access_tokens_by_access_token_id": "#/$defs/DockerHubDeleteV2OrgsByOrgNameAccessTokensByAccessTokenIdConfig",
+          "delete_v2_orgs_by_org_name_groups_by_group_name": "#/$defs/DockerHubDeleteV2OrgsByOrgNameGroupsByGroupNameConfig",
+          "delete_v2_orgs_by_org_name_groups_by_group_name_members_by_username": "#/$defs/DockerHubDeleteV2OrgsByOrgNameGroupsByGroupNameMembersByUsernameConfig",
+          "delete_v2_orgs_by_org_name_members_by_username": "#/$defs/DockerHubDeleteV2OrgsByOrgNameMembersByUsernameConfig",
+          "get_repository": "#/$defs/DockerHubGetRepositoryConfig",
+          "get_repository_tag": "#/$defs/DockerHubGetRepositoryTagConfig",
+          "get_v2_access_tokens": "#/$defs/DockerHubGetV2AccessTokensConfig",
+          "get_v2_access_tokens_by_uuid": "#/$defs/DockerHubGetV2AccessTokensByUuidConfig",
+          "get_v2_orgs_by_name_access_tokens": "#/$defs/DockerHubGetV2OrgsByNameAccessTokensConfig",
+          "get_v2_orgs_by_name_settings": "#/$defs/DockerHubGetV2OrgsByNameSettingsConfig",
+          "get_v2_orgs_by_org_name_access_tokens_by_access_token_id": "#/$defs/DockerHubGetV2OrgsByOrgNameAccessTokensByAccessTokenIdConfig",
+          "get_v2_orgs_by_org_name_groups": "#/$defs/DockerHubGetV2OrgsByOrgNameGroupsConfig",
+          "get_v2_orgs_by_org_name_groups_by_group_name": "#/$defs/DockerHubGetV2OrgsByOrgNameGroupsByGroupNameConfig",
+          "get_v2_orgs_by_org_name_groups_by_group_name_members": "#/$defs/DockerHubGetV2OrgsByOrgNameGroupsByGroupNameMembersConfig",
+          "get_v2_orgs_by_org_name_invites": "#/$defs/DockerHubGetV2OrgsByOrgNameInvitesConfig",
+          "get_v2_orgs_by_org_name_members": "#/$defs/DockerHubGetV2OrgsByOrgNameMembersConfig",
+          "get_v2_orgs_by_org_name_members_export": "#/$defs/DockerHubGetV2OrgsByOrgNameMembersExportConfig",
+          "get_v2_scim20_resource_types": "#/$defs/DockerHubGetV2Scim20ResourceTypesConfig",
+          "get_v2_scim20_resource_types_by_name": "#/$defs/DockerHubGetV2Scim20ResourceTypesByNameConfig",
+          "get_v2_scim20_schemas": "#/$defs/DockerHubGetV2Scim20SchemasConfig",
+          "get_v2_scim20_schemas_by_id": "#/$defs/DockerHubGetV2Scim20SchemasByIdConfig",
+          "get_v2_scim20_service_provider_config": "#/$defs/DockerHubGetV2Scim20ServiceProviderConfigConfig",
+          "get_v2_scim20_users": "#/$defs/DockerHubGetV2Scim20UsersConfig",
+          "get_v2_scim20_users_by_id": "#/$defs/DockerHubGetV2Scim20UsersByIdConfig",
+          "head_v2_namespaces_by_namespace_repositories_by_repository_tags": "#/$defs/DockerHubHeadV2NamespacesByNamespaceRepositoriesByRepositoryTagsConfig",
+          "head_v2_namespaces_by_namespace_repositories_by_repository_tags_by_tag": "#/$defs/DockerHubHeadV2NamespacesByNamespaceRepositoriesByRepositoryTagsByTagConfig",
+          "list_namespace_repositories": "#/$defs/DockerHubListNamespaceRepositoriesConfig",
+          "list_repository_tags": "#/$defs/DockerHubListRepositoryTagsConfig",
+          "patch_v2_access_tokens_by_uuid": "#/$defs/DockerHubPatchV2AccessTokensByUuidConfig",
+          "patch_v2_invites_by_id_resend": "#/$defs/DockerHubPatchV2InvitesByIdResendConfig",
+          "patch_v2_orgs_by_org_name_access_tokens_by_access_token_id": "#/$defs/DockerHubPatchV2OrgsByOrgNameAccessTokensByAccessTokenIdConfig",
+          "patch_v2_orgs_by_org_name_groups_by_group_name": "#/$defs/DockerHubPatchV2OrgsByOrgNameGroupsByGroupNameConfig",
+          "post_v2_access_tokens": "#/$defs/DockerHubPostV2AccessTokensConfig",
+          "post_v2_invites_bulk": "#/$defs/DockerHubPostV2InvitesBulkConfig",
+          "post_v2_orgs_by_name_access_tokens": "#/$defs/DockerHubPostV2OrgsByNameAccessTokensConfig",
+          "post_v2_orgs_by_org_name_groups": "#/$defs/DockerHubPostV2OrgsByOrgNameGroupsConfig",
+          "post_v2_orgs_by_org_name_groups_by_group_name_members": "#/$defs/DockerHubPostV2OrgsByOrgNameGroupsByGroupNameMembersConfig",
+          "post_v2_scim20_users": "#/$defs/DockerHubPostV2Scim20UsersConfig",
+          "put_v2_orgs_by_name_settings": "#/$defs/DockerHubPutV2OrgsByNameSettingsConfig",
+          "put_v2_orgs_by_org_name_groups_by_group_name": "#/$defs/DockerHubPutV2OrgsByOrgNameGroupsByGroupNameConfig",
+          "put_v2_orgs_by_org_name_members_by_username": "#/$defs/DockerHubPutV2OrgsByOrgNameMembersByUsernameConfig",
+          "put_v2_scim20_users_by_id": "#/$defs/DockerHubPutV2Scim20UsersByIdConfig",
+          "test_connection": "#/$defs/DockerHubTestConnectionConfig",
+          "update_repository_immutable_tags": "#/$defs/DockerHubUpdateRepositoryImmutableTagsConfig",
+          "verify_repository_immutable_tags": "#/$defs/DockerHubVerifyRepositoryImmutableTagsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DockerHubPostV2AccessTokensConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2AccessTokensConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubPatchV2AccessTokensByUuidConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2AccessTokensByUuidConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubDeleteV2AccessTokensByUuidConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubAuditLogsListAuditActionsConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubAuditLogsListAuditLogsConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2OrgsByNameSettingsConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubPutV2OrgsByNameSettingsConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubPostV2OrgsByNameAccessTokensConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2OrgsByNameAccessTokensConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2OrgsByOrgNameAccessTokensByAccessTokenIdConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubPatchV2OrgsByOrgNameAccessTokensByAccessTokenIdConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubDeleteV2OrgsByOrgNameAccessTokensByAccessTokenIdConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubListRepositoryTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubHeadV2NamespacesByNamespaceRepositoriesByRepositoryTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetRepositoryTagConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubHeadV2NamespacesByNamespaceRepositoriesByRepositoryTagsByTagConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubUpdateRepositoryImmutableTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubVerifyRepositoryImmutableTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubCreateRepositoryGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubListNamespaceRepositoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubCreateRepositoryConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetRepositoryConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubCheckRepositoryConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2OrgsByOrgNameMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2OrgsByOrgNameMembersExportConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubPutV2OrgsByOrgNameMembersByUsernameConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubDeleteV2OrgsByOrgNameMembersByUsernameConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2OrgsByOrgNameInvitesConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2OrgsByOrgNameGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubPostV2OrgsByOrgNameGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2OrgsByOrgNameGroupsByGroupNameConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubPutV2OrgsByOrgNameGroupsByGroupNameConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubPatchV2OrgsByOrgNameGroupsByGroupNameConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubDeleteV2OrgsByOrgNameGroupsByGroupNameConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2OrgsByOrgNameGroupsByGroupNameMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubPostV2OrgsByOrgNameGroupsByGroupNameMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubDeleteV2OrgsByOrgNameGroupsByGroupNameMembersByUsernameConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubDeleteV2InvitesByIdConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubPatchV2InvitesByIdResendConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubPostV2InvitesBulkConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2Scim20ServiceProviderConfigConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2Scim20ResourceTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2Scim20ResourceTypesByNameConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2Scim20SchemasConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2Scim20SchemasByIdConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2Scim20UsersConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubPostV2Scim20UsersConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubGetV2Scim20UsersByIdConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubPutV2Scim20UsersByIdConfig"
+        },
+        {
+          "$ref": "#/$defs/DockerHubTestConnectionConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DockerHubPATCredential"
+        },
+        {
+          "$ref": "#/$defs/DockerHubSCIMCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Docker-hub Node Configuration",
+  "type": "object",
+  "x-agent-tool-provider": true,
+  "x-edit-examples": [
+    "List repositories in my Docker Hub namespace",
+    "List tags for an image",
+    "Create a Docker Hub repository",
+    "View organization members"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
