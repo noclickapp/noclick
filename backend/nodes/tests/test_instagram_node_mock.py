@@ -339,7 +339,7 @@ class TestMediaOperationsMock:
                 create_mock_response(status_finished_response),
                 create_mock_response(publish_response),
             ]
-        ):
+        ), patch("asyncio.sleep", AsyncMock()):
             result = await node.execute({})
 
         assert result["action"] == "publish_video_reel"
@@ -833,7 +833,7 @@ class TestStoriesOperationsMock:
                 create_mock_response(publish_response),
                 create_mock_response(status_response),
             ]
-        ):
+        ), patch("asyncio.sleep", AsyncMock()):
             result = await node.execute({})
 
         assert result["action"] == "publish_video_story"
@@ -1131,7 +1131,7 @@ class TestErrorHandlingMock:
 
         with mock_async_client(
             create_mock_response(mock_error_response, status_code=429)
-        ):
+        ), patch("asyncio.sleep", AsyncMock()):
             result = await node.execute({})
 
         assert result["status"] == "error"

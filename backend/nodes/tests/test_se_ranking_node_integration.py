@@ -111,6 +111,13 @@ async def wire(monkeypatch):
         assert kwargs["trust_env"] is False and kwargs["follow_redirects"] is False
         return original(**kwargs, transport=httpx.MockTransport(respond))
     monkeypatch.setattr(sr, "guarded_async_client", client)
+    # The node spaces its requests 0.22 s apart for SE Ranking's rate limit; this fake API needs no spacing.
+    real_sleep = asyncio.sleep
+
+    async def unpaced(delay, *args, **kwargs):
+        return await real_sleep(0 if delay <= 0.22 else delay, *args, **kwargs)
+
+    monkeypatch.setattr(sr.asyncio, "sleep", unpaced)
     return state
 
 

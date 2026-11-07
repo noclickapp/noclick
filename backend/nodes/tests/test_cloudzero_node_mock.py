@@ -155,10 +155,13 @@ async def test_pagination_cost_and_secret_cursor_shapes(wire, body):
     assert len(wire.calls) == 1
 
 @pytest.mark.asyncio
-async def test_10000_native_cost_page_and_blank_filters_actual_dispatch(wire):
-    wire.responses.append(page("costs", [COST]*10000))
+async def test_10000_native_cost_page_and_blank_filters_actual_dispatch(wire, monkeypatch):
+    # A full page is the documented 10,000 rows; the boundary is checked at a lowered limit so it builds no 10,000-row page.
+    assert cn.MAX_ROWS == 10000
+    monkeypatch.setattr(cn, "MAX_ROWS", 10)
+    wire.responses.append(page("costs", [COST]*10))
     result = await run("get_costs", {"start_date": "2026-09-01", "filters_json": "   ", "confirm_query_quota": True})
-    assert len(result["data"]["costs"]) == 10000 and "filters" not in dict(wire.calls[0]["params"]) and result["data"]["next_page_token"] is None
+    assert len(result["data"]["costs"]) == 10 and "filters" not in dict(wire.calls[0]["params"]) and result["data"]["next_page_token"] is None
 
 @pytest.mark.asyncio
 async def test_current_row_type_over_blob_trusted_context_and_actual_stored_picker(monkeypatch, wire):
