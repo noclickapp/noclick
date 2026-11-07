@@ -39,6 +39,8 @@ os.environ.setdefault("PUBLIC_API_URL", "https://api.example.test")
 os.environ.setdefault("INBOUND_EMAIL_DOMAIN", "inbound.example.test")
 
 _pool_init_warned = False
+# URLs whose connection was refused: refused for the rest of the session too.
+_refused_pool_urls: set[str] = set()
 _postgres_test_module_paths: set[str] = set()
 
 
@@ -124,10 +126,14 @@ async def ensure_native_db_pool():
             await _db.close_native_pool()
         except Exception as e:
             logger.debug("[test] close_native_pool on stale loop failed: %s", e)
-    if _db._native_pool is None:
+    url = os.environ["POSTGRES_POOLER_URL"]
+    if _db._native_pool is None and url not in _refused_pool_urls:
         try:
             await _db.init_native_pool()
         except Exception as e:
+            # Asking again cost about a millisecond on each of ~27k tests.
+            if isinstance(e, OSError):
+                _refused_pool_urls.add(url)
             # Pure-unit tests with no DB don't need the pool; anything that
             # does will fail loudly via get_native_pool(). Warn ONCE so a
             # misconfigured URL is diagnosable from the log, not just from a
