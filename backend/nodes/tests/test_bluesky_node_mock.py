@@ -14,6 +14,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from nodes.bluesky_node import (
     BlueSkyNode,
     BlueSkyNodeConfig,
+    BlueSkyGetTimelineConfig,
     BlueSkyAppPasswordCredential,
     # Destructive operations
     BlueSkyDeleteAccountConfig,
@@ -898,6 +899,49 @@ class TestOtherSkippedOperations:
 
                 assert result["action"] == "create_moderation_report"
                 mock_report.assert_called_once()
+
+
+# Moved from the live suite (test_bluesky_node_integration.py): the checks there that need no account.
+@pytest.mark.asyncio
+async def test_missing_credentials():
+    """Test handling of missing credentials."""
+    config = BlueSkyGetTimelineConfig(limit=10)
+    node_config = BlueSkyNodeConfig(config=config, credentials=None)
+    node = BlueSkyNode(
+        node_id="test-node",
+        node_type="automation-bluesky",
+        node_data={},
+        config=node_config,
+        sio=None,
+        sid=None,
+        workflow_id="test-workflow",
+    )
+
+    with pytest.raises(ValueError, match="credentials are required"):
+        await node.execute({})
+
+
+@pytest.mark.integration  # signs in to bsky.social: a live call, which only the daily lane makes
+@pytest.mark.asyncio
+async def test_invalid_credentials():
+    """Test handling of invalid credentials."""
+    invalid_creds = BlueSkyAppPasswordCredential(
+        identifier="invalid.user.test", app_password="xxxx-xxxx-xxxx-xxxx"
+    )
+    config = BlueSkyGetTimelineConfig(limit=10)
+    node_config = BlueSkyNodeConfig(config=config, credentials=invalid_creds)
+    node = BlueSkyNode(
+        node_id="test-node",
+        node_type="automation-bluesky",
+        node_data={},
+        config=node_config,
+        sio=None,
+        sid=None,
+        workflow_id="test-workflow",
+    )
+
+    with pytest.raises(ValueError, match="authentication failed"):
+        await node.execute({})
 
 
 if __name__ == "__main__":

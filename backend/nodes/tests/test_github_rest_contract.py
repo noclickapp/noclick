@@ -12,6 +12,7 @@ import httpx
 import pytest
 
 from nodes.github_rest_node import (
+    GithubGetRepositoryConfig,
     GithubRestNode,
     GithubRestNodeConfig,
     GithubUpdateGistConfig,
@@ -333,3 +334,23 @@ async def test_workflow_run_usage_uses_timing_route(monkeypatch):
         "GET",
         "/repos/octocat/Hello-World/actions/runs/1/timing",
     )
+
+
+# Moved from the live suite (test_github_rest_node.py), the one check there that needs no account.
+@pytest.mark.asyncio
+async def test_missing_credentials():
+    """Test handling of missing credentials."""
+    config = GithubGetRepositoryConfig(**REPO)
+    node_config = GithubRestNodeConfig(config=config, credentials=None)
+    node = GithubRestNode(
+        node_id="test-node",
+        node_type="automation-github-rest",
+        node_data={},
+        config=node_config,
+        sio=None,
+        sid=None,
+        workflow_id="test-workflow",
+    )
+
+    with pytest.raises(ValueError, match="Credentials are required"):
+        await node.execute({})
