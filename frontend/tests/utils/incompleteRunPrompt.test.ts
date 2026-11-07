@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // Tests for the Run button's unconfigured-steps gate.
 //

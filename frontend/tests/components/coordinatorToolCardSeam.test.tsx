@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A platform draws cards for tools only it has by what the call answered, not by a tool name (hosted: a call NoClick
 // placed, whose tool is named after the number). The engine's own cards still win for their tools.
 import { cleanup, render, screen } from '@testing-library/react';

@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Exercise the real tool picker with route-backed credential policies.
 // Approval changes must preserve the operation allowlist, other restrictions,
 // owner boundaries, CSRF, and revision checks when credentials change.

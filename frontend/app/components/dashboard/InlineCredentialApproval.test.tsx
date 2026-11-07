@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Exercise the dashboard's real fetcher flow against a route-backed review.
 // Decisions must use the same CSRF token and immutable call as the standalone page.
 import { useState } from 'react';

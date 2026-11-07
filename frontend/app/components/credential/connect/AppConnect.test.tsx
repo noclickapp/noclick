@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A scanned or bought number is asked what it holds before it lands, as a sign-in is, and the form says it's checking
 // meanwhile rather than sitting on the finished scan or purchase.
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';

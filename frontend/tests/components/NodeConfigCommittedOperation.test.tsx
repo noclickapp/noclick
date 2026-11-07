@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The config panel judges a node's fields against its COMMITTED operation from the first render.
 // A WhatsApp QR trigger (receive_message, nothing required) used to be validated once against the
 // schema's first variant (send_text_message: to + body), flashing two false field errors on every open.

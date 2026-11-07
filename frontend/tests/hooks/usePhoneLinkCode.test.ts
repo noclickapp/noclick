@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The link code a QR and its "Open" link carry must always have time left to scan and send. A code is shown only while
 // it has more than three minutes left, judged on the wall clock (a laptop that slept, a tab that sat in the background),
 // and while a fresh one is on its way nothing is shown at all.

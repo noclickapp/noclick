@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A repo's page over a fake reader: the root's folders before its files with
 // the README under them, a folder and a file opened through ?path= (a folder
 // ends in /), a branch switch re-reading at that ref, a binary file named, not

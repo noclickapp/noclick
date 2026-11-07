@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Scenario (b): live execution. Backend node:output / node:state socket events must
 // reach the iframe as SDK push events (node:output, node:state, inputs:changed).
 import { afterEach, describe, expect, it } from 'vitest';

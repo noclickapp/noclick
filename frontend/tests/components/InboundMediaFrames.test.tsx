@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 
 // The run-results "What came in" frame renders what a contact ATTACHED, not
 // just what they typed — a WhatsApp voice note used to fall through to the raw

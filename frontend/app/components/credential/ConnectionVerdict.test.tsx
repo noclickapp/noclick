@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The one renderer for "did this credential work?" — pins the three stories
 // (working / rejected / unverified) so no surface can dress "cannot judge" up
 // as green, and that a rejection always carries the provider's words + hint.

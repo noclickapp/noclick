@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Scenario (a): a background run stored an output; the user opens the UI later
 // and nodes.getOutput must return it. Two timing cases matter:
 //   - node.data.output already hydrated  → fast in-memory read (no backend hit)

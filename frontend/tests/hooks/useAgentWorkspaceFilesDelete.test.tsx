@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Covers the deleteFile path added to useAgentWorkspaceFiles: it sends
 // agent_workspace:delete with the file path and optimistically drops the row,
 // and surfaces a server rejection to the caller.

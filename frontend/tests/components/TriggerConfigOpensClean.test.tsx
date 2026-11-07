@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A working trigger must open in the config panel with no field errors, not even
 // for a frame: the panel used to judge every operation-based node against its
 // FIRST action on mount (a WhatsApp trigger read "To" and "Message Text" as

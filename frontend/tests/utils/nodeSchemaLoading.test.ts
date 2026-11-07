@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // Node schemas load per node type (each generated file is its own lazy chunk), so
 // opening a workflow fetches only its own types' schemas, plus one more each time

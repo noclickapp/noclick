@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A turn's web searches share one Sources list under the reply: each page once, the pages the reply links to first,
 // folded to one line until it's opened.
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';

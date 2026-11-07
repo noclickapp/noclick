@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 
 // A trigger-started turn in the agent chat renders as the event it was — the
 // run popup's native frame — and never as the agent's standing instructions

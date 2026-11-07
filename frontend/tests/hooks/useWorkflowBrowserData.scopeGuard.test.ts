@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // Tests the scope-generation guard + volatile-state reset in useWorkflowBrowserData.
 // Added with the org-switch staleness fix (and hardened after review):

@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // Tests for usage-based (credential-optional) billing detection in the pure
 // credential helpers — added with the Exa platform-key path so the config

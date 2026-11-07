@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // Pins the single-dollar math regression: chat prose is full of literal `$`
 // ("A$AP Rocky", prices), and remark-math's default singleDollarTextMath

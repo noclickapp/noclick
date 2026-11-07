@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Pins the shared OAuth connect mechanisms so a provider that needs a pre-connect input
 // can't work in one surface and silently break the other (the Shopify-on-the-link gap).
 // Both the in-app credential UI and the public provide link render THIS component, so these

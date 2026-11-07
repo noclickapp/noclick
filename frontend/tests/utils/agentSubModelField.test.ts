@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Tests for the CLI-harness → sub-model-field detection helper.
 //
 // The sidebar shows a sub-model picker only when the selected agent model is

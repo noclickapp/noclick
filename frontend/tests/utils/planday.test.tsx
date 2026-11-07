@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Native catalog and masked credential form fixtures.
 import React from 'react';
 import { createHash } from 'node:crypto';

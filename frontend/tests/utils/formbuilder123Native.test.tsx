@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 import { render, cleanup } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 import { FormBuilder123Node } from '~/components/workflow/nodes/FormBuilder123Node';

@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Exercise the generated Facebook schema through the real configuration editor.
 // These cases guard Page/mode changes and stale registration responses in both editions.
 import React from 'react';

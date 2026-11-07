@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Standalone credential approvals have no workflow to display. Keep both dashboard
 // row sizes renderable without inventing a workflow or losing the review action.
 import { afterEach, expect, it, vi } from 'vitest';

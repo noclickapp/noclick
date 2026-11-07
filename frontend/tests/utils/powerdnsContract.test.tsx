@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // UNRUN native editor/control/save/export/hydration and visible API-key form cases.
 // Synthetic controls and descriptors are not live UI or provider qualification.
 import React, { useState } from 'react';

@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The shared connect form: pins that a refused save lands per field (and clears when that field is edited), that a
 // provider refusal shows who refused and their words plus the hint, that the legacy string result still works, that
 // the button is never greyed out (pressed early, it says what's missing under each empty field) and names who is

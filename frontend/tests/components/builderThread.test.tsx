@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The builder thread follows its newest change: the one box the scroller watches holds every change (a style it draws
 // first can't stand in for it), and a request of the reader's own pins it to the bottom even when it lands together
 // with its reply, as a send registers both at once. A reply says how its run ended: stopped without finishing, or

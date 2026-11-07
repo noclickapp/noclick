@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Renders the real native Secret Key form and optional protected product witness.
 // Account/socket boundaries are synthetic; editing does not authenticate a provider or prove project identity.
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';

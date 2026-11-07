@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // auth.requestCredential: success resolves the credential; CANCEL (popup closed)
 // resolves null per the SDK contract instead of hanging until the 30s timeout.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

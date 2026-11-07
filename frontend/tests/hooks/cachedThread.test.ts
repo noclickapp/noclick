@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A chat that keeps a copy of its thread paints it at once and lets the persisted history replace it: the copy never
 // doubles a message, never outlives a thread the server no longer holds, and a failed read is a failure, not an empty
 // thread. The coordinator's chat builds on that, so an ongoing conversation never opens on the empty start.

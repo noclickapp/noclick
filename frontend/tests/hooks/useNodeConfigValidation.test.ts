@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // Diagnostic test for "Bug 2": on the live canvas, node.data.configValid stays
 // undefined on every node — the incomplete-node badges never light up and the

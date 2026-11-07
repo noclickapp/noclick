@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // Safari before 16.4 has no regex lookbehind. The production build rewrites a
 // lookbehind literal into `new RegExp(...)`, which throws at render time there,

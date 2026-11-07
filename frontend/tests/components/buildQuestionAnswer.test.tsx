@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Answering a build's question on its card: the question gives way to the build at once, so it's answered once; the
 // builder's next question shows when it asks one, though the build read back still names the question answered; and an
 // answer the builder refuses puts the question back.

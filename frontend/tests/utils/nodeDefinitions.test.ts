@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // Node definitions (each node's component, icon and label) load per node type, so the canvas
 // carries only the open workflow's nodes. One list names every node with its module; this pins

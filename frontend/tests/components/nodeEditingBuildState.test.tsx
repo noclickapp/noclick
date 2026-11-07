@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A node card opens while a build works on it. The canvas's own builder marks it in the editor store; a build the
 // canvas didn't start (the coordinator's, an MCP client's, one reattached after a reload) marks it in the node's data
 // (`mcpAnimationState`, liveGraphStore / useMCPBuilderEvents). A preview says for itself, with `_previewEditInfo`.

@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Which country a phone input starts on: the IP country from /api/public-session
 // wins, then the browser locale's region, and nothing unsupported gets through.
 import { renderHook } from '@testing-library/react';

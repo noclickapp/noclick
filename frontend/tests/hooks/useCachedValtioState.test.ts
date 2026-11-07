@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // Tests for the scope-key resync guard in useCachedValtioState. Added when
 // fixing the org/workspace/workflow switch staleness: the hook mirrors a

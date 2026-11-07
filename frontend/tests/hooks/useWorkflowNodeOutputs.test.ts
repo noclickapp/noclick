@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Tests for useWorkflowNodeOutputs hook
 // Verifies in-memory caching of large outputs during execution.
 // Outputs are now server-backed; this hook only accumulates during real-time streaming.

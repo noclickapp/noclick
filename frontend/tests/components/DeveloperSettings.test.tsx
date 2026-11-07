@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Settings → Developer makes keys itself only where no developer console is registered (the open edition); with
 // one, it opens the console and lists only the older keys that still work.
 import { cleanup, render, screen, waitFor } from '@testing-library/react';

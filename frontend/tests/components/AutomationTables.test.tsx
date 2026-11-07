@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // An automation's tables on its database page: a table opens a level down
 // (`?table=`) with its rows a page at a time from the Table block's own event,
 // each row in full, secret-looking values hidden until asked, and every row as

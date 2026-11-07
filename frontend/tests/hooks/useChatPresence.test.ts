@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A message the chat shows is also texted unless its person is watching the
 // chat, so the tab claims "live" only while the chat is on screen in a visible
 // tab of the focused window that was touched within the last minute, renews

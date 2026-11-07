@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Email in the coordinator's thread: the owner's email reads as an email (subject, from, to, what they wrote), and
 // NoClick's reply says where it was emailed and how far it got, from the receipt saved on the reply and the
 // coordinator:email_reply frames that move it (fed here exactly as the relay delivers them). A reply saved before

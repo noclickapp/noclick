@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The sidebar's Resources row is one disclosure, as in Cloudflare's sidebar: it opens onto the overview, and clicked
 // again while open it folds its kinds away. The chevron is part of the row, never a button of its own.
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';

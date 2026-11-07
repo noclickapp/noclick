@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The country picker's rows: a long detail (the kinds of number sold there) sits on a line of its own under the name,
 // both truncating, so the name never shrinks to nothing beside it and the list never scrolls sideways; a short one (a
 // calling code) can sit beside the name, which truncates while it doesn't. The list wears the app's scrollbar.

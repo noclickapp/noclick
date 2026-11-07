@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The WhatsApp bubble in the coordinator chat: a shared contact or place drawn as WhatsApp draws it, and the corner's
 // time and read ticks only together.
 import { cleanup, render, screen } from '@testing-library/react';

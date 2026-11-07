@@ -2,7 +2,7 @@
 // Author-supplied IDs must resolve in the mounted graph before any read, write,
 // execution, state, or realtime side effect can cross the iframe boundary.
 
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { mountBridge, testNode } from './helpers/mountBridge';
 import { installMockSocket, type MockSocket } from '../integration/helpers/mockSocket';

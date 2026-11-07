@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The builder moved an agent from OpenCode to Claude Code: its node_updated
 // names the new label and sends what it removed as null. An open canvas must
 // land both, or it keeps showing "OpenCode" over a claude-code chip and its

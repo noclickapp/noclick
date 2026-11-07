@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A reminder's card reads its reminder back: still to come, it says when and can be cancelled; gone off, a one-off
 // reads as done; called off, it says so. It used to offer Cancel… after the reminder had gone off. The reminder's
 // own message in the thread reads it again.

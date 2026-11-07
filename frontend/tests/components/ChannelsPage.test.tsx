@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Channels over a platform registered as the hosted service registers its own,
 // with a fake transport holding the account's workspaces, channels, agents and
 // messages: the rail holds your own channels and each workspace, a channel

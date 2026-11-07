@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 
 /**
  * Tests for useAgentCredentialsRequired — the hook behind the agent config

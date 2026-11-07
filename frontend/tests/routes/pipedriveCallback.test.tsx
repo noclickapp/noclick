@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Standalone installs must not pretend to be editor popups or report a saved
 // connection merely because an authorization code reached the browser.
 

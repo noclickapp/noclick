@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A workflow picked on an /agents page or /mcp is finished in the chat: NoClick's note carries a `setup` reference,
 // live (the frame the backend's emit_notification sends) and from the saved thread alike, and the transcript draws
 // the card the platform registered under it, never folding it into a run of background notes.

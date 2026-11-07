@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // An agent workspace's page in Resources: its flat listing read as folders,
 // each opening in place (`?path=`, ending in /) with a trail back up, files
 // opening their preview, and an emptied folder saying so.

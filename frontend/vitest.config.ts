@@ -1,8 +1,10 @@
 /**
  * Vitest configuration for unit tests.
  *
- * Default 'node' environment for pure TS logic. React-hook tests opt
- * into jsdom via `// @vitest-environment jsdom` at the top of the file.
+ * Default 'node' environment for pure TS logic. Tests that need a DOM opt
+ * in at the top of the file with `// @vitest-environment happy-dom`, which
+ * sets up in a fraction of jsdom's time; the few files that fail under it
+ * keep `jsdom`.
  *
  * Integration tests use a separate config — see vitest.integration.config.ts.
  */

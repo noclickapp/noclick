@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // Regression: deleting a configured node and undoing must bring it back WITH its
 // config (operation + credentials) intact. The bug was that captureState only

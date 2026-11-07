@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The ways in a shared connect link offers (2026-11-06): only those it can finish, and "It's encrypted as soon as you
 // send it" only under what a person types in, never a sign-in, which sends nothing through the page.
 import { cleanup, render, screen } from '@testing-library/react';

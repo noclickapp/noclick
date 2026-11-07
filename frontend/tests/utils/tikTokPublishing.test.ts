@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Exercise the same validation gate used by the Run control and node validator.
 // Ordinary unattended configurations and unrelated operations must remain runnable.
 import { describe, expect, it } from 'vitest';

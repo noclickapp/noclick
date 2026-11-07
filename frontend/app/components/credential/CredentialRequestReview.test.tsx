@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Grouped reviews must decide only the selected IDs, across connection boundaries.
 // Keep ongoing unlocks distinct from single-use grants and render call details inertly.
 import { afterEach, expect, it, vi } from 'vitest';

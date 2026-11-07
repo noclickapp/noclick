@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Scenario (c): execute and wait. runNodesAndGetOutput triggers a background run
 // and resolves only when every target node reaches a terminal state. This is the
 // host half of the completion logic the SDK's stream.all() depends on.

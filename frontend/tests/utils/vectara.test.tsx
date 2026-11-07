@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Native Vectara wiring and privacy regressions.
 // Exercises both selectors, credential schema selection and normal owned auto-selection.
 // The exact public logo and closed operation catalog are pinned in the fixture.

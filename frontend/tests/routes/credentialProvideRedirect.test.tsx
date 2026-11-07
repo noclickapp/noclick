@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The public provide page returns the person to the request's redirect_url once
 // the credential lands, using the address the backend builds; a request without
 // one never navigates, and a failed lookup is shown instead of swallowed.

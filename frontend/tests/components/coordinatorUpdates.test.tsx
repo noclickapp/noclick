@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The coordinator's own notes (a failed run it looked into, an agent that messaged it) fold into one card per run,
 // an entry per automation, instead of a wall of near-identical messages.
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';

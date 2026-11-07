@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The chat's Connect menu lists the ways into the same conversation. A texting app opens on a message that carries the
 // link code until a phone is linked, then on a plain chat; email shows NoClick's address, claiming one the first time,
 // renaming it in place and taking mail to it or not as the owner says, from the owner only or from anyone as the server

@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The command palette as a person meets it: ⌘K, type, the place they meant on top. A place named by the query leads
 // (domains → Domains, ahead of the Resources page), a word for it finds it (logout → Sign out), a deployment's own
 // places arrive through the registered source, the person's own things are found by name, and what they went to

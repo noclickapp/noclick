@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Opening an account (the command palette's credential, a resource's Manage) shows the account when it works; a broken
 // one, or a Reconnect, opens the Connect dialog on its way back in.
 import { act, cleanup, render, screen } from '@testing-library/react';

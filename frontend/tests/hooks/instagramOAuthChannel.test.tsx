@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Exercises the real Instagram hook and callback together, including the
 // opener-less mobile path and acknowledgement only after credential persistence.
 import React from 'react';

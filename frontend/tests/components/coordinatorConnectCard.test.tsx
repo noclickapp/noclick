@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // An account the coordinator asks to connect is connected on its card, never in a new tab: the card runs the
 // coordinator's own credential request (the token in the tool's link) through the provide page's connect UI, so a
 // key is judged and saved by the request, a QR code is minted only when asked for, and a sign-in opens in a popup

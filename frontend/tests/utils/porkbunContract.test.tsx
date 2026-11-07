@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // UNRUN actual native controls, save/export/hydration, credential form and cache.
 import React, { useState } from 'react';
 import { createHash } from 'node:crypto';

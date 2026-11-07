@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A sign-in held back for marketplace review shows on our own dev servers, never on a self-hosted instance (whose
 // `make local` is a dev server too).
 import { renderHook } from '@testing-library/react';

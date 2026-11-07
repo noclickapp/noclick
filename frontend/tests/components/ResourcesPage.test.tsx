@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Resources with a platform registered (a fake one, as the hosted service
 // registers the real one): every kind gets its tile and none is marked as
 // sample data; the platform's items list beside the app's own; what they cost

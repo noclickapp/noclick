@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // OpenStatus schema, native-key cache and mounted editor contracts.
 // The real generated schemas keep registration and editor behavior in sync.
 import { render, cleanup, screen } from '@testing-library/react';

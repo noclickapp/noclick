@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 import React from 'react';
 import { createHash } from 'node:crypto';
 import { renderToStaticMarkup } from 'react-dom/server';

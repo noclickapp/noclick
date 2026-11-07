@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A read-only canvas shows what changed between two reads of a graph the way the live canvas shows the builder editing
 // a node: each node added or changed opens for a moment, then closes. Where motion is reduced (the OS setting, or a
 // lab's switch above the canvas), nothing opens; the changed node fades in instead.

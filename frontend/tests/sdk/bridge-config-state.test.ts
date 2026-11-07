@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Config reads + state (now routed through the backend workflow:state:* events, the
 // canonical store shared with the WebSocket SDK and state-manager node execution),
 // plus read-only gating and unknown-method handling.

@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The builder asking for an agent's account, as the chat's build card and Setup draw it: headed by whose account it
 // is and what it's for, the account connected through the flow every app uses (a sign-in before a key, the key as
 // get-it-then-paste-it), and answered only by an account that runs the agent's model. An agent switched from OpenCode

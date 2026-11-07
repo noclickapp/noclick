@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // What a resource's records look like on a page: which columns hide their values
 // (by the last word of their name, and the sign-in tables' own secrets), how a
 // value reads (NULL, bytes by their size, JSON, a timestamp in the reader's

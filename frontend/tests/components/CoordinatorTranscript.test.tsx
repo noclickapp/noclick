@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The coordinator's thread draws turns from other apps the way those apps drew them, a call as one call, and the
 // cards a turn's tools made under it, from the transcript's own data.
 import { afterEach, describe, expect, it, vi } from 'vitest';

@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // An agent's Message is required unless a trigger feeds the agent: the
 // delivered event is then the turn. The schema can't express this (the field

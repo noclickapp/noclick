@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A chat opens on its newest message and stays there while what renders after a message (markdown from its chunk, a
 // diagram, a card) grows the thread, even when the scroll event of the hook's own pin arrives after that growth, or
 // when the thread's own box shrinks under it (a card docking on the composer); a reader who scrolled up to read

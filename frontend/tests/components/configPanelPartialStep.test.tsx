@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A step a server write left the canvas holding only in part (a secret or an outsize setting the workflow's room
 // held back, still being read whole) can't be edited: its panel shows it loading until it's whole, so no edit of
 // the person's is saved over by the step as stored.

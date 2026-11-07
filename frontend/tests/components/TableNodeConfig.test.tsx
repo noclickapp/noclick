@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The Table step's form through the real NodeConfig and its generated schema: its picker lists the open
 // workflow's tables (the request names that workflow), a name not listed yet is a new table rather than a
 // value "not found", and an object typed as JSON text validates as the runtime reads it.

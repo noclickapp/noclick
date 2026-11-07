@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The dashboard's onboarding gate as the page loads: the server renders it from the token's claim alone, and the
 // browser hydrates that HTML knowing more (an earlier onboarding's marker, a pending invite or agent setup). Deciding in
 // the first render drew the questionnaire on the server and the dashboard in the browser, and React threw the server's

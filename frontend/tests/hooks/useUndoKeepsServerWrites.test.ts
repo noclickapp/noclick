@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Undo walks back the person's own edits, never a written server change: each change the canvas takes from the
 // server is applied to every state in its undo history (so NoClick filling in a trigger's fields a second after it's
 // added, or an API rename, survives an undo of the person's own edit), and a conflict that takes the server's graph

@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A write through the graph service (/v1/workflows/{id}/edits, a restore) sends every canvas open on the
 // workflow, whoever's, what changed as the builder's events in the workflow's room on the relay
 // (coder/workflow/graph_service.py: canvas_events). An open canvas applies them to its own copy, so its next save

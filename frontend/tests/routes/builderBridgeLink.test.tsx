@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A builder bridge link (/b/{linkId}) says what it asks: its preview in a chat (the route's meta, from a loader that
 // reads the link on the server) and the page's heading name the accounts to connect or the questions to answer, the
 // page reads right to the person NoClick asked and to anyone they sent it on to, and a closed link says so.

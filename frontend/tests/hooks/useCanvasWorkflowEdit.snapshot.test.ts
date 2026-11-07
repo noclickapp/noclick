@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Exercise the real Edit and Autofill requests with a hydrated canvas node.
 // Credentials and other persisted metadata must reach the builder and replay.
 import { act, renderHook } from '@testing-library/react';

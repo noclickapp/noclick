@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // Tests for deriveUnmetConnections' same-type merge: two WhatsApp nodes (a
 // trigger + a reply-tools provider) need ONE service account, so readiness

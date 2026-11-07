@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 
 // A shared agent's public page wears the brand its metadata carries (a
 // product's own agents): its name, logo, accent and support link, in place of

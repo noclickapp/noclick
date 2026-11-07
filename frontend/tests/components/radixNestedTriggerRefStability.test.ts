@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // Regression test for the canvas React #185 ("Maximum update depth exceeded")
 // loop driven by NESTING two Radix asChild triggers onto one element — the

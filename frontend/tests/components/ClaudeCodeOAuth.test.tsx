@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Exercise sign-in recovery through the same component both transports render.
 // A consumed code must never be resubmitted through the old authorization session.
 import React from 'react';

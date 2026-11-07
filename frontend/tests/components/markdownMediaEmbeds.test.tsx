@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A recording, a video or any other file NoClick links the way it links an image (`![Call recording](…mp3)`,
 // `![Briefing](…pdf)`) plays in place or shows as a file card, as the phone channels deliver it as native media or a
 // document; only an image renders as one.

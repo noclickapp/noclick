@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Exercise real publishing controls with a mocked credential-gated transport.
 // No provider calls or posts are made by these regression tests.
 import React from 'react';

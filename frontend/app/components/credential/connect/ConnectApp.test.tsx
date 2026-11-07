@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The shipped connect flow: a switch between the ways in, a key as numbered steps (get it, with the button that
 // opens where it comes from, paste it, then the form's Connect as the last), one line that swaps in asking someone who can, and what connecting
 // proved. Four ways in sit two to a row with the app's own name left off a sign-in's.

@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Setup distinguishes configuration from actual input and processing evidence.
 // Refresh cannot retain another workflow's old success badge.
 import React from 'react';

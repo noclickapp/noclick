@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Exercise the shared phone form's owner-confirmation mode. Selecting a number
 // must only prepare a quote; a separate explicit click authorizes its purchase.
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';

@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // A rehearsable trigger wears its own name. Node definitions load per type, so the scenarios can arrive before the
 // trigger's definition has: the name then comes from the catalog the dashboard already holds, never from the type

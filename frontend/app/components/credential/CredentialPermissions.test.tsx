@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Exercise per-connection lock controls and explicit human saves, including shared
 // read-only credentials and the all-actions rule's behavior after revalidation.
 import { afterEach, describe, expect, it, vi } from 'vitest';

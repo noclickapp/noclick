@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // Tests for the Run popup's entry-point list — which nodes a full run starts
 // from, and so which paths the user can pick between.

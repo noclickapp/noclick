@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Reproduces the IN-APP OAuth connect end-to-end through the real integration:
 // OAuthConnectForm → useOAuthConnect → the real Linear factory hook → the default
 // OAuthExchangeContext transport (socket-sender, mocked here). Simulates the popup

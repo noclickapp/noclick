@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A build card says where its build stands in its header: at work, a working mark beside "Building" and the part that
 // just landed under the name; built, a check, drawn in when the card saw it finish; waiting on you, or stopped.
 import { afterEach, describe, expect, it } from 'vitest';

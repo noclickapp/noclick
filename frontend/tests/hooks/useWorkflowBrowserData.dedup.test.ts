@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // Regression test for the duplicate-key bug: share:list_shared_with_me can return
 // the same resource under multiple share rows (direct share + shared-folder

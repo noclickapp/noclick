@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // UNRUN mounted native editor, typed controls, save/export/hydration and credential form.
 // Original PNG bytes and actual selection/icon seams are checked without provider calls.
 import React, { useState } from 'react';

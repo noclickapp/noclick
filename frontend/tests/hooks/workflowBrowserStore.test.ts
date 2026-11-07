@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // Invariant tests for the scope-keyed workflow-browser store. These assert the
 // structural guarantees that make the recurring bugs impossible — proven at the

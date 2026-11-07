@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A user-events relay viewer proves it is the user with its first frame: a short-lived token minted over the app's
 // socket, never put in the relay URL. Every connect sends one, a live token is reused, and one near expiry or refused
 // by the relay is replaced with a fresh mint on the next connect. A mint that fails is retried with backoff, and a

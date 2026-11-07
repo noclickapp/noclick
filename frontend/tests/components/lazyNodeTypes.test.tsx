@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // A canvas node draws as its outline until its definition loads, and keeps its size when the real node replaces
 // it. React Flow reads a node's handles only when it measures the node, so without a re-measure the edges of a

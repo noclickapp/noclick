@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // A trigger whose registration is live but whose provider will not deliver
 // (Slack: the app is not in the channel) mirrors that verdict as

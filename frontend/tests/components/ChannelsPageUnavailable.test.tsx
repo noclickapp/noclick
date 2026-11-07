@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Channels with no platform registered (the open edition): the page says
 // they aren't available here, and shows no sample conversations.
 import { render, screen } from '@testing-library/react';

@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Resources › Numbers › Buy a number over a fake transport: it opens on the person's own country, every filter reaches
 // the search, each number shows its own price, a country that asks a step that can't be taken here says so once (in the
 // picker, and above its numbers, none of which offers Buy), one that asks who holds it takes their name and address

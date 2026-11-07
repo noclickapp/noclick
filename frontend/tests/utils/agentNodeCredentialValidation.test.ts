@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 //
 // Regression tests for agent-node credential detection in the PURE validation
 // path — hasUnconnectedCredentials, which drives the canvas node badge, the

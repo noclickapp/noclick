@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A build draws its automation on the canvas, with no list of its parts under it. An automation's canvas draws once
 // in a thread, on its newest card: an earlier build of it folds to one line (its name, how it stands, Open canvas),
 // with the builder's question still under it when it asks one.

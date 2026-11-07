@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // A turn that comes in on another app (a text, a call, an email) shows up in the open coordinator chat without a
 // reload: the backend announces it (agent:state running) once the incoming message is saved and mirrors its end
 // once the reply is saved, and the chat reads the turn back from the transcript at both points.

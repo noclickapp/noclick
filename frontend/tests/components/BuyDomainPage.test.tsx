@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Resources › Domains › Buy a domain over a fake registrar: the page opens on
 // the name your domains have and names the one you own instead of offering
 // it; Buy opens a checkout with the price and term; a purchase waits on the

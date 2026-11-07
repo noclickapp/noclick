@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Verifies the composer's @-mention menu preempts Enter-to-send (menu open →
 // accept a file, not submit) and stays inert when no workspace files are passed
 // (the public share page). Pure-detection logic lives in mentionToken.test.ts.

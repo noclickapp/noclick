@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Bridge methods that proxy to the backend over the socket: credentials, resources,
 // datasets, and config persistence. Uses the integration MockSocket so we can assert
 // the exact backend event the bridge emits AND the SDK-shaped result it returns.

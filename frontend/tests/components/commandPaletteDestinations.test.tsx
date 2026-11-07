@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // The command palette goes everywhere the app does, from the tables the pages themselves read: every shell page,
 // every Resources kind the instance has and its page for getting one, every Settings section the account sees, and
 // Connections' tabs. What people type instead of a page's name finds it, and a page named exactly beats the page that

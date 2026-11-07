@@ -1,4 +1,4 @@
-// @vitest-environment jsdom
+// @vitest-environment happy-dom
 // Renders the real ScheduleWidget and verifies the sentence-pill UX: every
 // narrowing dimension is an always-visible inline word ("all day · every day
 // · all year") that opens a popover; pills adapt to frequency, clear
