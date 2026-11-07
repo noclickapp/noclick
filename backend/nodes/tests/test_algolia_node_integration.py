@@ -10,6 +10,8 @@ import pytest
 import respx
 from pydantic import ValidationError
 
+from nodes.core.binary_output import BinaryOutput
+
 from nodes.algolia_node import (
     CONFIG_MODELS,
     OPERATIONS,
@@ -125,3 +127,19 @@ async def test_api_error_is_actionable():
             return_value=httpx.Response(403, json={"message": "ACL missing"}))
         with pytest.raises(ValueError, match="Algolia API error 403: ACL missing"):
             await make_node(CONFIG_MODELS["search_list_indices"]()).execute({})
+
+
+@pytest.mark.asyncio
+async def test_non_json_transport_output_uses_binary_marker():
+    payload = b"\x00\x01\xff"
+    with respx.mock(assert_all_called=True) as router:
+        router.get("https://TESTAPP123.algolia.net/1/indexes").mock(
+            return_value=httpx.Response(
+                200, content=payload, headers={"content-type": "application/octet-stream"}
+            )
+        )
+        result = await make_node(CONFIG_MODELS["search_list_indices"]()).execute({})
+    assert isinstance(result["data"], BinaryOutput)
+    assert result["data"].data == payload
+    assert result["data"].content_type == "application/octet-stream"
+    assert result["data"].filename == "algolia-response"

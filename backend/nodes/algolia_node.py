@@ -1,6 +1,5 @@
 """Algolia REST workflow actions, from the official bundled OpenAPI specifications."""
 
-import base64
 import json
 import re
 from typing import Annotated, Any, Literal, Optional, Union
@@ -10,6 +9,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model, field_validator
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 
 # Official bundled Algolia operation metadata, kept local to this integration.
@@ -2235,10 +2235,11 @@ class AlgoliaNode(WorkflowNode):
             return {"ok": True}
         if "json" in response.headers.get("content-type", "") or response.content[:1] in (b"{", b"["):
             return response.json()
-        return {
-            "content_type": response.headers.get("content-type", "application/octet-stream"),
-            "base64": base64.b64encode(response.content).decode(),
-        }
+        return BinaryOutput(
+            data=response.content,
+            content_type=response.headers.get("content-type", "application/octet-stream"),
+            filename="algolia-response",
+        )
 
     async def execute(self, inputs: dict[str, Any]) -> dict[str, Any]:
         if not isinstance(self.config, AlgoliaNodeConfig):
