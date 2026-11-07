@@ -28,6 +28,7 @@ const AUTO_SELECT_TYPES: ReadonlySet<string> = new Set([
     'automation-aprimo',
     'automation-hetrixtools',
     'automation-acculynx',
+    'automation-stackitdns',
     'automation-telegram',
     'automation-tavily',
     'automation-google-sheets',
