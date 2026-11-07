@@ -1,0 +1,348 @@
+{
+  "$defs": {
+    "GetAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to username, acct and display_name on your account detail only. Profile/source, URLs, content, attachments, roles and all nested private fields are always omitted.",
+          "title": "Include Own Account Names",
+          "type": "boolean"
+        },
+        "account_id": {
+          "description": "Must equal the current protected verify_credentials ID. Third-party accounts are not supported; IDs are opaque strings, not necessarily numbers.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Current Actor Account ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste your verified actor ID",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "description": "Independently read your verified account's scalar IDs, counts and raw dates. Reverify the user token before returning output.",
+          "title": "Get Own Account Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Own Account Metadata",
+          "x-display-name": "Get Own Account Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to username, acct and display_name on your account detail only. Profile/source, URLs, content, attachments, roles and all nested private fields are always omitted.",
+          "title": "Include Own Account Names",
+          "type": "boolean"
+        },
+        "account_id": {
+          "description": "Must equal the current protected verify_credentials ID. Third-party accounts are not supported; IDs are opaque strings, not necessarily numbers.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Current Actor Account ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste your verified actor ID",
+            "auto_select_sole_option": true
+          }
+        },
+        "limit": {
+          "default": 20,
+          "description": "Strict integer 1\u201340, documented default 20. One page only; no total or completeness is inferred from page length.",
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Status Page Limit",
+          "type": "integer"
+        },
+        "max_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional opaque ID: request statuses older than this ID. No numeric comparison or Link parsing.",
+          "title": "Maximum Status Cursor"
+        },
+        "since_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional opaque ID: request statuses newer than this ID.",
+          "title": "Since Status Cursor"
+        },
+        "min_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional opaque ID: request statuses immediately newer than this ID. Combining min_id and max_id requires Mastodon 3.3+; instance compatibility is unverified.",
+          "title": "Minimum Status Cursor"
+        },
+        "operation": {
+          "const": "get_status",
+          "default": "get_status",
+          "description": "Require the exact status ID in your current configured catalog page, then independently read its metadata and reverify the actor. Use documented cursors to select older pages.",
+          "title": "Get Own Catalog Status Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Own Account Metadata",
+          "x-display-name": "Get Own Catalog Status Metadata",
+          "x-is-trigger": false
+        },
+        "status_id": {
+          "description": "Opaque string ID from your current selected status page. Third-party IDs and IDs outside that page are refused before status detail.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Own Catalog Status ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste an ID from your selected status page",
+            "depends_on": "account_id"
+          }
+        }
+      },
+      "required": [
+        "account_id",
+        "status_id"
+      ],
+      "title": "GetStatus",
+      "type": "object"
+    },
+    "ListStatuses": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to username, acct and display_name on your account detail only. Profile/source, URLs, content, attachments, roles and all nested private fields are always omitted.",
+          "title": "Include Own Account Names",
+          "type": "boolean"
+        },
+        "account_id": {
+          "description": "Must equal the current protected verify_credentials ID. Third-party accounts are not supported; IDs are opaque strings, not necessarily numbers.",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Current Actor Account ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Paste your verified actor ID",
+            "auto_select_sole_option": true
+          }
+        },
+        "limit": {
+          "default": 20,
+          "description": "Strict integer 1\u201340, documented default 20. One page only; no total or completeness is inferred from page length.",
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Status Page Limit",
+          "type": "integer"
+        },
+        "max_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional opaque ID: request statuses older than this ID. No numeric comparison or Link parsing.",
+          "title": "Maximum Status Cursor"
+        },
+        "since_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional opaque ID: request statuses newer than this ID.",
+          "title": "Since Status Cursor"
+        },
+        "min_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional opaque ID: request statuses immediately newer than this ID. Combining min_id and max_id requires Mastodon 3.3+; instance compatibility is unverified.",
+          "title": "Minimum Status Cursor"
+        },
+        "operation": {
+          "const": "list_statuses",
+          "default": "list_statuses",
+          "description": "Read one current actor page with exclude_reblogs and exclude_replies fixed true. The latter excludes replies to other accounts; self replies may remain. Content and nested data are never returned.",
+          "title": "List Own Status Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Own Account Metadata",
+          "x-display-name": "List Own Status Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "ListStatuses",
+      "type": "object"
+    },
+    "MastodonCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "mastodon_user_token",
+          "default": "mastodon_user_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_origin": {
+          "description": "Exact public HTTPS origin where this user token was issued, e.g. https://social.example.com. No /api path, profile URL, query, userinfo or federation destination.",
+          "title": "Instance Origin",
+          "type": "string"
+        },
+        "access_token": {
+          "title": "Existing User Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "instance_origin",
+        "access_token"
+      ],
+      "title": "Mastodon User Token",
+      "type": "object",
+      "x-credential-help-url": "https://docs.joinmastodon.org/methods/accounts/#verify_credentials",
+      "x-credential-instructions": "Supply an existing USER OAuth access token and its public HTTPS instance origin. verify_credentials needs read:accounts, or profile on Mastodon 4.3+. Private own statuses need read:statuses. These are documented requirements, not a claim about your granted scopes or server version. No app token, token issuance/exchange/refresh, anonymous fallback or default instance.",
+      "x-credential-type": "api_key"
+    },
+    "VerifyCredentials": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to username, acct and display_name on your account detail only. Profile/source, URLs, content, attachments, roles and all nested private fields are always omitted.",
+          "title": "Include Own Account Names",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "verify_credentials",
+          "default": "verify_credentials",
+          "description": "Read the protected token verification endpoint and return only its opaque current actor ID. Public account/status success alone cannot prove authentication.",
+          "title": "Verify User Token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Own Account Metadata",
+          "x-display-name": "Verify User Token",
+          "x-is-trigger": false
+        }
+      },
+      "title": "VerifyCredentials",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_account": "#/$defs/GetAccount",
+          "get_status": "#/$defs/GetStatus",
+          "list_statuses": "#/$defs/ListStatuses",
+          "verify_credentials": "#/$defs/VerifyCredentials"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/VerifyCredentials"
+        },
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/ListStatuses"
+        },
+        {
+          "$ref": "#/$defs/GetStatus"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MastodonCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    },
+    "node_type": {
+      "const": "automation-mastodon",
+      "default": "automation-mastodon",
+      "title": "Node Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Mastodon Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
