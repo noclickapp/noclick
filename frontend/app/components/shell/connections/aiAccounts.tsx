@@ -4,7 +4,8 @@
 // dialog (AiProviderDialog) runs the same sign-in and key logic the agent node's
 // credential panel uses, so an account added here is the one an agent picks up.
 import { useMemo, type ComponentType } from 'react';
-import { Github, GithubCopilot } from '@lobehub/icons';
+import Github from '@lobehub/icons/es/Github';
+import GithubCopilot from '@lobehub/icons/es/GithubCopilot';
 import { BrandIcon } from '~/components/shared/BrandIcon';
 import { hasAgentOAuthConnect } from '~/components/workflow/AgentOAuthConnect';
 import { useInstanceCapabilities } from '~/hooks/useInstanceCapabilities';

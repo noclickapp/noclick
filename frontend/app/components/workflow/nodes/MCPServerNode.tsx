@@ -6,7 +6,7 @@ import { memo } from 'react';
 import { NodeProps, Handle, Position } from '@xyflow/react';
 import { Ban } from 'lucide-react';
 import { NodeStatusBadge } from './base/NodeStatusBadge';
-import { MCP } from '@lobehub/icons';
+import MCP from '@lobehub/icons/es/MCP';
 import type {
     NodeDefinition,
     NodeDisplayStrategy,

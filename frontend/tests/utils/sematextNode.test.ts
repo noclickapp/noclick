@@ -3,7 +3,6 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { createElement, type ComponentType } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-vi.mock('@lobehub/icons', () => ({ Anthropic: () => null, MCP: () => null, OpenAI: () => null }));
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn() }));
 vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: vi.fn(), set: vi.fn(), clear: vi.fn() } }));
 import { SematextNode } from '~/components/workflow/nodes/SematextNode';

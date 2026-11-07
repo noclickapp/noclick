@@ -4,9 +4,6 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
-// Agent-provider artwork is unrelated to uptimecom's native asset.
-vi.mock('@lobehub/icons', () => ({ Anthropic: () => null, MCP: () => null, OpenAI: () => null }));
-
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn() }));
 vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: vi.fn(), set: vi.fn(), clear: vi.fn(), delete: vi.fn() } }));
 

@@ -7,7 +7,7 @@
 
 import type { CSSProperties } from 'react';
 import { Bot } from 'lucide-react';
-import { OpenAI } from '@lobehub/icons';
+import OpenAI from '@lobehub/icons/es/OpenAI';
 import { HARNESS_BRANDS, resolveAgentModelKind, type AgentModelKind } from '~/lib/harnessBrand';
 
 // The model → kind mapping lives in harnessBrand (pure-string leaf module) so

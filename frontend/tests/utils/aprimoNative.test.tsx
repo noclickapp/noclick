@@ -13,11 +13,6 @@ import { invalidateCredentialsCache, upsertCredentialsIntoCache } from '~/utils/
 
 import { autoSelectCredentialFromCache } from '~/utils/credentialAutoSelectForNode';
 
-// The eager catalog imports other providers' artwork, unrelated to Aprimo.
-vi.mock('@lobehub/icons', () => {
-    const Icon = Object.assign(() => null, { Avatar: () => null, Color: () => null });
-    return new Proxy({}, { has: () => true, get: (_target, key) => key === 'then' ? undefined : Icon });
-});
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn() }));
 vi.mock('~/lib/indexeddb', () => ({ valtioCache: { clear: vi.fn(), get: vi.fn(), set: vi.fn(), delete: vi.fn() } }));
 

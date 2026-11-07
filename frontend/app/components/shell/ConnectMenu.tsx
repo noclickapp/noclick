@@ -5,7 +5,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type MutableRefObject } from 'react';
 import { useRouteLoaderData } from 'react-router';
 import { ArrowUpRight, Check, ChevronDown, ChevronRight, Copy, Loader2, PenLine } from 'lucide-react';
-import { MCP } from '@lobehub/icons';
+import MCP from '@lobehub/icons/es/MCP';
 import { IoMail } from 'react-icons/io5';
 import { QrCode, QrPlaceholder } from '~/components/shared/QrCode';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';

@@ -15,7 +15,9 @@
 
 import { type ComponentType, type CSSProperties } from 'react';
 import { Bot, KeyRound, Sparkles } from 'lucide-react';
-import { Anthropic, MCP, OpenAI } from '@lobehub/icons';
+import Anthropic from '@lobehub/icons/es/Anthropic';
+import MCP from '@lobehub/icons/es/MCP';
+import OpenAI from '@lobehub/icons/es/OpenAI';
 import OpenRouter from '~/components/icons/OpenRouterIcon';
 import GoogleIcon from '~/components/icons/GoogleIcon';
 import MicrosoftIcon from '~/components/icons/MicrosoftIcon';

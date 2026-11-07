@@ -13,7 +13,10 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { Check, Copy, Loader2, X } from 'lucide-react';
-import { Claude, MCP, OpenAI, Windsurf as WindsurfIcon } from '@lobehub/icons';
+import Claude from '@lobehub/icons/es/Claude';
+import MCP from '@lobehub/icons/es/MCP';
+import OpenAI from '@lobehub/icons/es/OpenAI';
+import WindsurfIcon from '@lobehub/icons/es/Windsurf';
 import { HARNESS_BRANDS } from '~/lib/harnessBrand';
 import { CursorMark } from '~/components/shared/CursorMark';
 import { MCP_CLIENTS, type GuideBlock } from '~/data/mcpQuickSteps';

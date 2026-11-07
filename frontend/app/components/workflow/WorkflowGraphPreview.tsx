@@ -10,7 +10,7 @@
 import { memo, useId, useMemo } from 'react';
 import { Bot } from 'lucide-react';
 import { useIsDark } from '~/hooks/useIsDark';
-import { OpenAI } from '@lobehub/icons';
+import OpenAI from '@lobehub/icons/es/OpenAI';
 import { SerializedIcon } from '~/components/shared/SerializedIcon';
 import type { SerializedIconEntry } from '~/components/shared/SerializedNodeIconStack';
 import { IMG_META } from '~/components/workflow/nodes/base/AgentModelIcon';

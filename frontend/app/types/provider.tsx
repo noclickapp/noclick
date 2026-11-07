@@ -2,16 +2,62 @@
 // Contains provider enum, metadata mappings, and utility functions
 
 import type { ComponentType, ReactNode } from 'react';
-import {
-    OpenAI, Anthropic, Cohere, Azure, Bedrock, Aws, VertexAI,
-    Ai21, XAI, Perplexity, Cerebras, Groq, Together, Fireworks, Anyscale,
-    Replicate, DeepInfra, Featherless, DeepSeek, AlibabaCloud, Volcengine,
-    Moonshot, Gemini, PaLM, Mistral, HuggingFace, AlephAlpha, Baseten,
-    NPLCloud, Ollama, WorkersAI, Voyage, Inference, Nvidia, Novita, Nebius,
-    Vercel, IBM, LobeHub, Lambda, Hyperbolic, Friendli, SambaNova, Snowflake,
-    AssemblyAI, ElevenLabs, Recraft, Jina, V0, AzureAI, Meta, Dbrx,
-    Exa, Fal, Google, Kling
-} from '@lobehub/icons';
+import OpenAI from '@lobehub/icons/es/OpenAI';
+import Anthropic from '@lobehub/icons/es/Anthropic';
+import Cohere from '@lobehub/icons/es/Cohere';
+import Azure from '@lobehub/icons/es/Azure';
+import Bedrock from '@lobehub/icons/es/Bedrock';
+import Aws from '@lobehub/icons/es/Aws';
+import VertexAI from '@lobehub/icons/es/VertexAI';
+import Ai21 from '@lobehub/icons/es/Ai21';
+import XAI from '@lobehub/icons/es/XAI';
+import Perplexity from '@lobehub/icons/es/Perplexity';
+import Cerebras from '@lobehub/icons/es/Cerebras';
+import Groq from '@lobehub/icons/es/Groq';
+import Together from '@lobehub/icons/es/Together';
+import Fireworks from '@lobehub/icons/es/Fireworks';
+import Anyscale from '@lobehub/icons/es/Anyscale';
+import Replicate from '@lobehub/icons/es/Replicate';
+import DeepInfra from '@lobehub/icons/es/DeepInfra';
+import Featherless from '@lobehub/icons/es/Featherless';
+import DeepSeek from '@lobehub/icons/es/DeepSeek';
+import AlibabaCloud from '@lobehub/icons/es/AlibabaCloud';
+import Volcengine from '@lobehub/icons/es/Volcengine';
+import Moonshot from '@lobehub/icons/es/Moonshot';
+import Gemini from '@lobehub/icons/es/Gemini';
+import PaLM from '@lobehub/icons/es/PaLM';
+import Mistral from '@lobehub/icons/es/Mistral';
+import HuggingFace from '@lobehub/icons/es/HuggingFace';
+import AlephAlpha from '@lobehub/icons/es/AlephAlpha';
+import Baseten from '@lobehub/icons/es/Baseten';
+import NPLCloud from '@lobehub/icons/es/NPLCloud';
+import Ollama from '@lobehub/icons/es/Ollama';
+import WorkersAI from '@lobehub/icons/es/WorkersAI';
+import Voyage from '@lobehub/icons/es/Voyage';
+import Inference from '@lobehub/icons/es/Inference';
+import Nvidia from '@lobehub/icons/es/Nvidia';
+import Novita from '@lobehub/icons/es/Novita';
+import Nebius from '@lobehub/icons/es/Nebius';
+import Vercel from '@lobehub/icons/es/Vercel';
+import IBM from '@lobehub/icons/es/IBM';
+import LobeHub from '@lobehub/icons/es/LobeHub';
+import Lambda from '@lobehub/icons/es/Lambda';
+import Hyperbolic from '@lobehub/icons/es/Hyperbolic';
+import Friendli from '@lobehub/icons/es/Friendli';
+import SambaNova from '@lobehub/icons/es/SambaNova';
+import Snowflake from '@lobehub/icons/es/Snowflake';
+import AssemblyAI from '@lobehub/icons/es/AssemblyAI';
+import ElevenLabs from '@lobehub/icons/es/ElevenLabs';
+import Recraft from '@lobehub/icons/es/Recraft';
+import Jina from '@lobehub/icons/es/Jina';
+import V0 from '@lobehub/icons/es/V0';
+import AzureAI from '@lobehub/icons/es/AzureAI';
+import Meta from '@lobehub/icons/es/Meta';
+import Dbrx from '@lobehub/icons/es/Dbrx';
+import Exa from '@lobehub/icons/es/Exa';
+import Fal from '@lobehub/icons/es/Fal';
+import Google from '@lobehub/icons/es/Google';
+import Kling from '@lobehub/icons/es/Kling';
 import OpenRouter from '~/components/icons/OpenRouterIcon';
 import { HARNESS_BRANDS } from '~/lib/harnessBrand';
 

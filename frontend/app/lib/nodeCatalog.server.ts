@@ -17,7 +17,7 @@
 import '~/lib/nodeSchemas.server';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createElement, type ComponentType } from 'react';
-import { OpenAI } from '@lobehub/icons';
+import OpenAI from '@lobehub/icons/es/OpenAI';
 import {
     AVAILABLE_NODES,
     getNodeMetadata,

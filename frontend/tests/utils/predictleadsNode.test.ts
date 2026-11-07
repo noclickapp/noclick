@@ -5,7 +5,6 @@ import { createElement, type ComponentType } from 'react';
 
 vi.mock('~/components/workflow/nodes/base/AutomationNode', () => ({ default: () => null }));
 vi.mock('~/lib/applyNodeUpdate', () => ({ updateNodeInList: vi.fn() }));
-vi.mock('@lobehub/icons', () => ({ Anthropic: () => null, MCP: () => null, OpenAI: () => null }));
 vi.mock('~/lib/socket-sender', () => ({ sendEventAsync: vi.fn() }));
 vi.mock('~/lib/indexeddb', () => ({ valtioCache: { get: vi.fn(), set: vi.fn(), delete: vi.fn(), clear: vi.fn() } }));
 

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { Loader2, X } from 'lucide-react';
-import { OpenAI } from '@lobehub/icons';
+import OpenAI from '@lobehub/icons/es/OpenAI';
 import { isTextEntryTarget } from '~/lib/keyboard';
 import { KeyHint } from '~/components/shared/KeyHint';
 import { DragHintBadge } from '../DragHintBadge';

@@ -12,7 +12,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { Node } from '@xyflow/react';
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
-import { OpenAI } from '@lobehub/icons';
+import OpenAI from '@lobehub/icons/es/OpenAI';
 import { cn } from '~/lib/utils';
 import { LogoMark } from '~/components/shared/LogoMark';
 import { ModelPickerModal } from '~/components/workflow/ModelPickerModal';
