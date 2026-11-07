@@ -159,3 +159,31 @@ def test_catalog_has_only_fixed_iterable_paths_and_schema_for_every_operation():
 def test_region_is_allowlisted():
     with pytest.raises(ValidationError):
         IterableApiKeyCredential(region="https://evil.example", api_key="x")
+
+
+def test_structured_json_inputs_match_pasted_json_without_changing_the_request():
+    payload = {"email": "ada@example.com", "dataFields": {"plan": "pro"}}
+
+    def check_body(request):
+        assert_auth(request)
+        assert request.url.path == "/api/users/update"
+        assert json.loads(request.content) == payload
+
+    run_action({"operation": "users_update_user", "payload_json": payload}, check_body)
+
+    def check_query(request):
+        assert dict(request.url.params) == {"page": "1", "pageSize": "20"}
+
+    run_action(
+        {"operation": "campaigns_campaigns", "query_json": {"page": 1, "pageSize": 20}},
+        check_query,
+    )
+
+
+@pytest.mark.parametrize("value", ["1", "true", "null", "[]"])
+def test_json_scalars_and_arrays_still_fail_before_network(value):
+    with pytest.raises(ValueError, match="must be a JSON object"):
+        run_action(
+            {"operation": "users_update_user", "payload_json": value},
+            lambda _: pytest.fail("unexpected network request"),
+        )

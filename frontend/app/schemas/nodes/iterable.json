@@ -47,9 +47,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: campaignId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -73,9 +81,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: campaignId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -99,9 +115,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: campaignIds",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -130,6 +154,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -156,9 +184,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: campaignId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -192,6 +228,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -223,9 +263,17 @@
           "x-resource-type": "iterable_campaigns_create_campaign"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: listIds, name, templateId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -249,9 +297,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: campaignId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -309,6 +365,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -343,9 +403,17 @@
           "type": "string"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: sendAt",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -394,9 +462,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: campaignId, listIds",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -425,9 +501,17 @@
           "type": "string"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: itemIds",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -457,9 +541,17 @@
           "type": "string"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: documents, replaceUploadedFieldsOnly",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -628,9 +720,17 @@
           "type": "string"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: value",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -666,6 +766,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -698,6 +802,10 @@
           "anyOf": [
             {
               "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
             },
             {
               "type": "null"
@@ -736,9 +844,17 @@
           "type": "string"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: update",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -769,9 +885,17 @@
           "type": "string"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: mappingsUpdates",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -812,9 +936,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: items, total, user",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -838,9 +970,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: items, user",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -864,9 +1004,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Use Iterable's request body schema.",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -890,9 +1038,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: campaignId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -921,6 +1077,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -947,9 +1107,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: messageId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -973,9 +1141,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Use Iterable's request body schema.",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -999,9 +1175,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: messageId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1025,9 +1209,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: messageId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1051,9 +1243,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: events",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1077,9 +1277,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: eventName",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1103,9 +1311,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: messageId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1129,9 +1345,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: messageId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1155,9 +1379,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: messageId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1181,9 +1413,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: messageId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1207,9 +1447,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: campaignId, messageId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1233,9 +1481,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: messageId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1267,6 +1523,10 @@
           "anyOf": [
             {
               "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
             },
             {
               "type": "null"
@@ -1306,6 +1566,10 @@
           "anyOf": [
             {
               "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
             },
             {
               "type": "null"
@@ -1366,9 +1630,17 @@
           "type": "string"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: copyFromTemplateId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1395,9 +1667,17 @@
           "x-resource-type": "iterable_experiments_create"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: campaignId, experimentType",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1426,9 +1706,17 @@
           "type": "string"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: variantId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1506,6 +1794,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -1535,6 +1827,10 @@
           "anyOf": [
             {
               "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
             },
             {
               "type": "null"
@@ -1621,6 +1917,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -1655,9 +1955,17 @@
           "type": "string"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Use Iterable's request body schema.",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1740,6 +2048,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -1774,6 +2086,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -1800,9 +2116,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: dataTypeName, outputFormat",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1826,9 +2150,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Use Iterable's request body schema.",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1860,6 +2192,10 @@
           "anyOf": [
             {
               "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
             },
             {
               "type": "null"
@@ -1896,6 +2232,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -1922,9 +2262,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: campaignId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -1956,6 +2304,10 @@
           "anyOf": [
             {
               "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
             },
             {
               "type": "null"
@@ -2005,9 +2357,17 @@
           "x-resource-type": "iterable_lists_create"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: name",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -2079,9 +2439,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: listId, subscribers",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -2105,9 +2473,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: listId, subscribers",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -2241,6 +2617,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -2296,9 +2676,17 @@
           "type": "string"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: value",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -2324,9 +2712,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Use Iterable's request body schema.",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -2350,9 +2746,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: campaignId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -2376,9 +2780,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Use Iterable's request body schema.",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -2402,9 +2814,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: campaignId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -2428,9 +2848,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Use Iterable's request body schema.",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -2454,9 +2882,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: campaignId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -2482,9 +2918,17 @@
           "x-resource-type": "iterable_snippets_create_snippet"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: content, name",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -2577,9 +3021,17 @@
           "type": "string"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: content",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -2619,9 +3071,17 @@
           "type": "string"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Use Iterable's request body schema.",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -2720,9 +3180,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: messageTypeIds",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -2818,9 +3286,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: ids",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -2844,9 +3320,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: templateId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -2904,6 +3388,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -2941,6 +3429,10 @@
           "anyOf": [
             {
               "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
             },
             {
               "type": "null"
@@ -2982,6 +3474,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -3019,6 +3515,10 @@
           "anyOf": [
             {
               "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
             },
             {
               "type": "null"
@@ -3060,6 +3560,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -3094,6 +3598,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -3120,9 +3628,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: templateId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3156,6 +3672,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -3169,6 +3689,10 @@
           "anyOf": [
             {
               "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
             },
             {
               "type": "null"
@@ -3210,6 +3734,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -3223,6 +3751,10 @@
           "anyOf": [
             {
               "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
             },
             {
               "type": "null"
@@ -3254,9 +3786,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: templateId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3280,9 +3820,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: templateId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3306,9 +3854,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: templateId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3332,9 +3888,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: templateId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3358,9 +3922,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: templateId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3384,9 +3956,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: templateId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3410,9 +3990,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: templateId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3438,9 +4026,17 @@
           "x-resource-type": "iterable_templates_upsert_email_template"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: clientTemplateId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3466,9 +4062,17 @@
           "x-resource-type": "iterable_templates_upsert_embedded_template"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: clientTemplateId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3494,9 +4098,17 @@
           "x-resource-type": "iterable_templates_upsert_in_app_template"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: clientTemplateId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3522,9 +4134,17 @@
           "x-resource-type": "iterable_templates_upsert_push_template"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: clientTemplateId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3550,9 +4170,17 @@
           "x-resource-type": "iterable_templates_upsert_smstemplate"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: clientTemplateId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3576,9 +4204,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: updateSubscriptionsRequests",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3604,9 +4240,17 @@
           "x-resource-type": "iterable_users_bulk_update_user"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: users",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3683,6 +4327,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -3741,9 +4389,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Use Iterable's request body schema.",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3770,6 +4426,10 @@
           "anyOf": [
             {
               "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
             },
             {
               "type": "null"
@@ -3910,9 +4570,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Use Iterable's request body schema.",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3936,9 +4604,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: browserToken",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3962,9 +4638,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: device",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -3988,9 +4672,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Use Iterable's request body schema.",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -4014,9 +4706,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: newEmail",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -4040,9 +4740,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Use Iterable's request body schema.",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -4068,9 +4776,17 @@
           "x-resource-type": "iterable_users_update_user"
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Use Iterable's request body schema.",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -4094,9 +4810,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: phoneNumber, verificationProfileId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -4120,9 +4844,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: code, phoneNumber, verificationProfileId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -4146,9 +4878,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Use Iterable's request body schema.",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -4172,9 +4912,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: campaignId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -4214,9 +4962,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: id",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -4240,9 +4996,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Use Iterable's request body schema.",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -4266,9 +5030,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: campaignId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }
@@ -4297,6 +5069,10 @@
               "type": "string"
             },
             {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
               "type": "null"
             }
           ],
@@ -4323,9 +5099,17 @@
           "x-is-trigger": false
         },
         "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
           "description": "Required keys: workflowId",
           "title": "Request JSON",
-          "type": "string",
           "ui:widget": "code_editor",
           "x-code-language": "json"
         }

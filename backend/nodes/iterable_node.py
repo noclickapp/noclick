@@ -1493,7 +1493,7 @@ def _make_config(key: str, operation: dict[str, Any]) -> type[BaseModel]:
     optional_query = set(operation["query_params"]) - set(operation["required_query_params"])
     if optional_query:
         fields["query_json"] = (
-            Optional[str], Field(
+            Optional[Union[str, dict[str, Any]]], Field(
                 None, title="Other Query Parameters JSON",
                 description="Optional Iterable query keys: " + ", ".join(sorted(optional_query)),
                 json_schema_extra={"ui:widget": "code_editor", "x-code-language": "json"},
@@ -1503,7 +1503,7 @@ def _make_config(key: str, operation: dict[str, Any]) -> type[BaseModel]:
         required = operation["body_fields"]
         hint = "Required keys: " + ", ".join(required) if required else "Use Iterable's request body schema."
         fields["payload_json"] = (
-            str if operation["body_required"] else Optional[str],
+            Union[str, dict[str, Any]] if operation["body_required"] else Optional[Union[str, dict[str, Any]]],
             Field(
                 ... if operation["body_required"] else None,
                 title="Request JSON", description=hint,
@@ -1525,7 +1525,11 @@ class IterableNodeConfig(NodeConfig[IterableConfig, IterableApiKeyCredential]):
     model_config = ConfigDict(json_schema_extra={"x-agent-tool-provider": True})
 
 
-def _json_object(value: str, label: str) -> dict[str, Any]:
+def _json_object(value: str | dict[str, Any], label: str) -> dict[str, Any]:
+    # As with staging's Firestore/Deel nodes, upstream workflows can supply
+    # an already-parsed object; pasted JSON still follows the same validation.
+    if isinstance(value, dict):
+        return value
     try:
         parsed = json.loads(value)
     except (TypeError, json.JSONDecodeError) as exc:
