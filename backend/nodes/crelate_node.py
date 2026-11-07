@@ -58,7 +58,7 @@ def _id(value):
     return value.lower()
 
 
-Identifier = Annotated[str, BeforeValidator(_id)]
+Identifier = Annotated[str, BeforeValidator(_id), Field(json_schema_extra={"format": "uuid", "pattern": "^" + GUID + "$"})]
 Text = Annotated[str, Field(min_length=1, max_length=255)]
 
 

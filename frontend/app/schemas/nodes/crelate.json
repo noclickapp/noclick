@@ -137,6 +137,8 @@
           "x-is-trigger": false
         },
         "company_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Company",
           "type": "string",
           "ui:options": {
@@ -180,6 +182,8 @@
       "additionalProperties": false,
       "properties": {
         "contact_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Parent Contact",
           "type": "string",
           "ui:options": {
@@ -226,6 +230,8 @@
       "additionalProperties": false,
       "properties": {
         "contact_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Parent Contact",
           "type": "string",
           "ui:options": {
@@ -311,6 +317,8 @@
         "expected_user_id": {
           "anyOf": [
             {
+              "format": "uuid",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
               "type": "string"
             },
             {
@@ -342,6 +350,8 @@
           "x-is-trigger": false
         },
         "company_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Company",
           "type": "string",
           "ui:options": {
@@ -372,6 +382,8 @@
           "x-is-trigger": false
         },
         "contact_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Contact",
           "type": "string",
           "ui:options": {
@@ -402,6 +414,8 @@
           "x-is-trigger": false
         },
         "company_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Company",
           "type": "string",
           "ui:options": {
@@ -412,6 +426,8 @@
           "x-resource-type": "crelate_company_id"
         },
         "job_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Job GUID",
           "type": "string",
           "x-resource-type": "crelate_job_id"
@@ -428,6 +444,8 @@
       "additionalProperties": false,
       "properties": {
         "contact_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Parent Contact",
           "type": "string",
           "ui:options": {
@@ -455,6 +473,8 @@
           "x-is-trigger": false
         },
         "note_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Note GUID",
           "type": "string",
           "x-resource-type": "crelate_note_id"
@@ -472,6 +492,8 @@
       "additionalProperties": false,
       "properties": {
         "contact_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Parent Contact",
           "type": "string",
           "ui:options": {
@@ -499,6 +521,8 @@
           "x-is-trigger": false
         },
         "task_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Task GUID",
           "type": "string",
           "x-resource-type": "crelate_task_id"
@@ -526,6 +550,8 @@
           "x-is-trigger": false
         },
         "company_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Company",
           "type": "string",
           "ui:options": {
@@ -556,6 +582,8 @@
           "x-is-trigger": false
         },
         "contact_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Contact",
           "type": "string",
           "ui:options": {
@@ -586,6 +614,8 @@
           "x-is-trigger": false
         },
         "company_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Company",
           "type": "string",
           "ui:options": {
@@ -596,6 +626,8 @@
           "x-resource-type": "crelate_company_id"
         },
         "job_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Job GUID",
           "type": "string",
           "x-resource-type": "crelate_job_id"
@@ -612,6 +644,8 @@
       "additionalProperties": false,
       "properties": {
         "contact_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Parent Contact",
           "type": "string",
           "ui:options": {
@@ -639,6 +673,8 @@
           "x-is-trigger": false
         },
         "note_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Note GUID",
           "type": "string",
           "x-resource-type": "crelate_note_id"
@@ -690,6 +726,8 @@
       "additionalProperties": false,
       "properties": {
         "contact_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Parent Contact",
           "type": "string",
           "ui:options": {
@@ -717,6 +755,8 @@
           "x-is-trigger": false
         },
         "task_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Task GUID",
           "type": "string",
           "x-resource-type": "crelate_task_id"
@@ -900,6 +940,8 @@
           "x-is-trigger": false
         },
         "company_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Company",
           "type": "string",
           "ui:options": {
@@ -955,6 +997,8 @@
           "title": "Modified After"
         },
         "contact_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Parent Contact",
           "type": "string",
           "ui:options": {
@@ -1028,6 +1072,8 @@
           "title": "Modified After"
         },
         "contact_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Parent Contact",
           "type": "string",
           "ui:options": {
@@ -1076,6 +1122,8 @@
           "x-is-trigger": false
         },
         "company_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Company",
           "type": "string",
           "ui:options": {
@@ -1113,6 +1161,8 @@
           "x-is-trigger": false
         },
         "contact_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Contact",
           "type": "string",
           "ui:options": {
@@ -1157,6 +1207,8 @@
           "x-is-trigger": false
         },
         "company_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Company",
           "type": "string",
           "ui:options": {
@@ -1167,6 +1219,8 @@
           "x-resource-type": "crelate_company_id"
         },
         "job_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Job GUID",
           "type": "string",
           "x-resource-type": "crelate_job_id"
@@ -1190,6 +1244,8 @@
       "additionalProperties": false,
       "properties": {
         "contact_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Parent Contact",
           "type": "string",
           "ui:options": {
@@ -1217,6 +1273,8 @@
           "x-is-trigger": false
         },
         "note_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Note GUID",
           "type": "string",
           "x-resource-type": "crelate_note_id"
@@ -1242,6 +1300,8 @@
       "additionalProperties": false,
       "properties": {
         "contact_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Parent Contact",
           "type": "string",
           "ui:options": {
@@ -1269,6 +1329,8 @@
           "x-is-trigger": false
         },
         "task_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
           "title": "Task GUID",
           "type": "string",
           "x-resource-type": "crelate_task_id"

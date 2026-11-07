@@ -374,3 +374,10 @@ async def test_nested_public_canary_and_note_parent_type_privacy(wire):
         await factory("create_note", NOTE_ARGS).run({})
     assert len([r for r in wire.calls if r.method == "POST"]) == 1
     # This is an uncertain readback after one create, never an automatic retry.
+
+
+def test_identifier_schema_exposes_runtime_guid_constraint():
+    schema = cr.CrelateNodeConfig.model_json_schema()
+    field = schema["$defs"]["GetJob"]["properties"]["job_id"]
+    assert field["format"] == "uuid"
+    assert field["pattern"] == "^" + cr.GUID + "$"
