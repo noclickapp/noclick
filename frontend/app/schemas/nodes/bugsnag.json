@@ -1,0 +1,1587 @@
+{
+  "$defs": {
+    "BugsnagAuthTokenCredential": {
+      "description": "A personal auth token from BugSnag account settings.",
+      "properties": {
+        "credential_type": {
+          "const": "bugsnag_auth_token",
+          "default": "bugsnag_auth_token",
+          "title": "Credential Type",
+          "type": "string"
+        },
+        "auth_token": {
+          "description": "Create a personal auth token in BugSnag Settings \u2192 My account \u2192 Auth tokens.",
+          "minLength": 1,
+          "title": "Personal Auth Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "auth_token"
+      ],
+      "title": "Bugsnag Personal Auth Token",
+      "type": "object",
+      "x-credential-url": "https://app.bugsnag.com/settings/my-account",
+      "x-help-text": "Use a personal auth token, not a project's notifier API key."
+    },
+    "BugsnagCreateCommentConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Create Comment"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "error_id": {
+          "title": "Error ID",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "error_id",
+        "message"
+      ],
+      "title": "BugsnagCreateCommentConfig",
+      "type": "object"
+    },
+    "BugsnagCreateEventFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_event_field",
+          "default": "create_event_field",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event Fields",
+          "x-display-name": "Create Event Field"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "display_id": {
+          "title": "Display ID",
+          "type": "string"
+        },
+        "field_path": {
+          "title": "Event Field Path",
+          "type": "string"
+        },
+        "filter_options_json": {
+          "title": "Filter Options (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "display_id",
+        "field_path",
+        "filter_options_json"
+      ],
+      "title": "BugsnagCreateEventFieldConfig",
+      "type": "object"
+    },
+    "BugsnagCreateOrganizationConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_organization",
+          "default": "create_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "Create Organization"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "BugsnagCreateOrganizationConfig",
+      "type": "object"
+    },
+    "BugsnagCreateProjectConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Create Project"
+        },
+        "organization_id": {
+          "title": "Organization ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "project_type": {
+          "title": "Platform Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "name",
+        "project_type"
+      ],
+      "title": "BugsnagCreateProjectConfig",
+      "type": "object"
+    },
+    "BugsnagDeleteCommentConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_comment",
+          "default": "delete_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Delete Comment"
+        },
+        "comment_id": {
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "confirm_delete": {
+          "description": "Must be enabled to run this destructive operation.",
+          "title": "Confirm permanent deletion",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "comment_id",
+        "confirm_delete"
+      ],
+      "title": "BugsnagDeleteCommentConfig",
+      "type": "object"
+    },
+    "BugsnagDeleteErrorConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_error",
+          "default": "delete_error",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Errors",
+          "x-display-name": "Delete Error"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "error_id": {
+          "title": "Error ID",
+          "type": "string"
+        },
+        "confirm_delete": {
+          "description": "Must be enabled to run this destructive operation.",
+          "title": "Confirm permanent deletion",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "error_id",
+        "confirm_delete"
+      ],
+      "title": "BugsnagDeleteErrorConfig",
+      "type": "object"
+    },
+    "BugsnagDeleteEventConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_event",
+          "default": "delete_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Delete Event"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "event_id": {
+          "title": "Event ID",
+          "type": "string"
+        },
+        "confirm_delete": {
+          "description": "Must be enabled to run this destructive operation.",
+          "title": "Confirm permanent deletion",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "event_id",
+        "confirm_delete"
+      ],
+      "title": "BugsnagDeleteEventConfig",
+      "type": "object"
+    },
+    "BugsnagDeleteProjectConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Delete Project"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "confirm_delete": {
+          "description": "Must be enabled to run this destructive operation.",
+          "title": "Confirm permanent deletion",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "confirm_delete"
+      ],
+      "title": "BugsnagDeleteProjectConfig",
+      "type": "object"
+    },
+    "BugsnagGetCollaboratorConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_collaborator",
+          "default": "get_collaborator",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collaborators",
+          "x-display-name": "Get Collaborator"
+        },
+        "organization_id": {
+          "title": "Organization ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collaborator_id": {
+          "title": "Collaborator ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "collaborator_id"
+      ],
+      "title": "BugsnagGetCollaboratorConfig",
+      "type": "object"
+    },
+    "BugsnagGetCommentConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_comment",
+          "default": "get_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Get Comment"
+        },
+        "comment_id": {
+          "title": "Comment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "BugsnagGetCommentConfig",
+      "type": "object"
+    },
+    "BugsnagGetErrorConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_error",
+          "default": "get_error",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Errors",
+          "x-display-name": "Get Error"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "error_id": {
+          "title": "Error ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "error_id"
+      ],
+      "title": "BugsnagGetErrorConfig",
+      "type": "object"
+    },
+    "BugsnagGetErrorTrendConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_error_trend",
+          "default": "get_error_trend",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Get Error Trend"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "error_id": {
+          "title": "Error ID",
+          "type": "string"
+        },
+        "resolution": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolution"
+        }
+      },
+      "required": [
+        "project_id",
+        "error_id"
+      ],
+      "title": "BugsnagGetErrorTrendConfig",
+      "type": "object"
+    },
+    "BugsnagGetEventConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Get Event"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "event_id": {
+          "title": "Event ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "event_id"
+      ],
+      "title": "BugsnagGetEventConfig",
+      "type": "object"
+    },
+    "BugsnagGetLatestEventConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_latest_event",
+          "default": "get_latest_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Get Latest Event"
+        },
+        "error_id": {
+          "title": "Error ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "error_id"
+      ],
+      "title": "BugsnagGetLatestEventConfig",
+      "type": "object"
+    },
+    "BugsnagGetOrganizationConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "Get Organization"
+        },
+        "organization_id": {
+          "title": "Organization ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BugsnagGetOrganizationConfig",
+      "type": "object"
+    },
+    "BugsnagGetProjectConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Project"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "BugsnagGetProjectConfig",
+      "type": "object"
+    },
+    "BugsnagGetProjectTrendConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_project_trend",
+          "default": "get_project_trend",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Get Project Trend"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "resolution": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolution"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "BugsnagGetProjectTrendConfig",
+      "type": "object"
+    },
+    "BugsnagGetReleaseConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_release",
+          "default": "get_release",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "Get Release"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "release_id": {
+          "title": "Release ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "release_id"
+      ],
+      "title": "BugsnagGetReleaseConfig",
+      "type": "object"
+    },
+    "BugsnagGetStabilityTrendConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_stability_trend",
+          "default": "get_stability_trend",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Get Stability Trend"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "BugsnagGetStabilityTrendConfig",
+      "type": "object"
+    },
+    "BugsnagListCollaboratorProjectsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_collaborator_projects",
+          "default": "list_collaborator_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collaborators",
+          "x-display-name": "List Collaborator Projects"
+        },
+        "organization_id": {
+          "title": "Organization ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collaborator_id": {
+          "title": "Collaborator ID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "all_pages": {
+          "default": false,
+          "description": "Follow up to 10 BugSnag pages (at most 1,000 results).",
+          "title": "Fetch all pages",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "organization_id",
+        "collaborator_id"
+      ],
+      "title": "BugsnagListCollaboratorProjectsConfig",
+      "type": "object"
+    },
+    "BugsnagListCollaboratorsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_collaborators",
+          "default": "list_collaborators",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collaborators",
+          "x-display-name": "List Collaborators"
+        },
+        "organization_id": {
+          "title": "Organization ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "all_pages": {
+          "default": false,
+          "description": "Follow up to 10 BugSnag pages (at most 1,000 results).",
+          "title": "Fetch all pages",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BugsnagListCollaboratorsConfig",
+      "type": "object"
+    },
+    "BugsnagListCommentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "List Comments"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "error_id": {
+          "title": "Error ID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "all_pages": {
+          "default": false,
+          "description": "Follow up to 10 BugSnag pages (at most 1,000 results).",
+          "title": "Fetch all pages",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "error_id"
+      ],
+      "title": "BugsnagListCommentsConfig",
+      "type": "object"
+    },
+    "BugsnagListErrorEventsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_error_events",
+          "default": "list_error_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "List Events for Error"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "error_id": {
+          "title": "Error ID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "all_pages": {
+          "default": false,
+          "description": "Follow up to 10 BugSnag pages (at most 1,000 results).",
+          "title": "Fetch all pages",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "error_id"
+      ],
+      "title": "BugsnagListErrorEventsConfig",
+      "type": "object"
+    },
+    "BugsnagListErrorsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_errors",
+          "default": "list_errors",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Errors",
+          "x-display-name": "List Errors"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Direction"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "all_pages": {
+          "default": false,
+          "description": "Follow up to 10 BugSnag pages (at most 1,000 results).",
+          "title": "Fetch all pages",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "BugsnagListErrorsConfig",
+      "type": "object"
+    },
+    "BugsnagListEventFieldsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_event_fields",
+          "default": "list_event_fields",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event Fields",
+          "x-display-name": "List Event Fields"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "all_pages": {
+          "default": false,
+          "description": "Follow up to 10 BugSnag pages (at most 1,000 results).",
+          "title": "Fetch all pages",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "BugsnagListEventFieldsConfig",
+      "type": "object"
+    },
+    "BugsnagListEventsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "List Events"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "all_pages": {
+          "default": false,
+          "description": "Follow up to 10 BugSnag pages (at most 1,000 results).",
+          "title": "Fetch all pages",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "BugsnagListEventsConfig",
+      "type": "object"
+    },
+    "BugsnagListOrganizationsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "List Organizations"
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "all_pages": {
+          "default": false,
+          "description": "Follow up to 10 BugSnag pages (at most 1,000 results).",
+          "title": "Fetch all pages",
+          "type": "boolean"
+        }
+      },
+      "title": "BugsnagListOrganizationsConfig",
+      "type": "object"
+    },
+    "BugsnagListPivotValuesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_pivot_values",
+          "default": "list_pivot_values",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "List Pivot Values"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "display_id": {
+          "title": "Display ID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "all_pages": {
+          "default": false,
+          "description": "Follow up to 10 BugSnag pages (at most 1,000 results).",
+          "title": "Fetch all pages",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "display_id"
+      ],
+      "title": "BugsnagListPivotValuesConfig",
+      "type": "object"
+    },
+    "BugsnagListPivotsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_pivots",
+          "default": "list_pivots",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "List Pivots"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "all_pages": {
+          "default": false,
+          "description": "Follow up to 10 BugSnag pages (at most 1,000 results).",
+          "title": "Fetch all pages",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "BugsnagListPivotsConfig",
+      "type": "object"
+    },
+    "BugsnagListProjectCollaboratorsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_project_collaborators",
+          "default": "list_project_collaborators",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collaborators",
+          "x-display-name": "List Project Collaborators"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "all_pages": {
+          "default": false,
+          "description": "Follow up to 10 BugSnag pages (at most 1,000 results).",
+          "title": "Fetch all pages",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "BugsnagListProjectCollaboratorsConfig",
+      "type": "object"
+    },
+    "BugsnagListProjectsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Projects"
+        },
+        "organization_id": {
+          "title": "Organization ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "all_pages": {
+          "default": false,
+          "description": "Follow up to 10 BugSnag pages (at most 1,000 results).",
+          "title": "Fetch all pages",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BugsnagListProjectsConfig",
+      "type": "object"
+    },
+    "BugsnagListReleasesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_releases",
+          "default": "list_releases",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "List Releases"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per page",
+          "type": "integer"
+        },
+        "all_pages": {
+          "default": false,
+          "description": "Follow up to 10 BugSnag pages (at most 1,000 results).",
+          "title": "Fetch all pages",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "BugsnagListReleasesConfig",
+      "type": "object"
+    },
+    "BugsnagUpdateCommentConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_comment",
+          "default": "update_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Update Comment"
+        },
+        "comment_id": {
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id",
+        "message"
+      ],
+      "title": "BugsnagUpdateCommentConfig",
+      "type": "object"
+    },
+    "BugsnagUpdateErrorConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_error",
+          "default": "update_error",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Errors",
+          "x-display-name": "Update Error"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "error_id": {
+          "title": "Error ID",
+          "type": "string"
+        },
+        "error_operation": {
+          "description": "fix marks the error as fixed; open reopens it.",
+          "enum": [
+            "fix",
+            "open",
+            "ignore",
+            "snooze"
+          ],
+          "title": "Error Action",
+          "type": "string"
+        },
+        "severity": {
+          "anyOf": [
+            {
+              "enum": [
+                "info",
+                "warning",
+                "error"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Severity",
+          "enum": [
+            "info",
+            "warning",
+            "error"
+          ],
+          "x-enum-searchable": true
+        },
+        "assigned_collaborator_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee ID"
+        }
+      },
+      "required": [
+        "project_id",
+        "error_id",
+        "error_operation"
+      ],
+      "title": "BugsnagUpdateErrorConfig",
+      "type": "object"
+    },
+    "BugsnagUpdateOrganizationConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_organization",
+          "default": "update_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "Update Organization"
+        },
+        "organization_id": {
+          "title": "Organization ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "auto_upgrade": {
+          "description": "Allow BugSnag to upgrade the organization's plan when its event limit is reached.",
+          "title": "Automatically upgrade plan",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "organization_id",
+        "name",
+        "auto_upgrade"
+      ],
+      "title": "BugsnagUpdateOrganizationConfig",
+      "type": "object"
+    },
+    "BugsnagUpdateProjectConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Update Project"
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "title": "Project Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "body_json"
+      ],
+      "title": "BugsnagUpdateProjectConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_comment": "#/$defs/BugsnagCreateCommentConfig",
+          "create_event_field": "#/$defs/BugsnagCreateEventFieldConfig",
+          "create_organization": "#/$defs/BugsnagCreateOrganizationConfig",
+          "create_project": "#/$defs/BugsnagCreateProjectConfig",
+          "delete_comment": "#/$defs/BugsnagDeleteCommentConfig",
+          "delete_error": "#/$defs/BugsnagDeleteErrorConfig",
+          "delete_event": "#/$defs/BugsnagDeleteEventConfig",
+          "delete_project": "#/$defs/BugsnagDeleteProjectConfig",
+          "get_collaborator": "#/$defs/BugsnagGetCollaboratorConfig",
+          "get_comment": "#/$defs/BugsnagGetCommentConfig",
+          "get_error": "#/$defs/BugsnagGetErrorConfig",
+          "get_error_trend": "#/$defs/BugsnagGetErrorTrendConfig",
+          "get_event": "#/$defs/BugsnagGetEventConfig",
+          "get_latest_event": "#/$defs/BugsnagGetLatestEventConfig",
+          "get_organization": "#/$defs/BugsnagGetOrganizationConfig",
+          "get_project": "#/$defs/BugsnagGetProjectConfig",
+          "get_project_trend": "#/$defs/BugsnagGetProjectTrendConfig",
+          "get_release": "#/$defs/BugsnagGetReleaseConfig",
+          "get_stability_trend": "#/$defs/BugsnagGetStabilityTrendConfig",
+          "list_collaborator_projects": "#/$defs/BugsnagListCollaboratorProjectsConfig",
+          "list_collaborators": "#/$defs/BugsnagListCollaboratorsConfig",
+          "list_comments": "#/$defs/BugsnagListCommentsConfig",
+          "list_error_events": "#/$defs/BugsnagListErrorEventsConfig",
+          "list_errors": "#/$defs/BugsnagListErrorsConfig",
+          "list_event_fields": "#/$defs/BugsnagListEventFieldsConfig",
+          "list_events": "#/$defs/BugsnagListEventsConfig",
+          "list_organizations": "#/$defs/BugsnagListOrganizationsConfig",
+          "list_pivot_values": "#/$defs/BugsnagListPivotValuesConfig",
+          "list_pivots": "#/$defs/BugsnagListPivotsConfig",
+          "list_project_collaborators": "#/$defs/BugsnagListProjectCollaboratorsConfig",
+          "list_projects": "#/$defs/BugsnagListProjectsConfig",
+          "list_releases": "#/$defs/BugsnagListReleasesConfig",
+          "update_comment": "#/$defs/BugsnagUpdateCommentConfig",
+          "update_error": "#/$defs/BugsnagUpdateErrorConfig",
+          "update_organization": "#/$defs/BugsnagUpdateOrganizationConfig",
+          "update_project": "#/$defs/BugsnagUpdateProjectConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BugsnagListOrganizationsConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagGetOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagCreateOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagUpdateOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagCreateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagUpdateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagDeleteProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagListErrorsConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagGetErrorConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagUpdateErrorConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagDeleteErrorConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagListErrorEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagGetLatestEventConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagDeleteEventConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagGetCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagUpdateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagDeleteCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagListReleasesConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagGetReleaseConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagListCollaboratorsConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagGetCollaboratorConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagListProjectCollaboratorsConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagListCollaboratorProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagListEventFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagCreateEventFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagListPivotsConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagListPivotValuesConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagGetProjectTrendConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagGetErrorTrendConfig"
+        },
+        {
+          "$ref": "#/$defs/BugsnagGetStabilityTrendConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BugsnagAuthTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bugsnag Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List open BugSnag errors for a project",
+    "Resolve a BugSnag error after deployment",
+    "Comment on a BugSnag error",
+    "Get a project's stability trend"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
