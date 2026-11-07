@@ -5,7 +5,8 @@ import { INTEGRATION_METADATA } from '~/utils/integrationMetadata';
 export function declaredOAuthProvider(
     provider: string | undefined
 ): PublicOAuthProvider {
-    const spec = provider && INTEGRATION_METADATA.oauthProviders[provider];
+    const providers = INTEGRATION_METADATA.oauthProviders;
+    const spec = provider && Object.hasOwn(providers, provider) ? providers[provider] : undefined;
     if (!spec) throw new Response('Unknown OAuth provider', { status: 404 });
     return spec;
 }

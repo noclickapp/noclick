@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLoaderData, type LoaderFunctionArgs } from 'react-router';
 import { declaredOAuthProvider } from '~/lib/genericOAuth.server';
 import { oauthCallbackUrl } from '~/lib/oauthFlow.server';
@@ -35,6 +35,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
 export default function OAuthCallback() {
     const data = useLoaderData<typeof loader>();
+    const [missingOpener, setMissingOpener] = useState(false);
     useEffect(() => {
         if (window.opener) {
             window.opener.postMessage(
@@ -42,11 +43,15 @@ export default function OAuthCallback() {
                 window.location.origin
             );
             window.close();
+        } else {
+            setMissingOpener(true);
         }
     }, [data]);
     return (
         <p>
-            {data.success
+            {missingOpener
+                ? 'The connection window was lost. Close this window and click Connect again.'
+                : data.success
                 ? 'Completing connection. You can close this window.'
                 : data.error}
         </p>

@@ -7,7 +7,8 @@ import { createOAuthHook } from '~/hooks/oauth/createOAuthHook';
 const exchange = vi.hoisted(() => vi.fn());
 vi.mock('~/hooks/oauth/OAuthExchangeContext', () => ({
     useOAuthExchange: () => exchange,
-    useOAuthAuthorizeParams: () => ({}), useOAuthSignInStandIn: () => null,
+    useOAuthAuthorizeParams: () => ({}),
+    useOAuthSignInStandIn: () => null,
 }));
 const useGeneric = createOAuthHook({ provider: '', generic: true });
 afterEach(() => vi.restoreAllMocks());
@@ -68,20 +69,64 @@ it('connects a declared provider through the generic event with its PKCE verifie
     unmount();
 });
 
-
 it('useOAuthConnect dispatches metadata-only providers without a hook map entry', async () => {
-    exchange.mockResolvedValue({ success: true, credential_id: 'credential', credential_name: 'Example' });
-    INTEGRATION_METADATA.oauthProviders.example = { provider: 'example', authorizeUrl: 'https://example.com/authorize', scopes: ['read'], pkce: true, clientIdEnv: 'EXAMPLE_ID', redirectUriEnv: 'EXAMPLE_REDIRECT', authorizeParams: {}, credentialType: 'example_oauth' };
+    exchange.mockResolvedValue({
+        success: true,
+        credential_id: 'credential',
+        credential_name: 'Example',
+    });
+    INTEGRATION_METADATA.oauthProviders.example = {
+        provider: 'example',
+        authorizeUrl: 'https://example.com/authorize',
+        scopes: ['read'],
+        pkce: true,
+        clientIdEnv: 'EXAMPLE_ID',
+        clientSecretEnv: 'EXAMPLE_SECRET',
+        redirectUriEnv: 'EXAMPLE_REDIRECT',
+        authorizeParams: {},
+        credentialType: 'example_oauth',
+    };
     vi.spyOn(window, 'open').mockReturnValue({ closed: false } as Window);
     const created = vi.fn();
-    const { result, unmount } = renderHook(() => useOAuthConnect({ onCredentialCreated: created }));
+    const { result, unmount } = renderHook(() =>
+        useOAuthConnect({ onCredentialCreated: created })
+    );
     act(() => result.current.connect('example', 'Example'));
     expect(result.current.connectingProvider).toBe('example');
     await act(async () => {
-        window.dispatchEvent(new MessageEvent('message', { origin: window.location.origin, data: { type: 'example-oauth-callback', success: true, code: 'code', redirectUri: 'https://app.example/callback' } }));
+        window.dispatchEvent(
+            new MessageEvent('message', {
+                origin: window.location.origin,
+                data: {
+                    type: 'example-oauth-callback',
+                    success: true,
+                    code: 'code',
+                    redirectUri: 'https://app.example/callback',
+                },
+            })
+        );
     });
-    await waitFor(() => expect(created).toHaveBeenCalledWith('credential', 'example', undefined));
+    await waitFor(() =>
+        expect(created).toHaveBeenCalledWith('credential', 'example', undefined)
+    );
     expect(result.current.isConnecting).toBe(false);
     unmount();
     delete INTEGRATION_METADATA.oauthProviders.example;
 });
+
+it.each(['constructor', 'toString', '__proto__'])(
+    'refuses inherited hook/provider %s',
+    (provider) => {
+        const error = vi.fn();
+        const { result, unmount } = renderHook(() =>
+            useOAuthConnect({ onError: error })
+        );
+        expect(() =>
+            act(() => result.current.connect(provider, 'Example'))
+        ).not.toThrow();
+        expect(error).toHaveBeenCalledWith(
+            `Unknown OAuth provider: ${provider}`
+        );
+        unmount();
+    }
+);

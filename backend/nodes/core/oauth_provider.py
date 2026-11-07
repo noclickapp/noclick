@@ -43,8 +43,7 @@ class OAuthProviderSpec:
     client_secret_env: str
     redirect_uri_env: str
     credential_type: str
-    # A dotted field in the identity response, or in the token response when
-    # identity_url is unset. Missing identity is an error, never a fake account.
+    # A dotted field in the identity response. Missing identity fails connection.
     name_field: str
     identity_url: str | None = None
     pkce: bool = False
@@ -55,6 +54,8 @@ class OAuthProviderSpec:
     token_fields: tuple[str, ...] = ()
 
     def __post_init__(self):
+        if not self.identity_url:
+            raise ValueError("OAuth identity_url is required")
         if not re.fullmatch(r"[a-z][a-z0-9_-]*", self.provider):
             raise ValueError("Invalid OAuth provider id")
         if self.scope_registry.provider != self.provider:
@@ -104,6 +105,7 @@ class OAuthProviderSpec:
             "scopes": self.scopes,
             "pkce": self.pkce,
             "clientIdEnv": self.client_id_env,
+            "clientSecretEnv": self.client_secret_env,
             "redirectUriEnv": self.redirect_uri_env,
             "authorizeParams": self.authorize_params,
             "credentialType": self.credential_type,
@@ -153,24 +155,31 @@ class OAuthProviderSpec:
         )
         expires_at = None
         if payload.get("expires_in") is not None:
+            try:
+                lifetime = int(payload["expires_in"])
+            except (ValueError, TypeError):
+                raise ValueError("Invalid OAuth token expiry") from None
             expires_at = (
-                datetime.now(timezone.utc)
-                + timedelta(seconds=int(payload["expires_in"]))
+                datetime.now(timezone.utc) + timedelta(seconds=lifetime)
             ).isoformat()
-        tokens = OAuthTokens(
-            access_token=payload["access_token"],
-            refresh_token=refresh_token,
-            expires_at=expires_at,
-            scope=payload.get("scope"),
-            token_type=payload.get("token_type", "Bearer"),
-            **{key: payload[key] for key in self.token_fields if key in payload},
-        )
+        try:
+            tokens = OAuthTokens(
+                access_token=payload["access_token"],
+                refresh_token=refresh_token,
+                expires_at=expires_at,
+                scope=payload.get("scope"),
+                token_type=payload.get("token_type", "Bearer"),
+                **{key: payload[key] for key in self.token_fields if key in payload},
+            )
+        except ValueError:
+            raise ValueError("Invalid OAuth token response fields") from None
         return tokens, payload
 
     async def exchange(
         self, code: str, redirect_uri: str, code_verifier: str | None = None
     ) -> tuple[OAuthTokens, str]:
-        if redirect_uri != os.environ[self.redirect_uri_env]:
+        configured_redirect = os.environ.get(self.redirect_uri_env)
+        if configured_redirect and redirect_uri != configured_redirect:
             raise ValueError("OAuth redirect URI does not match configured URI")
         grant = {
             "grant_type": "authorization_code",
@@ -183,26 +192,18 @@ class OAuthProviderSpec:
             ):
                 raise ValueError("OAuth PKCE verifier is required")
             grant["code_verifier"] = code_verifier
-        tokens, payload = await self._tokens(grant)
-        name = await self.account_name(tokens.access_token, payload)
+        tokens, _ = await self._tokens(grant)
+        name = await self.account_name(tokens.access_token)
         return tokens, name
 
-    async def account_name(
-        self, access_token: str, token_payload: dict | None = None
-    ) -> str:
-        if self.identity_url:
-            async with httpx.AsyncClient(timeout=30) as client:
-                response = await client.get(
-                    self.identity_url,
-                    headers={"Authorization": f"Bearer {access_token}"},
-                )
-            response.raise_for_status()
-            payload = response.json()
-        elif token_payload is not None:
-            payload = token_payload
-        else:
-            raise ValueError("This provider has no identity endpoint")
-        name = read_field(payload, self.name_field)
+    async def account_name(self, access_token: str) -> str:
+        async with httpx.AsyncClient(timeout=30) as client:
+            response = await client.get(
+                self.identity_url,
+                headers={"Authorization": f"Bearer {access_token}"},
+            )
+        response.raise_for_status()
+        name = read_field(response.json(), self.name_field)
         if not isinstance(name, str) or not name.strip():
             raise ValueError(f"{self.provider} returned no account name")
         return name

@@ -295,8 +295,9 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
         userScopes?: string[],
         customClientCredentials?: { client_id: string; client_secret: string },
     ) => {
-        const hook = oauthHookMap[provider];
-        const spec = INTEGRATION_METADATA.oauthProviders[provider];
+        const hook = Object.hasOwn(oauthHookMap, provider) ? oauthHookMap[provider] : undefined;
+        const providers = INTEGRATION_METADATA.oauthProviders;
+        const spec = Object.hasOwn(providers, provider) ? providers[provider] : undefined;
         if (!hook && !spec) {
             const errorMsg = `Unknown OAuth provider: ${provider}`;
             setError(errorMsg);
@@ -316,12 +317,16 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
             return;
         }
 
-        if (!hook && spec) {
-            genericOAuth.connectWithConfig({
-                provider, generic: true, defaultScopes: spec.scopes, scopeDelimiter: ' ',
-                authorizePath: `/api/auth/oauth/${provider}/authorize`,
-            }, name, scopes);
-        } else if (provider === 'shopify' && shopName) {
+        if (!hook) {
+            if (spec) {
+                genericOAuth.connectWithConfig({
+                    provider, generic: true, defaultScopes: spec.scopes, scopeDelimiter: ' ',
+                    authorizePath: `/api/auth/oauth/${provider}/authorize`,
+                }, name, scopes);
+            }
+            return;
+        }
+        if (provider === 'shopify' && shopName) {
             hook.connect(name, shopName, scopes || [], customClientCredentials?.client_id, customClientCredentials?.client_secret);
         } else if (provider === 'zendesk' && shopName) {
             hook.connect(name, shopName, scopes || []);
@@ -355,7 +360,7 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
     // engine, provider-gated. Only factory hooks take the options arg, and only they carry
     // `supportsOrgConsent`, so the gate is what keeps a bespoke hook from silently ignoring it.
     const connectOrgConsent = useCallback((provider: string, name: string, scopes?: string[]) => {
-        const hook = oauthHookMap[provider];
+        const hook = Object.hasOwn(oauthHookMap, provider) ? oauthHookMap[provider] : undefined;
         if (!hook || !providerSupportsOrgConsent(provider)) {
             const errorMsg = `${provider} does not offer organization-wide consent`;
             setError(errorMsg);

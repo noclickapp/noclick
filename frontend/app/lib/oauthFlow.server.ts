@@ -93,7 +93,7 @@ export async function oauthRedirect(
     const sealedState = sealState(rawState);
     providerUrl.searchParams.set('state', sealedState);
     const response = redirect(providerUrl.toString(), init);
-    const bindingCookie = stateCookie(provider, requestUrl.pathname.startsWith("/api/auth/oauth/"));
+    const bindingCookie = stateCookie(provider, requestUrl.pathname.startsWith('/api/auth/oauth/'));
     const previous = await bindingCookie.parse(request.headers.get('Cookie'));
     const bindings = (Array.isArray(previous) ? previous : [previous])
         .filter((value): value is string => typeof value === 'string')
@@ -145,7 +145,7 @@ export async function oauthCallbackUrl(request: Request): Promise<URL> {
         throw new Response('Invalid or expired OAuth state', { status: 400 });
     }
 
-    const expected = await stateCookie(provider, url.pathname.startsWith("/api/auth/oauth/")).parse(
+    const expected = await stateCookie(provider, url.pathname.startsWith('/api/auth/oauth/')).parse(
         request.headers.get('Cookie')
     );
     const actualDigest = stateDigest(sealedState);

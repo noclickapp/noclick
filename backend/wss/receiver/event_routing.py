@@ -304,10 +304,12 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
         "monday:oauth:refresh": Handler.MONDAY_OAUTH,
         "monday:oauth:validate": Handler.MONDAY_OAUTH,
 
-        # Attio OAuth events
+        # Standard declared OAuth providers
         "oauth:exchange": Handler.GENERIC_OAUTH,
         "oauth:refresh": Handler.GENERIC_OAUTH,
         "oauth:validate": Handler.GENERIC_OAUTH,
+
+        # Attio OAuth events
         "attio:oauth:exchange": Handler.ATTIO_OAUTH,
         "attio:oauth:refresh": Handler.ATTIO_OAUTH,
         "attio:oauth:validate": Handler.ATTIO_OAUTH,

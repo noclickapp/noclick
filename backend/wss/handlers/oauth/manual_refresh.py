@@ -13,7 +13,7 @@ forced — a manual refresh of a still-valid token is a no-op, so users
 clicking the button can't burn rotations.
 """
 
-from typing import Any, Awaitable, Callable, Dict, Optional
+from typing import Any, Awaitable, Callable, Dict, Optional, Sequence
 
 from nodes.core.oauth_refresh import freshen_oauth_credential, is_token_expired
 
@@ -25,11 +25,15 @@ async def manual_refresh_credential(
     credential_id: str,
     provider: str,
     refresh: Optional[Callable[[str], Awaitable[Any]]] = None,
-    make_refresh: Optional[Callable[[Dict[str, Any]], Callable[[str], Awaitable[Any]]]] = None,
+    make_refresh: Optional[
+        Callable[[Dict[str, Any]], Callable[[str], Awaitable[Any]]]
+    ] = None,
     is_expired: Callable[[Optional[str]], bool] = is_token_expired,
     refresh_token_key: str = "refresh_token",
     access_token_key: str = "access_token",
     expires_at_key: str = "expires_at",
+    additional_token_fields: Sequence[str] = (),
+    expected_credential_type: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Load + freshen a credential for a manual refresh request.
 
@@ -45,6 +49,11 @@ async def manual_refresh_credential(
     credential = await load_credential(pool, user_id, credential_id)
     if not credential:
         raise ValueError("Credential not found or access denied")
+    if (
+        expected_credential_type is not None
+        and credential.get("credential_type") != expected_credential_type
+    ):
+        raise ValueError("Credential not found or provider does not match")
     if not credential.get(refresh_token_key):
         raise ValueError("No refresh token available")
 
@@ -64,5 +73,6 @@ async def manual_refresh_credential(
         expires_at_key=expires_at_key,
         provider=provider,
         caller_path="manual_refresh",
+        additional_token_fields=additional_token_fields,
     )
     return credential

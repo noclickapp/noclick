@@ -1190,7 +1190,10 @@ export function getProviderConfig(
     providerKey: string | undefined
 ): OAuthProviderConfig | undefined {
     if (!providerKey) return undefined;
-    return OAUTH_PROVIDER_CONFIG[providerKey] || PROVIDER_ALIASES[providerKey] || GENERIC_OAUTH_PROVIDER_CONFIG[providerKey];
+    for (const providers of [OAUTH_PROVIDER_CONFIG, PROVIDER_ALIASES, GENERIC_OAUTH_PROVIDER_CONFIG]) {
+        if (Object.hasOwn(providers, providerKey)) return providers[providerKey];
+    }
+    return undefined;
 }
 
 /**
@@ -1253,7 +1256,7 @@ export function getProviderConfigNormalized(
 ): OAuthProviderConfig | undefined {
     if (!key) return undefined;
     const normalized = key.toLowerCase().replace(/-/g, '_');
-    return OAUTH_PROVIDER_CONFIG[normalized] || PROVIDER_ALIASES[normalized] || GENERIC_OAUTH_PROVIDER_CONFIG[normalized];
+    return getProviderConfig(normalized);
 }
 
 /**

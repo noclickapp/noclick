@@ -13,6 +13,7 @@ export interface PublicOAuthProvider {
     scopes: string[];
     pkce: boolean;
     clientIdEnv: string;
+    clientSecretEnv: string;
     redirectUriEnv: string;
     authorizeParams: Record<string, string>;
     credentialType: string;
@@ -44,7 +45,7 @@ export function collectIntegrationMetadata(files: Record<string, IntegrationMeta
     let credentialTypes: Record<string, string> = {};
     let providerLabels: Record<string, string> = {};
     const autoSelectTypes: string[] = [];
-    const oauthProviders: Record<string, PublicOAuthProvider> = {};
+    const oauthProviders: Record<string, PublicOAuthProvider> = Object.create(null);
     for (const [path, meta] of Object.entries(files).sort(([a], [b]) => a.localeCompare(b))) {
         const slug = path.slice(path.lastIndexOf('/') + 1, -'.json'.length);
         if (meta.type !== `automation-${slug}` || meta.type in nodeMeta) {

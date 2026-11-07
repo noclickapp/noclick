@@ -12,10 +12,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { augmentScopes } from '~/utils/oauthProviders';
-import {
-    useOAuthAuthorizeParams,
-    useOAuthExchange,
-} from './OAuthExchangeContext';
+import { useOAuthAuthorizeParams, useOAuthExchange } from './OAuthExchangeContext';
 import { oauthChannelName } from '~/lib/oauthChannel';
 
 export interface OAuthHookResult {
@@ -269,17 +266,10 @@ export function createOAuthHook(config: OAuthHookConfig) {
                 const top = window.screenY + (window.outerHeight - height) / 2;
 
                 const authorizeUrl = new URL(
-                    buildAuthorizeUrl(
-                        activeConfig,
-                        credentialName,
-                        scopes,
-                        options
-                    ),
+                    buildAuthorizeUrl(activeConfig, credentialName, scopes, options),
                     window.location.origin
                 );
-                for (const [field, value] of Object.entries(
-                    authorizeParamsRef.current
-                )) {
+                for (const [field, value] of Object.entries(authorizeParamsRef.current)) {
                     authorizeUrl.searchParams.set(field, value);
                 }
                 if (activeConfig.broadcastChannel) {

@@ -575,14 +575,13 @@ class _NodeRegistry(Dict[str, Type[WorkflowNode]]):
         return alias is not None and dict.__contains__(self, alias)
 
 
-from nodes.core.oauth_registry import oauth_providers
-
-oauth_providers()  # Fail duplicate/invalid OAuth declarations during registry startup.
+from nodes.core.oauth_registry import oauth_providers, validate_oauth_credential_types
 
 DISCOVERED_NODE_ENTRIES = discover_nodes(Path(__file__).resolve().parents[1])
 NODE_REGISTRY: Dict[str, Type[WorkflowNode]] = _NodeRegistry(
     merge_node_entries(_NODE_REGISTRY_ENTRIES, DISCOVERED_NODE_ENTRIES)
 )
+validate_oauth_credential_types(oauth_providers(), NODE_REGISTRY.values())
 
 # Node types that use the SDK for inter-node communication — edges to/from them are rejected.
 # Derived from WorkflowNode.connectionless class attribute (single source of truth).

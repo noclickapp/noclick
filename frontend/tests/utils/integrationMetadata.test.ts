@@ -37,7 +37,7 @@ describe('integration metadata', () => {
 
 
 it('rejects duplicate OAuth ids and credentials absent from an integration schema', () => {
-    const oauth = { provider: 'example', authorizeUrl: 'https://example.com/authorize', scopes: ['read'], pkce: false, clientIdEnv: 'EXAMPLE_CLIENT_ID', redirectUriEnv: 'EXAMPLE_REDIRECT_URI', authorizeParams: {}, credentialType: 'example_api_key' };
+    const oauth = { provider: 'example', authorizeUrl: 'https://example.com/authorize', scopes: ['read'], pkce: false, clientIdEnv: 'EXAMPLE_CLIENT_ID', clientSecretEnv: 'EXAMPLE_SECRET', redirectUriEnv: 'EXAMPLE_REDIRECT_URI', authorizeParams: {}, credentialType: 'example_api_key' };
     const first = { ...example, oauthProviders: [oauth] };
     const second = { ...first, type: 'automation-second' };
     expect(() => collectIntegrationMetadata({ 'example.json': first, 'second.json': second })).toThrow(/Duplicate OAuth/);

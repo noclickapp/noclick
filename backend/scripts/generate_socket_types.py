@@ -6,6 +6,7 @@ This script converts backend event definitions to frontend TypeScript interfaces
 Generates TypeScript types from backend Pydantic models for the NoClick frontend.
 """
 import sys
+import json
 import re
 import inspect
 import argparse
@@ -54,6 +55,25 @@ def content_has_changed(file_path: Path, new_content: str, timestamp_pattern: st
         return existing_filtered != new_filtered
 
     return existing_content != new_content
+
+def _schema_without_union_order(value):
+    """anyOf alternatives are unordered; retain checked-in order for equal schemas."""
+    if isinstance(value, dict):
+        result = {key: item if key in {"default", "const", "enum", "examples"} else _schema_without_union_order(item)
+                  for key, item in value.items()}
+        if isinstance(result.get("anyOf"), list):
+            result["anyOf"] = sorted(result["anyOf"], key=lambda item: json.dumps(item, sort_keys=True))
+        return result
+    if isinstance(value, list):
+        return [_schema_without_union_order(item) for item in value]
+    return value
+
+
+def write_schema_if_changed(path: Path, schema: dict) -> bool:
+    if path.exists() and _schema_without_union_order(json.loads(path.read_text())) == _schema_without_union_order(schema):
+        return False
+    return write_if_changed(path, json.dumps(schema, indent=2))
+
 
 def write_if_changed(file_path: Path, content: str, timestamp_pattern: str = None) -> bool:
     """
@@ -1002,8 +1022,7 @@ def generate_node_schemas():
                     node_meta[node_type] = meta_entry
 
                 # Write to file with pretty formatting (only if content changed)
-                json_content = json.dumps(schema, indent=2)
-                if write_if_changed(output_file, json_content):
+                if write_schema_if_changed(output_file, schema):
                     qprint(f"  ✓ Generated {schema_name}.json")
                     updated_count += 1
                 else:

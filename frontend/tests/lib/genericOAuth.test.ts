@@ -24,6 +24,7 @@ const spec: PublicOAuthProvider = {
     scopes: ['read', 'offline'],
     pkce: true,
     clientIdEnv: 'EXAMPLE_ID',
+    clientSecretEnv: 'EXAMPLE_SECRET',
     redirectUriEnv: 'EXAMPLE_CALLBACK',
     authorizeParams: { prompt: 'consent' },
     credentialType: 'example_oauth',
@@ -135,6 +136,7 @@ it('omits PKCE when disabled and refuses unregistered providers/scopes', () => {
         buildGenericAuthorization(spec, ['admin'], 'id', callbackUri)
     ).toThrow();
     expect(() => declaredOAuthProvider('unknown-example')).toThrow();
+    expect(getProviderConfig('constructor')).toBeUndefined();
 });
 
 it('resolves generic provider and credential lookups while preserving bespoke precedence', () => {
@@ -151,4 +153,55 @@ it('resolves generic provider and credential lookups while preserving bespoke pr
     ).toBe('example');
     expect(getProviderKeyFromCredentialType('example_oauth')).toBe('example');
     expect(getProviderConfig('attio')?.name).toBe('Attio');
+});
+
+it.each(['constructor', 'toString', '__proto__'])(
+    'refuses inherited provider %s in both loaders',
+    async (provider) => {
+        for (const loader of [authorize, callback]) {
+            await expect(
+                loader({
+                    request: new Request(
+                        `https://app.example/api/auth/oauth/${provider}/authorize`
+                    ),
+                    params: { provider },
+                    context: {},
+                } as any)
+            ).rejects.toMatchObject({ status: 404 });
+        }
+    }
+);
+
+it('shows both processes env names for a metadata-only provider', async () => {
+    INTEGRATION_METADATA.oauthProviders.example = spec;
+    const { providerSetup } = await import('~/lib/oauthProviderSetup');
+    const { oauthNotConfiguredResponse, callbackUrlFor } = await import(
+        '~/lib/oauthSetupPage.server'
+    );
+    expect(providerSetup('example')).toMatchObject({
+        frontendEnv: ['EXAMPLE_ID', 'EXAMPLE_CALLBACK'],
+        backendEnv: ['EXAMPLE_ID', 'EXAMPLE_SECRET', 'EXAMPLE_CALLBACK'],
+    });
+    const request = new Request(
+        'https://app.example/api/auth/oauth/example/authorize'
+    );
+    const response = oauthNotConfiguredResponse({
+        request,
+        provider: 'example',
+    });
+    const html = await response.text();
+    expect(html).toContain('frontend/.env');
+    expect(html).toContain('backend/.env');
+    expect(html).toContain('EXAMPLE_SECRET=');
+    expect(html.match(/EXAMPLE_ID=/g)).toHaveLength(2);
+    expect(
+        html.match(
+            /EXAMPLE_CALLBACK=https:\/\/app.example\/api\/auth\/oauth\/example\/callback/g
+        )
+    ).toHaveLength(2);
+    expect(html).not.toContain('Settings &rarr; OAuth Apps');
+    expect(providerSetup('constructor').frontendEnv).toEqual([]);
+    expect(callbackUrlFor(request, 'constructor')).toBe(
+        'https://app.example/api/auth/constructor/callback'
+    );
 });

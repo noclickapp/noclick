@@ -96,7 +96,8 @@ async def test_exchange_identity_and_public_metadata(spec, endpoint):
         "client_id": ["client"],
         "client_secret": ["secret"],
     }
-    assert "clientSecretEnv" not in spec.public_metadata()
+    assert spec.public_metadata()["clientSecretEnv"] == "EXAMPLE_CLIENT_SECRET"
+    assert "secret" not in spec.public_metadata().values()
     assert spec.public_metadata()["scopes"] == ["read"]
 
 
@@ -121,13 +122,26 @@ async def test_redirect_mismatch_never_sends_code(spec, endpoint):
     assert endpoint[0] == []
 
 
-async def test_token_field_identity_and_missing_name(spec, endpoint):
-    _, name = await replace(
-        spec, identity_url=None, name_field="organization_id"
-    ).exchange("code", CALLBACK)
-    assert name == "org-new"
+def test_identity_endpoint_required(spec):
+    with pytest.raises(ValueError, match="identity_url is required"):
+        replace(spec, identity_url=None)
+    with pytest.raises(ValueError, match="identity_url is required"):
+        replace(spec, identity_url="")
+
+
+async def test_missing_identity_name_refused(spec, endpoint):
     with pytest.raises(KeyError):
         await replace(spec, name_field="absent").exchange("code", CALLBACK)
+
+
+async def test_frontend_redirect_allowed_when_backend_uri_unset(
+    spec, endpoint, monkeypatch
+):
+    monkeypatch.delenv("EXAMPLE_REDIRECT_URI")
+    await spec.exchange("code", "https://staging.example/callback")
+    assert parse_qs(endpoint[0][0].content.decode())["redirect_uri"] == [
+        "https://staging.example/callback"
+    ]
 
 
 async def test_rotation_missing_successor_refused(spec, endpoint):
@@ -362,6 +376,7 @@ async def test_manual_handler_refresh_uses_audited_cas(handler, endpoint, monkey
     assert handler.sio.emit.call_args.args[1]["data"]["success"]
     assert persist.call_args.kwargs["expected_token_version"] == 4
     assert persist.call_args.kwargs["new_data"]["refresh_token"] == "refresh-new"
+    assert persist.call_args.kwargs["new_data"]["organization_id"] == "org-new"
     assert audit.call_args.args[0]["caller_path"] == "manual_refresh"
 
 
@@ -427,13 +442,7 @@ async def test_validate_uses_actual_expiry_not_refresh_buffer(
     assert [request.url.path for request in endpoint[0]] == ["/me"]
 
 
-async def test_token_field_validation_requires_an_access_token(
-    handler, spec, monkeypatch
-):
-    monkeypatch.setattr(
-        "wss.handlers.oauth.generic_oauth_handler.get_oauth_provider",
-        lambda _: replace(spec, identity_url=None),
-    )
+async def test_validation_requires_an_access_token(handler, spec, monkeypatch):
     monkeypatch.setattr(
         "utils.credential_loader.load_credential",
         AsyncMock(return_value={"credential_type": "example_oauth"}),
@@ -445,3 +454,206 @@ async def test_token_field_validation_requires_an_access_token(
         ),
     )
     assert not handler.sio.emit.call_args.args[1]["data"]["valid"]
+
+
+@pytest.mark.parametrize("operation", ["exchange", "refresh", "validate"])
+@pytest.mark.parametrize("unexpected", [False, True])
+async def test_failures_are_logged_and_replied(handler, caplog, operation, unexpected):
+    error = (
+        RuntimeError("unexpected storage failure")
+        if unexpected
+        else ValueError("provider rejected request")
+    )
+    handler._context = AsyncMock(side_effect=error)
+    model, method, fields = {
+        "exchange": (
+            OAuthExchangeRequest,
+            handler.exchange_oauth_code,
+            {"code": "private-code", "redirect_uri": CALLBACK},
+        ),
+        "refresh": (
+            OAuthRefreshRequest,
+            handler.refresh_oauth_token,
+            {"credential_id": "credential"},
+        ),
+        "validate": (
+            OAuthValidateRequest,
+            handler.validate_oauth_token,
+            {"credential_id": "credential"},
+        ),
+    }[operation]
+    await method("sid", model(provider="example", request_id="request", **fields))
+    response = handler.sio.emit.call_args.args[1]["data"]
+    assert not response.get("success", response.get("valid"))
+    if unexpected:
+        assert response["message"] == "Internal error"
+    else:
+        assert response["message"] != "Internal error"
+    assert f"[generic_oauth] example {operation} failed" in caplog.text
+    assert "private-code" not in caplog.text
+    assert bool(caplog.records[-1].exc_info) == unexpected
+
+
+@pytest.mark.parametrize("bad_identity", [False, True])
+async def test_malformed_upstream_always_answers_without_tokens(
+    handler, monkeypatch, caplog, bad_identity
+):
+    token_payload = {
+        "access_token": "private-access",
+        "refresh_token": "private-refresh",
+        "scope": "read",
+    }
+
+    def respond(request):
+        if request.url.path == "/me":
+            return httpx.Response(200, json={"account": 42})
+        return httpx.Response(
+            200, json=token_payload if bad_identity else [token_payload]
+        )
+
+    original = httpx.AsyncClient
+    monkeypatch.setattr(
+        httpx,
+        "AsyncClient",
+        lambda **kw: original(transport=httpx.MockTransport(respond), **kw),
+    )
+    await handler.exchange_oauth_code(
+        "sid",
+        OAuthExchangeRequest(
+            provider="example",
+            request_id="request",
+            code="private-code",
+            redirect_uri=CALLBACK,
+        ),
+    )
+    assert handler.sio.emit.call_args.args[1]["data"]["message"] == "Internal error"
+    assert caplog.records[-1].exc_info
+    for secret in ("private-access", "private-refresh", "private-code"):
+        assert secret not in caplog.text
+        assert secret not in str(handler.sio.emit.call_args)
+
+
+async def test_validation_refuses_revoked_identity(handler, monkeypatch):
+    monkeypatch.setattr(
+        "utils.credential_loader.load_credential",
+        AsyncMock(
+            return_value={"credential_type": "example_oauth", "access_token": "revoked"}
+        ),
+    )
+    original = httpx.AsyncClient
+    monkeypatch.setattr(
+        httpx,
+        "AsyncClient",
+        lambda **kw: original(
+            transport=httpx.MockTransport(lambda _: httpx.Response(401)), **kw
+        ),
+    )
+    await handler.validate_oauth_token(
+        "sid",
+        OAuthValidateRequest(
+            provider="example", request_id="request", credential_id="credential"
+        ),
+    )
+    assert not handler.sio.emit.call_args.args[1]["data"]["valid"]
+
+
+def test_discovery_refuses_bespoke_provider(tmp_path, monkeypatch, spec):
+    declaration = replace(
+        spec, provider="attio", scope_registry=ScopeRegistry("attio", {})
+    )
+    (tmp_path / "attio_oauth.py").write_text("OAUTH_PROVIDER = declaration")
+    monkeypatch.setattr(
+        importlib,
+        "import_module",
+        lambda name: SimpleNamespace(OAUTH_PROVIDER=declaration, __name__=name),
+    )
+    with pytest.raises(ValueError, match="bespoke exchange event: attio"):
+        discover_oauth_providers(tmp_path, "fake")
+
+
+@pytest.mark.parametrize("field", ["default", "const"])
+def test_credential_schema_must_belong_to_declared_provider(spec, field):
+    from nodes.core.oauth_registry import validate_oauth_credential_types
+
+    class Node:
+        @classmethod
+        def get_config_schema(cls):
+            return {
+                "$defs": {
+                    "Credential": {
+                        "properties": {"credential_type": {field: "example_oauth"}},
+                        "x-oauth-provider": "other",
+                    }
+                }
+            }
+
+    with pytest.raises(ValueError, match="belongs to other, not example"):
+        validate_oauth_credential_types({"example": spec}, [Node])
+
+
+@pytest.mark.parametrize(
+    "scope,requested", [("read", ["read", "write"]), ("", ["read"])]
+)
+async def test_partial_grant_is_not_stored(
+    handler, endpoint, monkeypatch, scope, requested
+):
+    endpoint[1]["scope"] = scope
+    create = AsyncMock()
+    monkeypatch.setattr(
+        "repositories.credentials.create_credential_with_limit_check", create
+    )
+    await handler.exchange_oauth_code(
+        "sid",
+        OAuthExchangeRequest(
+            provider="example",
+            request_id="request",
+            code="code",
+            redirect_uri=CALLBACK,
+            scopes=requested,
+        ),
+    )
+    assert not handler.sio.emit.call_args.args[1]["data"]["success"]
+    create.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "scope,expected", [("read extra", ["read", "extra"]), (None, ["read"])]
+)
+async def test_granted_scopes_are_persisted(
+    handler, endpoint, monkeypatch, scope, expected
+):
+    endpoint[1]["scope"] = scope
+    create = AsyncMock(return_value=({"id": "credential", "name": "Example"}, None))
+    monkeypatch.setattr(
+        "repositories.credentials.create_credential_with_limit_check", create
+    )
+    await handler.exchange_oauth_code(
+        "sid",
+        OAuthExchangeRequest(
+            provider="example",
+            request_id="request",
+            code="code",
+            redirect_uri=CALLBACK,
+            scopes=["read"],
+        ),
+    )
+    assert handler.sio.emit.call_args.args[1]["data"]["success"]
+    assert create.call_args.args[6]["scopes"] == expected
+    assert handler.encryption.decrypt_credential(create.call_args.args[5])[
+        "scope"
+    ] == " ".join(expected)
+
+
+def test_generator_retains_equivalent_anyof_order(tmp_path):
+    from scripts.generate_socket_types import write_schema_if_changed
+
+    path = tmp_path / "node.json"
+    path.write_text('{"anyOf": [{"type": "string"}, {"type": "integer"}]}')
+    original = path.read_text()
+    assert not write_schema_if_changed(
+        path, {"anyOf": [{"type": "integer"}, {"type": "string"}]}
+    )
+    assert path.read_text() == original
+    assert write_schema_if_changed(
+        path, {"anyOf": [{"type": "integer"}, {"type": "boolean"}]}
+    )

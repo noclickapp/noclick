@@ -35,7 +35,7 @@ export function callbackUrlFor(request: Request, provider: string): string {
     const proto = forwardedProto ? forwardedProto.split(',')[0].trim() : url.protocol.replace(':', '');
     const forwardedHost = request.headers.get('X-Forwarded-Host');
     const host = forwardedHost ? forwardedHost.split(',')[0].trim() : url.host;
-    const prefix = INTEGRATION_METADATA.oauthProviders[provider] ? `oauth/${provider}` : provider;
+    const prefix = Object.hasOwn(INTEGRATION_METADATA.oauthProviders, provider) ? `oauth/${provider}` : provider;
     return `${proto}://${host}/api/auth/${prefix}/callback`;
 }
 
@@ -47,11 +47,11 @@ export interface OAuthNotConfiguredOptions {
 }
 
 /** `VAR=value` lines, prefilling the redirect URI since we know it. */
-function envBlock(vars: string[], callbackUrl: string): string {
-    return vars.map((v) => (v.endsWith('REDIRECT_URI') ? `${v}=${callbackUrl}` : `${v}=`)).join('\n');
+function envBlock(vars: string[], callbackUrl: string, redirectEnv?: string): string {
+    return vars.map((v) => ((v === redirectEnv || v.endsWith('REDIRECT_URI')) ? `${v}=${callbackUrl}` : `${v}=`)).join('\n');
 }
 
-function fileBlock(title: string, note: string, vars: string[], callbackUrl: string, id: string): string {
+function fileBlock(title: string, note: string, vars: string[], callbackUrl: string, id: string, redirectEnv?: string): string {
     if (!vars.length) return '';
     return `
       <div class="file">
@@ -60,7 +60,7 @@ function fileBlock(title: string, note: string, vars: string[], callbackUrl: str
           <span class="note">${escapeHtml(note)}</span>
           <button type="button" class="copy" data-target="${id}">Copy</button>
         </div>
-        <pre id="${id}">${escapeHtml(envBlock(vars, callbackUrl))}</pre>
+        <pre id="${id}">${escapeHtml(envBlock(vars, callbackUrl, redirectEnv))}</pre>
       </div>`;
 }
 
@@ -76,7 +76,9 @@ export function oauthNotConfiguredResponse({
 }: OAuthNotConfiguredOptions): Response {
     const setup = providerSetup(provider);
     const { label, consoleUrl } = setup;
+    const declared = Object.hasOwn(INTEGRATION_METADATA.oauthProviders, provider);
     const callbackUrl = callbackUrlFor(request, provider);
+    const redirectEnv = declared ? INTEGRATION_METADATA.oauthProviders[provider].redirectUriEnv : undefined;
 
     // The route knows what IT found missing; the map knows the other process's
     // half, which the route can't see.
@@ -187,13 +189,13 @@ export function oauthNotConfiguredResponse({
     <li>
       <div class="step-title">Give NoClick the credentials</div>
       <div class="note" style="margin-bottom:10px">
-        Easiest: paste them into
+        ${declared ? 'Set these environment variables and restart both processes:' : `Easiest: paste them into
         <a href="/dashboard?tab=settings&amp;section=oauth-apps" target="_blank" rel="noreferrer">Settings &rarr; OAuth Apps</a>.
         Saved there, they apply immediately — no restart. Or set them as
-        environment variables, which take precedence:
+        environment variables, which take precedence:`}
       </div>
-      ${fileBlock('frontend/.env', 'starts the sign-in', frontendVars, callbackUrl, 'fe')}
-      ${fileBlock('backend/.env', 'exchanges the code for a token', backendVars, callbackUrl, 'be')}
+      ${fileBlock('frontend/.env', 'starts the sign-in', frontendVars, callbackUrl, 'fe', redirectEnv)}
+      ${fileBlock('backend/.env', 'exchanges the code for a token', backendVars, callbackUrl, 'be', redirectEnv)}
       ${backendVars.length ? `<div class="note" style="margin-top:8px">The client ID goes in both${backendVars.some((v) => v.endsWith('SECRET')) ? '; only the backend needs the secret' : ''}. Restart both processes afterwards.</div>` : ''}
     </li>
     <li>

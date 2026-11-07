@@ -1,9 +1,10 @@
 """Standard OAuth2 credential operations, registered once for every declaration."""
+import logging
+
 import httpx
 
 from nodes.core.oauth_refresh import (
     OAuthRefreshError,
-    freshen_oauth_credential,
     is_token_expired,
 )
 from nodes.core.oauth_registry import get_oauth_provider, oauth_providers
@@ -14,6 +15,7 @@ from wss.receiver.client_events import (
     OAuthRefreshRequest,
     OAuthValidateRequest,
 )
+from wss.handlers.oauth.manual_refresh import manual_refresh_credential
 from wss.schema import SocketIOHandler
 from wss.sender import ResponseEvent, send_event
 from wss.sender.responses import (
@@ -23,9 +25,14 @@ from wss.sender.responses import (
 )
 
 
+logger = logging.getLogger(__name__)
+
+
 class GenericOAuthHandler(DatabasePoolMixin, SocketIOHandler):
     def __init__(self, sio):
         super().__init__(sio)
+        import nodes.core.registry  # Validate credential/provider bindings at startup.
+
         oauth_providers()  # Refuse duplicate/invalid specs at startup, not first connect.
         self.encryption = get_encryption()
 
@@ -72,7 +79,12 @@ class GenericOAuthHandler(DatabasePoolMixin, SocketIOHandler):
             tokens, name = await spec.exchange(
                 request.code, request.redirect_uri, request.code_verifier
             )
+            requested = request.scopes or spec.scopes
+            granted = tokens.scope.split() if tokens.scope is not None else requested
+            if set(requested) - set(granted):
+                raise ValueError("OAuth provider did not grant all requested scopes")
             credential = tokens.model_dump()
+            credential["scope"] = " ".join(granted)
             credential["name"] = name
             encrypted = self.encryption.encrypt_credential(credential)
             from repositories.credentials import create_credential_with_limit_check
@@ -85,7 +97,7 @@ class GenericOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                     spec.credential_type,
                     name,
                     encrypted,
-                    {"provider": spec.provider, "name": name, "scopes": spec.scopes},
+                    {"provider": spec.provider, "name": name, "scopes": granted},
                 )
             if error:
                 await send_event(
@@ -100,30 +112,31 @@ class GenericOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 credential_name=row["name"],
                 name=name,
             )
-        except (ValueError, KeyError, httpx.HTTPError):
+        except (ValueError, KeyError, httpx.HTTPError) as exc:
+            logger.warning(
+                "[generic_oauth] %s exchange failed: %s", request.provider, exc
+            )
             response = OAuthExchangeResponse(
                 success=False,
                 message="OAuth connection failed; check provider configuration and try again",
             )
+        except Exception:
+            logger.warning(
+                "[generic_oauth] %s exchange failed", request.provider, exc_info=True
+            )
+            response = OAuthExchangeResponse(success=False, message="Internal error")
         await self._reply(sid, request, response)
 
     async def _freshen(self, session, spec, pool, credential_id):
-        credential = await self._credential(
-            pool, session["user_id"], credential_id, spec
-        )
-        if not credential.get("refresh_token"):
-            raise ValueError("No refresh token available")
-        await freshen_oauth_credential(
-            credential,
-            pool=pool,
+        return await manual_refresh_credential(
+            pool,
             user_id=session["user_id"],
             credential_id=credential_id,
-            refresh=spec.refresh,
             provider=spec.provider,
-            caller_path="manual_refresh",
+            refresh=spec.refresh,
             additional_token_fields=spec.token_fields,
+            expected_credential_type=spec.credential_type,
         )
-        return credential
 
     async def refresh_oauth_token(self, sid: str, request: OAuthRefreshRequest) -> None:
         try:
@@ -133,6 +146,9 @@ class GenericOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 success=True, expires_at=credential.get("expires_at")
             )
         except OAuthRefreshError as exc:
+            logger.warning(
+                "[generic_oauth] %s refresh failed: %s", request.provider, exc
+            )
             response = OAuthRefreshResponse(
                 success=False,
                 message=(
@@ -141,10 +157,18 @@ class GenericOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                     else "OAuth refresh rejected; reconnect the account"
                 ),
             )
-        except (ValueError, KeyError, httpx.HTTPError):
+        except (ValueError, KeyError, httpx.HTTPError) as exc:
+            logger.warning(
+                "[generic_oauth] %s refresh failed: %s", request.provider, exc
+            )
             response = OAuthRefreshResponse(
                 success=False, message="OAuth refresh failed; reconnect the account"
             )
+        except Exception:
+            logger.warning(
+                "[generic_oauth] %s refresh failed", request.provider, exc_info=True
+            )
+            response = OAuthRefreshResponse(success=False, message="Internal error")
         await self._reply(sid, request, response)
 
     async def validate_oauth_token(
@@ -158,11 +182,19 @@ class GenericOAuthHandler(DatabasePoolMixin, SocketIOHandler):
             if not credential.get("access_token"):
                 raise ValueError("Credential has no access token")
             expired = is_token_expired(credential.get("expires_at"), buffer_minutes=0)
-            if not expired and spec.identity_url:
+            if not expired:
                 await spec.account_name(credential["access_token"])
             response = OAuthValidateResponse(valid=not expired, expired=expired)
-        except (ValueError, KeyError, httpx.HTTPError):
+        except (ValueError, KeyError, httpx.HTTPError) as exc:
+            logger.warning(
+                "[generic_oauth] %s validate failed: %s", request.provider, exc
+            )
             response = OAuthValidateResponse(
                 valid=False, message="OAuth credential could not be validated"
             )
+        except Exception:
+            logger.warning(
+                "[generic_oauth] %s validate failed", request.provider, exc_info=True
+            )
+            response = OAuthValidateResponse(valid=False, message="Internal error")
         await self._reply(sid, request, response)

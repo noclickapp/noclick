@@ -667,8 +667,9 @@ class SocketIOProxy:
         asana_oauth_handler = AsanaOAuthHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Initialize Monday OAuth handler (API only)
         monday_oauth_handler = MondayOAuthHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
-        # Initialize Attio OAuth handler (API only)
+        # Initialize declared OAuth handler (API only)
         generic_oauth_handler = GenericOAuthHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
+        # Initialize Attio OAuth handler (API only)
         attio_oauth_handler = AttioOAuthHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Initialize Intercom OAuth handler (API only)
         intercom_oauth_handler = IntercomOAuthHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None

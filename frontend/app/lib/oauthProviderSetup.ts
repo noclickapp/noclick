@@ -1,3 +1,5 @@
+import { INTEGRATION_METADATA } from '~/utils/integrationMetadata';
+
 // GENERATED. Provider labels from the provider key (brand casing applied);
 // console URLs from the schemas' x-credential-url where declared, hand-filled
 // otherwise; env vars read from the source that actually consumes them —
@@ -75,11 +77,12 @@ export const OAUTH_PROVIDER_SETUP: Record<string, OAuthProviderSetup> = {
 };
 
 export function providerSetup(provider: string): OAuthProviderSetup {
-    return (
-        OAUTH_PROVIDER_SETUP[provider] ?? {
-            label: provider.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
-            frontendEnv: [],
-            backendEnv: [],
-        }
-    );
+    if (Object.hasOwn(OAUTH_PROVIDER_SETUP, provider)) return OAUTH_PROVIDER_SETUP[provider];
+    const providers = INTEGRATION_METADATA.oauthProviders;
+    const spec = Object.hasOwn(providers, provider) ? providers[provider] : undefined;
+    return {
+        label: provider.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+        frontendEnv: spec ? [spec.clientIdEnv, spec.redirectUriEnv] : [],
+        backendEnv: spec ? [spec.clientIdEnv, spec.clientSecretEnv, spec.redirectUriEnv] : [],
+    };
 }
