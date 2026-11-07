@@ -276,6 +276,7 @@ async def test_staging_credential_hooks_validate_non_rotating_tokens(provider):
 
 @pytest.mark.asyncio
 async def test_staging_runner_resolves_stored_connection(provider, monkeypatch):
+    monkeypatch.setattr("utils.credential_approval.admit_node", AsyncMock(return_value=None))
     resolver = AsyncMock(return_value=CREDS)
     monkeypatch.setattr("nodes.core.run_op.resolve_operation_credential", resolver)
     result = await run("list_external_warehouses", credential_id=CID, credential_data=None)
