@@ -1,0 +1,1214 @@
+{
+  "$defs": {
+    "NeonCRMAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "neoncrm_api_key",
+          "default": "neoncrm_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "org_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "api_key": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "instance": {
+          "default": "production",
+          "description": "Production also covers sandbox instances.",
+          "enum": [
+            "production",
+            "trial"
+          ],
+          "title": "Instance",
+          "type": "string"
+        }
+      },
+      "required": [
+        "org_id",
+        "api_key"
+      ],
+      "title": "Neon CRM API Key",
+      "type": "object",
+      "x-credential-instructions": "Use an existing organization ID and the API key of a system user with API Access. Choose Trial only for a trial instance; constituent OAuth is not system-user authorization.",
+      "x-credential-url": "https://developer.neoncrm.com/authentication/"
+    },
+    "NeonCRMAccountConfig": {
+      "description": "Reads documented organization-scoped metadata.",
+      "properties": {
+        "account_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_account_id"
+        },
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "read"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "NeonCRMAccountConfig",
+      "type": "object"
+    },
+    "NeonCRMAccountsConfig": {
+      "description": "Reads documented organization-scoped metadata.",
+      "properties": {
+        "current_page": {
+          "default": 0,
+          "description": "Zero-based; returns one bounded page.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "List Accounts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "read"
+        }
+      },
+      "title": "NeonCRMAccountsConfig",
+      "type": "object"
+    },
+    "NeonCRMActivityConfig": {
+      "description": "Reads documented organization-scoped metadata.",
+      "properties": {
+        "activity_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Activity ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_activity_id"
+        },
+        "operation": {
+          "const": "get_activity",
+          "default": "get_activity",
+          "title": "Get Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "read"
+        },
+        "include_note": {
+          "default": false,
+          "description": "Includes the activity's private note text in workflow output.",
+          "title": "Include Note",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "activity_id"
+      ],
+      "title": "NeonCRMActivityConfig",
+      "type": "object"
+    },
+    "NeonCRMContactConfig": {
+      "description": "Reads documented organization-scoped metadata.",
+      "properties": {
+        "account_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_account_id"
+        },
+        "contact_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_contact_id"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Company Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "read"
+        }
+      },
+      "required": [
+        "account_id",
+        "contact_id"
+      ],
+      "title": "NeonCRMContactConfig",
+      "type": "object"
+    },
+    "NeonCRMContactsConfig": {
+      "description": "Reads documented organization-scoped metadata.",
+      "properties": {
+        "account_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_account_id"
+        },
+        "current_page": {
+          "default": 0,
+          "description": "Company-contact pagination exposes currentPage only.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Company Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "read"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "NeonCRMContactsConfig",
+      "type": "object"
+    },
+    "NeonCRMCreateActivityConfig": {
+      "description": "Changes ordinary CRM records; organization automation may apply.",
+      "properties": {
+        "subject": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "start_date": {
+          "description": "ISO 8601 date-time.",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "timezone_id": {
+          "description": "Use List Timezones.",
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Timezone ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_timezone_id"
+        },
+        "status_id": {
+          "description": "Use List Activity Statuses.",
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Status ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_activity_status_id"
+        },
+        "priority": {
+          "default": "Normal",
+          "enum": [
+            "High",
+            "Normal",
+            "Low"
+          ],
+          "title": "Priority",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "client_account_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Linked Account ID",
+          "x-resource-type": "neoncrm_account_id"
+        },
+        "activity_type_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Activity Type ID",
+          "x-resource-type": "neoncrm_activity_type_id"
+        },
+        "operation": {
+          "const": "create_activity",
+          "default": "create_activity",
+          "title": "Create Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "write"
+        }
+      },
+      "required": [
+        "subject",
+        "start_date",
+        "timezone_id",
+        "status_id"
+      ],
+      "title": "NeonCRMCreateActivityConfig",
+      "type": "object"
+    },
+    "NeonCRMCreateCompanyConfig": {
+      "description": "Changes ordinary CRM records; organization automation may apply.",
+      "properties": {
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Company Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_company_account",
+          "default": "create_company_account",
+          "title": "Create Company Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "write"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "NeonCRMCreateCompanyConfig",
+      "type": "object"
+    },
+    "NeonCRMCreateContactConfig": {
+      "description": "Changes ordinary CRM records; organization automation may apply.",
+      "properties": {
+        "account_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_account_id"
+        },
+        "first_name": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Stores contact information; does not request a system email.",
+          "title": "Email"
+        },
+        "department": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Department"
+        },
+        "job_title": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Title"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Company Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "write"
+        }
+      },
+      "required": [
+        "account_id",
+        "first_name",
+        "last_name"
+      ],
+      "title": "NeonCRMCreateContactConfig",
+      "type": "object"
+    },
+    "NeonCRMCreateIndividualConfig": {
+      "description": "Changes ordinary CRM records; organization automation may apply.",
+      "properties": {
+        "first_name": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Stores contact information; does not request a system email.",
+          "title": "Email"
+        },
+        "operation": {
+          "const": "create_individual_account",
+          "default": "create_individual_account",
+          "title": "Create Individual Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "write"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name"
+      ],
+      "title": "NeonCRMCreateIndividualConfig",
+      "type": "object"
+    },
+    "NeonCRMCurrentUserConfig": {
+      "description": "Reads documented organization-scoped metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Current API User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "read"
+        }
+      },
+      "title": "NeonCRMCurrentUserConfig",
+      "type": "object"
+    },
+    "NeonCRMDeleteActivityConfig": {
+      "description": "Changes ordinary CRM records; organization automation may apply.",
+      "properties": {
+        "activity_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Activity ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_activity_id"
+        },
+        "operation": {
+          "const": "delete_activity",
+          "default": "delete_activity",
+          "title": "Delete Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "write"
+        }
+      },
+      "required": [
+        "activity_id"
+      ],
+      "title": "NeonCRMDeleteActivityConfig",
+      "type": "object"
+    },
+    "NeonCRMDeleteContactConfig": {
+      "description": "Changes ordinary CRM records; organization automation may apply.",
+      "properties": {
+        "account_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_account_id"
+        },
+        "contact_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_contact_id"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Company Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "write"
+        }
+      },
+      "required": [
+        "account_id",
+        "contact_id"
+      ],
+      "title": "NeonCRMDeleteContactConfig",
+      "type": "object"
+    },
+    "NeonCRMEventConfig": {
+      "description": "Reads documented organization-scoped metadata.",
+      "properties": {
+        "event_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Legacy Event ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_event_id"
+        },
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Get Legacy Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "read"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "NeonCRMEventConfig",
+      "type": "object"
+    },
+    "NeonCRMEventsConfig": {
+      "description": "Reads documented organization-scoped metadata.",
+      "properties": {
+        "current_page": {
+          "default": 0,
+          "description": "Zero-based; returns one bounded page.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "List Legacy Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "read"
+        }
+      },
+      "title": "NeonCRMEventsConfig",
+      "type": "object"
+    },
+    "NeonCRMOrganizationConfig": {
+      "description": "Reads documented organization-scoped metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_organization_profile",
+          "default": "get_organization_profile",
+          "title": "Organization Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "read"
+        }
+      },
+      "title": "NeonCRMOrganizationConfig",
+      "type": "object"
+    },
+    "NeonCRMOutputFieldsConfig": {
+      "description": "Reads documented organization-scoped metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_activity_output_fields",
+          "default": "list_activity_output_fields",
+          "title": "Activity Output Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "read"
+        }
+      },
+      "title": "NeonCRMOutputFieldsConfig",
+      "type": "object"
+    },
+    "NeonCRMPatchActivityConfig": {
+      "description": "Changes ordinary CRM records; organization automation may apply.",
+      "properties": {
+        "activity_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Activity ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_activity_id"
+        },
+        "subject": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "start_date": {
+          "description": "ISO 8601 date-time.",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "timezone_id": {
+          "description": "Use List Timezones.",
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Timezone ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_timezone_id"
+        },
+        "status_id": {
+          "description": "Use List Activity Statuses.",
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Status ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_activity_status_id"
+        },
+        "priority": {
+          "default": "Normal",
+          "enum": [
+            "High",
+            "Normal",
+            "Low"
+          ],
+          "title": "Priority",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "client_account_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Linked Account ID",
+          "x-resource-type": "neoncrm_account_id"
+        },
+        "activity_type_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Activity Type ID",
+          "x-resource-type": "neoncrm_activity_type_id"
+        },
+        "operation": {
+          "const": "update_activity",
+          "default": "update_activity",
+          "title": "Update Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "write"
+        }
+      },
+      "required": [
+        "activity_id",
+        "subject",
+        "start_date",
+        "timezone_id",
+        "status_id"
+      ],
+      "title": "NeonCRMPatchActivityConfig",
+      "type": "object"
+    },
+    "NeonCRMPatchCompanyConfig": {
+      "description": "Changes ordinary CRM records; organization automation may apply.",
+      "properties": {
+        "account_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_account_id"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Company Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_company_account",
+          "default": "update_company_account",
+          "title": "Update Company Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "write"
+        }
+      },
+      "required": [
+        "account_id",
+        "name"
+      ],
+      "title": "NeonCRMPatchCompanyConfig",
+      "type": "object"
+    },
+    "NeonCRMPatchContactConfig": {
+      "description": "Changes ordinary CRM records; organization automation may apply.",
+      "properties": {
+        "account_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_account_id"
+        },
+        "contact_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_contact_id"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "department": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Department"
+        },
+        "job_title": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Title"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Company Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "write"
+        }
+      },
+      "required": [
+        "account_id",
+        "contact_id"
+      ],
+      "title": "NeonCRMPatchContactConfig",
+      "type": "object"
+    },
+    "NeonCRMPatchIndividualConfig": {
+      "description": "Changes ordinary CRM records; organization automation may apply.",
+      "properties": {
+        "account_id": {
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Account ID",
+          "type": "string",
+          "x-resource-type": "neoncrm_account_id"
+        },
+        "first_name": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Stores contact information; does not request a system email.",
+          "title": "Email"
+        },
+        "operation": {
+          "const": "update_individual_account",
+          "default": "update_individual_account",
+          "title": "Update Individual Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "write"
+        }
+      },
+      "required": [
+        "account_id",
+        "first_name",
+        "last_name"
+      ],
+      "title": "NeonCRMPatchIndividualConfig",
+      "type": "object"
+    },
+    "NeonCRMSearchActivitiesConfig": {
+      "description": "Reads documented organization-scoped metadata.",
+      "properties": {
+        "current_page": {
+          "default": 0,
+          "description": "Zero-based; returns one bounded page.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "output_fields": {
+          "description": "Exact standard field names from Activity Output Fields. Only selected columns are returned.",
+          "items": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Output Fields",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "search_field": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact standard field name from Activity Search Fields.",
+          "title": "Search Field"
+        },
+        "operator": {
+          "default": "EQUAL",
+          "enum": [
+            "EQUAL",
+            "NOT_EQUAL",
+            "BLANK",
+            "NOT_BLANK",
+            "LESS_THAN",
+            "GREATER_THAN",
+            "LESS_AND_EQUAL",
+            "GREATER_AND_EQUAL",
+            "CONTAIN",
+            "NOT_CONTAIN"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Value"
+        },
+        "operation": {
+          "const": "search_activities",
+          "default": "search_activities",
+          "title": "Search Activity Report",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "read"
+        }
+      },
+      "required": [
+        "output_fields"
+      ],
+      "title": "NeonCRMSearchActivitiesConfig",
+      "type": "object"
+    },
+    "NeonCRMSearchFieldsConfig": {
+      "description": "Reads documented organization-scoped metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_activity_search_fields",
+          "default": "list_activity_search_fields",
+          "title": "Activity Search Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "read"
+        }
+      },
+      "title": "NeonCRMSearchFieldsConfig",
+      "type": "object"
+    },
+    "NeonCRMStatusesConfig": {
+      "description": "Reads documented organization-scoped metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_activity_statuses",
+          "default": "list_activity_statuses",
+          "title": "List Activity Statuses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "read"
+        }
+      },
+      "title": "NeonCRMStatusesConfig",
+      "type": "object"
+    },
+    "NeonCRMTimezonesConfig": {
+      "description": "Reads documented organization-scoped metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_timezones",
+          "default": "list_timezones",
+          "title": "List Timezones",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "read"
+        }
+      },
+      "title": "NeonCRMTimezonesConfig",
+      "type": "object"
+    },
+    "NeonCRMTypesConfig": {
+      "description": "Reads documented organization-scoped metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_activity_types",
+          "default": "list_activity_types",
+          "title": "List Activity Types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "read"
+        }
+      },
+      "title": "NeonCRMTypesConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "discriminator": {
+        "mapping": {
+          "create_activity": "#/$defs/NeonCRMCreateActivityConfig",
+          "create_company_account": "#/$defs/NeonCRMCreateCompanyConfig",
+          "create_contact": "#/$defs/NeonCRMCreateContactConfig",
+          "create_individual_account": "#/$defs/NeonCRMCreateIndividualConfig",
+          "delete_activity": "#/$defs/NeonCRMDeleteActivityConfig",
+          "delete_contact": "#/$defs/NeonCRMDeleteContactConfig",
+          "get_account": "#/$defs/NeonCRMAccountConfig",
+          "get_activity": "#/$defs/NeonCRMActivityConfig",
+          "get_contact": "#/$defs/NeonCRMContactConfig",
+          "get_current_user": "#/$defs/NeonCRMCurrentUserConfig",
+          "get_event": "#/$defs/NeonCRMEventConfig",
+          "get_organization_profile": "#/$defs/NeonCRMOrganizationConfig",
+          "list_accounts": "#/$defs/NeonCRMAccountsConfig",
+          "list_activity_output_fields": "#/$defs/NeonCRMOutputFieldsConfig",
+          "list_activity_search_fields": "#/$defs/NeonCRMSearchFieldsConfig",
+          "list_activity_statuses": "#/$defs/NeonCRMStatusesConfig",
+          "list_activity_types": "#/$defs/NeonCRMTypesConfig",
+          "list_contacts": "#/$defs/NeonCRMContactsConfig",
+          "list_events": "#/$defs/NeonCRMEventsConfig",
+          "list_timezones": "#/$defs/NeonCRMTimezonesConfig",
+          "search_activities": "#/$defs/NeonCRMSearchActivitiesConfig",
+          "update_activity": "#/$defs/NeonCRMPatchActivityConfig",
+          "update_company_account": "#/$defs/NeonCRMPatchCompanyConfig",
+          "update_contact": "#/$defs/NeonCRMPatchContactConfig",
+          "update_individual_account": "#/$defs/NeonCRMPatchIndividualConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/NeonCRMOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMCreateIndividualConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMCreateCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMPatchIndividualConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMPatchCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMContactConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMPatchContactConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMCreateActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMPatchActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMDeleteActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMEventConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMStatusesConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMTimezonesConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMSearchFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMOutputFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/NeonCRMSearchActivitiesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NeonCRMAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Neoncrm Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
