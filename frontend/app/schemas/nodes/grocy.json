@@ -1,0 +1,232 @@
+{
+  "$defs": {
+    "GrocyAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "grocy_api_key",
+          "default": "grocy_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "Existing API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "instance_url": {
+          "title": "Public HTTPS Grocy Instance Origin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "instance_url"
+      ],
+      "title": "Grocy API Key",
+      "type": "object",
+      "x-credential-instructions": "Supply an existing API key and one public HTTPS instance origin. GROCY-API-KEY header only, fixed /api. Protected location catalog access shows reachability, not identity, key kind, role or ownership. No login, token issue/refresh, Basic/Bearer/OAuth or host fallback. Installed source/spec parity and permissions remain unverified.",
+      "x-credential-url": "https://grocy.info/"
+    },
+    "GrocyLocationConfig": {
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Names are opt-in. Userfields, plural forms, product/stock data and every other field stay excluded.",
+          "title": "Include Private Resource Names",
+          "type": "boolean"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Catalogs send only documented limit. Default100 and maximum100 are local bounds; vendor default/maximum and completion are unknown. Details send no query parameters.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Local Catalog Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_location",
+          "default": "get_location",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Grocy Metadata",
+          "x-display-name": "Get Current Location Metadata",
+          "x-is-trigger": false
+        },
+        "location_id": {
+          "description": "Canonical positive decimal ID from this independent current catalog; local UI-safe bound, not a vendor limit.",
+          "title": "Current Location ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "location_id",
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "location_id"
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "GrocyLocationConfig",
+      "type": "object"
+    },
+    "GrocyLocationsConfig": {
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Names are opt-in. Userfields, plural forms, product/stock data and every other field stay excluded.",
+          "title": "Include Private Resource Names",
+          "type": "boolean"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Catalogs send only documented limit. Default100 and maximum100 are local bounds; vendor default/maximum and completion are unknown. Details send no query parameters.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Local Catalog Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Grocy Metadata",
+          "x-display-name": "Read Accessible Location Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GrocyLocationsConfig",
+      "type": "object"
+    },
+    "GrocyQuantityUnitConfig": {
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Names are opt-in. Userfields, plural forms, product/stock data and every other field stay excluded.",
+          "title": "Include Private Resource Names",
+          "type": "boolean"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Catalogs send only documented limit. Default100 and maximum100 are local bounds; vendor default/maximum and completion are unknown. Details send no query parameters.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Local Catalog Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_quantity_unit",
+          "default": "get_quantity_unit",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Grocy Metadata",
+          "x-display-name": "Get Current Quantity Unit Metadata",
+          "x-is-trigger": false
+        },
+        "quantity_unit_id": {
+          "description": "Canonical positive decimal ID from this independent current catalog; no inferred relation to a location.",
+          "title": "Current Quantity Unit ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "quantity_unit_id",
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "quantity_unit_id"
+        }
+      },
+      "required": [
+        "quantity_unit_id"
+      ],
+      "title": "GrocyQuantityUnitConfig",
+      "type": "object"
+    },
+    "GrocyQuantityUnitsConfig": {
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Names are opt-in. Userfields, plural forms, product/stock data and every other field stay excluded.",
+          "title": "Include Private Resource Names",
+          "type": "boolean"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Catalogs send only documented limit. Default100 and maximum100 are local bounds; vendor default/maximum and completion are unknown. Details send no query parameters.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Local Catalog Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_quantity_units",
+          "default": "list_quantity_units",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Grocy Metadata",
+          "x-display-name": "Read Accessible Quantity Unit Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GrocyQuantityUnitsConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_location": "#/$defs/GrocyLocationConfig",
+          "get_quantity_unit": "#/$defs/GrocyQuantityUnitConfig",
+          "list_locations": "#/$defs/GrocyLocationsConfig",
+          "list_quantity_units": "#/$defs/GrocyQuantityUnitsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GrocyLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/GrocyLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/GrocyQuantityUnitsConfig"
+        },
+        {
+          "$ref": "#/$defs/GrocyQuantityUnitConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GrocyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Grocy Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Read current location IDs and raw creation timestamps without stock or private names",
+    "Read independent quantity-unit metadata without plural forms, conversions or userfields"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
