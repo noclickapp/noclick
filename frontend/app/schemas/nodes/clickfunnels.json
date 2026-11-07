@@ -1,0 +1,1209 @@
+{
+  "$defs": {
+    "ClickFunnelsAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "clickfunnels_api_key",
+          "default": "clickfunnels_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "workspace_subdomain": {
+          "description": "Your workspace's myclickfunnels.com subdomain or dashboard URL.",
+          "title": "Workspace Subdomain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "workspace_subdomain"
+      ],
+      "title": "ClickFunnels API Key",
+      "type": "object",
+      "x-credential-instructions": "In Team Settings \u2192 Developer Portal, create a platform application and copy its API access token. Paste it here with your workspace subdomain. The key needs account read, contacts read/write, store read/write and courses read/write access.",
+      "x-credential-url": "https://developers.myclickfunnels.com/docs/getting-started"
+    },
+    "ClickFunnelsApplyContactTagConfig": {
+      "description": "Create Applied Tag.",
+      "properties": {
+        "operation": {
+          "const": "apply_contact_tag",
+          "default": "apply_contact_tag",
+          "title": "Create Applied Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Create Applied Tag",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "tag_id": {
+          "description": "Numeric tag ID, not its public ID.",
+          "minimum": 1,
+          "title": "Tag ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tag_id"
+      ],
+      "title": "ClickFunnelsApplyContactTagConfig",
+      "type": "object"
+    },
+    "ClickFunnelsCreateContactConfig": {
+      "description": "Create Contact.",
+      "properties": {
+        "email_address": {
+          "minLength": 1,
+          "title": "Email Address",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "time_zone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Zone"
+        },
+        "custom_attributes_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of custom field names and string values.",
+          "title": "Custom Attributes",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Create Contact",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workspace ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email_address",
+        "workspace_id"
+      ],
+      "title": "ClickFunnelsCreateContactConfig",
+      "type": "object"
+    },
+    "ClickFunnelsCreateContactTagConfig": {
+      "description": "Create Tag.",
+      "properties": {
+        "operation": {
+          "const": "create_contact_tag",
+          "default": "create_contact_tag",
+          "title": "Create Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Create Tag",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Tag Name",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hex color, for example #FF5733.",
+          "title": "Color"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "name"
+      ],
+      "title": "ClickFunnelsCreateContactTagConfig",
+      "type": "object"
+    },
+    "ClickFunnelsCreateEnrollmentConfig": {
+      "description": "Create Enrollment.",
+      "properties": {
+        "operation": {
+          "const": "create_enrollment",
+          "default": "create_enrollment",
+          "title": "Create Enrollment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Courses",
+          "x-display-name": "Create Enrollment",
+          "x-is-trigger": false
+        },
+        "course_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Course ID",
+          "type": "string"
+        },
+        "contact_id": {
+          "description": "Numeric contact ID.",
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        },
+        "suspended": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suspended"
+        },
+        "suspension_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suspension Reason"
+        }
+      },
+      "required": [
+        "course_id",
+        "contact_id"
+      ],
+      "title": "ClickFunnelsCreateEnrollmentConfig",
+      "type": "object"
+    },
+    "ClickFunnelsCreateInvoiceConfig": {
+      "description": "Create External Invoice.",
+      "properties": {
+        "operation": {
+          "const": "create_invoice",
+          "default": "create_invoice",
+          "title": "Create External Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Create External Invoice",
+          "x-is-trigger": false
+        },
+        "order_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Order ID",
+          "type": "string"
+        },
+        "external_id": {
+          "minLength": 1,
+          "title": "External Invoice ID",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "unpaid",
+            "paid",
+            "voided",
+            "refunded",
+            "disputed",
+            "past-due"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "paid_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp; required when status is paid.",
+          "title": "Paid At"
+        },
+        "line_items_json": {
+          "description": "JSON array with amount, quantity, variant_id and products_price_id for each item.",
+          "title": "Line Items",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "order_id",
+        "external_id",
+        "status",
+        "line_items_json"
+      ],
+      "title": "ClickFunnelsCreateInvoiceConfig",
+      "type": "object"
+    },
+    "ClickFunnelsCreateOrderConfig": {
+      "description": "Create External Order.",
+      "properties": {
+        "operation": {
+          "const": "create_order",
+          "default": "create_order",
+          "title": "Create External Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Create External Order",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "order_type": {
+          "default": "one-time-order",
+          "enum": [
+            "one-time-order",
+            "subscription-order"
+          ],
+          "title": "Order Type",
+          "type": "string"
+        },
+        "live_mode": {
+          "description": "Yes for production, No for test orders.",
+          "title": "Live Mode",
+          "type": "boolean"
+        },
+        "contact_id": {
+          "description": "Numeric contact ID.",
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        },
+        "line_items_json": {
+          "description": "JSON array with variant_id, products_price_id and quantity for each item.",
+          "title": "Line Items",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External ID"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "live_mode",
+        "contact_id",
+        "line_items_json"
+      ],
+      "title": "ClickFunnelsCreateOrderConfig",
+      "type": "object"
+    },
+    "ClickFunnelsGetContactConfig": {
+      "description": "Fetch Contact.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Fetch Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Fetch Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ClickFunnelsGetContactConfig",
+      "type": "object"
+    },
+    "ClickFunnelsGetOrderConfig": {
+      "description": "Fetch Order.",
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Fetch Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Fetch Order",
+          "x-is-trigger": false
+        },
+        "order_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Order ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "ClickFunnelsGetOrderConfig",
+      "type": "object"
+    },
+    "ClickFunnelsListContactTagsConfig": {
+      "description": "List Tags.",
+      "properties": {
+        "per_page": {
+          "default": 20,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination-Next cursor from the previous response.",
+          "title": "After Cursor"
+        },
+        "operation": {
+          "const": "list_contact_tags",
+          "default": "list_contact_tags",
+          "title": "List Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "List Tags",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workspace ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "ClickFunnelsListContactTagsConfig",
+      "type": "object"
+    },
+    "ClickFunnelsListContactsConfig": {
+      "description": "List Contacts.",
+      "properties": {
+        "per_page": {
+          "default": 20,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination-Next cursor from the previous response.",
+          "title": "After Cursor"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contacts",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workspace ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "ClickFunnelsListContactsConfig",
+      "type": "object"
+    },
+    "ClickFunnelsListCoursesConfig": {
+      "description": "List Courses.",
+      "properties": {
+        "per_page": {
+          "default": 20,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination-Next cursor from the previous response.",
+          "title": "After Cursor"
+        },
+        "operation": {
+          "const": "list_courses",
+          "default": "list_courses",
+          "title": "List Courses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Courses",
+          "x-display-name": "List Courses",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workspace ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "ClickFunnelsListCoursesConfig",
+      "type": "object"
+    },
+    "ClickFunnelsListEnrollmentsConfig": {
+      "description": "List Enrollments.",
+      "properties": {
+        "per_page": {
+          "default": 20,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination-Next cursor from the previous response.",
+          "title": "After Cursor"
+        },
+        "operation": {
+          "const": "list_enrollments",
+          "default": "list_enrollments",
+          "title": "List Enrollments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Courses",
+          "x-display-name": "List Enrollments",
+          "x-is-trigger": false
+        },
+        "course_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Course ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "course_id"
+      ],
+      "title": "ClickFunnelsListEnrollmentsConfig",
+      "type": "object"
+    },
+    "ClickFunnelsListOrdersConfig": {
+      "description": "List Orders.",
+      "properties": {
+        "per_page": {
+          "default": 20,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination-Next cursor from the previous response.",
+          "title": "After Cursor"
+        },
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "List Orders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "List Orders",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workspace ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "ClickFunnelsListOrdersConfig",
+      "type": "object"
+    },
+    "ClickFunnelsListTeamsConfig": {
+      "description": "List Teams.",
+      "properties": {
+        "per_page": {
+          "default": 20,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination-Next cursor from the previous response.",
+          "title": "After Cursor"
+        },
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "List Teams",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "List Teams",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ClickFunnelsListTeamsConfig",
+      "type": "object"
+    },
+    "ClickFunnelsListTransactionsConfig": {
+      "description": "List Transactions.",
+      "properties": {
+        "per_page": {
+          "default": 20,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination-Next cursor from the previous response.",
+          "title": "After Cursor"
+        },
+        "operation": {
+          "const": "list_transactions",
+          "default": "list_transactions",
+          "title": "List Transactions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "List Transactions",
+          "x-is-trigger": false
+        },
+        "order_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Order ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "ClickFunnelsListTransactionsConfig",
+      "type": "object"
+    },
+    "ClickFunnelsListWorkspacesConfig": {
+      "description": "List Workspaces.",
+      "properties": {
+        "per_page": {
+          "default": 20,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination-Next cursor from the previous response.",
+          "title": "After Cursor"
+        },
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "List Workspaces",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "List Workspaces",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Team ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "team_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "ClickFunnelsListWorkspacesConfig",
+      "type": "object"
+    },
+    "ClickFunnelsRemoveContactTagConfig": {
+      "description": "Remove Applied Tag.",
+      "properties": {
+        "operation": {
+          "const": "remove_contact_tag",
+          "default": "remove_contact_tag",
+          "title": "Remove Applied Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Remove Applied Tag",
+          "x-is-trigger": false
+        },
+        "applied_tag_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Applied Tag ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "applied_tag_id"
+      ],
+      "title": "ClickFunnelsRemoveContactTagConfig",
+      "type": "object"
+    },
+    "ClickFunnelsUpdateContactConfig": {
+      "description": "Update Contact.",
+      "properties": {
+        "email_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Address"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "time_zone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Zone"
+        },
+        "custom_attributes_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of custom field names and string values.",
+          "title": "Custom Attributes",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Update Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Contact ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ClickFunnelsUpdateContactConfig",
+      "type": "object"
+    },
+    "ClickFunnelsUpdateEnrollmentConfig": {
+      "description": "Update Enrollment.",
+      "properties": {
+        "operation": {
+          "const": "update_enrollment",
+          "default": "update_enrollment",
+          "title": "Update Enrollment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Courses",
+          "x-display-name": "Update Enrollment",
+          "x-is-trigger": false
+        },
+        "enrollment_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Enrollment ID",
+          "type": "string"
+        },
+        "suspended": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suspended"
+        },
+        "suspension_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suspension Reason"
+        }
+      },
+      "required": [
+        "enrollment_id"
+      ],
+      "title": "ClickFunnelsUpdateEnrollmentConfig",
+      "type": "object"
+    },
+    "ClickFunnelsUpsertContactConfig": {
+      "description": "Upsert a Contact.",
+      "properties": {
+        "email_address": {
+          "minLength": 1,
+          "title": "Email Address",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "time_zone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Zone"
+        },
+        "custom_attributes_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of custom field names and string values.",
+          "title": "Custom Attributes",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "upsert_contact",
+          "default": "upsert_contact",
+          "title": "Upsert a Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Upsert a Contact",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workspace ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email_address",
+        "workspace_id"
+      ],
+      "title": "ClickFunnelsUpsertContactConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "apply_contact_tag": "#/$defs/ClickFunnelsApplyContactTagConfig",
+          "create_contact": "#/$defs/ClickFunnelsCreateContactConfig",
+          "create_contact_tag": "#/$defs/ClickFunnelsCreateContactTagConfig",
+          "create_enrollment": "#/$defs/ClickFunnelsCreateEnrollmentConfig",
+          "create_invoice": "#/$defs/ClickFunnelsCreateInvoiceConfig",
+          "create_order": "#/$defs/ClickFunnelsCreateOrderConfig",
+          "get_contact": "#/$defs/ClickFunnelsGetContactConfig",
+          "get_order": "#/$defs/ClickFunnelsGetOrderConfig",
+          "list_contact_tags": "#/$defs/ClickFunnelsListContactTagsConfig",
+          "list_contacts": "#/$defs/ClickFunnelsListContactsConfig",
+          "list_courses": "#/$defs/ClickFunnelsListCoursesConfig",
+          "list_enrollments": "#/$defs/ClickFunnelsListEnrollmentsConfig",
+          "list_orders": "#/$defs/ClickFunnelsListOrdersConfig",
+          "list_teams": "#/$defs/ClickFunnelsListTeamsConfig",
+          "list_transactions": "#/$defs/ClickFunnelsListTransactionsConfig",
+          "list_workspaces": "#/$defs/ClickFunnelsListWorkspacesConfig",
+          "remove_contact_tag": "#/$defs/ClickFunnelsRemoveContactTagConfig",
+          "update_contact": "#/$defs/ClickFunnelsUpdateContactConfig",
+          "update_enrollment": "#/$defs/ClickFunnelsUpdateEnrollmentConfig",
+          "upsert_contact": "#/$defs/ClickFunnelsUpsertContactConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ClickFunnelsListTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsListWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsUpsertContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsListContactTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsCreateContactTagConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsApplyContactTagConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsRemoveContactTagConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsListOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsGetOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsCreateOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsCreateInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsListTransactionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsListCoursesConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsListEnrollmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsCreateEnrollmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickFunnelsUpdateEnrollmentConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ClickFunnelsAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Clickfunnels Node Configuration",
+  "type": "object",
+  "x-agent-tool-provider": true,
+  "x-edit-examples": [
+    "Create a ClickFunnels lead",
+    "Tag a ClickFunnels contact",
+    "Sync external purchases to ClickFunnels",
+    "Enroll a customer in a course"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
