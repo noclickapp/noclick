@@ -1,0 +1,1082 @@
+{
+  "$defs": {
+    "MatillionBearerTokenCredential": {
+      "properties": {
+        "region": {
+          "description": "Select the actual account region. Current official OpenAPI lists EU1, US1 and AU1; hosts are fixed and never inferred from token claims.",
+          "enum": [
+            "eu1",
+            "us1",
+            "au1"
+          ],
+          "title": "Account Region",
+          "type": "string"
+        },
+        "credential_type": {
+          "const": "matillion_bearer_token",
+          "default": "matillion_bearer_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Existing API Bearer Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only a known timezone-aware expiry. Issued API tokens last 30 minutes; no guessed mint time or JWT identity proof.",
+          "title": "Actual Expiry (Optional)"
+        }
+      },
+      "required": [
+        "region",
+        "access_token"
+      ],
+      "title": "Maia (Matillion) Bearer Token",
+      "type": "object",
+      "x-credential-instructions": "Supply an existing issued Maia/DPC API access token for this region. Exact Authorization: Bearer TOKEN. Token lifetime is 30 minutes; supply a new current token when needed. No token mint, refresh or environment fallback for this family. GitHub repository PATs are different credentials. Protected metadata reads do not prove execution privileges or account identity.",
+      "x-credential-url": "https://docs.maia.ai/docs/api-reference/maia-api-authentication"
+    },
+    "MatillionCancelConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "project_id",
+          "x-resource-type": "matillion_project"
+        },
+        "pipeline_execution_id": {
+          "title": "Pipeline Execution",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "pipeline_execution_id",
+            "searchable": true
+          },
+          "x-resource-id-path": "pipeline_execution_id",
+          "x-resource-type": "matillion_pipeline_execution"
+        },
+        "operation": {
+          "const": "cancel_pipeline_execution",
+          "default": "cancel_pipeline_execution",
+          "title": "Cancel Scoped Pipeline Execution",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Execution Lifecycle",
+          "x-display-name": "Cancel Scoped Pipeline Execution",
+          "x-is-trigger": false
+        },
+        "force_termination": {
+          "default": false,
+          "description": "Forceful termination may leave partially completed external data effects. Default is graceful cancellation.",
+          "title": "Force Termination",
+          "type": "boolean"
+        },
+        "confirm_execution": {
+          "default": false,
+          "description": "Confirm cancellation of this exact owned execution. An acknowledgement does not establish completion or rolled-back data effects.",
+          "title": "Confirm Execution",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "pipeline_execution_id"
+      ],
+      "title": "MatillionCancelConfig",
+      "type": "object"
+    },
+    "MatillionCheckConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "test_connection",
+          "default": "test_connection",
+          "title": "Check Protected Project Access",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connection",
+          "x-display-name": "Check Protected Project Access",
+          "x-is-trigger": false
+        }
+      },
+      "title": "MatillionCheckConfig",
+      "type": "object"
+    },
+    "MatillionClientCredentialsCredential": {
+      "properties": {
+        "region": {
+          "description": "Select the actual account region. Current official OpenAPI lists EU1, US1 and AU1; hosts are fixed and never inferred from token claims.",
+          "enum": [
+            "eu1",
+            "us1",
+            "au1"
+          ],
+          "title": "Account Region",
+          "type": "string"
+        },
+        "credential_type": {
+          "const": "matillion_client_credentials",
+          "default": "matillion_client_credentials",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "maxLength": 256,
+          "title": "Existing API Client ID",
+          "type": "string"
+        },
+        "client_secret": {
+          "maxLength": 4096,
+          "title": "Existing API Client Secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "region",
+        "client_id",
+        "client_secret"
+      ],
+      "title": "Maia (Matillion) Client ID and Secret",
+      "type": "object",
+      "x-credential-instructions": "Use an existing issued API client ID/secret. Native OAuth client_credentials sends a URL-encoded form to id.core.matillion.com/oauth/dpc/token with fixed audience https://api.matillion.com; resource calls use Bearer. Tokens remain in memory for one operation and are never persisted or returned. No app registration, user login, invented refresh token or role assignment. Actual account/project/environment roles and execution/credit access depend on the credential.",
+      "x-credential-url": "https://docs.maia.ai/docs/api-reference/maia-api-authentication"
+    },
+    "MatillionGetArtifactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "project_id",
+          "x-resource-type": "matillion_project"
+        },
+        "environment_name": {
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "environment_name",
+            "searchable": true
+          },
+          "x-resource-id-path": "environment_name",
+          "x-resource-type": "matillion_environment"
+        },
+        "operation": {
+          "const": "get_artifact_metadata",
+          "default": "get_artifact_metadata",
+          "title": "Get Artifact Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Artifacts",
+          "x-display-name": "Get Artifact Metadata",
+          "x-is-trigger": false
+        },
+        "version_name": {
+          "description": "Exact explicit version; no implicit latest readback.",
+          "title": "Artifact Version",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "environment_name",
+            "field_name": "version_name",
+            "searchable": true
+          },
+          "x-resource-id-path": "version_name",
+          "x-resource-type": "matillion_version"
+        }
+      },
+      "required": [
+        "project_id",
+        "environment_name",
+        "version_name"
+      ],
+      "title": "MatillionGetArtifactConfig",
+      "type": "object"
+    },
+    "MatillionGetExecutionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "project_id",
+          "x-resource-type": "matillion_project"
+        },
+        "pipeline_execution_id": {
+          "title": "Pipeline Execution",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "pipeline_execution_id",
+            "searchable": true
+          },
+          "x-resource-id-path": "pipeline_execution_id",
+          "x-resource-type": "matillion_pipeline_execution"
+        },
+        "operation": {
+          "const": "get_pipeline_execution_metadata",
+          "default": "get_pipeline_execution_metadata",
+          "title": "Get Scoped Execution Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Executions",
+          "x-display-name": "Get Scoped Execution Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "project_id",
+        "pipeline_execution_id"
+      ],
+      "title": "MatillionGetExecutionConfig",
+      "type": "object"
+    },
+    "MatillionGetSharedArtifactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_shared_artifact_metadata",
+          "default": "get_shared_artifact_metadata",
+          "title": "Get Shared Artifact Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Artifacts",
+          "x-display-name": "Get Shared Artifact Metadata",
+          "x-is-trigger": false
+        },
+        "shared_pipeline_id_prefix": {
+          "description": "Exact known published prefix. The generic shared-pipeline-list row contract is not published, so no invented ID picker is used.",
+          "maxLength": 255,
+          "title": "Shared Pipeline Prefix",
+          "type": "string"
+        },
+        "version_name": {
+          "maxLength": 255,
+          "title": "Explicit Artifact Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shared_pipeline_id_prefix",
+        "version_name"
+      ],
+      "title": "MatillionGetSharedArtifactConfig",
+      "type": "object"
+    },
+    "MatillionGetStatusConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "project_id",
+          "x-resource-type": "matillion_project"
+        },
+        "pipeline_execution_id": {
+          "title": "Pipeline Execution",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "pipeline_execution_id",
+            "searchable": true
+          },
+          "x-resource-id-path": "pipeline_execution_id",
+          "x-resource-type": "matillion_pipeline_execution"
+        },
+        "operation": {
+          "const": "get_pipeline_execution_status",
+          "default": "get_pipeline_execution_status",
+          "title": "Get Lightweight Execution Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Executions",
+          "x-display-name": "Get Lightweight Execution Status",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "project_id",
+        "pipeline_execution_id"
+      ],
+      "title": "MatillionGetStatusConfig",
+      "type": "object"
+    },
+    "MatillionListArtifactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "project_id",
+          "x-resource-type": "matillion_project"
+        },
+        "environment_name": {
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "environment_name",
+            "searchable": true
+          },
+          "x-resource-id-path": "environment_name",
+          "x-resource-type": "matillion_environment"
+        },
+        "page": {
+          "default": 0,
+          "description": "Actual zero-based Maia page; one page is returned.",
+          "maximum": 100000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 25,
+          "description": "Native page limit 100. Most endpoints document 1\u2013100; published pipelines allow up to 1000, but this node keeps the smaller bound.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_artifacts",
+          "default": "list_artifacts",
+          "title": "List Environment Artifact Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Artifacts",
+          "x-display-name": "List Environment Artifact Metadata",
+          "x-is-trigger": false
+        },
+        "enabled_only": {
+          "default": true,
+          "title": "Enabled Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "environment_name"
+      ],
+      "title": "MatillionListArtifactsConfig",
+      "type": "object"
+    },
+    "MatillionListEnvironmentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "project_id",
+          "x-resource-type": "matillion_project"
+        },
+        "page": {
+          "default": 0,
+          "description": "Actual zero-based Maia page; one page is returned.",
+          "maximum": 100000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 25,
+          "description": "Native page limit 100. Most endpoints document 1\u2013100; published pipelines allow up to 1000, but this node keeps the smaller bound.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_environments",
+          "default": "list_environments",
+          "title": "List Project Environments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "List Project Environments",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "MatillionListEnvironmentsConfig",
+      "type": "object"
+    },
+    "MatillionListExecutionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "project_id",
+          "x-resource-type": "matillion_project"
+        },
+        "operation": {
+          "const": "list_pipeline_executions",
+          "default": "list_pipeline_executions",
+          "title": "List Project Execution Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Executions",
+          "x-display-name": "List Project Execution Metadata",
+          "x-is-trigger": false
+        },
+        "environment_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Environment Filter",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "environment_name",
+            "searchable": true
+          },
+          "x-resource-id-path": "environment_name",
+          "x-resource-type": "matillion_environment"
+        },
+        "pipeline_name_search": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented case-insensitive pipeline-name substring filter.",
+          "title": "Pipeline Name Search"
+        },
+        "status_filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "RUNNING",
+                "SUCCESS",
+                "FAILED",
+                "CANCELLING",
+                "CANCELLED",
+                "FORBIDDEN",
+                "SKIPPED",
+                "UNKNOWN"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Filter",
+          "enum": [
+            "RUNNING",
+            "SUCCESS",
+            "FAILED",
+            "CANCELLING",
+            "CANCELLED",
+            "FORBIDDEN",
+            "SKIPPED",
+            "UNKNOWN"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "continuation": {
+          "anyOf": [
+            {
+              "maxLength": 24000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only the node's bound continuation from the same current actor/credential/project/filter. Continuation wraps the provider cursor and remains private workflow metadata; it is not account identity proof.",
+          "title": "Continuation"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "MatillionListExecutionsConfig",
+      "type": "object"
+    },
+    "MatillionListPipelinesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "project_id",
+          "x-resource-type": "matillion_project"
+        },
+        "environment_name": {
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "environment_name",
+            "searchable": true
+          },
+          "x-resource-id-path": "environment_name",
+          "x-resource-type": "matillion_environment"
+        },
+        "page": {
+          "default": 0,
+          "description": "Actual zero-based Maia page; one page is returned.",
+          "maximum": 100000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 25,
+          "description": "Native page limit 100. Most endpoints document 1\u2013100; published pipelines allow up to 1000, but this node keeps the smaller bound.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_published_pipelines",
+          "default": "list_published_pipelines",
+          "title": "List Published Environment Pipelines",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pipelines",
+          "x-display-name": "List Published Environment Pipelines",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "project_id",
+        "environment_name"
+      ],
+      "title": "MatillionListPipelinesConfig",
+      "type": "object"
+    },
+    "MatillionListProjectsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Actual zero-based Maia page; one page is returned.",
+          "maximum": 100000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 25,
+          "description": "Native page limit 100. Most endpoints document 1\u2013100; published pipelines allow up to 1000, but this node keeps the smaller bound.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Projects",
+          "x-is-trigger": false
+        }
+      },
+      "title": "MatillionListProjectsConfig",
+      "type": "object"
+    },
+    "MatillionListSharedArtifactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Actual zero-based Maia page; one page is returned.",
+          "maximum": 100000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 25,
+          "description": "Native page limit 100. Most endpoints document 1\u2013100; published pipelines allow up to 1000, but this node keeps the smaller bound.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_shared_artifact_metadata",
+          "default": "list_shared_artifact_metadata",
+          "title": "List Shared Artifact Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Artifacts",
+          "x-display-name": "List Shared Artifact Metadata",
+          "x-is-trigger": false
+        },
+        "shared_pipeline_id_prefix": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional exact published prefix filter; no publication or enable/disable action.",
+          "title": "Shared Pipeline Id Prefix"
+        },
+        "enabled_only": {
+          "default": true,
+          "title": "Enabled Only",
+          "type": "boolean"
+        }
+      },
+      "title": "MatillionListSharedArtifactsConfig",
+      "type": "object"
+    },
+    "MatillionListStepsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "project_id",
+          "x-resource-type": "matillion_project"
+        },
+        "pipeline_execution_id": {
+          "title": "Pipeline Execution",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "pipeline_execution_id",
+            "searchable": true
+          },
+          "x-resource-id-path": "pipeline_execution_id",
+          "x-resource-type": "matillion_pipeline_execution"
+        },
+        "page": {
+          "default": 0,
+          "description": "Actual zero-based Maia page; one page is returned.",
+          "maximum": 100000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 25,
+          "description": "Native page limit 100. Most endpoints document 1\u2013100; published pipelines allow up to 1000, but this node keeps the smaller bound.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_execution_steps",
+          "default": "list_execution_steps",
+          "title": "List Execution Step Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Executions",
+          "x-display-name": "List Execution Step Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "project_id",
+        "pipeline_execution_id"
+      ],
+      "title": "MatillionListStepsConfig",
+      "type": "object"
+    },
+    "MatillionListTasksConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "project_id",
+          "x-resource-type": "matillion_project"
+        },
+        "pipeline_execution_id": {
+          "title": "Pipeline Execution",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "pipeline_execution_id",
+            "searchable": true
+          },
+          "x-resource-id-path": "pipeline_execution_id",
+          "x-resource-type": "matillion_pipeline_execution"
+        },
+        "page": {
+          "default": 0,
+          "description": "Actual zero-based Maia page; one page is returned.",
+          "maximum": 100000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 25,
+          "description": "Native page limit 100. Most endpoints document 1\u2013100; published pipelines allow up to 1000, but this node keeps the smaller bound.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_execution_tasks",
+          "default": "list_execution_tasks",
+          "title": "List Execution Task Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Executions",
+          "x-display-name": "List Execution Task Metadata",
+          "x-is-trigger": false
+        },
+        "status_filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "RUNNING",
+                "SUCCESS",
+                "FAILED",
+                "CANCELLING",
+                "CANCELLED",
+                "FORBIDDEN",
+                "SKIPPED",
+                "UNKNOWN"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Filter",
+          "enum": [
+            "RUNNING",
+            "SUCCESS",
+            "FAILED",
+            "CANCELLING",
+            "CANCELLED",
+            "FORBIDDEN",
+            "SKIPPED",
+            "UNKNOWN"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id",
+        "pipeline_execution_id"
+      ],
+      "title": "MatillionListTasksConfig",
+      "type": "object"
+    },
+    "MatillionStartConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "project_id",
+          "x-resource-type": "matillion_project"
+        },
+        "environment_name": {
+          "title": "Environment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "environment_name",
+            "searchable": true
+          },
+          "x-resource-id-path": "environment_name",
+          "x-resource-type": "matillion_environment"
+        },
+        "operation": {
+          "const": "start_pipeline_execution",
+          "default": "start_pipeline_execution",
+          "title": "Start Published Pipeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Execution Lifecycle",
+          "x-display-name": "Start Published Pipeline",
+          "x-is-trigger": false
+        },
+        "pipeline_name": {
+          "title": "Published Pipeline",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "environment_name",
+            "field_name": "pipeline_name",
+            "searchable": true
+          },
+          "x-resource-id-path": "pipeline_name",
+          "x-resource-type": "matillion_pipeline"
+        },
+        "version_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When omitted, the provider executes the latest published version. Current artifact membership and execution permissions are ultimately enforced by Maia.",
+          "title": "Artifact Version (Optional)",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "environment_name",
+            "field_name": "version_name",
+            "searchable": true
+          },
+          "x-resource-id-path": "version_name",
+          "x-resource-type": "matillion_version"
+        },
+        "execution_tag": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented concurrency tag; only one execution per tag/environment may run. 409 is not retried.",
+          "title": "Execution Tag"
+        },
+        "confirm_execution": {
+          "default": false,
+          "description": "Confirm this starts a real published pipeline, may move data and consume credits. No execution is performed during integration preparation.",
+          "title": "Confirm Execution",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "environment_name",
+        "pipeline_name"
+      ],
+      "title": "MatillionStartConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_pipeline_execution": "#/$defs/MatillionCancelConfig",
+          "get_artifact_metadata": "#/$defs/MatillionGetArtifactConfig",
+          "get_pipeline_execution_metadata": "#/$defs/MatillionGetExecutionConfig",
+          "get_pipeline_execution_status": "#/$defs/MatillionGetStatusConfig",
+          "get_shared_artifact_metadata": "#/$defs/MatillionGetSharedArtifactConfig",
+          "list_artifacts": "#/$defs/MatillionListArtifactsConfig",
+          "list_environments": "#/$defs/MatillionListEnvironmentsConfig",
+          "list_execution_steps": "#/$defs/MatillionListStepsConfig",
+          "list_execution_tasks": "#/$defs/MatillionListTasksConfig",
+          "list_pipeline_executions": "#/$defs/MatillionListExecutionsConfig",
+          "list_projects": "#/$defs/MatillionListProjectsConfig",
+          "list_published_pipelines": "#/$defs/MatillionListPipelinesConfig",
+          "list_shared_artifact_metadata": "#/$defs/MatillionListSharedArtifactsConfig",
+          "start_pipeline_execution": "#/$defs/MatillionStartConfig",
+          "test_connection": "#/$defs/MatillionCheckConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MatillionCheckConfig"
+        },
+        {
+          "$ref": "#/$defs/MatillionListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/MatillionListEnvironmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/MatillionListPipelinesConfig"
+        },
+        {
+          "$ref": "#/$defs/MatillionListArtifactsConfig"
+        },
+        {
+          "$ref": "#/$defs/MatillionGetArtifactConfig"
+        },
+        {
+          "$ref": "#/$defs/MatillionListExecutionsConfig"
+        },
+        {
+          "$ref": "#/$defs/MatillionGetExecutionConfig"
+        },
+        {
+          "$ref": "#/$defs/MatillionGetStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/MatillionListStepsConfig"
+        },
+        {
+          "$ref": "#/$defs/MatillionListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/MatillionStartConfig"
+        },
+        {
+          "$ref": "#/$defs/MatillionCancelConfig"
+        },
+        {
+          "$ref": "#/$defs/MatillionListSharedArtifactsConfig"
+        },
+        {
+          "$ref": "#/$defs/MatillionGetSharedArtifactConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MatillionBearerTokenCredential"
+        },
+        {
+          "$ref": "#/$defs/MatillionClientCredentialsCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Matillion Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Read published pipeline metadata in a selected environment",
+    "Check an existing pipeline execution's lightweight status",
+    "Start a confirmed published pipeline and retain its asynchronous execution ID"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
