@@ -128,6 +128,7 @@ from nodes.perplexity_node import PerplexityNode
 from nodes.posthog_node import PostHogNode
 from nodes.cloudzero_node import CloudZeroNode
 from nodes.keila_node import KeilaNode
+from nodes.mediasilo_node import MediaSiloNode
 from nodes.voyage_node import VoyageNode
 from nodes.pinecone_node import PineconeNode
 from nodes.qdrant_node import QdrantNode
@@ -323,6 +324,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-posthog': PostHogNode,
     'automation-cloudzero': CloudZeroNode,
     'automation-keila': KeilaNode,
+    'automation-mediasilo': MediaSiloNode,
     'automation-voyage': VoyageNode,
     'automation-pinecone': PineconeNode,
     'automation-qdrant': QdrantNode,

@@ -1382,6 +1382,30 @@
       "source": "https://www.keila.io/favicon.ico (unmodified official favicon; byte-for-byte verified)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "9ca5a810dbeb3c6b4b25fa263ae5981bd4822c33e038180a36538bdeab7799b8"
+    },
+    {
+      "path": "frontend/public/icons/mediasilo-brand-vector.svg",
+      "source": "https://www.mediasilo.com/ (MediaSilo published brand artwork; cropped vector from integration commit f413b187f)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "011c661df8dd855f4b5d7a9296cd723f64d5a7f8f6d475100ecd3d11393cd80d"
+    },
+    {
+      "path": "frontend/public/icons/mediasilo-brand.png",
+      "source": "https://www.mediasilo.com/ (MediaSilo published brand artwork; compact raster from integration commit 5c9db939e)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "69d7b16326c3eba1f0a790dcb4654ce9602d7ddd4762b87f267c05f91f72d8fd"
+    },
+    {
+      "path": "frontend/public/icons/mediasilo.provenance.md",
+      "source": "MediaSilo integration asset provenance, documenting https://www.mediasilo.com/ and the official asset URL",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "a02d77b01f55bde9c7fc625531161ef215fb9acca6e234290be6162e76ef2382"
+    },
+    {
+      "path": "frontend/public/icons/mediasilo.svg",
+      "source": "https://cdn.prod.website-files.com/618f03f7132898049f978506/6ab56cbc77c14933a4e7d900_MediaSilo%20by%20Editshare%20Black.svg (unaltered official MediaSilo asset)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "62c83daf9e3a7128e6d477645056d2f68b32d078218ee834ab59c31c0b0a444c"
     }
   ],
   "excludedSourceAssets": [
