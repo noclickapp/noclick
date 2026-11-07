@@ -154,6 +154,7 @@ from nodes.mindbody_node import MindbodyNode
 from nodes.bytescale_node import BytescaleNode
 from nodes.linkwarden_node import LinkwardenNode
 from nodes.rebrandly_node import RebrandlyNode
+from nodes.skyvia_node import SkyviaNode
 from nodes.firestore_node import FirestoreNode
 from nodes.google_cloud_storage_node import GoogleCloudStorageNode
 from nodes.monday_node import MondayNode
@@ -355,6 +356,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-bytescale': BytescaleNode,
     'automation-linkwarden': LinkwardenNode,
     'automation-rebrandly': RebrandlyNode,
+    'automation-skyvia': SkyviaNode,
     'automation-firestore': FirestoreNode,
     'automation-google-cloud-storage': GoogleCloudStorageNode,
     'automation-monday': MondayNode,
