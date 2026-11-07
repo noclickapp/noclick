@@ -229,9 +229,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // NocoDB
     'NocoDBTokenCredential': 'nocodb_api_token',
 
-    // NocoDB
-    'NocoDBTokenCredential': 'nocodb_api_token',
-
     // Basedash
     'BasedashApiKeyCredential': 'basedash_api_key',
 
