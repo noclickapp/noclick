@@ -28,9 +28,10 @@ export default defineConfig({
     maxWorkers: availableParallelism() <= 2 ? 2 : undefined,
   },
   resolve: {
-    alias: {
-      '~': resolve(__dirname, './app'),
-    },
+    alias: [
+      { find: '~', replacement: resolve(__dirname, './app') },
+      { find: /^@lobehub\/icons\/es\/\w+$/, replacement: resolve(__dirname, './tests/support/lobehubIcon.tsx') },
+    ],
   },
   // As in vite.config.ts: modules may read files beside frontend/ (the docs import the SDK READMEs).
   server: {
