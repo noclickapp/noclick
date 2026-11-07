@@ -93,7 +93,7 @@ def _stored(raw): return _credential(raw).model_dump(mode="json")
 
 
 def _op(value, title): return Field(value, json_schema_extra={"const": value, "ui:hidden": True, "x-display-name": title, "x-category": "Scalr Metadata", "x-is-trigger": False})
-def _selector(title, field, parents=()): return Field(..., title=title, json_schema_extra={"x-resource-type": field, "x-dynamic-options": {"field_name": field, "depends_on": list(parents), "allow_custom": True, "auto_select_sole_option": False}})
+def _selector(title, field, parents=()): return Field(..., title=title, json_schema_extra={"x-resource-type": field, "x-dynamic-options": {"field_name": field, "depends_on": list(parents), "allow_custom": True}})
 
 
 class _Config(BaseModel):

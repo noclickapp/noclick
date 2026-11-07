@@ -51,9 +51,9 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
             "depends_on": [],
-            "field_name": "account_id"
+            "field_name": "account_id",
+            "auto_select_sole_option": true
           },
           "x-resource-type": "account_id"
         },
@@ -62,7 +62,6 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
             "depends_on": [
               "account_id"
             ],
@@ -117,9 +116,9 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
             "depends_on": [],
-            "field_name": "account_id"
+            "field_name": "account_id",
+            "auto_select_sole_option": true
           },
           "x-resource-type": "account_id"
         },
@@ -153,9 +152,9 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
             "depends_on": [],
-            "field_name": "account_id"
+            "field_name": "account_id",
+            "auto_select_sole_option": true
           },
           "x-resource-type": "account_id"
         },
@@ -164,7 +163,6 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
             "depends_on": [
               "account_id"
             ],
@@ -177,7 +175,6 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
             "depends_on": [
               "account_id",
               "environment_id"
@@ -201,7 +198,6 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
             "depends_on": [
               "account_id",
               "environment_id",
@@ -250,9 +246,9 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
             "depends_on": [],
-            "field_name": "account_id"
+            "field_name": "account_id",
+            "auto_select_sole_option": true
           },
           "x-resource-type": "account_id"
         },
@@ -261,7 +257,6 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
             "depends_on": [
               "account_id"
             ],
@@ -274,7 +269,6 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
             "depends_on": [
               "account_id",
               "environment_id"
@@ -357,9 +351,9 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
             "depends_on": [],
-            "field_name": "account_id"
+            "field_name": "account_id",
+            "auto_select_sole_option": true
           },
           "x-resource-type": "account_id"
         },
@@ -368,7 +362,6 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
             "depends_on": [
               "account_id"
             ],
@@ -381,7 +374,6 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
             "depends_on": [
               "account_id",
               "environment_id"
@@ -438,9 +430,9 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
             "depends_on": [],
-            "field_name": "account_id"
+            "field_name": "account_id",
+            "auto_select_sole_option": true
           },
           "x-resource-type": "account_id"
         },
@@ -449,7 +441,6 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
             "depends_on": [
               "account_id"
             ],
