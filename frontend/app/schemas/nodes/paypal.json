@@ -1,0 +1,5295 @@
+{
+  "$defs": {
+    "PayPalClientCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "paypal_client_credentials",
+          "default": "paypal_client_credentials",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "description": "PayPal REST app client ID.",
+          "title": "Client ID",
+          "type": "string"
+        },
+        "client_secret": {
+          "title": "Client Secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "environment": {
+          "default": "sandbox",
+          "description": "Use Sandbox while testing. Live can move real money.",
+          "enum": [
+            "sandbox",
+            "live"
+          ],
+          "title": "Environment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_id",
+        "client_secret"
+      ],
+      "title": "PayPal App",
+      "type": "object",
+      "x-credential-type": "api_key",
+      "x-credential-url": "https://developer.paypal.com/dashboard/applications"
+    },
+    "PayPalOnEventConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On PayPal Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On PayPal Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "PAYMENT.CAPTURE.COMPLETED",
+          "description": "The payment, subscription or dispute event that starts this workflow.",
+          "enum": [
+            "PAYMENT.CAPTURE.COMPLETED",
+            "PAYMENT.CAPTURE.DENIED",
+            "PAYMENT.CAPTURE.REFUNDED",
+            "PAYMENT.SALE.COMPLETED",
+            "BILLING.SUBSCRIPTION.ACTIVATED",
+            "BILLING.SUBSCRIPTION.CANCELLED",
+            "CUSTOMER.DISPUTE.CREATED"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with PayPal automatically.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "PayPalOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PayPal_accept_dispute_claim_Config": {
+      "properties": {
+        "operation": {
+          "const": "accept_dispute_claim",
+          "default": "accept_dispute_claim",
+          "title": "Accept Dispute Claim",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Disputes",
+          "x-display-name": "Accept Dispute Claim",
+          "x-is-trigger": false
+        },
+        "dispute_id": {
+          "title": "Dispute Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "dispute_id"
+      ],
+      "title": "PayPal_accept_dispute_claim_Config",
+      "type": "object"
+    },
+    "PayPal_accept_dispute_offer_Config": {
+      "properties": {
+        "operation": {
+          "const": "accept_dispute_offer",
+          "default": "accept_dispute_offer",
+          "title": "Accept Dispute Offer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Disputes",
+          "x-display-name": "Accept Dispute Offer",
+          "x-is-trigger": false
+        },
+        "dispute_id": {
+          "title": "Dispute Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "dispute_id"
+      ],
+      "title": "PayPal_accept_dispute_offer_Config",
+      "type": "object"
+    },
+    "PayPal_acknowledge_dispute_return_Config": {
+      "properties": {
+        "operation": {
+          "const": "acknowledge_dispute_return",
+          "default": "acknowledge_dispute_return",
+          "title": "Acknowledge Dispute Return",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Disputes",
+          "x-display-name": "Acknowledge Dispute Return",
+          "x-is-trigger": false
+        },
+        "dispute_id": {
+          "title": "Dispute Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "dispute_id"
+      ],
+      "title": "PayPal_acknowledge_dispute_return_Config",
+      "type": "object"
+    },
+    "PayPal_activate_plan_Config": {
+      "properties": {
+        "operation": {
+          "const": "activate_plan",
+          "default": "activate_plan",
+          "title": "Activate Plan",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Billing Plans",
+          "x-display-name": "Activate Plan",
+          "x-is-trigger": false
+        },
+        "plan_id": {
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "plan_id"
+      ],
+      "title": "PayPal_activate_plan_Config",
+      "type": "object"
+    },
+    "PayPal_activate_recurring_invoice_Config": {
+      "properties": {
+        "operation": {
+          "const": "activate_recurring_invoice",
+          "default": "activate_recurring_invoice",
+          "title": "Activate Recurring Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recurring Invoices",
+          "x-display-name": "Activate Recurring Invoice",
+          "x-is-trigger": false
+        },
+        "series_id": {
+          "title": "Series Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "series_id"
+      ],
+      "title": "PayPal_activate_recurring_invoice_Config",
+      "type": "object"
+    },
+    "PayPal_activate_subscription_Config": {
+      "properties": {
+        "operation": {
+          "const": "activate_subscription",
+          "default": "activate_subscription",
+          "title": "Activate Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Activate Subscription",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "PayPal_activate_subscription_Config",
+      "type": "object"
+    },
+    "PayPal_add_order_tracking_Config": {
+      "properties": {
+        "operation": {
+          "const": "add_order_tracking",
+          "default": "add_order_tracking",
+          "title": "Add Order Tracking",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Add Order Tracking",
+          "x-is-trigger": false
+        },
+        "order_id": {
+          "title": "Order Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "PayPal_add_order_tracking_Config",
+      "type": "object"
+    },
+    "PayPal_appeal_dispute_Config": {
+      "properties": {
+        "operation": {
+          "const": "appeal_dispute",
+          "default": "appeal_dispute",
+          "title": "Appeal Dispute",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Disputes",
+          "x-display-name": "Appeal Dispute",
+          "x-is-trigger": false
+        },
+        "dispute_id": {
+          "title": "Dispute Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "dispute_id"
+      ],
+      "title": "PayPal_appeal_dispute_Config",
+      "type": "object"
+    },
+    "PayPal_authorize_order_Config": {
+      "properties": {
+        "operation": {
+          "const": "authorize_order",
+          "default": "authorize_order",
+          "title": "Authorize Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Authorize Order",
+          "x-is-trigger": false
+        },
+        "order_id": {
+          "title": "Order Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "PayPal_authorize_order_Config",
+      "type": "object"
+    },
+    "PayPal_cancel_invoice_reminders_Config": {
+      "properties": {
+        "operation": {
+          "const": "cancel_invoice_reminders",
+          "default": "cancel_invoice_reminders",
+          "title": "Cancel Invoice Reminders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Cancel Invoice Reminders",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "PayPal_cancel_invoice_reminders_Config",
+      "type": "object"
+    },
+    "PayPal_cancel_payout_item_Config": {
+      "properties": {
+        "operation": {
+          "const": "cancel_payout_item",
+          "default": "cancel_payout_item",
+          "title": "Cancel Payout Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payouts",
+          "x-display-name": "Cancel Payout Item",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "PayPal_cancel_payout_item_Config",
+      "type": "object"
+    },
+    "PayPal_cancel_recurring_invoice_Config": {
+      "properties": {
+        "operation": {
+          "const": "cancel_recurring_invoice",
+          "default": "cancel_recurring_invoice",
+          "title": "Cancel Recurring Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recurring Invoices",
+          "x-display-name": "Cancel Recurring Invoice",
+          "x-is-trigger": false
+        },
+        "series_id": {
+          "title": "Series Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "series_id"
+      ],
+      "title": "PayPal_cancel_recurring_invoice_Config",
+      "type": "object"
+    },
+    "PayPal_cancel_sent_invoice_Config": {
+      "properties": {
+        "operation": {
+          "const": "cancel_sent_invoice",
+          "default": "cancel_sent_invoice",
+          "title": "Cancel Sent Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Cancel Sent Invoice",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "PayPal_cancel_sent_invoice_Config",
+      "type": "object"
+    },
+    "PayPal_cancel_subscription_Config": {
+      "properties": {
+        "operation": {
+          "const": "cancel_subscription",
+          "default": "cancel_subscription",
+          "title": "Cancel Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Cancel Subscription",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "PayPal_cancel_subscription_Config",
+      "type": "object"
+    },
+    "PayPal_capture_authorization_Config": {
+      "properties": {
+        "operation": {
+          "const": "capture_authorization",
+          "default": "capture_authorization",
+          "title": "Capture Authorization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "Capture Authorization",
+          "x-is-trigger": false
+        },
+        "authorization_id": {
+          "title": "Authorization Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "authorization_id"
+      ],
+      "title": "PayPal_capture_authorization_Config",
+      "type": "object"
+    },
+    "PayPal_capture_order_Config": {
+      "properties": {
+        "operation": {
+          "const": "capture_order",
+          "default": "capture_order",
+          "title": "Capture Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Capture Order",
+          "x-is-trigger": false
+        },
+        "order_id": {
+          "title": "Order Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "PayPal_capture_order_Config",
+      "type": "object"
+    },
+    "PayPal_capture_subscription_payment_Config": {
+      "properties": {
+        "operation": {
+          "const": "capture_subscription_payment",
+          "default": "capture_subscription_payment",
+          "title": "Capture Subscription Payment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Capture Subscription Payment",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "PayPal_capture_subscription_payment_Config",
+      "type": "object"
+    },
+    "PayPal_confirm_order_payment_source_Config": {
+      "properties": {
+        "operation": {
+          "const": "confirm_order_payment_source",
+          "default": "confirm_order_payment_source",
+          "title": "Confirm Order Payment Source",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Confirm Order Payment Source",
+          "x-is-trigger": false
+        },
+        "order_id": {
+          "title": "Order Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "PayPal_confirm_order_payment_source_Config",
+      "type": "object"
+    },
+    "PayPal_create_batch_payout_Config": {
+      "properties": {
+        "operation": {
+          "const": "create_batch_payout",
+          "default": "create_batch_payout",
+          "title": "Create Batch Payout",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payouts",
+          "x-display-name": "Create Batch Payout",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_create_batch_payout_Config",
+      "type": "object"
+    },
+    "PayPal_create_draft_invoice_Config": {
+      "properties": {
+        "operation": {
+          "const": "create_draft_invoice",
+          "default": "create_draft_invoice",
+          "title": "Create Draft Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Create Draft Invoice",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_create_draft_invoice_Config",
+      "type": "object"
+    },
+    "PayPal_create_invoice_conditional_rule_Config": {
+      "properties": {
+        "operation": {
+          "const": "create_invoice_conditional_rule",
+          "default": "create_invoice_conditional_rule",
+          "title": "Create Invoice Conditional Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice Conditional Rules",
+          "x-display-name": "Create Invoice Conditional Rule",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "PayPal_create_invoice_conditional_rule_Config",
+      "type": "object"
+    },
+    "PayPal_create_invoice_template_Config": {
+      "properties": {
+        "operation": {
+          "const": "create_invoice_template",
+          "default": "create_invoice_template",
+          "title": "Create Invoice Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice Templates",
+          "x-display-name": "Create Invoice Template",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_create_invoice_template_Config",
+      "type": "object"
+    },
+    "PayPal_create_order_Config": {
+      "properties": {
+        "operation": {
+          "const": "create_order",
+          "default": "create_order",
+          "title": "Create Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Create Order",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_create_order_Config",
+      "type": "object"
+    },
+    "PayPal_create_plan_Config": {
+      "properties": {
+        "operation": {
+          "const": "create_plan",
+          "default": "create_plan",
+          "title": "Create Plan",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Billing Plans",
+          "x-display-name": "Create Plan",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_create_plan_Config",
+      "type": "object"
+    },
+    "PayPal_create_product_Config": {
+      "properties": {
+        "operation": {
+          "const": "create_product",
+          "default": "create_product",
+          "title": "Create Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog Products",
+          "x-display-name": "Create Product",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_create_product_Config",
+      "type": "object"
+    },
+    "PayPal_create_recurring_invoice_Config": {
+      "properties": {
+        "operation": {
+          "const": "create_recurring_invoice",
+          "default": "create_recurring_invoice",
+          "title": "Create Recurring Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recurring Invoices",
+          "x-display-name": "Create Recurring Invoice",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_create_recurring_invoice_Config",
+      "type": "object"
+    },
+    "PayPal_create_subscription_Config": {
+      "properties": {
+        "operation": {
+          "const": "create_subscription",
+          "default": "create_subscription",
+          "title": "Create Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Create Subscription",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_create_subscription_Config",
+      "type": "object"
+    },
+    "PayPal_create_webhook_Config": {
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Create Webhook",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_create_webhook_Config",
+      "type": "object"
+    },
+    "PayPal_create_webhook_lookup_Config": {
+      "properties": {
+        "operation": {
+          "const": "create_webhook_lookup",
+          "default": "create_webhook_lookup",
+          "title": "Create Webhook Lookup",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Create Webhook Lookup",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_create_webhook_lookup_Config",
+      "type": "object"
+    },
+    "PayPal_deactivate_plan_Config": {
+      "properties": {
+        "operation": {
+          "const": "deactivate_plan",
+          "default": "deactivate_plan",
+          "title": "Deactivate Plan",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Billing Plans",
+          "x-display-name": "Deactivate Plan",
+          "x-is-trigger": false
+        },
+        "plan_id": {
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "plan_id"
+      ],
+      "title": "PayPal_deactivate_plan_Config",
+      "type": "object"
+    },
+    "PayPal_delete_invoice_Config": {
+      "properties": {
+        "operation": {
+          "const": "delete_invoice",
+          "default": "delete_invoice",
+          "title": "Delete Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Delete Invoice",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "PayPal_delete_invoice_Config",
+      "type": "object"
+    },
+    "PayPal_delete_invoice_conditional_rule_Config": {
+      "properties": {
+        "operation": {
+          "const": "delete_invoice_conditional_rule",
+          "default": "delete_invoice_conditional_rule",
+          "title": "Delete Invoice Conditional Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice Conditional Rules",
+          "x-display-name": "Delete Invoice Conditional Rule",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoice_id",
+        "rule_id"
+      ],
+      "title": "PayPal_delete_invoice_conditional_rule_Config",
+      "type": "object"
+    },
+    "PayPal_delete_invoice_payment_Config": {
+      "properties": {
+        "operation": {
+          "const": "delete_invoice_payment",
+          "default": "delete_invoice_payment",
+          "title": "Delete Invoice Payment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Delete Invoice Payment",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "transaction_id": {
+          "title": "Transaction Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoice_id",
+        "transaction_id"
+      ],
+      "title": "PayPal_delete_invoice_payment_Config",
+      "type": "object"
+    },
+    "PayPal_delete_invoice_refund_Config": {
+      "properties": {
+        "operation": {
+          "const": "delete_invoice_refund",
+          "default": "delete_invoice_refund",
+          "title": "Delete Invoice Refund",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Delete Invoice Refund",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "transaction_id": {
+          "title": "Transaction Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoice_id",
+        "transaction_id"
+      ],
+      "title": "PayPal_delete_invoice_refund_Config",
+      "type": "object"
+    },
+    "PayPal_delete_invoice_template_Config": {
+      "properties": {
+        "operation": {
+          "const": "delete_invoice_template",
+          "default": "delete_invoice_template",
+          "title": "Delete Invoice Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice Templates",
+          "x-display-name": "Delete Invoice Template",
+          "x-is-trigger": false
+        },
+        "template_id": {
+          "title": "Template Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "PayPal_delete_invoice_template_Config",
+      "type": "object"
+    },
+    "PayPal_delete_recurring_invoice_Config": {
+      "properties": {
+        "operation": {
+          "const": "delete_recurring_invoice",
+          "default": "delete_recurring_invoice",
+          "title": "Delete Recurring Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recurring Invoices",
+          "x-display-name": "Delete Recurring Invoice",
+          "x-is-trigger": false
+        },
+        "series_id": {
+          "title": "Series Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "series_id"
+      ],
+      "title": "PayPal_delete_recurring_invoice_Config",
+      "type": "object"
+    },
+    "PayPal_delete_webhook_Config": {
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Delete Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "title": "Webhook Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "PayPal_delete_webhook_Config",
+      "type": "object"
+    },
+    "PayPal_delete_webhook_lookup_Config": {
+      "properties": {
+        "operation": {
+          "const": "delete_webhook_lookup",
+          "default": "delete_webhook_lookup",
+          "title": "Delete Webhook Lookup",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Delete Webhook Lookup",
+          "x-is-trigger": false
+        },
+        "lookup_id": {
+          "title": "Lookup Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lookup_id"
+      ],
+      "title": "PayPal_delete_webhook_lookup_Config",
+      "type": "object"
+    },
+    "PayPal_deny_dispute_offer_Config": {
+      "properties": {
+        "operation": {
+          "const": "deny_dispute_offer",
+          "default": "deny_dispute_offer",
+          "title": "Deny Dispute Offer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Disputes",
+          "x-display-name": "Deny Dispute Offer",
+          "x-is-trigger": false
+        },
+        "dispute_id": {
+          "title": "Dispute Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "dispute_id"
+      ],
+      "title": "PayPal_deny_dispute_offer_Config",
+      "type": "object"
+    },
+    "PayPal_escalate_dispute_Config": {
+      "properties": {
+        "operation": {
+          "const": "escalate_dispute",
+          "default": "escalate_dispute",
+          "title": "Escalate Dispute",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Disputes",
+          "x-display-name": "Escalate Dispute",
+          "x-is-trigger": false
+        },
+        "dispute_id": {
+          "title": "Dispute Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "dispute_id"
+      ],
+      "title": "PayPal_escalate_dispute_Config",
+      "type": "object"
+    },
+    "PayPal_find_eligible_payment_methods_Config": {
+      "properties": {
+        "operation": {
+          "const": "find_eligible_payment_methods",
+          "default": "find_eligible_payment_methods",
+          "title": "Find Eligible Payment Methods",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "Find Eligible Payment Methods",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_find_eligible_payment_methods_Config",
+      "type": "object"
+    },
+    "PayPal_generate_invoice_number_Config": {
+      "properties": {
+        "operation": {
+          "const": "generate_invoice_number",
+          "default": "generate_invoice_number",
+          "title": "Generate Invoice Number",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Generate Invoice Number",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_generate_invoice_number_Config",
+      "type": "object"
+    },
+    "PayPal_generate_invoice_qr_code_Config": {
+      "properties": {
+        "operation": {
+          "const": "generate_invoice_qr_code",
+          "default": "generate_invoice_qr_code",
+          "title": "Generate Invoice Qr Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Generate Invoice Qr Code",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "PayPal_generate_invoice_qr_code_Config",
+      "type": "object"
+    },
+    "PayPal_get_authorization_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_authorization",
+          "default": "get_authorization",
+          "title": "Get Authorization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "Get Authorization",
+          "x-is-trigger": false
+        },
+        "authorization_id": {
+          "title": "Authorization Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "authorization_id"
+      ],
+      "title": "PayPal_get_authorization_Config",
+      "type": "object"
+    },
+    "PayPal_get_auto_reminder_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_auto_reminder",
+          "default": "get_auto_reminder",
+          "title": "Get Auto Reminder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice Reminders",
+          "x-display-name": "Get Auto Reminder",
+          "x-is-trigger": false
+        },
+        "reminder_id": {
+          "title": "Reminder Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "reminder_id"
+      ],
+      "title": "PayPal_get_auto_reminder_Config",
+      "type": "object"
+    },
+    "PayPal_get_balance_net_summary_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_balance_net_summary",
+          "default": "get_balance_net_summary",
+          "title": "Get Balance Net Summary",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reporting",
+          "x-display-name": "Get Balance Net Summary",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PayPal_get_balance_net_summary_Config",
+      "type": "object"
+    },
+    "PayPal_get_capture_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_capture",
+          "default": "get_capture",
+          "title": "Get Capture",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "Get Capture",
+          "x-is-trigger": false
+        },
+        "capture_id": {
+          "title": "Capture Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "capture_id"
+      ],
+      "title": "PayPal_get_capture_Config",
+      "type": "object"
+    },
+    "PayPal_get_daily_summary_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_daily_summary",
+          "default": "get_daily_summary",
+          "title": "Get Daily Summary",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reporting",
+          "x-display-name": "Get Daily Summary",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PayPal_get_daily_summary_Config",
+      "type": "object"
+    },
+    "PayPal_get_dispute_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_dispute",
+          "default": "get_dispute",
+          "title": "Get Dispute",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Disputes",
+          "x-display-name": "Get Dispute",
+          "x-is-trigger": false
+        },
+        "dispute_id": {
+          "title": "Dispute Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "dispute_id"
+      ],
+      "title": "PayPal_get_dispute_Config",
+      "type": "object"
+    },
+    "PayPal_get_invoice_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Get Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Get Invoice",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "PayPal_get_invoice_Config",
+      "type": "object"
+    },
+    "PayPal_get_invoice_conditional_rule_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_invoice_conditional_rule",
+          "default": "get_invoice_conditional_rule",
+          "title": "Get Invoice Conditional Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice Conditional Rules",
+          "x-display-name": "Get Invoice Conditional Rule",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "invoice_id",
+        "rule_id"
+      ],
+      "title": "PayPal_get_invoice_conditional_rule_Config",
+      "type": "object"
+    },
+    "PayPal_get_invoice_template_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_invoice_template",
+          "default": "get_invoice_template",
+          "title": "Get Invoice Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice Templates",
+          "x-display-name": "Get Invoice Template",
+          "x-is-trigger": false
+        },
+        "template_id": {
+          "title": "Template Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "PayPal_get_invoice_template_Config",
+      "type": "object"
+    },
+    "PayPal_get_order_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Get Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Get Order",
+          "x-is-trigger": false
+        },
+        "order_id": {
+          "title": "Order Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "PayPal_get_order_Config",
+      "type": "object"
+    },
+    "PayPal_get_payout_batch_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_payout_batch",
+          "default": "get_payout_batch",
+          "title": "Get Payout Batch",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payouts",
+          "x-display-name": "Get Payout Batch",
+          "x-is-trigger": false
+        },
+        "batch_id": {
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "PayPal_get_payout_batch_Config",
+      "type": "object"
+    },
+    "PayPal_get_payout_item_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_payout_item",
+          "default": "get_payout_item",
+          "title": "Get Payout Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payouts",
+          "x-display-name": "Get Payout Item",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "PayPal_get_payout_item_Config",
+      "type": "object"
+    },
+    "PayPal_get_plan_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_plan",
+          "default": "get_plan",
+          "title": "Get Plan",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Billing Plans",
+          "x-display-name": "Get Plan",
+          "x-is-trigger": false
+        },
+        "plan_id": {
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "plan_id"
+      ],
+      "title": "PayPal_get_plan_Config",
+      "type": "object"
+    },
+    "PayPal_get_product_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Get Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog Products",
+          "x-display-name": "Get Product",
+          "x-is-trigger": false
+        },
+        "product_id": {
+          "title": "Product Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "PayPal_get_product_Config",
+      "type": "object"
+    },
+    "PayPal_get_recurring_invoice_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_recurring_invoice",
+          "default": "get_recurring_invoice",
+          "title": "Get Recurring Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recurring Invoices",
+          "x-display-name": "Get Recurring Invoice",
+          "x-is-trigger": false
+        },
+        "series_id": {
+          "title": "Series Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "series_id"
+      ],
+      "title": "PayPal_get_recurring_invoice_Config",
+      "type": "object"
+    },
+    "PayPal_get_refund_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_refund",
+          "default": "get_refund",
+          "title": "Get Refund",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "Get Refund",
+          "x-is-trigger": false
+        },
+        "refund_id": {
+          "title": "Refund Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "refund_id"
+      ],
+      "title": "PayPal_get_refund_Config",
+      "type": "object"
+    },
+    "PayPal_get_subscription_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_subscription",
+          "default": "get_subscription",
+          "title": "Get Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Get Subscription",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "PayPal_get_subscription_Config",
+      "type": "object"
+    },
+    "PayPal_get_webhook_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_webhook",
+          "default": "get_webhook",
+          "title": "Get Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Get Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "title": "Webhook Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "PayPal_get_webhook_Config",
+      "type": "object"
+    },
+    "PayPal_get_webhook_event_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_webhook_event",
+          "default": "get_webhook_event",
+          "title": "Get Webhook Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Get Webhook Event",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "PayPal_get_webhook_event_Config",
+      "type": "object"
+    },
+    "PayPal_get_webhook_lookup_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_webhook_lookup",
+          "default": "get_webhook_lookup",
+          "title": "Get Webhook Lookup",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Get Webhook Lookup",
+          "x-is-trigger": false
+        },
+        "lookup_id": {
+          "title": "Lookup Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "lookup_id"
+      ],
+      "title": "PayPal_get_webhook_lookup_Config",
+      "type": "object"
+    },
+    "PayPal_list_auto_reminders_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_auto_reminders",
+          "default": "list_auto_reminders",
+          "title": "List Auto Reminders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice Reminders",
+          "x-display-name": "List Auto Reminders",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PayPal_list_auto_reminders_Config",
+      "type": "object"
+    },
+    "PayPal_list_balances_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_balances",
+          "default": "list_balances",
+          "title": "List Balances",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reporting",
+          "x-display-name": "List Balances",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PayPal_list_balances_Config",
+      "type": "object"
+    },
+    "PayPal_list_disputes_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_disputes",
+          "default": "list_disputes",
+          "title": "List Disputes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Disputes",
+          "x-display-name": "List Disputes",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PayPal_list_disputes_Config",
+      "type": "object"
+    },
+    "PayPal_list_invoice_conditional_rules_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_invoice_conditional_rules",
+          "default": "list_invoice_conditional_rules",
+          "title": "List Invoice Conditional Rules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice Conditional Rules",
+          "x-display-name": "List Invoice Conditional Rules",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "PayPal_list_invoice_conditional_rules_Config",
+      "type": "object"
+    },
+    "PayPal_list_invoice_templates_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_invoice_templates",
+          "default": "list_invoice_templates",
+          "title": "List Invoice Templates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice Templates",
+          "x-display-name": "List Invoice Templates",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PayPal_list_invoice_templates_Config",
+      "type": "object"
+    },
+    "PayPal_list_invoices_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "List Invoices",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "List Invoices",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PayPal_list_invoices_Config",
+      "type": "object"
+    },
+    "PayPal_list_plans_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_plans",
+          "default": "list_plans",
+          "title": "List Plans",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Billing Plans",
+          "x-display-name": "List Plans",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PayPal_list_plans_Config",
+      "type": "object"
+    },
+    "PayPal_list_products_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "List Products",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog Products",
+          "x-display-name": "List Products",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PayPal_list_products_Config",
+      "type": "object"
+    },
+    "PayPal_list_subscription_transactions_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_subscription_transactions",
+          "default": "list_subscription_transactions",
+          "title": "List Subscription Transactions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "List Subscription Transactions",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "PayPal_list_subscription_transactions_Config",
+      "type": "object"
+    },
+    "PayPal_list_subscriptions_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_subscriptions",
+          "default": "list_subscriptions",
+          "title": "List Subscriptions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "List Subscriptions",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PayPal_list_subscriptions_Config",
+      "type": "object"
+    },
+    "PayPal_list_transactions_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_transactions",
+          "default": "list_transactions",
+          "title": "List Transactions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reporting",
+          "x-display-name": "List Transactions",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PayPal_list_transactions_Config",
+      "type": "object"
+    },
+    "PayPal_list_webhook_event_subscriptions_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_webhook_event_subscriptions",
+          "default": "list_webhook_event_subscriptions",
+          "title": "List Webhook Event Subscriptions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhook Event Subscriptions",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "title": "Webhook Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "PayPal_list_webhook_event_subscriptions_Config",
+      "type": "object"
+    },
+    "PayPal_list_webhook_event_types_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_webhook_event_types",
+          "default": "list_webhook_event_types",
+          "title": "List Webhook Event Types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhook Event Types",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PayPal_list_webhook_event_types_Config",
+      "type": "object"
+    },
+    "PayPal_list_webhook_events_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_webhook_events",
+          "default": "list_webhook_events",
+          "title": "List Webhook Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhook Events",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PayPal_list_webhook_events_Config",
+      "type": "object"
+    },
+    "PayPal_list_webhook_lookups_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_webhook_lookups",
+          "default": "list_webhook_lookups",
+          "title": "List Webhook Lookups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhook Lookups",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PayPal_list_webhook_lookups_Config",
+      "type": "object"
+    },
+    "PayPal_list_webhooks_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhooks",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal query parameters as a JSON object.",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PayPal_list_webhooks_Config",
+      "type": "object"
+    },
+    "PayPal_make_dispute_offer_Config": {
+      "properties": {
+        "operation": {
+          "const": "make_dispute_offer",
+          "default": "make_dispute_offer",
+          "title": "Make Dispute Offer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Disputes",
+          "x-display-name": "Make Dispute Offer",
+          "x-is-trigger": false
+        },
+        "dispute_id": {
+          "title": "Dispute Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "dispute_id"
+      ],
+      "title": "PayPal_make_dispute_offer_Config",
+      "type": "object"
+    },
+    "PayPal_provide_dispute_evidence_Config": {
+      "properties": {
+        "operation": {
+          "const": "provide_dispute_evidence",
+          "default": "provide_dispute_evidence",
+          "title": "Provide Dispute Evidence",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Disputes",
+          "x-display-name": "Provide Dispute Evidence",
+          "x-is-trigger": false
+        },
+        "dispute_id": {
+          "title": "Dispute Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "dispute_id"
+      ],
+      "title": "PayPal_provide_dispute_evidence_Config",
+      "type": "object"
+    },
+    "PayPal_provide_dispute_supporting_info_Config": {
+      "properties": {
+        "operation": {
+          "const": "provide_dispute_supporting_info",
+          "default": "provide_dispute_supporting_info",
+          "title": "Provide Dispute Supporting Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Disputes",
+          "x-display-name": "Provide Dispute Supporting Info",
+          "x-is-trigger": false
+        },
+        "dispute_id": {
+          "title": "Dispute Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "dispute_id"
+      ],
+      "title": "PayPal_provide_dispute_supporting_info_Config",
+      "type": "object"
+    },
+    "PayPal_reauthorize_payment_Config": {
+      "properties": {
+        "operation": {
+          "const": "reauthorize_payment",
+          "default": "reauthorize_payment",
+          "title": "Reauthorize Payment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "Reauthorize Payment",
+          "x-is-trigger": false
+        },
+        "authorization_id": {
+          "title": "Authorization Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "authorization_id"
+      ],
+      "title": "PayPal_reauthorize_payment_Config",
+      "type": "object"
+    },
+    "PayPal_record_invoice_payment_Config": {
+      "properties": {
+        "operation": {
+          "const": "record_invoice_payment",
+          "default": "record_invoice_payment",
+          "title": "Record Invoice Payment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Record Invoice Payment",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "PayPal_record_invoice_payment_Config",
+      "type": "object"
+    },
+    "PayPal_record_invoice_refund_Config": {
+      "properties": {
+        "operation": {
+          "const": "record_invoice_refund",
+          "default": "record_invoice_refund",
+          "title": "Record Invoice Refund",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Record Invoice Refund",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "PayPal_record_invoice_refund_Config",
+      "type": "object"
+    },
+    "PayPal_refund_capture_Config": {
+      "properties": {
+        "operation": {
+          "const": "refund_capture",
+          "default": "refund_capture",
+          "title": "Refund Capture",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "Refund Capture",
+          "x-is-trigger": false
+        },
+        "capture_id": {
+          "title": "Capture Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "capture_id"
+      ],
+      "title": "PayPal_refund_capture_Config",
+      "type": "object"
+    },
+    "PayPal_remind_invoice_Config": {
+      "properties": {
+        "operation": {
+          "const": "remind_invoice",
+          "default": "remind_invoice",
+          "title": "Remind Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Remind Invoice",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "PayPal_remind_invoice_Config",
+      "type": "object"
+    },
+    "PayPal_resend_webhook_event_Config": {
+      "properties": {
+        "operation": {
+          "const": "resend_webhook_event",
+          "default": "resend_webhook_event",
+          "title": "Resend Webhook Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Resend Webhook Event",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "PayPal_resend_webhook_event_Config",
+      "type": "object"
+    },
+    "PayPal_resume_auto_reminder_Config": {
+      "properties": {
+        "operation": {
+          "const": "resume_auto_reminder",
+          "default": "resume_auto_reminder",
+          "title": "Resume Auto Reminder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice Reminders",
+          "x-display-name": "Resume Auto Reminder",
+          "x-is-trigger": false
+        },
+        "reminder_id": {
+          "title": "Reminder Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "reminder_id"
+      ],
+      "title": "PayPal_resume_auto_reminder_Config",
+      "type": "object"
+    },
+    "PayPal_revise_subscription_Config": {
+      "properties": {
+        "operation": {
+          "const": "revise_subscription",
+          "default": "revise_subscription",
+          "title": "Revise Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Revise Subscription",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "PayPal_revise_subscription_Config",
+      "type": "object"
+    },
+    "PayPal_search_invoices_Config": {
+      "properties": {
+        "operation": {
+          "const": "search_invoices",
+          "default": "search_invoices",
+          "title": "Search Invoices",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Search Invoices",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_search_invoices_Config",
+      "type": "object"
+    },
+    "PayPal_search_recurring_invoices_Config": {
+      "properties": {
+        "operation": {
+          "const": "search_recurring_invoices",
+          "default": "search_recurring_invoices",
+          "title": "Search Recurring Invoices",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recurring Invoices",
+          "x-display-name": "Search Recurring Invoices",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_search_recurring_invoices_Config",
+      "type": "object"
+    },
+    "PayPal_send_dispute_message_Config": {
+      "properties": {
+        "operation": {
+          "const": "send_dispute_message",
+          "default": "send_dispute_message",
+          "title": "Send Dispute Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Disputes",
+          "x-display-name": "Send Dispute Message",
+          "x-is-trigger": false
+        },
+        "dispute_id": {
+          "title": "Dispute Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "dispute_id"
+      ],
+      "title": "PayPal_send_dispute_message_Config",
+      "type": "object"
+    },
+    "PayPal_send_invoice_Config": {
+      "properties": {
+        "operation": {
+          "const": "send_invoice",
+          "default": "send_invoice",
+          "title": "Send Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Send Invoice",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "PayPal_send_invoice_Config",
+      "type": "object"
+    },
+    "PayPal_setup_auto_reminders_Config": {
+      "properties": {
+        "operation": {
+          "const": "setup_auto_reminders",
+          "default": "setup_auto_reminders",
+          "title": "Setup Auto Reminders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice Reminders",
+          "x-display-name": "Setup Auto Reminders",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_setup_auto_reminders_Config",
+      "type": "object"
+    },
+    "PayPal_simulate_webhook_event_Config": {
+      "properties": {
+        "operation": {
+          "const": "simulate_webhook_event",
+          "default": "simulate_webhook_event",
+          "title": "Simulate Webhook Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Simulate Webhook Event",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_simulate_webhook_event_Config",
+      "type": "object"
+    },
+    "PayPal_suspend_auto_reminder_Config": {
+      "properties": {
+        "operation": {
+          "const": "suspend_auto_reminder",
+          "default": "suspend_auto_reminder",
+          "title": "Suspend Auto Reminder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice Reminders",
+          "x-display-name": "Suspend Auto Reminder",
+          "x-is-trigger": false
+        },
+        "reminder_id": {
+          "title": "Reminder Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "reminder_id"
+      ],
+      "title": "PayPal_suspend_auto_reminder_Config",
+      "type": "object"
+    },
+    "PayPal_suspend_subscription_Config": {
+      "properties": {
+        "operation": {
+          "const": "suspend_subscription",
+          "default": "suspend_subscription",
+          "title": "Suspend Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Suspend Subscription",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "PayPal_suspend_subscription_Config",
+      "type": "object"
+    },
+    "PayPal_update_auto_reminder_Config": {
+      "properties": {
+        "operation": {
+          "const": "update_auto_reminder",
+          "default": "update_auto_reminder",
+          "title": "Update Auto Reminder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice Reminders",
+          "x-display-name": "Update Auto Reminder",
+          "x-is-trigger": false
+        },
+        "reminder_id": {
+          "title": "Reminder Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "reminder_id"
+      ],
+      "title": "PayPal_update_auto_reminder_Config",
+      "type": "object"
+    },
+    "PayPal_update_dispute_Config": {
+      "properties": {
+        "operation": {
+          "const": "update_dispute",
+          "default": "update_dispute",
+          "title": "Update Dispute",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Disputes",
+          "x-display-name": "Update Dispute",
+          "x-is-trigger": false
+        },
+        "dispute_id": {
+          "title": "Dispute Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "dispute_id"
+      ],
+      "title": "PayPal_update_dispute_Config",
+      "type": "object"
+    },
+    "PayPal_update_invoice_Config": {
+      "properties": {
+        "operation": {
+          "const": "update_invoice",
+          "default": "update_invoice",
+          "title": "Update Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Update Invoice",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "PayPal_update_invoice_Config",
+      "type": "object"
+    },
+    "PayPal_update_invoice_conditional_rule_Config": {
+      "properties": {
+        "operation": {
+          "const": "update_invoice_conditional_rule",
+          "default": "update_invoice_conditional_rule",
+          "title": "Update Invoice Conditional Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice Conditional Rules",
+          "x-display-name": "Update Invoice Conditional Rule",
+          "x-is-trigger": false
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "invoice_id",
+        "rule_id"
+      ],
+      "title": "PayPal_update_invoice_conditional_rule_Config",
+      "type": "object"
+    },
+    "PayPal_update_invoice_template_Config": {
+      "properties": {
+        "operation": {
+          "const": "update_invoice_template",
+          "default": "update_invoice_template",
+          "title": "Update Invoice Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice Templates",
+          "x-display-name": "Update Invoice Template",
+          "x-is-trigger": false
+        },
+        "template_id": {
+          "title": "Template Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "PayPal_update_invoice_template_Config",
+      "type": "object"
+    },
+    "PayPal_update_order_Config": {
+      "properties": {
+        "operation": {
+          "const": "update_order",
+          "default": "update_order",
+          "title": "Update Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Update Order",
+          "x-is-trigger": false
+        },
+        "order_id": {
+          "title": "Order Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "PayPal_update_order_Config",
+      "type": "object"
+    },
+    "PayPal_update_order_tracking_Config": {
+      "properties": {
+        "operation": {
+          "const": "update_order_tracking",
+          "default": "update_order_tracking",
+          "title": "Update Order Tracking",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Orders",
+          "x-display-name": "Update Order Tracking",
+          "x-is-trigger": false
+        },
+        "order_id": {
+          "title": "Order Id",
+          "type": "string"
+        },
+        "tracker_id": {
+          "title": "Tracker Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "order_id",
+        "tracker_id"
+      ],
+      "title": "PayPal_update_order_tracking_Config",
+      "type": "object"
+    },
+    "PayPal_update_plan_Config": {
+      "properties": {
+        "operation": {
+          "const": "update_plan",
+          "default": "update_plan",
+          "title": "Update Plan",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Billing Plans",
+          "x-display-name": "Update Plan",
+          "x-is-trigger": false
+        },
+        "plan_id": {
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "plan_id"
+      ],
+      "title": "PayPal_update_plan_Config",
+      "type": "object"
+    },
+    "PayPal_update_plan_pricing_Config": {
+      "properties": {
+        "operation": {
+          "const": "update_plan_pricing",
+          "default": "update_plan_pricing",
+          "title": "Update Plan Pricing",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Billing Plans",
+          "x-display-name": "Update Plan Pricing",
+          "x-is-trigger": false
+        },
+        "plan_id": {
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "plan_id"
+      ],
+      "title": "PayPal_update_plan_pricing_Config",
+      "type": "object"
+    },
+    "PayPal_update_product_Config": {
+      "properties": {
+        "operation": {
+          "const": "update_product",
+          "default": "update_product",
+          "title": "Update Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog Products",
+          "x-display-name": "Update Product",
+          "x-is-trigger": false
+        },
+        "product_id": {
+          "title": "Product Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "PayPal_update_product_Config",
+      "type": "object"
+    },
+    "PayPal_update_recurring_invoice_Config": {
+      "properties": {
+        "operation": {
+          "const": "update_recurring_invoice",
+          "default": "update_recurring_invoice",
+          "title": "Update Recurring Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recurring Invoices",
+          "x-display-name": "Update Recurring Invoice",
+          "x-is-trigger": false
+        },
+        "series_id": {
+          "title": "Series Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "series_id"
+      ],
+      "title": "PayPal_update_recurring_invoice_Config",
+      "type": "object"
+    },
+    "PayPal_update_subscription_Config": {
+      "properties": {
+        "operation": {
+          "const": "update_subscription",
+          "default": "update_subscription",
+          "title": "Update Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Update Subscription",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "PayPal_update_subscription_Config",
+      "type": "object"
+    },
+    "PayPal_update_webhook_Config": {
+      "properties": {
+        "operation": {
+          "const": "update_webhook",
+          "default": "update_webhook",
+          "title": "Update Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Update Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "title": "Webhook Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "PayPal_update_webhook_Config",
+      "type": "object"
+    },
+    "PayPal_verify_webhook_signature_Config": {
+      "properties": {
+        "operation": {
+          "const": "verify_webhook_signature",
+          "default": "verify_webhook_signature",
+          "title": "Verify Webhook Signature",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Verify Webhook Signature",
+          "x-is-trigger": false
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "title": "PayPal_verify_webhook_signature_Config",
+      "type": "object"
+    },
+    "PayPal_void_authorization_Config": {
+      "properties": {
+        "operation": {
+          "const": "void_authorization",
+          "default": "void_authorization",
+          "title": "Void Authorization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "Void Authorization",
+          "x-is-trigger": false
+        },
+        "authorization_id": {
+          "title": "Authorization Id",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PayPal request body as JSON. PATCH actions usually require a JSON Patch array.",
+          "title": "Request Body (JSON)",
+          "ui:widget": "textarea"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional PayPal-Request-Id. Reuse the same key when retrying a payment-changing call.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "authorization_id"
+      ],
+      "title": "PayPal_void_authorization_Config",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "accept_dispute_claim": "#/$defs/PayPal_accept_dispute_claim_Config",
+          "accept_dispute_offer": "#/$defs/PayPal_accept_dispute_offer_Config",
+          "acknowledge_dispute_return": "#/$defs/PayPal_acknowledge_dispute_return_Config",
+          "activate_plan": "#/$defs/PayPal_activate_plan_Config",
+          "activate_recurring_invoice": "#/$defs/PayPal_activate_recurring_invoice_Config",
+          "activate_subscription": "#/$defs/PayPal_activate_subscription_Config",
+          "add_order_tracking": "#/$defs/PayPal_add_order_tracking_Config",
+          "appeal_dispute": "#/$defs/PayPal_appeal_dispute_Config",
+          "authorize_order": "#/$defs/PayPal_authorize_order_Config",
+          "cancel_invoice_reminders": "#/$defs/PayPal_cancel_invoice_reminders_Config",
+          "cancel_payout_item": "#/$defs/PayPal_cancel_payout_item_Config",
+          "cancel_recurring_invoice": "#/$defs/PayPal_cancel_recurring_invoice_Config",
+          "cancel_sent_invoice": "#/$defs/PayPal_cancel_sent_invoice_Config",
+          "cancel_subscription": "#/$defs/PayPal_cancel_subscription_Config",
+          "capture_authorization": "#/$defs/PayPal_capture_authorization_Config",
+          "capture_order": "#/$defs/PayPal_capture_order_Config",
+          "capture_subscription_payment": "#/$defs/PayPal_capture_subscription_payment_Config",
+          "confirm_order_payment_source": "#/$defs/PayPal_confirm_order_payment_source_Config",
+          "create_batch_payout": "#/$defs/PayPal_create_batch_payout_Config",
+          "create_draft_invoice": "#/$defs/PayPal_create_draft_invoice_Config",
+          "create_invoice_conditional_rule": "#/$defs/PayPal_create_invoice_conditional_rule_Config",
+          "create_invoice_template": "#/$defs/PayPal_create_invoice_template_Config",
+          "create_order": "#/$defs/PayPal_create_order_Config",
+          "create_plan": "#/$defs/PayPal_create_plan_Config",
+          "create_product": "#/$defs/PayPal_create_product_Config",
+          "create_recurring_invoice": "#/$defs/PayPal_create_recurring_invoice_Config",
+          "create_subscription": "#/$defs/PayPal_create_subscription_Config",
+          "create_webhook": "#/$defs/PayPal_create_webhook_Config",
+          "create_webhook_lookup": "#/$defs/PayPal_create_webhook_lookup_Config",
+          "deactivate_plan": "#/$defs/PayPal_deactivate_plan_Config",
+          "delete_invoice": "#/$defs/PayPal_delete_invoice_Config",
+          "delete_invoice_conditional_rule": "#/$defs/PayPal_delete_invoice_conditional_rule_Config",
+          "delete_invoice_payment": "#/$defs/PayPal_delete_invoice_payment_Config",
+          "delete_invoice_refund": "#/$defs/PayPal_delete_invoice_refund_Config",
+          "delete_invoice_template": "#/$defs/PayPal_delete_invoice_template_Config",
+          "delete_recurring_invoice": "#/$defs/PayPal_delete_recurring_invoice_Config",
+          "delete_webhook": "#/$defs/PayPal_delete_webhook_Config",
+          "delete_webhook_lookup": "#/$defs/PayPal_delete_webhook_lookup_Config",
+          "deny_dispute_offer": "#/$defs/PayPal_deny_dispute_offer_Config",
+          "escalate_dispute": "#/$defs/PayPal_escalate_dispute_Config",
+          "find_eligible_payment_methods": "#/$defs/PayPal_find_eligible_payment_methods_Config",
+          "generate_invoice_number": "#/$defs/PayPal_generate_invoice_number_Config",
+          "generate_invoice_qr_code": "#/$defs/PayPal_generate_invoice_qr_code_Config",
+          "get_authorization": "#/$defs/PayPal_get_authorization_Config",
+          "get_auto_reminder": "#/$defs/PayPal_get_auto_reminder_Config",
+          "get_balance_net_summary": "#/$defs/PayPal_get_balance_net_summary_Config",
+          "get_capture": "#/$defs/PayPal_get_capture_Config",
+          "get_daily_summary": "#/$defs/PayPal_get_daily_summary_Config",
+          "get_dispute": "#/$defs/PayPal_get_dispute_Config",
+          "get_invoice": "#/$defs/PayPal_get_invoice_Config",
+          "get_invoice_conditional_rule": "#/$defs/PayPal_get_invoice_conditional_rule_Config",
+          "get_invoice_template": "#/$defs/PayPal_get_invoice_template_Config",
+          "get_order": "#/$defs/PayPal_get_order_Config",
+          "get_payout_batch": "#/$defs/PayPal_get_payout_batch_Config",
+          "get_payout_item": "#/$defs/PayPal_get_payout_item_Config",
+          "get_plan": "#/$defs/PayPal_get_plan_Config",
+          "get_product": "#/$defs/PayPal_get_product_Config",
+          "get_recurring_invoice": "#/$defs/PayPal_get_recurring_invoice_Config",
+          "get_refund": "#/$defs/PayPal_get_refund_Config",
+          "get_subscription": "#/$defs/PayPal_get_subscription_Config",
+          "get_webhook": "#/$defs/PayPal_get_webhook_Config",
+          "get_webhook_event": "#/$defs/PayPal_get_webhook_event_Config",
+          "get_webhook_lookup": "#/$defs/PayPal_get_webhook_lookup_Config",
+          "list_auto_reminders": "#/$defs/PayPal_list_auto_reminders_Config",
+          "list_balances": "#/$defs/PayPal_list_balances_Config",
+          "list_disputes": "#/$defs/PayPal_list_disputes_Config",
+          "list_invoice_conditional_rules": "#/$defs/PayPal_list_invoice_conditional_rules_Config",
+          "list_invoice_templates": "#/$defs/PayPal_list_invoice_templates_Config",
+          "list_invoices": "#/$defs/PayPal_list_invoices_Config",
+          "list_plans": "#/$defs/PayPal_list_plans_Config",
+          "list_products": "#/$defs/PayPal_list_products_Config",
+          "list_subscription_transactions": "#/$defs/PayPal_list_subscription_transactions_Config",
+          "list_subscriptions": "#/$defs/PayPal_list_subscriptions_Config",
+          "list_transactions": "#/$defs/PayPal_list_transactions_Config",
+          "list_webhook_event_subscriptions": "#/$defs/PayPal_list_webhook_event_subscriptions_Config",
+          "list_webhook_event_types": "#/$defs/PayPal_list_webhook_event_types_Config",
+          "list_webhook_events": "#/$defs/PayPal_list_webhook_events_Config",
+          "list_webhook_lookups": "#/$defs/PayPal_list_webhook_lookups_Config",
+          "list_webhooks": "#/$defs/PayPal_list_webhooks_Config",
+          "make_dispute_offer": "#/$defs/PayPal_make_dispute_offer_Config",
+          "on_event": "#/$defs/PayPalOnEventConfig",
+          "provide_dispute_evidence": "#/$defs/PayPal_provide_dispute_evidence_Config",
+          "provide_dispute_supporting_info": "#/$defs/PayPal_provide_dispute_supporting_info_Config",
+          "reauthorize_payment": "#/$defs/PayPal_reauthorize_payment_Config",
+          "record_invoice_payment": "#/$defs/PayPal_record_invoice_payment_Config",
+          "record_invoice_refund": "#/$defs/PayPal_record_invoice_refund_Config",
+          "refund_capture": "#/$defs/PayPal_refund_capture_Config",
+          "remind_invoice": "#/$defs/PayPal_remind_invoice_Config",
+          "resend_webhook_event": "#/$defs/PayPal_resend_webhook_event_Config",
+          "resume_auto_reminder": "#/$defs/PayPal_resume_auto_reminder_Config",
+          "revise_subscription": "#/$defs/PayPal_revise_subscription_Config",
+          "search_invoices": "#/$defs/PayPal_search_invoices_Config",
+          "search_recurring_invoices": "#/$defs/PayPal_search_recurring_invoices_Config",
+          "send_dispute_message": "#/$defs/PayPal_send_dispute_message_Config",
+          "send_invoice": "#/$defs/PayPal_send_invoice_Config",
+          "setup_auto_reminders": "#/$defs/PayPal_setup_auto_reminders_Config",
+          "simulate_webhook_event": "#/$defs/PayPal_simulate_webhook_event_Config",
+          "suspend_auto_reminder": "#/$defs/PayPal_suspend_auto_reminder_Config",
+          "suspend_subscription": "#/$defs/PayPal_suspend_subscription_Config",
+          "update_auto_reminder": "#/$defs/PayPal_update_auto_reminder_Config",
+          "update_dispute": "#/$defs/PayPal_update_dispute_Config",
+          "update_invoice": "#/$defs/PayPal_update_invoice_Config",
+          "update_invoice_conditional_rule": "#/$defs/PayPal_update_invoice_conditional_rule_Config",
+          "update_invoice_template": "#/$defs/PayPal_update_invoice_template_Config",
+          "update_order": "#/$defs/PayPal_update_order_Config",
+          "update_order_tracking": "#/$defs/PayPal_update_order_tracking_Config",
+          "update_plan": "#/$defs/PayPal_update_plan_Config",
+          "update_plan_pricing": "#/$defs/PayPal_update_plan_pricing_Config",
+          "update_product": "#/$defs/PayPal_update_product_Config",
+          "update_recurring_invoice": "#/$defs/PayPal_update_recurring_invoice_Config",
+          "update_subscription": "#/$defs/PayPal_update_subscription_Config",
+          "update_webhook": "#/$defs/PayPal_update_webhook_Config",
+          "verify_webhook_signature": "#/$defs/PayPal_verify_webhook_signature_Config",
+          "void_authorization": "#/$defs/PayPal_void_authorization_Config"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PayPal_create_order_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_order_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_update_order_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_confirm_order_payment_source_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_authorize_order_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_capture_order_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_add_order_tracking_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_update_order_tracking_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_list_products_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_create_product_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_product_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_update_product_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_list_plans_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_create_plan_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_plan_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_update_plan_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_activate_plan_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_deactivate_plan_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_update_plan_pricing_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_list_subscriptions_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_create_subscription_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_subscription_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_update_subscription_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_revise_subscription_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_suspend_subscription_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_cancel_subscription_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_activate_subscription_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_capture_subscription_payment_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_list_subscription_transactions_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_list_invoices_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_create_draft_invoice_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_send_invoice_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_remind_invoice_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_cancel_sent_invoice_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_record_invoice_payment_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_delete_invoice_payment_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_record_invoice_refund_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_delete_invoice_refund_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_generate_invoice_qr_code_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_generate_invoice_number_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_invoice_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_delete_invoice_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_update_invoice_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_cancel_invoice_reminders_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_search_invoices_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_list_invoice_templates_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_create_invoice_template_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_invoice_template_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_delete_invoice_template_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_update_invoice_template_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_invoice_conditional_rule_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_delete_invoice_conditional_rule_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_update_invoice_conditional_rule_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_list_invoice_conditional_rules_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_create_invoice_conditional_rule_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_create_recurring_invoice_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_recurring_invoice_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_delete_recurring_invoice_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_update_recurring_invoice_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_activate_recurring_invoice_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_cancel_recurring_invoice_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_search_recurring_invoices_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_setup_auto_reminders_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_list_auto_reminders_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_auto_reminder_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_update_auto_reminder_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_suspend_auto_reminder_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_resume_auto_reminder_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_authorization_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_capture_authorization_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_reauthorize_payment_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_void_authorization_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_capture_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_refund_capture_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_find_eligible_payment_methods_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_refund_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_create_batch_payout_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_payout_batch_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_payout_item_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_cancel_payout_item_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_list_transactions_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_list_balances_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_balance_net_summary_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_daily_summary_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_list_webhooks_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_create_webhook_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_webhook_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_update_webhook_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_delete_webhook_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_list_webhook_event_subscriptions_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_list_webhook_lookups_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_create_webhook_lookup_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_webhook_lookup_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_delete_webhook_lookup_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_verify_webhook_signature_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_list_webhook_event_types_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_list_webhook_events_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_webhook_event_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_resend_webhook_event_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_simulate_webhook_event_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_list_disputes_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_get_dispute_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_update_dispute_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_provide_dispute_evidence_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_appeal_dispute_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_accept_dispute_claim_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_escalate_dispute_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_send_dispute_message_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_make_dispute_offer_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_accept_dispute_offer_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_deny_dispute_offer_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_acknowledge_dispute_return_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPal_provide_dispute_supporting_info_Config"
+        },
+        {
+          "$ref": "#/$defs/PayPalOnEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PayPalClientCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Paypal Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List PayPal products",
+    "Find recent PayPal transactions",
+    "Review disputes",
+    "Create a draft invoice"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
