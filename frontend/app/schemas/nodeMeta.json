@@ -957,6 +957,9 @@
     "automation-predictleads": {
       "agentToolProvider": true
     },
+    "automation-pulsetic": {
+      "agentToolProvider": true
+    },
     "automation-qdrant": {
       "agentToolProvider": true
     },

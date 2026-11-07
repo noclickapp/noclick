@@ -88,6 +88,7 @@ const AUTO_SELECT_TYPES: ReadonlySet<string> = new Set([
     'automation-elevenlabs',
     'automation-cloudflare',
     'automation-cloudzero',
+    'automation-pulsetic',
     'automation-google-analytics',
     'automation-google-ads',
     'automation-google-business-profile',

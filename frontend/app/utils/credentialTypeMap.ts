@@ -217,6 +217,9 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'CloudflareAPITokenCredential': 'cloudflare_api_token',
     'CloudflareAPIKeyCredential': 'cloudflare_api_key',
     'BitriseAPITokenCredential': 'bitrise_api_token',
+    // Pulsetic raw Authorization API key
+    'PulseticAPIKeyCredential': 'pulsetic_api_key',
+    'Pulsetic API Key': 'pulsetic_api_key',
 
     // HubSpot
     'HubSpotOAuthCredential': 'hubspot_oauth',
