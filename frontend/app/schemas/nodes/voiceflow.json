@@ -1,0 +1,562 @@
+{
+  "$defs": {
+    "DeleteDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "title": "Document",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "document_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_document",
+          "default": "delete_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Knowledge Base",
+          "x-display-name": "Delete Selected Knowledge Document",
+          "x-is-trigger": false
+        },
+        "confirm_delete": {
+          "const": "DELETE_SELECTED_DOCUMENT",
+          "description": "Select only an owned disposable document. Deletion removes a retrieval source and cannot be undone by this node.",
+          "title": "Confirm Delete",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id",
+        "confirm_delete"
+      ],
+      "title": "DeleteDocument",
+      "type": "object"
+    },
+    "GetAgent": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_agent_metadata",
+          "default": "get_agent_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agent",
+          "x-display-name": "Get Agent Workflow Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetAgent",
+      "type": "object"
+    },
+    "GetDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "title": "Document",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "document_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_document",
+          "default": "get_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Knowledge Base",
+          "x-display-name": "Get Document Metadata and Status",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "GetDocument",
+      "type": "object"
+    },
+    "GetEnvironment": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_environment",
+          "default": "get_environment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "Get Environment Metadata",
+          "x-is-trigger": false
+        },
+        "environment_alias": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Metadata target only. Knowledge operations retain the credential's environment.",
+          "title": "Environment",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "environment_alias",
+            "searchable": true
+          }
+        }
+      },
+      "title": "GetEnvironment",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Project Metadata",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default: credential's project. Other selections must belong to its workspace; knowledge operations always retain the credential's project.",
+          "title": "Project",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true
+          }
+        }
+      },
+      "title": "GetProject",
+      "type": "object"
+    },
+    "GetWorkspace": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_workspace",
+          "default": "get_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "Get Connected Workspace Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetWorkspace",
+      "type": "object"
+    },
+    "ListDocuments": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "The provider returns its whole collection; this is a local output slice.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Local Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use this operation's next_page_token with the same credential, query and unchanged collection.",
+          "title": "Local Continuation"
+        },
+        "search": {
+          "default": "",
+          "description": "Local name filter over the bounded full collection.",
+          "maxLength": 100,
+          "title": "Name Contains",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Knowledge Base",
+          "x-display-name": "List Knowledge Document Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListDocuments",
+      "type": "object"
+    },
+    "ListEnvironments": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "The provider returns its whole collection; this is a local output slice.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Local Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use this operation's next_page_token with the same credential, query and unchanged collection.",
+          "title": "Local Continuation"
+        },
+        "search": {
+          "default": "",
+          "description": "Local name filter over the bounded full collection.",
+          "maxLength": 100,
+          "title": "Name Contains",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_environments",
+          "default": "list_environments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "List Project Environment Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListEnvironments",
+      "type": "object"
+    },
+    "ListProjects": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "The provider returns its whole collection; this is a local output slice.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Local Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use this operation's next_page_token with the same credential, query and unchanged collection.",
+          "title": "Local Continuation"
+        },
+        "search": {
+          "default": "",
+          "description": "Local name filter over the bounded full collection.",
+          "maxLength": 100,
+          "title": "Name Contains",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Workspace Project Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "ListWorkspaces": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "The provider returns its whole collection; this is a local output slice.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Local Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use this operation's next_page_token with the same credential, query and unchanged collection.",
+          "title": "Local Continuation"
+        },
+        "search": {
+          "default": "",
+          "description": "Local name filter over the bounded full collection.",
+          "maxLength": 100,
+          "title": "Name Contains",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "List Accessible Workspace Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListWorkspaces",
+      "type": "object"
+    },
+    "QueryKnowledgeBase": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "query_knowledge_base",
+          "default": "query_knowledge_base",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Knowledge Base",
+          "x-display-name": "Retrieve Knowledge Chunks",
+          "x-is-trigger": false
+        },
+        "question": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Retrieval Question",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "version": {
+          "default": "draft",
+          "enum": [
+            "draft",
+            "published"
+          ],
+          "title": "Knowledge Version",
+          "type": "string"
+        },
+        "chunk_limit": {
+          "default": 5,
+          "description": "Local bound. Sends synthesis:false; no model settings or answer generation.",
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Maximum Chunks",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "question"
+      ],
+      "title": "QueryKnowledgeBase",
+      "type": "object"
+    },
+    "UpdateDocumentMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "title": "Document",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "document_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_document_metadata",
+          "default": "update_document_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Knowledge Base",
+          "x-display-name": "Update Document Metadata Tags",
+          "x-is-trigger": false
+        },
+        "metadata_json": {
+          "description": "JSON array of {\"key\":\"topic\",\"values\":[\"owned-fixture\"]}. Replaces document metadata; no text-replacement contract is assumed.",
+          "maxLength": 12000,
+          "title": "Metadata Tags",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "document_id",
+        "metadata_json"
+      ],
+      "title": "UpdateDocumentMetadata",
+      "type": "object"
+    },
+    "VoiceflowPATCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "voiceflow_pat",
+          "default": "voiceflow_pat",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "personal_access_token": {
+          "maxLength": 4096,
+          "minLength": 12,
+          "title": "Personal Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "workspace_id": {
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "project_id": {
+          "description": "Find the existing project ID under Settings > General > Metadata.",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "environment_alias": {
+          "description": "An existing environment alias such as main. No environment is created or published.",
+          "title": "Knowledge Environment Alias",
+          "type": "string"
+        }
+      },
+      "required": [
+        "personal_access_token",
+        "workspace_id",
+        "project_id",
+        "environment_alias"
+      ],
+      "title": "Voiceflow Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "Create a personal access token under Voiceflow Settings > Access tokens. Supply its existing workspace/project IDs and environment alias. Current vfp_ tokens act with your account's access across its workspaces and expire; rotate manually before expiry. This node binds knowledge operations to the supplied project/environment and verifies current returned metadata. A returned project name identifies that project, not a human principal or universal write entitlement.",
+      "x-credential-url": "https://www.voiceflow.com/docs/api-reference/authentication"
+    }
+  },
+  "properties": {
+    "config": {
+      "discriminator": {
+        "mapping": {
+          "delete_document": "#/$defs/DeleteDocument",
+          "get_agent_metadata": "#/$defs/GetAgent",
+          "get_document": "#/$defs/GetDocument",
+          "get_environment": "#/$defs/GetEnvironment",
+          "get_project": "#/$defs/GetProject",
+          "get_workspace": "#/$defs/GetWorkspace",
+          "list_documents": "#/$defs/ListDocuments",
+          "list_environments": "#/$defs/ListEnvironments",
+          "list_projects": "#/$defs/ListProjects",
+          "list_workspaces": "#/$defs/ListWorkspaces",
+          "query_knowledge_base": "#/$defs/QueryKnowledgeBase",
+          "update_document_metadata": "#/$defs/UpdateDocumentMetadata"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListWorkspaces"
+        },
+        {
+          "$ref": "#/$defs/GetWorkspace"
+        },
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/ListEnvironments"
+        },
+        {
+          "$ref": "#/$defs/GetEnvironment"
+        },
+        {
+          "$ref": "#/$defs/GetAgent"
+        },
+        {
+          "$ref": "#/$defs/ListDocuments"
+        },
+        {
+          "$ref": "#/$defs/GetDocument"
+        },
+        {
+          "$ref": "#/$defs/UpdateDocumentMetadata"
+        },
+        {
+          "$ref": "#/$defs/DeleteDocument"
+        },
+        {
+          "$ref": "#/$defs/QueryKnowledgeBase"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VoiceflowPATCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Voiceflow Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
