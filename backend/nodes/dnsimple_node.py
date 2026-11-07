@@ -219,23 +219,27 @@ class DNSimpleNode(WorkflowNode):
     @classmethod
     def get_config_model(cls): return DNSimpleNodeConfig
     @classmethod
-    def parse_config(cls, data):
-        if data.get("credentials") is not None:
-            try: _stored(data["credentials"])
+    def parse_config(cls, config_data):
+        if config_data.get("credentials") is not None:
+            try: _stored(config_data["credentials"])
             except ValueError as error: raise ConfigValidationError(str(error)) from None
-        return super().parse_config(data)
+        return super().parse_config(config_data)
     @classmethod
-    async def freshen_credential(cls, credential_data, **kwargs):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        return await cls._resolve_current_credential(
+            credential_data, pool=pool, user_id=user_id, credential_id=credential_id
+        )
+    @classmethod
+    async def _resolve_current_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=None):
         initial = _stored(credential_data)
-        if not kwargs.get("credential_id"):
+        if not credential_id:
             return credential_data
 
         async def load():
             from nodes.core.run_op import resolve_operation_credential
 
             return await resolve_operation_credential(
-                kwargs["credential_id"], kwargs.get("user_id"), kwargs.get("pool"),
-                kwargs.get("organization_id"), kwargs.get("workflow_id"),
+                credential_id, user_id, pool, organization_id, workflow_id,
             )
 
         try:
@@ -285,5 +289,5 @@ class DNSimpleNode(WorkflowNode):
     async def execute(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         raw = self.node_data.get("credentials") if self.node_data.get("credentials") is not None else self.config.credentials
         initial = _credential(raw)
-        credential = await self.freshen_credential(initial.model_dump(mode="json"), pool=self.node_data.get("_approval_pool"), user_id=self.user_id, credential_id=self.node_data["credential_id"], workflow_id=self.workflow_id, organization_id=self.organization_id) if self.node_data.get("credential_id") else initial
+        credential = await self._resolve_current_credential(initial.model_dump(mode="json"), pool=self.node_data.get("_approval_pool"), user_id=self.user_id, credential_id=self.node_data["credential_id"], workflow_id=self.workflow_id, organization_id=self.organization_id) if self.node_data.get("credential_id") else initial
         return await self._dispatch(credential, self.config.config)
