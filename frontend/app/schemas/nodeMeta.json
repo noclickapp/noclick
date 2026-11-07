@@ -264,6 +264,15 @@
         "on_mention"
       ]
     },
+    "automation-dnsimple": {
+      "agentToolProvider": true
+    },
+    "automation-docspell": {
+      "agentToolProvider": true
+    },
+    "automation-doppler": {
+      "agentToolProvider": true
+    },
     "automation-docspell": {
       "agentToolProvider": true
     },

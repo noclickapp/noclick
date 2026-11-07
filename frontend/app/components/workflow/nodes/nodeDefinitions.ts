@@ -120,6 +120,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-phone', 'PhoneNode'],
     ['automation-twitter', 'TwitterNode'],
     ['automation-cloudflare', 'CloudflareNode'],
+    ['automation-dnsimple', 'DNSimpleNode'],
     ['automation-bitrise', 'BitriseNode'],
     ['automation-pulsetic', 'PulseticNode'],
     ['automation-stackitdns', 'STACKITDNSNode'],

@@ -90,6 +90,7 @@ from nodes.alarm_node import AlarmNode
 from nodes.filesystem_node import FilesystemNode
 from nodes.twitter_node import TwitterNode
 from nodes.cloudflare_node import CloudflareNode
+from nodes.dnsimple_node import DNSimpleNode
 from nodes.bitrise_node import BitriseNode
 from nodes.pulsetic_node import PulseticNode
 from nodes.stackitdns_node import STACKITDNSNode
@@ -431,6 +432,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-twilio': TwilioNode,
     'automation-twitter': TwitterNode,
     'automation-cloudflare': CloudflareNode,
+    'automation-dnsimple': DNSimpleNode,
     'automation-bitrise': BitriseNode,
     'automation-pulsetic': PulseticNode,
     'automation-stackitdns': STACKITDNSNode,
