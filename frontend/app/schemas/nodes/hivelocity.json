@@ -56,8 +56,8 @@
           "type": "integer",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
-            "field_name": "device_id"
+            "field_name": "device_id",
+            "auto_select_sole_option": true
           },
           "x-resource-type": "device_id"
         }

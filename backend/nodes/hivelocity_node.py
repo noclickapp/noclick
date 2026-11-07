@@ -236,7 +236,7 @@ class HivelocityDevicesConfig(_Config):
     operation: Literal["list_devices"] = _op("list_devices", "Read Protected Device Catalog Metadata")
 class HivelocityDeviceConfig(_Config):
     operation: Literal["get_device"] = _op("get_device", "Get Selected Device Metadata")
-    device_id: int = Field(..., ge=0, le=MAX_ID, title="Device in Current Protected Catalog", json_schema_extra={"x-resource-type": "device_id", "x-dynamic-options": {"field_name": "device_id", "allow_custom": True, "auto_select_sole_option": False}})
+    device_id: int = Field(..., ge=0, le=MAX_ID, title="Device in Current Protected Catalog", json_schema_extra={"x-resource-type": "device_id", "x-dynamic-options": {"field_name": "device_id", "allow_custom": True}})
     @field_validator("device_id", mode="before")
     @classmethod
     def device(cls, value): return _id(value)
