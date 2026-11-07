@@ -1,0 +1,719 @@
+{
+  "$defs": {
+    "ZenotiAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "zenoti_api_key",
+          "default": "zenoti_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "Organization API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Zenoti API Key",
+      "type": "object",
+      "x-credential-instructions": "Supply an existing organization-issued API key. Sent as Authorization: apikey KEY. Organization-wide key access is distinct from a role-bound user token. API enablement and write permission are not proved by a catalog read. No environment fallback or key creation.",
+      "x-credential-type": "api_key",
+      "x-credential-url": "https://docs.zenoti.com/docs/authentication"
+    },
+    "ZenotiAppointmentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One vendor page; continuation is verified only when page_info is returned.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "description": "Zenoti maximum 100. Missing page_info does not prove exhaustion.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "center_id": {
+          "title": "Center",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "center_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "center_id",
+          "x-resource-type": "zenoti_center"
+        },
+        "guest_id": {
+          "title": "Guest",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "center_id",
+            "field_name": "guest_id",
+            "searchable": true
+          },
+          "x-resource-id-path": "guest_id",
+          "x-resource-type": "zenoti_guest"
+        },
+        "operation": {
+          "const": "list_guest_appointments",
+          "default": "list_guest_appointments",
+          "title": "List Guest Appointment Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Appointments",
+          "x-display-name": "List Guest Appointment Metadata",
+          "x-is-trigger": false
+        },
+        "start_date": {
+          "description": "ISO date; local privacy window at most 31 days.",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "ISO date, on or after start date.",
+          "title": "End Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "center_id",
+        "guest_id",
+        "start_date",
+        "end_date"
+      ],
+      "title": "ZenotiAppointmentsConfig",
+      "type": "object"
+    },
+    "ZenotiBearerTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "zenoti_bearer_token",
+          "default": "zenoti_bearer_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Existing User Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "description": "Timezone-aware ISO 8601 expiry supplied with the issued token; no assumed duration or renewal.",
+          "title": "Actual Token Expiry",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "expires_at"
+      ],
+      "title": "Zenoti User Token",
+      "type": "object",
+      "x-credential-instructions": "Supply an existing role-bound Zenoti user token and its actual expiry. Sent as Authorization: bearer TOKEN. Employee permissions, password changes, departures and token expiry can restrict access. This node does not obtain or refresh tokens and does not prove a user identity from public catalog metadata.",
+      "x-credential-type": "api_key",
+      "x-credential-url": "https://docs.zenoti.com/docs/authentication"
+    },
+    "ZenotiCheckConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_api_access",
+          "default": "check_api_access",
+          "title": "Check API Reachability",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connection",
+          "x-display-name": "Check API Reachability",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ZenotiCheckConfig",
+      "type": "object"
+    },
+    "ZenotiGetCenterConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "center_id": {
+          "title": "Center",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "center_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "center_id",
+          "x-resource-type": "zenoti_center"
+        },
+        "operation": {
+          "const": "get_center",
+          "default": "get_center",
+          "title": "Get Center Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Centers",
+          "x-display-name": "Get Center Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "center_id"
+      ],
+      "title": "ZenotiGetCenterConfig",
+      "type": "object"
+    },
+    "ZenotiGetEmployeeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "center_id": {
+          "title": "Center",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "center_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "center_id",
+          "x-resource-type": "zenoti_center"
+        },
+        "operation": {
+          "const": "get_center_employee",
+          "default": "get_center_employee",
+          "title": "Find Center Employee Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "Find Center Employee Metadata",
+          "x-is-trigger": false
+        },
+        "employee_id": {
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "center_id",
+            "field_name": "employee_id",
+            "searchable": true
+          },
+          "x-resource-id-path": "employee_id",
+          "x-resource-type": "zenoti_employee"
+        }
+      },
+      "required": [
+        "center_id",
+        "employee_id"
+      ],
+      "title": "ZenotiGetEmployeeConfig",
+      "type": "object"
+    },
+    "ZenotiGetGuestConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "center_id": {
+          "title": "Center",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "center_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "center_id",
+          "x-resource-type": "zenoti_center"
+        },
+        "guest_id": {
+          "title": "Guest",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "center_id",
+            "field_name": "guest_id",
+            "searchable": true
+          },
+          "x-resource-id-path": "guest_id",
+          "x-resource-type": "zenoti_guest"
+        },
+        "operation": {
+          "const": "get_guest",
+          "default": "get_guest",
+          "title": "Get Guest CRM Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Guests",
+          "x-display-name": "Get Guest CRM Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "center_id",
+        "guest_id"
+      ],
+      "title": "ZenotiGetGuestConfig",
+      "type": "object"
+    },
+    "ZenotiGetServiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "center_id": {
+          "title": "Center",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "center_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "center_id",
+          "x-resource-type": "zenoti_center"
+        },
+        "service_id": {
+          "title": "Service",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "center_id",
+            "field_name": "service_id",
+            "searchable": true
+          },
+          "x-resource-id-path": "service_id",
+          "x-resource-type": "zenoti_service"
+        },
+        "operation": {
+          "const": "get_service",
+          "default": "get_service",
+          "title": "Get Service Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Services",
+          "x-display-name": "Get Service Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "center_id",
+        "service_id"
+      ],
+      "title": "ZenotiGetServiceConfig",
+      "type": "object"
+    },
+    "ZenotiGuestSettingsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_guest_configuration",
+          "default": "get_guest_configuration",
+          "title": "Get Guest Configuration Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Get Guest Configuration Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ZenotiGuestSettingsConfig",
+      "type": "object"
+    },
+    "ZenotiListCentersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One vendor page; continuation is verified only when page_info is returned.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "description": "Zenoti maximum 100. Missing page_info does not prove exhaustion.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_centers",
+          "default": "list_centers",
+          "title": "List Centers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Centers",
+          "x-display-name": "List Centers",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ZenotiListCentersConfig",
+      "type": "object"
+    },
+    "ZenotiListEmployeesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "center_id": {
+          "title": "Center",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "center_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "center_id",
+          "x-resource-type": "zenoti_center"
+        },
+        "page": {
+          "default": 1,
+          "description": "One vendor page; continuation is verified only when page_info is returned.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "description": "Zenoti maximum 100. Missing page_info does not prove exhaustion.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_center_employees",
+          "default": "list_center_employees",
+          "title": "List Center Employee Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "List Center Employee Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "center_id"
+      ],
+      "title": "ZenotiListEmployeesConfig",
+      "type": "object"
+    },
+    "ZenotiListGuestsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "center_id": {
+          "title": "Center",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "center_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "center_id",
+          "x-resource-type": "zenoti_center"
+        },
+        "page": {
+          "default": 1,
+          "description": "One vendor page; continuation is verified only when page_info is returned.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "description": "Zenoti maximum 100. Missing page_info does not prove exhaustion.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_center_guests",
+          "default": "list_center_guests",
+          "title": "List Center Guest Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Guests",
+          "x-display-name": "List Center Guest Metadata",
+          "x-is-trigger": false
+        },
+        "last_updated": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO date. Guest names and contact details are excluded from output.",
+          "title": "Last Updated"
+        }
+      },
+      "required": [
+        "center_id"
+      ],
+      "title": "ZenotiListGuestsConfig",
+      "type": "object"
+    },
+    "ZenotiListServicesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "center_id": {
+          "title": "Center",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "center_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "center_id",
+          "x-resource-type": "zenoti_center"
+        },
+        "page": {
+          "default": 1,
+          "description": "One vendor page; continuation is verified only when page_info is returned.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "description": "Zenoti maximum 100. Missing page_info does not prove exhaustion.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_center_services",
+          "default": "list_center_services",
+          "title": "List Center Service Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Services",
+          "x-display-name": "List Center Service Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "center_id"
+      ],
+      "title": "ZenotiListServicesConfig",
+      "type": "object"
+    },
+    "ZenotiOrganizationConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_organization_metadata",
+          "default": "get_organization_metadata",
+          "title": "Get Organization Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Get Organization Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ZenotiOrganizationConfig",
+      "type": "object"
+    },
+    "ZenotiUpdateGuestConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "center_id": {
+          "title": "Center",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "center_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-id-path": "center_id",
+          "x-resource-type": "zenoti_center"
+        },
+        "guest_id": {
+          "title": "Guest",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "center_id",
+            "field_name": "guest_id",
+            "searchable": true
+          },
+          "x-resource-id-path": "guest_id",
+          "x-resource-type": "zenoti_guest"
+        },
+        "operation": {
+          "const": "update_guest_crm_metadata",
+          "default": "update_guest_crm_metadata",
+          "title": "Update Guest CRM Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Guests",
+          "x-display-name": "Update Guest CRM Metadata",
+          "x-is-trigger": false
+        },
+        "guest_code": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional replacement CRM code. Blank omits; it does not clear.",
+          "title": "Guest Code"
+        },
+        "preferred_service_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional existing service in the selected center. No booking or price change.",
+          "title": "Preferred Service",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "center_id",
+            "field_name": "service_id",
+            "searchable": true
+          },
+          "x-resource-id-path": "preferred_service_id",
+          "x-resource-type": "zenoti_service"
+        },
+        "confirm_update": {
+          "default": false,
+          "description": "Confirm a full-profile read-modify-write. Unchanged profile fields are preserved; concurrent changes can race. Notification behavior remains unverified.",
+          "title": "Confirm Update",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "center_id",
+        "guest_id"
+      ],
+      "title": "ZenotiUpdateGuestConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_api_access": "#/$defs/ZenotiCheckConfig",
+          "get_center": "#/$defs/ZenotiGetCenterConfig",
+          "get_center_employee": "#/$defs/ZenotiGetEmployeeConfig",
+          "get_guest": "#/$defs/ZenotiGetGuestConfig",
+          "get_guest_configuration": "#/$defs/ZenotiGuestSettingsConfig",
+          "get_organization_metadata": "#/$defs/ZenotiOrganizationConfig",
+          "get_service": "#/$defs/ZenotiGetServiceConfig",
+          "list_center_employees": "#/$defs/ZenotiListEmployeesConfig",
+          "list_center_guests": "#/$defs/ZenotiListGuestsConfig",
+          "list_center_services": "#/$defs/ZenotiListServicesConfig",
+          "list_centers": "#/$defs/ZenotiListCentersConfig",
+          "list_guest_appointments": "#/$defs/ZenotiAppointmentsConfig",
+          "update_guest_crm_metadata": "#/$defs/ZenotiUpdateGuestConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ZenotiCheckConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenotiListCentersConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenotiGetCenterConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenotiOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenotiGuestSettingsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenotiListServicesConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenotiGetServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenotiListEmployeesConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenotiGetEmployeeConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenotiListGuestsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenotiGetGuestConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenotiAppointmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZenotiUpdateGuestConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ZenotiAPIKeyCredential"
+        },
+        {
+          "$ref": "#/$defs/ZenotiBearerTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Zenoti Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List service metadata in a selected Zenoti center",
+    "Read scoped guest CRM and appointment metadata",
+    "Update an owned guest CRM code while preserving the full profile"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,72 @@
+{
+  "body": {
+    "id": "0b1c4a20-02f8-4e91-9adf-c0e9480b5938",
+    "offline_id": null,
+    "code": "ELU23722",
+    "center_id": "d1fb6a44-0d35-4992-aa96-24b58cd79369",
+    "preferred_service_id": "",
+    "is_online_booking_blocked": false,
+    "center_name": "Eluru",
+    "created_date": "2022-10-03T10:23:55",
+    "can_edit_personal_info": true,
+    "is_virtual_guest": false,
+    "is_guest_custom_form_filled": false,
+    "personal_info": {
+      "user_name": "vasily@ignatenko.com",
+      "first_name": "vasily",
+      "last_name": "ignatenko",
+      "middle_name": "",
+      "email": "vasily@ignatenko.com",
+      "mobile_phone": {
+        "country_code": 225,
+        "phone_code": 0,
+        "number": "120126659"
+      },
+      "work_phone": null,
+      "home_phone": null,
+      "gender": 1,
+      "date_of_birth": "2000-01-23T00:00:00",
+      "is_minor": false,
+      "nationality_id": -1,
+      "language_id": 2,
+      "anniversary_date": null,
+      "lock_guest_custom_data": false,
+      "pan": "",
+      "dob_incomplete_year": ""
+    },
+    "address_info": {
+      "address_1": "",
+      "address_2": "",
+      "city": "",
+      "country_id": 225,
+      "state_id": -1,
+      "state_other": "",
+      "zip_code": "12345"
+    },
+    "preferences": {
+      "receive_transactional_email": true,
+      "receive_transactional_sms": true,
+      "receive_marketing_email": true,
+      "receive_marketing_sms": true,
+      "recieve_lp_stmt": false,
+      "preferred_therapist": null,
+      "opt_in_for_loyalty_program": true,
+      "lp_enrollment_status": false,
+      "transactional_sms_optin": 1,
+      "transactional_email_optin": 1,
+      "marketing_sms_optin": 1,
+      "marketing_email_optin": 1,
+      "transactional_whatsapp_optin": 0,
+      "receive_transactional_whatsapp": false
+    },
+    "tags": null,
+    "referral": null,
+    "primary_employee": null,
+    "guest_passes": null,
+    "deposit_applicability": {
+      "is_deposit_applicable": false,
+      "deposit_type_applied": []
+    }
+  },
+  "source": "https://docs.zenoti.com/openapi/62a1f7e28e84bc001add6642"
+}
