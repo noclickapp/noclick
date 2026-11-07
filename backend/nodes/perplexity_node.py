@@ -685,7 +685,16 @@ def _background_compat(data: Dict[str, Any], model: Optional[str] = None) -> Dic
     citations = list(dict.fromkeys(result["url"] for result in search_results if result.get("url")))
     response = None
     if data["status"] == "completed" or text:
-        usage = data.get("usage") or {}
+        usage = dict(data.get("usage") or {})
+        if isinstance(usage.get("cost"), dict):
+            # Keep Agent's names and the legacy Sonar paths used by saved workflows.
+            # Copy the nested object so agent_response remains the native snapshot.
+            cost = dict(usage["cost"])
+            for native, legacy in (("input_cost", "input_tokens_cost"),
+                                   ("output_cost", "output_tokens_cost")):
+                if native in cost:
+                    cost[legacy] = cost[native]
+            usage["cost"] = cost
         response = {
             "id": data["id"], "object": "chat.completion",
             "created": data.get("created_at"), "model": model or data.get("model"),

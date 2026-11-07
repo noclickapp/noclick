@@ -244,6 +244,37 @@ class TestPerplexityChatMock:
             assert data["error_message"]
 
     @pytest.mark.asyncio
+    @pytest.mark.parametrize("operation", [
+        "create_async_completion", "get_async_completion", "list_async_completions",
+    ])
+    async def test_background_cost_aliases_from_provider_fixture(self, api_key_credentials, operation):
+        configs = {
+            "create_async_completion": PerplexityCreateAsyncCompletionConfig(prompt="Research"),
+            "get_async_completion": PerplexityGetAsyncCompletionConfig(request_id=AGENT_RESPONSE["id"]),
+            "list_async_completions": PerplexityListAsyncCompletionsConfig(request_ids=AGENT_RESPONSE["id"]),
+        }
+        node = create_perplexity_node(PerplexityNodeConfig(
+            config=configs[operation], credentials=api_key_credentials,
+        ))
+        node.workflow_id = None
+        snapshot = copy.deepcopy(AGENT_RESPONSE)
+        client = create_mock_client(200, snapshot)
+        with patch("nodes.perplexity_node.httpx.AsyncClient", return_value=client):
+            result = await node.execute({})
+        assert result["status"] == "success"
+        data = result["data"]
+        if operation == "list_async_completions":
+            data = data["requests"][0]
+        cost = data["response"]["usage"]["cost"]
+        native_cost = AGENT_RESPONSE["usage"]["cost"]
+        assert cost["input_tokens_cost"] == cost["input_cost"] == native_cost["input_cost"] == 0.01307
+        assert cost["output_tokens_cost"] == cost["output_cost"] == native_cost["output_cost"] == 0.02632
+        assert cost["total_cost"] == native_cost["total_cost"]
+        assert data["agent_response"]["usage"]["cost"] == native_cost
+        assert data["usage"]["cost"] == native_cost
+        assert snapshot == AGENT_RESPONSE  # No aliases added to the native response.
+
+    @pytest.mark.asyncio
     async def test_listing_explicit_ids_without_workflow(self, api_key_credentials):
         node = create_perplexity_node(PerplexityNodeConfig(
             config=PerplexityListAsyncCompletionsConfig(request_ids=AGENT_RESPONSE["id"]),
