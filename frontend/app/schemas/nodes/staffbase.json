@@ -1,0 +1,1258 @@
+{
+  "$defs": {
+    "CreateDraftPage": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "default": "en_US",
+          "description": "A Staffbase locale such as en_US.",
+          "title": "Locale",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 500,
+          "title": "Title",
+          "type": "string"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text or HTML Content",
+          "ui:widget": "textarea"
+        },
+        "space_id": {
+          "description": "An explicit existing space. Omitting it would target the All Employees space.",
+          "title": "Page Space ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_draft_page",
+          "default": "create_draft_page",
+          "description": "Sends published=false and an explicit existing space. Vendor access defaults still apply.",
+          "title": "Create Draft Page",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "title",
+        "space_id"
+      ],
+      "title": "CreateDraftPage",
+      "type": "object"
+    },
+    "CreateDraftPost": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "default": "en_US",
+          "description": "A Staffbase locale such as en_US.",
+          "title": "Locale",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 500,
+          "title": "Title",
+          "type": "string"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text or HTML Content",
+          "ui:widget": "textarea"
+        },
+        "channel_id": {
+          "title": "News Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "channel_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "staffbase_channel"
+        },
+        "operation": {
+          "const": "create_draft_post",
+          "default": "create_draft_post",
+          "description": "Does not supply publish dates or notification channels. No blanket silence guarantee.",
+          "title": "Create Draft News Post",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "teaser": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Teaser"
+        }
+      },
+      "required": [
+        "title",
+        "channel_id"
+      ],
+      "title": "CreateDraftPost",
+      "type": "object"
+    },
+    "CreateGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "default": "en_US",
+          "title": "Locale",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 500,
+          "title": "Group Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "description": "No membership or administrator IDs are supplied; vendor defaults and visibility still apply.",
+          "title": "Create Group Metadata",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateGroup",
+      "type": "object"
+    },
+    "CreateUser": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "department": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Department"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "description": "Uses InviteUser v2. Creation and invitation effects follow Staffbase; this is not a silent-user guarantee.",
+          "title": "Create Pending Reader User",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "maxLength": 254,
+          "title": "Email",
+          "type": "string"
+        },
+        "locale": {
+          "default": "en_US",
+          "title": "User Locale",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CreateUser",
+      "type": "object"
+    },
+    "DeleteDraftPage": {
+      "additionalProperties": false,
+      "properties": {
+        "space_id": {
+          "description": "An explicit existing space. Omitting it would target the All Employees space.",
+          "title": "Page Space ID",
+          "type": "string"
+        },
+        "page_id": {
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "space_id",
+            "field_name": "page_id",
+            "searchable": true
+          },
+          "x-resource-type": "staffbase_page"
+        },
+        "operation": {
+          "const": "delete_draft_page",
+          "default": "delete_draft_page",
+          "title": "Delete Draft Page",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "space_id",
+        "page_id"
+      ],
+      "title": "DeleteDraftPage",
+      "type": "object"
+    },
+    "DeleteDraftPost": {
+      "additionalProperties": false,
+      "properties": {
+        "channel_id": {
+          "title": "News Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "channel_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "staffbase_channel"
+        },
+        "post_id": {
+          "title": "News Post",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "channel_id",
+            "field_name": "post_id",
+            "searchable": true
+          },
+          "x-resource-type": "staffbase_post"
+        },
+        "operation": {
+          "const": "delete_draft_post",
+          "default": "delete_draft_post",
+          "description": "Staffbase may move a post to trash. Exact absence is checked; restoration and hard deletion are not promised.",
+          "title": "Delete Draft News Post",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "channel_id",
+        "post_id"
+      ],
+      "title": "DeleteDraftPost",
+      "type": "object"
+    },
+    "DeleteGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "group_id": {
+          "title": "Group",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "group_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "staffbase_group"
+        },
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "description": "Deletion may affect access through this group; no quiet or reversible deletion guarantee.",
+          "title": "Delete Group",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "DeleteGroup",
+      "type": "object"
+    },
+    "DeleteUser": {
+      "additionalProperties": false,
+      "properties": {
+        "user_id": {
+          "title": "User",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "user_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "staffbase_user"
+        },
+        "operation": {
+          "const": "delete_user",
+          "default": "delete_user",
+          "description": "Permanent user deletion cannot be restored. Native code refuses users whose role is not reader.",
+          "title": "Delete Reader User Permanently",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "DeleteUser",
+      "type": "object"
+    },
+    "GetChannel": {
+      "additionalProperties": false,
+      "properties": {
+        "channel_id": {
+          "title": "News Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "channel_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "staffbase_channel"
+        },
+        "operation": {
+          "const": "get_channel",
+          "default": "get_channel",
+          "title": "Get News Channel",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "channel_id"
+      ],
+      "title": "GetChannel",
+      "type": "object"
+    },
+    "GetGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "group_id": {
+          "title": "Group",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "group_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "staffbase_group"
+        },
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Get Group",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "GetGroup",
+      "type": "object"
+    },
+    "GetPage": {
+      "additionalProperties": false,
+      "properties": {
+        "space_id": {
+          "description": "An explicit existing space. Omitting it would target the All Employees space.",
+          "title": "Page Space ID",
+          "type": "string"
+        },
+        "page_id": {
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "space_id",
+            "field_name": "page_id",
+            "searchable": true
+          },
+          "x-resource-type": "staffbase_page"
+        },
+        "operation": {
+          "const": "get_page",
+          "default": "get_page",
+          "title": "Get Space Page",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "space_id",
+        "page_id"
+      ],
+      "title": "GetPage",
+      "type": "object"
+    },
+    "GetPost": {
+      "additionalProperties": false,
+      "properties": {
+        "channel_id": {
+          "title": "News Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "channel_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "staffbase_channel"
+        },
+        "post_id": {
+          "title": "News Post",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "channel_id",
+            "field_name": "post_id",
+            "searchable": true
+          },
+          "x-resource-type": "staffbase_post"
+        },
+        "operation": {
+          "const": "get_post",
+          "default": "get_post",
+          "title": "Get Channel Post",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "channel_id",
+        "post_id"
+      ],
+      "title": "GetPost",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "properties": {
+        "user_id": {
+          "title": "User",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "user_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "staffbase_user"
+        },
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Get User",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetUser",
+      "type": "object"
+    },
+    "ListChannels": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation"
+        },
+        "operation": {
+          "const": "list_channels",
+          "default": "list_channels",
+          "title": "List Manageable News Channels",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListChannels",
+      "type": "object"
+    },
+    "ListGroupMembers": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation"
+        },
+        "group_id": {
+          "title": "Group",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "group_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "staffbase_group"
+        },
+        "operation": {
+          "const": "list_group_members",
+          "default": "list_group_members",
+          "title": "List Group Members",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "ListGroupMembers",
+      "type": "object"
+    },
+    "ListGroups": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation"
+        },
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "List Groups",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListGroups",
+      "type": "object"
+    },
+    "ListPages": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation"
+        },
+        "space_id": {
+          "description": "An explicit existing space. Omitting it would target the All Employees space.",
+          "title": "Page Space ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_pages",
+          "default": "list_pages",
+          "title": "List Space Pages",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "DRAFT",
+                "PUBLISHED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publication Filter",
+          "enum": [
+            "DRAFT",
+            "PUBLISHED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "space_id"
+      ],
+      "title": "ListPages",
+      "type": "object"
+    },
+    "ListPosts": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation"
+        },
+        "channel_id": {
+          "title": "News Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "channel_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "staffbase_channel"
+        },
+        "operation": {
+          "const": "list_posts",
+          "default": "list_posts",
+          "title": "List Channel Posts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "channel_id"
+      ],
+      "title": "ListPosts",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List Users",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "StaffbaseApiTokenCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "staffbase_api_token",
+          "default": "staffbase_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_base_url": {
+          "description": "Copy the HTTPS root from Studio, for example https://exampleapp.staffbase.com/api. Private hosts and redirects are refused.",
+          "title": "Tenant API Root",
+          "type": "string"
+        },
+        "api_token": {
+          "description": "Paste the API token from Studio. It is already encoded and is sent once as Authorization: Basic token; omit the Basic prefix.",
+          "title": "Prepared API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_base_url",
+        "api_token"
+      ],
+      "title": "Staffbase Prepared API Token",
+      "type": "object",
+      "x-credential-url": "https://developers.staffbase.com/concepts/authentication/"
+    },
+    "UpdateDraftPage": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "default": "en_US",
+          "description": "A Staffbase locale such as en_US.",
+          "title": "Locale",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 500,
+          "title": "Title",
+          "type": "string"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text or HTML Content",
+          "ui:widget": "textarea"
+        },
+        "space_id": {
+          "description": "An explicit existing space. Omitting it would target the All Employees space.",
+          "title": "Page Space ID",
+          "type": "string"
+        },
+        "page_id": {
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "space_id",
+            "field_name": "page_id",
+            "searchable": true
+          },
+          "x-resource-type": "staffbase_page"
+        },
+        "operation": {
+          "const": "update_draft_page",
+          "default": "update_draft_page",
+          "description": "Requires current membership in this space's DRAFT-filtered list; preserves other text locales.",
+          "title": "Update Draft Page",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "title",
+        "space_id",
+        "page_id"
+      ],
+      "title": "UpdateDraftPage",
+      "type": "object"
+    },
+    "UpdateDraftPost": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "default": "en_US",
+          "description": "A Staffbase locale such as en_US.",
+          "title": "Locale",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 500,
+          "title": "Title",
+          "type": "string"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text or HTML Content",
+          "ui:widget": "textarea"
+        },
+        "channel_id": {
+          "title": "News Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "channel_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "staffbase_channel"
+        },
+        "post_id": {
+          "title": "News Post",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "channel_id",
+            "field_name": "post_id",
+            "searchable": true
+          },
+          "x-resource-type": "staffbase_post"
+        },
+        "operation": {
+          "const": "update_draft_post",
+          "default": "update_draft_post",
+          "description": "Requires explicit null planned/published dates; text-only localized content. Scheduled or unknown states are refused.",
+          "title": "Update Draft News Post",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "teaser": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Teaser"
+        }
+      },
+      "required": [
+        "title",
+        "channel_id",
+        "post_id"
+      ],
+      "title": "UpdateDraftPost",
+      "type": "object"
+    },
+    "UpdateGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "locale": {
+          "default": "en_US",
+          "title": "Locale",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 500,
+          "title": "Group Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "group_id": {
+          "title": "Group",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "group_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "staffbase_group"
+        },
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "title": "Update Group Name and Description",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "group_id"
+      ],
+      "title": "UpdateGroup",
+      "type": "object"
+    },
+    "UpdateUser": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "department": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Department"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "user_id": {
+          "title": "User",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "user_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "staffbase_user"
+        },
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Update User Profile",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "send_mail": {
+          "default": false,
+          "description": "True requests a signup email for a pending user. This has an outbound effect; delivery cannot be proven by readback.",
+          "title": "Send Signup Email",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "UpdateUser",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_draft_page": "#/$defs/CreateDraftPage",
+          "create_draft_post": "#/$defs/CreateDraftPost",
+          "create_group": "#/$defs/CreateGroup",
+          "create_user": "#/$defs/CreateUser",
+          "delete_draft_page": "#/$defs/DeleteDraftPage",
+          "delete_draft_post": "#/$defs/DeleteDraftPost",
+          "delete_group": "#/$defs/DeleteGroup",
+          "delete_user": "#/$defs/DeleteUser",
+          "get_channel": "#/$defs/GetChannel",
+          "get_group": "#/$defs/GetGroup",
+          "get_page": "#/$defs/GetPage",
+          "get_post": "#/$defs/GetPost",
+          "get_user": "#/$defs/GetUser",
+          "list_channels": "#/$defs/ListChannels",
+          "list_group_members": "#/$defs/ListGroupMembers",
+          "list_groups": "#/$defs/ListGroups",
+          "list_pages": "#/$defs/ListPages",
+          "list_posts": "#/$defs/ListPosts",
+          "list_users": "#/$defs/ListUsers",
+          "update_draft_page": "#/$defs/UpdateDraftPage",
+          "update_draft_post": "#/$defs/UpdateDraftPost",
+          "update_group": "#/$defs/UpdateGroup",
+          "update_user": "#/$defs/UpdateUser"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/CreateUser"
+        },
+        {
+          "$ref": "#/$defs/UpdateUser"
+        },
+        {
+          "$ref": "#/$defs/DeleteUser"
+        },
+        {
+          "$ref": "#/$defs/ListGroups"
+        },
+        {
+          "$ref": "#/$defs/GetGroup"
+        },
+        {
+          "$ref": "#/$defs/CreateGroup"
+        },
+        {
+          "$ref": "#/$defs/UpdateGroup"
+        },
+        {
+          "$ref": "#/$defs/DeleteGroup"
+        },
+        {
+          "$ref": "#/$defs/ListGroupMembers"
+        },
+        {
+          "$ref": "#/$defs/ListChannels"
+        },
+        {
+          "$ref": "#/$defs/GetChannel"
+        },
+        {
+          "$ref": "#/$defs/ListPosts"
+        },
+        {
+          "$ref": "#/$defs/GetPost"
+        },
+        {
+          "$ref": "#/$defs/CreateDraftPost"
+        },
+        {
+          "$ref": "#/$defs/UpdateDraftPost"
+        },
+        {
+          "$ref": "#/$defs/DeleteDraftPost"
+        },
+        {
+          "$ref": "#/$defs/ListPages"
+        },
+        {
+          "$ref": "#/$defs/GetPage"
+        },
+        {
+          "$ref": "#/$defs/CreateDraftPage"
+        },
+        {
+          "$ref": "#/$defs/UpdateDraftPage"
+        },
+        {
+          "$ref": "#/$defs/DeleteDraftPage"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/StaffbaseApiTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Staffbase Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find users in this tenant",
+    "Update this group description",
+    "Create a draft page in this space"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
