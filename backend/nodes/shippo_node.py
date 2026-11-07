@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import base64
 import json
+import mimetypes
 import re
 import time
 from typing import Annotated, Any, Literal, Optional, Union
@@ -13,6 +13,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, create_model
 
 from nodes.core.base import NodeConfig, WorkflowNode
+from nodes.core.binary_output import BinaryOutput
 from nodes.core.connection_evidence import ConnectionEvidence
 
 
@@ -1005,8 +1006,14 @@ class ShippoNode(WorkflowNode):
             try:
                 data = response.json()
             except ValueError:
-                data = {"content_base64": base64.b64encode(response.content).decode("ascii"),
-                        "content_type": response.headers.get("content-type")}
+                content_type = response.headers.get(
+                    "content-type", "application/octet-stream"
+                ).split(";", 1)[0].strip()
+                extension = mimetypes.guess_extension(content_type) or ".bin"
+                data = BinaryOutput(
+                    data=response.content, content_type=content_type,
+                    filename=f"shippo-{name}{extension}",
+                )
         oauth_redirect = name == "initiate_oauth2_signin" and response.status_code == 302
         if response.is_error or (response.is_redirect and not oauth_redirect):
             detail = (data.get("detail") or data.get("message") or data.get("error")) if isinstance(data, dict) else None

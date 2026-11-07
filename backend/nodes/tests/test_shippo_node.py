@@ -6,6 +6,7 @@ import httpx
 import pytest
 from pydantic import ValidationError
 
+from nodes.core.binary_output import BinaryOutput
 from nodes.shippo_node import CONFIG_MODELS, OPERATIONS, ShippoNode, ShippoNodeConfig
 
 
@@ -157,4 +158,30 @@ async def test_carrier_oauth_returns_documented_redirect_without_following(monke
 async def test_unexpected_redirect_still_reports_api_error(monkeypatch):
     _transport(monkeypatch, lambda request: httpx.Response(302))
     with pytest.raises(ValueError, match="Shippo API error 302"):
+        await ShippoNode._request("shippo_test_example", "list_addresses", {})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("headers, content_type, extension", [
+    ({"Content-Type": "application/pdf"}, "application/pdf", ".pdf"),
+    ({"Content-Type": "application/pdf; charset=binary"}, "application/pdf", ".pdf"),
+    ({}, "application/octet-stream", ".bin"),
+])
+async def test_non_json_response_returns_binary_output(monkeypatch, headers, content_type, extension):
+    payload = b"\x00\xffbinary download"
+    _transport(monkeypatch, lambda request: httpx.Response(200, content=payload, headers=headers))
+
+    result = await ShippoNode._request("shippo_test_example", "list_addresses", {})
+
+    assert result["status"] == "success"
+    assert isinstance(result["data"], BinaryOutput)
+    assert result["data"].data == payload
+    assert result["data"].content_type == content_type
+    assert result["data"].filename == f"shippo-list_addresses{extension}"
+
+
+@pytest.mark.asyncio
+async def test_non_json_error_still_reports_api_error(monkeypatch):
+    _transport(monkeypatch, lambda request: httpx.Response(502, text="Bad Gateway"))
+    with pytest.raises(ValueError, match="Shippo API error 502: request failed"):
         await ShippoNode._request("shippo_test_example", "list_addresses", {})
