@@ -1,0 +1,677 @@
+{
+  "$defs": {
+    "MetricoolAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "metricool_api_key",
+          "default": "metricool_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "user_id": {
+          "description": "Your supplied account userId; it is never inferred from a shared brand's owner.",
+          "title": "Metricool User ID",
+          "type": "string"
+        },
+        "blog_id": {
+          "description": "Existing accessible brand used for connection validation and the brand list. Other selected brands require a current list witness.",
+          "title": "Default Brand ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_token",
+        "user_id",
+        "blog_id"
+      ],
+      "title": "Metricool API Token",
+      "type": "object",
+      "x-credential-instructions": "Supply an existing API token and the userId/blogId from your Metricool account. Current authentication uses X-Mc-Auth, not Authorization. API access is documented for Advanced and Custom plans; your actual entitlement is unverified. No login, mint, refresh or token introspection is performed.",
+      "x-credential-url": "https://help.metricool.com/basic-guide-for-api-integration-r97af"
+    },
+    "MetricoolCreateDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "blog_id": {
+          "title": "Brand",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "blog_id",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_draft",
+          "default": "create_draft",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Drafts",
+          "x-display-name": "Create Unpublished Facebook Draft",
+          "x-is-trigger": false
+        },
+        "text": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Draft Text",
+          "type": "string"
+        },
+        "planning_time": {
+          "description": "Required provider publicationDate metadata; draft is always true, so this does not schedule the post. Use a future local ISO time.",
+          "title": "Draft Planning Time",
+          "type": "string"
+        },
+        "timezone": {
+          "default": "UTC",
+          "title": "Timezone",
+          "type": "string"
+        }
+      },
+      "required": [
+        "blog_id",
+        "text",
+        "planning_time"
+      ],
+      "title": "MetricoolCreateDraft",
+      "type": "object"
+    },
+    "MetricoolDeleteDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "blog_id": {
+          "title": "Brand",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "blog_id",
+            "auto_select_sole_option": true
+          }
+        },
+        "start": {
+          "description": "Local ISO time, e.g.2026-10-01T00:00:00; the selected timezone applies.",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "Later than Start, at most31 days; no automatic unbounded pagination.",
+          "title": "End",
+          "type": "string"
+        },
+        "timezone": {
+          "default": "UTC",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "post_id": {
+          "description": "Must appear in List Scheduler Posts for this exact brand and date window before direct lookup.",
+          "title": "Post ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_draft",
+          "default": "delete_draft",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Drafts",
+          "x-display-name": "Delete Unpublished Draft",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "blog_id",
+        "start",
+        "end",
+        "post_id"
+      ],
+      "title": "MetricoolDeleteDraft",
+      "type": "object"
+    },
+    "MetricoolGetDefaultBrand": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_default_brand",
+          "default": "get_default_brand",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Brands",
+          "x-display-name": "Get Default Brand Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "MetricoolGetDefaultBrand",
+      "type": "object"
+    },
+    "MetricoolGetSchedulerCounters": {
+      "additionalProperties": false,
+      "properties": {
+        "blog_id": {
+          "title": "Brand",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "blog_id",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_scheduler_counters",
+          "default": "get_scheduler_counters",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scheduler",
+          "x-display-name": "Get Publishing Counters",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "blog_id"
+      ],
+      "title": "MetricoolGetSchedulerCounters",
+      "type": "object"
+    },
+    "MetricoolGetSchedulerPost": {
+      "additionalProperties": false,
+      "properties": {
+        "blog_id": {
+          "title": "Brand",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "blog_id",
+            "auto_select_sole_option": true
+          }
+        },
+        "start": {
+          "description": "Local ISO time, e.g.2026-10-01T00:00:00; the selected timezone applies.",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "Later than Start, at most31 days; no automatic unbounded pagination.",
+          "title": "End",
+          "type": "string"
+        },
+        "timezone": {
+          "default": "UTC",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "post_id": {
+          "description": "Must appear in List Scheduler Posts for this exact brand and date window before direct lookup.",
+          "title": "Post ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_scheduler_post",
+          "default": "get_scheduler_post",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scheduler",
+          "x-display-name": "Get Scoped Scheduler Post",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "blog_id",
+        "start",
+        "end",
+        "post_id"
+      ],
+      "title": "MetricoolGetSchedulerPost",
+      "type": "object"
+    },
+    "MetricoolGetSocialTimeline": {
+      "additionalProperties": false,
+      "properties": {
+        "blog_id": {
+          "title": "Brand",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "blog_id",
+            "auto_select_sole_option": true
+          }
+        },
+        "start": {
+          "description": "Local ISO time, e.g.2026-10-01T00:00:00; the selected timezone applies.",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "Later than Start, at most31 days; no automatic unbounded pagination.",
+          "title": "End",
+          "type": "string"
+        },
+        "timezone": {
+          "default": "UTC",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_social_timeline",
+          "default": "get_social_timeline",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Get Social Post Timeline",
+          "x-is-trigger": false
+        },
+        "network": {
+          "enum": [
+            "instagram",
+            "facebook",
+            "linkedin"
+          ],
+          "title": "Network",
+          "type": "string"
+        },
+        "metric": {
+          "enum": [
+            "count",
+            "posts",
+            "interactions",
+            "engagement",
+            "reach",
+            "impressions",
+            "likes",
+            "comments",
+            "saves",
+            "shares",
+            "impressionsunique",
+            "clicks",
+            "reactions"
+          ],
+          "title": "Post Metric",
+          "type": "string"
+        }
+      },
+      "required": [
+        "blog_id",
+        "start",
+        "end",
+        "network",
+        "metric"
+      ],
+      "title": "MetricoolGetSocialTimeline",
+      "type": "object"
+    },
+    "MetricoolListBrands": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_brands",
+          "default": "list_brands",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Brands",
+          "x-display-name": "List Accessible Brands",
+          "x-is-trigger": false
+        }
+      },
+      "title": "MetricoolListBrands",
+      "type": "object"
+    },
+    "MetricoolListFacebookPosts": {
+      "additionalProperties": false,
+      "properties": {
+        "blog_id": {
+          "title": "Brand",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "blog_id",
+            "auto_select_sole_option": true
+          }
+        },
+        "start": {
+          "description": "Local ISO time, e.g.2026-10-01T00:00:00; the selected timezone applies.",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "Later than Start, at most31 days; no automatic unbounded pagination.",
+          "title": "End",
+          "type": "string"
+        },
+        "timezone": {
+          "default": "UTC",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_facebook_posts",
+          "default": "list_facebook_posts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "List Facebook Post Analytics",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "blog_id",
+        "start",
+        "end"
+      ],
+      "title": "MetricoolListFacebookPosts",
+      "type": "object"
+    },
+    "MetricoolListInstagramPosts": {
+      "additionalProperties": false,
+      "properties": {
+        "blog_id": {
+          "title": "Brand",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "blog_id",
+            "auto_select_sole_option": true
+          }
+        },
+        "start": {
+          "description": "Local ISO time, e.g.2026-10-01T00:00:00; the selected timezone applies.",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "Later than Start, at most31 days; no automatic unbounded pagination.",
+          "title": "End",
+          "type": "string"
+        },
+        "timezone": {
+          "default": "UTC",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_instagram_posts",
+          "default": "list_instagram_posts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "List Instagram Post Analytics",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "blog_id",
+        "start",
+        "end"
+      ],
+      "title": "MetricoolListInstagramPosts",
+      "type": "object"
+    },
+    "MetricoolListLibraryStates": {
+      "additionalProperties": false,
+      "properties": {
+        "blog_id": {
+          "title": "Brand",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "blog_id",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_library_states",
+          "default": "list_library_states",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scheduler",
+          "x-display-name": "List Library Workflow States",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "blog_id"
+      ],
+      "title": "MetricoolListLibraryStates",
+      "type": "object"
+    },
+    "MetricoolListLinkedinPosts": {
+      "additionalProperties": false,
+      "properties": {
+        "blog_id": {
+          "title": "Brand",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "blog_id",
+            "auto_select_sole_option": true
+          }
+        },
+        "start": {
+          "description": "Local ISO time, e.g.2026-10-01T00:00:00; the selected timezone applies.",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "Later than Start, at most31 days; no automatic unbounded pagination.",
+          "title": "End",
+          "type": "string"
+        },
+        "timezone": {
+          "default": "UTC",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_linkedin_posts",
+          "default": "list_linkedin_posts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "List LinkedIn Post Analytics",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "blog_id",
+        "start",
+        "end"
+      ],
+      "title": "MetricoolListLinkedinPosts",
+      "type": "object"
+    },
+    "MetricoolListSchedulerPosts": {
+      "additionalProperties": false,
+      "properties": {
+        "blog_id": {
+          "title": "Brand",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "blog_id",
+            "auto_select_sole_option": true
+          }
+        },
+        "start": {
+          "description": "Local ISO time, e.g.2026-10-01T00:00:00; the selected timezone applies.",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "Later than Start, at most31 days; no automatic unbounded pagination.",
+          "title": "End",
+          "type": "string"
+        },
+        "timezone": {
+          "default": "UTC",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_scheduler_posts",
+          "default": "list_scheduler_posts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scheduler",
+          "x-display-name": "List Scheduler Post Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "blog_id",
+        "start",
+        "end"
+      ],
+      "title": "MetricoolListSchedulerPosts",
+      "type": "object"
+    },
+    "MetricoolUpdateDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "blog_id": {
+          "title": "Brand",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "blog_id",
+            "auto_select_sole_option": true
+          }
+        },
+        "start": {
+          "description": "Local ISO time, e.g.2026-10-01T00:00:00; the selected timezone applies.",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "Later than Start, at most31 days; no automatic unbounded pagination.",
+          "title": "End",
+          "type": "string"
+        },
+        "timezone": {
+          "default": "UTC",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "post_id": {
+          "description": "Must appear in List Scheduler Posts for this exact brand and date window before direct lookup.",
+          "title": "Post ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_draft",
+          "default": "update_draft",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Drafts",
+          "x-display-name": "Update Unpublished Draft Text",
+          "x-is-trigger": false
+        },
+        "text": {
+          "description": "Retains the draft's existing planning time and Facebook network; threads, media and approval workflows are refused.",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Draft Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "blog_id",
+        "start",
+        "end",
+        "post_id",
+        "text"
+      ],
+      "title": "MetricoolUpdateDraft",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_draft": "#/$defs/MetricoolCreateDraft",
+          "delete_draft": "#/$defs/MetricoolDeleteDraft",
+          "get_default_brand": "#/$defs/MetricoolGetDefaultBrand",
+          "get_scheduler_counters": "#/$defs/MetricoolGetSchedulerCounters",
+          "get_scheduler_post": "#/$defs/MetricoolGetSchedulerPost",
+          "get_social_timeline": "#/$defs/MetricoolGetSocialTimeline",
+          "list_brands": "#/$defs/MetricoolListBrands",
+          "list_facebook_posts": "#/$defs/MetricoolListFacebookPosts",
+          "list_instagram_posts": "#/$defs/MetricoolListInstagramPosts",
+          "list_library_states": "#/$defs/MetricoolListLibraryStates",
+          "list_linkedin_posts": "#/$defs/MetricoolListLinkedinPosts",
+          "list_scheduler_posts": "#/$defs/MetricoolListSchedulerPosts",
+          "update_draft": "#/$defs/MetricoolUpdateDraft"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MetricoolListBrands"
+        },
+        {
+          "$ref": "#/$defs/MetricoolGetDefaultBrand"
+        },
+        {
+          "$ref": "#/$defs/MetricoolGetSocialTimeline"
+        },
+        {
+          "$ref": "#/$defs/MetricoolListInstagramPosts"
+        },
+        {
+          "$ref": "#/$defs/MetricoolListFacebookPosts"
+        },
+        {
+          "$ref": "#/$defs/MetricoolListLinkedinPosts"
+        },
+        {
+          "$ref": "#/$defs/MetricoolListSchedulerPosts"
+        },
+        {
+          "$ref": "#/$defs/MetricoolGetSchedulerPost"
+        },
+        {
+          "$ref": "#/$defs/MetricoolGetSchedulerCounters"
+        },
+        {
+          "$ref": "#/$defs/MetricoolListLibraryStates"
+        },
+        {
+          "$ref": "#/$defs/MetricoolCreateDraft"
+        },
+        {
+          "$ref": "#/$defs/MetricoolUpdateDraft"
+        },
+        {
+          "$ref": "#/$defs/MetricoolDeleteDraft"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MetricoolAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Metricool Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
