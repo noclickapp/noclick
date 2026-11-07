@@ -80,7 +80,6 @@ class TestCredentialRequestHandler(BaseHandlerTest):
         """Test creating a credential request sends email and returns request info."""
         await self.create_test_user(real_database)
         await self.ensure_credential_requests_table(real_database)
-        await asyncio.sleep(0.1)
 
         request = CredentialRequestCreateRequest(
             request_id="test-req-create-1",
@@ -90,7 +89,7 @@ class TestCredentialRequestHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         assert len(response_events) >= 1
@@ -112,7 +111,6 @@ class TestCredentialRequestHandler(BaseHandlerTest):
         """An empty target_email creates a shareable link and sends no email."""
         await self.create_test_user(real_database)
         await self.ensure_credential_requests_table(real_database)
-        await asyncio.sleep(0.1)
 
         request = CredentialRequestCreateRequest(
             request_id="test-req-link-1",
@@ -122,7 +120,7 @@ class TestCredentialRequestHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         response_data = next(
@@ -150,7 +148,6 @@ class TestCredentialRequestHandler(BaseHandlerTest):
         """Test listing credential requests returns all user's requests."""
         await self.create_test_user(real_database)
         await self.ensure_credential_requests_table(real_database)
-        await asyncio.sleep(0.1)
 
         # Create two requests
         for email in [TARGET_EMAIL, 'other@example.com']:
@@ -160,12 +157,12 @@ class TestCredentialRequestHandler(BaseHandlerTest):
                 credential_type="openai_api_key",
             )
             await send_event(frontend_sio, sid, create_req)
-            await asyncio.sleep(0.2)
+            await self.wait_for_main_api_events("response", request_id=create_req.request_id)
 
         # List requests
         list_req = CredentialRequestListRequest(request_id="test-list-1")
         await send_event(frontend_sio, sid, list_req)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=list_req.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         list_response = next(
@@ -181,7 +178,7 @@ class TestCredentialRequestHandler(BaseHandlerTest):
             "WHERE requester_id = $1 AND target_email = 'other@example.com'", TEST_USER_ID,
         )
         await send_event(frontend_sio, sid, CredentialRequestListRequest(request_id="test-list-2"))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="test-list-2")
         hidden_response = next(
             e[1] for e in self.get_main_api_emitted_events("response") if e[1].get('request_id') == 'test-list-2'
         )
@@ -193,7 +190,6 @@ class TestCredentialRequestHandler(BaseHandlerTest):
         """Test cancelling a pending credential request."""
         await self.create_test_user(real_database)
         await self.ensure_credential_requests_table(real_database)
-        await asyncio.sleep(0.1)
 
         # Create request
         create_req = CredentialRequestCreateRequest(
@@ -202,7 +198,7 @@ class TestCredentialRequestHandler(BaseHandlerTest):
             credential_type="slack_oauth",
         )
         await send_event(frontend_sio, sid, create_req)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=create_req.request_id)
 
         # Get the request ID
         response_events = self.get_main_api_emitted_events("response")
@@ -219,7 +215,7 @@ class TestCredentialRequestHandler(BaseHandlerTest):
             credential_request_id=request_id,
         )
         await send_event(frontend_sio, sid, cancel_req)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=cancel_req.request_id)
 
         cancel_response = next(
             (e[1] for e in self.get_main_api_emitted_events("response") if e[1].get('request_id') == 'test-cancel-1'),

@@ -57,7 +57,7 @@ class TestFolderDatabaseTriggers(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, create_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=create_request.request_id)
 
         # Get response
         response_events = self.get_main_api_emitted_events("response")
@@ -85,7 +85,7 @@ class TestFolderDatabaseTriggers(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, parent_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=parent_request.request_id)
 
         parent_responses = [e for e in self.get_main_api_emitted_events("response")
                            if e[1].get('request_id') == 'test-nested-parent']
@@ -100,7 +100,7 @@ class TestFolderDatabaseTriggers(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, child_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=child_request.request_id)
 
         child_responses = [e for e in self.get_main_api_emitted_events("response")
                           if e[1].get('request_id') == 'test-nested-child']
@@ -126,7 +126,7 @@ class TestFolderDatabaseTriggers(BaseHandlerTest):
             )
 
             await send_event(frontend_sio, sid, request)
-            await asyncio.sleep(0.2)
+            await self.wait_for_main_api_events("response", request_id=request.request_id)
 
             responses = [e for e in self.get_main_api_emitted_events("response")
                         if e[1].get('request_id') == f'test-depth-{depth}']
@@ -148,7 +148,7 @@ class TestFolderDatabaseTriggers(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         responses = [e for e in self.get_main_api_emitted_events("response")
                     if e[1].get('request_id') == 'test-depth-10']
@@ -185,7 +185,7 @@ class TestFolderCRUDOperations(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         responses = [e for e in self.get_main_api_emitted_events("response")
                     if e[1].get('request_id') == 'test-create-1']
@@ -212,7 +212,7 @@ class TestFolderCRUDOperations(BaseHandlerTest):
                 name=f"Folder {i+1}",
                 parent_folder_id=None,
             ))
-            await asyncio.sleep(0.1)
+            await self.wait_for_main_api_events("response", request_id=f"test-list-create-{i}")
 
         # List root folders
         list_request = FolderListRequest(
@@ -222,7 +222,7 @@ class TestFolderCRUDOperations(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, list_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=list_request.request_id)
 
         responses = [e for e in self.get_main_api_emitted_events("response")
                     if e[1].get('request_id') == 'test-list-1']
@@ -246,7 +246,7 @@ class TestFolderCRUDOperations(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, create_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=create_request.request_id)
 
         create_responses = [e for e in self.get_main_api_emitted_events("response")
                            if e[1].get('request_id') == 'test-delete-create']
@@ -260,7 +260,7 @@ class TestFolderCRUDOperations(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, delete_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=delete_request.request_id)
 
         delete_responses = [e for e in self.get_main_api_emitted_events("response")
                            if e[1].get('request_id') == 'test-delete-1']
@@ -300,7 +300,7 @@ class TestFolderTreeOperations(BaseHandlerTest):
             name="Root 1",
             parent_folder_id=None,
         ))
-        await asyncio.sleep(0.1)
+        await self.wait_for_main_api_events("response", request_id="test-tree-root1")
 
         root1_responses = [e for e in self.get_main_api_emitted_events("response")
                           if e[1].get('request_id') == 'test-tree-root1']
@@ -314,7 +314,7 @@ class TestFolderTreeOperations(BaseHandlerTest):
                 name=child_name,
                 parent_folder_id=root1_id,
             ))
-            await asyncio.sleep(0.1)
+            await self.wait_for_main_api_events("response", request_id=f"test-tree-{child_name.replace(' ', '-')}")
 
         # Create Root 2
         await send_event(frontend_sio, sid, FolderCreateRequest(
@@ -323,7 +323,7 @@ class TestFolderTreeOperations(BaseHandlerTest):
             name="Root 2",
             parent_folder_id=None,
         ))
-        await asyncio.sleep(0.1)
+        await self.wait_for_main_api_events("response", request_id="test-tree-root2")
 
         # Get tree
         tree_request = FolderGetTreeRequest(
@@ -332,7 +332,7 @@ class TestFolderTreeOperations(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, tree_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=tree_request.request_id)
 
         tree_responses = [e for e in self.get_main_api_emitted_events("response")
                          if e[1].get('request_id') == 'test-tree-1']
@@ -362,7 +362,7 @@ class TestFolderTreeOperations(BaseHandlerTest):
             name="Root Folder",
             parent_folder_id=None,
         ))
-        await asyncio.sleep(0.1)
+        await self.wait_for_main_api_events("response", request_id="test-path-root")
 
         root_responses = [e for e in self.get_main_api_emitted_events("response")
                          if e[1].get('request_id') == 'test-path-root']
@@ -375,7 +375,7 @@ class TestFolderTreeOperations(BaseHandlerTest):
             name="Parent Folder",
             parent_folder_id=root_id,
         ))
-        await asyncio.sleep(0.1)
+        await self.wait_for_main_api_events("response", request_id="test-path-parent")
 
         parent_responses = [e for e in self.get_main_api_emitted_events("response")
                            if e[1].get('request_id') == 'test-path-parent']
@@ -388,7 +388,7 @@ class TestFolderTreeOperations(BaseHandlerTest):
             name="Child Folder",
             parent_folder_id=parent_id,
         ))
-        await asyncio.sleep(0.1)
+        await self.wait_for_main_api_events("response", request_id="test-path-child")
 
         child_responses = [e for e in self.get_main_api_emitted_events("response")
                           if e[1].get('request_id') == 'test-path-child']
@@ -402,7 +402,7 @@ class TestFolderTreeOperations(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, path_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=path_request.request_id)
 
         path_responses = [e for e in self.get_main_api_emitted_events("response")
                          if e[1].get('request_id') == 'test-path-1']
@@ -446,7 +446,7 @@ class TestFolderEdgeCases(BaseHandlerTest):
                 name=f"Parent {i+1}",
                 parent_folder_id=None,
             ))
-            await asyncio.sleep(0.1)
+            await self.wait_for_main_api_events("response", request_id=f"test-dup-parent{i+1}")
 
         parent1_responses = [e for e in self.get_main_api_emitted_events("response")
                             if e[1].get('request_id') == 'test-dup-parent1']
@@ -463,7 +463,7 @@ class TestFolderEdgeCases(BaseHandlerTest):
             name="Duplicate Name",
             parent_folder_id=parent1_id,
         ))
-        await asyncio.sleep(0.1)
+        await self.wait_for_main_api_events("response", request_id="test-dup-child1")
 
         await send_event(frontend_sio, sid, FolderCreateRequest(
             event_name="workflow_folder:create",
@@ -471,7 +471,7 @@ class TestFolderEdgeCases(BaseHandlerTest):
             name="Duplicate Name",
             parent_folder_id=parent2_id,
         ))
-        await asyncio.sleep(0.1)
+        await self.wait_for_main_api_events("response", request_id="test-dup-child2")
 
         child1_responses = [e for e in self.get_main_api_emitted_events("response")
                            if e[1].get('request_id') == 'test-dup-child1']

@@ -79,7 +79,6 @@ class TestCredentialsHandler(BaseHandlerTest):
         """
         user_id = '00000000-0000-4000-8000-000000000001'
         await self.create_test_user(real_database, user_id)
-        await asyncio.sleep(0.1)
 
         # Create credential
         credential_data = {
@@ -96,7 +95,7 @@ class TestCredentialsHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, create_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=create_request.request_id)
 
         # Verify response
         response_events = self.get_main_api_emitted_events("response")
@@ -136,7 +135,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             credential_type="firecrawl_api_key",
             credential_data={"api_key": "https://www.firecrawl.dev/app/api-keys"},
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="test-create-refused")
 
         response = self.get_main_api_emitted_events("response")[-1][1]
         assert response['request_id'] == 'test-create-refused'
@@ -186,7 +185,7 @@ class TestCredentialsHandler(BaseHandlerTest):
                 "pat_secret": "s3cret\n",
             },
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="test-create-verified")
 
         response = self.get_main_api_emitted_events("response")[-1][1]
         data = response['data']
@@ -231,7 +230,7 @@ class TestCredentialsHandler(BaseHandlerTest):
                 "pat_secret": "s3cret",
             },
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="test-create-rejected")
 
         response = self.get_main_api_emitted_events("response")[-1][1]
         assert response['data']['success'] is False
@@ -265,7 +264,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             credential_type="tableau_pat",
             credential_data={"server_url": "https://tableau.example.com", "pat_name": "n", "pat_secret": "s"},
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="test-create-unverified")
 
         data = self.get_main_api_emitted_events("response")[-1][1]['data']
         assert data['success'] is True
@@ -283,7 +282,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             credential_type="firecrawl_api_key",
             credential_data={"api_key": "fc-real-key"},
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="test-update-seed")
         credential_id = self.get_main_api_emitted_events("response")[-1][1]['data']['credential']['id']
 
         await send_event(frontend_sio, sid, CredentialUpdateRequest(
@@ -292,7 +291,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             credential_id=credential_id,
             credential_data={"api_key": "<your api key>"},
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="test-update-refused")
 
         response = self.get_main_api_emitted_events("response")[-1][1]
         assert response['request_id'] == 'test-update-refused'
@@ -334,7 +333,7 @@ class TestCredentialsHandler(BaseHandlerTest):
                 event_name="credential:create", request_id=f"bind-{i}", name=f"Bind {i}",
                 credential_type=credential_type, credential_data=data, metadata=metadata,
             ))
-            await asyncio.sleep(0.2)
+            await self.wait_for_main_api_events("response", request_id=f"bind-{i}")
             response = self.get_main_api_emitted_events("response")[-1][1]
             assert response['request_id'] == f'bind-{i}'
             assert response['data']['success'] is False, credential_type
@@ -358,7 +357,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             await send_event(frontend_sio, sid, CredentialUpdateRequest(
                 event_name="credential:update", request_id=f"move-{i}", credential_id=credential_id, **change,
             ))
-            await asyncio.sleep(0.2)
+            await self.wait_for_main_api_events("response", request_id=f"move-{i}")
             response = self.get_main_api_emitted_events("response")[-1][1]
             assert response['request_id'] == f'move-{i}'
             assert response['data']['success'] is False
@@ -368,7 +367,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             event_name="credential:update", request_id="relabel", credential_id=credential_id,
             name="Shop WhatsApp", metadata={"note": "front desk"},
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="relabel")
         response = self.get_main_api_emitted_events("response")[-1][1]
         assert response['request_id'] == 'relabel' and response['data']['success'] is True
 
@@ -389,7 +388,6 @@ class TestCredentialsHandler(BaseHandlerTest):
         """
         user_id = '00000000-0000-4000-8000-000000000001'
         await self.create_test_user(real_database, user_id)
-        await asyncio.sleep(0.1)
 
         # Create two credentials
         for i in range(2):
@@ -402,7 +400,7 @@ class TestCredentialsHandler(BaseHandlerTest):
                 metadata={"index": i}
             )
             await send_event(frontend_sio, sid, create_request)
-            await asyncio.sleep(0.1)
+            await self.wait_for_main_api_events("response", request_id=create_request.request_id)
         # Held for someone else: resolvable by id, never listed to its owner.
         hidden_id = str(await real_database.fetchval(
             "INSERT INTO credentials (owner_id, name, credential_type, credential, metadata) "
@@ -416,7 +414,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             request_id="test-list-1"
         )
         await send_event(frontend_sio, sid, list_request)
-        await asyncio.sleep(0.1)
+        await self.wait_for_main_api_events("response", request_id=list_request.request_id)
 
         # Verify response
         response_events = self.get_main_api_emitted_events("response")
@@ -455,7 +453,6 @@ class TestCredentialsHandler(BaseHandlerTest):
 
         user_id = '00000000-0000-4000-8000-000000000001'
         await self.create_test_user(real_database, user_id)
-        await asyncio.sleep(0.1)
 
         # As the bot install leaves it (wss/handlers/oauth/discord_oauth_handler.py): only that flow makes one.
         await real_database.execute(
@@ -474,7 +471,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             await send_event(frontend_sio, sid, CredentialListRequest(
                 event_name="credential:list", request_id=request_id,
             ))
-            await asyncio.sleep(0.1)
+            await self.wait_for_main_api_events("response", request_id=request_id)
             for event in self.get_main_api_emitted_events("response"):
                 if event[1]['request_id'] == request_id:
                     return [
@@ -509,7 +506,6 @@ class TestCredentialsHandler(BaseHandlerTest):
         """
         user_id = '00000000-0000-4000-8000-000000000001'
         await self.create_test_user(real_database, user_id)
-        await asyncio.sleep(0.1)
 
         # Create credential
         original_data = {
@@ -526,7 +522,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             metadata={"db_type": "postgresql"}
         )
         await send_event(frontend_sio, sid, create_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=create_request.request_id)
 
         # Get created credential ID from response
         response_events = self.get_main_api_emitted_events("response")
@@ -544,7 +540,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             credential_id=credential_id
         )
         await send_event(frontend_sio, sid, get_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=get_request.request_id)
 
         # Verify response
         response_events = self.get_main_api_emitted_events("response")
@@ -576,7 +572,6 @@ class TestCredentialsHandler(BaseHandlerTest):
         """
         user_id = '00000000-0000-4000-8000-000000000001'
         await self.create_test_user(real_database, user_id)
-        await asyncio.sleep(0.1)
 
         # Create credential
         create_request = CredentialCreateRequest(
@@ -588,7 +583,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             metadata={"version": "1"}
         )
         await send_event(frontend_sio, sid, create_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=create_request.request_id)
 
         # Get created credential ID from response
         response_events = self.get_main_api_emitted_events("response")
@@ -610,7 +605,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             metadata={"version": "2"}
         )
         await send_event(frontend_sio, sid, update_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=update_request.request_id)
 
         # Verify response
         response_events = self.get_main_api_emitted_events("response")
@@ -634,7 +629,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             credential_id=credential_id
         )
         await send_event(frontend_sio, sid, get_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=get_request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         get_response = None
@@ -656,7 +651,6 @@ class TestCredentialsHandler(BaseHandlerTest):
         """
         user_id = '00000000-0000-4000-8000-000000000001'
         await self.create_test_user(real_database, user_id)
-        await asyncio.sleep(0.1)
 
         # Create credential
         create_request = CredentialCreateRequest(
@@ -668,7 +662,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             metadata={}
         )
         await send_event(frontend_sio, sid, create_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=create_request.request_id)
 
         # Get created credential ID from response
         response_events = self.get_main_api_emitted_events("response")
@@ -686,7 +680,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             credential_id=credential_id,
         )
         await send_event(frontend_sio, sid, dry_run_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=dry_run_request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         dry_run_response = None
@@ -712,7 +706,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             confirm=True,
         )
         await send_event(frontend_sio, sid, delete_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=delete_request.request_id)
 
         # Verify response
         response_events = self.get_main_api_emitted_events("response")
@@ -756,7 +750,7 @@ class TestCredentialsHandler(BaseHandlerTest):
         monkeypatch.setitem(capabilities._providers, capabilities.CREDENTIAL_HOLDERS, holders)
         await send_event(frontend_sio, sid, CredentialDeleteRequest(
             event_name="credential:delete", request_id="test-delete-holders", credential_id=credential_id))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="test-delete-holders")
         response = next(e[1] for e in self.get_main_api_emitted_events("response")
                         if e[1]['request_id'] == 'test-delete-holders')
         assert response['data']['deleted'] is False
@@ -794,14 +788,13 @@ class TestCredentialsHandler(BaseHandlerTest):
             )
             VALUES ('credential', $1, 'user', $2, 'edit', $3)
         """, credential_id, caller_id, owner_id)
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, CredentialDeleteRequest(
             event_name="credential:delete",
             request_id="test-delete-non-owner",
             credential_id=credential_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="test-delete-non-owner")
 
         delete_response = None
         for event in self.get_main_api_emitted_events("response"):
@@ -838,7 +831,6 @@ class TestCredentialsHandler(BaseHandlerTest):
 
         await self.create_test_user(real_database, user_a_id, 'user_a@example.com')
         await self.create_test_user(real_database, user_b_id, 'user_b@example.com')
-        await asyncio.sleep(0.1)
 
         # User A creates a credential
         create_request = CredentialCreateRequest(
@@ -850,7 +842,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             metadata={}
         )
         await send_event(frontend_sio, sid, create_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=create_request.request_id)
 
         # Get created credential ID from response
         response_events = self.get_main_api_emitted_events("response")
@@ -884,7 +876,6 @@ class TestCredentialsHandler(BaseHandlerTest):
         """
         user_id = '00000000-0000-4000-8000-000000000001'
         await self.create_test_user(real_database, user_id)
-        await asyncio.sleep(0.1)
 
         # Create OAuth credential
         oauth_data = {
@@ -904,7 +895,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             metadata={"provider": "github", "user": "testuser"}
         )
         await send_event(frontend_sio, sid, create_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=create_request.request_id)
 
         # Get created credential ID from response
         response_events = self.get_main_api_emitted_events("response")
@@ -922,7 +913,7 @@ class TestCredentialsHandler(BaseHandlerTest):
             credential_id=credential_id
         )
         await send_event(frontend_sio, sid, get_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=get_request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         get_response = None
@@ -995,7 +986,6 @@ class TestCredentialsHandler(BaseHandlerTest):
         """
         user_id = '00000000-0000-4000-8000-000000000001'
         await self.create_test_user(real_database, user_id)
-        await asyncio.sleep(0.1)
 
         # Create a credential via handler
         test_data = {
@@ -1013,7 +1003,7 @@ class TestCredentialsHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, create_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=create_request.request_id)
 
         # Get credential ID
         response_events = self.get_main_api_emitted_events("response")
@@ -1046,7 +1036,6 @@ class TestCredentialsHandler(BaseHandlerTest):
 
         await self.create_test_user(real_database, user_a_id, 'user_a@example.com')
         await self.create_test_user(real_database, user_b_id, 'user_b@example.com')
-        await asyncio.sleep(0.1)
 
         # User A creates a credential
         create_request = CredentialCreateRequest(
@@ -1059,7 +1048,7 @@ class TestCredentialsHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, create_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=create_request.request_id)
 
         # Get credential ID
         response_events = self.get_main_api_emitted_events("response")
@@ -1093,7 +1082,6 @@ class TestCredentialsHandler(BaseHandlerTest):
         """
         user_id = '00000000-0000-4000-8000-000000000001'
         await self.create_test_user(real_database, user_id)
-        await asyncio.sleep(0.1)
 
         # Create multiple credentials
         for i in range(3):
@@ -1106,9 +1094,8 @@ class TestCredentialsHandler(BaseHandlerTest):
                 metadata={"index": i}
             )
             await send_event(frontend_sio, sid, create_request)
-            await asyncio.sleep(0.1)
+            await self.wait_for_main_api_events("response", request_id=create_request.request_id)
 
-        await asyncio.sleep(0.2)
 
         # Use utility to list credentials (pass pool proxy for testing)
         pool = real_database.pool

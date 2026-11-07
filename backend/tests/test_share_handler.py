@@ -135,7 +135,6 @@ class TestShareHandler(BaseHandlerTest):
         await self.create_test_user(real_database, target_id, 'target@example.com')
         await self.create_test_workflow(real_database, workflow_id, owner_id, "Shared Workflow")
 
-        await asyncio.sleep(0.1)
 
         # Create share
         request = ShareCreateRequest(
@@ -149,7 +148,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         # Verify response
         response_events = self.get_main_api_emitted_events("response")
@@ -191,7 +190,6 @@ class TestShareHandler(BaseHandlerTest):
         await self.create_test_user(real_database, owner_id, 'share-test@example.com')
         await self.create_test_workflow(real_database, workflow_id, owner_id, "Shared Workflow")
 
-        await asyncio.sleep(0.1)
 
         # Create share for non-existent user
         request = ShareCreateRequest(
@@ -205,7 +203,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         # Verify response
         response_events = self.get_main_api_emitted_events("response")
@@ -238,7 +236,6 @@ class TestShareHandler(BaseHandlerTest):
         await self.create_test_organization(real_database, org_id, "Test Org", owner_id)
         await self.create_test_workflow(real_database, workflow_id, owner_id, "Shared Workflow")
 
-        await asyncio.sleep(0.1)
 
         # Create org share
         request = ShareCreateRequest(
@@ -252,7 +249,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         # Verify response
         response_events = self.get_main_api_emitted_events("response")
@@ -282,7 +279,6 @@ class TestShareHandler(BaseHandlerTest):
         await self.create_test_user(real_database, target_id, 'target@example.com')
         await self.create_test_database(real_database, table_id, owner_id, "Shared Database")
 
-        await asyncio.sleep(0.1)
 
         request = ShareCreateRequest(
             event_name="share:create",
@@ -295,7 +291,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-db-1']
@@ -319,7 +315,6 @@ class TestShareHandler(BaseHandlerTest):
         await self.create_test_user(real_database, target_id, 'target@example.com')
         await self.create_test_workflow(real_database, workflow_id, owner_id, "Shared Workflow")
 
-        await asyncio.sleep(0.1)
 
         # First share with view permission
         request1 = ShareCreateRequest(
@@ -333,7 +328,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request1)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request1.request_id)
 
         response1 = [e for e in self.get_main_api_emitted_events("response")
                      if e[1].get('request_id') == 'test-upsert-1'][0][1]['data']
@@ -352,7 +347,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request2)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request2.request_id)
 
         response2 = [e for e in self.get_main_api_emitted_events("response")
                      if e[1].get('request_id') == 'test-upsert-2'][0][1]['data']
@@ -383,7 +378,6 @@ class TestShareHandler(BaseHandlerTest):
         await self.create_test_user(real_database, owner_id, 'owner@example.com')
         await self.create_test_workflow(real_database, workflow_id, owner_id, "Not My Workflow")
 
-        await asyncio.sleep(0.1)
 
         request = ShareCreateRequest(
             event_name="share:create",
@@ -396,7 +390,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-denied-1']
@@ -435,7 +429,6 @@ class TestShareHandler(BaseHandlerTest):
             VALUES ('workflow', $1, 'user', $2, 'edit', $3)
         """, workflow_id, target2_id, owner_id)
 
-        await asyncio.sleep(0.1)
 
         # List shares
         request = ShareListRequest(
@@ -446,7 +439,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-list-1']
@@ -470,7 +463,6 @@ class TestShareHandler(BaseHandlerTest):
         await self.create_test_user(real_database, owner_id, 'share-test@example.com')
         await self.create_test_workflow(real_database, workflow_id, owner_id, "Unshared Workflow")
 
-        await asyncio.sleep(0.1)
 
         request = ShareListRequest(
             event_name="share:list",
@@ -480,7 +472,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-list-empty']
@@ -509,7 +501,6 @@ class TestShareHandler(BaseHandlerTest):
             VALUES ($1, 'workflow', $2, 'user', $3, 'view', $4)
         """, share_id, workflow_id, target_id, owner_id)
 
-        await asyncio.sleep(0.1)
 
         # Update permission
         request = ShareUpdateRequest(
@@ -520,7 +511,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-update-1']
@@ -551,7 +542,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-update-notfound']
@@ -581,7 +572,6 @@ class TestShareHandler(BaseHandlerTest):
             VALUES ($1, 'workflow', $2, 'user', $3, 'view', $4)
         """, share_id, workflow_id, target_id, owner_id)
 
-        await asyncio.sleep(0.1)
 
         # Delete share
         request = ShareDeleteRequest(
@@ -591,7 +581,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-delete-1']
@@ -621,7 +611,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-delete-notfound']
@@ -650,7 +640,6 @@ class TestShareHandler(BaseHandlerTest):
             VALUES ('workflow', $1, 'user', $2, 'edit', $3)
         """, workflow_id, my_id, owner_id)
 
-        await asyncio.sleep(0.1)
 
         request = ShareListSharedWithMeRequest(
             event_name="share:list_shared_with_me",
@@ -658,7 +647,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-shared-me-1']
@@ -703,7 +692,6 @@ class TestShareHandler(BaseHandlerTest):
             VALUES ('workflow', $1, 'organization', $2, 'view', $3)
         """, workflow_id, org_id, owner_id)
 
-        await asyncio.sleep(0.1)
 
         request = ShareListSharedWithMeRequest(
             event_name="share:list_shared_with_me",
@@ -711,7 +699,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-shared-org-1']
@@ -750,7 +738,6 @@ class TestShareHandler(BaseHandlerTest):
             VALUES ('database', $1, 'user', $2, 'view', $3)
         """, table_id, my_id, owner_id)
 
-        await asyncio.sleep(0.1)
 
         # Filter by workflow type
         request = ShareListSharedWithMeRequest(
@@ -760,7 +747,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-filter-1']
@@ -808,7 +795,6 @@ class TestShareHandler(BaseHandlerTest):
             VALUES ('workflow', $1, 'organization', $2, 'edit', $3)
         """, other_workflow_id, org_id, other_id)
 
-        await asyncio.sleep(0.1)
 
         request = ShareListSharedWithMeRequest(
             event_name="share:list_shared_with_me",
@@ -816,7 +802,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-exclude-own']
@@ -856,7 +842,6 @@ class TestShareHandler(BaseHandlerTest):
         # Create workflow owned by owner but in org
         await self.create_test_workflow(real_database, workflow_id, owner_id, "Org Workflow", org_id)
 
-        await asyncio.sleep(0.1)
 
         # Admin should be able to share with anyone (even outside org)
         request = ShareCreateRequest(
@@ -870,7 +855,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-admin-share']
@@ -912,7 +897,6 @@ class TestShareHandler(BaseHandlerTest):
         # Create workflow in org owned by session user (member)
         await self.create_test_workflow(real_database, workflow_id, member_id, "Member Workflow", org_id)
 
-        await asyncio.sleep(0.1)
 
         # Member should be able to share with another org member
         request = ShareCreateRequest(
@@ -926,7 +910,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-member-share-allowed']
@@ -961,7 +945,6 @@ class TestShareHandler(BaseHandlerTest):
         # Create workflow in org owned by session user (member)
         await self.create_test_workflow(real_database, workflow_id, member_id, "Restricted Workflow", org_id)
 
-        await asyncio.sleep(0.1)
 
         # Member should NOT be able to share with user outside org
         request = ShareCreateRequest(
@@ -975,7 +958,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-member-share-denied']
@@ -1009,7 +992,6 @@ class TestShareHandler(BaseHandlerTest):
         # Create workflow in first org
         await self.create_test_workflow(real_database, workflow_id, member_id, "My Org Workflow", org_id)
 
-        await asyncio.sleep(0.1)
 
         # Member should NOT be able to share with other org
         request = ShareCreateRequest(
@@ -1023,7 +1005,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-member-org-share-denied']
@@ -1055,7 +1037,6 @@ class TestShareHandler(BaseHandlerTest):
         # Create workflow in org
         await self.create_test_workflow(real_database, workflow_id, member_id, "Own Org Workflow", org_id)
 
-        await asyncio.sleep(0.1)
 
         # Member should be able to share with their own org
         request = ShareCreateRequest(
@@ -1069,7 +1050,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-member-own-org-share']
@@ -1100,7 +1081,6 @@ class TestShareHandler(BaseHandlerTest):
         # Create workflow in org
         await self.create_test_workflow(real_database, workflow_id, member_id, "Pending Workflow", org_id)
 
-        await asyncio.sleep(0.1)
 
         # Member should NOT be able to create pending invite (user doesn't exist)
         request = ShareCreateRequest(
@@ -1114,7 +1094,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-member-pending-denied']
@@ -1148,7 +1128,6 @@ class TestShareHandler(BaseHandlerTest):
         # Create workflow in org
         await self.create_test_workflow(real_database, workflow_id, admin_id, "Admin Workflow", org_id)
 
-        await asyncio.sleep(0.1)
 
         # Admin should be able to share with user outside org
         request = ShareCreateRequest(
@@ -1162,7 +1141,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-admin-outside-share']
@@ -1196,7 +1175,6 @@ class TestShareHandler(BaseHandlerTest):
         # Create workflow in org
         await self.create_test_workflow(real_database, workflow_id, org_owner_id, "Owner Workflow", org_id)
 
-        await asyncio.sleep(0.1)
 
         # Owner should be able to share with user outside org
         request = ShareCreateRequest(
@@ -1210,7 +1188,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-owner-outside-share']
@@ -1232,7 +1210,6 @@ class TestShareHandler(BaseHandlerTest):
         # Create personal workflow (no org)
         await self.create_test_workflow(real_database, workflow_id, owner_id, "Personal Workflow")
 
-        await asyncio.sleep(0.1)
 
         # Should be able to share with anyone
         request = ShareCreateRequest(
@@ -1246,7 +1223,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-personal-share']
@@ -1293,7 +1270,6 @@ class TestShareHandler(BaseHandlerTest):
             VALUES ('workflow', $1, 'organization', $2, 'view', $3)
         """, workflow_id, org_id, owner_id)
 
-        await asyncio.sleep(0.1)
 
         # List workflows as org member
         request = WorkflowListRequest(
@@ -1302,7 +1278,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-list-shared-wf']
@@ -1351,7 +1327,6 @@ class TestShareHandler(BaseHandlerTest):
             VALUES ('workflow', $1, 'organization', $2, 'view', $3)
         """, workflow_id, org_id, owner_id)
 
-        await asyncio.sleep(0.1)
 
         request = WorkflowListRequest(
             event_name="workflow:list",
@@ -1359,7 +1334,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-list-viewonly-wf']
@@ -1409,7 +1384,6 @@ class TestShareHandler(BaseHandlerTest):
             )
         """)
 
-        await asyncio.sleep(0.1)
 
         request = ResourceForkRequest(
             event_name="resource:fork",
@@ -1422,7 +1396,7 @@ class TestShareHandler(BaseHandlerTest):
 
         self.main_api_sio.clear_emitted_events()
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-fork-workflow-personal']
@@ -1507,7 +1481,6 @@ class TestShareHandler(BaseHandlerTest):
             )
         """)
 
-        await asyncio.sleep(0.1)
 
         request = ResourceForkRequest(
             event_name="resource:fork",
@@ -1520,7 +1493,7 @@ class TestShareHandler(BaseHandlerTest):
 
         self.main_api_sio.clear_emitted_events()
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-fork-workflow-org']
@@ -1576,7 +1549,6 @@ class TestShareHandler(BaseHandlerTest):
             )
         """)
 
-        await asyncio.sleep(0.1)
 
         request = ResourceForkRequest(
             event_name="resource:fork",
@@ -1590,7 +1562,7 @@ class TestShareHandler(BaseHandlerTest):
 
         self.main_api_sio.clear_emitted_events()
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-fork-db-personal']
@@ -1651,7 +1623,6 @@ class TestShareHandler(BaseHandlerTest):
             )
         """)
 
-        await asyncio.sleep(0.1)
 
         request = ResourceForkRequest(
             event_name="resource:fork",
@@ -1664,7 +1635,7 @@ class TestShareHandler(BaseHandlerTest):
 
         self.main_api_sio.clear_emitted_events()
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-fork-db-with-data']
@@ -1701,7 +1672,6 @@ class TestShareHandler(BaseHandlerTest):
         # Create workflow but DON'T share it
         await self.create_test_workflow(real_database, workflow_id, owner_id, "Unshared WF")
 
-        await asyncio.sleep(0.1)
 
         request = ResourceForkRequest(
             event_name="resource:fork",
@@ -1713,7 +1683,7 @@ class TestShareHandler(BaseHandlerTest):
 
         self.main_api_sio.clear_emitted_events()
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-fork-no-access']
@@ -1744,7 +1714,6 @@ class TestShareHandler(BaseHandlerTest):
             VALUES ('workflow', $1, 'user', $2, 'view', $3)
         """, workflow_id, forker_id, owner_id)
 
-        await asyncio.sleep(0.1)
 
         request = ResourceForkRequest(
             event_name="resource:fork",
@@ -1757,7 +1726,7 @@ class TestShareHandler(BaseHandlerTest):
 
         self.main_api_sio.clear_emitted_events()
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-fork-non-member-org']
@@ -1779,7 +1748,6 @@ class TestShareHandler(BaseHandlerTest):
         await self.create_test_user(real_database, target_id, 'target@example.com')
         await self.create_test_folder(real_database, folder_id, owner_id, "My Folder")
 
-        await asyncio.sleep(0.1)
 
         request = ShareCreateRequest(
             event_name="share:create",
@@ -1792,7 +1760,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-folder-user-1']
@@ -1816,7 +1784,6 @@ class TestShareHandler(BaseHandlerTest):
         await self.create_test_organization(real_database, org_id, 'Target Org', owner_id)
         await self.create_test_folder(real_database, folder_id, owner_id, "Personal Folder")
 
-        await asyncio.sleep(0.1)
 
         request = ShareCreateRequest(
             event_name="share:create",
@@ -1829,7 +1796,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-folder-org-1']
@@ -1857,7 +1824,6 @@ class TestShareHandler(BaseHandlerTest):
         await self.create_test_organization(real_database, org_id, f"Folder Test Org {org_id[:8]}", owner_id)
         await self.create_test_folder(real_database, folder_id, owner_id, "Org Folder", org_id=org_id)
 
-        await asyncio.sleep(0.1)
 
         request = ShareCreateRequest(
             event_name="share:create",
@@ -1870,7 +1836,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-folder-org-user-1']
@@ -1896,7 +1862,6 @@ class TestShareHandler(BaseHandlerTest):
             VALUES ($1, 'workflow_folder', $2, 'user', $3, 'view', $4)
         """, share_id, folder_id, target_id, owner_id)
 
-        await asyncio.sleep(0.1)
 
         request = ShareListRequest(
             event_name="share:list",
@@ -1906,7 +1871,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-folder-list-1']
@@ -1935,7 +1900,6 @@ class TestShareHandler(BaseHandlerTest):
             VALUES ($1, 'workflow_folder', $2, 'user', $3, 'view', $4)
         """, share_id, folder_id, target_id, owner_id)
 
-        await asyncio.sleep(0.1)
 
         request = ShareUpdateRequest(
             event_name="share:update",
@@ -1945,7 +1909,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-folder-update-1']
@@ -1971,7 +1935,6 @@ class TestShareHandler(BaseHandlerTest):
             VALUES ($1, 'workflow_folder', $2, 'user', $3, 'view', $4)
         """, share_id, folder_id, target_id, owner_id)
 
-        await asyncio.sleep(0.1)
 
         request = ShareDeleteRequest(
             event_name="share:delete",
@@ -1980,7 +1943,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-folder-delete-1']
@@ -2007,7 +1970,6 @@ class TestShareHandler(BaseHandlerTest):
         await self.create_test_user(real_database, target_id, 'target@example.com')
         await self.create_test_folder(real_database, folder_id, owner_id, "Someone Else's Folder")
 
-        await asyncio.sleep(0.1)
 
         request = ShareCreateRequest(
             event_name="share:create",
@@ -2020,7 +1982,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-folder-denied-1']
@@ -2039,7 +2001,6 @@ class TestShareHandler(BaseHandlerTest):
         await self.create_test_user(real_database, target_id, 'target@example.com')
         await self.create_test_folder(real_database, folder_id, owner_id, "Upsert Folder")
 
-        await asyncio.sleep(0.1)
 
         for perm, req_id in [("view", "test-folder-upsert-1"), ("edit", "test-folder-upsert-2")]:
             request = ShareCreateRequest(
@@ -2052,7 +2013,7 @@ class TestShareHandler(BaseHandlerTest):
                 permission=perm,
             )
             await send_event(frontend_sio, sid, request)
-            await asyncio.sleep(0.2)
+            await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         shares = await real_database.fetch(
             "SELECT * FROM resource_shares WHERE resource_id = $1 AND resource_type = 'workflow_folder'",
@@ -2077,7 +2038,6 @@ class TestShareHandler(BaseHandlerTest):
             VALUES ($1, 'workflow_folder', $2, 'user', $3, 'view', $4)
         """, share_id, folder_id, recipient_id, owner_id)
 
-        await asyncio.sleep(0.1)
 
         request = ShareListSharedWithMeRequest(
             event_name="share:list_shared_with_me",
@@ -2086,7 +2046,7 @@ class TestShareHandler(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         matching = [e for e in response_events if e[1].get('request_id') == 'test-folder-shared-with-me-1']

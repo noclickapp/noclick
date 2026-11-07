@@ -118,12 +118,11 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
         workflow_id = str(uuid.uuid4())
         await self.create_test_user(real_database, SESSION_USER_ID, 'invite-test@example.com')
         await self.create_test_workflow(real_database, workflow_id, SESSION_USER_ID, "My Flow")
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, ShareInviteLinkRequest(
             event_name="share:invite_link", request_id="mint-1", workflow_id=workflow_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="mint-1")
 
         matching = self._response_for("mint-1")
         assert len(matching) == 1
@@ -147,16 +146,15 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
         workflow_id = str(uuid.uuid4())
         await self.create_test_user(real_database, SESSION_USER_ID, 'invite-test@example.com')
         await self.create_test_workflow(real_database, workflow_id, SESSION_USER_ID, "My Flow")
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, ShareInviteLinkRequest(
             event_name="share:invite_link", request_id="mint-a", workflow_id=workflow_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="mint-a")
         await send_event(frontend_sio, sid, ShareInviteLinkRequest(
             event_name="share:invite_link", request_id="mint-b", workflow_id=workflow_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="mint-b")
 
         token_a = self._response_for("mint-a")[0][1]['data']['token']
         token_b = self._response_for("mint-b")[0][1]['data']['token']
@@ -174,12 +172,11 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
         await self.create_test_user(real_database, SESSION_USER_ID, 'invite-test@example.com')
         await self.create_test_user(real_database, OTHER_OWNER_ID, 'owner@example.com')
         await self.create_test_workflow(real_database, workflow_id, OTHER_OWNER_ID, "Not Mine")
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, ShareInviteLinkRequest(
             event_name="share:invite_link", request_id="mint-deny", workflow_id=workflow_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="mint-deny")
 
         response = self._response_for("mint-deny")[0][1]
         assert 'error' in response
@@ -196,12 +193,11 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
         # Owner already minted the link; the session user is a collaborator.
         await self.insert_invite_link(real_database, workflow_id, token, OTHER_OWNER_ID)
         await self.insert_resource_share(real_database, workflow_id, SESSION_USER_ID, OTHER_OWNER_ID)
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, ShareInviteLinkRequest(
             event_name="share:invite_link", request_id="collab-fetch", workflow_id=workflow_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="collab-fetch")
 
         data = self._response_for("collab-fetch")[0][1]['data']
         assert data.get('success') is True
@@ -220,12 +216,11 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
         await self.create_test_user(real_database, OTHER_OWNER_ID, 'owner@example.com')
         await self.create_test_workflow(real_database, workflow_id, OTHER_OWNER_ID, "Shared Flow 2")
         await self.insert_resource_share(real_database, workflow_id, SESSION_USER_ID, OTHER_OWNER_ID)
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, ShareInviteLinkRequest(
             event_name="share:invite_link", request_id="collab-none", workflow_id=workflow_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="collab-none")
 
         response = self._response_for("collab-none")[0][1]
         assert 'error' in response
@@ -242,12 +237,11 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
         await self.create_test_user(real_database, SESSION_USER_ID, 'invite-test@example.com')
         await self.create_test_organization(real_database, org_id, "Acme", SESSION_USER_ID)
         await self.create_test_workflow(real_database, workflow_id, SESSION_USER_ID, "Org Flow", org_id)
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, ShareInviteLinkRequest(
             event_name="share:invite_link", request_id="mint-org", workflow_id=workflow_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="mint-org")
 
         response = self._response_for("mint-org")[0][1]
         assert 'error' in response
@@ -262,12 +256,11 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
         await self.create_test_user(real_database, SESSION_USER_ID, 'invite-test@example.com')
         await self.create_test_organization(real_database, org_id, "My Personal WS", SESSION_USER_ID, is_personal_workspace=True)
         await self.create_test_workflow(real_database, workflow_id, SESSION_USER_ID, "Personal WS Flow", org_id)
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, ShareInviteLinkRequest(
             event_name="share:invite_link", request_id="mint-personal-ws", workflow_id=workflow_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="mint-personal-ws")
 
         response = self._response_for("mint-personal-ws")[0][1]
         assert not response.get('error'), response
@@ -283,12 +276,11 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
         await self.create_test_user(real_database, OTHER_OWNER_ID, 'owner@example.com')
         await self.create_test_workflow(real_database, workflow_id, OTHER_OWNER_ID, "Owner's Flow")
         await self.insert_invite_link(real_database, workflow_id, token, OTHER_OWNER_ID)
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, ShareInviteAcceptRequest(
             event_name="share:invite_accept", request_id="accept-1", token=token,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="accept-1")
 
         data = self._response_for("accept-1")[0][1]['data']
         assert data.get('success') is True
@@ -339,12 +331,11 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
         await self.create_test_user(real_database, SESSION_USER_ID, 'invite-test@example.com')
         await self.create_test_workflow(real_database, workflow_id, SESSION_USER_ID, "My Own Flow")
         await self.insert_invite_link(real_database, workflow_id, token, SESSION_USER_ID)
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, ShareInviteAcceptRequest(
             event_name="share:invite_accept", request_id="accept-owner", token=token,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="accept-owner")
 
         data = self._response_for("accept-owner")[0][1]['data']
         assert data.get('success') is True
@@ -371,13 +362,12 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
         await self.create_test_user(real_database, OTHER_OWNER_ID, 'owner@example.com')
         await self.create_test_workflow(real_database, workflow_id, OTHER_OWNER_ID, "Owner's Flow")
         await self.insert_invite_link(real_database, workflow_id, token, OTHER_OWNER_ID)
-        await asyncio.sleep(0.1)
 
         for rid in ("accept-x", "accept-y"):
             await send_event(frontend_sio, sid, ShareInviteAcceptRequest(
                 event_name="share:invite_accept", request_id=rid, token=token,
             ))
-            await asyncio.sleep(0.2)
+            await self.wait_for_main_api_events("response", request_id=rid)
 
         assert self._response_for("accept-y")[0][1]['data'].get('success') is True
         shares = await real_database.fetch(
@@ -392,12 +382,11 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
     async def test_accept_invite_invalid_token(self, real_database, frontend_sio, sid):
         """An unknown / inactive token is rejected."""
         await self.create_test_user(real_database, SESSION_USER_ID, 'invite-test@example.com')
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, ShareInviteAcceptRequest(
             event_name="share:invite_accept", request_id="accept-bad", token="nonexistent-token",
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="accept-bad")
 
         response = self._response_for("accept-bad")[0][1]
         assert 'error' in response
@@ -421,12 +410,11 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
             workflow_blob=self.workflow_with_cred_node(cred_id),
         )
         await self.insert_invite_link(real_database, workflow_id, token, OTHER_OWNER_ID)
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, ShareInviteAcceptRequest(
             event_name="share:invite_accept", request_id="accept-nocred", token=token,
         ))
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id="accept-nocred")
 
         # The joiner DOES get the workflow share (edit access)...
         wf_share = await real_database.fetchrow(
@@ -464,12 +452,11 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
             workflow_blob=self.workflow_with_cred_node(cred_id),
         )
         await self.insert_resource_share(real_database, workflow_id, SESSION_USER_ID, OTHER_OWNER_ID)
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, CredentialDisplayInfoRequest(
             event_name="credential:display_info", request_id="disp-1", workflow_id=workflow_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="disp-1")
 
         response = self._response_for("disp-1")[0][1]
         assert not response.get('error'), response
@@ -493,12 +480,11 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
             real_database, workflow_id, SESSION_USER_ID, "My Flow",
             workflow_blob=self.workflow_with_cred_node(cred_id),
         )
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, CredentialDisplayInfoRequest(
             event_name="credential:display_info", request_id="disp-2", workflow_id=workflow_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="disp-2")
 
         response = self._response_for("disp-2")[0][1]
         assert not response.get('error'), response
@@ -520,12 +506,11 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
             workflow_blob=self.workflow_with_cred_node(cred_id),
         )
         # NO resource_share for SESSION_USER_ID
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, CredentialDisplayInfoRequest(
             event_name="credential:display_info", request_id="disp-3", workflow_id=workflow_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="disp-3")
 
         response = self._response_for("disp-3")[0][1]
         assert response.get('error'), response
@@ -548,12 +533,11 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
             workflow_blob=self.workflow_with_cred_node(third_cred),
         )
         await self.insert_resource_share(real_database, workflow_id, SESSION_USER_ID, OTHER_OWNER_ID)
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, CredentialDisplayInfoRequest(
             event_name="credential:display_info", request_id="disp-3p", workflow_id=workflow_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="disp-3p")
 
         response = self._response_for("disp-3p")[0][1]
         assert not response.get('error'), response
@@ -571,12 +555,11 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
         await self.create_test_workflow(real_database, workflow_id, OTHER_OWNER_ID, "Victim Flow")
         # Forged: created_by is the attacker (SESSION_USER), not the workflow owner.
         await self.insert_invite_link(real_database, workflow_id, token, SESSION_USER_ID)
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, ShareInviteAcceptRequest(
             event_name="share:invite_accept", request_id="accept-forged", token=token,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="accept-forged")
 
         response = self._response_for("accept-forged")[0][1]
         assert response.get('error'), response
@@ -597,13 +580,12 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
         await self.create_test_user(real_database, SESSION_USER_ID, 'invite-test@example.com')
         await self.insert_credential(real_database, cred_id, SESSION_USER_ID)
         await self.create_test_workflow(real_database, workflow_id, SESSION_USER_ID, "My Flow")
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, CredentialAuthorizeForWorkflowRequest(
             event_name="credential:authorize_for_workflow", request_id="authz-1",
             workflow_id=workflow_id, credential_id=cred_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="authz-1")
 
         response = self._response_for("authz-1")[0][1]
         assert not response.get('error'), response
@@ -626,13 +608,12 @@ class TestWorkflowInviteLinks(BaseHandlerTest):
         await self.insert_credential(real_database, cred_id, OTHER_OWNER_ID, name='Owner Secret')
         await self.create_test_workflow(real_database, workflow_id, OTHER_OWNER_ID, "Shared Flow")
         await self.insert_resource_share(real_database, workflow_id, SESSION_USER_ID, OTHER_OWNER_ID)
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, CredentialAuthorizeForWorkflowRequest(
             event_name="credential:authorize_for_workflow", request_id="authz-2",
             workflow_id=workflow_id, credential_id=cred_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="authz-2")
 
         response = self._response_for("authz-2")[0][1]
         assert not response.get('error'), response

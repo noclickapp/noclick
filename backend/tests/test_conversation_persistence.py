@@ -96,7 +96,6 @@ class TestSaveConversation(BaseHandlerTest):
         ]
 
         await handler._save_conversation(conv_id, TEST_USER_ID, messages, title="Add Slack")
-        await asyncio.sleep(0.3)
 
         row = await real_database.fetchrow(
             "SELECT * FROM conversations WHERE conversation_id = $1", conv_id
@@ -131,7 +130,6 @@ class TestSaveConversation(BaseHandlerTest):
             {"role": "assistant", "message": "", "edit_segments": [{"type": "text", "text": "Done"}]},
         ]
         await handler._save_conversation(conv_id, TEST_USER_ID, turn1)
-        await asyncio.sleep(0.3)
 
         # Turn 2
         turn2 = [
@@ -139,7 +137,6 @@ class TestSaveConversation(BaseHandlerTest):
             {"role": "assistant", "message": "", "edit_segments": [{"type": "text", "text": "Added"}]},
         ]
         await handler._save_conversation(conv_id, TEST_USER_ID, turn2)
-        await asyncio.sleep(0.3)
 
         row = await real_database.fetchrow(
             "SELECT events, preview FROM conversations WHERE conversation_id = $1", conv_id
@@ -165,7 +162,6 @@ class TestSaveConversation(BaseHandlerTest):
             {"role": "assistant", "message": "", "edit_segments": []},
         ]
         await handler._save_conversation(conv_id, TEST_USER_ID, messages)
-        await asyncio.sleep(0.3)
 
         row = await real_database.fetchrow(
             "SELECT title FROM conversations WHERE conversation_id = $1", conv_id
@@ -184,7 +180,6 @@ class TestSaveConversation(BaseHandlerTest):
             {"role": "assistant", "message": "", "edit_segments": []},
         ]
         await handler._save_conversation(conv_id, TEST_USER_ID, messages)
-        await asyncio.sleep(0.3)
 
         row = await real_database.fetchrow(
             "SELECT preview, title FROM conversations WHERE conversation_id = $1", conv_id
@@ -212,7 +207,7 @@ class TestListConversations(BaseHandlerTest):
             request_id="list-empty-1",
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("conversations:list", request_id=request.request_id)
 
         event = _find_conversation_list(
             self.get_main_api_emitted_events("conversations:list"), "list-empty-1"
@@ -250,7 +245,7 @@ class TestListConversations(BaseHandlerTest):
             request_id="list-sorted-1",
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("conversations:list", request_id=request.request_id)
 
         event = _find_conversation_list(
             self.get_main_api_emitted_events("conversations:list"), "list-sorted-1"
@@ -283,7 +278,7 @@ class TestListConversations(BaseHandlerTest):
             request_id="list-no-deleted-1",
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("conversations:list", request_id=request.request_id)
 
         event = _find_conversation_list(
             self.get_main_api_emitted_events("conversations:list"), "list-no-deleted-1"
@@ -315,7 +310,7 @@ class TestListConversations(BaseHandlerTest):
             request_id="list-user-iso-1",
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("conversations:list", request_id=request.request_id)
 
         event = _find_conversation_list(
             self.get_main_api_emitted_events("conversations:list"), "list-user-iso-1"
@@ -339,7 +334,7 @@ class TestListConversations(BaseHandlerTest):
             request_id="list-meta-1",
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("conversations:list", request_id=request.request_id)
 
         event = _find_conversation_list(
             self.get_main_api_emitted_events("conversations:list"), "list-meta-1"
@@ -385,7 +380,7 @@ class TestResumeConversation(BaseHandlerTest):
             session_id=conv_id,
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         resp = _find_response(self.get_main_api_emitted_events("response"), "resume-1")
         assert resp is not None, "Should receive response event"
@@ -418,7 +413,7 @@ class TestResumeConversation(BaseHandlerTest):
             session_id=conv_id,
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         resp = _find_response(self.get_main_api_emitted_events("response"), "resume-multi-1")
         assert len(resp["data"]["messages"]) == 4
@@ -433,7 +428,7 @@ class TestResumeConversation(BaseHandlerTest):
             session_id="nonexistent-conv-id",
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         resp = _find_response(self.get_main_api_emitted_events("response"), "resume-missing-1")
         assert resp["data"]["messages"] == []
@@ -457,7 +452,7 @@ class TestResumeConversation(BaseHandlerTest):
             session_id=conv_id,
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         resp = _find_response(self.get_main_api_emitted_events("response"), "resume-deleted-1")
         assert resp["data"]["messages"] == []
@@ -478,7 +473,7 @@ class TestResumeConversation(BaseHandlerTest):
             session_id=f"coordinator:{TEST_USER_ID}",
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         resp = _find_response(self.get_main_api_emitted_events("response"), "resume-broken-1")
         assert resp["error"] == "Could not load the conversation"
@@ -504,7 +499,7 @@ class TestResumeConversation(BaseHandlerTest):
             session_id=conv_id,
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         resp = _find_response(self.get_main_api_emitted_events("response"), "resume-other-1")
         assert resp["data"]["messages"] == []
@@ -533,7 +528,7 @@ class TestDeleteConversation(BaseHandlerTest):
             conversation_id=conv_id,
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         resp = _find_response(self.get_main_api_emitted_events("response"), "delete-1")
         assert resp is not None
@@ -556,7 +551,7 @@ class TestDeleteConversation(BaseHandlerTest):
             conversation_id="does-not-exist",
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         resp = _find_response(self.get_main_api_emitted_events("response"), "delete-missing-1")
         assert resp["data"]["success"] is False
@@ -581,7 +576,7 @@ class TestDeleteConversation(BaseHandlerTest):
             conversation_id=conv_id,
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         resp = _find_response(self.get_main_api_emitted_events("response"), "delete-other-1")
         assert resp["data"]["success"] is False
@@ -611,7 +606,7 @@ class TestDeleteConversation(BaseHandlerTest):
             conversation_id=conv_id,
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id=request.request_id)
 
         resp = _find_response(self.get_main_api_emitted_events("response"), "delete-double-1")
         assert resp["data"]["success"] is False
@@ -652,13 +647,12 @@ class TestConversationLifecycle(BaseHandlerTest):
         # 1. Save via handler method
         handler = self.handlers[Handler.WORKFLOW_BUILDER]
         await handler._save_conversation(conv_id, TEST_USER_ID, messages, title="Webhook Workflow")
-        await asyncio.sleep(0.3)
 
         # 2. List — should contain our conversation
         await send_event(frontend_sio, sid, ListConversationsRequest(
             event_name="conversations:list", request_id="lc-lifecycle-list",
         ))
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("conversations:list", request_id="lc-lifecycle-list")
 
         list_event = _find_conversation_list(
             self.get_main_api_emitted_events("conversations:list"), "lc-lifecycle-list"
@@ -672,7 +666,7 @@ class TestConversationLifecycle(BaseHandlerTest):
         await send_event(frontend_sio, sid, ResumeConversationRequest(
             event_name="conversation:resume", request_id="lc-lifecycle-resume", session_id=conv_id,
         ))
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id="lc-lifecycle-resume")
 
         resume_resp = _find_response(self.get_main_api_emitted_events("response"), "lc-lifecycle-resume")
         restored = resume_resp["data"]["messages"]
@@ -685,7 +679,7 @@ class TestConversationLifecycle(BaseHandlerTest):
         await send_event(frontend_sio, sid, DeleteConversationRequest(
             event_name="conversation:delete", request_id="lc-lifecycle-delete", conversation_id=conv_id,
         ))
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id="lc-lifecycle-delete")
 
         del_resp = _find_response(self.get_main_api_emitted_events("response"), "lc-lifecycle-delete")
         assert del_resp["data"]["success"] is True
@@ -694,7 +688,7 @@ class TestConversationLifecycle(BaseHandlerTest):
         await send_event(frontend_sio, sid, ListConversationsRequest(
             event_name="conversations:list", request_id="lc-lifecycle-list2",
         ))
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("conversations:list", request_id="lc-lifecycle-list2")
 
         list_event2 = _find_conversation_list(
             self.get_main_api_emitted_events("conversations:list"), "lc-lifecycle-list2"
@@ -706,7 +700,7 @@ class TestConversationLifecycle(BaseHandlerTest):
         await send_event(frontend_sio, sid, ResumeConversationRequest(
             event_name="conversation:resume", request_id="lc-lifecycle-resume2", session_id=conv_id,
         ))
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id="lc-lifecycle-resume2")
 
         resume_resp2 = _find_response(self.get_main_api_emitted_events("response"), "lc-lifecycle-resume2")
         assert resume_resp2["data"]["messages"] == []
@@ -743,13 +737,12 @@ class TestEditSegmentsAccumulation(BaseHandlerTest):
 
         handler = self.handlers[Handler.WORKFLOW_BUILDER]
         await handler._save_conversation(conv_id, TEST_USER_ID, messages)
-        await asyncio.sleep(0.3)
 
         # Resume and verify round-trip fidelity
         await send_event(frontend_sio, sid, ResumeConversationRequest(
             event_name="conversation:resume", request_id="seg-roundtrip", session_id=conv_id,
         ))
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id="seg-roundtrip")
 
         resp = _find_response(self.get_main_api_emitted_events("response"), "seg-roundtrip")
         restored_segments = resp["data"]["messages"][1]["edit_segments"]
@@ -773,12 +766,11 @@ class TestEditSegmentsAccumulation(BaseHandlerTest):
 
         handler = self.handlers[Handler.WORKFLOW_BUILDER]
         await handler._save_conversation(conv_id, TEST_USER_ID, messages)
-        await asyncio.sleep(0.3)
 
         await send_event(frontend_sio, sid, ResumeConversationRequest(
             event_name="conversation:resume", request_id="empty-seg-1", session_id=conv_id,
         ))
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id="empty-seg-1")
 
         resp = _find_response(self.get_main_api_emitted_events("response"), "empty-seg-1")
         assert resp["data"]["messages"][1]["edit_segments"] == []

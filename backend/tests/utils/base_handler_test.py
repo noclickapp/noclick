@@ -195,24 +195,32 @@ class BaseHandlerTest:
             raw = zlib.decompress(raw)
         return json.loads(raw.decode("utf-8"))
 
-    async def wait_for_main_api_events(self, event_name, *, count=1, timeout=2.0):
-        """Poll until ``count`` events named ``event_name`` have been emitted.
+    async def wait_for_main_api_events(self, event_name, *, count=1, timeout=2.0, request_id=None):
+        """Poll until ``count`` events named ``event_name`` have been emitted,
+        counting only those answering ``request_id`` when one is given.
 
         Use instead of a fixed ``asyncio.sleep(...)`` after sending a request:
         fixed sleeps race the socket round-trip on a busy loop — the dominant
-        full-suite flake shape. Returns the events seen at success or timeout;
-        the caller's own assertions decide pass/fail.
+        full-suite flake shape — and wait their whole length when the answer
+        is already in. Returns the events seen at success or timeout; the
+        caller's own assertions decide pass/fail.
         """
         import asyncio
         import time
 
+        def seen():
+            events = self.get_main_api_emitted_events(event_name)
+            if request_id is None:
+                return events
+            return [e for e in events if isinstance(e[1], dict) and e[1].get("request_id") == request_id]
+
         deadline = time.monotonic() + timeout
         while time.monotonic() < deadline:
-            events = self.get_main_api_emitted_events(event_name)
+            events = seen()
             if len(events) >= count:
                 return events
             await asyncio.sleep(0.01)
-        return self.get_main_api_emitted_events(event_name)
+        return seen()
     
     def get_session_data(self, sid: str) -> Dict[str, Any]:
         """

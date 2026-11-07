@@ -72,7 +72,7 @@ class TestCoreNodeExecution(BaseHandlerTest):
             edges=edges,
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(0.5)
+        await self.wait_for_main_api_events("workflow:complete")
 
         outputs: Dict[str, Any] = {}
         for event in self.get_main_api_emitted_events("workflow:node:output"):

@@ -123,7 +123,6 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
         # Create test user first
         await self.create_test_user(real_database, user_id)
 
-        await asyncio.sleep(0.1)
         await real_database.execute("""
             INSERT INTO workflows (id, owner_id, name, description, workflow, permissions, created_at, updated_at)
             VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
@@ -137,7 +136,7 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, list_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=list_request.request_id)
 
         # Verify response
         response_events = self.get_main_api_emitted_events("response")
@@ -164,7 +163,6 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
         # Create test user first
         await self.create_test_user(real_database, user_id)
 
-        await asyncio.sleep(0.1)
         await real_database.execute("""
             INSERT INTO workflows (id, owner_id, name, description, workflow, permissions, created_at, updated_at)
             VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
@@ -185,7 +183,7 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, workflow_request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("workflow:complete")
 
         # Get execution_id from workflow:started event
         started_events = self.get_main_api_emitted_events("workflow:started")
@@ -205,7 +203,7 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, list_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=list_request.request_id)
 
         # Verify response
         response_events = self.get_main_api_emitted_events("response")
@@ -250,7 +248,6 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
         # Create test user first
         await self.create_test_user(real_database, user_id)
 
-        await asyncio.sleep(0.1)
         await real_database.execute("""
             INSERT INTO workflows (id, owner_id, name, description, workflow, permissions, created_at, updated_at)
             VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
@@ -275,7 +272,7 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, workflow_request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("workflow:complete")
 
         # Get execution_id if workflow:started was emitted
         started_events = self.get_main_api_emitted_events("workflow:started")
@@ -292,7 +289,7 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
             )
 
             await send_event(frontend_sio, sid, list_request)
-            await asyncio.sleep(0.2)
+            await self.wait_for_main_api_events("response", request_id=list_request.request_id)
 
             # Verify response
             response_events = self.get_main_api_emitted_events("response")
@@ -332,7 +329,6 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
         # Create test user first
         await self.create_test_user(real_database, user_id)
 
-        await asyncio.sleep(0.1)
         await real_database.execute("""
             INSERT INTO workflows (id, owner_id, name, description, workflow, permissions, created_at, updated_at)
             VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
@@ -355,7 +351,7 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
             )
 
             await send_event(frontend_sio, sid, workflow_request)
-            await asyncio.sleep(0.3)
+            await self.wait_for_main_api_events("workflow:complete", count=i + 1)
 
             # Get execution_id
             started_events = self.get_main_api_emitted_events("workflow:started")
@@ -370,7 +366,7 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, list_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=list_request.request_id)
 
         # Verify response
         response_events = self.get_main_api_emitted_events("response")
@@ -405,7 +401,6 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
         # Create test user first
         await self.create_test_user(real_database, user_id)
 
-        await asyncio.sleep(0.1)
         await real_database.execute("""
             INSERT INTO workflows (id, owner_id, name, description, workflow, permissions, created_at, updated_at)
             VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
@@ -428,7 +423,7 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
             )
 
             await send_event(frontend_sio, sid, workflow_request)
-            await asyncio.sleep(0.3)
+            await self.wait_for_main_api_events("workflow:complete", count=i + 1)
 
             # Get execution_id
             started_events = self.get_main_api_emitted_events("workflow:started")
@@ -444,7 +439,7 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, list_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=list_request.request_id)
 
         # Verify response
         response_events = self.get_main_api_emitted_events("response")
@@ -478,7 +473,6 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
         # Create test user first
         await self.create_test_user(real_database, user_id)
 
-        await asyncio.sleep(0.1)
         await real_database.execute("""
             INSERT INTO workflows (id, owner_id, name, description, workflow, permissions, created_at, updated_at)
             VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
@@ -504,7 +498,7 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
         await send_event(frontend_sio, sid, workflow_request)
 
         # Get execution_id from workflow:started event
-        await asyncio.sleep(0.1)
+        await self.wait_for_main_api_events("workflow:started")
         started_events = self.get_main_api_emitted_events("workflow:started")
         assert len(started_events) >= 1
         execution_id = started_events[-1][1]['execution_id']
@@ -515,7 +509,7 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
         """, execution_id)
 
         # Wait for completion
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("workflow:complete")
 
         # Verify workflow completed
         complete_events = self.get_main_api_emitted_events("workflow:complete")
@@ -538,7 +532,7 @@ class TestWorkflowExecutionListing(BaseHandlerTest):
         )
 
         await send_event(frontend_sio, sid, list_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=list_request.request_id)
 
         # Verify response shows completed status
         response_events = self.get_main_api_emitted_events("response")

@@ -108,7 +108,7 @@ async def _insert_conversation(
     )
 
 
-async def _send_lookup(frontend_sio, sid, workflow_id, request_id):
+async def _send_lookup(test, frontend_sio, sid, workflow_id, request_id):
     await send_event(
         frontend_sio, sid,
         GetLatestConversationForWorkflowRequest(
@@ -117,10 +117,10 @@ async def _send_lookup(frontend_sio, sid, workflow_id, request_id):
             workflow_id=workflow_id,
         ),
     )
-    await asyncio.sleep(0.3)
+    await test.wait_for_main_api_events("response", request_id=request_id)
 
 
-async def _send_resume(frontend_sio, sid, conversation_id, request_id):
+async def _send_resume(test, frontend_sio, sid, conversation_id, request_id):
     await send_event(
         frontend_sio, sid,
         ResumeConversationRequest(
@@ -129,7 +129,7 @@ async def _send_resume(frontend_sio, sid, conversation_id, request_id):
             session_id=conversation_id,
         ),
     )
-    await asyncio.sleep(0.3)
+    await test.wait_for_main_api_events("response", request_id=request_id)
 
 
 def _ask(ask_id="ask-1", title=None, inputs=None):
@@ -150,7 +150,7 @@ class TestLookupPriority(BaseHandlerTest):
         await _setup_test_user(real_database)
         wf_id = await _make_workflow(real_database)
 
-        await _send_lookup(frontend_sio, sid, wf_id, "lp-empty")
+        await _send_lookup(self, frontend_sio, sid, wf_id, "lp-empty")
         resp = _find_response(self.get_main_api_emitted_events("response"), "lp-empty")
 
         assert resp["data"]["conversation_id"] is None
@@ -169,7 +169,7 @@ class TestLookupPriority(BaseHandlerTest):
             workflow_id=wf_id,
         )
 
-        await _send_lookup(frontend_sio, sid, wf_id, "lp-one")
+        await _send_lookup(self, frontend_sio, sid, wf_id, "lp-one")
         resp = _find_response(self.get_main_api_emitted_events("response"), "lp-one")
 
         assert resp["data"]["conversation_id"] == conv_id
@@ -196,7 +196,7 @@ class TestLookupPriority(BaseHandlerTest):
             workflow_id=wf_id, last_activity_offset_seconds=0,
         )
 
-        await _send_lookup(frontend_sio, sid, wf_id, "lp-stub")
+        await _send_lookup(self, frontend_sio, sid, wf_id, "lp-stub")
         resp = _find_response(self.get_main_api_emitted_events("response"), "lp-stub")
 
         assert resp["data"]["conversation_id"] == real_conv, \
@@ -230,7 +230,7 @@ class TestLookupPriority(BaseHandlerTest):
             workflow_id=wf_id, last_activity_offset_seconds=0,
         )
 
-        await _send_lookup(frontend_sio, sid, wf_id, "lp-paused")
+        await _send_lookup(self, frontend_sio, sid, wf_id, "lp-paused")
         resp = _find_response(self.get_main_api_emitted_events("response"), "lp-paused")
 
         assert resp["data"]["conversation_id"] == paused_conv, \
@@ -251,7 +251,7 @@ class TestLookupPriority(BaseHandlerTest):
             workflow_id=wf_id,
         )
 
-        await _send_lookup(frontend_sio, sid, wf_id, "lp-iso")
+        await _send_lookup(self, frontend_sio, sid, wf_id, "lp-iso")
         resp = _find_response(self.get_main_api_emitted_events("response"), "lp-iso")
 
         assert resp["data"]["conversation_id"] is None
@@ -275,7 +275,7 @@ class TestLookupPriority(BaseHandlerTest):
             workflow_id=wf_id, last_activity_offset_seconds=-120,
         )
 
-        await _send_lookup(frontend_sio, sid, wf_id, "lp-walk")
+        await _send_lookup(self, frontend_sio, sid, wf_id, "lp-walk")
         resp = _find_response(self.get_main_api_emitted_events("response"), "lp-walk")
 
         assert resp["data"]["conversation_id"] == real_conv
@@ -303,7 +303,7 @@ class TestLookupPriority(BaseHandlerTest):
             workflow_id=wf_id, last_activity_offset_seconds=-60,
         )
 
-        await _send_lookup(frontend_sio, sid, wf_id, "lp-deleted")
+        await _send_lookup(self, frontend_sio, sid, wf_id, "lp-deleted")
         resp = _find_response(self.get_main_api_emitted_events("response"), "lp-deleted")
         assert resp["data"]["conversation_id"] == kept_conv
 
@@ -331,9 +331,8 @@ class TestSaveConversation(BaseHandlerTest):
                 {"type": "text", "text": "done"},
             ]},
         ])
-        await asyncio.sleep(0.3)
 
-        await _send_resume(frontend_sio, sid, conv_id, "save-complete")
+        await _send_resume(self, frontend_sio, sid, conv_id, "save-complete")
         resp = _find_response(self.get_main_api_emitted_events("response"), "save-complete")
         msgs = resp["data"]["messages"]
         assert len(msgs) == 2
@@ -360,10 +359,9 @@ class TestSaveConversation(BaseHandlerTest):
                 "pending_ask": _ask("a1", inputs=[{"id": "ask_0", "type": "credential"}]),
             },
         ], workflow_id=wf_id)
-        await asyncio.sleep(0.3)
 
         # Resume returns the paused assistant with pending_ask intact.
-        await _send_resume(frontend_sio, sid, conv_id, "save-paused")
+        await _send_resume(self, frontend_sio, sid, conv_id, "save-paused")
         resp = _find_response(self.get_main_api_emitted_events("response"), "save-paused")
         asst = resp["data"]["messages"][1]
         assert asst["pending_ask"]["ask_id"] == "a1"
@@ -371,7 +369,7 @@ class TestSaveConversation(BaseHandlerTest):
         assert asst["llm_messages"][0]["content"].startswith("<ask")
 
         # Lookup picks it up via the pending_ask column priority.
-        await _send_lookup(frontend_sio, sid, wf_id, "save-paused-lookup")
+        await _send_lookup(self, frontend_sio, sid, wf_id, "save-paused-lookup")
         lookup = _find_response(
             self.get_main_api_emitted_events("response"), "save-paused-lookup",
         )
@@ -401,7 +399,6 @@ class TestSaveConversation(BaseHandlerTest):
              "edit_steps": ["Modifying workflow"],
              "pending_ask": _ask("a1")},
         ])
-        await asyncio.sleep(0.2)
 
         # Resume completes — replace_pending=True. New turn carries its
         # OWN new content (no need to re-include the prior asking text).
@@ -417,9 +414,8 @@ class TestSaveConversation(BaseHandlerTest):
              ],
              "edit_steps": ["Thinking after skip"]},
         ], replace_pending=True)
-        await asyncio.sleep(0.3)
 
-        await _send_resume(frontend_sio, sid, conv_id, "rs-merge")
+        await _send_resume(self, frontend_sio, sid, conv_id, "rs-merge")
         resp = _find_response(self.get_main_api_emitted_events("response"), "rs-merge")
         msgs = resp["data"]["messages"]
         assert len(msgs) == 2, f"Expected 2 messages, got {len(msgs)}"
@@ -447,16 +443,14 @@ class TestSaveConversation(BaseHandlerTest):
             {"role": "assistant", "message": "",
              "edit_segments": [{"type": "text", "text": "first done"}]},
         ])
-        await asyncio.sleep(0.2)
 
         await handler._save_conversation(conv_id, TEST_USER_ID, [
             {"role": "user", "message": "second"},
             {"role": "assistant", "message": "",
              "edit_segments": [{"type": "text", "text": "second done"}]},
         ])
-        await asyncio.sleep(0.3)
 
-        await _send_resume(frontend_sio, sid, conv_id, "rs-multi")
+        await _send_resume(self, frontend_sio, sid, conv_id, "rs-multi")
         resp = _find_response(self.get_main_api_emitted_events("response"), "rs-multi")
         msgs = resp["data"]["messages"]
         assert len(msgs) == 4
@@ -477,9 +471,8 @@ class TestSaveConversation(BaseHandlerTest):
              "edit_steps": ["Modifying workflow"],
              "cancelled": True},
         ])
-        await asyncio.sleep(0.3)
 
-        await _send_resume(frontend_sio, sid, conv_id, "rs-cancel")
+        await _send_resume(self, frontend_sio, sid, conv_id, "rs-cancel")
         resp = _find_response(self.get_main_api_emitted_events("response"), "rs-cancel")
         asst = resp["data"]["messages"][1]
         assert asst["cancelled"] is True
@@ -497,13 +490,11 @@ class TestSaveConversation(BaseHandlerTest):
             {"role": "user", "message": "first"},
             {"role": "assistant", "message": "", "edit_segments": []},
         ], cost_delta=0.01, token_delta=100, turn_delta=1)
-        await asyncio.sleep(0.2)
 
         await handler._save_conversation(conv_id, TEST_USER_ID, [
             {"role": "user", "message": "second"},
             {"role": "assistant", "message": "", "edit_segments": []},
         ], cost_delta=0.02, token_delta=250, turn_delta=2)
-        await asyncio.sleep(0.3)
 
         row = await real_database.fetchrow(
             "SELECT total_cost, total_tokens, turn_count FROM conversations "
@@ -536,7 +527,6 @@ class TestPendingAskColumn(BaseHandlerTest):
             {"role": "assistant", "message": "", "edit_segments": [],
              "pending_ask": _ask("ask-x", title="Connect")},
         ])
-        await asyncio.sleep(0.3)
 
         row = await real_database.fetchrow(
             "SELECT pending_ask FROM conversations WHERE conversation_id = $1", conv_id,
@@ -561,7 +551,6 @@ class TestPendingAskColumn(BaseHandlerTest):
             {"role": "assistant", "message": "", "edit_segments": [],
              "pending_ask": _ask("ask-y")},
         ])
-        await asyncio.sleep(0.2)
 
         # Complete (replace_pending=True). The new assistant has no pending_ask.
         await handler._save_conversation(conv_id, TEST_USER_ID, [
@@ -569,7 +558,6 @@ class TestPendingAskColumn(BaseHandlerTest):
             {"role": "assistant", "message": "", "edit_segments": [
                 {"type": "text", "text": "done"}]},
         ], replace_pending=True)
-        await asyncio.sleep(0.3)
 
         row = await real_database.fetchrow(
             "SELECT pending_ask FROM conversations WHERE conversation_id = $1", conv_id,
@@ -620,7 +608,7 @@ class TestListPending(BaseHandlerTest):
                 request_id="lp-1",
             ),
         )
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id="lp-1")
 
         resp = _find_response(self.get_main_api_emitted_events("response"), "lp-1")
         runs = resp["data"]["runs"]
@@ -659,7 +647,7 @@ class TestListPending(BaseHandlerTest):
                 workflow_id=wf_a,
             ),
         )
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("response", request_id="lp-flt")
 
         resp = _find_response(self.get_main_api_emitted_events("response"), "lp-flt")
         ids = [r["conversation_id"] for r in resp["data"]["runs"]]
@@ -694,9 +682,8 @@ class TestRoundTripIntegrity(BaseHandlerTest):
                 ]},
             ]},
         ])
-        await asyncio.sleep(0.3)
 
-        await _send_resume(frontend_sio, sid, conv_id, "rt-icon")
+        await _send_resume(self, frontend_sio, sid, conv_id, "rt-icon")
         resp = _find_response(self.get_main_api_emitted_events("response"), "rt-icon")
         ev = resp["data"]["messages"][1]["edit_segments"][0]["events"][0]
         assert ev.get("nodeType") == "automation-slack"
@@ -712,9 +699,8 @@ class TestRoundTripIntegrity(BaseHandlerTest):
             {"role": "user", "message": "x"},
             {"role": "assistant", "message": "", "edit_segments": [], "edit_steps": steps},
         ])
-        await asyncio.sleep(0.3)
 
-        await _send_resume(frontend_sio, sid, conv_id, "rt-steps")
+        await _send_resume(self, frontend_sio, sid, conv_id, "rt-steps")
         resp = _find_response(self.get_main_api_emitted_events("response"), "rt-steps")
         assert resp["data"]["messages"][1]["edit_steps"] == steps
 
@@ -733,9 +719,8 @@ class TestRoundTripIntegrity(BaseHandlerTest):
             {"role": "assistant", "message": "", "edit_segments": [],
              "llm_messages": llm},
         ])
-        await asyncio.sleep(0.3)
 
-        await _send_resume(frontend_sio, sid, conv_id, "rt-llm")
+        await _send_resume(self, frontend_sio, sid, conv_id, "rt-llm")
         resp = _find_response(self.get_main_api_emitted_events("response"), "rt-llm")
         assert resp["data"]["messages"][1]["llm_messages"] == llm
 
@@ -763,7 +748,6 @@ class TestRoundTripIntegrity(BaseHandlerTest):
              "llm_messages": [{"role": "assistant", "content": "<ask field='to_number'/>"}],
              "pending_ask": _ask("a1", inputs=[{"id": "ask_0"}])},
         ])
-        await asyncio.sleep(0.2)
 
         # Turn 2 (resume): builder.messages models what the brain saw this turn —
         # system + loaded history (user + assistant) + the INJECTED answer +
@@ -789,7 +773,6 @@ class TestRoundTripIntegrity(BaseHandlerTest):
              "edit_segments": [{"type": "text", "text": "Done"}],
              "llm_messages": llm},
         ], replace_pending=True)
-        await asyncio.sleep(0.3)
 
         # Reload the brain history exactly as the NEXT resume would, and assert
         # the answer is present (so the brain won't re-ask for it).

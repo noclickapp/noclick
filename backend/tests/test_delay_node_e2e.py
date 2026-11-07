@@ -96,7 +96,7 @@ class TestDelayNodeE2E(BaseHandlerTest):
             workflow_id=workflow_id, nodes=nodes, edges=edges,
         )
         await send_event(frontend_sio, sid, request)
-        await asyncio.sleep(2.5)  # 1s in-process delay + engine overhead
+        await self.wait_for_main_api_events("workflow:complete", timeout=5.0)  # 1s in-process delay + engine overhead
 
         assert "delay-1" in self._node_states("completed")
         # Downstream executed — the short delay did NOT suspend the run.

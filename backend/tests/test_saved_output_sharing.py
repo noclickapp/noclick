@@ -99,7 +99,7 @@ class TestSavedOutputSharing(BaseHandlerTest):
             visibility=visibility
         )
         await send_event(frontend_sio, sid, create_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=create_request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         for event in response_events:
@@ -120,7 +120,6 @@ class TestSavedOutputSharing(BaseHandlerTest):
 
         await self.create_test_user(real_database, owner_id, 'owner@example.com')
         await self.create_test_user(real_database, recipient_id, 'recipient@example.com')
-        await asyncio.sleep(0.1)
 
         # Create saved output
         output_id = await self.create_saved_output(
@@ -139,7 +138,7 @@ class TestSavedOutputSharing(BaseHandlerTest):
             permission="view"
         )
         await send_event(frontend_sio, sid, share_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=share_request.request_id)
 
         # Verify share was created
         response_events = self.get_main_api_emitted_events("response")
@@ -163,7 +162,6 @@ class TestSavedOutputSharing(BaseHandlerTest):
         """
         owner_id = '00000000-0000-4000-8000-000000000001'
         await self.create_test_user(real_database, owner_id, 'owner@example.com')
-        await asyncio.sleep(0.1)
 
         # Create public saved output
         output_id = await self.create_saved_output(
@@ -197,7 +195,6 @@ class TestSavedOutputSharing(BaseHandlerTest):
         await self.create_test_organization(real_database, org_id, 'Test Team')
         await self.add_org_member(real_database, org_id, owner_id, 'owner')
         await self.add_org_member(real_database, org_id, member_id, 'member')
-        await asyncio.sleep(0.1)
 
         # Create saved output
         output_id = await self.create_saved_output(
@@ -215,7 +212,7 @@ class TestSavedOutputSharing(BaseHandlerTest):
             permission="edit"
         )
         await send_event(frontend_sio, sid, share_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=share_request.request_id)
 
         # Verify share was created
         share_row = await real_database.fetchrow("""
@@ -240,7 +237,6 @@ class TestSavedOutputSharing(BaseHandlerTest):
 
         await self.create_test_user(real_database, owner_id, 'owner@example.com')
         await self.create_test_user(real_database, viewer_id, 'viewer@example.com')
-        await asyncio.sleep(0.1)
 
         # Create and share output with view permission
         output_id = await self.create_saved_output(
@@ -257,7 +253,7 @@ class TestSavedOutputSharing(BaseHandlerTest):
             permission="view"
         )
         await send_event(frontend_sio, sid, share_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=share_request.request_id)
 
         # Verify share exists with view permission
         share_row = await real_database.fetchrow("""
@@ -282,7 +278,6 @@ class TestSavedOutputSharing(BaseHandlerTest):
 
         await self.create_test_user(real_database, owner_id, 'owner@example.com')
         await self.create_test_user(real_database, editor_id, 'editor@example.com')
-        await asyncio.sleep(0.1)
 
         # Create and share output with edit permission
         output_id = await self.create_saved_output(
@@ -299,7 +294,7 @@ class TestSavedOutputSharing(BaseHandlerTest):
             permission="edit"
         )
         await send_event(frontend_sio, sid, share_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=share_request.request_id)
 
         # Verify share exists with edit permission
         share_row = await real_database.fetchrow("""
@@ -327,7 +322,6 @@ class TestSavedOutputSharing(BaseHandlerTest):
         await self.create_test_user(real_database, owner_id, 'owner@example.com')
         await self.create_test_user(real_database, recipient1_id, 'user1@example.com')
         await self.create_test_user(real_database, recipient2_id, 'user2@example.com')
-        await asyncio.sleep(0.1)
 
         # Create saved output
         output_id = await self.create_saved_output(
@@ -346,9 +340,8 @@ class TestSavedOutputSharing(BaseHandlerTest):
                 permission="view" if i == 0 else "edit"
             )
             await send_event(frontend_sio, sid, share_request)
-            await asyncio.sleep(0.1)
+            await self.wait_for_main_api_events("response", request_id=share_request.request_id)
 
-        await asyncio.sleep(0.2)
 
         # List shares
         list_request = ShareListRequest(
@@ -358,7 +351,7 @@ class TestSavedOutputSharing(BaseHandlerTest):
             resource_id=output_id
         )
         await send_event(frontend_sio, sid, list_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=list_request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         list_response = None
@@ -384,7 +377,6 @@ class TestSavedOutputSharing(BaseHandlerTest):
 
         await self.create_test_user(real_database, owner_id, 'owner@example.com')
         await self.create_test_user(real_database, other_id, 'other@example.com')
-        await asyncio.sleep(0.1)
 
         # Create private saved output
         output_id = await self.create_saved_output(
@@ -419,7 +411,6 @@ class TestSavedOutputSharing(BaseHandlerTest):
         """
         owner_id = '00000000-0000-4000-8000-000000000001'
         await self.create_test_user(real_database, owner_id, 'owner@example.com')
-        await asyncio.sleep(0.1)
 
         # Create private saved output
         output_id = await self.create_saved_output(
@@ -440,7 +431,7 @@ class TestSavedOutputSharing(BaseHandlerTest):
             visibility="public"
         )
         await send_event(frontend_sio, sid, update_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=update_request.request_id)
 
         # Verify now public
         output_row = await real_database.fetchrow("""
@@ -458,7 +449,6 @@ class TestSavedOutputSharing(BaseHandlerTest):
         """
         owner_id = '00000000-0000-4000-8000-000000000001'
         await self.create_test_user(real_database, owner_id, 'owner@example.com')
-        await asyncio.sleep(0.1)
 
         # Create outputs for different node types
         await self.create_saved_output(
@@ -475,7 +465,7 @@ class TestSavedOutputSharing(BaseHandlerTest):
             node_type="automation-telegram"
         )
         await send_event(frontend_sio, sid, list_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=list_request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         list_response = None

@@ -119,7 +119,6 @@ class TestResourceHandler(BaseHandlerTest):
         and verify it's gone.
         """
         workflow_id = await self._setup_user_and_workflow(real_database)
-        await asyncio.sleep(0.1)
 
         # 1. Create
         await send_event(frontend_sio, sid, ResourceCreateRequest(
@@ -127,7 +126,7 @@ class TestResourceHandler(BaseHandlerTest):
             workflow_id=workflow_id, resource_type="dataset",
             name="Sales Data", metadata={"row_count": 0},
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="rc-1")
 
         create_resp = _find_response(self.get_main_api_emitted_events("response"), "rc-1")
         assert create_resp and create_resp['data']['success']
@@ -142,7 +141,7 @@ class TestResourceHandler(BaseHandlerTest):
             event_name="resource:list", request_id="rl-1",
             workflow_id=workflow_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="rl-1")
 
         list_resp = _find_response(self.get_main_api_emitted_events("response"), "rl-1")
         assert list_resp
@@ -154,7 +153,7 @@ class TestResourceHandler(BaseHandlerTest):
             event_name="resource:get", request_id="rg-1",
             resource_id=resource_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="rg-1")
 
         get_resp = _find_response(self.get_main_api_emitted_events("response"), "rg-1")
         assert get_resp
@@ -165,7 +164,7 @@ class TestResourceHandler(BaseHandlerTest):
             event_name="resource:delete", request_id="rd-1",
             resource_id=resource_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="rd-1")
 
         del_resp = _find_response(self.get_main_api_emitted_events("response"), "rd-1")
         assert del_resp and del_resp['data']['success']
@@ -180,7 +179,6 @@ class TestResourceHandler(BaseHandlerTest):
         """The size cap is enforced server-side at resource:create — a declared
         size over 100MB errors with no row written; exactly at the cap passes."""
         workflow_id = await self._setup_user_and_workflow(real_database)
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, ResourceCreateRequest(
             event_name="resource:create", request_id="rc-over",
@@ -188,7 +186,7 @@ class TestResourceHandler(BaseHandlerTest):
             name="huge.bin", mime_type="application/octet-stream",
             size_bytes=100 * 1024 * 1024 + 1,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="rc-over")
 
         over_resp = _find_response(self.get_main_api_emitted_events("response"), "rc-over")
         assert over_resp and "100 MB" in over_resp['error']
@@ -203,7 +201,7 @@ class TestResourceHandler(BaseHandlerTest):
             name="max.bin", mime_type="application/octet-stream",
             size_bytes=100 * 1024 * 1024,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="rc-max")
 
         max_resp = _find_response(self.get_main_api_emitted_events("response"), "rc-max")
         assert max_resp and max_resp['data']['success']
@@ -216,14 +214,13 @@ class TestResourceHandler(BaseHandlerTest):
         update one, delete one, and verify counts.
         """
         workflow_id = await self._setup_user_and_workflow(real_database)
-        await asyncio.sleep(0.1)
 
         # Create dataset resource
         await send_event(frontend_sio, sid, ResourceCreateRequest(
             event_name="resource:create", request_id="ds-create",
             workflow_id=workflow_id, resource_type="dataset", name="Users",
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="ds-create")
         resource_id = _find_response(
             self.get_main_api_emitted_events("response"), "ds-create"
         )['data']['resource']['id']
@@ -238,7 +235,7 @@ class TestResourceHandler(BaseHandlerTest):
             event_name="resource:dataset:append", request_id="ds-append",
             resource_id=resource_id, rows=rows_data,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="ds-append")
 
         append_resp = _find_response(self.get_main_api_emitted_events("response"), "ds-append")
         assert append_resp['data']['success']
@@ -249,7 +246,7 @@ class TestResourceHandler(BaseHandlerTest):
             event_name="resource:dataset:rows", request_id="ds-read",
             resource_id=resource_id, limit=2, offset=0,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="ds-read")
 
         read_resp = _find_response(self.get_main_api_emitted_events("response"), "ds-read")
         assert read_resp['data']['total_count'] == 3
@@ -265,7 +262,7 @@ class TestResourceHandler(BaseHandlerTest):
             resource_id=resource_id, row_id=row_id_alice,
             data={"name": "Alice", "age": 31},
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="ds-update")
 
         update_resp = _find_response(self.get_main_api_emitted_events("response"), "ds-update")
         assert update_resp['data']['success']
@@ -275,7 +272,7 @@ class TestResourceHandler(BaseHandlerTest):
             event_name="resource:dataset:rows", request_id="ds-read2",
             resource_id=resource_id, limit=10, offset=0,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="ds-read2")
         all_rows = _find_response(
             self.get_main_api_emitted_events("response"), "ds-read2"
         )['data']['rows']
@@ -292,7 +289,7 @@ class TestResourceHandler(BaseHandlerTest):
             event_name="resource:dataset:delete_rows", request_id="ds-del",
             resource_id=resource_id, row_ids=[bob_id],
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="ds-del")
 
         del_resp = _find_response(self.get_main_api_emitted_events("response"), "ds-del")
         assert del_resp['data']['success']
@@ -303,12 +300,12 @@ class TestResourceHandler(BaseHandlerTest):
             event_name="resource:dataset:append", request_id="ds-append2",
             resource_id=resource_id, rows=[{"name": "Dana", "age": 41}],
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="ds-append2")
         await send_event(frontend_sio, sid, ResourceDatasetRowsRequest(
             event_name="resource:dataset:rows", request_id="ds-read3",
             resource_id=resource_id, limit=10, offset=0,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="ds-read3")
         final = _find_response(self.get_main_api_emitted_events("response"), "ds-read3")['data']
         assert final['total_count'] == 3
         assert [(r['row_index'], r['data']['name']) for r in final['rows']] == [
@@ -324,14 +321,13 @@ class TestResourceHandler(BaseHandlerTest):
     async def test_dataset_rows_rejects_non_dataset_resource(self, real_database, frontend_sio, sid):
         """Attempting to append/read rows on a non-dataset resource returns an error."""
         workflow_id = await self._setup_user_and_workflow(real_database)
-        await asyncio.sleep(0.1)
 
         # Create a file resource (not dataset)
         await send_event(frontend_sio, sid, ResourceCreateRequest(
             event_name="resource:create", request_id="file-c",
             workflow_id=workflow_id, resource_type="file", name="doc.pdf",
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="file-c")
         resource_id = _find_response(
             self.get_main_api_emitted_events("response"), "file-c"
         )['data']['resource']['id']
@@ -341,7 +337,7 @@ class TestResourceHandler(BaseHandlerTest):
             event_name="resource:dataset:rows", request_id="bad-read",
             resource_id=resource_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="bad-read")
         resp = _find_response(self.get_main_api_emitted_events("response"), "bad-read")
         assert resp.get('error') == "Resource is not a dataset"
 
@@ -353,7 +349,6 @@ class TestResourceHandler(BaseHandlerTest):
         then generate download URL and verify it returns a URL.
         """
         workflow_id = await self._setup_user_and_workflow(real_database)
-        await asyncio.sleep(0.1)
 
         # Create a file resource
         await send_event(frontend_sio, sid, ResourceCreateRequest(
@@ -361,7 +356,7 @@ class TestResourceHandler(BaseHandlerTest):
             workflow_id=workflow_id, resource_type="image", name="photo.jpg",
             size_bytes=1234,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="blob-c")
         resource_id = _find_response(
             self.get_main_api_emitted_events("response"), "blob-c"
         )['data']['resource']['id']
@@ -374,7 +369,7 @@ class TestResourceHandler(BaseHandlerTest):
                 resource_id=resource_id, filename="photo.jpg",
                 content_type="image/jpeg",
             ))
-            await asyncio.sleep(0.2)
+            await self.wait_for_main_api_events("response", request_id="upload-1")
 
         upload_resp = _find_response(self.get_main_api_emitted_events("response"), "upload-1")
         assert upload_resp['data']['upload_url'] == "https://r2.example.com/upload?token=abc"
@@ -405,7 +400,7 @@ class TestResourceHandler(BaseHandlerTest):
                 event_name="resource:download_url", request_id="download-1",
                 resource_id=resource_id,
             ))
-            await asyncio.sleep(0.2)
+            await self.wait_for_main_api_events("response", request_id="download-1")
 
         dl_resp = _find_response(self.get_main_api_emitted_events("response"), "download-1")
         assert dl_resp['data']['download_url'] == expected_download_url
@@ -414,14 +409,13 @@ class TestResourceHandler(BaseHandlerTest):
     async def test_download_url_returns_error_when_no_blob(self, real_database, frontend_sio, sid):
         """Requesting a download URL for a resource without a stored file returns an error."""
         workflow_id = await self._setup_user_and_workflow(real_database)
-        await asyncio.sleep(0.1)
 
         # Create resource with no storage_ref
         await send_event(frontend_sio, sid, ResourceCreateRequest(
             event_name="resource:create", request_id="no-blob",
             workflow_id=workflow_id, resource_type="file", name="empty.txt",
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="no-blob")
         resource_id = _find_response(
             self.get_main_api_emitted_events("response"), "no-blob"
         )['data']['resource']['id']
@@ -430,7 +424,7 @@ class TestResourceHandler(BaseHandlerTest):
             event_name="resource:download_url", request_id="dl-fail",
             resource_id=resource_id,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="dl-fail")
         resp = _find_response(self.get_main_api_emitted_events("response"), "dl-fail")
         assert resp.get('error') == "Resource has no stored file"
 
@@ -443,13 +437,12 @@ class TestResourceHandler(BaseHandlerTest):
         """
         # Create User A's workflow & resource
         wf_a = await self._setup_user_and_workflow(real_database, USER_A, 'a@test.com')
-        await asyncio.sleep(0.1)
 
         await send_event(frontend_sio, sid, ResourceCreateRequest(
             event_name="resource:create", request_id="acl-create",
             workflow_id=wf_a, resource_type="dataset", name="Private Data",
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="acl-create")
         resource_id = _find_response(
             self.get_main_api_emitted_events("response"), "acl-create"
         )['data']['resource']['id']
@@ -484,7 +477,6 @@ class TestResourceHandler(BaseHandlerTest):
         as selectable options with correct label format.
         """
         workflow_id = await self._setup_user_and_workflow(real_database)
-        await asyncio.sleep(0.1)
 
         # Create a dataset resource with row_count metadata
         await real_database.execute("""
@@ -525,7 +517,6 @@ class TestResourceHandler(BaseHandlerTest):
         dataset_rows instead of using inline config data.
         """
         workflow_id = await self._setup_user_and_workflow(real_database)
-        await asyncio.sleep(0.1)
 
         # Insert a dataset resource + rows directly
         resource_row = await real_database.fetchrow("""
@@ -602,14 +593,13 @@ class TestResourceHandler(BaseHandlerTest):
         dataset_rows) for a workflow. R2 blobs are cleaned up via mocked delete_files_from_r2.
         """
         workflow_id = await self._setup_user_and_workflow(real_database)
-        await asyncio.sleep(0.1)
 
         # Create dataset resource + rows
         await send_event(frontend_sio, sid, ResourceCreateRequest(
             event_name="resource:create", request_id="cleanup-c",
             workflow_id=workflow_id, resource_type="dataset", name="ToClean",
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="cleanup-c")
         resource_id = _find_response(
             self.get_main_api_emitted_events("response"), "cleanup-c"
         )['data']['resource']['id']
@@ -618,7 +608,7 @@ class TestResourceHandler(BaseHandlerTest):
             event_name="resource:dataset:append", request_id="cleanup-a",
             resource_id=resource_id, rows=[{"k": "v"}],
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id="cleanup-a")
 
         # Also create a blob resource with storage_ref
         await real_database.execute("""

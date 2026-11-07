@@ -94,7 +94,7 @@ class TestCredentialSharing(BaseHandlerTest):
             metadata={"provider": "test"}
         )
         await send_event(frontend_sio, sid, create_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=create_request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         for event in response_events:
@@ -116,7 +116,6 @@ class TestCredentialSharing(BaseHandlerTest):
 
         await self.create_test_user(real_database, owner_id, 'owner@example.com')
         await self.create_test_user(real_database, recipient_id, 'recipient@example.com')
-        await asyncio.sleep(0.1)
 
         # Create credential as owner
         credential_id = await self.create_credential(frontend_sio, sid, "create-cred-1", "Shared API Key")
@@ -133,7 +132,7 @@ class TestCredentialSharing(BaseHandlerTest):
             permission="view"
         )
         await send_event(frontend_sio, sid, share_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=share_request.request_id)
 
         # Verify share was created
         response_events = self.get_main_api_emitted_events("response")
@@ -160,7 +159,6 @@ class TestCredentialSharing(BaseHandlerTest):
 
         await self.create_test_user(real_database, owner_id, 'owner@example.com')
         await self.create_test_user(real_database, recipient_id, 'recipient@example.com')
-        await asyncio.sleep(0.1)
 
         # Create and share credential
         credential_id = await self.create_credential(frontend_sio, sid, "create-cred-2", "Team API Key")
@@ -175,7 +173,7 @@ class TestCredentialSharing(BaseHandlerTest):
             permission="view"
         )
         await send_event(frontend_sio, sid, share_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=share_request.request_id)
 
         # Verify via database that the share exists
         share_row = await real_database.fetchrow("""
@@ -205,7 +203,6 @@ class TestCredentialSharing(BaseHandlerTest):
         await self.create_test_organization(real_database, org_id, 'Test Team')
         await self.add_org_member(real_database, org_id, owner_id, 'owner')
         await self.add_org_member(real_database, org_id, member_id, 'member')
-        await asyncio.sleep(0.1)
 
         # Create credential
         credential_id = await self.create_credential(frontend_sio, sid, "create-cred-3", "Org API Key")
@@ -221,7 +218,7 @@ class TestCredentialSharing(BaseHandlerTest):
             permission="edit"
         )
         await send_event(frontend_sio, sid, share_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=share_request.request_id)
 
         # Verify share was created
         share_row = await real_database.fetchrow("""
@@ -247,7 +244,6 @@ class TestCredentialSharing(BaseHandlerTest):
 
         await self.create_test_user(real_database, owner_id, 'owner@example.com')
         await self.create_test_user(real_database, viewer_id, 'viewer@example.com')
-        await asyncio.sleep(0.1)
 
         # Create and share credential with view permission
         credential_id = await self.create_credential(frontend_sio, sid, "create-cred-4", "View Only Key")
@@ -262,7 +258,7 @@ class TestCredentialSharing(BaseHandlerTest):
             permission="view"
         )
         await send_event(frontend_sio, sid, share_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=share_request.request_id)
 
         # Verify share exists with view permission
         share_row = await real_database.fetchrow("""
@@ -288,7 +284,6 @@ class TestCredentialSharing(BaseHandlerTest):
 
         await self.create_test_user(real_database, owner_id, 'owner@example.com')
         await self.create_test_user(real_database, editor_id, 'editor@example.com')
-        await asyncio.sleep(0.1)
 
         # Create and share credential with edit permission
         credential_id = await self.create_credential(frontend_sio, sid, "create-cred-5", "Editable Key")
@@ -303,7 +298,7 @@ class TestCredentialSharing(BaseHandlerTest):
             permission="edit"
         )
         await send_event(frontend_sio, sid, share_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=share_request.request_id)
 
         # Verify share exists with edit permission
         share_row = await real_database.fetchrow("""
@@ -331,7 +326,6 @@ class TestCredentialSharing(BaseHandlerTest):
         await self.create_test_user(real_database, owner_id, 'owner@example.com')
         await self.create_test_user(real_database, recipient1_id, 'user1@example.com')
         await self.create_test_user(real_database, recipient2_id, 'user2@example.com')
-        await asyncio.sleep(0.1)
 
         # Create credential
         credential_id = await self.create_credential(frontend_sio, sid, "create-cred-6", "Multi-shared Key")
@@ -348,9 +342,8 @@ class TestCredentialSharing(BaseHandlerTest):
                 permission="view" if i == 0 else "edit"
             )
             await send_event(frontend_sio, sid, share_request)
-            await asyncio.sleep(0.1)
+            await self.wait_for_main_api_events("response", request_id=share_request.request_id)
 
-        await asyncio.sleep(0.2)
 
         # List shares
         list_request = ShareListRequest(
@@ -360,7 +353,7 @@ class TestCredentialSharing(BaseHandlerTest):
             resource_id=credential_id
         )
         await send_event(frontend_sio, sid, list_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("response", request_id=list_request.request_id)
 
         response_events = self.get_main_api_emitted_events("response")
         list_response = None
@@ -386,7 +379,6 @@ class TestCredentialSharing(BaseHandlerTest):
 
         await self.create_test_user(real_database, owner_id, 'owner@example.com')
         await self.create_test_user(real_database, other_id, 'other@example.com')
-        await asyncio.sleep(0.1)
 
         # Create credential (not shared)
         credential_id = await self.create_credential(frontend_sio, sid, "create-cred-7", "Private Key")

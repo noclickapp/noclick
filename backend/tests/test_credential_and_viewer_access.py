@@ -149,7 +149,7 @@ class TestCredentialAndViewerAccess(BaseHandlerTest):
         await send_event(frontend_sio, sid, WorkflowExecuteRequest(
             request_id=f"req-{uuid.uuid4().hex[:8]}", workflow_id=workflow_id, **fields,
         ))
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("workflow:complete")
         [(_e, done, _t)] = self.get_main_api_emitted_events("workflow:complete")
         return done
 

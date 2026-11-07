@@ -613,7 +613,7 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
 
         workflow_request = self.create_workflow_request(nodes, edges, workflow_id=workflow_id)
         await send_event(frontend_sio, sid, workflow_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("workflow:complete")
 
         # Verify execution order via state events
         state_events = self.get_main_api_emitted_events("workflow:node:state")
@@ -801,7 +801,7 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
 
         workflow_request = self.create_workflow_request(nodes, edges, workflow_id=workflow_id)
         await send_event(frontend_sio, sid, workflow_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("workflow:complete")
 
         # Verify execution order: start first, end last, branches in middle
         state_events = self.get_main_api_emitted_events("workflow:node:state")
@@ -837,7 +837,7 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
 
         workflow_request = self.create_workflow_request(nodes, edges, workflow_id=workflow_id)
         await send_event(frontend_sio, sid, workflow_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("workflow:complete")
 
         # Single node should execute
         state_events = self.get_main_api_emitted_events("workflow:node:state")
@@ -864,7 +864,7 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
 
         workflow_request = self.create_workflow_request([], [], workflow_id=workflow_id)
         await send_event(frontend_sio, sid, workflow_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("workflow:complete")
 
         # Should complete immediately with 0 nodes executed
         workflow_complete_events = self.get_main_api_emitted_events("workflow:complete")
@@ -894,7 +894,7 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
 
         workflow_request = self.create_workflow_request(nodes, edges, workflow_id=workflow_id)
         await send_event(frontend_sio, sid, workflow_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("workflow:complete")
 
         # All nodes should execute (order doesn't matter)
         state_events = self.get_main_api_emitted_events("workflow:node:state")
@@ -925,7 +925,7 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
 
         workflow_request = self.create_workflow_request(nodes, edges, workflow_id=workflow_id)
         await send_event(frontend_sio, sid, workflow_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("workflow:complete")
 
         # Get output events (nodes emit their own outputs now)
         output_events = self.get_main_api_emitted_events("workflow:node:output")
@@ -976,7 +976,7 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
 
         workflow_request = self.create_workflow_request(nodes, edges, workflow_id=workflow_id)
         await send_event(frontend_sio, sid, workflow_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("workflow:complete")
 
         state_events = self.get_main_api_emitted_events("workflow:node:state")
         running_events = [event for event in state_events if event[1]['state'] == 'running']
@@ -1019,7 +1019,7 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
 
         workflow_request = self.create_workflow_request(nodes, edges, workflow_id=workflow_id)
         await send_event(frontend_sio, sid, workflow_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("workflow:complete")
 
         # Should fail with cycle detection
         workflow_complete_events = self.get_main_api_emitted_events("workflow:complete")
@@ -1086,7 +1086,7 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
 
         workflow_request = self.create_workflow_request(nodes, edges, workflow_id=workflow_id)
         await send_event(frontend_sio, sid, workflow_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("workflow:complete")
 
         # Verify each node parsed to correct subclass based on output
         # Each node emits output via self.emit() and workflow handler emits final output
@@ -1157,7 +1157,7 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
 
         workflow_request = self.create_workflow_request(nodes, edges, workflow_id=workflow_id)
         await send_event(frontend_sio, sid, workflow_request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("workflow:complete")
 
         # Verify all nodes executed with correct configs
         state_events = self.get_main_api_emitted_events("workflow:node:state")
@@ -1218,7 +1218,7 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
 
         workflow_request = self.create_workflow_request(nodes, edges, workflow_id=workflow_id)
         await send_event(frontend_sio, sid, workflow_request)
-        await asyncio.sleep(0.2)
+        await self.wait_for_main_api_events("workflow:complete")
 
         # Verify workflow failed
         workflow_complete_events = self.get_main_api_emitted_events("workflow:complete")
@@ -1313,7 +1313,7 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
         ]
 
         await send_event(frontend_sio, sid, self.create_workflow_request(nodes, edges, workflow_id=workflow_id))
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("workflow:complete")
 
         state_events = self.get_main_api_emitted_events("workflow:node:state")
         # final state per node (running comes first, then a terminal state)
@@ -1363,7 +1363,7 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
         ]
 
         await send_event(frontend_sio, sid, self.create_workflow_request(nodes, edges, workflow_id=workflow_id))
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("workflow:complete")
 
         state_events = self.get_main_api_emitted_events("workflow:node:state")
         final: Dict[str, str] = {ev[1]['node_id']: ev[1]['state'] for ev in state_events}
@@ -1411,7 +1411,7 @@ class TestWorkflowExecutionHandler(BaseHandlerTest):
         ]
 
         await send_event(frontend_sio, sid, self.create_workflow_request(nodes, edges, workflow_id=workflow_id))
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("workflow:complete")
 
         state_events = self.get_main_api_emitted_events("workflow:node:state")
         final: Dict[str, str] = {ev[1]['node_id']: ev[1]['state'] for ev in state_events}
@@ -1494,7 +1494,6 @@ class TestWorkflowExecutionDatabasePersistence(BaseHandlerTest):
         await self.create_test_user(real_database, user_id)
 
         # Insert workflow into database
-        await asyncio.sleep(0.1)  # Ensure connection is ready
         await real_database.execute("""
             INSERT INTO workflows (id, owner_id, name, description, workflow, permissions, created_at, updated_at)
             VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
@@ -1510,7 +1509,7 @@ class TestWorkflowExecutionDatabasePersistence(BaseHandlerTest):
         workflow_request.workflow_id = workflow_id
 
         await send_event(frontend_sio, sid, workflow_request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("workflow:complete")
 
         # Verify workflow:started event was emitted with execution_id
         started_events = self.get_main_api_emitted_events("workflow:started")
@@ -1553,7 +1552,6 @@ class TestWorkflowExecutionDatabasePersistence(BaseHandlerTest):
         # Create test user first
         await self.create_test_user(real_database, user_id)
 
-        await asyncio.sleep(0.1)
         await real_database.execute("""
             INSERT INTO workflows (id, owner_id, name, description, workflow, permissions, created_at, updated_at)
             VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
@@ -1572,7 +1570,7 @@ class TestWorkflowExecutionDatabasePersistence(BaseHandlerTest):
         workflow_request.workflow_id = workflow_id
 
         await send_event(frontend_sio, sid, workflow_request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("workflow:complete")
 
         # Get execution_id from workflow:started event
         started_events = self.get_main_api_emitted_events("workflow:started")
@@ -1618,7 +1616,6 @@ class TestWorkflowExecutionDatabasePersistence(BaseHandlerTest):
         # Create test user first
         await self.create_test_user(real_database, user_id)
 
-        await asyncio.sleep(0.1)
         await real_database.execute("""
             INSERT INTO workflows (id, owner_id, name, description, workflow, permissions, created_at, updated_at)
             VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
@@ -1638,7 +1635,7 @@ class TestWorkflowExecutionDatabasePersistence(BaseHandlerTest):
         workflow_request.workflow_id = workflow_id
 
         await send_event(frontend_sio, sid, workflow_request)
-        await asyncio.sleep(0.3)
+        await self.wait_for_main_api_events("workflow:complete")
 
         # Get execution_id from workflow:started event (if emitted)
         started_events = self.get_main_api_emitted_events("workflow:started")
@@ -1678,7 +1675,6 @@ class TestWorkflowExecutionDatabasePersistence(BaseHandlerTest):
         # Create test user first
         await self.create_test_user(real_database, user_id)
 
-        await asyncio.sleep(0.1)
         await real_database.execute("""
             INSERT INTO workflows (id, owner_id, name, description, workflow, permissions, created_at, updated_at)
             VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
@@ -1696,7 +1692,7 @@ class TestWorkflowExecutionDatabasePersistence(BaseHandlerTest):
             workflow_request.workflow_id = workflow_id
 
             await send_event(frontend_sio, sid, workflow_request)
-            await asyncio.sleep(0.3)
+            await self.wait_for_main_api_events("workflow:complete", count=i + 1)
 
             # Get execution_id
             started_events = self.get_main_api_emitted_events("workflow:started")
