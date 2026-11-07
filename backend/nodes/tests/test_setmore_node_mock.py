@@ -215,6 +215,34 @@ async def test_actual_connect_collector_and_picker_use_protected_account_data(pr
     evidence = await collect_evidence(node_type=NODE, credential_data=CREDS, user_id=USER)
     assert evidence.reachable is True and evidence.samples == [] and evidence.account_label is None
 
+
+@pytest.mark.asyncio
+async def test_freshen_preserves_permanent_token_and_picker_exchanges_before_use(provider):
+    credential = {**CREDS, "access_token": "stale-bearer", "expires_at": "2000-01-01T00:00:00Z", "token_version": 7}
+    original = deepcopy(credential)
+    freshened = await native.SetmoreNode.freshen_credential(
+        credential, pool=object(), user_id=USER, credential_id=CID,
+    )
+    assert freshened is credential and freshened == original
+    assert provider.requests == []  # No permanent-token rotation or persistence.
+
+    options = await native.SetmoreNode.load_field_options("service_key", freshened)
+    assert options["options"] == [{"value": SERVICE["key"], "label": SERVICE["service_name"]}]
+    assert [request.url.path for request in provider.requests] == [
+        "/api/v1/o/oauth2/token", "/api/v1/bookingapi/services",
+    ]
+    assert provider.requests[-1].headers["authorization"] == "Bearer " + ACCESS
+
+
+@pytest.mark.asyncio
+async def test_freshen_validates_native_credential_without_http(provider):
+    assert await native.SetmoreNode.freshen_credential(None) is None
+    for credential in ({**CREDS, "credential_type": "foreign"}, {**CREDS, "refresh_token": "<refresh_token>"}):
+        with pytest.raises(ValueError):
+            await native.SetmoreNode.freshen_credential(credential)
+    assert provider.requests == []
+
+
 @pytest.mark.asyncio
 async def test_response_bounds_media_duplicate_properties_and_ack_binding(provider):
     provider.headers = {"content-type": "text/html"}

@@ -394,6 +394,18 @@ class SetmoreNode(WorkflowNode):
         return super().parse_config(config_data)
 
     @classmethod
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        """Validate the permanent token while preserving stored-row metadata.
+
+        Setmore does not store a rotating access token. Each picker creates a
+        new _Session, which exchanges this permanent token before its first
+        protected request and refreshes its invocation-local bearer on expiry.
+        """
+        if credential_data is not None:
+            _credential(credential_data)
+        return credential_data
+
+    @classmethod
     async def load_field_options(cls, field_name, credential_data, context=None, page_token=None, search=None):
         if field_name not in ("service_key", "staff_key", "category_key") or page_token is not None:
             raise ValueError("Unsupported Setmore picker or continuation")
