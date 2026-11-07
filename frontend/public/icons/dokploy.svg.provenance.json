@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/dokploy.svg",
+  "source": "Exact official Dokploy v0.30.8 apps/dokploy/public/logo.svg: https://raw.githubusercontent.com/Dokploy/dokploy/v0.30.8/apps/dokploy/public/logo.svg",
+  "license": "Vendor-issued brand mark used nominatively; no trademark rights are claimed or granted",
+  "sha256": "f3aac257d4a08b24c9abfc45aea825be0d33c50902a622e12177660be09aac50"
+}
