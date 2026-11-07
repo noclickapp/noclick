@@ -1,0 +1,539 @@
+{
+  "$defs": {
+    "BasetenAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "baseten_api_key",
+          "default": "baseten_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Baseten API key from your workspace API Keys page.",
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Baseten API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in Baseten Settings \u2192 API Keys.",
+      "x-credential-url": "https://app.baseten.co/settings/api_keys"
+    },
+    "BasetenAsyncPredictConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "submit_async_prediction",
+          "default": "submit_async_prediction",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inference",
+          "x-display-name": "Submit Async Prediction"
+        },
+        "model_id": {
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "environment": {
+          "default": "production",
+          "title": "Environment",
+          "type": "string"
+        },
+        "input_json": {
+          "description": "JSON object matching your deployed model's input schema.",
+          "minLength": 1,
+          "title": "Model Input (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "model_id",
+        "input_json"
+      ],
+      "title": "BasetenAsyncPredictConfig",
+      "type": "object"
+    },
+    "BasetenChatCompletionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "chat_completion",
+          "default": "chat_completion",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inference",
+          "x-display-name": "Create Chat Completion"
+        },
+        "model": {
+          "description": "A model slug returned by List Inference Models.",
+          "minLength": 1,
+          "title": "Model Slug",
+          "type": "string"
+        },
+        "prompt": {
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "system_prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "System Prompt",
+          "ui:widget": "textarea"
+        },
+        "max_tokens": {
+          "anyOf": [
+            {
+              "maximum": 8192,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Tokens"
+        },
+        "temperature": {
+          "anyOf": [
+            {
+              "maximum": 2,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Temperature"
+        }
+      },
+      "required": [
+        "model",
+        "prompt"
+      ],
+      "title": "BasetenChatCompletionConfig",
+      "type": "object"
+    },
+    "BasetenCurrentUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Current User"
+        }
+      },
+      "title": "BasetenCurrentUserConfig",
+      "type": "object"
+    },
+    "BasetenGetAsyncRequestConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_async_request",
+          "default": "get_async_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inference",
+          "x-display-name": "Get Async Request"
+        },
+        "model_id": {
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "request_id": {
+          "minLength": 1,
+          "title": "Request ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id",
+        "request_id"
+      ],
+      "title": "BasetenGetAsyncRequestConfig",
+      "type": "object"
+    },
+    "BasetenGetDeploymentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_deployment",
+          "default": "get_deployment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deployments",
+          "x-display-name": "Get Deployment"
+        },
+        "model_id": {
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "deployment_id": {
+          "minLength": 1,
+          "title": "Deployment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id",
+        "deployment_id"
+      ],
+      "title": "BasetenGetDeploymentConfig",
+      "type": "object"
+    },
+    "BasetenGetModelConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_model",
+          "default": "get_model",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Models",
+          "x-display-name": "Get Model"
+        },
+        "model_id": {
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "title": "BasetenGetModelConfig",
+      "type": "object"
+    },
+    "BasetenListDeploymentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_deployments",
+          "default": "list_deployments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deployments",
+          "x-display-name": "List Deployments"
+        },
+        "model_id": {
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional deployment name filter.",
+          "title": "Exact Name"
+        },
+        "max_results": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "title": "BasetenListDeploymentsConfig",
+      "type": "object"
+    },
+    "BasetenListInferenceModelsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_inference_models",
+          "default": "list_inference_models",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Model APIs",
+          "x-display-name": "List Inference Models"
+        },
+        "max_results": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        }
+      },
+      "title": "BasetenListInferenceModelsConfig",
+      "type": "object"
+    },
+    "BasetenListModelAPIsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_model_apis",
+          "default": "list_model_apis",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Model APIs",
+          "x-display-name": "List Model APIs"
+        },
+        "added_only": {
+          "default": false,
+          "title": "Added to Workspace Only",
+          "type": "boolean"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor from the previous page.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "BasetenListModelAPIsConfig",
+      "type": "object"
+    },
+    "BasetenListModelsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_models",
+          "default": "list_models",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Models",
+          "x-display-name": "List Models"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional exact model name filter.",
+          "title": "Exact Name"
+        },
+        "max_results": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        }
+      },
+      "title": "BasetenListModelsConfig",
+      "type": "object"
+    },
+    "BasetenPredictDeploymentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "predict_deployment",
+          "default": "predict_deployment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inference",
+          "x-display-name": "Predict with Deployment"
+        },
+        "model_id": {
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "deployment_id": {
+          "minLength": 1,
+          "title": "Deployment ID",
+          "type": "string"
+        },
+        "input_json": {
+          "description": "JSON object or array matching your deployed model's input schema.",
+          "minLength": 1,
+          "title": "Model Input (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "model_id",
+        "deployment_id",
+        "input_json"
+      ],
+      "title": "BasetenPredictDeploymentConfig",
+      "type": "object"
+    },
+    "BasetenPredictModelConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "predict_model",
+          "default": "predict_model",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inference",
+          "x-display-name": "Predict with Model"
+        },
+        "model_id": {
+          "minLength": 1,
+          "title": "Model ID",
+          "type": "string"
+        },
+        "environment": {
+          "default": "production",
+          "description": "Environment serving this model, usually production.",
+          "title": "Environment",
+          "type": "string"
+        },
+        "input_json": {
+          "description": "JSON object or array matching your deployed model's input schema.",
+          "minLength": 1,
+          "title": "Model Input (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "model_id",
+        "input_json"
+      ],
+      "title": "BasetenPredictModelConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "chat_completion": "#/$defs/BasetenChatCompletionConfig",
+          "get_async_request": "#/$defs/BasetenGetAsyncRequestConfig",
+          "get_current_user": "#/$defs/BasetenCurrentUserConfig",
+          "get_deployment": "#/$defs/BasetenGetDeploymentConfig",
+          "get_model": "#/$defs/BasetenGetModelConfig",
+          "list_deployments": "#/$defs/BasetenListDeploymentsConfig",
+          "list_inference_models": "#/$defs/BasetenListInferenceModelsConfig",
+          "list_model_apis": "#/$defs/BasetenListModelAPIsConfig",
+          "list_models": "#/$defs/BasetenListModelsConfig",
+          "predict_deployment": "#/$defs/BasetenPredictDeploymentConfig",
+          "predict_model": "#/$defs/BasetenPredictModelConfig",
+          "submit_async_prediction": "#/$defs/BasetenAsyncPredictConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BasetenCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/BasetenListModelsConfig"
+        },
+        {
+          "$ref": "#/$defs/BasetenGetModelConfig"
+        },
+        {
+          "$ref": "#/$defs/BasetenListDeploymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/BasetenGetDeploymentConfig"
+        },
+        {
+          "$ref": "#/$defs/BasetenListModelAPIsConfig"
+        },
+        {
+          "$ref": "#/$defs/BasetenListInferenceModelsConfig"
+        },
+        {
+          "$ref": "#/$defs/BasetenChatCompletionConfig"
+        },
+        {
+          "$ref": "#/$defs/BasetenPredictModelConfig"
+        },
+        {
+          "$ref": "#/$defs/BasetenPredictDeploymentConfig"
+        },
+        {
+          "$ref": "#/$defs/BasetenAsyncPredictConfig"
+        },
+        {
+          "$ref": "#/$defs/BasetenGetAsyncRequestConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BasetenAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Baseten Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
