@@ -11,13 +11,13 @@
   "reviewedCustomAssets": [
     {
       "path": "frontend/public/icons/cyclr-brand.png",
-      "source": "Cyclr official brand asset published at https://cyclr.com (retained from the integration\u2019s original assets)",
+      "source": "Cyclr official brand asset published at https://cyclr.com (retained from the integration’s original assets)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "16a38db3b13ce29ce5d338e7f041c413da9c1d2c9022b37f52dd3157d1637025"
     },
     {
       "path": "frontend/public/icons/cyclr.svg",
-      "source": "Cyclr official brand asset published at https://cyclr.com (retained from the integration\u2019s original assets)",
+      "source": "Cyclr official brand asset published at https://cyclr.com (retained from the integration’s original assets)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "c17a4aa709c3dafb7dee96e81253e74fcd8b080d36585093b1f10529e8378303"
     },
