@@ -1,0 +1,1740 @@
+{
+  "$defs": {
+    "LumaAddGuestsConfig": {
+      "description": "Add (register/invite) guests to an event.",
+      "properties": {
+        "operation": {
+          "const": "add_guests",
+          "default": "add_guests",
+          "title": "Add Guests",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Guests",
+          "x-display-name": "Add Guests",
+          "x-is-trigger": false
+        },
+        "event_api_id": {
+          "description": "The event API id (evt-...) to add guests to",
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event id (evt-...)",
+            "field_name": "event_api_id",
+            "placeholder": "Select an event...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "emails": {
+          "description": "Guest email addresses to add, comma-separated",
+          "title": "Guest Emails",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_api_id",
+        "emails"
+      ],
+      "title": "LumaAddGuestsConfig",
+      "type": "object"
+    },
+    "LumaAddHostConfig": {
+      "description": "Add a host to an event.",
+      "properties": {
+        "operation": {
+          "const": "add_host",
+          "default": "add_host",
+          "title": "Add Host",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Hosts",
+          "x-display-name": "Add Host",
+          "x-is-trigger": false
+        },
+        "event_api_id": {
+          "description": "The event API id (evt-...)",
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event id (evt-...)",
+            "field_name": "event_api_id",
+            "placeholder": "Select an event...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "email": {
+          "description": "Email of the host to add",
+          "title": "Host Email",
+          "type": "string"
+        },
+        "access_level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Host access level / permissions",
+          "enum": [
+            "",
+            "manager",
+            "check-in",
+            "none"
+          ],
+          "enumNames": [
+            "Default",
+            "Manager",
+            "Check-in",
+            "None"
+          ],
+          "title": "Access Level",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "event_api_id",
+        "email"
+      ],
+      "title": "LumaAddHostConfig",
+      "type": "object"
+    },
+    "LumaApiKeyCredential": {
+      "description": "API Key credential for Luma (calendar- or organization-scoped).",
+      "properties": {
+        "credential_type": {
+          "const": "luma_api_key",
+          "default": "luma_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Luma API key from Calendar -> Settings -> Developer -> API Keys (requires Luma Plus). Sent as the x-luma-api-key header.",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Luma API Key",
+      "type": "object",
+      "x-credential-url": "https://luma.com/calendar/manage/api-keys"
+    },
+    "LumaCancelEventConfig": {
+      "description": "Cancel an event. Pair with the cancel-request token obtained from Luma.",
+      "properties": {
+        "operation": {
+          "const": "cancel_event",
+          "default": "cancel_event",
+          "title": "Cancel Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Cancel Event",
+          "x-is-trigger": false
+        },
+        "event_api_id": {
+          "description": "The event API id (evt-...) to cancel",
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event id (evt-...)",
+            "field_name": "event_api_id",
+            "placeholder": "Select an event...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "cancellation_token": {
+          "description": "Token from POST /v1/events/cancel/request, required by Luma to confirm cancellation",
+          "title": "Cancellation Token",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_api_id",
+        "cancellation_token"
+      ],
+      "title": "LumaCancelEventConfig",
+      "type": "object"
+    },
+    "LumaCreateCalendarCouponConfig": {
+      "description": "Create a coupon usable on any event in the calendar.",
+      "properties": {
+        "operation": {
+          "const": "create_calendar_coupon",
+          "default": "create_calendar_coupon",
+          "title": "Create Calendar Coupon",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Coupons",
+          "x-display-name": "Create Calendar Coupon",
+          "x-is-trigger": false
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Local label; not sent to Luma",
+          "title": "Name"
+        },
+        "code": {
+          "description": "Coupon code guests enter at registration",
+          "title": "Code",
+          "type": "string"
+        },
+        "discount_type": {
+          "description": "Whether the discount is a percentage or a fixed amount",
+          "enum": [
+            "percent",
+            "amount"
+          ],
+          "enumNames": [
+            "Percentage",
+            "Fixed Amount"
+          ],
+          "title": "Discount Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "discount_value": {
+          "description": "Discount amount \u2014 a percentage (0-100) or amount in cents depending on type",
+          "title": "Discount Value",
+          "type": "string"
+        },
+        "currency": {
+          "default": "usd",
+          "description": "Currency code for a fixed amount discount, e.g. usd",
+          "title": "Currency",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "discount_type",
+        "discount_value"
+      ],
+      "title": "LumaCreateCalendarCouponConfig",
+      "type": "object"
+    },
+    "LumaCreateEventConfig": {
+      "description": "Create a new event on the calendar.",
+      "properties": {
+        "operation": {
+          "const": "create_event",
+          "default": "create_event",
+          "title": "Create Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Create Event",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name / title of the event",
+          "title": "Name",
+          "type": "string"
+        },
+        "start_at": {
+          "description": "Event start time in ISO 8601 (e.g. 2026-07-01T18:00:00Z)",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "timezone": {
+          "description": "IANA timezone for the event (e.g. America/New_York)",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "end_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Event end time in ISO 8601 (optional)",
+          "title": "End Time"
+        },
+        "require_rsvp_approval": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Whether guests need host approval to register",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Require RSVP Approval",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name",
+        "start_at",
+        "timezone"
+      ],
+      "title": "LumaCreateEventConfig",
+      "type": "object"
+    },
+    "LumaCreateEventCouponConfig": {
+      "description": "Create a coupon applied when a guest registers for the event.",
+      "properties": {
+        "operation": {
+          "const": "create_event_coupon",
+          "default": "create_event_coupon",
+          "title": "Create Event Coupon",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Coupons",
+          "x-display-name": "Create Event Coupon",
+          "x-is-trigger": false
+        },
+        "event_api_id": {
+          "description": "The event API id (evt-...)",
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event id (evt-...)",
+            "field_name": "event_api_id",
+            "placeholder": "Select an event...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Local label; not sent to Luma",
+          "title": "Name"
+        },
+        "code": {
+          "description": "Coupon code guests enter at registration",
+          "title": "Code",
+          "type": "string"
+        },
+        "discount_type": {
+          "description": "Whether the discount is a percentage or a fixed amount",
+          "enum": [
+            "percent",
+            "amount"
+          ],
+          "enumNames": [
+            "Percentage",
+            "Fixed Amount"
+          ],
+          "title": "Discount Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "discount_value": {
+          "description": "Discount amount \u2014 a percentage (0-100) or amount in cents depending on type",
+          "title": "Discount Value",
+          "type": "string"
+        },
+        "currency": {
+          "default": "usd",
+          "description": "Currency code for a fixed amount discount, e.g. usd",
+          "title": "Currency",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_api_id",
+        "code",
+        "discount_type",
+        "discount_value"
+      ],
+      "title": "LumaCreateEventCouponConfig",
+      "type": "object"
+    },
+    "LumaCreateEventTagConfig": {
+      "description": "Create an event tag on the calendar.",
+      "properties": {
+        "operation": {
+          "const": "create_event_tag",
+          "default": "create_event_tag",
+          "title": "Create Event Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Create Event Tag",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name of the event tag to create",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "LumaCreateEventTagConfig",
+      "type": "object"
+    },
+    "LumaCreateTicketTypeConfig": {
+      "description": "Create a new ticket type for an event.",
+      "properties": {
+        "operation": {
+          "const": "create_ticket_type",
+          "default": "create_ticket_type",
+          "title": "Create Ticket Type",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ticket Types",
+          "x-display-name": "Create Ticket Type",
+          "x-is-trigger": false
+        },
+        "event_api_id": {
+          "description": "The event API id (evt-...)",
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event id (evt-...)",
+            "field_name": "event_api_id",
+            "placeholder": "Select an event...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "description": "Name of the ticket type",
+          "title": "Name",
+          "type": "string"
+        },
+        "cents": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ticket price in cents (omit for a free ticket)",
+          "title": "Price (cents)"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 4217 currency code (e.g. USD), required if priced",
+          "title": "Currency"
+        },
+        "max_capacity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of tickets of this type (optional)",
+          "title": "Max Capacity"
+        }
+      },
+      "required": [
+        "event_api_id",
+        "name"
+      ],
+      "title": "LumaCreateTicketTypeConfig",
+      "type": "object"
+    },
+    "LumaCreateWebhookConfig": {
+      "description": "Register a webhook endpoint to receive event notifications.",
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Create Webhook",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "The endpoint URL Luma will POST events to",
+          "title": "URL",
+          "type": "string"
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Comma-separated event types to subscribe to, or * for all (e.g. event.created, guest.registered)",
+          "title": "Event Types",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "LumaCreateWebhookConfig",
+      "type": "object"
+    },
+    "LumaGetCalendarConfig": {
+      "description": "Get calendar information/settings.",
+      "properties": {
+        "operation": {
+          "const": "get_calendar",
+          "default": "get_calendar",
+          "title": "Get Calendar",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Get Calendar",
+          "x-is-trigger": false
+        }
+      },
+      "title": "LumaGetCalendarConfig",
+      "type": "object"
+    },
+    "LumaGetEventConfig": {
+      "description": "Return full details about an event you have manage access for.",
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Get Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Get Event",
+          "x-is-trigger": false
+        },
+        "event_api_id": {
+          "description": "The event API id (evt-...)",
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event id (evt-...)",
+            "field_name": "event_api_id",
+            "placeholder": "Select an event...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "event_api_id"
+      ],
+      "title": "LumaGetEventConfig",
+      "type": "object"
+    },
+    "LumaGetGuestConfig": {
+      "description": "Get detailed information for a single event guest.",
+      "properties": {
+        "operation": {
+          "const": "get_guest",
+          "default": "get_guest",
+          "title": "Get Guest",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Guests",
+          "x-display-name": "Get Guest",
+          "x-is-trigger": false
+        },
+        "event_api_id": {
+          "description": "The event API id (evt-...)",
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event id (evt-...)",
+            "field_name": "event_api_id",
+            "placeholder": "Select an event...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email of the guest to look up",
+          "title": "Guest Email"
+        },
+        "api_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The guest API id to look up (alternative to email)",
+          "title": "Guest API ID"
+        }
+      },
+      "required": [
+        "event_api_id"
+      ],
+      "title": "LumaGetGuestConfig",
+      "type": "object"
+    },
+    "LumaGetSelfConfig": {
+      "description": "Return info about the authenticated user (also the auth-test ping).",
+      "properties": {
+        "operation": {
+          "const": "get_self",
+          "default": "get_self",
+          "title": "Get Self",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Self",
+          "x-is-trigger": false
+        }
+      },
+      "title": "LumaGetSelfConfig",
+      "type": "object"
+    },
+    "LumaImportContactsConfig": {
+      "description": "Import contacts to the calendar so they can be invited to events.",
+      "properties": {
+        "operation": {
+          "const": "import_contacts",
+          "default": "import_contacts",
+          "title": "Import Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Import Contacts",
+          "x-is-trigger": false
+        },
+        "emails": {
+          "description": "Contact email addresses to import, comma-separated",
+          "title": "Contact Emails",
+          "type": "string"
+        }
+      },
+      "required": [
+        "emails"
+      ],
+      "title": "LumaImportContactsConfig",
+      "type": "object"
+    },
+    "LumaListCalendarAdminsConfig": {
+      "description": "List all admins for the calendar.",
+      "properties": {
+        "operation": {
+          "const": "list_calendar_admins",
+          "default": "list_calendar_admins",
+          "title": "List Calendar Admins",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "List Calendar Admins",
+          "x-is-trigger": false
+        }
+      },
+      "title": "LumaListCalendarAdminsConfig",
+      "type": "object"
+    },
+    "LumaListCalendarCouponsConfig": {
+      "description": "List all coupons created for the calendar.",
+      "properties": {
+        "operation": {
+          "const": "list_calendar_coupons",
+          "default": "list_calendar_coupons",
+          "title": "List Calendar Coupons",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Coupons",
+          "x-display-name": "List Calendar Coupons",
+          "x-is-trigger": false
+        }
+      },
+      "title": "LumaListCalendarCouponsConfig",
+      "type": "object"
+    },
+    "LumaListContactsConfig": {
+      "description": "List calendar contacts (cursor-paginated).",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "List Contacts",
+          "x-is-trigger": false
+        },
+        "pagination_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response's next_cursor",
+          "title": "Pagination Cursor"
+        },
+        "pagination_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of contacts to return per page",
+          "title": "Page Size"
+        }
+      },
+      "title": "LumaListContactsConfig",
+      "type": "object"
+    },
+    "LumaListEventCouponsConfig": {
+      "description": "List all coupons created for an event.",
+      "properties": {
+        "operation": {
+          "const": "list_event_coupons",
+          "default": "list_event_coupons",
+          "title": "List Event Coupons",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Coupons",
+          "x-display-name": "List Event Coupons",
+          "x-is-trigger": false
+        },
+        "event_api_id": {
+          "description": "The event API id (evt-...)",
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event id (evt-...)",
+            "field_name": "event_api_id",
+            "placeholder": "Select an event...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "event_api_id"
+      ],
+      "title": "LumaListEventCouponsConfig",
+      "type": "object"
+    },
+    "LumaListEventsConfig": {
+      "description": "List events the calendar manages.",
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "List Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "List Events",
+          "x-is-trigger": false
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 lower bound \u2014 only events starting after this time",
+          "title": "After"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 upper bound \u2014 only events starting before this time",
+          "title": "Before"
+        },
+        "pagination_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response's next_cursor to fetch the next page",
+          "title": "Pagination Cursor"
+        },
+        "pagination_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of events to return per page",
+          "title": "Page Size"
+        }
+      },
+      "title": "LumaListEventsConfig",
+      "type": "object"
+    },
+    "LumaListGuestsConfig": {
+      "description": "List guests who registered or were invited to an event.",
+      "properties": {
+        "operation": {
+          "const": "list_guests",
+          "default": "list_guests",
+          "title": "List Guests",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Guests",
+          "x-display-name": "List Guests",
+          "x-is-trigger": false
+        },
+        "event_api_id": {
+          "description": "The event API id (evt-...) to list guests for",
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event id (evt-...)",
+            "field_name": "event_api_id",
+            "placeholder": "Select an event...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "approval_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by guest approval status",
+          "enum": [
+            "",
+            "approved",
+            "pending_approval",
+            "declined",
+            "invited"
+          ],
+          "enumNames": [
+            "Any",
+            "Approved",
+            "Pending Approval",
+            "Declined",
+            "Invited"
+          ],
+          "title": "Approval Status",
+          "x-enum-searchable": true
+        },
+        "pagination_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response's next_cursor",
+          "title": "Pagination Cursor"
+        },
+        "pagination_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of guests to return per page",
+          "title": "Page Size"
+        }
+      },
+      "required": [
+        "event_api_id"
+      ],
+      "title": "LumaListGuestsConfig",
+      "type": "object"
+    },
+    "LumaListTicketTypesConfig": {
+      "description": "List all ticket types for an event.",
+      "properties": {
+        "operation": {
+          "const": "list_ticket_types",
+          "default": "list_ticket_types",
+          "title": "List Ticket Types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ticket Types",
+          "x-display-name": "List Ticket Types",
+          "x-is-trigger": false
+        },
+        "event_api_id": {
+          "description": "The event API id (evt-...)",
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event id (evt-...)",
+            "field_name": "event_api_id",
+            "placeholder": "Select an event...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "event_api_id"
+      ],
+      "title": "LumaListTicketTypesConfig",
+      "type": "object"
+    },
+    "LumaListWebhooksConfig": {
+      "description": "List all webhook endpoints registered for the calendar.",
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhooks",
+          "x-is-trigger": false
+        }
+      },
+      "title": "LumaListWebhooksConfig",
+      "type": "object"
+    },
+    "LumaLookupEventConfig": {
+      "description": "Check whether an event already exists on the calendar.",
+      "properties": {
+        "operation": {
+          "const": "lookup_event",
+          "default": "lookup_event",
+          "title": "Lookup Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Lookup Event",
+          "x-is-trigger": false
+        },
+        "platform": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Platform to look up",
+          "enum": [
+            "external",
+            "luma"
+          ],
+          "title": "Platform"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Event URL to look up",
+          "title": "URL"
+        }
+      },
+      "title": "LumaLookupEventConfig",
+      "type": "object"
+    },
+    "LumaRemoveHostConfig": {
+      "description": "Remove a host from an event.",
+      "properties": {
+        "operation": {
+          "const": "remove_host",
+          "default": "remove_host",
+          "title": "Remove Host",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Hosts",
+          "x-display-name": "Remove Host",
+          "x-is-trigger": false
+        },
+        "event_api_id": {
+          "description": "The event API id (evt-...)",
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event id (evt-...)",
+            "field_name": "event_api_id",
+            "placeholder": "Select an event...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "email": {
+          "description": "Email of the host to remove",
+          "title": "Host Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_api_id",
+        "email"
+      ],
+      "title": "LumaRemoveHostConfig",
+      "type": "object"
+    },
+    "LumaSendInvitesConfig": {
+      "description": "Send invitation emails to event guests.",
+      "properties": {
+        "operation": {
+          "const": "send_invites",
+          "default": "send_invites",
+          "title": "Send Invites",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Guests",
+          "x-display-name": "Send Invites",
+          "x-is-trigger": false
+        },
+        "event_api_id": {
+          "description": "The event API id (evt-...) whose guests to invite",
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event id (evt-...)",
+            "field_name": "event_api_id",
+            "placeholder": "Select an event...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "emails": {
+          "description": "Guest email addresses to invite, comma-separated",
+          "title": "Guest Emails",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_api_id",
+        "emails"
+      ],
+      "title": "LumaSendInvitesConfig",
+      "type": "object"
+    },
+    "LumaUpdateCalendarConfig": {
+      "description": "Update a calendar's settings.",
+      "properties": {
+        "operation": {
+          "const": "update_calendar",
+          "default": "update_calendar",
+          "title": "Update Calendar",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Update Calendar",
+          "x-is-trigger": false
+        },
+        "calendar_id": {
+          "description": "Calendar ID (cal-...) to update",
+          "title": "Calendar ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New calendar name (optional)",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New calendar description (optional)",
+          "title": "Description",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "calendar_id"
+      ],
+      "title": "LumaUpdateCalendarConfig",
+      "type": "object"
+    },
+    "LumaUpdateEventConfig": {
+      "description": "Update an existing event's details.",
+      "properties": {
+        "operation": {
+          "const": "update_event",
+          "default": "update_event",
+          "title": "Update Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Update Event",
+          "x-is-trigger": false
+        },
+        "event_api_id": {
+          "description": "The event API id (evt-...) to update",
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event id (evt-...)",
+            "field_name": "event_api_id",
+            "placeholder": "Select an event...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New event name (optional)",
+          "title": "Name"
+        },
+        "start_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New start time in ISO 8601 (optional)",
+          "title": "Start Time"
+        },
+        "end_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New end time in ISO 8601 (optional)",
+          "title": "End Time"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New IANA timezone (optional)",
+          "title": "Timezone"
+        }
+      },
+      "required": [
+        "event_api_id"
+      ],
+      "title": "LumaUpdateEventConfig",
+      "type": "object"
+    },
+    "LumaUpdateGuestStatusConfig": {
+      "description": "Approve, decline, or otherwise change a guest's status.",
+      "properties": {
+        "operation": {
+          "const": "update_guest_status",
+          "default": "update_guest_status",
+          "title": "Update Guest Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Guests",
+          "x-display-name": "Update Guest Status",
+          "x-is-trigger": false
+        },
+        "event_api_id": {
+          "description": "The event API id (evt-...)",
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event id (evt-...)",
+            "field_name": "event_api_id",
+            "placeholder": "Select an event...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "guest_api_id": {
+          "description": "The guest API id to update",
+          "title": "Guest API ID",
+          "type": "string"
+        },
+        "status": {
+          "description": "New status for the guest",
+          "enum": [
+            "approved",
+            "declined",
+            "pending_approval",
+            "waitlist"
+          ],
+          "enumNames": [
+            "Approved",
+            "Declined",
+            "Pending Approval",
+            "Waitlist"
+          ],
+          "title": "Status",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "event_api_id",
+        "guest_api_id",
+        "status"
+      ],
+      "title": "LumaUpdateGuestStatusConfig",
+      "type": "object"
+    },
+    "LumaUpdateHostConfig": {
+      "description": "Update a host's permissions or visibility.",
+      "properties": {
+        "operation": {
+          "const": "update_host",
+          "default": "update_host",
+          "title": "Update Host",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Hosts",
+          "x-display-name": "Update Host",
+          "x-is-trigger": false
+        },
+        "event_api_id": {
+          "description": "The event API id (evt-...)",
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event id (evt-...)",
+            "field_name": "event_api_id",
+            "placeholder": "Select an event...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "email": {
+          "description": "Email of the host to update",
+          "title": "Host Email",
+          "type": "string"
+        },
+        "access_level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New host access level / permissions",
+          "enum": [
+            "",
+            "manager",
+            "check-in",
+            "none"
+          ],
+          "enumNames": [
+            "Unchanged",
+            "Manager",
+            "Check-in",
+            "None"
+          ],
+          "title": "Access Level",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "event_api_id",
+        "email"
+      ],
+      "title": "LumaUpdateHostConfig",
+      "type": "object"
+    },
+    "LumaUpdateTicketTypeConfig": {
+      "description": "Update an existing ticket type configuration.",
+      "properties": {
+        "operation": {
+          "const": "update_ticket_type",
+          "default": "update_ticket_type",
+          "title": "Update Ticket Type",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ticket Types",
+          "x-display-name": "Update Ticket Type",
+          "x-is-trigger": false
+        },
+        "event_api_id": {
+          "description": "The event API id (evt-...)",
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event id (evt-...)",
+            "field_name": "event_api_id",
+            "placeholder": "Select an event...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "ticket_type_api_id": {
+          "description": "The ticket type API id to update",
+          "title": "Ticket Type API ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New ticket type name (optional)",
+          "title": "Name"
+        },
+        "cents": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New ticket price in cents (optional)",
+          "title": "Price (cents)"
+        },
+        "max_capacity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New maximum capacity (optional)",
+          "title": "Max Capacity"
+        }
+      },
+      "required": [
+        "event_api_id",
+        "ticket_type_api_id"
+      ],
+      "title": "LumaUpdateTicketTypeConfig",
+      "type": "object"
+    },
+    "LumaWebhookTriggerConfig": {
+      "description": "Fire the workflow when a Luma event, guest, or ticket changes.",
+      "properties": {
+        "operation": {
+          "const": "on_luma_event",
+          "default": "on_luma_event",
+          "title": "On Luma Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Luma Event",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Luma posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "LumaWebhookTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    }
+  },
+  "description": "Full configuration for the Luma node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_guests": "#/$defs/LumaAddGuestsConfig",
+          "add_host": "#/$defs/LumaAddHostConfig",
+          "cancel_event": "#/$defs/LumaCancelEventConfig",
+          "create_calendar_coupon": "#/$defs/LumaCreateCalendarCouponConfig",
+          "create_event": "#/$defs/LumaCreateEventConfig",
+          "create_event_coupon": "#/$defs/LumaCreateEventCouponConfig",
+          "create_event_tag": "#/$defs/LumaCreateEventTagConfig",
+          "create_ticket_type": "#/$defs/LumaCreateTicketTypeConfig",
+          "create_webhook": "#/$defs/LumaCreateWebhookConfig",
+          "get_calendar": "#/$defs/LumaGetCalendarConfig",
+          "get_event": "#/$defs/LumaGetEventConfig",
+          "get_guest": "#/$defs/LumaGetGuestConfig",
+          "get_self": "#/$defs/LumaGetSelfConfig",
+          "import_contacts": "#/$defs/LumaImportContactsConfig",
+          "list_calendar_admins": "#/$defs/LumaListCalendarAdminsConfig",
+          "list_calendar_coupons": "#/$defs/LumaListCalendarCouponsConfig",
+          "list_contacts": "#/$defs/LumaListContactsConfig",
+          "list_event_coupons": "#/$defs/LumaListEventCouponsConfig",
+          "list_events": "#/$defs/LumaListEventsConfig",
+          "list_guests": "#/$defs/LumaListGuestsConfig",
+          "list_ticket_types": "#/$defs/LumaListTicketTypesConfig",
+          "list_webhooks": "#/$defs/LumaListWebhooksConfig",
+          "lookup_event": "#/$defs/LumaLookupEventConfig",
+          "on_luma_event": "#/$defs/LumaWebhookTriggerConfig",
+          "remove_host": "#/$defs/LumaRemoveHostConfig",
+          "send_invites": "#/$defs/LumaSendInvitesConfig",
+          "update_calendar": "#/$defs/LumaUpdateCalendarConfig",
+          "update_event": "#/$defs/LumaUpdateEventConfig",
+          "update_guest_status": "#/$defs/LumaUpdateGuestStatusConfig",
+          "update_host": "#/$defs/LumaUpdateHostConfig",
+          "update_ticket_type": "#/$defs/LumaUpdateTicketTypeConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LumaGetSelfConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaCreateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaUpdateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaCancelEventConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaLookupEventConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaListGuestsConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaGetGuestConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaAddGuestsConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaUpdateGuestStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaSendInvitesConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaAddHostConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaUpdateHostConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaRemoveHostConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaListTicketTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaCreateTicketTypeConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaUpdateTicketTypeConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaCreateEventCouponConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaListEventCouponsConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaCreateCalendarCouponConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaListCalendarCouponsConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaGetCalendarConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaUpdateCalendarConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaListCalendarAdminsConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaImportContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaCreateEventTagConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/LumaWebhookTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LumaApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Luma Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List all upcoming Luma events",
+    "Create a Luma event for next Friday at 6pm",
+    "Add a guest to a Luma event and send them an invite",
+    "Approve a pending guest's registration",
+    "Trigger a workflow whenever someone registers for a Luma event"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
