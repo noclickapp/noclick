@@ -22,6 +22,7 @@ const AUTO_SELECT_TYPES: ReadonlySet<string> = new Set([
     'automation-adapty',
     'automation-mindbody',
     'automation-predictleads',
+    'automation-dropcontact',
     'automation-porkbun',
     'automation-aprimo',
     'automation-hetrixtools',

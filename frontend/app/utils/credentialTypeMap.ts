@@ -28,6 +28,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'PredictLeads API Key and Token': 'predictleads_api_key_token',
     'SematextAccountAPIKeyCredential': 'sematext_account_api_key',
     'Sematext Account API Key': 'sematext_account_api_key',
+    'DropcontactAccessTokenCredential': 'dropcontact_access_token',
     'FormBuilder123TokenCredential': '123formbuilder_v2_token',
     'PorkbunCredential': 'porkbun_api_key',
     'HetrixToolsAPIKeyCredential': 'hetrixtools_api_key',
