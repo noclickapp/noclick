@@ -271,12 +271,14 @@ class _TestPostgres(PostgresContainer):
 
     Trust auth skips the SCRAM handshake, whose 4096 HMAC rounds asyncpg runs in
     Python on every connect, and the address is asked of Docker once rather
-    than on every connect.
+    than on every connect. Nothing in it needs to survive a crash, so no commit
+    waits for the disk: the module reset alone went from 0.65s to 0.15s.
     """
 
     def __init__(self):
         super().__init__("pgvector/pgvector:pg16")
         self.with_env("POSTGRES_HOST_AUTH_METHOD", "trust")
+        self.with_command("postgres -c fsync=off -c synchronous_commit=off -c full_page_writes=off")
         self._address = {}
 
     def get_container_host_ip(self) -> str:
