@@ -11,6 +11,8 @@ from nodes.adapty_node import AdaptyNode
 from nodes.sematext_node import SematextNode
 from nodes.statuspal_node import StatusPalNode
 from nodes.core.base import WorkflowNode
+from nodes.singlestore_node import SingleStoreNode
+from nodes.uptimecom_node import UptimeComNode
 from nodes.fountain_node import FountainNode
 from nodes.porkbun_node import PorkbunNode
 from nodes.predictleads_node import PredictLeadsNode
@@ -90,6 +92,9 @@ from nodes.twitter_node import TwitterNode
 from nodes.cloudflare_node import CloudflareNode
 from nodes.bitrise_node import BitriseNode
 from nodes.pulsetic_node import PulseticNode
+from nodes.stackitdns_node import STACKITDNSNode
+from nodes.websupport_node import WebsupportNode
+from nodes.xata_node import XataNode
 from nodes.jwplayer_node import JWPlayerNode
 from nodes.twilio_node import TwilioNode
 from nodes.webhook_trigger_node import WebhookTriggerNode
@@ -131,6 +136,7 @@ from nodes.google_maps_node import GoogleMapsNode
 from nodes.perplexity_node import PerplexityNode
 from nodes.posthog_node import PostHogNode
 from nodes.cloudzero_node import CloudZeroNode
+from nodes.talkjs_node import TalkJSNode
 from nodes.keila_node import KeilaNode
 from nodes.mediasilo_node import MediaSiloNode
 from nodes.productplan_node import ProductPlanNode
@@ -248,6 +254,8 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-hetrixtools': HetrixToolsNode,
     'automation-acculynx': AccuLynxNode,
     'automation-sematext': SematextNode,
+    'automation-statuspal': StatusPalNode,
+    'automation-uptimecom': UptimeComNode,
     'automation-fountain': FountainNode,
     # Trigger nodes (entry points for workflows)
     'trigger-run': RunTriggerNode,
@@ -334,6 +342,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-perplexity': PerplexityNode,
     'automation-posthog': PostHogNode,
     'automation-cloudzero': CloudZeroNode,
+    'automation-talkjs': TalkJSNode,
     'automation-keila': KeilaNode,
     'automation-mediasilo': MediaSiloNode,
     'automation-productplan': ProductPlanNode,
@@ -424,6 +433,9 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-cloudflare': CloudflareNode,
     'automation-bitrise': BitriseNode,
     'automation-pulsetic': PulseticNode,
+    'automation-stackitdns': STACKITDNSNode,
+    'automation-websupport': WebsupportNode,
+    'automation-xata': XataNode,
     'automation-jwplayer': JWPlayerNode,
     'automation-whatsapp': WhatsAppNode,
     'automation-elevenlabs': ElevenLabsNode,

@@ -16,6 +16,7 @@ type DefinitionModule = Record<string, unknown>;
 /** [type, its module under nodes/ without the extension], in palette order. */
 export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: string]> = [
     ['automation-acculynx', 'AccuLynxNode'],
+    ['automation-supernormal', 'SupernormalNode'],
     ['automation-fountain', 'FountainNode'],
     ['trigger-run', 'RunTriggerNode'],
     ['trigger-webhook', 'WebhookTriggerNode'],
@@ -55,6 +56,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-cliniko', 'ClinikoNode'],
     ['automation-apify', 'ApifyNode'],
     ['automation-apollo', 'ApolloNode'],
+    ['automation-qonversion', 'QonversionNode'],
     ['automation-exoscale', 'ExoscaleNode'],
     ['automation-bluesky', 'BlueSkyNode'],
     ['automation-canva', 'CanvaNode'],
@@ -120,6 +122,9 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-cloudflare', 'CloudflareNode'],
     ['automation-bitrise', 'BitriseNode'],
     ['automation-pulsetic', 'PulseticNode'],
+    ['automation-stackitdns', 'STACKITDNSNode'],
+    ['automation-websupport', 'WebsupportNode'],
+    ['automation-xata', 'XataNode'],
     ['automation-jwplayer', 'JWPlayerNode'],
     ['automation-typeform', 'TypeformNode'],
     ['automation-123formbuilder', 'FormBuilder123Node'],

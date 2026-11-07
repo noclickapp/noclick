@@ -1240,6 +1240,180 @@
       "sha256": "d105cef6ef8fded268f382ee7f3b1fbcc2937d72e1795b162fb7453a64e69d4c"
     },
     {
+      "path": "frontend/public/icons/qonversion-brand-vector.svg",
+      "source": "https://raw.githubusercontent.com/qonversion/android-sdk/adeeeae489191328b1c75190d96c2930f5101737/sample/src/main/res/drawable/ic_qonversion.xml (provider vector drawable converted to SVG paths)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "93d43e1d1450170451e086a80bc3e1ac1d17af20a9d559daf7ca59b8f95aca9a"
+    },
+    {
+      "path": "frontend/public/icons/rebrandly.png",
+      "source": "https://cdn.prod.website-files.com/688a5cbe40e5592f8f57f7b5/689e38d55fe7006d4bab62fc_Rebrandly.png",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "edf07c2a7f323aa7fc58b2a49acd36d6c7d4a7d8b96646f6d84f21356d072766"
+    },
+    {
+      "path": "frontend/public/icons/rebrandly.png.provenance.json",
+      "source": "https://cdn.prod.website-files.com/688a5cbe40e5592f8f57f7b5/689e38d55fe7006d4bab62fc_Rebrandly.png (source recorded by the integration favicon provenance sidecar)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "9a3a6f769c3c57c5d1b436054ad84af1844771dba7c5d059cab9877d3ef4ec4f"
+    },
+    {
+      "path": "frontend/public/icons/singlestore-brand-vector.svg",
+      "source": "https://www.singlestore.com/ (official brand artwork retained from the integration; source and SHA-256 recorded in its original icon commit)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "44db5f6ed9ab092698189845615eb79cd310e5f462c8a904ea2f96d85f100594"
+    },
+    {
+      "path": "frontend/public/icons/singlestore-brand.png",
+      "source": "https://www.singlestore.com/ (official brand artwork retained from the integration; source and SHA-256 recorded in its original icon commit)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "a5c4c4eb60738c3e77a222f73d065b41fe9ac44c266689ed0729356fe58d56ab"
+    },
+    {
+      "path": "frontend/public/icons/singlestore.svg",
+      "source": "https://cdn.sanity.io/images/h3bp8c98/production/657be2fe1000bc283faf6c86bbcae2086b4027bd-197x68.svg (official logo linked by SingleStore documentation)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "dc6418d084f67095fe339ecade69034e75024117fe9d572dc7ec8a8871977ea3"
+    },
+    {
+      "path": "frontend/public/icons/skyvia-preferred-brand.svg",
+      "source": "https://skyvia.com/assets/img/sprite.svg#logo (Skyvia published logo, cropped to the standalone mark and placed on a white tile)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "9fd5172959c7ffdeb538de173b1090b1f5535410956516c76af59134eb685592"
+    },
+    {
+      "path": "frontend/public/icons/stackitdns-brand-vector.svg",
+      "source": "https://stackit.com/de (STACKIT published brand artwork)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "4e354e3fc93d32159f8b59dca7903c0052bc927245a4a842f9f05ea665fce784"
+    },
+    {
+      "path": "frontend/public/icons/stackitdns-brand.png",
+      "source": "https://stackit.com/de (STACKIT published brand artwork)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "092d32e15b6d63fd656797eddbd98c40aeb804abef7a3cda8babde2d390eb31a"
+    },
+    {
+      "path": "frontend/public/icons/stackitdns.svg",
+      "source": "https://github.com/noclickapp/noclick-cloud/commit/17c4bc706df18a069bfe25a9799c5dde54060850 (STACKIT mark supplied by the original integration)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "c117f2693292365162077e9b61d910ec737a2cd223b7adf30b8f4d4b508fa0bd"
+    },
+    {
+      "path": "frontend/public/icons/statuspal.png",
+      "source": "https://www.statuspal.io/favicon/apple-touch-icon.png (unmodified official StatusPal touch icon; byte-for-byte verified)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "189a1006eca506a7b82f84f622703a6c45f8d965038dd84d960955b449c01684"
+    },
+    {
+      "path": "frontend/public/icons/statuspal-brand-vector.svg",
+      "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/statuspal.svg (Statuspal path unchanged; SVG wrapper adds dimensions)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "a728d9ef7c5a2f66f4d380fbaa645ab11c05d65c4ff701447de627f3bdded549"
+    },
+    {
+      "path": "frontend/public/icons/statuspal.provenance.md",
+      "source": "Integration-authored provenance note for https://www.statuspal.io/favicon/apple-touch-icon.png and https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/statuspal.svg",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "884f602b5bd788fddb547d46125efd36841e2a6d18299ce46736e6a4ded44a46"
+    },
+    {
+      "path": "frontend/public/icons/stream-chat-brand.png",
+      "source": "https://getstream.io (Stream company brand artwork; source recorded in commit 95280fe3392297e4a15eec613a05324e0ff5564f)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "b175b45e53b94e4e6fbb2a52ed677dba4f002b4e9515e76b3bf15fce1c9e24b4"
+    },
+    {
+      "path": "frontend/public/icons/stream-chat-native-brand-20261012.svg",
+      "source": "https://getstream.io/chat/docs/sdk/react/ (Stream published favicon; source recorded in commit e00906ae022a722183081138551af6b19779dac3)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "e35830fcadc64d3e2b32f83626314faeadfacb24db61904be8f9dcef82c34c2d"
+    },
+    {
+      "path": "frontend/public/icons/stream-chat.svg",
+      "source": "https://getstream.io/ (Chat navigation link product mark)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "98da32f528baec2bf83b08fc258415568719f11d44d385bd0022ff875fa9a70d"
+    },
+    {
+      "path": "frontend/public/icons/supernormal.svg",
+      "source": "https://mintcdn.com/supernormal/CyH9SFd6gs3Z71rV/logo/dark.svg (Supernormal official API documentation logo; isolated brand symbol with currentColor fill and local clip ID)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "3ea7a71fd59ce63062185e5e42ea4eb5d2a4a88243572ee16f022ba257d4f3b2"
+    },
+    {
+      "path": "frontend/public/icons/talkjs.svg",
+      "source": "https://talkjs.com/core/logos/talkjs-logo-dark.svg (unmodified official TalkJS wordmark)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "15c4a2d7952f0882868f1275bbf22fc27835cff5ba28f449f61ce66cd22ad513"
+    },
+    {
+      "path": "frontend/public/icons/talkjs.svg.provenance.md",
+      "source": "https://talkjs.com/core/logos/talkjs-logo-dark.svg (NoClick provenance note for the official wordmark)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "30f4a7ac501da0bd95343ab1396bae335ac462118634f7d716450200799405d9"
+    },
+    {
+      "path": "frontend/public/icons/talkjs-brand-vector.svg",
+      "source": "https://talkjs.com (TalkJS brand artwork; source recorded in commit b444b2c8bc8c64df8fd0637b121864ed943cf6fc)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "dbc379a0fcf63296a10335edabb85c143b01848d5ec0e2b0a46078233fd25731"
+    },
+    {
+      "path": "frontend/public/icons/talkjs-brand.png",
+      "source": "https://talkjs.com (TalkJS brand artwork; source recorded in commit b30fdb58f89b2d0a9e0ad4e0623836cf6953aa32)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "afbfc7595a5cded10c2aa3d66e5f4721d1966221bc8cee1eb38195f963a2ecb3"
+    },
+    {
+      "path": "frontend/public/icons/uptimecom.svg",
+      "source": "https://uptime.com/static/up-global-ui/images/header/assets/uptime-mobile-logo.svg",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "b695c1a35dc76a2b33f8ec243dc2572e57bb62a3567b1938a8284fa57eb4b29c"
+    },
+    {
+      "path": "frontend/public/icons/uptimecom-brand-vector.svg",
+      "source": "https://uptime.com (provider brand artwork; original source recorded in integration commit b46b0bd82469081719752853170a6f30be34cac3)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "0c646b6d4790df80be01794f521c335f6b2b84434cd8ece2bb99107f8f633e3d"
+    },
+    {
+      "path": "frontend/public/icons/uptimecom-brand.png",
+      "source": "https://uptime.com (provider brand artwork; original source recorded in integration commit 4920d1ba9d81bad1ce92a267aeb6d4e34c5cf9c3)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "81de675b3913fbc47a597a6c70f183be65ac1c4fc456d3174f87687ed0c32a19"
+    },
+    {
+      "path": "frontend/public/icons/uptimecom.provenance.json",
+      "source": "https://uptime.com/static/up-global-ui/images/header/assets/uptime-mobile-logo.svg",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "58eceaf1488a67f01e9e02de3c65f5cfbc390343064f1083de0038b17abd53dd"
+    },
+    {
+      "path": "frontend/public/icons/websupport-brand.svg",
+      "source": "https://www.websupport.sk/ (Websupport brand artwork; imported by integration commits 013f7959945c75957d557d9d3cb057d3a2c54820, 1eebed27fbd9c830f39e190ec00e56d8990d578d and b3fa4b6a721a0ee303a9212e8b04592df603946d)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "d3d459dc09d6eed04e6a8283409e6b5e930d2625b0b9cc505a8b9ea937558135"
+    },
+    {
+      "path": "frontend/public/icons/websupport-preferred-brand.svg",
+      "source": "https://www.websupport.sk/ (Websupport brand artwork; imported by integration commits 013f7959945c75957d557d9d3cb057d3a2c54820, 1eebed27fbd9c830f39e190ec00e56d8990d578d and b3fa4b6a721a0ee303a9212e8b04592df603946d)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "a5606c77772bd9dbb192d76930d44fce4335f39f92af5cf1577a2fd2b060b423"
+    },
+    {
+      "path": "frontend/public/icons/websupport.svg",
+      "source": "https://www.websupport.sk/ (Websupport brand artwork; imported by integration commits 013f7959945c75957d557d9d3cb057d3a2c54820, 1eebed27fbd9c830f39e190ec00e56d8990d578d and b3fa4b6a721a0ee303a9212e8b04592df603946d)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "8977994ae4936afb1921ccdfb4940f418231d96ed288ede5b2426d7aea0f1620"
+    },
+    {
+      "path": "frontend/public/icons/xata.svg",
+      "source": "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/xata.svg (unmodified Xata brand mark; byte-for-byte verified)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "85ca51598b4267e5f9e979787ccc5e182b8328d63d2ec1e2c39f548e5b8f7356"
+    },
+    {
       "path": "frontend/public/icons/bloomerang-brand-vector.svg",
       "source": "https://cdn.prod.website-files.com/696e28ecf85c5265341ed1b9/69709ec3c394cccfa4f30325_logo.svg (official Bloomerang artwork linked by https://bloomerang.com/api/rest-api; integration-cropped vector)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",

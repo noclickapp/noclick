@@ -28,6 +28,19 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'PredictLeads API Key and Token': 'predictleads_api_key_token',
     'SematextAccountAPIKeyCredential': 'sematext_account_api_key',
     'Sematext Account API Key': 'sematext_account_api_key',
+    'RebrandlyAPIKeyCredential': 'rebrandly_api_key',
+    'Rebrandly API Key': 'rebrandly_api_key',
+    'SingleStoreManagementCredential': 'singlestore_management_api_key',
+    'SingleStore Management API': 'singlestore_management_api_key',
+    'SkyviaAPITokenCredential': 'skyvia_api_token',
+    'StatusPalAPIKeyCredential': 'statuspal_api_key',
+    'Status Pal API Key': 'statuspal_api_key',
+    'StreamChatServerCredential': 'stream_chat_api_key',
+    'Stream Chat Server Key': 'stream_chat_api_key',
+    'Supernormal API Token': 'supernormal_api_key',
+    'SupernormalAPITokenCredential': 'supernormal_api_key',
+    'UptimeComAPITokenCredential': 'uptimecom_api_token',
+    'Uptime.com API Token': 'uptimecom_api_token',
     'DropcontactAccessTokenCredential': 'dropcontact_access_token',
     'FountainPrivateHireCredential': 'fountain_private_hire',
     'IlertAPIKeyCredential': 'ilert_api_key',
@@ -236,6 +249,8 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Pulsetic raw Authorization API key
     'PulseticAPIKeyCredential': 'pulsetic_api_key',
     'Pulsetic API Key': 'pulsetic_api_key',
+    'WebsupportApiKeyCredential': 'websupport_api_key',
+    'XataIssuedOAuthCredential': 'xata_issued_oauth',
     // JWX Management API v2 (different from player license keys)
     'JWPlayerAPISecretCredential': 'jwplayer_api_secret',
     'JWX Management API Secret': 'jwplayer_api_secret',
@@ -252,24 +267,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'Bloomerang Private CRM API Key': 'bloomerang_private_api_key',
     'PrintifyPATCredential': 'printify_pat',
     'PrintifyOAuthAccessTokenCredential': 'printify_oauth_access_token',
-
-    // NocoDB
-    'NocoDBTokenCredential': 'nocodb_api_token',
-
-    // NocoDB
-    'NocoDBTokenCredential': 'nocodb_api_token',
-
-    // NocoDB
-    'NocoDBTokenCredential': 'nocodb_api_token',
-
-    // NocoDB
-    'NocoDBTokenCredential': 'nocodb_api_token',
-
-    // NocoDB
-    'NocoDBTokenCredential': 'nocodb_api_token',
-
-    // NocoDB
-    'NocoDBTokenCredential': 'nocodb_api_token',
 
     // NocoDB
     'NocoDBTokenCredential': 'nocodb_api_token',

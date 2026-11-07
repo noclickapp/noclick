@@ -2192,15 +2192,30 @@ class WorkflowHandler(DatabasePoolMixin, SocketIOHandler):
                           AND {credential_access_predicate()}
                     """, request.credential_id, user_id, org_id)
 
-                if credential_data is None:
-                    await send_event(self.sio, sid, ResponseEvent(
-                        request_id=request.request_id,
-                        data=WorkflowNodeLoadOptionsResponse(
-                            success=False,
-                            message="Credential not found or access denied"
-                        ).model_dump()
-                    ))
-                    return
+                    if not row:
+                        await send_event(self.sio, sid, ResponseEvent(
+                            request_id=request.request_id,
+                            data=WorkflowNodeLoadOptionsResponse(
+                                success=False,
+                                message="Credential not found or access denied"
+                            ).model_dump()
+                        ))
+                        return
+
+                    # Decrypt credential
+                    try:
+                        encryption = get_encryption()
+                        credential_data = encryption.decrypt_credential(row['credential'])
+                    except Exception as e:
+                        logger.error(f"Error decrypting credential: {e}")
+                        await send_event(self.sio, sid, ResponseEvent(
+                            request_id=request.request_id,
+                            data=WorkflowNodeLoadOptionsResponse(
+                                success=False,
+                                message="Failed to decrypt credential"
+                            ).model_dump()
+                        ))
+                        return
 
             # Call node's load_field_options method
             try:
