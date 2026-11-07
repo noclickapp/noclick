@@ -9,6 +9,7 @@ import logging
 from typing import Dict, Optional, Type, Any
 from nodes.adapty_node import AdaptyNode
 from nodes.sematext_node import SematextNode
+from nodes.statuspal_node import StatusPalNode
 from nodes.core.base import WorkflowNode
 from nodes.fountain_node import FountainNode
 from nodes.porkbun_node import PorkbunNode
