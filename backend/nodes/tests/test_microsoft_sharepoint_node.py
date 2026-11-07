@@ -114,6 +114,7 @@ async def test_token_uses_staging_microsoft_refresh_and_updates_model():
         from nodes.oauth.microsoft_oauth import refresh_access_token
         assert kwargs["refresh"] is refresh_access_token
         assert kwargs["provider"] == "microsoft"
+        assert kwargs["caller_path"] == "execute"
         kwargs["credential"].update(access_token="renewed", refresh_token="rotated", expires_at="2100-01-01T00:00:00Z")
         return "renewed"
 

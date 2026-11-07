@@ -212,7 +212,7 @@ class SharePointNode(WorkflowNode):
         token = await ensure_fresh_oauth_token(
             credential_id=(self.node_data or {}).get("credential_id"),
             user_id=self.user_id, credential=data,
-            refresh=refresh_access_token, provider="microsoft",
+            refresh=refresh_access_token, provider="microsoft", caller_path="execute",
         )
         credential.access_token = data["access_token"]
         credential.refresh_token = data.get("refresh_token", credential.refresh_token)
