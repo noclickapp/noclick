@@ -1268,6 +1268,12 @@
       "source": "https://cdn.prod.website-files.com/655b8092803c160e897db876/655b8092803c160e897db898_logo-black-color.svg",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "29c9b5a76080c60328a68c3a33f3e33f6497f4d1c60468e63a6728546cb7caa1"
+    },
+    {
+      "path": "frontend/public/icons/exoscale-brand-vector.svg",
+      "source": "https://www.exoscale.com/press/ (source recorded in commit f85702910)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "f6cdc801de57ea0227a910debfb14dd8e0cf36c671f573b0a1871bb6fe497155"
     }
   ],
   "excludedSourceAssets": [
