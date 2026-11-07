@@ -146,6 +146,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-perplexity', 'PerplexityNode'],
     ['automation-posthog', 'PostHogNode'],
     ['automation-cloudzero', 'CloudZeroNode'],
+    ['automation-keila', 'KeilaNode'],
     ['automation-pinecone', 'PineconeNode'],
     ['automation-qdrant', 'QdrantNode'],
     ['automation-upstash-vector', 'UpstashVectorNode'],
