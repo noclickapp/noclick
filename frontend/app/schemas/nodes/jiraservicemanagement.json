@@ -1,0 +1,1040 @@
+{
+  "$defs": {
+    "JiraServiceManagementAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "jiraservicemanagement_api_token",
+          "default": "jiraservicemanagement_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "site_url": {
+          "description": "Your Jira Cloud site, for example https://your-team.atlassian.net",
+          "title": "Site URL",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email of the Atlassian account that created the API token",
+          "minLength": 3,
+          "title": "Atlassian Account Email",
+          "type": "string"
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "site_url",
+        "email",
+        "api_token"
+      ],
+      "title": "Jira Service Management API Token",
+      "type": "object",
+      "x-credential-instructions": "Create an API token without scopes in your Atlassian account security settings. Paste the token, the account email and your Jira Cloud site URL. The token inherits your account permissions.",
+      "x-credential-url": "https://id.atlassian.com/manage-profile/security/api-tokens"
+    },
+    "JiraServiceManagementAddCommentConfig": {
+      "description": "POST /rest/servicedeskapi/request/{issue_id_or_key}/comment.",
+      "properties": {
+        "issue_id_or_key": {
+          "description": "For example HELPDESK-1",
+          "minLength": 1,
+          "title": "Request ID or Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_comment",
+          "default": "add_comment",
+          "title": "Add Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "Add Comment",
+          "x-is-trigger": false
+        },
+        "body": {
+          "minLength": 1,
+          "title": "Comment",
+          "type": "string"
+        },
+        "public": {
+          "default": true,
+          "title": "Public Comment",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "issue_id_or_key",
+        "body"
+      ],
+      "title": "JiraServiceManagementAddCommentConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementAddCustomersConfig": {
+      "description": "POST /rest/servicedeskapi/servicedesk/{service_desk_id}/customer.",
+      "properties": {
+        "service_desk_id": {
+          "minLength": 1,
+          "title": "Service Desk",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "service_desk_id",
+            "placeholder": "Select a service desk...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "add_customers",
+          "default": "add_customers",
+          "title": "Add Customers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Add Customers",
+          "x-is-trigger": false
+        },
+        "account_ids": {
+          "description": "Comma-separated Atlassian account IDs (not usernames)",
+          "minLength": 1,
+          "title": "Account IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "service_desk_id",
+        "account_ids"
+      ],
+      "title": "JiraServiceManagementAddCustomersConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementAddParticipantsConfig": {
+      "description": "POST /rest/servicedeskapi/request/{issue_id_or_key}/participant.",
+      "properties": {
+        "issue_id_or_key": {
+          "description": "For example HELPDESK-1",
+          "minLength": 1,
+          "title": "Request ID or Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_participants",
+          "default": "add_participants",
+          "title": "Add Participants",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "Add Participants",
+          "x-is-trigger": false
+        },
+        "account_ids": {
+          "description": "Comma-separated Atlassian account IDs (not usernames)",
+          "minLength": 1,
+          "title": "Account IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "issue_id_or_key",
+        "account_ids"
+      ],
+      "title": "JiraServiceManagementAddParticipantsConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementCreateCustomerConfig": {
+      "description": "POST /rest/servicedeskapi/customer.",
+      "properties": {
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Create Customer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "Create Customer",
+          "x-is-trigger": false
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Customer Email",
+          "type": "string"
+        },
+        "display_name": {
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "display_name"
+      ],
+      "title": "JiraServiceManagementCreateCustomerConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementCreateRequestConfig": {
+      "description": "POST /rest/servicedeskapi/request.",
+      "properties": {
+        "service_desk_id": {
+          "minLength": 1,
+          "title": "Service Desk",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "service_desk_id",
+            "placeholder": "Select a service desk...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_request",
+          "default": "create_request",
+          "title": "Create Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "Create Request",
+          "x-is-trigger": false
+        },
+        "request_type_id": {
+          "minLength": 1,
+          "title": "Request Type ID",
+          "type": "string"
+        },
+        "summary": {
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "request_field_values": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object mapping custom Jira field IDs to values. Summary and description are set above.",
+          "title": "Additional Request Fields (JSON)",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        },
+        "raise_on_behalf_of": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raise on Behalf of Account ID"
+        }
+      },
+      "required": [
+        "service_desk_id",
+        "request_type_id",
+        "summary"
+      ],
+      "title": "JiraServiceManagementCreateRequestConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementGetRequestConfig": {
+      "description": "GET /rest/servicedeskapi/request/{issue_id_or_key}.",
+      "properties": {
+        "issue_id_or_key": {
+          "description": "For example HELPDESK-1",
+          "minLength": 1,
+          "title": "Request ID or Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_request",
+          "default": "get_request",
+          "title": "Get Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "Get Request",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "issue_id_or_key"
+      ],
+      "title": "JiraServiceManagementGetRequestConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementGetRequestTypeFieldsConfig": {
+      "description": "GET /rest/servicedeskapi/servicedesk/{service_desk_id}/requesttype/{request_type_id}/field.",
+      "properties": {
+        "service_desk_id": {
+          "minLength": 1,
+          "title": "Service Desk",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "service_desk_id",
+            "placeholder": "Select a service desk...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_request_type_fields",
+          "default": "get_request_type_fields",
+          "title": "Get Request Type Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Service Desks",
+          "x-display-name": "Get Request Type Fields",
+          "x-is-trigger": false
+        },
+        "request_type_id": {
+          "minimum": 1,
+          "title": "Request Type ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "service_desk_id",
+        "request_type_id"
+      ],
+      "title": "JiraServiceManagementGetRequestTypeFieldsConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementGetServiceDeskConfig": {
+      "description": "GET /rest/servicedeskapi/servicedesk/{service_desk_id}.",
+      "properties": {
+        "service_desk_id": {
+          "minLength": 1,
+          "title": "Service Desk",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "service_desk_id",
+            "placeholder": "Select a service desk...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_service_desk",
+          "default": "get_service_desk",
+          "title": "Get Service Desk",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Service Desks",
+          "x-display-name": "Get Service Desk",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "service_desk_id"
+      ],
+      "title": "JiraServiceManagementGetServiceDeskConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementGetSlaConfig": {
+      "description": "GET /rest/servicedeskapi/request/{issue_id_or_key}/sla/{sla_metric_id}.",
+      "properties": {
+        "issue_id_or_key": {
+          "description": "For example HELPDESK-1",
+          "minLength": 1,
+          "title": "Request ID or Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_sla",
+          "default": "get_sla",
+          "title": "Get SLA",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLAs",
+          "x-display-name": "Get SLA",
+          "x-is-trigger": false
+        },
+        "sla_metric_id": {
+          "minimum": 1,
+          "title": "SLA Metric ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "issue_id_or_key",
+        "sla_metric_id"
+      ],
+      "title": "JiraServiceManagementGetSlaConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementListCommentsConfig": {
+      "description": "GET /rest/servicedeskapi/request/{issue_id_or_key}/comment.",
+      "properties": {
+        "start": {
+          "default": 0,
+          "description": "Zero-based offset; use the returned next-page link to continue",
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Page size; Jira may return fewer items",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "issue_id_or_key": {
+          "description": "For example HELPDESK-1",
+          "minLength": 1,
+          "title": "Request ID or Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "List Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "List Comments",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "issue_id_or_key"
+      ],
+      "title": "JiraServiceManagementListCommentsConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementListCustomersConfig": {
+      "description": "GET /rest/servicedeskapi/servicedesk/{service_desk_id}/customer.",
+      "properties": {
+        "start": {
+          "default": 0,
+          "description": "Zero-based offset; use the returned next-page link to continue",
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Page size; Jira may return fewer items",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "service_desk_id": {
+          "minLength": 1,
+          "title": "Service Desk",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "service_desk_id",
+            "placeholder": "Select a service desk...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "List Customers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Customers",
+          "x-display-name": "List Customers",
+          "x-is-trigger": false
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Search"
+        }
+      },
+      "required": [
+        "service_desk_id"
+      ],
+      "title": "JiraServiceManagementListCustomersConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementListParticipantsConfig": {
+      "description": "GET /rest/servicedeskapi/request/{issue_id_or_key}/participant.",
+      "properties": {
+        "start": {
+          "default": 0,
+          "description": "Zero-based offset; use the returned next-page link to continue",
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Page size; Jira may return fewer items",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "issue_id_or_key": {
+          "description": "For example HELPDESK-1",
+          "minLength": 1,
+          "title": "Request ID or Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_participants",
+          "default": "list_participants",
+          "title": "List Participants",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "List Participants",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "issue_id_or_key"
+      ],
+      "title": "JiraServiceManagementListParticipantsConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementListQueueIssuesConfig": {
+      "description": "GET /rest/servicedeskapi/servicedesk/{service_desk_id}/queue/{queue_id}/issue.",
+      "properties": {
+        "start": {
+          "default": 0,
+          "description": "Zero-based offset; use the returned next-page link to continue",
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Page size; Jira may return fewer items",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "service_desk_id": {
+          "minLength": 1,
+          "title": "Service Desk",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "service_desk_id",
+            "placeholder": "Select a service desk...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_queue_issues",
+          "default": "list_queue_issues",
+          "title": "List Queue Issues",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queues",
+          "x-display-name": "List Queue Issues",
+          "x-is-trigger": false
+        },
+        "queue_id": {
+          "minimum": 1,
+          "title": "Queue ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "service_desk_id",
+        "queue_id"
+      ],
+      "title": "JiraServiceManagementListQueueIssuesConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementListQueuesConfig": {
+      "description": "GET /rest/servicedeskapi/servicedesk/{service_desk_id}/queue.",
+      "properties": {
+        "start": {
+          "default": 0,
+          "description": "Zero-based offset; use the returned next-page link to continue",
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Page size; Jira may return fewer items",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "service_desk_id": {
+          "minLength": 1,
+          "title": "Service Desk",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "service_desk_id",
+            "placeholder": "Select a service desk...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_queues",
+          "default": "list_queues",
+          "title": "List Queues",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queues",
+          "x-display-name": "List Queues",
+          "x-is-trigger": false
+        },
+        "include_count": {
+          "default": false,
+          "title": "Include Issue Count",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "service_desk_id"
+      ],
+      "title": "JiraServiceManagementListQueuesConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementListRequestTypesConfig": {
+      "description": "GET /rest/servicedeskapi/servicedesk/{service_desk_id}/requesttype.",
+      "properties": {
+        "start": {
+          "default": 0,
+          "description": "Zero-based offset; use the returned next-page link to continue",
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Page size; Jira may return fewer items",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "service_desk_id": {
+          "minLength": 1,
+          "title": "Service Desk",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "service_desk_id",
+            "placeholder": "Select a service desk...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_request_types",
+          "default": "list_request_types",
+          "title": "List Request Types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Service Desks",
+          "x-display-name": "List Request Types",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "service_desk_id"
+      ],
+      "title": "JiraServiceManagementListRequestTypesConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementListRequestsConfig": {
+      "description": "GET /rest/servicedeskapi/request.",
+      "properties": {
+        "start": {
+          "default": 0,
+          "description": "Zero-based offset; use the returned next-page link to continue",
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Page size; Jira may return fewer items",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_requests",
+          "default": "list_requests",
+          "title": "List Requests",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "List Requests",
+          "x-is-trigger": false
+        },
+        "search_term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Term"
+        },
+        "service_desk_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service Desk ID"
+        },
+        "request_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "OPEN_REQUESTS",
+                "CLOSED_REQUESTS",
+                "ALL_REQUESTS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Request Status",
+          "enum": [
+            "OPEN_REQUESTS",
+            "CLOSED_REQUESTS",
+            "ALL_REQUESTS"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "JiraServiceManagementListRequestsConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementListServiceDesksConfig": {
+      "description": "GET /rest/servicedeskapi/servicedesk.",
+      "properties": {
+        "start": {
+          "default": 0,
+          "description": "Zero-based offset; use the returned next-page link to continue",
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Page size; Jira may return fewer items",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_service_desks",
+          "default": "list_service_desks",
+          "title": "List Service Desks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Service Desks",
+          "x-display-name": "List Service Desks",
+          "x-is-trigger": false
+        }
+      },
+      "title": "JiraServiceManagementListServiceDesksConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementListSlasConfig": {
+      "description": "GET /rest/servicedeskapi/request/{issue_id_or_key}/sla.",
+      "properties": {
+        "start": {
+          "default": 0,
+          "description": "Zero-based offset; use the returned next-page link to continue",
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Page size; Jira may return fewer items",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "issue_id_or_key": {
+          "description": "For example HELPDESK-1",
+          "minLength": 1,
+          "title": "Request ID or Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_slas",
+          "default": "list_slas",
+          "title": "List SLAs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLAs",
+          "x-display-name": "List SLAs",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "issue_id_or_key"
+      ],
+      "title": "JiraServiceManagementListSlasConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementListTransitionsConfig": {
+      "description": "GET /rest/servicedeskapi/request/{issue_id_or_key}/transition.",
+      "properties": {
+        "start": {
+          "default": 0,
+          "description": "Zero-based offset; use the returned next-page link to continue",
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Page size; Jira may return fewer items",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "issue_id_or_key": {
+          "description": "For example HELPDESK-1",
+          "minLength": 1,
+          "title": "Request ID or Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_transitions",
+          "default": "list_transitions",
+          "title": "List Transitions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "List Transitions",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "issue_id_or_key"
+      ],
+      "title": "JiraServiceManagementListTransitionsConfig",
+      "type": "object"
+    },
+    "JiraServiceManagementTransitionRequestConfig": {
+      "description": "POST /rest/servicedeskapi/request/{issue_id_or_key}/transition.",
+      "properties": {
+        "issue_id_or_key": {
+          "description": "For example HELPDESK-1",
+          "minLength": 1,
+          "title": "Request ID or Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "transition_request",
+          "default": "transition_request",
+          "title": "Transition Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "Transition Request",
+          "x-is-trigger": false
+        },
+        "transition_id": {
+          "minLength": 1,
+          "title": "Transition ID",
+          "type": "string"
+        },
+        "additional_comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Additional Comment"
+        }
+      },
+      "required": [
+        "issue_id_or_key",
+        "transition_id"
+      ],
+      "title": "JiraServiceManagementTransitionRequestConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_comment": "#/$defs/JiraServiceManagementAddCommentConfig",
+          "add_customers": "#/$defs/JiraServiceManagementAddCustomersConfig",
+          "add_participants": "#/$defs/JiraServiceManagementAddParticipantsConfig",
+          "create_customer": "#/$defs/JiraServiceManagementCreateCustomerConfig",
+          "create_request": "#/$defs/JiraServiceManagementCreateRequestConfig",
+          "get_request": "#/$defs/JiraServiceManagementGetRequestConfig",
+          "get_request_type_fields": "#/$defs/JiraServiceManagementGetRequestTypeFieldsConfig",
+          "get_service_desk": "#/$defs/JiraServiceManagementGetServiceDeskConfig",
+          "get_sla": "#/$defs/JiraServiceManagementGetSlaConfig",
+          "list_comments": "#/$defs/JiraServiceManagementListCommentsConfig",
+          "list_customers": "#/$defs/JiraServiceManagementListCustomersConfig",
+          "list_participants": "#/$defs/JiraServiceManagementListParticipantsConfig",
+          "list_queue_issues": "#/$defs/JiraServiceManagementListQueueIssuesConfig",
+          "list_queues": "#/$defs/JiraServiceManagementListQueuesConfig",
+          "list_request_types": "#/$defs/JiraServiceManagementListRequestTypesConfig",
+          "list_requests": "#/$defs/JiraServiceManagementListRequestsConfig",
+          "list_service_desks": "#/$defs/JiraServiceManagementListServiceDesksConfig",
+          "list_slas": "#/$defs/JiraServiceManagementListSlasConfig",
+          "list_transitions": "#/$defs/JiraServiceManagementListTransitionsConfig",
+          "transition_request": "#/$defs/JiraServiceManagementTransitionRequestConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/JiraServiceManagementListServiceDesksConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementGetServiceDeskConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementListRequestTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementGetRequestTypeFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementListRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementGetRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementCreateRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementAddCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementListParticipantsConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementAddParticipantsConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementListTransitionsConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementTransitionRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementListSlasConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementGetSlaConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementCreateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementAddCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementListQueuesConfig"
+        },
+        {
+          "$ref": "#/$defs/JiraServiceManagementListQueueIssuesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JiraServiceManagementAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Jiraservicemanagement Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a service request for a new laptop",
+    "List requests waiting in a service desk queue",
+    "Check a request's SLA",
+    "Add an internal comment to a request"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
