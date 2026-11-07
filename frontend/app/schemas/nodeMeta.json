@@ -273,12 +273,6 @@
     "automation-doppler": {
       "agentToolProvider": true
     },
-    "automation-docspell": {
-      "agentToolProvider": true
-    },
-    "automation-doppler": {
-      "agentToolProvider": true
-    },
     "automation-dropbox": {
       "agentToolProvider": true
     },

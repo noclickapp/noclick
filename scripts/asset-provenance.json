@@ -1414,6 +1414,24 @@
       "sha256": "85ca51598b4267e5f9e979787ccc5e182b8328d63d2ec1e2c39f548e5b8f7356"
     },
     {
+      "path": "frontend/public/icons/dnsimple.svg",
+      "source": "https://developer.dnsimple.com/v2/ (original inline DNSimple Developer logo)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "2a8a240ea91e04789add9baa5431fc9587af29eedd2fb741af18a4c390b3b259"
+    },
+    {
+      "path": "frontend/public/icons/dnsimple-brand-vector.svg",
+      "source": "https://dnsimple.com (official pinned-tab vector brand mark; source recorded in commit 57928082f)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "267a052c14f44c17cb7b455f8f0a49f397059f8cd0e7797c8861852f3399a869"
+    },
+    {
+      "path": "frontend/public/icons/dnsimple-brand.png",
+      "source": "https://dnsimple.com (official compact brand mark; source recorded in commit d2a4772e9)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "78e89450c79232b74352467df7994d803eaa9d52092c4d02dcabfb930ee5e9cc"
+    },
+    {
       "path": "frontend/public/icons/bloomerang-brand-vector.svg",
       "source": "https://cdn.prod.website-files.com/696e28ecf85c5265341ed1b9/69709ec3c394cccfa4f30325_logo.svg (official Bloomerang artwork linked by https://bloomerang.com/api/rest-api; integration-cropped vector)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
