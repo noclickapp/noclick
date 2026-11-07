@@ -136,6 +136,7 @@ from nodes.ashby_node import AshbyNode
 from nodes.clickup_node import ClickUpNode
 from nodes.devin_node import DevinNode
 from nodes.asana_node import AsanaNode
+from nodes.docspell_node import DocspellNode
 from nodes.mindbody_node import MindbodyNode
 from nodes.bytescale_node import BytescaleNode
 from nodes.linkwarden_node import LinkwardenNode
@@ -323,6 +324,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-clickup': ClickUpNode,
     'automation-devin': DevinNode,
     'automation-asana': AsanaNode,
+    'automation-docspell': DocspellNode,
     'automation-mindbody': MindbodyNode,
     'automation-bytescale': BytescaleNode,
     'automation-linkwarden': LinkwardenNode,

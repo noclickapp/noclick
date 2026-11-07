@@ -153,6 +153,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-clickup', 'ClickUpNode'],
     ['automation-devin', 'DevinNode'],
     ['automation-asana', 'AsanaNode'],
+    ['automation-docspell', 'DocspellNode'],
     ['automation-mindbody', 'MindbodyNode'],
     ['automation-bytescale', 'BytescaleNode'],
     ['automation-linkwarden', 'LinkwardenNode'],

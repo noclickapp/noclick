@@ -787,6 +787,9 @@
     "automation-milvus": {
       "agentToolProvider": true
     },
+    "automation-docspell": {
+      "agentToolProvider": true
+    },
     "automation-mindbody": {
       "agentToolProvider": true
     },
