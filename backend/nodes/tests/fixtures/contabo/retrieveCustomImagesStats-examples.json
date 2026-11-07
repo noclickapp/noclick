@@ -1,0 +1,17 @@
+[
+  {
+    "data": [
+      {
+        "tenantId": "DE",
+        "customerId": "54321",
+        "currentImagesCount": 4,
+        "totalSizeMb": 102400,
+        "usedSizeMb": 55000,
+        "freeSizeMb": 47400
+      }
+    ],
+    "_links": {
+      "self": "/v1/compute/images/stats"
+    }
+  }
+]

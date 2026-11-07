@@ -1,0 +1,378 @@
+{
+  "$defs": {
+    "ContaboBearerCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "contabo_bearer",
+          "default": "contabo_bearer",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expected_instance_id": {
+          "anyOf": [
+            {
+              "maxLength": 19,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional exact existing instance ID as decimal text. Every operation independently verifies this resource; no customer or tenant identity is inferred.",
+          "title": "Expected Instance ID"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Contabo Bearer Token",
+      "type": "object",
+      "x-credential-help-url": "https://api.contabo.com/",
+      "x-credential-instructions": "Supply an existing Contabo access token authorized for the required compute GETs. Contabo's documented password grant uses four separate credentials; this node does not exchange, refresh or mint tokens. Replace an expired token manually. Connection reads protected instance metadata and proves scoped resource reachability, not principal/customer identity. The optional expected instance is an existing resource witness."
+    },
+    "GetImage": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to instance display names, image and snapshot names. Internal host names, IPs, customer IDs, URLs, notes, credentials and configuration are always omitted.",
+          "title": "Include Resource Names",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "get_image",
+          "default": "get_image",
+          "description": "Read the exact existing image ID and verify the singleton data array.",
+          "title": "Get Image Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cloud Metadata",
+          "x-display-name": "Get Image Metadata",
+          "x-is-trigger": false
+        },
+        "image_id": {
+          "description": "Existing image ID; the saved-credential picker uses numeric pages and custom entry remains available.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Image ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "image_id"
+      ],
+      "title": "GetImage",
+      "type": "object"
+    },
+    "GetInstance": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to instance display names, image and snapshot names. Internal host names, IPs, customer IDs, URLs, notes, credentials and configuration are always omitted.",
+          "title": "Include Resource Names",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "get_instance",
+          "default": "get_instance",
+          "description": "Read the exact protected numeric instance ID and verify the singleton data array.",
+          "title": "Get Instance Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cloud Metadata",
+          "x-display-name": "Get Instance Metadata",
+          "x-is-trigger": false
+        },
+        "instance_id": {
+          "description": "Existing positive numeric instance ID. Enter it explicitly; strings, fractions and booleans are refused.",
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Instance ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "instance_id"
+      ],
+      "title": "GetInstance",
+      "type": "object"
+    },
+    "GetSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to instance display names, image and snapshot names. Internal host names, IPs, customer IDs, URLs, notes, credentials and configuration are always omitted.",
+          "title": "Include Resource Names",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "get_snapshot",
+          "default": "get_snapshot",
+          "description": "Verify the instance parent and exact snapshot ID; metadata only, no restore or download.",
+          "title": "Get Instance Snapshot Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cloud Metadata",
+          "x-display-name": "Get Instance Snapshot Metadata",
+          "x-is-trigger": false
+        },
+        "instance_id": {
+          "description": "Explicit existing positive numeric parent.",
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Instance ID",
+          "type": "integer"
+        },
+        "snapshot_id": {
+          "description": "Explicit existing snapshot ID such as snap1628603855. This integration does not infer ancestry from its text.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$",
+          "title": "Snapshot ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "instance_id",
+        "snapshot_id"
+      ],
+      "title": "GetSnapshot",
+      "type": "object"
+    },
+    "ImageStats": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to instance display names, image and snapshot names. Internal host names, IPs, customer IDs, URLs, notes, credentials and configuration are always omitted.",
+          "title": "Include Resource Names",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "image_stats",
+          "default": "image_stats",
+          "description": "Read documented currentImagesCount and total/used/free image MB only; no customer or tenant fields.",
+          "title": "Get Custom Image Capacity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cloud Metadata",
+          "x-display-name": "Get Custom Image Capacity",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ImageStats",
+      "type": "object"
+    },
+    "ListImages": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to instance display names, image and snapshot names. Internal host names, IPs, customer IDs, URLs, notes, credentials and configuration are always omitted.",
+          "title": "Include Resource Names",
+          "type": "boolean"
+        },
+        "page": {
+          "default": 1,
+          "description": "Documented one-based page; this node reads one page without following returned links. Local maximum is 1,000,000.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Sent as the documented size query. Local bound is 1\u2013100; no undocumented provider cap is claimed.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_images",
+          "default": "list_images",
+          "description": "Read one image page with IDs, format, sizes, OS/version and standard/custom flags. No source URLs or error text.",
+          "title": "List Image Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cloud Metadata",
+          "x-display-name": "List Image Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListImages",
+      "type": "object"
+    },
+    "ListInstances": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to instance display names, image and snapshot names. Internal host names, IPs, customer IDs, URLs, notes, credentials and configuration are always omitted.",
+          "title": "Include Resource Names",
+          "type": "boolean"
+        },
+        "page": {
+          "default": 1,
+          "description": "Documented one-based page; this node reads one page without following returned links. Local maximum is 1,000,000.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Sent as the documented size query. Local bound is 1\u2013100; no undocumented provider cap is claimed.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_instances",
+          "default": "list_instances",
+          "description": "Read one protected instance page with IDs, states, time, capacity, region and OS metadata.",
+          "title": "List Instance Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cloud Metadata",
+          "x-display-name": "List Instance Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListInstances",
+      "type": "object"
+    },
+    "ListSnapshots": {
+      "additionalProperties": false,
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Opt in to instance display names, image and snapshot names. Internal host names, IPs, customer IDs, URLs, notes, credentials and configuration are always omitted.",
+          "title": "Include Resource Names",
+          "type": "boolean"
+        },
+        "page": {
+          "default": 1,
+          "description": "Documented one-based page; this node reads one page without following returned links. Local maximum is 1,000,000.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Sent as the documented size query. Local bound is 1\u2013100; no undocumented provider cap is claimed.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_snapshots",
+          "default": "list_snapshots",
+          "description": "First verify the exact parent instance, then read one page whose snapshots all match that parent.",
+          "title": "List Instance Snapshot Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cloud Metadata",
+          "x-display-name": "List Instance Snapshot Metadata",
+          "x-is-trigger": false
+        },
+        "instance_id": {
+          "description": "Explicit existing numeric parent. No cross-instance lookup or control operation.",
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Instance ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "instance_id"
+      ],
+      "title": "ListSnapshots",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_image": "#/$defs/GetImage",
+          "get_instance": "#/$defs/GetInstance",
+          "get_snapshot": "#/$defs/GetSnapshot",
+          "image_stats": "#/$defs/ImageStats",
+          "list_images": "#/$defs/ListImages",
+          "list_instances": "#/$defs/ListInstances",
+          "list_snapshots": "#/$defs/ListSnapshots"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListInstances"
+        },
+        {
+          "$ref": "#/$defs/GetInstance"
+        },
+        {
+          "$ref": "#/$defs/ListImages"
+        },
+        {
+          "$ref": "#/$defs/GetImage"
+        },
+        {
+          "$ref": "#/$defs/ListSnapshots"
+        },
+        {
+          "$ref": "#/$defs/GetSnapshot"
+        },
+        {
+          "$ref": "#/$defs/ImageStats"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ContaboBearerCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    },
+    "node_type": {
+      "const": "automation-contabo",
+      "default": "automation-contabo",
+      "title": "Node Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Contabo Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

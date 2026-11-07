@@ -1,0 +1,44 @@
+[
+  {
+    "_pagination": {
+      "size": 10,
+      "totalElements": 100,
+      "totalPages": 10,
+      "page": 1
+    },
+    "data": [
+      {
+        "imageId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+        "tenantId": "DE",
+        "customerId": "12345",
+        "name": "Custom Image Ubuntu",
+        "description": "Ubuntu Server 20.04.2 LTS",
+        "url": "https://example.com/image.qcow2",
+        "sizeMb": 1024,
+        "uploadedSizeMb": 1024,
+        "osType": "Linux",
+        "version": "20.04.2",
+        "format": "iso",
+        "status": "Pending",
+        "errorMessage": "Error downloading image from provided URL",
+        "standardImage": true,
+        "gpu": true,
+        "creationDate": "2021-06-03T06:27:12.000Z",
+        "lastModifiedDate": "2021-06-04T06:27:12.000Z",
+        "tags": [
+          {
+            "tagId": 12345,
+            "tagName": "Web-Server"
+          }
+        ]
+      }
+    ],
+    "_links": {
+      "first": "/v1/compute/images?page=1",
+      "previous": "/v1/compute/images?page=19",
+      "self": "/v1/compute/images?page=20",
+      "next": "/v1/compute/images?page=21",
+      "last": "/v1/compute/images?page=101"
+    }
+  }
+]

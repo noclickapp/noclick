@@ -1,0 +1,31 @@
+[
+  {
+    "_pagination": {
+      "size": 10,
+      "totalElements": 100,
+      "totalPages": 10,
+      "page": 1
+    },
+    "data": [
+      {
+        "tenantId": "DE",
+        "customerId": "3f184ab8-a600-4e7c-8c9b-3413e21a3752",
+        "snapshotId": "snap1628603855",
+        "name": "Snapshot-Server",
+        "description": "Snapshot-Description",
+        "instanceId": 1234,
+        "createdDate": "2021-06-02T12:32:03.363Z",
+        "autoDeleteDate": "2021-07-02T12:32:03.363Z",
+        "imageId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+        "imageName": "ubuntu-18.04"
+      }
+    ],
+    "_links": {
+      "first": "/v1/compute/instances/12345/snapshots?page=1",
+      "next": "/v1/compute/instances/12345/snapshots?page=19",
+      "self": "/v1/compute/instances/12345/snapshots/snap1628603855",
+      "previous": "/v1/compute/instances/12345/snapshots?page=21",
+      "last": "/v1/compute/instances/12345/snapshots?page=101"
+    }
+  }
+]
