@@ -530,23 +530,23 @@ class DataForSEONode(WorkflowNode):
         return DataForSEOConfiguration
 
     @classmethod
-    def parse_config(cls, data):
-        raw_tag(data)
+    def parse_config(cls, config_data):
+        raw_tag(config_data)
         try:
-            return DataForSEOConfiguration.model_validate(data)
+            return DataForSEOConfiguration.model_validate(config_data)
         except Exception:
             raise ConfigValidationError("Invalid DataForSEO configuration or credential shape.") from None
 
     @classmethod
-    def validate_config(cls, data):
+    def validate_config(cls, config_data):
         try:
-            cls.parse_config(data)
+            cls.parse_config(config_data)
             return {"valid": True, "errors": [], "satisfied_set": "default"}
         except Exception:
             return {"valid": False, "errors": ["Invalid DataForSEO configuration or credential shape."], "satisfied_set": None}
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, user_id=None, pool=None, credential_id=None):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
         # Staging resolves saved-row access before this hook. Issued API Basic
         # credentials do not have a refresh flow.
         return credential(credential_data).model_dump()

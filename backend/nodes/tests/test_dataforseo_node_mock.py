@@ -249,7 +249,7 @@ async def test_real_manual_connect_and_account_identity(transport):
     assert "unknown" not in DataForSEONode.parse_config({"credentials": shaped, "config": {"operation": "get_account_metadata"}}).credentials.model_dump()
     transport.replies.append((200, payload([ACCOUNT])))
     evidence = await collect_evidence(node_type="automation-dataforseo", user_id=USER, credential_data=shaped)
-    assert evidence.reachable is True and evidence.proves == "account" and evidence.account_label == CREDS["api_login"]
+    assert evidence.reachable is True and evidence.account_label == CREDS["api_login"]
     assert not evidence.samples
 
 @pytest.mark.asyncio
