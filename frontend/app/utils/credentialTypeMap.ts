@@ -28,6 +28,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'PredictLeads API Key and Token': 'predictleads_api_key_token',
     'SematextAccountAPIKeyCredential': 'sematext_account_api_key',
     'Sematext Account API Key': 'sematext_account_api_key',
+    'ImmichAPIKeyCredential': 'immich_api_key',
     'RebrandlyAPIKeyCredential': 'rebrandly_api_key',
     'Rebrandly API Key': 'rebrandly_api_key',
     'SingleStoreManagementCredential': 'singlestore_management_api_key',

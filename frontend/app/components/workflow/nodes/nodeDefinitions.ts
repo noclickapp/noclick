@@ -180,6 +180,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-mindbody', 'MindbodyNode'],
     ['automation-bytescale', 'BytescaleNode'],
     ['automation-linkwarden', 'LinkwardenNode'],
+    ['automation-immich', 'ImmichNode'],
     ['automation-rebrandly', 'RebrandlyNode'],
     ['automation-skyvia', 'SkyviaNode'],
     ['automation-firestore', 'FirestoreNode'],

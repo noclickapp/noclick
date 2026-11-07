@@ -162,6 +162,7 @@ from nodes.docspell_node import DocspellNode
 from nodes.mindbody_node import MindbodyNode
 from nodes.bytescale_node import BytescaleNode
 from nodes.linkwarden_node import LinkwardenNode
+from nodes.immich_node import ImmichNode
 from nodes.rebrandly_node import RebrandlyNode
 from nodes.skyvia_node import SkyviaNode
 from nodes.firestore_node import FirestoreNode
@@ -368,6 +369,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-mindbody': MindbodyNode,
     'automation-bytescale': BytescaleNode,
     'automation-linkwarden': LinkwardenNode,
+    'automation-immich': ImmichNode,
     'automation-rebrandly': RebrandlyNode,
     'automation-skyvia': SkyviaNode,
     'automation-firestore': FirestoreNode,
