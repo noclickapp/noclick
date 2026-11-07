@@ -1,0 +1,715 @@
+{
+  "$defs": {
+    "OneNoteAppendPageContentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "append_page_content",
+          "default": "append_page_content",
+          "title": "Append Page Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "Append Page Content",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "OneNote page ID",
+          "minLength": 1,
+          "title": "Page ID",
+          "type": "string"
+        },
+        "content_html": {
+          "description": "Well-formed HTML to append or replace",
+          "minLength": 1,
+          "title": "Content HTML",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "content_html"
+      ],
+      "title": "OneNoteAppendPageContentConfig",
+      "type": "object"
+    },
+    "OneNoteCreateNotebookConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_notebook",
+          "default": "create_notebook",
+          "title": "Create Notebook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notebook",
+          "x-display-name": "Create Notebook",
+          "x-is-trigger": false
+        },
+        "display_name": {
+          "description": "Name for the new notebook, section, or group",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "display_name"
+      ],
+      "title": "OneNoteCreateNotebookConfig",
+      "type": "object"
+    },
+    "OneNoteCreatePageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_page",
+          "default": "create_page",
+          "title": "Create Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "Create Page",
+          "x-is-trigger": false
+        },
+        "section_id": {
+          "description": "OneNote section ID",
+          "minLength": 1,
+          "title": "Section ID",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title of the new page",
+          "minLength": 1,
+          "title": "Page Title",
+          "type": "string"
+        },
+        "body_html": {
+          "description": "HTML content for the new page",
+          "minLength": 1,
+          "title": "Body HTML",
+          "type": "string"
+        }
+      },
+      "required": [
+        "section_id",
+        "title",
+        "body_html"
+      ],
+      "title": "OneNoteCreatePageConfig",
+      "type": "object"
+    },
+    "OneNoteCreateSectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_section",
+          "default": "create_section",
+          "title": "Create Section",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Section",
+          "x-display-name": "Create Section",
+          "x-is-trigger": false
+        },
+        "notebook_id": {
+          "description": "OneNote notebook ID",
+          "minLength": 1,
+          "title": "Notebook ID",
+          "type": "string"
+        },
+        "display_name": {
+          "description": "Name for the new notebook, section, or group",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "notebook_id",
+        "display_name"
+      ],
+      "title": "OneNoteCreateSectionConfig",
+      "type": "object"
+    },
+    "OneNoteCreateSectionGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_section_group",
+          "default": "create_section_group",
+          "title": "Create Section Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Section Group",
+          "x-display-name": "Create Section Group",
+          "x-is-trigger": false
+        },
+        "notebook_id": {
+          "description": "OneNote notebook ID",
+          "minLength": 1,
+          "title": "Notebook ID",
+          "type": "string"
+        },
+        "display_name": {
+          "description": "Name for the new notebook, section, or group",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "notebook_id",
+        "display_name"
+      ],
+      "title": "OneNoteCreateSectionGroupConfig",
+      "type": "object"
+    },
+    "OneNoteDeletePageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_page",
+          "default": "delete_page",
+          "title": "Delete Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "Delete Page",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "OneNote page ID",
+          "minLength": 1,
+          "title": "Page ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "OneNoteDeletePageConfig",
+      "type": "object"
+    },
+    "OneNoteGetNotebookConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_notebook",
+          "default": "get_notebook",
+          "title": "Get Notebook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notebook",
+          "x-display-name": "Get Notebook",
+          "x-is-trigger": false
+        },
+        "notebook_id": {
+          "description": "OneNote notebook ID",
+          "minLength": 1,
+          "title": "Notebook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "notebook_id"
+      ],
+      "title": "OneNoteGetNotebookConfig",
+      "type": "object"
+    },
+    "OneNoteGetPageConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_page",
+          "default": "get_page",
+          "title": "Get Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "Get Page",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "OneNote page ID",
+          "minLength": 1,
+          "title": "Page ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "OneNoteGetPageConfig",
+      "type": "object"
+    },
+    "OneNoteGetPageContentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_page_content",
+          "default": "get_page_content",
+          "title": "Get Page Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "Get Page Content",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "OneNote page ID",
+          "minLength": 1,
+          "title": "Page ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "OneNoteGetPageContentConfig",
+      "type": "object"
+    },
+    "OneNoteGetPagePreviewConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_page_preview",
+          "default": "get_page_preview",
+          "title": "Get Page Preview",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "Get Page Preview",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "OneNote page ID",
+          "minLength": 1,
+          "title": "Page ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "OneNoteGetPagePreviewConfig",
+      "type": "object"
+    },
+    "OneNoteGetSectionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_section",
+          "default": "get_section",
+          "title": "Get Section",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Section",
+          "x-display-name": "Get Section",
+          "x-is-trigger": false
+        },
+        "section_id": {
+          "description": "OneNote section ID",
+          "minLength": 1,
+          "title": "Section ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "section_id"
+      ],
+      "title": "OneNoteGetSectionConfig",
+      "type": "object"
+    },
+    "OneNoteGetSectionGroupConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_section_group",
+          "default": "get_section_group",
+          "title": "Get Section Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Section Group",
+          "x-display-name": "Get Section Group",
+          "x-is-trigger": false
+        },
+        "section_group_id": {
+          "description": "OneNote section group ID",
+          "minLength": 1,
+          "title": "Section Group ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "section_group_id"
+      ],
+      "title": "OneNoteGetSectionGroupConfig",
+      "type": "object"
+    },
+    "OneNoteListNotebookSectionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_notebook_sections",
+          "default": "list_notebook_sections",
+          "title": "List Notebook Sections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Section",
+          "x-display-name": "List Notebook Sections",
+          "x-is-trigger": false
+        },
+        "notebook_id": {
+          "description": "OneNote notebook ID",
+          "minLength": 1,
+          "title": "Notebook ID",
+          "type": "string"
+        },
+        "top": {
+          "default": 25,
+          "description": "Maximum number of results (1\u2013100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "notebook_id"
+      ],
+      "title": "OneNoteListNotebookSectionsConfig",
+      "type": "object"
+    },
+    "OneNoteListNotebooksConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_notebooks",
+          "default": "list_notebooks",
+          "title": "List Notebooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notebook",
+          "x-display-name": "List Notebooks",
+          "x-is-trigger": false
+        },
+        "top": {
+          "default": 25,
+          "description": "Maximum number of results (1\u2013100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "OneNoteListNotebooksConfig",
+      "type": "object"
+    },
+    "OneNoteListPagesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_pages",
+          "default": "list_pages",
+          "title": "List Pages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "List Pages",
+          "x-is-trigger": false
+        },
+        "top": {
+          "default": 25,
+          "description": "Maximum number of results (1\u2013100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "OneNoteListPagesConfig",
+      "type": "object"
+    },
+    "OneNoteListSectionGroupsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_section_groups",
+          "default": "list_section_groups",
+          "title": "List Section Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Section Group",
+          "x-display-name": "List Section Groups",
+          "x-is-trigger": false
+        },
+        "top": {
+          "default": 25,
+          "description": "Maximum number of results (1\u2013100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "OneNoteListSectionGroupsConfig",
+      "type": "object"
+    },
+    "OneNoteListSectionPagesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_section_pages",
+          "default": "list_section_pages",
+          "title": "List Section Pages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "List Section Pages",
+          "x-is-trigger": false
+        },
+        "section_id": {
+          "description": "OneNote section ID",
+          "minLength": 1,
+          "title": "Section ID",
+          "type": "string"
+        },
+        "top": {
+          "default": 25,
+          "description": "Maximum number of results (1\u2013100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "section_id"
+      ],
+      "title": "OneNoteListSectionPagesConfig",
+      "type": "object"
+    },
+    "OneNoteListSectionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_sections",
+          "default": "list_sections",
+          "title": "List Sections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Section",
+          "x-display-name": "List Sections",
+          "x-is-trigger": false
+        },
+        "top": {
+          "default": 25,
+          "description": "Maximum number of results (1\u2013100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "OneNoteListSectionsConfig",
+      "type": "object"
+    },
+    "OneNoteOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "microsoft_oauth",
+          "default": "microsoft_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "title": "Expires At",
+          "type": "string"
+        },
+        "email": {
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "Microsoft OneNote OAuth",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "microsoft",
+      "x-oauth-scopes": [
+        "https://graph.microsoft.com/Notes.ReadWrite",
+        "https://graph.microsoft.com/User.Read",
+        "offline_access"
+      ]
+    },
+    "OneNoteReplacePageContentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "replace_page_content",
+          "default": "replace_page_content",
+          "title": "Replace Page Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "Replace Page Content",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "OneNote page ID",
+          "minLength": 1,
+          "title": "Page ID",
+          "type": "string"
+        },
+        "target_id": {
+          "description": "Generated ID or data-id from Get Page Content",
+          "minLength": 1,
+          "title": "Element ID",
+          "type": "string"
+        },
+        "content_html": {
+          "description": "Well-formed HTML to append or replace",
+          "minLength": 1,
+          "title": "Content HTML",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "target_id",
+        "content_html"
+      ],
+      "title": "OneNoteReplacePageContentConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "append_page_content": "#/$defs/OneNoteAppendPageContentConfig",
+          "create_notebook": "#/$defs/OneNoteCreateNotebookConfig",
+          "create_page": "#/$defs/OneNoteCreatePageConfig",
+          "create_section": "#/$defs/OneNoteCreateSectionConfig",
+          "create_section_group": "#/$defs/OneNoteCreateSectionGroupConfig",
+          "delete_page": "#/$defs/OneNoteDeletePageConfig",
+          "get_notebook": "#/$defs/OneNoteGetNotebookConfig",
+          "get_page": "#/$defs/OneNoteGetPageConfig",
+          "get_page_content": "#/$defs/OneNoteGetPageContentConfig",
+          "get_page_preview": "#/$defs/OneNoteGetPagePreviewConfig",
+          "get_section": "#/$defs/OneNoteGetSectionConfig",
+          "get_section_group": "#/$defs/OneNoteGetSectionGroupConfig",
+          "list_notebook_sections": "#/$defs/OneNoteListNotebookSectionsConfig",
+          "list_notebooks": "#/$defs/OneNoteListNotebooksConfig",
+          "list_pages": "#/$defs/OneNoteListPagesConfig",
+          "list_section_groups": "#/$defs/OneNoteListSectionGroupsConfig",
+          "list_section_pages": "#/$defs/OneNoteListSectionPagesConfig",
+          "list_sections": "#/$defs/OneNoteListSectionsConfig",
+          "replace_page_content": "#/$defs/OneNoteReplacePageContentConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/OneNoteListNotebooksConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteGetNotebookConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteCreateNotebookConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteListNotebookSectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteListSectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteGetSectionConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteCreateSectionConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteListSectionGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteGetSectionGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteCreateSectionGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteListPagesConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteListSectionPagesConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteGetPageConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteGetPageContentConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteGetPagePreviewConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteCreatePageConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteAppendPageContentConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteReplacePageContentConfig"
+        },
+        {
+          "$ref": "#/$defs/OneNoteDeletePageConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OneNoteOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Microsoft-onenote Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List my OneNote notebooks and sections",
+    "Create a project notes page in a section",
+    "Append a meeting summary to a OneNote page",
+    "Read the HTML of a page for summarization"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
