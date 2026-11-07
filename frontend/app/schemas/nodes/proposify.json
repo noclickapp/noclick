@@ -24,8 +24,8 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
-            "field_name": "template_id"
+            "field_name": "template_id",
+            "auto_select_sole_option": true
           },
           "x-resource-type": "template_id"
         },
@@ -59,8 +59,8 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
-            "field_name": "document_id"
+            "field_name": "document_id",
+            "auto_select_sole_option": true
           },
           "x-resource-type": "document_id"
         },
@@ -212,8 +212,8 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
-            "field_name": "document_id"
+            "field_name": "document_id",
+            "auto_select_sole_option": true
           },
           "x-resource-type": "document_id"
         },
@@ -243,8 +243,8 @@
           "type": "string",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
-            "field_name": "document_id"
+            "field_name": "document_id",
+            "auto_select_sole_option": true
           },
           "x-resource-type": "document_id"
         },

@@ -23,7 +23,7 @@ describe('native Proposify', () => {
     expect(ops).not.toContain('send_document');
     expect(schema.$defs.ProposifyUsersConfig.properties.include_personal_details.default).toBe(false);
     expect(schema.$defs.ProposifyCreateDraftConfig.required).toContain('template_id');
-    expect(schema.$defs.ProposifyCreateDraftConfig.properties.template_id['x-dynamic-options'].auto_select_sole_option).toBe(false);
+    expect(schema.$defs.ProposifyCreateDraftConfig.properties.template_id['x-dynamic-options'].auto_select_sole_option).toBe(true);
   });
   it('selects via the actual native provider import and removes cached selection', () => {
     upsertCredentialsIntoCache([{ id: 'proposify-fixture', name: 'Issued fixture', credential_type: FAMILY, owned_by_me: true }]);

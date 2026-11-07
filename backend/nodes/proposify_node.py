@@ -110,7 +110,7 @@ class _CurrentCredential(dict):
 
 
 def _op(value, title, category): return Field(value, json_schema_extra={"const": value, "ui:hidden": True, "x-display-name": title, "x-category": category, "x-is-trigger": False})
-def _pick(name): return Field(..., title=name.replace("_", " ").title(), json_schema_extra={"x-resource-type": name, "x-dynamic-options": {"field_name": name, "allow_custom": True, "auto_select_sole_option": False}})
+def _pick(name): return Field(..., title=name.replace("_", " ").title(), json_schema_extra={"x-resource-type": name, "x-dynamic-options": {"field_name": name, "allow_custom": True}})
 
 
 class _Config(BaseModel):
