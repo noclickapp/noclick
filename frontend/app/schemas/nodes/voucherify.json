@@ -1,0 +1,1392 @@
+{
+  "$defs": {
+    "VoucherifyApplicationKeysCredential": {
+      "description": "Existing server Application keys for one shared-cluster project.",
+      "properties": {
+        "credential_type": {
+          "const": "voucherify_application_keys",
+          "default": "voucherify_application_keys",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "region": {
+          "default": "eu",
+          "description": "Europe, US, or Singapore shared cluster. Dedicated custom clusters are not supported.",
+          "enum": [
+            "eu",
+            "us",
+            "asia"
+          ],
+          "title": "Project region",
+          "type": "string"
+        },
+        "application_id": {
+          "description": "Existing server Application ID. Client-side and management keys are separate families.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Application ID",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "application_secret": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Application secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "application_id",
+        "application_secret"
+      ],
+      "title": "Voucherify Application Keys",
+      "type": "object",
+      "x-credential-url": "https://docs.voucherify.io/guides/authentication"
+    },
+    "VoucherifyCreateCustomerConfig": {
+      "description": "Create or match customer metadata; may trigger project automation.",
+      "properties": {
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "customer": {
+          "$ref": "#/$defs/VoucherifyNewCustomer"
+        }
+      },
+      "required": [
+        "customer"
+      ],
+      "title": "VoucherifyCreateCustomerConfig",
+      "type": "object"
+    },
+    "VoucherifyCreateProductConfig": {
+      "description": "Create catalog metadata without setting a price or image URL.",
+      "properties": {
+        "operation": {
+          "const": "create_product",
+          "default": "create_product",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product": {
+          "$ref": "#/$defs/VoucherifyNewProduct"
+        }
+      },
+      "required": [
+        "product"
+      ],
+      "title": "VoucherifyCreateProductConfig",
+      "type": "object"
+    },
+    "VoucherifyCreateSKUConfig": {
+      "description": "Create product-scoped SKU metadata without price, currency or image changes.",
+      "properties": {
+        "operation": {
+          "const": "create_sku",
+          "default": "create_sku",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        },
+        "sku": {
+          "$ref": "#/$defs/VoucherifyNewSKU"
+        }
+      },
+      "required": [
+        "product_id",
+        "sku"
+      ],
+      "title": "VoucherifyCreateSKUConfig",
+      "type": "object"
+    },
+    "VoucherifyCustomerChanges": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "maxProperties": 50,
+              "minProperties": 1,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "title": "VoucherifyCustomerChanges",
+      "type": "object"
+    },
+    "VoucherifyDeleteCustomerConfig": {
+      "description": "Soft-delete a customer to the provider bin; not permanent deletion.",
+      "properties": {
+        "operation": {
+          "const": "delete_customer",
+          "default": "delete_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "customer_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "confirm_delete": {
+          "const": true,
+          "description": "Confirm deleting this existing customer record.",
+          "title": "Confirm Delete",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "customer_id",
+        "confirm_delete"
+      ],
+      "title": "VoucherifyDeleteCustomerConfig",
+      "type": "object"
+    },
+    "VoucherifyDeleteProductConfig": {
+      "description": "Move a product and ALL related SKUs to the provider bin; force permanent deletion is disabled.",
+      "properties": {
+        "operation": {
+          "const": "delete_product",
+          "default": "delete_product",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        },
+        "confirm_delete": {
+          "const": true,
+          "description": "Confirm moving this catalog product to the bin.",
+          "title": "Confirm Delete",
+          "type": "boolean"
+        },
+        "confirm_cascade_skus": {
+          "const": true,
+          "description": "Confirm that ALL related SKUs, including concurrently added SKUs, will also move to the bin.",
+          "title": "Confirm Cascade Skus",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "product_id",
+        "confirm_delete",
+        "confirm_cascade_skus"
+      ],
+      "title": "VoucherifyDeleteProductConfig",
+      "type": "object"
+    },
+    "VoucherifyDeleteSKUConfig": {
+      "description": "Move a verified product-scoped SKU to the provider bin, with permanent deletion disabled.",
+      "properties": {
+        "operation": {
+          "const": "delete_sku",
+          "default": "delete_sku",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        },
+        "sku_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Sku Id",
+          "type": "string"
+        },
+        "confirm_delete": {
+          "const": true,
+          "description": "Confirm deletion of this catalog SKU.",
+          "title": "Confirm Delete",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "product_id",
+        "sku_id",
+        "confirm_delete"
+      ],
+      "title": "VoucherifyDeleteSKUConfig",
+      "type": "object"
+    },
+    "VoucherifyGetCampaignConfig": {
+      "description": "Read one canonical campaign's selected metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "VoucherifyGetCampaignConfig",
+      "type": "object"
+    },
+    "VoucherifyGetCustomerConfig": {
+      "description": "Read one canonical customer ID.",
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "customer_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "VoucherifyGetCustomerConfig",
+      "type": "object"
+    },
+    "VoucherifyGetProductConfig": {
+      "description": "Read one canonical catalog product.",
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "VoucherifyGetProductConfig",
+      "type": "object"
+    },
+    "VoucherifyGetPromotionTierConfig": {
+      "description": "Read a promotion tier and verify its campaign association.",
+      "properties": {
+        "operation": {
+          "const": "get_promotion_tier",
+          "default": "get_promotion_tier",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "promotion_tier_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Promotion Tier Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "promotion_tier_id"
+      ],
+      "title": "VoucherifyGetPromotionTierConfig",
+      "type": "object"
+    },
+    "VoucherifyGetSKUConfig": {
+      "description": "Read a SKU using the global SKU endpoint and verify its product.",
+      "properties": {
+        "operation": {
+          "const": "get_sku",
+          "default": "get_sku",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        },
+        "sku_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Sku Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "product_id",
+        "sku_id"
+      ],
+      "title": "VoucherifyGetSKUConfig",
+      "type": "object"
+    },
+    "VoucherifyGetVoucherConfig": {
+      "description": "Read a voucher code and verify the campaign association.",
+      "properties": {
+        "operation": {
+          "const": "get_voucher",
+          "default": "get_voucher",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "voucher_code": {
+          "description": "Existing voucher code; a URL or path is not accepted.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Voucher Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "voucher_code"
+      ],
+      "title": "VoucherifyGetVoucherConfig",
+      "type": "object"
+    },
+    "VoucherifyListCampaignsConfig": {
+      "description": "Read campaign names/types/status; no discount, balance or distribution data.",
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "Read one bounded page; no automatic pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "VoucherifyListCampaignsConfig",
+      "type": "object"
+    },
+    "VoucherifyListCustomersConfig": {
+      "description": "Read customer IDs/names/email; addresses, phone and custom metadata are omitted.",
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "Read one bounded page; no automatic pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 99,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "VoucherifyListCustomersConfig",
+      "type": "object"
+    },
+    "VoucherifyListProductsConfig": {
+      "description": "Read product metadata without prices, images or custom metadata.",
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "Read one bounded page; no automatic pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "VoucherifyListProductsConfig",
+      "type": "object"
+    },
+    "VoucherifyListPromotionTiersConfig": {
+      "description": "Read the documented unpaged promotion-tier list for one campaign, bounded to 100 rows.",
+      "properties": {
+        "operation": {
+          "const": "list_promotion_tiers",
+          "default": "list_promotion_tiers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "VoucherifyListPromotionTiersConfig",
+      "type": "object"
+    },
+    "VoucherifyListSKUsConfig": {
+      "description": "Read a page of SKUs and verify every product association.",
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "Read one bounded page; no automatic pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_skus",
+          "default": "list_skus",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "VoucherifyListSKUsConfig",
+      "type": "object"
+    },
+    "VoucherifyListVouchersConfig": {
+      "description": "Read vouchers in one verified campaign without balances, holders or assets.",
+      "properties": {
+        "limit": {
+          "default": 25,
+          "description": "Read one bounded page; no automatic pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "maximum": 99,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_vouchers",
+          "default": "list_vouchers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "VoucherifyListVouchersConfig",
+      "type": "object"
+    },
+    "VoucherifyNewCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "maxProperties": 50,
+              "minProperties": 1,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "source_id": {
+          "description": "Your existing external customer identifier; provider matching may reuse an existing record.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "source_id"
+      ],
+      "title": "VoucherifyNewCustomer",
+      "type": "object"
+    },
+    "VoucherifyNewProduct": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 50,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "maxProperties": 50,
+              "minProperties": 1,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "VoucherifyNewProduct",
+      "type": "object"
+    },
+    "VoucherifyNewSKU": {
+      "additionalProperties": false,
+      "properties": {
+        "sku": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Sku",
+          "type": "string"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "maxProperties": 50,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "maxProperties": 50,
+              "minProperties": 1,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        }
+      },
+      "required": [
+        "sku"
+      ],
+      "title": "VoucherifyNewSKU",
+      "type": "object"
+    },
+    "VoucherifyProductChanges": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 50,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "maxProperties": 50,
+              "minProperties": 1,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "title": "VoucherifyProductChanges",
+      "type": "object"
+    },
+    "VoucherifySKUChanges": {
+      "additionalProperties": false,
+      "properties": {
+        "sku": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sku"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "maxProperties": 50,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "maxProperties": 50,
+              "minProperties": 1,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        }
+      },
+      "title": "VoucherifySKUChanges",
+      "type": "object"
+    },
+    "VoucherifyUpdateCampaignMetadataConfig": {
+      "description": "Update campaign metadata; may trigger asynchronous voucher updates or automation.",
+      "properties": {
+        "operation": {
+          "const": "update_campaign_metadata",
+          "default": "update_campaign_metadata",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          },
+          "maxProperties": 50,
+          "minProperties": 1,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "metadata"
+      ],
+      "title": "VoucherifyUpdateCampaignMetadataConfig",
+      "type": "object"
+    },
+    "VoucherifyUpdateCustomerConfig": {
+      "description": "Update selected customer metadata; may trigger project automation.",
+      "properties": {
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "customer_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "customer": {
+          "$ref": "#/$defs/VoucherifyCustomerChanges"
+        }
+      },
+      "required": [
+        "customer_id",
+        "customer"
+      ],
+      "title": "VoucherifyUpdateCustomerConfig",
+      "type": "object"
+    },
+    "VoucherifyUpdateProductConfig": {
+      "description": "Update a product's name, attribute names or metadata.",
+      "properties": {
+        "operation": {
+          "const": "update_product",
+          "default": "update_product",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        },
+        "product": {
+          "$ref": "#/$defs/VoucherifyProductChanges"
+        }
+      },
+      "required": [
+        "product_id",
+        "product"
+      ],
+      "title": "VoucherifyUpdateProductConfig",
+      "type": "object"
+    },
+    "VoucherifyUpdateSKUConfig": {
+      "description": "Update a verified product-scoped SKU's ordinary metadata.",
+      "properties": {
+        "operation": {
+          "const": "update_sku",
+          "default": "update_sku",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Product Id",
+          "type": "string"
+        },
+        "sku_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Sku Id",
+          "type": "string"
+        },
+        "sku": {
+          "$ref": "#/$defs/VoucherifySKUChanges"
+        }
+      },
+      "required": [
+        "product_id",
+        "sku_id",
+        "sku"
+      ],
+      "title": "VoucherifyUpdateSKUConfig",
+      "type": "object"
+    },
+    "VoucherifyUpdateVoucherMetadataConfig": {
+      "description": "Update a verified voucher's custom metadata without changing discount or balance.",
+      "properties": {
+        "operation": {
+          "const": "update_voucher_metadata",
+          "default": "update_voucher_metadata",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "voucher_code": {
+          "description": "Existing voucher code; a URL or path is not accepted.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Voucher Code",
+          "type": "string"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          },
+          "maxProperties": 50,
+          "minProperties": 1,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "voucher_code",
+        "metadata"
+      ],
+      "title": "VoucherifyUpdateVoucherMetadataConfig",
+      "type": "object"
+    },
+    "VoucherifyValidateDiscountsConfig": {
+      "description": "Validate existing discount coupons/tiers without redemption or a session lock. Records history and uses API quota.",
+      "properties": {
+        "operation": {
+          "const": "validate_discounts",
+          "default": "validate_discounts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "redeemables": {
+          "items": {
+            "$ref": "#/$defs/VoucherifyValidationRedeemable"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Redeemables",
+          "type": "array"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "order_amount": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order amount in the smallest currency unit, used only for validation calculation.",
+          "title": "Order Amount"
+        }
+      },
+      "required": [
+        "redeemables"
+      ],
+      "title": "VoucherifyValidateDiscountsConfig",
+      "type": "object"
+    },
+    "VoucherifyValidationRedeemable": {
+      "additionalProperties": false,
+      "properties": {
+        "object": {
+          "enum": [
+            "voucher",
+            "promotion_tier"
+          ],
+          "title": "Object",
+          "type": "string"
+        },
+        "id": {
+          "description": "Voucher code or promotion-tier ID, as selected above.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "campaign_id": {
+          "description": "Existing campaign association verified before validation.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "object",
+        "id",
+        "campaign_id"
+      ],
+      "title": "VoucherifyValidationRedeemable",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_customer": "#/$defs/VoucherifyCreateCustomerConfig",
+          "create_product": "#/$defs/VoucherifyCreateProductConfig",
+          "create_sku": "#/$defs/VoucherifyCreateSKUConfig",
+          "delete_customer": "#/$defs/VoucherifyDeleteCustomerConfig",
+          "delete_product": "#/$defs/VoucherifyDeleteProductConfig",
+          "delete_sku": "#/$defs/VoucherifyDeleteSKUConfig",
+          "get_campaign": "#/$defs/VoucherifyGetCampaignConfig",
+          "get_customer": "#/$defs/VoucherifyGetCustomerConfig",
+          "get_product": "#/$defs/VoucherifyGetProductConfig",
+          "get_promotion_tier": "#/$defs/VoucherifyGetPromotionTierConfig",
+          "get_sku": "#/$defs/VoucherifyGetSKUConfig",
+          "get_voucher": "#/$defs/VoucherifyGetVoucherConfig",
+          "list_campaigns": "#/$defs/VoucherifyListCampaignsConfig",
+          "list_customers": "#/$defs/VoucherifyListCustomersConfig",
+          "list_products": "#/$defs/VoucherifyListProductsConfig",
+          "list_promotion_tiers": "#/$defs/VoucherifyListPromotionTiersConfig",
+          "list_skus": "#/$defs/VoucherifyListSKUsConfig",
+          "list_vouchers": "#/$defs/VoucherifyListVouchersConfig",
+          "update_campaign_metadata": "#/$defs/VoucherifyUpdateCampaignMetadataConfig",
+          "update_customer": "#/$defs/VoucherifyUpdateCustomerConfig",
+          "update_product": "#/$defs/VoucherifyUpdateProductConfig",
+          "update_sku": "#/$defs/VoucherifyUpdateSKUConfig",
+          "update_voucher_metadata": "#/$defs/VoucherifyUpdateVoucherMetadataConfig",
+          "validate_discounts": "#/$defs/VoucherifyValidateDiscountsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/VoucherifyListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyGetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyCreateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyUpdateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyDeleteCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyGetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyCreateProductConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyUpdateProductConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyDeleteProductConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyListSKUsConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyGetSKUConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyCreateSKUConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyUpdateSKUConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyDeleteSKUConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyListCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyGetCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyUpdateCampaignMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyListVouchersConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyGetVoucherConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyUpdateVoucherMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyListPromotionTiersConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyGetPromotionTierConfig"
+        },
+        {
+          "$ref": "#/$defs/VoucherifyValidateDiscountsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VoucherifyApplicationKeysCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Connect supplied Voucherify server Application keys for the selected shared region; no environment credential fallback."
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Voucherify Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
