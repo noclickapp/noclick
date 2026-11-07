@@ -1,0 +1,26 @@
+import { memo } from 'react';
+import { NodeProps } from '@xyflow/react';
+import AutomationNode from '~/components/workflow/nodes/base/AutomationNode';
+import { NodeDefinition } from '~/components/workflow/nodes/types';
+
+
+// Unmodified compact brand asset from https://www.microsoft.com/en-us/microsoft-365/sharepoint/collaboration
+import type { CSSProperties as BrandCSSProperties } from 'react';
+const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
+    <img src="/icons/microsoft-sharepoint.svg" alt="" aria-hidden="true" className={className}
+        style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
+);
+
+const DIMENSIONS = { width: 90, height: 90, iconSize: 48 };
+
+export const SharePointNode: NodeDefinition = {
+    type: 'automation-microsoft-sharepoint',
+    label: 'SharePoint',
+    description: 'Work with SharePoint sites, lists, and document libraries',
+    Icon: OfficialBrandIcon,
+    iconColor: 'text-[#038387]',
+    dimensions: DIMENSIONS,
+    component: memo((props: NodeProps) => (
+        <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="text-[#038387]" />
+    )),
+};
