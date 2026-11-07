@@ -144,6 +144,11 @@ OPERATIONS: dict[str, Operation] = {
 }
 
 
+def _catalog_title(label: str) -> str:
+    # Staging strips one provider token before splitting PascalCase titles.
+    return "Activecampaign" + "".join(word.title() for word in label.split()) + "Config"
+
+
 def _make_config(name: str, op: Operation) -> type[BaseModel]:
     extra = {"const": name, "ui:hidden": True, "x-category": op.category,
              "x-is-trigger": False, "x-display-name": op.label}
@@ -169,7 +174,7 @@ def _make_config(name: str, op: Operation) -> type[BaseModel]:
             description='Optional filters and pagination, for example {"limit": 20, "offset": 0}',
             json_schema_extra={"ui:widget": "code_editor", "x-code-language": "json"}))
     return create_model("ActiveCampaign" + "".join(part.title() for part in name.split("_")) + "Config",
-                        __module__=__name__, **fields)
+                        __module__=__name__, __config__=ConfigDict(title=_catalog_title(op.label)), **fields)
 
 
 CONFIG_MODELS = {name: _make_config(name, op) for name, op in OPERATIONS.items()}
@@ -177,6 +182,7 @@ globals().update({model.__name__: model for model in CONFIG_MODELS.values()})
 
 
 class ActiveCampaignOnNewContactConfig(PollTriggerConfigBase):
+    model_config = ConfigDict(title=_catalog_title("On New Contact"))
     operation: Literal["on_new_contact"] = Field(
         "on_new_contact", title="On New Contact",
         json_schema_extra={"const": "on_new_contact", "ui:hidden": True,

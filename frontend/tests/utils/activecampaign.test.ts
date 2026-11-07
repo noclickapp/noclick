@@ -1,7 +1,13 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { methodFromRequirement, requirementsFromSchema } from '~/components/credential/credentialMethods';
 import schema from '~/schemas/nodes/activecampaign.json';
 import meta from '~/schemas/nodeMeta/activecampaign.json';
+import { getNodeOperations } from '~/lib/nodeCatalog.server';
+
+vi.mock('~/components/workflow/nodes/nodeRegistry', () => ({
+    AVAILABLE_NODES: [], getNodeMetadata: () => undefined,
+}));
+
 import { ActiveCampaignNode } from '~/components/workflow/nodes/integrations/activecampaign';
 
 describe('ActiveCampaign integration metadata', () => {
@@ -12,6 +18,12 @@ describe('ActiveCampaign integration metadata', () => {
         expect(meta.credentialTypes.ActiveCampaignApiKeyCredential).toBe('activecampaign_api_key');
         expect(meta.credentialTypes['ActiveCampaign API Key']).toBe('activecampaign_api_key');
         expect(schema.$defs.ActiveCampaignApiKeyCredential.required).toEqual(['api_url', 'api_key']);
+    });
+    it('renders operation labels through staging’s existing catalog renderer', () => {
+        const names = Object.fromEntries(getNodeOperations('automation-activecampaign').map(op => [op.value, op.name]));
+        expect(names.sync_contact).toBe('Upsert Contact');
+        expect(names.list_deal_fields).toBe('List Deal Custom Fields');
+        expect(names.on_new_contact).toBe('On New Contact');
     });
     it('exposes the discovered canvas definition and contact poll trigger', () => {
         expect(ActiveCampaignNode.type).toBe('automation-activecampaign');

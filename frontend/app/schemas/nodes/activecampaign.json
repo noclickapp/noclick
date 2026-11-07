@@ -28,7 +28,7 @@
         "contactId",
         "payload_json"
       ],
-      "title": "ActiveCampaignAddContactTagsConfig",
+      "title": "ActivecampaignAddTagsToContactConfig",
       "type": "object"
     },
     "ActiveCampaignAddContactToAutomationConfig": {
@@ -54,7 +54,7 @@
       "required": [
         "payload_json"
       ],
-      "title": "ActiveCampaignAddContactToAutomationConfig",
+      "title": "ActivecampaignAddContactToAutomationConfig",
       "type": "object"
     },
     "ActiveCampaignApiKeyCredential": {
@@ -108,7 +108,7 @@
       "required": [
         "payload_json"
       ],
-      "title": "ActiveCampaignBulkImportContactsConfig",
+      "title": "ActivecampaignBulkImportContactsConfig",
       "type": "object"
     },
     "ActiveCampaignBulkSyncContactsConfig": {
@@ -134,7 +134,7 @@
       "required": [
         "payload_json"
       ],
-      "title": "ActiveCampaignBulkSyncContactsConfig",
+      "title": "ActivecampaignBulkUpsertContactsConfig",
       "type": "object"
     },
     "ActiveCampaignCreateCampaignConfig": {
@@ -162,7 +162,7 @@
       "required": [
         "payload_json"
       ],
-      "title": "ActiveCampaignCreateCampaignConfig",
+      "title": "ActivecampaignCreateCampaignConfig",
       "type": "object"
     },
     "ActiveCampaignCreateContactConfig": {
@@ -190,7 +190,7 @@
       "required": [
         "payload_json"
       ],
-      "title": "ActiveCampaignCreateContactConfig",
+      "title": "ActivecampaignCreateContactConfig",
       "type": "object"
     },
     "ActiveCampaignCreateContactFieldConfig": {
@@ -218,7 +218,7 @@
       "required": [
         "payload_json"
       ],
-      "title": "ActiveCampaignCreateContactFieldConfig",
+      "title": "ActivecampaignCreateContactCustomFieldConfig",
       "type": "object"
     },
     "ActiveCampaignCreateContactNoteConfig": {
@@ -251,7 +251,7 @@
         "id",
         "payload_json"
       ],
-      "title": "ActiveCampaignCreateContactNoteConfig",
+      "title": "ActivecampaignCreateContactNoteConfig",
       "type": "object"
     },
     "ActiveCampaignCreateDealConfig": {
@@ -279,7 +279,7 @@
       "required": [
         "payload_json"
       ],
-      "title": "ActiveCampaignCreateDealConfig",
+      "title": "ActivecampaignCreateDealConfig",
       "type": "object"
     },
     "ActiveCampaignCreateDealFieldConfig": {
@@ -307,7 +307,7 @@
       "required": [
         "payload_json"
       ],
-      "title": "ActiveCampaignCreateDealFieldConfig",
+      "title": "ActivecampaignCreateDealCustomFieldConfig",
       "type": "object"
     },
     "ActiveCampaignCreateEmptyCampaignConfig": {
@@ -335,7 +335,7 @@
       "required": [
         "payload_json"
       ],
-      "title": "ActiveCampaignCreateEmptyCampaignConfig",
+      "title": "ActivecampaignCreateEmptyCampaignConfig",
       "type": "object"
     },
     "ActiveCampaignCreateFieldValueConfig": {
@@ -363,7 +363,7 @@
       "required": [
         "payload_json"
       ],
-      "title": "ActiveCampaignCreateFieldValueConfig",
+      "title": "ActivecampaignSetContactFieldValueConfig",
       "type": "object"
     },
     "ActiveCampaignCreateFormConfig": {
@@ -391,7 +391,7 @@
       "required": [
         "payload_json"
       ],
-      "title": "ActiveCampaignCreateFormConfig",
+      "title": "ActivecampaignCreateFormConfig",
       "type": "object"
     },
     "ActiveCampaignCreateListConfig": {
@@ -419,7 +419,7 @@
       "required": [
         "payload_json"
       ],
-      "title": "ActiveCampaignCreateListConfig",
+      "title": "ActivecampaignCreateListConfig",
       "type": "object"
     },
     "ActiveCampaignCreateSegmentConfig": {
@@ -447,7 +447,7 @@
       "required": [
         "payload_json"
       ],
-      "title": "ActiveCampaignCreateSegmentConfig",
+      "title": "ActivecampaignCreateSegmentConfig",
       "type": "object"
     },
     "ActiveCampaignCreateTaskReminderConfig": {
@@ -475,7 +475,7 @@
       "required": [
         "payload_json"
       ],
-      "title": "ActiveCampaignCreateTaskReminderConfig",
+      "title": "ActivecampaignCreateTaskReminderConfig",
       "type": "object"
     },
     "ActiveCampaignCreateTemplateConfig": {
@@ -503,7 +503,7 @@
       "required": [
         "payload_json"
       ],
-      "title": "ActiveCampaignCreateTemplateConfig",
+      "title": "ActivecampaignCreateEmailTemplateConfig",
       "type": "object"
     },
     "ActiveCampaignDeleteContactNoteConfig": {
@@ -546,7 +546,7 @@
         "id",
         "noteId"
       ],
-      "title": "ActiveCampaignDeleteContactNoteConfig",
+      "title": "ActivecampaignDeleteContactNoteConfig",
       "type": "object"
     },
     "ActiveCampaignDeleteFormConfig": {
@@ -584,7 +584,7 @@
       "required": [
         "id"
       ],
-      "title": "ActiveCampaignDeleteFormConfig",
+      "title": "ActivecampaignDeleteFormConfig",
       "type": "object"
     },
     "ActiveCampaignDeleteSegmentConfig": {
@@ -622,7 +622,7 @@
       "required": [
         "segmentId"
       ],
-      "title": "ActiveCampaignDeleteSegmentConfig",
+      "title": "ActivecampaignDeleteSegmentConfig",
       "type": "object"
     },
     "ActiveCampaignDuplicateCampaignConfig": {
@@ -645,7 +645,7 @@
       "required": [
         "id"
       ],
-      "title": "ActiveCampaignDuplicateCampaignConfig",
+      "title": "ActivecampaignDuplicateCampaignConfig",
       "type": "object"
     },
     "ActiveCampaignEditCampaignConfig": {
@@ -676,7 +676,7 @@
         "id",
         "payload_json"
       ],
-      "title": "ActiveCampaignEditCampaignConfig",
+      "title": "ActivecampaignEditCampaignConfig",
       "type": "object"
     },
     "ActiveCampaignGetAccountInfoConfig": {
@@ -707,7 +707,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignGetAccountInfoConfig",
+      "title": "ActivecampaignGetAccountInformationConfig",
       "type": "object"
     },
     "ActiveCampaignGetCampaignMessageConfig": {
@@ -750,7 +750,7 @@
         "campaignId",
         "id"
       ],
-      "title": "ActiveCampaignGetCampaignMessageConfig",
+      "title": "ActivecampaignGetCampaignMessageConfig",
       "type": "object"
     },
     "ActiveCampaignGetContactConfig": {
@@ -788,7 +788,7 @@
       "required": [
         "id"
       ],
-      "title": "ActiveCampaignGetContactConfig",
+      "title": "ActivecampaignGetContactConfig",
       "type": "object"
     },
     "ActiveCampaignGetContactFieldConfig": {
@@ -826,7 +826,7 @@
       "required": [
         "id"
       ],
-      "title": "ActiveCampaignGetContactFieldConfig",
+      "title": "ActivecampaignGetContactCustomFieldConfig",
       "type": "object"
     },
     "ActiveCampaignGetDealConfig": {
@@ -864,7 +864,7 @@
       "required": [
         "id"
       ],
-      "title": "ActiveCampaignGetDealConfig",
+      "title": "ActivecampaignGetDealConfig",
       "type": "object"
     },
     "ActiveCampaignGetDealFieldConfig": {
@@ -902,7 +902,7 @@
       "required": [
         "id"
       ],
-      "title": "ActiveCampaignGetDealFieldConfig",
+      "title": "ActivecampaignGetDealCustomFieldConfig",
       "type": "object"
     },
     "ActiveCampaignGetDealStageConfig": {
@@ -940,7 +940,7 @@
       "required": [
         "id"
       ],
-      "title": "ActiveCampaignGetDealStageConfig",
+      "title": "ActivecampaignGetDealStageConfig",
       "type": "object"
     },
     "ActiveCampaignGetImportStatusConfig": {
@@ -971,7 +971,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignGetImportStatusConfig",
+      "title": "ActivecampaignGetBulkImportStatusConfig",
       "type": "object"
     },
     "ActiveCampaignGetSegmentConfig": {
@@ -1009,7 +1009,7 @@
       "required": [
         "id"
       ],
-      "title": "ActiveCampaignGetSegmentConfig",
+      "title": "ActivecampaignGetSegmentConfig",
       "type": "object"
     },
     "ActiveCampaignListAutomationContactsConfig": {
@@ -1047,7 +1047,7 @@
       "required": [
         "seriesId"
       ],
-      "title": "ActiveCampaignListAutomationContactsConfig",
+      "title": "ActivecampaignListContactsInAutomationConfig",
       "type": "object"
     },
     "ActiveCampaignListAutomationsConfig": {
@@ -1078,7 +1078,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListAutomationsConfig",
+      "title": "ActivecampaignListAutomationsConfig",
       "type": "object"
     },
     "ActiveCampaignListCampaignBouncesConfig": {
@@ -1116,7 +1116,7 @@
       "required": [
         "campaignId"
       ],
-      "title": "ActiveCampaignListCampaignBouncesConfig",
+      "title": "ActivecampaignListCampaignBouncesConfig",
       "type": "object"
     },
     "ActiveCampaignListCampaignClicksConfig": {
@@ -1154,7 +1154,7 @@
       "required": [
         "campaignId"
       ],
-      "title": "ActiveCampaignListCampaignClicksConfig",
+      "title": "ActivecampaignListCampaignClicksConfig",
       "type": "object"
     },
     "ActiveCampaignListCampaignMessagesConfig": {
@@ -1192,7 +1192,7 @@
       "required": [
         "campaignId"
       ],
-      "title": "ActiveCampaignListCampaignMessagesConfig",
+      "title": "ActivecampaignListCampaignMessagesConfig",
       "type": "object"
     },
     "ActiveCampaignListCampaignOpensConfig": {
@@ -1230,7 +1230,7 @@
       "required": [
         "campaignId"
       ],
-      "title": "ActiveCampaignListCampaignOpensConfig",
+      "title": "ActivecampaignListCampaignOpensConfig",
       "type": "object"
     },
     "ActiveCampaignListCampaignUnsubscribesConfig": {
@@ -1268,7 +1268,7 @@
       "required": [
         "campaignId"
       ],
-      "title": "ActiveCampaignListCampaignUnsubscribesConfig",
+      "title": "ActivecampaignListCampaignUnsubscribesConfig",
       "type": "object"
     },
     "ActiveCampaignListCampaignsConfig": {
@@ -1299,7 +1299,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListCampaignsConfig",
+      "title": "ActivecampaignListCampaignsConfig",
       "type": "object"
     },
     "ActiveCampaignListContactAccountLinksConfig": {
@@ -1337,7 +1337,7 @@
       "required": [
         "id"
       ],
-      "title": "ActiveCampaignListContactAccountLinksConfig",
+      "title": "ActivecampaignListContactAccountLinksConfig",
       "type": "object"
     },
     "ActiveCampaignListContactActivitiesConfig": {
@@ -1368,7 +1368,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListContactActivitiesConfig",
+      "title": "ActivecampaignListContactActivitiesConfig",
       "type": "object"
     },
     "ActiveCampaignListContactAutomationsConfig": {
@@ -1399,7 +1399,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListContactAutomationsConfig",
+      "title": "ActivecampaignListContactAutomationsConfig",
       "type": "object"
     },
     "ActiveCampaignListContactDealsConfig": {
@@ -1437,7 +1437,7 @@
       "required": [
         "id"
       ],
-      "title": "ActiveCampaignListContactDealsConfig",
+      "title": "ActivecampaignListContactDealsConfig",
       "type": "object"
     },
     "ActiveCampaignListContactFieldGroupsConfig": {
@@ -1468,7 +1468,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListContactFieldGroupsConfig",
+      "title": "ActivecampaignListContactFieldGroupsConfig",
       "type": "object"
     },
     "ActiveCampaignListContactFieldValuesConfig": {
@@ -1506,7 +1506,7 @@
       "required": [
         "id"
       ],
-      "title": "ActiveCampaignListContactFieldValuesConfig",
+      "title": "ActivecampaignListContactFieldValuesConfig",
       "type": "object"
     },
     "ActiveCampaignListContactFieldsConfig": {
@@ -1537,7 +1537,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListContactFieldsConfig",
+      "title": "ActivecampaignListContactCustomFieldsConfig",
       "type": "object"
     },
     "ActiveCampaignListContactListsConfig": {
@@ -1575,7 +1575,7 @@
       "required": [
         "id"
       ],
-      "title": "ActiveCampaignListContactListsConfig",
+      "title": "ActivecampaignListContactListMembershipsConfig",
       "type": "object"
     },
     "ActiveCampaignListContactNotesConfig": {
@@ -1613,7 +1613,7 @@
       "required": [
         "id"
       ],
-      "title": "ActiveCampaignListContactNotesConfig",
+      "title": "ActivecampaignListContactNotesConfig",
       "type": "object"
     },
     "ActiveCampaignListContactsConfig": {
@@ -1644,7 +1644,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListContactsConfig",
+      "title": "ActivecampaignListContactsConfig",
       "type": "object"
     },
     "ActiveCampaignListDealFieldsConfig": {
@@ -1675,7 +1675,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListDealFieldsConfig",
+      "title": "ActivecampaignListDealCustomFieldsConfig",
       "type": "object"
     },
     "ActiveCampaignListDealStagesConfig": {
@@ -1706,7 +1706,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListDealStagesConfig",
+      "title": "ActivecampaignListDealStagesConfig",
       "type": "object"
     },
     "ActiveCampaignListDealTasksConfig": {
@@ -1737,7 +1737,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListDealTasksConfig",
+      "title": "ActivecampaignListDealTasksConfig",
       "type": "object"
     },
     "ActiveCampaignListDealsConfig": {
@@ -1768,7 +1768,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListDealsConfig",
+      "title": "ActivecampaignListDealsConfig",
       "type": "object"
     },
     "ActiveCampaignListFormsConfig": {
@@ -1799,7 +1799,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListFormsConfig",
+      "title": "ActivecampaignListFormsConfig",
       "type": "object"
     },
     "ActiveCampaignListImportsConfig": {
@@ -1830,7 +1830,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListImportsConfig",
+      "title": "ActivecampaignListBulkImportsConfig",
       "type": "object"
     },
     "ActiveCampaignListListsConfig": {
@@ -1861,7 +1861,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListListsConfig",
+      "title": "ActivecampaignListListsConfig",
       "type": "object"
     },
     "ActiveCampaignListPipelinesConfig": {
@@ -1892,7 +1892,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListPipelinesConfig",
+      "title": "ActivecampaignListDealPipelinesConfig",
       "type": "object"
     },
     "ActiveCampaignListSegmentsConfig": {
@@ -1923,7 +1923,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListSegmentsConfig",
+      "title": "ActivecampaignListSegmentsConfig",
       "type": "object"
     },
     "ActiveCampaignListTagsConfig": {
@@ -1954,7 +1954,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListTagsConfig",
+      "title": "ActivecampaignListTagsConfig",
       "type": "object"
     },
     "ActiveCampaignListTemplatesConfig": {
@@ -1985,7 +1985,7 @@
           "x-code-language": "json"
         }
       },
-      "title": "ActiveCampaignListTemplatesConfig",
+      "title": "ActivecampaignListEmailTemplatesConfig",
       "type": "object"
     },
     "ActiveCampaignOnNewContactConfig": {
@@ -2160,7 +2160,7 @@
           "title": "List ID"
         }
       },
-      "title": "ActiveCampaignOnNewContactConfig",
+      "title": "ActivecampaignOnNewContactConfig",
       "type": "object",
       "x-requires-webhook": true
     },
@@ -2184,7 +2184,7 @@
       "required": [
         "campaignId"
       ],
-      "title": "ActiveCampaignPauseCampaignConfig",
+      "title": "ActivecampaignPauseCampaignConfig",
       "type": "object"
     },
     "ActiveCampaignRemoveContactFromAutomationConfig": {
@@ -2229,7 +2229,7 @@
         "contact",
         "automation"
       ],
-      "title": "ActiveCampaignRemoveContactFromAutomationConfig",
+      "title": "ActivecampaignRemoveContactFromAutomationConfig",
       "type": "object"
     },
     "ActiveCampaignRemoveContactTagByIdConfig": {
@@ -2272,7 +2272,7 @@
         "contactId",
         "tagId"
       ],
-      "title": "ActiveCampaignRemoveContactTagByIdConfig",
+      "title": "ActivecampaignRemoveContactTagByIdConfig",
       "type": "object"
     },
     "ActiveCampaignRemoveContactTagByNameConfig": {
@@ -2316,7 +2316,7 @@
         "contactId",
         "tag"
       ],
-      "title": "ActiveCampaignRemoveContactTagByNameConfig",
+      "title": "ActivecampaignRemoveContactTagByNameConfig",
       "type": "object"
     },
     "ActiveCampaignResumeCampaignConfig": {
@@ -2339,7 +2339,7 @@
       "required": [
         "campaignId"
       ],
-      "title": "ActiveCampaignResumeCampaignConfig",
+      "title": "ActivecampaignResumeCampaignConfig",
       "type": "object"
     },
     "ActiveCampaignScheduleCampaignConfig": {
@@ -2362,7 +2362,7 @@
       "required": [
         "campaignId"
       ],
-      "title": "ActiveCampaignScheduleCampaignConfig",
+      "title": "ActivecampaignScheduleCampaignConfig",
       "type": "object"
     },
     "ActiveCampaignStopCampaignConfig": {
@@ -2385,7 +2385,7 @@
       "required": [
         "campaignId"
       ],
-      "title": "ActiveCampaignStopCampaignConfig",
+      "title": "ActivecampaignStopCampaignConfig",
       "type": "object"
     },
     "ActiveCampaignSyncContactConfig": {
@@ -2413,7 +2413,7 @@
       "required": [
         "payload_json"
       ],
-      "title": "ActiveCampaignSyncContactConfig",
+      "title": "ActivecampaignUpsertContactConfig",
       "type": "object"
     },
     "ActiveCampaignUpdateContactConfig": {
@@ -2444,7 +2444,7 @@
         "id",
         "payload_json"
       ],
-      "title": "ActiveCampaignUpdateContactConfig",
+      "title": "ActivecampaignUpdateContactConfig",
       "type": "object"
     },
     "ActiveCampaignUpdateContactNoteConfig": {
@@ -2480,7 +2480,7 @@
         "noteId",
         "payload_json"
       ],
-      "title": "ActiveCampaignUpdateContactNoteConfig",
+      "title": "ActivecampaignUpdateContactNoteConfig",
       "type": "object"
     },
     "ActiveCampaignUpdateDealConfig": {
@@ -2511,7 +2511,7 @@
         "id",
         "payload_json"
       ],
-      "title": "ActiveCampaignUpdateDealConfig",
+      "title": "ActivecampaignUpdateDealConfig",
       "type": "object"
     },
     "ActiveCampaignUpdateDealNoteConfig": {
@@ -2547,7 +2547,7 @@
         "noteId",
         "payload_json"
       ],
-      "title": "ActiveCampaignUpdateDealNoteConfig",
+      "title": "ActivecampaignUpdateDealNoteConfig",
       "type": "object"
     },
     "ActiveCampaignUpdateFieldValueConfig": {
@@ -2578,7 +2578,7 @@
         "id",
         "payload_json"
       ],
-      "title": "ActiveCampaignUpdateFieldValueConfig",
+      "title": "ActivecampaignUpdateContactFieldValueConfig",
       "type": "object"
     },
     "ActiveCampaignUpdateFormConfig": {
@@ -2609,7 +2609,7 @@
         "id",
         "payload_json"
       ],
-      "title": "ActiveCampaignUpdateFormConfig",
+      "title": "ActivecampaignUpdateFormConfig",
       "type": "object"
     },
     "ActiveCampaignUpdateListConfig": {
@@ -2640,7 +2640,7 @@
         "id",
         "payload_json"
       ],
-      "title": "ActiveCampaignUpdateListConfig",
+      "title": "ActivecampaignUpdateListConfig",
       "type": "object"
     },
     "ActiveCampaignUpdateSegmentConfig": {
@@ -2671,7 +2671,7 @@
         "segmentId",
         "payload_json"
       ],
-      "title": "ActiveCampaignUpdateSegmentConfig",
+      "title": "ActivecampaignUpdateSegmentConfig",
       "type": "object"
     },
     "ActiveCampaignUpdateTemplateConfig": {
@@ -2702,7 +2702,7 @@
         "id",
         "payload_json"
       ],
-      "title": "ActiveCampaignUpdateTemplateConfig",
+      "title": "ActivecampaignUpdateEmailTemplateConfig",
       "type": "object"
     },
     "ScheduleConfig": {
