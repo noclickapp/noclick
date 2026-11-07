@@ -44,6 +44,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-nylas', 'NylasNode'],
     ['automation-aprimo', 'AprimoNode'],
     ['automation-stripe', 'StripeNode'],
+    ['automation-sling', 'SlingNode'],
     ['automation-cliniko', 'ClinikoNode'],
     ['automation-apify', 'ApifyNode'],
     ['automation-apollo', 'ApolloNode'],
