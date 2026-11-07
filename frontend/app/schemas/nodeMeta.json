@@ -261,6 +261,9 @@
         "on_mention"
       ]
     },
+    "automation-docspell": {
+      "agentToolProvider": true
+    },
     "automation-doppler": {
       "agentToolProvider": true
     },
@@ -785,9 +788,6 @@
       "agentToolProvider": true
     },
     "automation-milvus": {
-      "agentToolProvider": true
-    },
-    "automation-docspell": {
       "agentToolProvider": true
     },
     "automation-mindbody": {

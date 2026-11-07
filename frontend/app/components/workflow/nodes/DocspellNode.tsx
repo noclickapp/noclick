@@ -1,24 +1,17 @@
 // Docspell exposes closed folder/tag metadata reads in the native editor.
 // The provider mark is separate from generated operation forms.
-import { memo, forwardRef } from 'react';
+import { memo } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import AutomationNode from './base/AutomationNode';
-import type { NodeDefinition, SvgIconComponent } from './types';
+import type { NodeDefinition } from './types';
 
 
 import type { CSSProperties as BrandCSSProperties } from 'react';
-// Vector brand artwork from https://docspell.org
+// Vector brand artwork from https://docspell.org/icons/logo-only-36.svg
 const OfficialBrandIcon = ({ className, style }: { className?: string; style?: BrandCSSProperties }) => (
-    <img src="/icons/docspell-brand-vector.svg" alt="" aria-hidden="true" className={className}
+    <img src="/icons/docspell.svg" alt="" aria-hidden="true" className={className}
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as BrandCSSProperties} />
 );
-
-const DocspellIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
-    ({ className, style, ...props }, ref) => (
-        <img ref={ref} src="/icons/docspell.svg" alt="" className={className} style={{ ...style, objectFit: "contain" }} {...props} />
-    ),
-);
-DocspellIcon.displayName = 'DocspellIcon';
 
 export const DocspellNode: NodeDefinition = {
     type: 'automation-docspell',
