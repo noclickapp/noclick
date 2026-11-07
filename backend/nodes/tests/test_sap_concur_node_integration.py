@@ -15,7 +15,6 @@ from nodes.tests.test_sap_concur_node_mock import native, ensure_native_db_pool,
 @pytest.fixture
 async def saved(native, monkeypatch):
     from nodes.core import oauth_refresh
-    from utils import audit_pool
     state = SimpleNamespace(blob={**deepcopy(EXPIRED), 'credential_type': 'sap_concur_oauth', 'token_version': 7}, writes=[])
     class Store:
         def __init__(self, pool, user_id, credential_id):
@@ -30,7 +29,6 @@ async def saved(native, monkeypatch):
             return 1, None
     monkeypatch.setattr(oauth_refresh, 'CredentialsTableStore', Store)
     monkeypatch.setattr(oauth_refresh, 'record_refresh_event', AsyncMock())
-    monkeypatch.setattr(audit_pool, '_get_pool', AsyncMock(return_value=None))
     return state
 
 
