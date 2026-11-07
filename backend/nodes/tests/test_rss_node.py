@@ -101,6 +101,7 @@ def create_node(config: Any, credential: Any = None) -> RSSNode:
     )
 
 
+@pytest.mark.integration  # fetches live public feeds (hnrss.org, github.com)
 class TestDirectFeedParsing:
     """Tests for direct RSS/Atom feed parsing operations."""
 
