@@ -1,0 +1,62 @@
+{
+  "_comment": "Unmodified HTTP 200 example from the provider documentation. Retained to verify native parsing independently of the empty conformance spec.",
+  "source": "https://docs.vagaro.com/public/reference/retrieve-appointment",
+  "body": {
+    "status": 200,
+    "responseId": "00-da317a6b570b27108714a52d8ad4eed5-e241fb615f065063-00",
+    "responseCode": 1000,
+    "message": "Success",
+    "data": [
+      {
+        "appointmentId": "juAUYXCq~EjSHCX5CwucPg==",
+        "startTime": "2024-10-10T21:15:00.000Z",
+        "endTime": "2024-10-10T21:45:00.000Z",
+        "bookingStatus": "Confirmed",
+        "serviceTitle": "Mens Haircut",
+        "serviceId": "~yJZcatIl80KSY0sNCfpTQ==",
+        "calendarEventId": null,
+        "amount": 25.0,
+        "eventType": "Appointment",
+        "onlineVsInhouse": "Booked Online",
+        "appointmentTypeCode": null,
+        "appointmentTypeName": null,
+        "customerId": "FM1R4gT8OoDnqSAIK5jTtQ==",
+        "bookingSource": "Vagaro Marketplace",
+        "serviceProviderId": "1TAhJhyWgIWWk-vlsSBAnw==",
+        "serviceCategory": "Hair Services",
+        "createdDate": "2024-10-10T14:44:37.350Z",
+        "createdBy": "FM1R4gT8OoDnqSAIK5jTtQ==",
+        "modifiedDate": null,
+        "modifiedBy": null,
+        "formResponseIds": [
+          "tagxhMbeyaoB4ML3hz0l5wwzrXnKRRfsUJEgMZaAtfE="
+        ]
+      },
+      {
+        "appointmentId": "juAUYXCq~EjSHCX5CwucPg==",
+        "startTime": "2024-10-10T21:15:00.000Z",
+        "endTime": "2024-10-10T21:45:00.000Z",
+        "bookingStatus": "Confirmed",
+        "serviceTitle": "Beard Trim",
+        "serviceId": "~yJZcatIl80KSY0sNCfpTQ==",
+        "calendarEventId": null,
+        "amount": 25.0,
+        "eventType": "Appointment",
+        "onlineVsInhouse": "Booked Online",
+        "appointmentTypeCode": null,
+        "appointmentTypeName": null,
+        "customerId": "FM1R4gT8OoDnqSAIK5jTtQ==",
+        "bookingSource": "Vagaro Marketplace",
+        "serviceProviderId": "1TAhJhyWgIWWk-vlsSBAnw==",
+        "serviceCategory": "Hair Services",
+        "createdDate": "2024-10-10T14:44:37.350Z",
+        "createdBy": "FM1R4gT8OoDnqSAIK5jTtQ==",
+        "modifiedDate": null,
+        "modifiedBy": null,
+        "formResponseIds": [
+          "tagxhMbeyaoB4ML3hz0l5wwzrXnKRRfsUJEgMZaAtfE="
+        ]
+      }
+    ]
+  }
+}

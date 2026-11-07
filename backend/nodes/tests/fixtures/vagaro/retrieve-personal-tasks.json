@@ -1,0 +1,43 @@
+{
+  "_comment": "Unmodified HTTP 200 example from the provider documentation. Retained to verify native parsing independently of the empty conformance spec.",
+  "source": "https://docs.vagaro.com/public/reference/retrieve-personal-tasks",
+  "body": {
+    "status": 200,
+    "responseId": "00-358cf8caa6da23e8283455b06ef50bc2-81c52aa812e1097a-00",
+    "responseCode": 1000,
+    "message": "Success",
+    "data": {
+      "personalTasks": [
+        {
+          "personalTaskId": "usqjshasdSjlKZjTE-Q==",
+          "personalTaskHexCode": "#e5b67f",
+          "blockOnlineBooking": true,
+          "businessId": "asdfY3uhP8dLvzgWt4vZA==",
+          "serviceProviderId": "asdfEM0BewGSjlKZjTE-Q==",
+          "personalTaskName": "Anthonys Day Off",
+          "personalTaskComment": "Dentist Appointment",
+          "startTime": "2025-04-22T07:23:17.467Z",
+          "endTime": "2025-04-22T08:23:17.467Z"
+        },
+        {
+          "personalTaskId": "usqjshasdSjlKZjTE-Q==",
+          "personalTaskHexCode": "#e5b67f",
+          "blockOnlineBooking": true,
+          "recurrence": {
+            "type": "yearly",
+            "interval": 1,
+            "monthOfYear": 4,
+            "endDate": "2029-04-29"
+          },
+          "businessId": "asdfY3uhP8dLvzgWt4vZA==",
+          "serviceProviderId": "asdfEM0BewGSjlKZjTE-Q==",
+          "personalTaskName": "Hawaii Vacation",
+          "personalTaskComment": "Going on a trip to Hawaii",
+          "startTime": "2025-04-22T07:23:17.467Z",
+          "endTime": "2025-04-29T07:23:17.467Z"
+        }
+      ],
+      "nextPage": "https://api.vagaro.com/us04/api/v2/personal-tasks/retrieve?pageNumber=2&pageSize=50"
+    }
+  }
+}
