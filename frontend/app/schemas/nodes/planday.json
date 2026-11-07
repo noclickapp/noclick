@@ -1,0 +1,468 @@
+{
+  "$defs": {
+    "GetDepartment": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_department",
+          "default": "get_department",
+          "description": "Read exact department ID; department:read.",
+          "title": "Get Department",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workforce Metadata",
+          "x-display-name": "Get Department",
+          "x-is-trigger": false
+        },
+        "department_id": {
+          "description": "Known exact ID or a current actor-bound picker result.",
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Department ID",
+          "type": "integer",
+          "x-dynamic-options": true
+        }
+      },
+      "required": [
+        "department_id"
+      ],
+      "title": "GetDepartment",
+      "type": "object"
+    },
+    "GetEmployee": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_employee",
+          "default": "get_employee",
+          "description": "Read exact employee ID and business profile only; no custom/special fields; employee:read.",
+          "title": "Get Employee Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workforce Metadata",
+          "x-display-name": "Get Employee Metadata",
+          "x-is-trigger": false
+        },
+        "employee_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Employee ID",
+          "type": "integer",
+          "x-dynamic-options": true
+        }
+      },
+      "required": [
+        "employee_id"
+      ],
+      "title": "GetEmployee",
+      "type": "object"
+    },
+    "GetEmployeeGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_employee_group",
+          "default": "get_employee_group",
+          "description": "Read exact employee group ID; employeegroup:read.",
+          "title": "Get Employee Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workforce Metadata",
+          "x-display-name": "Get Employee Group",
+          "x-is-trigger": false
+        },
+        "employee_group_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Employee Group ID",
+          "type": "integer",
+          "x-dynamic-options": true
+        }
+      },
+      "required": [
+        "employee_group_id"
+      ],
+      "title": "GetEmployeeGroup",
+      "type": "object"
+    },
+    "GetPortalInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_portal_info",
+          "default": "get_portal_info",
+          "description": "Read actual protected portal ID, name, company name, country and timezone. Child portals and aliases are not traversed.",
+          "title": "Get Portal Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workforce Metadata",
+          "x-display-name": "Get Portal Info",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetPortalInfo",
+      "type": "object"
+    },
+    "GetShift": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_shift",
+          "default": "get_shift",
+          "description": "Read exact shift ID and independently verify returned department parent; shift:read.",
+          "title": "Get Department Shift Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workforce Metadata",
+          "x-display-name": "Get Department Shift Metadata",
+          "x-is-trigger": false
+        },
+        "department_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Department ID",
+          "type": "integer",
+          "x-dynamic-options": true
+        },
+        "shift_id": {
+          "description": "Exact ID from List Department Shift Metadata; custom entry only.",
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Shift ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "department_id",
+        "shift_id"
+      ],
+      "title": "GetShift",
+      "type": "object"
+    },
+    "ListDepartmentEmployees": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_department_employees",
+          "default": "list_department_employees",
+          "description": "Read a protected department first, then its documented unpaged employee-ID relation; no pagination query is invented. Maximum 500 IDs accepted locally.",
+          "title": "List Department Employee IDs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workforce Metadata",
+          "x-display-name": "List Department Employee IDs",
+          "x-is-trigger": false
+        },
+        "department_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Department ID",
+          "type": "integer",
+          "x-dynamic-options": true
+        }
+      },
+      "required": [
+        "department_id"
+      ],
+      "title": "ListDepartmentEmployees",
+      "type": "object"
+    },
+    "ListDepartments": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "One provider offset page, maximum 2,147,483,647; no automatic traversal or snapshot guarantee.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Local and HR maximum is 50. Scheduling allows more, but this node also limits it to 50.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_departments",
+          "default": "list_departments",
+          "description": "Read one department metadata page; department:read.",
+          "title": "List Departments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workforce Metadata",
+          "x-display-name": "List Departments",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListDepartments",
+      "type": "object"
+    },
+    "ListEmployeeGroups": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "One provider offset page, maximum 2,147,483,647; no automatic traversal or snapshot guarantee.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Local and HR maximum is 50. Scheduling allows more, but this node also limits it to 50.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_employee_groups",
+          "default": "list_employee_groups",
+          "description": "Read one employee-group page; employeegroup:read.",
+          "title": "List Employee Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workforce Metadata",
+          "x-display-name": "List Employee Groups",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListEmployeeGroups",
+      "type": "object"
+    },
+    "ListEmployees": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "One provider offset page, maximum 2,147,483,647; no automatic traversal or snapshot guarantee.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Local and HR maximum is 50. Scheduling allows more, but this node also limits it to 50.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_employees",
+          "default": "list_employees",
+          "description": "Read active employee IDs and department/group/type bindings, omitting personal and special fields; employee:read.",
+          "title": "List Employee Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workforce Metadata",
+          "x-display-name": "List Employee Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListEmployees",
+      "type": "object"
+    },
+    "ListShifts": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "One provider offset page, maximum 2,147,483,647; no automatic traversal or snapshot guarantee.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Local and HR maximum is 50. Scheduling allows more, but this node also limits it to 50.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_shifts",
+          "default": "list_shifts",
+          "description": "Read one department-scoped scheduling page within a required local date window, at most 31 inclusive days; shift:read. No punchclock details, comments or costs.",
+          "title": "List Department Shift Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workforce Metadata",
+          "x-display-name": "List Department Shift Metadata",
+          "x-is-trigger": false
+        },
+        "department_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Department ID",
+          "type": "integer",
+          "x-dynamic-options": true
+        },
+        "date_from": {
+          "maxLength": 10,
+          "minLength": 10,
+          "title": "From Date",
+          "type": "string"
+        },
+        "date_to": {
+          "maxLength": 10,
+          "minLength": 10,
+          "title": "To Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "department_id",
+        "date_from",
+        "date_to"
+      ],
+      "title": "ListShifts",
+      "type": "object"
+    },
+    "PlandayAccessTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "planday_access_token",
+          "default": "planday_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "title": "Client ID",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional exact issuer expiry with timezone. An expired value prevents any API request; no expiry is invented from the time of entry.",
+          "title": "Access Token Expiry"
+        },
+        "expected_portal_id": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "pattern": "^[1-9][0-9]{0,15}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional exact protected /portal/v1.0/info data.id, checked before accepting other operation results.",
+          "title": "Expected Portal ID"
+        }
+      },
+      "required": [
+        "client_id",
+        "access_token"
+      ],
+      "title": "Planday Access Token",
+      "type": "object",
+      "x-credential-help-url": "https://developer.planday.com/gettingstarted/authorization/",
+      "x-credential-instructions": "Supply an already issued access token and its exact client ID. Calls send X-ClientId and Authorization: Bearer to openapi.planday.com. Connection reads protected portal info; it proves a portal resource, not human identity or every permission. Reads require department:read, employeegroup:read, employee:read and shift:read where used. No app creation, consent, refresh exchange or generic OAuth callback is performed. Documented access lifetime is one hour; replace expired tokens through their issuing flow.",
+      "x-credential-type": "api_key"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_department": "#/$defs/GetDepartment",
+          "get_employee": "#/$defs/GetEmployee",
+          "get_employee_group": "#/$defs/GetEmployeeGroup",
+          "get_portal_info": "#/$defs/GetPortalInfo",
+          "get_shift": "#/$defs/GetShift",
+          "list_department_employees": "#/$defs/ListDepartmentEmployees",
+          "list_departments": "#/$defs/ListDepartments",
+          "list_employee_groups": "#/$defs/ListEmployeeGroups",
+          "list_employees": "#/$defs/ListEmployees",
+          "list_shifts": "#/$defs/ListShifts"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetPortalInfo"
+        },
+        {
+          "$ref": "#/$defs/ListDepartments"
+        },
+        {
+          "$ref": "#/$defs/GetDepartment"
+        },
+        {
+          "$ref": "#/$defs/ListEmployeeGroups"
+        },
+        {
+          "$ref": "#/$defs/GetEmployeeGroup"
+        },
+        {
+          "$ref": "#/$defs/ListEmployees"
+        },
+        {
+          "$ref": "#/$defs/GetEmployee"
+        },
+        {
+          "$ref": "#/$defs/ListDepartmentEmployees"
+        },
+        {
+          "$ref": "#/$defs/ListShifts"
+        },
+        {
+          "$ref": "#/$defs/GetShift"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PlandayAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    },
+    "node_type": {
+      "const": "automation-planday",
+      "default": "automation-planday",
+      "title": "Node Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Planday Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
