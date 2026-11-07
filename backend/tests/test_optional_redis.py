@@ -53,8 +53,11 @@ def test_no_module_defaults_redis_url_to_localhost():
     that is meant to degrade silently."""
     offenders = []
     for path in _shipped_backend_modules():
+        source = path.read_text(errors="ignore")
+        if "REDIS" not in source:
+            continue  # can't name REDIS_URL, so no need to parse it
         try:
-            tree = ast.parse(path.read_text(errors="ignore"))
+            tree = ast.parse(source)
         except SyntaxError:
             continue
         for node in ast.walk(tree):

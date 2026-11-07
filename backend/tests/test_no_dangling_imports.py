@@ -4,6 +4,7 @@ Static resolution covers deferred imports that a boot check cannot exercise.
 """
 
 import ast
+import functools
 from pathlib import Path
 
 BACKEND = Path(__file__).resolve().parents[1]
@@ -21,6 +22,7 @@ FIRST_PARTY = {
 }
 
 
+@functools.cache
 def _module_exists(dotted: str) -> bool:
     """True if `dotted` resolves to a module or package under backend/."""
     rel = Path(*dotted.split("."))
@@ -38,6 +40,17 @@ def _iter_python_files():
         yield path
 
 
+def _statements(node: ast.AST):
+    """``node`` and every statement under it. An import is a statement, so this
+    finds each one ``ast.walk`` would without visiting every expression."""
+    stack = [node]
+    while stack:
+        node = stack.pop()
+        yield node
+        for block in ("body", "orelse", "finalbody", "handlers", "cases"):
+            stack.extend(getattr(node, block, ()))
+
+
 def _guarded_import_lines(tree: ast.AST) -> set:
     """Line numbers of imports inside a try/except that catches ImportError.
 
@@ -46,7 +59,7 @@ def _guarded_import_lines(tree: ast.AST) -> set:
     module are latent crashes.
     """
     guarded = set()
-    for node in ast.walk(tree):
+    for node in _statements(tree):
         if not isinstance(node, ast.Try):
             continue
         catches_import_error = any(
@@ -62,7 +75,7 @@ def _guarded_import_lines(tree: ast.AST) -> set:
         if not catches_import_error:
             continue
         for stmt in node.body:
-            for sub in ast.walk(stmt):
+            for sub in _statements(stmt):
                 if isinstance(sub, (ast.Import, ast.ImportFrom)):
                     guarded.add(sub.lineno)
     return guarded
@@ -71,7 +84,7 @@ def _guarded_import_lines(tree: ast.AST) -> set:
 def _imported_modules(tree: ast.AST):
     """Yield (dotted_name, lineno) for unguarded absolute imports naming a module."""
     guarded = _guarded_import_lines(tree)
-    for node in ast.walk(tree):
+    for node in _statements(tree):
         if node.lineno in guarded if hasattr(node, "lineno") else False:
             continue
         if isinstance(node, ast.Import):

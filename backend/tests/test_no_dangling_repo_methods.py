@@ -16,6 +16,7 @@ wrong one would be a false failure nobody could act on.
 
 import ast
 import pathlib
+import re
 
 BACKEND = pathlib.Path(__file__).resolve().parents[1]
 REPO_DIR = BACKEND / "repositories"
@@ -96,8 +97,13 @@ def test_every_called_repository_method_exists():
     for path in sorted(BACKEND.rglob("*.py")):
         if any(p in {"__pycache__", ".venv", "tests"} for p in path.parts):
             continue
+        source = path.read_text(errors="ignore")
+        # A local is bound to a repository by calling its class: a file that calls
+        # none binds none, so it needs no parse.
+        if known.keys().isdisjoint(re.findall(r"(\w+)[\s\\]*\(", source)):
+            continue
         try:
-            tree = ast.parse(path.read_text(errors="ignore"))
+            tree = ast.parse(source)
         except SyntaxError:
             continue
         problems += _scan(tree, str(path.relative_to(BACKEND)), known)

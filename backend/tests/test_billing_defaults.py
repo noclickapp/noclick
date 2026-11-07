@@ -39,8 +39,11 @@ def _imported_billing_symbols() -> dict:
             continue
         if rel.parts[0] == "billing":
             continue
+        source = p.read_text()
+        if "billing" not in source:
+            continue  # imports nothing from it, so no need to parse it
         try:
-            tree = ast.parse(p.read_text())
+            tree = ast.parse(source)
         except SyntaxError:
             continue
         for node in ast.walk(tree):

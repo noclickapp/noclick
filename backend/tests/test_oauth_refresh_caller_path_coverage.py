@@ -102,6 +102,8 @@ def _find_violations(path: Path) -> list[str]:
         source = path.read_text()
     except (UnicodeDecodeError, OSError):
         return []
+    if "ensure_fresh_oauth_token" not in source:
+        return []  # no call to judge, so no need to parse it
     try:
         tree = ast.parse(source, filename=str(path))
     except SyntaxError:

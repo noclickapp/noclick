@@ -12,6 +12,7 @@ work MUST use ``spawn()``.
 
 import ast
 import asyncio
+import functools
 import gc
 import logging
 from pathlib import Path
@@ -203,8 +204,9 @@ async def test_drain_spawned_tasks_cancels_after_timeout():
 ORPHAN_ALLOWLIST: set = set()
 
 
+@functools.cache
 def _scan_orphans():
-    """AST-walk backend/ and yield (path, lineno, attr) for each orphan
+    """AST-walk backend/ and return (path, lineno, attr) for each orphan
     bare-call statement matching asyncio.create_task / ensure_future.
     Also catches the same calls inside lambda bodies; those are still
     orphans, just not at the statement level."""
@@ -222,23 +224,30 @@ def _scan_orphans():
             and f.attr in {"create_task", "ensure_future"}
         )
 
+    found = []
     for path in sorted(root.rglob("*.py")):
         if any(part in excludes for part in path.parts):
             continue
+        source = path.read_text()
+        # A call it matches names one of them; parsing only those files is the
+        # same scan in a fraction of the time.
+        if "create_task" not in source and "ensure_future" not in source:
+            continue
         try:
-            tree = ast.parse(path.read_text())
+            tree = ast.parse(source)
         except SyntaxError:
             continue
         for node in ast.walk(tree):
             # Statement-level orphan: bare call as a statement (Task discarded).
             if isinstance(node, ast.Expr) and is_target(node.value):
                 rel = str(path.relative_to(root.parent))
-                yield (rel, node.lineno, node.value.func.attr)
+                found.append((rel, node.lineno, node.value.func.attr))
             # Lambda-body orphan: lambda's expression body is itself an
             # orphan create_task/ensure_future call.
             elif isinstance(node, ast.Lambda) and is_target(node.body):
                 rel = str(path.relative_to(root.parent))
-                yield (rel, node.body.lineno, node.body.func.attr)
+                found.append((rel, node.body.lineno, node.body.func.attr))
+    return tuple(found)
 
 
 def test_no_orphan_create_task_outside_allowlist():
