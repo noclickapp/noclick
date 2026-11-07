@@ -397,3 +397,51 @@ async def test_public_sign_in_uses_same_repository_store(
         )
     finally:
         exchange_request.cache_clear()
+
+
+async def test_validate_uses_actual_expiry_not_refresh_buffer(
+    handler, endpoint, monkeypatch
+):
+    from datetime import datetime, timedelta, timezone
+
+    expires = (datetime.now(timezone.utc) + timedelta(minutes=2)).isoformat()
+    credential = {
+        "credential_type": "example_oauth",
+        "access_token": "access-new",
+        "expires_at": expires,
+    }
+    monkeypatch.setattr(
+        "utils.credential_loader.load_credential", AsyncMock(return_value=credential)
+    )
+    await handler.validate_oauth_token(
+        "sid",
+        OAuthValidateRequest(
+            provider="example", credential_id="credential", request_id="validate"
+        ),
+    )
+    assert handler.sio.emit.call_args.args[1]["data"] == {
+        "valid": True,
+        "expired": False,
+        "message": None,
+    }
+    assert [request.url.path for request in endpoint[0]] == ["/me"]
+
+
+async def test_token_field_validation_requires_an_access_token(
+    handler, spec, monkeypatch
+):
+    monkeypatch.setattr(
+        "wss.handlers.oauth.generic_oauth_handler.get_oauth_provider",
+        lambda _: replace(spec, identity_url=None),
+    )
+    monkeypatch.setattr(
+        "utils.credential_loader.load_credential",
+        AsyncMock(return_value={"credential_type": "example_oauth"}),
+    )
+    await handler.validate_oauth_token(
+        "sid",
+        OAuthValidateRequest(
+            provider="example", credential_id="credential", request_id="validate"
+        ),
+    )
+    assert not handler.sio.emit.call_args.args[1]["data"]["valid"]

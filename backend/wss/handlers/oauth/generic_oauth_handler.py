@@ -155,8 +155,10 @@ class GenericOAuthHandler(DatabasePoolMixin, SocketIOHandler):
             credential = await self._credential(
                 pool, session["user_id"], request.credential_id, spec
             )
-            expired = is_token_expired(credential.get("expires_at"))
-            if spec.identity_url:
+            if not credential.get("access_token"):
+                raise ValueError("Credential has no access token")
+            expired = is_token_expired(credential.get("expires_at"), buffer_minutes=0)
+            if not expired and spec.identity_url:
                 await spec.account_name(credential["access_token"])
             response = OAuthValidateResponse(valid=not expired, expired=expired)
         except (ValueError, KeyError, httpx.HTTPError):
