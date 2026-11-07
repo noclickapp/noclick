@@ -20,6 +20,7 @@ _BASE_URL = "https://hub.docker.com"
 _JSON_EDITOR = {"ui:widget": "code_editor", "x-code-language": "json"}
 _catalog = {'source': 'https://docs.docker.com/reference/api/hub/latest.yaml',
  'source_sha256': '46c09f04fd8e7b3fe464c9b406a1bf8a0a6a164c87083f57ebbab64ccb7c8d3f',
+ 'fixture_sha256': '0541455eb3324c496417537b86d972dbe3eb08790281efb0cc25870ea1696ea0',
  'operations': [{'name': 'post_v2_access_tokens',
                  'label': 'Create personal access token',
                  'category': 'Access Tokens',

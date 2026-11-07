@@ -47,9 +47,11 @@ def test_catalog_matches_pinned_official_openapi():
     source = Path(__file__).parent / "fixtures/docker-hub/openapi.yaml"
     spec = yaml.safe_load(source.read_text())
     catalog = docker_hub_node._catalog
+    # The contract fixture omits upstream credential examples; retain provenance separately.
+    assert catalog["source_sha256"] == "46c09f04fd8e7b3fe464c9b406a1bf8a0a6a164c87083f57ebbab64ccb7c8d3f"
     assert len(OPERATIONS) == len(CONFIG_MODELS) == 52
     assert (
-        catalog["source_sha256"]
+        catalog["fixture_sha256"]
         == __import__("hashlib").sha256(source.read_bytes()).hexdigest()
     )
     for op in catalog["operations"]:

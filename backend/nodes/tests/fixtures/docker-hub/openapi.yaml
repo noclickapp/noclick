@@ -1,3 +1,4 @@
+# Credential-bearing examples are omitted from this upstream contract fixture.
 openapi: 3.2.0
 info:
   title: Docker HUB API
@@ -3415,18 +3416,13 @@ components:
           type: string
           example: p@ssw0rd
     AuthCreateTokenResponse:
-      examples:
-        - access_token: REDACTED.SAMPLE.JWT
       description: successful access token response
       type: object
       properties:
         access_token:
           description: The created access token. This expires in 10 minutes.
           type: string
-          example: REDACTED.SAMPLE.JWT
     PostUsersLoginSuccessResponse:
-      examples:
-        - token: REDACTED.SAMPLE.JWT
       description: successful user login response
       type: object
       properties:
@@ -3435,7 +3431,6 @@ components:
             Created authentication token.
             This token can be used in the HTTP Authorization header as a JWT to authenticate with the Docker Hub APIs.
           type: string
-          example: REDACTED.SAMPLE.JWT
     PostUsersLoginErrorResponse:
       examples:
         - detail: Incorrect authentication credentials
@@ -3454,11 +3449,7 @@ components:
           type:
             - string
             - "null"
-          example: REDACTED.SAMPLE.JWT
     Users2FALoginRequest:
-      examples:
-        - login_2fa_token: REDACTED.SAMPLE.JWT
-          code: "123456"
       description: Second factor user login details
       type: object
       required:
@@ -3468,7 +3459,6 @@ components:
         login_2fa_token:
           description: The intermediate 2FA token returned from `/v2/users/login` API.
           type: string
-          example: REDACTED.SAMPLE.JWT
         code:
           description: |
             The Time-based One-Time Password of the Docker Hub account to authenticate with.
