@@ -1,0 +1,147 @@
+{
+  "$defs": {
+    "BuiltWithApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "builtwith_api_key",
+          "default": "builtwith_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "BuiltWith API Key",
+      "type": "object",
+      "x-credential-instructions": "Use an existing BuiltWith API key. Connecting saves it unverified without a credit-consuming lookup. An explicit domain lookup uses credits and may visit the website.",
+      "x-credential-url": "https://api.builtwith.com/domain-api"
+    },
+    "LookupDomainTechnologies": {
+      "properties": {
+        "operation": {
+          "const": "lookup_domain_technologies",
+          "default": "lookup_domain_technologies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domains": {
+          "description": "1\u201316 public root domains, such as example.com. Supply the root yourself; subdomains are not converted. Each lookup consumes credits and may visit the website.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Root Domains",
+          "type": "array"
+        },
+        "live_only": {
+          "default": false,
+          "description": "Uses BuiltWith LIVEONLY. Without it, historical detections can also be returned.",
+          "title": "Live Technologies Only",
+          "type": "boolean"
+        },
+        "details": {
+          "default": "full",
+          "description": "Full details; omit descriptions and links with HIDEDL; or omit description, link, tag and categories with HIDETEXT.",
+          "enum": [
+            "full",
+            "no_description_links",
+            "names_only"
+          ],
+          "title": "Technology Details",
+          "type": "string"
+        },
+        "first_detected_start": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD; supply both range dates.",
+          "title": "First Detected From"
+        },
+        "first_detected_end": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD.",
+          "title": "First Detected Through"
+        },
+        "last_detected_start": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD; supply both range dates.",
+          "title": "Last Detected From"
+        },
+        "last_detected_end": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "YYYY-MM-DD.",
+          "title": "Last Detected Through"
+        }
+      },
+      "required": [
+        "domains"
+      ],
+      "title": "LookupDomainTechnologies",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/LookupDomainTechnologies",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BuiltWithApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Builtwith Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
