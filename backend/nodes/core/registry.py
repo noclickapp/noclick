@@ -235,6 +235,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-hetrixtools': HetrixToolsNode,
     'automation-acculynx': AccuLynxNode,
     'automation-sematext': SematextNode,
+    'automation-fountain': FountainNode,
     # Trigger nodes (entry points for workflows)
     'trigger-run': RunTriggerNode,
     'trigger-webhook': WebhookTriggerNode,

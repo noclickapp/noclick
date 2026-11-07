@@ -1280,6 +1280,30 @@
       "source": "https://forgejo.org/favicon.svg",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "acfeda65446d1c17c5d8e62e18b70a6616ef20df81e7de93ff791a3b11d4be28"
+    },
+    {
+      "path": "frontend/public/icons/fountain-brand-vector.svg",
+      "source": "https://fountain.com (Fountain published logo; cropped and framed for icon variants)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "8d929ea55b107b8a99a04d6482779eb8a6a0f6caf27fcdd5a867055fa8894e8a"
+    },
+    {
+      "path": "frontend/public/icons/fountain-brand.webp",
+      "source": "https://www.fountain.com/in/fountain-india (Fountain published artwork)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "f697ee4ced4fb6fbc55ac0c80c459f36f42dfb76382e639b4e1a6fccaaaf2d91"
+    },
+    {
+      "path": "frontend/public/icons/fountain-preferred-brand.svg",
+      "source": "https://fountain.com (Fountain published logo; cropped and framed for icon variants)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "504a4a8b330b025a65192fe0041279a4b29ba9f80ddd811bac47ad9cdc71f72c"
+    },
+    {
+      "path": "frontend/public/icons/fountain.svg",
+      "source": "https://fountain.com (Fountain published logo; cropped and framed for icon variants)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "40285e44e99d0fd03b1b5e04a1cfe694967ef73f917a71b6f3b292d4de2e5d12"
     }
   ],
   "excludedSourceAssets": [

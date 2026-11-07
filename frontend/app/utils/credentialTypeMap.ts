@@ -29,6 +29,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'SematextAccountAPIKeyCredential': 'sematext_account_api_key',
     'Sematext Account API Key': 'sematext_account_api_key',
     'DropcontactAccessTokenCredential': 'dropcontact_access_token',
+    'FountainPrivateHireCredential': 'fountain_private_hire',
     'FormBuilder123TokenCredential': '123formbuilder_v2_token',
     'PorkbunCredential': 'porkbun_api_key',
     'HetrixToolsAPIKeyCredential': 'hetrixtools_api_key',
@@ -237,9 +238,6 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'Aprimo DAM Bearer Token': 'aprimo_bearer',
     'BloomerangPrivateApiKeyCredential': 'bloomerang_private_api_key',
     'Bloomerang Private CRM API Key': 'bloomerang_private_api_key',
-
-    // NocoDB
-    'NocoDBTokenCredential': 'nocodb_api_token',
 
     // NocoDB
     'NocoDBTokenCredential': 'nocodb_api_token',
