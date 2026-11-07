@@ -229,6 +229,9 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     // Pulsetic raw Authorization API key
     'PulseticAPIKeyCredential': 'pulsetic_api_key',
     'Pulsetic API Key': 'pulsetic_api_key',
+    // JWX Management API v2 (different from player license keys)
+    'JWPlayerAPISecretCredential': 'jwplayer_api_secret',
+    'JWX Management API Secret': 'jwplayer_api_secret',
 
     // HubSpot
     'HubSpotOAuthCredential': 'hubspot_oauth',

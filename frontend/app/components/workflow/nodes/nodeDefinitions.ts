@@ -115,6 +115,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-cloudflare', 'CloudflareNode'],
     ['automation-bitrise', 'BitriseNode'],
     ['automation-pulsetic', 'PulseticNode'],
+    ['automation-jwplayer', 'JWPlayerNode'],
     ['automation-typeform', 'TypeformNode'],
     ['automation-123formbuilder', 'FormBuilder123Node'],
     ['automation-whatsapp', 'WhatsAppNode'],

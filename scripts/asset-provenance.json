@@ -1352,6 +1352,18 @@
       "source": "https://cdn.prod.website-files.com/606f59f19fb10864bac47260/660fc14f1929536638d8fb64_ilert-logo-white.svg (official ilert website wordmark; byte-for-byte verified)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "5a77bfd267a87c360125bb436d3d353ed2fd51a8bd1786338fd4dbafe71057e9"
+    },
+    {
+      "path": "frontend/public/icons/jwplayer.png",
+      "source": "https://20577834.fs1.hubspotusercontent-na1.net/hubfs/20577834/JWX_logo.png (official JWX logo linked by https://jwx.com/)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "0182357eb7c84ba0f444232ca85ea62b0ee3ee0c33ec48a406dace71d0078f42"
+    },
+    {
+      "path": "frontend/public/icons/jwplayer.provenance.md",
+      "source": "NoClick integration-authored source record for the official JWX logo at https://jwx.com/",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "1cca894a7a919d59a6f43c80fb927f1951e7aff2b7c9fe95435481690a1ab9e5"
     }
   ],
   "excludedSourceAssets": [
