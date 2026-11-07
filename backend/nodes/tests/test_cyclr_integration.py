@@ -110,7 +110,7 @@ async def test_manual_connect_bad_auth_no_io(seams, change):
 async def test_current_row_family_blocks_blob_and_provider(seams, family):
     seams.row["credential_type"] = family
     with pytest.raises(ValueError, match="Current Cyclr authority"):
-        await node.CyclrNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org")
+        await node.CyclrNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool)
     assert seams.calls == []
 
 
@@ -131,7 +131,7 @@ async def test_resolution_current_authority_race_no_io(seams, condition):
             return seams.row
         seams.pool.conn.fetchrow.side_effect = read
     with pytest.raises(ValueError):
-        await node.CyclrNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org")
+        await node.CyclrNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool)
     assert seams.calls == []
 
 
@@ -203,18 +203,18 @@ async def test_workflow_owner_fallback_requires_actual_acl_and_current_org(seams
         return None
     seams.pool.conn.fetchrow.side_effect = read
     if authorized:
-        current = await node.CyclrNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org", workflow_id=workflow)
+        current = await node.CyclrNode._resolve_current_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org", workflow_id=workflow)
         assert current == CREDENTIAL and isinstance(current, node._CurrentCredential)
         await node.request_operation(current, node.GetAccount())
         assert len(owner_reads) >= 5 and all(args[2] == "fixture-org" for args in owner_reads)
     else:
         with pytest.raises(ValueError, match="Current Cyclr authority"):
-            await node.CyclrNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org", workflow_id=workflow)
+            await node.CyclrNode._resolve_current_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org", workflow_id=workflow)
         assert owner_reads == [] and seams.calls == []
 
 
 async def test_native_carrier_fields_cannot_change_after_resolution(seams):
-    current = await node.CyclrNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org")
+    current = await node.CyclrNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool)
     current["account_id"] = "other-account"
     with pytest.raises(ValueError, match="fields changed"):
         await node.request_operation(current, node.GetAccount())
@@ -231,8 +231,19 @@ async def test_actual_workflow_fallback_acl_removed_during_http(seams):
             return {"allowed": 1} if state["authorized"] else None
         return {**seams.row, "owner_id": "fixture-owner"} if args[1] == "fixture-owner" else None
     seams.pool.conn.fetchrow.side_effect = read
-    current = await node.CyclrNode.freshen_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org", workflow_id=workflow)
+    current = await node.CyclrNode._resolve_current_credential(CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool, organization_id="fixture-org", workflow_id=workflow)
     seams.state["during_request"] = lambda: state.update(authorized=False)
     with pytest.raises(ValueError, match="workflow owner authorization changed"):
         await node.request_operation(current, node.GetAccount())
     assert len(seams.calls) == 1
+
+
+async def test_freshen_requires_current_caller_access_without_workflow_context(seams):
+    seams.pool.conn.fetchrow.return_value = None
+    seams.pool.conn.fetchrow.side_effect = None
+    with pytest.raises(ValueError, match="Current Cyclr authority"):
+        await node.CyclrNode.freshen_credential(
+            CREDENTIAL, credential_id=CID, user_id="fixture-user", pool=seams.pool
+        )
+    workflow_handler.get_user_org_context.assert_awaited_once_with(seams.pool.conn, "fixture-user")
+    assert seams.calls == []

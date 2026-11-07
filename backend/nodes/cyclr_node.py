@@ -443,20 +443,26 @@ class CyclrNode(WorkflowNode):
             raise ValueError("Use typed metadata fields without credential, route or account overrides")
 
     @classmethod
-    def parse_config(cls, raw):
-        cls._require_raw(raw)
-        return super().parse_config(raw)
+    def parse_config(cls, config_data):
+        cls._require_raw(config_data)
+        return super().parse_config(config_data)
 
     @classmethod
-    def validate_config(cls, raw):
+    def validate_config(cls, config_data):
         try:
-            cls._require_raw(raw)
+            cls._require_raw(config_data)
         except ValueError:
             return {"valid": False, "errors": ["Use native Cyclr metadata fields and a typed credential"], "satisfied_set": None}
-        return super().validate_config(raw)
+        return super().validate_config(config_data)
 
     @classmethod
-    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=CURRENT_ORGANIZATION):
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        return await cls._resolve_current_credential(
+            credential_data, pool=pool, user_id=user_id, credential_id=credential_id
+        )
+
+    @classmethod
+    async def _resolve_current_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None, workflow_id=None, organization_id=CURRENT_ORGANIZATION):
         if not credential_id:
             return credential_value(credential_data, manual=True).model_dump()
         if not user_id:
@@ -537,5 +543,5 @@ class CyclrNode(WorkflowNode):
         # Direct callers can supply the validated model without duplicating it
         # in node_data; saved raw configurations still receive the same guards.
         self._require_raw(self.node_data or self.config.model_dump())
-        credential = await self.freshen_credential(self.config.credentials.model_dump(), pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id, credential_id=(self.node_data or {}).get("credential_id"), workflow_id=self.workflow_id, organization_id=self.organization_id)
+        credential = await self._resolve_current_credential(self.config.credentials.model_dump(), pool=(self.node_data or {}).get("_approval_pool"), user_id=self.user_id, credential_id=(self.node_data or {}).get("credential_id"), workflow_id=self.workflow_id, organization_id=self.organization_id)
         return {"status": "success", "action": self.config.config.operation, **await request_operation(credential, self.config.config)}
