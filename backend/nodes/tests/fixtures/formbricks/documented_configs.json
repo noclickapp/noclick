@@ -1,0 +1,119 @@
+{
+  "source": "https://raw.githubusercontent.com/formbricks/formbricks/main/docs/api-reference/openapi.json",
+  "configs": {
+    "create_survey": {
+      "operation": "create_survey",
+      "workspace_id": "{{workspaceId}}",
+      "payload_json": "{\"autoClose\": null, \"autoComplete\": null, \"autoSelectLanguage\": null, \"createdBy\": null, \"delay\": 0, \"displayLimit\": null, \"displayOption\": \"displayOnce\", \"displayPercentage\": null, \"endings\": [{\"buttonLabel\": {\"default\": \"Create your own Survey\"}, \"buttonLink\": \"https://formbricks.com/signup\", \"headline\": {\"default\": \"Thank you!\"}, \"id\": \"p73t62dgwq0cvmtt6ug0hmfc\", \"subheader\": {\"default\": \"We appreciate your feedback.\"}, \"type\": \"endScreen\"}], \"hiddenFields\": {\"enabled\": false, \"fieldIds\": []}, \"isVerifyEmailEnabled\": false, \"languages\": [], \"name\": \"Example Survey\", \"pin\": null, \"productOverwrites\": null, \"questions\": [{\"headline\": {\"default\": \"What would you like to know?\"}, \"id\": \"ovpy6va1hab7fl12n913zua0\", \"inputType\": \"text\", \"placeholder\": {\"default\": \"Type your answer here...\"}, \"required\": true, \"subheader\": {\"default\": \"This is an example survey.\"}, \"type\": \"openText\"}, {\"choices\": [{\"id\": \"xpoxuu3sifk1ee8he67ctf5i\", \"label\": {\"default\": \"Sun ☀️\"}}, {\"id\": \"hnsovcdmxtcbly6tig1az3qc\", \"label\": {\"default\": \"Ocean 🌊\"}}, {\"id\": \"kcnelzdxknvwo8fq20d3nrr5\", \"label\": {\"default\": \"Palms 🌴\"}}], \"headline\": {\"default\": \"What's important on vacay?\"}, \"id\": \"awkn2llljy7a4oulp5t15yec\", \"required\": true, \"shuffleOption\": \"none\", \"type\": \"multipleChoiceMulti\"}], \"recontactDays\": null, \"redirectUrl\": null, \"segmentId\": null, \"showLanguageSwitch\": null, \"singleUse\": {\"enabled\": false, \"isEncrypted\": true}, \"status\": \"inProgress\", \"styling\": null, \"surveyClosedMessage\": null, \"triggers\": [], \"type\": \"link\", \"welcomeCard\": {\"enabled\": true, \"fileUrl\": \"\", \"headline\": {\"default\": \"Welcome!\"}, \"html\": {\"default\": \"<p class=\\\"fb-editor-paragraph\\\" dir=\\\"ltr\\\"><span style=\\\"white-space: pre-wrap;\\\">Thanks for providing your feedback - let's go!</span></p>\"}, \"showResponseCount\": false, \"timeToFinish\": false}, \"workspaceId\": \"{{workspaceId}}\"}"
+    },
+    "update_survey": {
+      "operation": "update_survey",
+      "survey_id": "clzgw1k4i0001mny1unf8eggn",
+      "payload_json": "{\"name\": \"Example Survey\"}"
+    },
+    "create_response": {
+      "operation": "create_response",
+      "survey_id": "clwj7hi7r0000vfhpfze6vjdg",
+      "payload_json": "{\"createdAt\": \"2024-09-05T08:44:16.051Z\", \"data\": {\"hg508afs7lgx8nlni5dtit5u\": [\"Hello World\"]}, \"finished\": false, \"language\": \"en\", \"surveyId\": \"clwj7hi7r0000vfhpfze6vjdg\", \"updatedAt\": \"2024-09-05T08:44:16.051Z\"}"
+    },
+    "update_response": {
+      "operation": "update_response",
+      "response_id": "clvc3n6hy000u494jn2ypw30r",
+      "payload_json": "{\"data\": {\"hs8yd14l9h8u353tjmv6rzawqqq\": \"clicked\", \"language\": \"en\", \"tcgls0063n8ri7dtrbnepcmz\": \"Who? Who? Who?\", \"ttc\": {\"hs8yd14l9h8u353tjmv6rzawqqq\": 120, \"tcgls0063n8ri7dtrbnepcmz\": 190}}, \"finished\": true}"
+    },
+    "create_webhook": {
+      "operation": "create_webhook",
+      "webhook_url": "https://eoy8o887lmsqmhz.m.pipedream.net",
+      "triggers": [
+        "responseCreated",
+        "responseUpdated",
+        "responseFinished"
+      ]
+    },
+    "prepare_public_upload": {
+      "operation": "prepare_public_upload",
+      "workspace_id": "env123",
+      "file_name": "profile.png",
+      "file_type": "image/png",
+      "allowed_extensions_json": "[\"png\", \"jpg\", \"jpeg\"]"
+    },
+    "get_me": {
+      "operation": "get_me"
+    },
+    "list_surveys": {
+      "operation": "list_surveys"
+    },
+    "get_survey": {
+      "operation": "get_survey",
+      "survey_id": "clzgw1k4i0001mny1unf8eggn"
+    },
+    "delete_survey": {
+      "operation": "delete_survey",
+      "survey_id": "clzgw1k4i0001mny1unf8eggn"
+    },
+    "get_single_use_links": {
+      "operation": "get_single_use_links",
+      "survey_id": "clzgw1k4i0001mny1unf8eggn"
+    },
+    "list_responses": {
+      "operation": "list_responses",
+      "survey_id": "clzgw1k4i0001mny1unf8eggn",
+      "limit": 100,
+      "skip": 0
+    },
+    "get_response": {
+      "operation": "get_response",
+      "response_id": "clvc3n6hy000u494jn2ypw30r"
+    },
+    "delete_response": {
+      "operation": "delete_response",
+      "response_id": "clvc3n6hy000u494jn2ypw30r"
+    },
+    "list_contacts": {
+      "operation": "list_contacts"
+    },
+    "get_contact": {
+      "operation": "get_contact",
+      "contact_id": "cm4jnsxcd00ufh3aqz1b6zox6"
+    },
+    "list_contact_attribute_keys": {
+      "operation": "list_contact_attribute_keys"
+    },
+    "get_contact_attribute_key": {
+      "operation": "get_contact_attribute_key",
+      "attribute_key_id": "cm37a748d000ahbwhd5bbwc09"
+    },
+    "list_contact_attributes": {
+      "operation": "list_contact_attributes"
+    },
+    "list_action_classes": {
+      "operation": "list_action_classes"
+    },
+    "create_action_class": {
+      "operation": "create_action_class",
+      "workspace_id": "{{workspaceId}}",
+      "name": "My Action from Postman",
+      "key": "my-action",
+      "description": "From API Docs (optional)"
+    },
+    "get_action_class": {
+      "operation": "get_action_class",
+      "action_class_id": "clurwouax000bzffxv3fqy6mt"
+    },
+    "delete_action_class": {
+      "operation": "delete_action_class",
+      "action_class_id": "clurwouax000bzffxv3fqy6mt"
+    },
+    "list_webhooks": {
+      "operation": "list_webhooks"
+    },
+    "get_webhook": {
+      "operation": "get_webhook",
+      "webhook_id": "clvcdd8oe000nxz1zhz6q9z3l"
+    },
+    "delete_webhook": {
+      "operation": "delete_webhook",
+      "webhook_id": "clvcdd8oe000nxz1zhz6q9z3l"
+    }
+  }
+}

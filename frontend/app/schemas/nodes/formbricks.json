@@ -1,0 +1,856 @@
+{
+  "$defs": {
+    "FormbricksApiKeyCredential": {
+      "description": "Personal API key with access to the intended Formbricks workspace.",
+      "properties": {
+        "credential_type": {
+          "const": "formbricks_api_key",
+          "default": "formbricks_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "base_url": {
+          "default": "https://app.formbricks.com",
+          "description": "Use https://app.formbricks.com or the HTTPS origin of your self-hosted site.",
+          "title": "Formbricks Site URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Formbricks API Key",
+      "type": "object",
+      "x-credential-instructions": "Create a personal API key with Workspace Read access for reads, Write for creation and updates, or Manage for deletes. Add each workspace the key needs.",
+      "x-credential-url": "https://formbricks.com/docs/api-reference/generate-key"
+    },
+    "FormbricksCreateActionClassConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_action_class",
+          "default": "create_action_class",
+          "title": "Create Action Class",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Create Action Class"
+        },
+        "workspace_id": {
+          "description": "Shown by Get Connected Workspace.",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "key": {
+          "title": "Action Key",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "name",
+        "key"
+      ],
+      "title": "FormbricksCreateActionClassConfig",
+      "type": "object"
+    },
+    "FormbricksCreateResponseConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_response",
+          "default": "create_response",
+          "title": "Create Response",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Responses",
+          "x-display-name": "Create Response"
+        },
+        "survey_id": {
+          "title": "Survey",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a survey ID",
+            "field_name": "survey_id",
+            "placeholder": "Select a survey",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "payload_json": {
+          "description": "Paste the documented Formbricks request body. Create Survey and Create Response add the selected workspace or survey ID.",
+          "title": "Request Body (JSON Object)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "survey_id",
+        "payload_json"
+      ],
+      "title": "FormbricksCreateResponseConfig",
+      "type": "object"
+    },
+    "FormbricksCreateSurveyConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_survey",
+          "default": "create_survey",
+          "title": "Create Survey",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Surveys",
+          "x-display-name": "Create Survey"
+        },
+        "workspace_id": {
+          "description": "Shown by Get Connected Workspace.",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Paste the documented Formbricks request body. Create Survey and Create Response add the selected workspace or survey ID.",
+          "title": "Request Body (JSON Object)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "payload_json"
+      ],
+      "title": "FormbricksCreateSurveyConfig",
+      "type": "object"
+    },
+    "FormbricksCreateWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Create Webhook"
+        },
+        "webhook_url": {
+          "description": "An HTTPS URL that will receive Formbricks events.",
+          "title": "Webhook Destination URL",
+          "type": "string"
+        },
+        "triggers": {
+          "items": {
+            "enum": [
+              "responseCreated",
+              "responseUpdated",
+              "responseFinished"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Webhook Events",
+          "type": "array"
+        }
+      },
+      "required": [
+        "webhook_url",
+        "triggers"
+      ],
+      "title": "FormbricksCreateWebhookConfig",
+      "type": "object"
+    },
+    "FormbricksDeleteActionClassConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_action_class",
+          "default": "delete_action_class",
+          "title": "Delete Action Class",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Delete Action Class"
+        },
+        "action_class_id": {
+          "title": "Action Class ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "action_class_id"
+      ],
+      "title": "FormbricksDeleteActionClassConfig",
+      "type": "object"
+    },
+    "FormbricksDeleteResponseConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_response",
+          "default": "delete_response",
+          "title": "Delete Response",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Responses",
+          "x-display-name": "Delete Response"
+        },
+        "response_id": {
+          "title": "Response ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "response_id"
+      ],
+      "title": "FormbricksDeleteResponseConfig",
+      "type": "object"
+    },
+    "FormbricksDeleteSurveyConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_survey",
+          "default": "delete_survey",
+          "title": "Delete Survey",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Surveys",
+          "x-display-name": "Delete Survey"
+        },
+        "survey_id": {
+          "title": "Survey",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a survey ID",
+            "field_name": "survey_id",
+            "placeholder": "Select a survey",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "survey_id"
+      ],
+      "title": "FormbricksDeleteSurveyConfig",
+      "type": "object"
+    },
+    "FormbricksDeleteWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Delete Webhook"
+        },
+        "webhook_id": {
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "FormbricksDeleteWebhookConfig",
+      "type": "object"
+    },
+    "FormbricksGetActionClassConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_action_class",
+          "default": "get_action_class",
+          "title": "Get Action Class",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Get Action Class"
+        },
+        "action_class_id": {
+          "title": "Action Class ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "action_class_id"
+      ],
+      "title": "FormbricksGetActionClassConfig",
+      "type": "object"
+    },
+    "FormbricksGetContactAttributeKeyConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_contact_attribute_key",
+          "default": "get_contact_attribute_key",
+          "title": "Get Contact Attribute Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get Contact Attribute Key"
+        },
+        "attribute_key_id": {
+          "title": "Attribute Key ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "attribute_key_id"
+      ],
+      "title": "FormbricksGetContactAttributeKeyConfig",
+      "type": "object"
+    },
+    "FormbricksGetContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get Contact"
+        },
+        "contact_id": {
+          "title": "Contact ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "FormbricksGetContactConfig",
+      "type": "object"
+    },
+    "FormbricksGetMeConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Get Connected Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Connected Workspace"
+        }
+      },
+      "title": "FormbricksGetMeConfig",
+      "type": "object"
+    },
+    "FormbricksGetResponseConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_response",
+          "default": "get_response",
+          "title": "Get Response",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Responses",
+          "x-display-name": "Get Response"
+        },
+        "response_id": {
+          "title": "Response ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "response_id"
+      ],
+      "title": "FormbricksGetResponseConfig",
+      "type": "object"
+    },
+    "FormbricksGetSingleUseLinksConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_single_use_links",
+          "default": "get_single_use_links",
+          "title": "Get Single-Use Links",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Surveys",
+          "x-display-name": "Get Single-Use Links"
+        },
+        "survey_id": {
+          "title": "Survey",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a survey ID",
+            "field_name": "survey_id",
+            "placeholder": "Select a survey",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "survey_id"
+      ],
+      "title": "FormbricksGetSingleUseLinksConfig",
+      "type": "object"
+    },
+    "FormbricksGetSurveyConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_survey",
+          "default": "get_survey",
+          "title": "Get Survey",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Surveys",
+          "x-display-name": "Get Survey"
+        },
+        "survey_id": {
+          "title": "Survey",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a survey ID",
+            "field_name": "survey_id",
+            "placeholder": "Select a survey",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "survey_id"
+      ],
+      "title": "FormbricksGetSurveyConfig",
+      "type": "object"
+    },
+    "FormbricksGetWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_webhook",
+          "default": "get_webhook",
+          "title": "Get Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Get Webhook"
+        },
+        "webhook_id": {
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "FormbricksGetWebhookConfig",
+      "type": "object"
+    },
+    "FormbricksListActionClassesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_action_classes",
+          "default": "list_action_classes",
+          "title": "List Action Classes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Action Classes"
+        }
+      },
+      "title": "FormbricksListActionClassesConfig",
+      "type": "object"
+    },
+    "FormbricksListContactAttributeKeysConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_contact_attribute_keys",
+          "default": "list_contact_attribute_keys",
+          "title": "List Contact Attribute Keys",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contact Attribute Keys"
+        }
+      },
+      "title": "FormbricksListContactAttributeKeysConfig",
+      "type": "object"
+    },
+    "FormbricksListContactAttributesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_contact_attributes",
+          "default": "list_contact_attributes",
+          "title": "List Contact Attributes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contact Attributes"
+        }
+      },
+      "title": "FormbricksListContactAttributesConfig",
+      "type": "object"
+    },
+    "FormbricksListContactsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contacts"
+        }
+      },
+      "title": "FormbricksListContactsConfig",
+      "type": "object"
+    },
+    "FormbricksListResponsesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_responses",
+          "default": "list_responses",
+          "title": "List Responses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Responses",
+          "x-display-name": "List Responses"
+        },
+        "survey_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to list responses across accessible surveys.",
+          "title": "Survey (Optional)",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a survey ID",
+            "field_name": "survey_id",
+            "placeholder": "Select a survey",
+            "searchable": true
+          }
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        }
+      },
+      "title": "FormbricksListResponsesConfig",
+      "type": "object"
+    },
+    "FormbricksListSurveysConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_surveys",
+          "default": "list_surveys",
+          "title": "List Surveys",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Surveys",
+          "x-display-name": "List Surveys"
+        }
+      },
+      "title": "FormbricksListSurveysConfig",
+      "type": "object"
+    },
+    "FormbricksListWebhooksConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhooks"
+        }
+      },
+      "title": "FormbricksListWebhooksConfig",
+      "type": "object"
+    },
+    "FormbricksPreparePublicUploadConfig": {
+      "properties": {
+        "operation": {
+          "const": "prepare_public_upload",
+          "default": "prepare_public_upload",
+          "title": "Get Public Upload URL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Get Public Upload URL"
+        },
+        "workspace_id": {
+          "description": "Shown by Get Connected Workspace.",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "file_name": {
+          "title": "File Name",
+          "type": "string"
+        },
+        "file_type": {
+          "title": "MIME Type",
+          "type": "string"
+        },
+        "allowed_extensions_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For example [\"png\",\"jpg\"].",
+          "title": "Allowed Extensions (JSON Array)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "file_name",
+        "file_type"
+      ],
+      "title": "FormbricksPreparePublicUploadConfig",
+      "type": "object"
+    },
+    "FormbricksUpdateResponseConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_response",
+          "default": "update_response",
+          "title": "Update Response",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Responses",
+          "x-display-name": "Update Response"
+        },
+        "response_id": {
+          "title": "Response ID",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Paste the documented Formbricks request body. Create Survey and Create Response add the selected workspace or survey ID.",
+          "title": "Request Body (JSON Object)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "response_id",
+        "payload_json"
+      ],
+      "title": "FormbricksUpdateResponseConfig",
+      "type": "object"
+    },
+    "FormbricksUpdateSurveyConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_survey",
+          "default": "update_survey",
+          "title": "Update Survey",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Surveys",
+          "x-display-name": "Update Survey"
+        },
+        "survey_id": {
+          "title": "Survey",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a survey ID",
+            "field_name": "survey_id",
+            "placeholder": "Select a survey",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "payload_json": {
+          "description": "Paste the documented Formbricks request body. Create Survey and Create Response add the selected workspace or survey ID.",
+          "title": "Request Body (JSON Object)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "survey_id",
+        "payload_json"
+      ],
+      "title": "FormbricksUpdateSurveyConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_action_class": "#/$defs/FormbricksCreateActionClassConfig",
+          "create_response": "#/$defs/FormbricksCreateResponseConfig",
+          "create_survey": "#/$defs/FormbricksCreateSurveyConfig",
+          "create_webhook": "#/$defs/FormbricksCreateWebhookConfig",
+          "delete_action_class": "#/$defs/FormbricksDeleteActionClassConfig",
+          "delete_response": "#/$defs/FormbricksDeleteResponseConfig",
+          "delete_survey": "#/$defs/FormbricksDeleteSurveyConfig",
+          "delete_webhook": "#/$defs/FormbricksDeleteWebhookConfig",
+          "get_action_class": "#/$defs/FormbricksGetActionClassConfig",
+          "get_contact": "#/$defs/FormbricksGetContactConfig",
+          "get_contact_attribute_key": "#/$defs/FormbricksGetContactAttributeKeyConfig",
+          "get_me": "#/$defs/FormbricksGetMeConfig",
+          "get_response": "#/$defs/FormbricksGetResponseConfig",
+          "get_single_use_links": "#/$defs/FormbricksGetSingleUseLinksConfig",
+          "get_survey": "#/$defs/FormbricksGetSurveyConfig",
+          "get_webhook": "#/$defs/FormbricksGetWebhookConfig",
+          "list_action_classes": "#/$defs/FormbricksListActionClassesConfig",
+          "list_contact_attribute_keys": "#/$defs/FormbricksListContactAttributeKeysConfig",
+          "list_contact_attributes": "#/$defs/FormbricksListContactAttributesConfig",
+          "list_contacts": "#/$defs/FormbricksListContactsConfig",
+          "list_responses": "#/$defs/FormbricksListResponsesConfig",
+          "list_surveys": "#/$defs/FormbricksListSurveysConfig",
+          "list_webhooks": "#/$defs/FormbricksListWebhooksConfig",
+          "prepare_public_upload": "#/$defs/FormbricksPreparePublicUploadConfig",
+          "update_response": "#/$defs/FormbricksUpdateResponseConfig",
+          "update_survey": "#/$defs/FormbricksUpdateSurveyConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FormbricksGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksListSurveysConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksCreateSurveyConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksGetSurveyConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksUpdateSurveyConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksDeleteSurveyConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksGetSingleUseLinksConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksListResponsesConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksCreateResponseConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksGetResponseConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksUpdateResponseConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksDeleteResponseConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksListContactAttributeKeysConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksGetContactAttributeKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksListContactAttributesConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksListActionClassesConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksCreateActionClassConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksGetActionClassConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksDeleteActionClassConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksGetWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksDeleteWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/FormbricksPreparePublicUploadConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FormbricksApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Formbricks Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
