@@ -1,0 +1,889 @@
+{
+  "list_vendors": {
+    "config": {},
+    "method": "GET",
+    "path": "/v3/vendors",
+    "source": "https://developer.bill.com/docs/creating-a-us-vendor",
+    "response": {
+      "nextPage": "1",
+      "prevPage": "1",
+      "results": [
+        {
+          "id": "{vendor_id}",
+          "archived": false,
+          "name": "Happy Music Supplies",
+          "accountType": "BUSINESS",
+          "email": "info@happymusicsupplies.org",
+          "phone": "9876543210",
+          "address": {
+            "line1": "123 Main St",
+            "city": "San Jose",
+            "stateOrProvince": "CA",
+            "zipOrPostalCode": "95002",
+            "country": "US"
+          },
+          "paymentInformation": {
+            "payeeName": "Happy Music Supplies",
+            "payByType": "ACH",
+            "virtualCard": {
+              "status": "UNENROLLED"
+            },
+            "bankAccount": {
+              "nameOnAccount": "Bill Venderson",
+              "accountNumber": "*****2333",
+              "routingNumber": "074000010",
+              "type": "CHECKING",
+              "ownerType": "BUSINESS"
+            }
+          },
+          "additionalInfo": {
+            "track1099": false,
+            "combinePayments": true
+          },
+          "bankAccountStatus": "NO_NET_LINKED_ACCOUNT",
+          "recurringPayments": false,
+          "billCurrency": "USD",
+          "createdTime": "2026-12-29T23:25:27.127+00:00",
+          "updatedTime": "2026-12-29T23:25:28.127+00:00",
+          "balance": {
+            "amount": 0
+          },
+          "autoPay": {
+            "enabled": false
+          },
+          "networkStatus": "NOT_CONNECTED"
+        }
+      ],
+      "count": 1
+    },
+    "response_status": 200,
+    "kind": "documented entity response in the official list envelope"
+  },
+  "create_vendor": {
+    "config": {
+      "name": "Happy Music Supplies",
+      "account_type": "BUSINESS",
+      "email": "info@happymusicsupplies.org",
+      "phone": "9876543210",
+      "address": "{\"line1\": \"123 Main Street\", \"city\": \"San Jose\", \"stateOrProvince\": \"CA\", \"zipOrPostalCode\": \"95002\", \"country\": \"US\"}",
+      "payment_information": "{\"payeeName\": \"Happy Music Supplies\", \"bankAccount\": {\"nameOnAccount\": \"Bill Vendorson\", \"accountNumber\": \"111222333\", \"routingNumber\": \"074000010\"}}",
+      "bill_currency": "USD"
+    },
+    "method": "POST",
+    "path": "/v3/vendors",
+    "source": "https://developer.bill.com/docs/creating-a-us-vendor",
+    "response": {
+      "id": "{vendor_id}",
+      "archived": false,
+      "name": "Happy Music Supplies",
+      "accountType": "BUSINESS",
+      "email": "info@happymusicsupplies.org",
+      "phone": "9876543210",
+      "address": {
+        "line1": "123 Main St",
+        "city": "San Jose",
+        "stateOrProvince": "CA",
+        "zipOrPostalCode": "95002",
+        "country": "US"
+      },
+      "paymentInformation": {
+        "payeeName": "Happy Music Supplies",
+        "payByType": "ACH",
+        "virtualCard": {
+          "status": "UNENROLLED"
+        },
+        "bankAccount": {
+          "nameOnAccount": "Bill Venderson",
+          "accountNumber": "*****2333",
+          "routingNumber": "074000010",
+          "type": "CHECKING",
+          "ownerType": "BUSINESS"
+        }
+      },
+      "additionalInfo": {
+        "track1099": false,
+        "combinePayments": true
+      },
+      "bankAccountStatus": "NO_NET_LINKED_ACCOUNT",
+      "recurringPayments": false,
+      "billCurrency": "USD",
+      "createdTime": "2026-12-29T23:25:27.127+00:00",
+      "updatedTime": "2026-12-29T23:25:28.127+00:00",
+      "balance": {
+        "amount": 0
+      },
+      "autoPay": {
+        "enabled": false
+      },
+      "networkStatus": "NOT_CONNECTED"
+    },
+    "response_status": 201,
+    "kind": "documented response"
+  },
+  "get_vendor": {
+    "config": {
+      "vendor_id": "{{vendor_id}}"
+    },
+    "method": "GET",
+    "path": "/v3/vendors/{vendorId}",
+    "source": "https://developer.bill.com/docs/creating-a-us-vendor",
+    "response": {
+      "id": "{vendor_id}",
+      "archived": false,
+      "name": "Happy Music Supplies",
+      "accountType": "BUSINESS",
+      "email": "info@happymusicsupplies.org",
+      "phone": "9876543210",
+      "address": {
+        "line1": "123 Main St",
+        "city": "San Jose",
+        "stateOrProvince": "CA",
+        "zipOrPostalCode": "95002",
+        "country": "US"
+      },
+      "paymentInformation": {
+        "payeeName": "Happy Music Supplies",
+        "payByType": "ACH",
+        "virtualCard": {
+          "status": "UNENROLLED"
+        },
+        "bankAccount": {
+          "nameOnAccount": "Bill Venderson",
+          "accountNumber": "*****2333",
+          "routingNumber": "074000010",
+          "type": "CHECKING",
+          "ownerType": "BUSINESS"
+        }
+      },
+      "additionalInfo": {
+        "track1099": false,
+        "combinePayments": true
+      },
+      "bankAccountStatus": "NO_NET_LINKED_ACCOUNT",
+      "recurringPayments": false,
+      "billCurrency": "USD",
+      "createdTime": "2026-12-29T23:25:27.127+00:00",
+      "updatedTime": "2026-12-29T23:25:28.127+00:00",
+      "balance": {
+        "amount": 0
+      },
+      "autoPay": {
+        "enabled": false
+      },
+      "networkStatus": "NOT_CONNECTED"
+    },
+    "response_status": 200,
+    "kind": "documented response"
+  },
+  "update_vendor": {
+    "config": {
+      "vendor_id": "{{vendor_id}}",
+      "name": "Happy Music Supplies (Updated)",
+      "account_type": "PERSON"
+    },
+    "method": "PATCH",
+    "path": "/v3/vendors/{vendorId}",
+    "source": "https://developer.bill.com/docs/creating-a-us-vendor",
+    "response": {
+      "id": "{vendor_id}",
+      "archived": false,
+      "name": "Happy Music Supplies",
+      "accountType": "BUSINESS",
+      "email": "info@happymusicsupplies.org",
+      "phone": "9876543210",
+      "address": {
+        "line1": "123 Main St",
+        "city": "San Jose",
+        "stateOrProvince": "CA",
+        "zipOrPostalCode": "95002",
+        "country": "US"
+      },
+      "paymentInformation": {
+        "payeeName": "Happy Music Supplies",
+        "payByType": "ACH",
+        "virtualCard": {
+          "status": "UNENROLLED"
+        },
+        "bankAccount": {
+          "nameOnAccount": "Bill Venderson",
+          "accountNumber": "*****2333",
+          "routingNumber": "074000010",
+          "type": "CHECKING",
+          "ownerType": "BUSINESS"
+        }
+      },
+      "additionalInfo": {
+        "track1099": false,
+        "combinePayments": true
+      },
+      "bankAccountStatus": "NO_NET_LINKED_ACCOUNT",
+      "recurringPayments": false,
+      "billCurrency": "USD",
+      "createdTime": "2026-12-29T23:25:27.127+00:00",
+      "updatedTime": "2026-12-29T23:25:28.127+00:00",
+      "balance": {
+        "amount": 0
+      },
+      "autoPay": {
+        "enabled": false
+      },
+      "networkStatus": "NOT_CONNECTED"
+    },
+    "response_status": 200,
+    "kind": "documented response"
+  },
+  "list_bills": {
+    "config": {},
+    "method": "GET",
+    "path": "/v3/bills",
+    "source": "https://developer.bill.com/docs/ap-bills",
+    "response": {
+      "nextPage": "1",
+      "prevPage": "1",
+      "results": [
+        {
+          "id": "{bill_id}",
+          "archived": false,
+          "vendorId": "{vendor_id}",
+          "amount": 228.99,
+          "dueDate": "2026-12-31",
+          "invoice": {
+            "invoiceNumber": "202601",
+            "invoiceDate": "2026-12-31"
+          },
+          "billLineItems": [
+            {
+              "id": "{billLineItem_id01}",
+              "amount": 149.0,
+              "description": "USB audio interface"
+            },
+            {
+              "id": "{billLineItem_id02}",
+              "amount": 79.99,
+              "description": "Drum foot pedal"
+            }
+          ],
+          "paymentStatus": "UNPAID",
+          "approvalStatus": "UNASSIGNED",
+          "createdTime": "2026-12-30T23:15:23.127+00:00",
+          "updatedTime": "2026-12-30T23:15:23.127+00:00"
+        }
+      ],
+      "count": 1,
+      "totalDueAmount": 1
+    },
+    "response_status": 200,
+    "kind": "documented entity response in the official list envelope"
+  },
+  "create_bill": {
+    "config": {
+      "vendor_id": "{{vendor_id}}",
+      "due_date": "2026-12-31",
+      "bill_line_items": "[{\"amount\": 149, \"description\": \"USB audio interface\"}, {\"amount\": 79.99, \"description\": \"Drum foot pedal\"}]",
+      "invoice": "{\"invoiceNumber\": \"202601\", \"invoiceDate\": \"2026-12-31\"}"
+    },
+    "method": "POST",
+    "path": "/v3/bills",
+    "source": "https://developer.bill.com/docs/ap-bills",
+    "response": {
+      "id": "{bill_id}",
+      "archived": false,
+      "vendorId": "{vendor_id}",
+      "amount": 228.99,
+      "dueDate": "2026-12-31",
+      "invoice": {
+        "invoiceNumber": "202601",
+        "invoiceDate": "2026-12-31"
+      },
+      "billLineItems": [
+        {
+          "id": "{billLineItem_id01}",
+          "amount": 149.0,
+          "description": "USB audio interface"
+        },
+        {
+          "id": "{billLineItem_id02}",
+          "amount": 79.99,
+          "description": "Drum foot pedal"
+        }
+      ],
+      "paymentStatus": "UNPAID",
+      "approvalStatus": "UNASSIGNED",
+      "createdTime": "2026-12-30T23:15:23.127+00:00",
+      "updatedTime": "2026-12-30T23:15:23.127+00:00"
+    },
+    "response_status": 201,
+    "kind": "documented response"
+  },
+  "get_bill": {
+    "config": {
+      "bill_id": "00n02JZNIEYMNPY99iz9"
+    },
+    "method": "GET",
+    "path": "/v3/bills/{billId}",
+    "source": "https://developer.bill.com/docs/ap-bills",
+    "response": {
+      "id": "{bill_id}",
+      "archived": false,
+      "vendorId": "{vendor_id}",
+      "amount": 228.99,
+      "dueDate": "2026-12-31",
+      "invoice": {
+        "invoiceNumber": "202601",
+        "invoiceDate": "2026-12-31"
+      },
+      "billLineItems": [
+        {
+          "id": "{billLineItem_id01}",
+          "amount": 149.0,
+          "description": "USB audio interface"
+        },
+        {
+          "id": "{billLineItem_id02}",
+          "amount": 79.99,
+          "description": "Drum foot pedal"
+        }
+      ],
+      "paymentStatus": "UNPAID",
+      "approvalStatus": "UNASSIGNED",
+      "createdTime": "2026-12-30T23:15:23.127+00:00",
+      "updatedTime": "2026-12-30T23:15:23.127+00:00"
+    },
+    "response_status": 200,
+    "kind": "documented response"
+  },
+  "update_bill": {
+    "config": {
+      "bill_id": "{{bill_id}}",
+      "bill_line_items": "[{\"id\": \"{{bill_line_item_id01}}\", \"amount\": 179, \"description\": \"USB audio interface (amount updated)\"}]",
+      "payment_term_id": "{{payment_term_id}}"
+    },
+    "method": "PATCH",
+    "path": "/v3/bills/{billId}",
+    "source": "https://developer.bill.com/docs/ap-bills",
+    "response": {
+      "id": "{bill_id}",
+      "archived": false,
+      "vendorId": "{vendor_id}",
+      "amount": 228.99,
+      "dueDate": "2026-12-31",
+      "invoice": {
+        "invoiceNumber": "202601",
+        "invoiceDate": "2026-12-31"
+      },
+      "billLineItems": [
+        {
+          "id": "{billLineItem_id01}",
+          "amount": 149.0,
+          "description": "USB audio interface"
+        },
+        {
+          "id": "{billLineItem_id02}",
+          "amount": 79.99,
+          "description": "Drum foot pedal"
+        }
+      ],
+      "paymentStatus": "UNPAID",
+      "approvalStatus": "UNASSIGNED",
+      "createdTime": "2026-12-30T23:15:23.127+00:00",
+      "updatedTime": "2026-12-30T23:15:23.127+00:00"
+    },
+    "response_status": 200,
+    "kind": "documented response"
+  },
+  "list_customers": {
+    "config": {},
+    "method": "GET",
+    "path": "/v3/customers",
+    "source": "https://developer.bill.com/docs/ar-customers",
+    "response": {
+      "nextPage": "1",
+      "prevPage": "1",
+      "results": [
+        {
+          "id": "{customer_id}",
+          "archived": false,
+          "name": "Paperless Band",
+          "companyName": "Paperless Band LLC",
+          "contact": {
+            "firstName": "Check",
+            "lastName": "Mailworth"
+          },
+          "email": "contact@paperlessband.org",
+          "phone": "9998887654",
+          "invoiceCurrency": "USD",
+          "accountType": "BUSINESS",
+          "billingAddress": {
+            "line1": "987 Side Street",
+            "city": "San Jose",
+            "stateOrProvince": "CA",
+            "zipOrPostalCode": "95002",
+            "country": "US"
+          },
+          "balance": {
+            "amount": {
+              "value": 0.0
+            }
+          },
+          "createdTime": "2026-12-30T23:25:27.127+00:00",
+          "updatedTime": "2026-12-30T23:25:28.127+00:00"
+        }
+      ]
+    },
+    "response_status": 200,
+    "kind": "documented entity response in the official list envelope"
+  },
+  "create_customer": {
+    "config": {
+      "name": "Paperless Band",
+      "company_name": "Paperless Band LLC",
+      "contact": "{\"firstName\": \"Check\", \"lastName\": \"Mailworth\"}",
+      "email": "contact@paperlessband.org",
+      "account_type": "BUSINESS",
+      "phone": "9998887654",
+      "billing_address": "{\"line1\": \"987 Side Street\", \"city\": \"San Jose\", \"stateOrProvince\": \"CA\", \"zipOrPostalCode\": \"95002\", \"country\": \"US\"}"
+    },
+    "method": "POST",
+    "path": "/v3/customers",
+    "source": "https://developer.bill.com/docs/ar-customers",
+    "response": {
+      "id": "{customer_id}",
+      "archived": false,
+      "name": "Paperless Band",
+      "companyName": "Paperless Band LLC",
+      "contact": {
+        "firstName": "Check",
+        "lastName": "Mailworth"
+      },
+      "email": "contact@paperlessband.org",
+      "phone": "9998887654",
+      "invoiceCurrency": "USD",
+      "accountType": "BUSINESS",
+      "billingAddress": {
+        "line1": "987 Side Street",
+        "city": "San Jose",
+        "stateOrProvince": "CA",
+        "zipOrPostalCode": "95002",
+        "country": "US"
+      },
+      "balance": {
+        "amount": {
+          "value": 0.0
+        }
+      },
+      "createdTime": "2026-12-30T23:25:27.127+00:00",
+      "updatedTime": "2026-12-30T23:25:28.127+00:00"
+    },
+    "response_status": 201,
+    "kind": "documented response"
+  },
+  "get_customer": {
+    "config": {
+      "customer_id": "{{customer_id}}"
+    },
+    "method": "GET",
+    "path": "/v3/customers/{customerId}",
+    "source": "https://developer.bill.com/docs/ar-customers",
+    "response": {
+      "id": "{customer_id}",
+      "archived": false,
+      "name": "Paperless Band",
+      "companyName": "Paperless Band LLC",
+      "contact": {
+        "firstName": "Check",
+        "lastName": "Mailworth"
+      },
+      "email": "contact@paperlessband.org",
+      "phone": "9998887654",
+      "invoiceCurrency": "USD",
+      "accountType": "BUSINESS",
+      "billingAddress": {
+        "line1": "987 Side Street",
+        "city": "San Jose",
+        "stateOrProvince": "CA",
+        "zipOrPostalCode": "95002",
+        "country": "US"
+      },
+      "balance": {
+        "amount": {
+          "value": 0.0
+        }
+      },
+      "createdTime": "2026-12-30T23:25:27.127+00:00",
+      "updatedTime": "2026-12-30T23:25:28.127+00:00"
+    },
+    "response_status": 200,
+    "kind": "documented response"
+  },
+  "update_customer": {
+    "config": {
+      "customer_id": "{{customer_id}}",
+      "name": "Paperless Band (Updated)",
+      "account_type": "PERSON"
+    },
+    "method": "PATCH",
+    "path": "/v3/customers/{customerId}",
+    "source": "https://developer.bill.com/docs/ar-customers",
+    "response": {
+      "id": "{customer_id}",
+      "archived": false,
+      "name": "Paperless Band",
+      "companyName": "Paperless Band LLC",
+      "contact": {
+        "firstName": "Check",
+        "lastName": "Mailworth"
+      },
+      "email": "contact@paperlessband.org",
+      "phone": "9998887654",
+      "invoiceCurrency": "USD",
+      "accountType": "BUSINESS",
+      "billingAddress": {
+        "line1": "987 Side Street",
+        "city": "San Jose",
+        "stateOrProvince": "CA",
+        "zipOrPostalCode": "95002",
+        "country": "US"
+      },
+      "balance": {
+        "amount": {
+          "value": 0.0
+        }
+      },
+      "createdTime": "2026-12-30T23:25:27.127+00:00",
+      "updatedTime": "2026-12-30T23:25:28.127+00:00"
+    },
+    "response_status": 200,
+    "kind": "documented response"
+  },
+  "list_pending_approvals": {
+    "config": {},
+    "method": "GET",
+    "path": "/v3/bill-approvals/pending-user-approvals",
+    "source": "https://developer.bill.com/docs/ap-bill-approvals",
+    "response": {
+      "bills": [
+        {
+          "billId": "{bill_id01}",
+          "vendorId": "{vendor_id01}",
+          "amount": 1500.0,
+          "dueDate": "2026-12-31"
+        },
+        {
+          "billId": "{bill_id02}",
+          "vendorId": "{bill_id02}",
+          "amount": 1199.0,
+          "dueDate": "2026-12-31"
+        }
+      ]
+    },
+    "response_status": 200,
+    "kind": "documented response"
+  },
+  "list_approval_policies": {
+    "config": {},
+    "method": "GET",
+    "path": "/v3/bill-approvals/policies",
+    "source": "https://developer.bill.com/docs/ap-bill-approvals",
+    "response": [
+      {
+        "id": "{bill_approval_policy_id}",
+        "policyName": "Bills 1000 to 2000",
+        "status": "ACTIVE",
+        "rules": [
+          {
+            "key": "BILL_AMOUNT",
+            "op": "gte",
+            "values": [
+              {
+                "value": "1000",
+                "displayName": "1000"
+              }
+            ]
+          },
+          {
+            "key": "BILL_AMOUNT",
+            "op": "lt",
+            "values": [
+              {
+                "value": "2000",
+                "displayName": "2000"
+              }
+            ]
+          }
+        ],
+        "approvers": {
+          "users": [
+            {
+              "userId": "{user_id01}",
+              "fullName": "Clark Billenterson"
+            },
+            {
+              "userId": "{user_id02}",
+              "fullName": "Final boss"
+            }
+          ],
+          "groups": []
+        }
+      }
+    ],
+    "response_status": 200,
+    "kind": "documented policy response in the official array envelope"
+  },
+  "create_approval_policy": {
+    "config": {
+      "policy_name": "Approval policy for bills >= $1000",
+      "rules": "[{\"key\": \"BILL_AMOUNT\", \"op\": \"gte\", \"values\": [\"1000\"]}]",
+      "approvers": "[\"{{bill_approver_user_id}}\"]"
+    },
+    "method": "POST",
+    "path": "/v3/bill-approvals/policies",
+    "source": "https://developer.bill.com/docs/ap-bill-approvals",
+    "response": {
+      "id": "{bill_approval_policy_id}",
+      "policyName": "Bills 1000 to 2000",
+      "status": "ACTIVE",
+      "rules": [
+        {
+          "key": "BILL_AMOUNT",
+          "op": "gte",
+          "values": [
+            {
+              "value": "1000",
+              "displayName": "1000"
+            }
+          ]
+        },
+        {
+          "key": "BILL_AMOUNT",
+          "op": "lt",
+          "values": [
+            {
+              "value": "2000",
+              "displayName": "2000"
+            }
+          ]
+        }
+      ],
+      "approvers": {
+        "users": [
+          {
+            "userId": "{user_id01}",
+            "fullName": "Clark Billenterson"
+          },
+          {
+            "userId": "{user_id02}",
+            "fullName": "Final boss"
+          }
+        ],
+        "groups": []
+      }
+    },
+    "response_status": 201,
+    "kind": "documented response"
+  },
+  "approve_or_deny_bills": {
+    "config": {
+      "actions": "[\n  {\n    \"billId\": \"{{bill_id}}\",\n    \"action\": \"APPROVE\",\n    \"comment\": \"Approved for payment\"\n  }\n]"
+    },
+    "method": "POST",
+    "path": "/v3/bill-approvals/actions",
+    "source": "https://developer.bill.com/openapi/bill-v3-api.json",
+    "response": {
+      "status": "SUCCESS"
+    },
+    "response_status": 200,
+    "kind": "official response schema specimen"
+  },
+  "list_payments": {
+    "config": {},
+    "method": "GET",
+    "path": "/v3/payments",
+    "source": "https://developer.bill.com/docs/ap-payments",
+    "response": {
+      "nextPage": "1",
+      "prevPage": "1",
+      "results": [
+        {
+          "id": "stp01ZZRCUFIQWHP6ldb",
+          "vendorId": "{vendor_id}",
+          "vendorName": "{vendor_name}",
+          "billId": "{bill_id}",
+          "billPayments": [
+            {
+              "id": "{bill_payment_id}",
+              "billId": "{bill_id}",
+              "amount": 228.99
+            }
+          ],
+          "description": "Inv #20261231",
+          "processDate": "2026-12-31",
+          "fundingAccount": {
+            "type": "BANK_ACCOUNT",
+            "id": "{org_bank_account_id}"
+          },
+          "amount": 228.99,
+          "processingOptions": {
+            "requestPayFaster": false,
+            "createBill": false,
+            "requestCheckDeliveryType": "STANDARD"
+          },
+          "transactionNumber": "EPKZLNTSTYSEUWVALISV",
+          "confirmationNumber": "P24123101 - 0411839",
+          "status": "SCHEDULED",
+          "onlinePayment": true,
+          "disbursementType": "ACH",
+          "createdTime": "2026-12-30T23:56:52.127+00:00",
+          "updatedTime": "2026-12-30T23:56:52.127+00:00",
+          "createdBy": "{user_id}",
+          "voidInfo": [],
+          "cancelRequestSubmitted": false,
+          "singleStatus": "SCHEDULED"
+        }
+      ],
+      "count": 1,
+      "totalAmount": 1
+    },
+    "response_status": 200,
+    "kind": "documented entity response in the official list envelope"
+  },
+  "get_payment": {
+    "config": {
+      "payment_id": "stp01ZZRCUFIQWHP6ldb"
+    },
+    "method": "GET",
+    "path": "/v3/payments/{paymentId}",
+    "source": "https://developer.bill.com/docs/ap-payments",
+    "response": {
+      "id": "stp01ZZRCUFIQWHP6ldb",
+      "vendorId": "{vendor_id}",
+      "vendorName": "{vendor_name}",
+      "billId": "{bill_id}",
+      "billPayments": [
+        {
+          "id": "{bill_payment_id}",
+          "billId": "{bill_id}",
+          "amount": 228.99
+        }
+      ],
+      "description": "Inv #20261231",
+      "processDate": "2026-12-31",
+      "fundingAccount": {
+        "type": "BANK_ACCOUNT",
+        "id": "{org_bank_account_id}"
+      },
+      "amount": 228.99,
+      "processingOptions": {
+        "requestPayFaster": false,
+        "createBill": false,
+        "requestCheckDeliveryType": "STANDARD"
+      },
+      "transactionNumber": "EPKZLNTSTYSEUWVALISV",
+      "confirmationNumber": "P24123101 - 0411839",
+      "status": "SCHEDULED",
+      "onlinePayment": true,
+      "disbursementType": "ACH",
+      "createdTime": "2026-12-30T23:56:52.127+00:00",
+      "updatedTime": "2026-12-30T23:56:52.127+00:00",
+      "createdBy": "{user_id}",
+      "voidInfo": [],
+      "cancelRequestSubmitted": false,
+      "singleStatus": "SCHEDULED"
+    },
+    "response_status": 200,
+    "kind": "documented response"
+  },
+  "schedule_payment": {
+    "config": {
+      "vendor_id": "{{vendor_id}}",
+      "bill_id": "{{bill_id}}",
+      "process_date": "2026-12-31",
+      "funding_account": "{\"type\": \"BANK_ACCOUNT\", \"id\": \"{{org_bank_account_id}}\"}",
+      "amount": 228.99,
+      "processing_options": "{\"requestPayFaster\": false, \"createBill\": false}"
+    },
+    "method": "POST",
+    "path": "/v3/payments",
+    "source": "https://developer.bill.com/docs/ap-payments",
+    "response": {
+      "id": "stp01ZZRCUFIQWHP6ldb",
+      "vendorId": "{vendor_id}",
+      "vendorName": "{vendor_name}",
+      "billId": "{bill_id}",
+      "billPayments": [
+        {
+          "id": "{bill_payment_id}",
+          "billId": "{bill_id}",
+          "amount": 228.99
+        }
+      ],
+      "description": "Inv #20261231",
+      "processDate": "2026-12-31",
+      "fundingAccount": {
+        "type": "BANK_ACCOUNT",
+        "id": "{org_bank_account_id}"
+      },
+      "amount": 228.99,
+      "processingOptions": {
+        "requestPayFaster": false,
+        "createBill": false,
+        "requestCheckDeliveryType": "STANDARD"
+      },
+      "transactionNumber": "EPKZLNTSTYSEUWVALISV",
+      "confirmationNumber": "P24123101 - 0411839",
+      "status": "SCHEDULED",
+      "onlinePayment": true,
+      "disbursementType": "ACH",
+      "createdTime": "2026-12-30T23:56:52.127+00:00",
+      "updatedTime": "2026-12-30T23:56:52.127+00:00",
+      "createdBy": "{user_id}",
+      "voidInfo": [],
+      "cancelRequestSubmitted": false,
+      "singleStatus": "SCHEDULED"
+    },
+    "response_status": 201,
+    "kind": "documented response"
+  },
+  "record_payment": {
+    "config": {
+      "vendor_id": "{{vendor_id}}",
+      "process_date": "2026-12-20",
+      "to_print_check": false,
+      "payments": "[{\"billId\": \"{{bill_id}}\", \"amount\": 70}]"
+    },
+    "method": "POST",
+    "path": "/v3/bills/record-payment",
+    "source": "https://developer.bill.com/docs/record-ap-payments",
+    "response": {
+      "id": "{payment_id}",
+      "vendorId": "{vendor_id}",
+      "billPayments": [
+        {
+          "id": "{bill_payment_id01}",
+          "billId": "{bill_id02}",
+          "amount": 70.0
+        },
+        {
+          "id": "{bill_payment_id01}",
+          "billId": "{bill_id02}",
+          "amount": 30.0
+        }
+      ],
+      "processDate": "2026-12-20",
+      "amount": 100.0,
+      "transactionNumber": "{transaction_number}",
+      "confirmationNumber": "{confirmation_number}",
+      "status": "PAID",
+      "onlinePayment": false,
+      "disbursementType": "OFFLINE",
+      "createdTime": "2026-12-10T00:04:52.612+00:00",
+      "updatedTime": "2026-12-10T00:04:52.854+00:00",
+      "createdBy": "{user_id}",
+      "disbursementStatus": "DONE",
+      "singleStatus": "PAID_OFFLINE",
+      "toPrintCheck": false,
+      "allowExport": true
+    },
+    "response_status": 200,
+    "kind": "documented response"
+  }
+}
