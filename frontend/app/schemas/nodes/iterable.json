@@ -1,0 +1,4986 @@
+{
+  "$defs": {
+    "IterableApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "iterable_api_key",
+          "default": "iterable_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "region": {
+          "default": "us",
+          "description": "Choose the region that hosts your Iterable project.",
+          "enum": [
+            "us",
+            "eu"
+          ],
+          "title": "Data Center",
+          "type": "string"
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "Server-side API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Iterable API Key",
+      "type": "object",
+      "x-credential-instructions": "In Iterable, open Integrations > API Keys and create a server-side key for this project. Choose the project's data center here.",
+      "x-credential-url": "https://support.iterable.com/hc/en-us/articles/360043464871-API-Keys"
+    },
+    "IterableCampaignsAbortCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "campaigns_abort_campaign",
+          "default": "campaigns_abort_campaign",
+          "title": "Abort a campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Abort a campaign",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: campaignId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableCampaignsAbortCampaignConfig",
+      "type": "object"
+    },
+    "IterableCampaignsActivateTriggeredCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "campaigns_activate_triggered_campaign",
+          "default": "campaigns_activate_triggered_campaign",
+          "title": "Activate a triggered campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Activate a triggered campaign",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: campaignId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableCampaignsActivateTriggeredCampaignConfig",
+      "type": "object"
+    },
+    "IterableCampaignsArchiveCampaignsConfig": {
+      "properties": {
+        "operation": {
+          "const": "campaigns_archive_campaigns",
+          "default": "campaigns_archive_campaigns",
+          "title": "Archive campaigns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Archive campaigns",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: campaignIds",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableCampaignsArchiveCampaignsConfig",
+      "type": "object"
+    },
+    "IterableCampaignsCampaignsConfig": {
+      "properties": {
+        "operation": {
+          "const": "campaigns_campaigns",
+          "default": "campaigns_campaigns",
+          "title": "List campaign metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "List campaign metadata",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: campaignState, page, pageSize, sort",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "IterableCampaignsCampaignsConfig",
+      "type": "object"
+    },
+    "IterableCampaignsCancelCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "campaigns_cancel_campaign",
+          "default": "campaigns_cancel_campaign",
+          "title": "Cancel a scheduled or recurring campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Cancel a scheduled or recurring campaign",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: campaignId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableCampaignsCancelCampaignConfig",
+      "type": "object"
+    },
+    "IterableCampaignsChildCampaignsConfig": {
+      "properties": {
+        "operation": {
+          "const": "campaigns_child_campaigns",
+          "default": "campaigns_child_campaigns",
+          "title": "Get child campaigns of a recurring campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Get child campaigns of a recurring campaign",
+          "x-is-trigger": false
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: campaignState, page, pageSize, sort",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "IterableCampaignsChildCampaignsConfig",
+      "type": "object"
+    },
+    "IterableCampaignsCreateCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "campaigns_create_campaign",
+          "default": "campaigns_create_campaign",
+          "title": "Create a campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-creates-resource": true,
+          "x-display-name": "Create a campaign",
+          "x-is-trigger": false,
+          "x-resource-type": "iterable_campaigns_create_campaign"
+        },
+        "payload_json": {
+          "description": "Required keys: listIds, name, templateId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableCampaignsCreateCampaignConfig",
+      "type": "object"
+    },
+    "IterableCampaignsDeactivateTriggeredCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "campaigns_deactivate_triggered_campaign",
+          "default": "campaigns_deactivate_triggered_campaign",
+          "title": "Deactivate a triggered campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Deactivate a triggered campaign",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: campaignId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableCampaignsDeactivateTriggeredCampaignConfig",
+      "type": "object"
+    },
+    "IterableCampaignsGetCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "campaigns_get_campaign",
+          "default": "campaigns_get_campaign",
+          "title": "Get a campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Get a campaign",
+          "x-is-trigger": false
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "IterableCampaignsGetCampaignConfig",
+      "type": "object"
+    },
+    "IterableCampaignsMetricsConfig": {
+      "properties": {
+        "operation": {
+          "const": "campaigns_metrics",
+          "default": "campaigns_metrics",
+          "title": "Get metrics for campaigns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Get metrics for campaigns",
+          "x-is-trigger": false
+        },
+        "query_campaign_id": {
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: endDateTime, startDateTime",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "query_campaign_id"
+      ],
+      "title": "IterableCampaignsMetricsConfig",
+      "type": "object"
+    },
+    "IterableCampaignsScheduleCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "campaigns_schedule_campaign",
+          "default": "campaigns_schedule_campaign",
+          "title": "Schedule existing campaign to be sent",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Schedule existing campaign to be sent",
+          "x-is-trigger": false
+        },
+        "campaignId": {
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Required keys: sendAt",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "campaignId",
+        "payload_json"
+      ],
+      "title": "IterableCampaignsScheduleCampaignConfig",
+      "type": "object"
+    },
+    "IterableCampaignsSendCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "campaigns_send_campaign",
+          "default": "campaigns_send_campaign",
+          "title": "Send existing campaign now",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Send existing campaign now",
+          "x-is-trigger": false
+        },
+        "campaignId": {
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaignId"
+      ],
+      "title": "IterableCampaignsSendCampaignConfig",
+      "type": "object"
+    },
+    "IterableCampaignsTriggerCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "campaigns_trigger_campaign",
+          "default": "campaigns_trigger_campaign",
+          "title": "Trigger a campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Trigger a campaign",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: campaignId, listIds",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableCampaignsTriggerCampaignConfig",
+      "type": "object"
+    },
+    "IterableCatalogsBulkDeleteCatalogItemsConfig": {
+      "properties": {
+        "operation": {
+          "const": "catalogs_bulk_delete_catalog_items",
+          "default": "catalogs_bulk_delete_catalog_items",
+          "title": "Bulk delete catalog items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Bulk delete catalog items",
+          "x-is-trigger": false
+        },
+        "catalogName": {
+          "minLength": 1,
+          "title": "Catalog Name",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Required keys: itemIds",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "catalogName",
+        "payload_json"
+      ],
+      "title": "IterableCatalogsBulkDeleteCatalogItemsConfig",
+      "type": "object"
+    },
+    "IterableCatalogsBulkUpdateCatalogItemsConfig": {
+      "properties": {
+        "operation": {
+          "const": "catalogs_bulk_update_catalog_items",
+          "default": "catalogs_bulk_update_catalog_items",
+          "title": "Bulk create catalog items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Bulk create catalog items",
+          "x-is-trigger": false
+        },
+        "catalogName": {
+          "minLength": 1,
+          "title": "Catalog Name",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Required keys: documents, replaceUploadedFieldsOnly",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "catalogName",
+        "payload_json"
+      ],
+      "title": "IterableCatalogsBulkUpdateCatalogItemsConfig",
+      "type": "object"
+    },
+    "IterableCatalogsCreateCatalogConfig": {
+      "properties": {
+        "operation": {
+          "const": "catalogs_create_catalog",
+          "default": "catalogs_create_catalog",
+          "title": "Create a catalog",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-creates-resource": true,
+          "x-display-name": "Create a catalog",
+          "x-is-trigger": false,
+          "x-resource-type": "iterable_catalogs_create_catalog"
+        },
+        "catalogName": {
+          "minLength": 1,
+          "title": "Catalog Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "catalogName"
+      ],
+      "title": "IterableCatalogsCreateCatalogConfig",
+      "type": "object"
+    },
+    "IterableCatalogsDeleteCatalogConfig": {
+      "properties": {
+        "operation": {
+          "const": "catalogs_delete_catalog",
+          "default": "catalogs_delete_catalog",
+          "title": "Delete a catalog",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Delete a catalog",
+          "x-is-trigger": false
+        },
+        "catalogName": {
+          "minLength": 1,
+          "title": "Catalog Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "catalogName"
+      ],
+      "title": "IterableCatalogsDeleteCatalogConfig",
+      "type": "object"
+    },
+    "IterableCatalogsDeleteCatalogItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "catalogs_delete_catalog_item",
+          "default": "catalogs_delete_catalog_item",
+          "title": "Delete a catalog item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Delete a catalog item",
+          "x-is-trigger": false
+        },
+        "catalogName": {
+          "minLength": 1,
+          "title": "Catalog Name",
+          "type": "string"
+        },
+        "itemId": {
+          "minLength": 1,
+          "title": "Item Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "catalogName",
+        "itemId"
+      ],
+      "title": "IterableCatalogsDeleteCatalogItemConfig",
+      "type": "object"
+    },
+    "IterableCatalogsGetCatalogItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "catalogs_get_catalog_item",
+          "default": "catalogs_get_catalog_item",
+          "title": "Get a specific catalog item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Get a specific catalog item",
+          "x-is-trigger": false
+        },
+        "catalogName": {
+          "minLength": 1,
+          "title": "Catalog Name",
+          "type": "string"
+        },
+        "itemId": {
+          "minLength": 1,
+          "title": "Item Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "catalogName",
+        "itemId"
+      ],
+      "title": "IterableCatalogsGetCatalogItemConfig",
+      "type": "object"
+    },
+    "IterableCatalogsGetFieldMappingsConfig": {
+      "properties": {
+        "operation": {
+          "const": "catalogs_get_field_mappings",
+          "default": "catalogs_get_field_mappings",
+          "title": "Get field mappings for a catalog",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Get field mappings for a catalog",
+          "x-is-trigger": false
+        },
+        "catalogName": {
+          "minLength": 1,
+          "title": "Catalog Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "catalogName"
+      ],
+      "title": "IterableCatalogsGetFieldMappingsConfig",
+      "type": "object"
+    },
+    "IterableCatalogsIndexCatalogItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "catalogs_index_catalog_item",
+          "default": "catalogs_index_catalog_item",
+          "title": "Create or replace a catalog item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Create or replace a catalog item",
+          "x-is-trigger": false
+        },
+        "catalogName": {
+          "minLength": 1,
+          "title": "Catalog Name",
+          "type": "string"
+        },
+        "itemId": {
+          "minLength": 1,
+          "title": "Item Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Required keys: value",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "catalogName",
+        "itemId",
+        "payload_json"
+      ],
+      "title": "IterableCatalogsIndexCatalogItemConfig",
+      "type": "object"
+    },
+    "IterableCatalogsListCatalogItemsConfig": {
+      "properties": {
+        "operation": {
+          "const": "catalogs_list_catalog_items",
+          "default": "catalogs_list_catalog_items",
+          "title": "Get the catalog items for a catalog",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Get the catalog items for a catalog",
+          "x-is-trigger": false
+        },
+        "catalogName": {
+          "minLength": 1,
+          "title": "Catalog Name",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: orderBy, page, pageSize, sortAscending",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "catalogName"
+      ],
+      "title": "IterableCatalogsListCatalogItemsConfig",
+      "type": "object"
+    },
+    "IterableCatalogsListCatalogsConfig": {
+      "properties": {
+        "operation": {
+          "const": "catalogs_list_catalogs",
+          "default": "catalogs_list_catalogs",
+          "title": "Get catalog names",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Get catalog names",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: page, pageSize",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "IterableCatalogsListCatalogsConfig",
+      "type": "object"
+    },
+    "IterableCatalogsPartialUpdateCatalogItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "catalogs_partial_update_catalog_item",
+          "default": "catalogs_partial_update_catalog_item",
+          "title": "Create or update a catalog item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Create or update a catalog item",
+          "x-is-trigger": false
+        },
+        "catalogName": {
+          "minLength": 1,
+          "title": "Catalog Name",
+          "type": "string"
+        },
+        "itemId": {
+          "minLength": 1,
+          "title": "Item Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Required keys: update",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "catalogName",
+        "itemId",
+        "payload_json"
+      ],
+      "title": "IterableCatalogsPartialUpdateCatalogItemConfig",
+      "type": "object"
+    },
+    "IterableCatalogsUpdateFieldTypesConfig": {
+      "properties": {
+        "operation": {
+          "const": "catalogs_update_field_types",
+          "default": "catalogs_update_field_types",
+          "title": "Set a catalog's field mappings (data types)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Set a catalog's field mappings (data types)",
+          "x-is-trigger": false
+        },
+        "catalogName": {
+          "minLength": 1,
+          "title": "Catalog Name",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Required keys: mappingsUpdates",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "catalogName",
+        "payload_json"
+      ],
+      "title": "IterableCatalogsUpdateFieldTypesConfig",
+      "type": "object"
+    },
+    "IterableChannelsChannelsConfig": {
+      "properties": {
+        "operation": {
+          "const": "channels_channels",
+          "default": "channels_channels",
+          "title": "Get channels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channels",
+          "x-display-name": "Get channels",
+          "x-is-trigger": false
+        }
+      },
+      "title": "IterableChannelsChannelsConfig",
+      "type": "object"
+    },
+    "IterableCommerceTrackPurchaseConfig": {
+      "properties": {
+        "operation": {
+          "const": "commerce_track_purchase",
+          "default": "commerce_track_purchase",
+          "title": "Track a purchase",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Commerce",
+          "x-display-name": "Track a purchase",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: items, total, user",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableCommerceTrackPurchaseConfig",
+      "type": "object"
+    },
+    "IterableCommerceUpdateCartConfig": {
+      "properties": {
+        "operation": {
+          "const": "commerce_update_cart",
+          "default": "commerce_update_cart",
+          "title": "Update a user's shopping cart items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Commerce",
+          "x-display-name": "Update a user's shopping cart items",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: items, user",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableCommerceUpdateCartConfig",
+      "type": "object"
+    },
+    "IterableEmailCancelConfig": {
+      "properties": {
+        "operation": {
+          "const": "email_cancel",
+          "default": "email_cancel",
+          "title": "Cancel an email to a user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email",
+          "x-display-name": "Cancel an email to a user",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableEmailCancelConfig",
+      "type": "object"
+    },
+    "IterableEmailTargetConfig": {
+      "properties": {
+        "operation": {
+          "const": "email_target",
+          "default": "email_target",
+          "title": "Send an email to an email address",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email",
+          "x-display-name": "Send an email to an email address",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: campaignId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableEmailTargetConfig",
+      "type": "object"
+    },
+    "IterableEmbeddedMessagingMessagesConfig": {
+      "properties": {
+        "operation": {
+          "const": "embedded_messaging_messages",
+          "default": "embedded_messaging_messages",
+          "title": "Get a user's embedded messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Embedded Messaging",
+          "x-display-name": "Get a user's embedded messages",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: currentMessageIds, email, packageName, placementIds, platform, sdkVersion, userId",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "IterableEmbeddedMessagingMessagesConfig",
+      "type": "object"
+    },
+    "IterableEventsEmbeddedTrackClickConfig": {
+      "properties": {
+        "operation": {
+          "const": "events_embedded_track_click",
+          "default": "events_embedded_track_click",
+          "title": "Track an embedded message click",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Track an embedded message click",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: messageId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableEventsEmbeddedTrackClickConfig",
+      "type": "object"
+    },
+    "IterableEventsEmbeddedTrackImpressionConfig": {
+      "properties": {
+        "operation": {
+          "const": "events_embedded_track_impression",
+          "default": "events_embedded_track_impression",
+          "title": "Track an embedded message session and related impressions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Track an embedded message session and related impressions",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableEventsEmbeddedTrackImpressionConfig",
+      "type": "object"
+    },
+    "IterableEventsEmbeddedTrackReceivedConfig": {
+      "properties": {
+        "operation": {
+          "const": "events_embedded_track_received",
+          "default": "events_embedded_track_received",
+          "title": "Track an embedded message received event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Track an embedded message received event",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: messageId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableEventsEmbeddedTrackReceivedConfig",
+      "type": "object"
+    },
+    "IterableEventsInAppConsumeConfig": {
+      "properties": {
+        "operation": {
+          "const": "events_in_app_consume",
+          "default": "events_in_app_consume",
+          "title": "Consume or delete an in-app message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Consume or delete an in-app message",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: messageId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableEventsInAppConsumeConfig",
+      "type": "object"
+    },
+    "IterableEventsTrackBulkConfig": {
+      "properties": {
+        "operation": {
+          "const": "events_track_bulk",
+          "default": "events_track_bulk",
+          "title": "Bulk track events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Bulk track events",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: events",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableEventsTrackBulkConfig",
+      "type": "object"
+    },
+    "IterableEventsTrackConfig": {
+      "properties": {
+        "operation": {
+          "const": "events_track",
+          "default": "events_track",
+          "title": "Track an event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Track an event",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: eventName",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableEventsTrackConfig",
+      "type": "object"
+    },
+    "IterableEventsTrackInAppClickConfig": {
+      "properties": {
+        "operation": {
+          "const": "events_track_in_app_click",
+          "default": "events_track_in_app_click",
+          "title": "Track an in-app message click",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Track an in-app message click",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: messageId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableEventsTrackInAppClickConfig",
+      "type": "object"
+    },
+    "IterableEventsTrackInAppCloseConfig": {
+      "properties": {
+        "operation": {
+          "const": "events_track_in_app_close",
+          "default": "events_track_in_app_close",
+          "title": "Track the closing of an in-app message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Track the closing of an in-app message",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: messageId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableEventsTrackInAppCloseConfig",
+      "type": "object"
+    },
+    "IterableEventsTrackInAppDeliveryConfig": {
+      "properties": {
+        "operation": {
+          "const": "events_track_in_app_delivery",
+          "default": "events_track_in_app_delivery",
+          "title": "Track the delivery of an in-app message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Track the delivery of an in-app message",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: messageId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableEventsTrackInAppDeliveryConfig",
+      "type": "object"
+    },
+    "IterableEventsTrackInAppOpenConfig": {
+      "properties": {
+        "operation": {
+          "const": "events_track_in_app_open",
+          "default": "events_track_in_app_open",
+          "title": "Track an in-app message open",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Track an in-app message open",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: messageId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableEventsTrackInAppOpenConfig",
+      "type": "object"
+    },
+    "IterableEventsTrackPushOpenConfig": {
+      "properties": {
+        "operation": {
+          "const": "events_track_push_open",
+          "default": "events_track_push_open",
+          "title": "Track a mobile push open",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Track a mobile push open",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: campaignId, messageId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableEventsTrackPushOpenConfig",
+      "type": "object"
+    },
+    "IterableEventsTrackWebPushClickConfig": {
+      "properties": {
+        "operation": {
+          "const": "events_track_web_push_click",
+          "default": "events_track_web_push_click",
+          "title": "Track a web push click",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Track a web push click",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: messageId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableEventsTrackWebPushClickConfig",
+      "type": "object"
+    },
+    "IterableEventsUserEventsByUserIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "events_user_events_by_user_id",
+          "default": "events_user_events_by_user_id",
+          "title": "Get user events by userId",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Get user events by userId",
+          "x-is-trigger": false
+        },
+        "userId": {
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: limit",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "userId"
+      ],
+      "title": "IterableEventsUserEventsByUserIdConfig",
+      "type": "object"
+    },
+    "IterableEventsUserEventsConfig": {
+      "properties": {
+        "operation": {
+          "const": "events_user_events",
+          "default": "events_user_events",
+          "title": "Get user events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Get user events",
+          "x-is-trigger": false
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: limit",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "IterableEventsUserEventsConfig",
+      "type": "object"
+    },
+    "IterableExperimentsCancelConfig": {
+      "properties": {
+        "operation": {
+          "const": "experiments_cancel",
+          "default": "experiments_cancel",
+          "title": "Cancel an experiment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-display-name": "Cancel an experiment",
+          "x-is-trigger": false
+        },
+        "experimentId": {
+          "minLength": 1,
+          "title": "Experiment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "experimentId"
+      ],
+      "title": "IterableExperimentsCancelConfig",
+      "type": "object"
+    },
+    "IterableExperimentsCopyVariantConfig": {
+      "properties": {
+        "operation": {
+          "const": "experiments_copy_variant",
+          "default": "experiments_copy_variant",
+          "title": "Copy a template as a new variant",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-display-name": "Copy a template as a new variant",
+          "x-is-trigger": false
+        },
+        "experimentId": {
+          "minLength": 1,
+          "title": "Experiment Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Required keys: copyFromTemplateId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "experimentId",
+        "payload_json"
+      ],
+      "title": "IterableExperimentsCopyVariantConfig",
+      "type": "object"
+    },
+    "IterableExperimentsCreateConfig": {
+      "properties": {
+        "operation": {
+          "const": "experiments_create",
+          "default": "experiments_create",
+          "title": "Create an experiment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-creates-resource": true,
+          "x-display-name": "Create an experiment",
+          "x-is-trigger": false,
+          "x-resource-type": "iterable_experiments_create"
+        },
+        "payload_json": {
+          "description": "Required keys: campaignId, experimentType",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableExperimentsCreateConfig",
+      "type": "object"
+    },
+    "IterableExperimentsDeclareWinnerConfig": {
+      "properties": {
+        "operation": {
+          "const": "experiments_declare_winner",
+          "default": "experiments_declare_winner",
+          "title": "Declare a winner and end experiment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-display-name": "Declare a winner and end experiment",
+          "x-is-trigger": false
+        },
+        "experimentId": {
+          "minLength": 1,
+          "title": "Experiment Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Required keys: variantId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "experimentId",
+        "payload_json"
+      ],
+      "title": "IterableExperimentsDeclareWinnerConfig",
+      "type": "object"
+    },
+    "IterableExperimentsDeleteConfig": {
+      "properties": {
+        "operation": {
+          "const": "experiments_delete",
+          "default": "experiments_delete",
+          "title": "Delete an experiment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-display-name": "Delete an experiment",
+          "x-is-trigger": false
+        },
+        "experimentId": {
+          "minLength": 1,
+          "title": "Experiment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "experimentId"
+      ],
+      "title": "IterableExperimentsDeleteConfig",
+      "type": "object"
+    },
+    "IterableExperimentsGetConfig": {
+      "properties": {
+        "operation": {
+          "const": "experiments_get",
+          "default": "experiments_get",
+          "title": "Get an experiment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-display-name": "Get an experiment",
+          "x-is-trigger": false
+        },
+        "experimentId": {
+          "minLength": 1,
+          "title": "Experiment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "experimentId"
+      ],
+      "title": "IterableExperimentsGetConfig",
+      "type": "object"
+    },
+    "IterableExperimentsListConfig": {
+      "properties": {
+        "operation": {
+          "const": "experiments_list",
+          "default": "experiments_list",
+          "title": "List experiments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-display-name": "List experiments",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: campaignId, endDateTime, limit, offset, startDateTime, state",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "IterableExperimentsListConfig",
+      "type": "object"
+    },
+    "IterableExperimentsMetricsConfig": {
+      "properties": {
+        "operation": {
+          "const": "experiments_metrics",
+          "default": "experiments_metrics",
+          "title": "Get metrics for experiments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-display-name": "Get metrics for experiments",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: campaignId, endDateTime, experimentId, startDateTime",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "IterableExperimentsMetricsConfig",
+      "type": "object"
+    },
+    "IterableExperimentsStartConfig": {
+      "properties": {
+        "operation": {
+          "const": "experiments_start",
+          "default": "experiments_start",
+          "title": "Start an experiment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-display-name": "Start an experiment",
+          "x-is-trigger": false
+        },
+        "experimentId": {
+          "minLength": 1,
+          "title": "Experiment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "experimentId"
+      ],
+      "title": "IterableExperimentsStartConfig",
+      "type": "object"
+    },
+    "IterableExperimentsTotalsConfig": {
+      "properties": {
+        "operation": {
+          "const": "experiments_totals",
+          "default": "experiments_totals",
+          "title": "Get experiment totals",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-display-name": "Get experiment totals",
+          "x-is-trigger": false
+        },
+        "experimentId": {
+          "minLength": 1,
+          "title": "Experiment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "experimentId"
+      ],
+      "title": "IterableExperimentsTotalsConfig",
+      "type": "object"
+    },
+    "IterableExperimentsTrendsConfig": {
+      "properties": {
+        "operation": {
+          "const": "experiments_trends",
+          "default": "experiments_trends",
+          "title": "Get experiment trends",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-display-name": "Get experiment trends",
+          "x-is-trigger": false
+        },
+        "experimentId": {
+          "minLength": 1,
+          "title": "Experiment Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: endDateTime, startDateTime",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "experimentId"
+      ],
+      "title": "IterableExperimentsTrendsConfig",
+      "type": "object"
+    },
+    "IterableExperimentsUpdateSettingsConfig": {
+      "properties": {
+        "operation": {
+          "const": "experiments_update_settings",
+          "default": "experiments_update_settings",
+          "title": "Update experiment settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-display-name": "Update experiment settings",
+          "x-is-trigger": false
+        },
+        "experimentId": {
+          "minLength": 1,
+          "title": "Experiment Id",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "experimentId",
+        "payload_json"
+      ],
+      "title": "IterableExperimentsUpdateSettingsConfig",
+      "type": "object"
+    },
+    "IterableExperimentsVariantsConfig": {
+      "properties": {
+        "operation": {
+          "const": "experiments_variants",
+          "default": "experiments_variants",
+          "title": "Get experiment variants",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-display-name": "Get experiment variants",
+          "x-is-trigger": false
+        },
+        "experimentId": {
+          "minLength": 1,
+          "title": "Experiment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "experimentId"
+      ],
+      "title": "IterableExperimentsVariantsConfig",
+      "type": "object"
+    },
+    "IterableExportCancelExportConfig": {
+      "properties": {
+        "operation": {
+          "const": "export_cancel_export",
+          "default": "export_cancel_export",
+          "title": "Cancel export",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Export",
+          "x-display-name": "Cancel export",
+          "x-is-trigger": false
+        },
+        "jobId": {
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "jobId"
+      ],
+      "title": "IterableExportCancelExportConfig",
+      "type": "object"
+    },
+    "IterableExportGetExportFilesConfig": {
+      "properties": {
+        "operation": {
+          "const": "export_get_export_files",
+          "default": "export_get_export_files",
+          "title": "Get export files",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Export",
+          "x-display-name": "Get export files",
+          "x-is-trigger": false
+        },
+        "jobId": {
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: startAfter",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "jobId"
+      ],
+      "title": "IterableExportGetExportFilesConfig",
+      "type": "object"
+    },
+    "IterableExportGetExportJobsConfig": {
+      "properties": {
+        "operation": {
+          "const": "export_get_export_jobs",
+          "default": "export_get_export_jobs",
+          "title": "Get export jobs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Export",
+          "x-display-name": "Get export jobs",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: jobState",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "IterableExportGetExportJobsConfig",
+      "type": "object"
+    },
+    "IterableExportStartExportConfig": {
+      "properties": {
+        "operation": {
+          "const": "export_start_export",
+          "default": "export_start_export",
+          "title": "Start export",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Export",
+          "x-display-name": "Start export",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: dataTypeName, outputFormat",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableExportStartExportConfig",
+      "type": "object"
+    },
+    "IterableInAppCancelConfig": {
+      "properties": {
+        "operation": {
+          "const": "in_app_cancel",
+          "default": "in_app_cancel",
+          "title": "Cancel a scheduled in-app message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "In App",
+          "x-display-name": "Cancel a scheduled in-app message",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableInAppCancelConfig",
+      "type": "object"
+    },
+    "IterableInAppGetMessagesConfig": {
+      "properties": {
+        "operation": {
+          "const": "in_app_get_messages",
+          "default": "in_app_get_messages",
+          "title": "Get a user's in-app messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "In App",
+          "x-display-name": "Get a user's in-app messages",
+          "x-is-trigger": false
+        },
+        "query_count": {
+          "minLength": 1,
+          "title": "Count",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: SDKVersion, email, packageName, platform, userId",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "query_count"
+      ],
+      "title": "IterableInAppGetMessagesConfig",
+      "type": "object"
+    },
+    "IterableInAppGetPriorityMessageConfig": {
+      "properties": {
+        "operation": {
+          "const": "in_app_get_priority_message",
+          "default": "in_app_get_priority_message",
+          "title": "Get a user's most relevant in-app message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "In App",
+          "x-display-name": "Get a user's most relevant in-app message",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: SDKVersion, email, packageName, platform, userId",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "IterableInAppGetPriorityMessageConfig",
+      "type": "object"
+    },
+    "IterableInAppTargetConfig": {
+      "properties": {
+        "operation": {
+          "const": "in_app_target",
+          "default": "in_app_target",
+          "title": "Send an in-app notification to a user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "In App",
+          "x-display-name": "Send an in-app notification to a user",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: campaignId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableInAppTargetConfig",
+      "type": "object"
+    },
+    "IterableInAppWebGetMessagesConfig": {
+      "properties": {
+        "operation": {
+          "const": "in_app_web_get_messages",
+          "default": "in_app_web_get_messages",
+          "title": "Get a user's web in-app messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "In App Web",
+          "x-display-name": "Get a user's web in-app messages",
+          "x-is-trigger": false
+        },
+        "query_count": {
+          "minLength": 1,
+          "title": "Count",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: SDKVersion, email, packageName, userId",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "query_count"
+      ],
+      "title": "IterableInAppWebGetMessagesConfig",
+      "type": "object"
+    },
+    "IterableListListsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "Get lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Get lists",
+          "x-is-trigger": false
+        }
+      },
+      "title": "IterableListListsConfig",
+      "type": "object"
+    },
+    "IterableListsCreateConfig": {
+      "properties": {
+        "operation": {
+          "const": "lists_create",
+          "default": "lists_create",
+          "title": "Create a static list",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-creates-resource": true,
+          "x-display-name": "Create a static list",
+          "x-is-trigger": false,
+          "x-resource-type": "iterable_lists_create"
+        },
+        "payload_json": {
+          "description": "Required keys: name",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableListsCreateConfig",
+      "type": "object"
+    },
+    "IterableListsDeleteConfig": {
+      "properties": {
+        "operation": {
+          "const": "lists_delete",
+          "default": "lists_delete",
+          "title": "Delete a list",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Delete a list",
+          "x-is-trigger": false
+        },
+        "listId": {
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "listId"
+      ],
+      "title": "IterableListsDeleteConfig",
+      "type": "object"
+    },
+    "IterableListsGetListCountConfig": {
+      "properties": {
+        "operation": {
+          "const": "lists_get_list_count",
+          "default": "lists_get_list_count",
+          "title": "Get count of users in list",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Get count of users in list",
+          "x-is-trigger": false
+        },
+        "listId": {
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "listId"
+      ],
+      "title": "IterableListsGetListCountConfig",
+      "type": "object"
+    },
+    "IterableListsSubscribeConfig": {
+      "properties": {
+        "operation": {
+          "const": "lists_subscribe",
+          "default": "lists_subscribe",
+          "title": "Add subscribers to list",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Add subscribers to list",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: listId, subscribers",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableListsSubscribeConfig",
+      "type": "object"
+    },
+    "IterableListsUnsubscribeConfig": {
+      "properties": {
+        "operation": {
+          "const": "lists_unsubscribe",
+          "default": "lists_unsubscribe",
+          "title": "Remove users from a list",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Remove users from a list",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: listId, subscribers",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableListsUnsubscribeConfig",
+      "type": "object"
+    },
+    "IterableMessageTypesMessageTypesConfig": {
+      "properties": {
+        "operation": {
+          "const": "message_types_message_types",
+          "default": "message_types_message_types",
+          "title": "List message types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messagetypes",
+          "x-display-name": "List message types",
+          "x-is-trigger": false
+        }
+      },
+      "title": "IterableMessageTypesMessageTypesConfig",
+      "type": "object"
+    },
+    "IterableMetadataDeleteKeyConfig": {
+      "properties": {
+        "operation": {
+          "const": "metadata_delete_key",
+          "default": "metadata_delete_key",
+          "title": "Delete a single metadata key/value",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Delete a single metadata key/value",
+          "x-is-trigger": false
+        },
+        "table": {
+          "minLength": 1,
+          "title": "Table",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "table",
+        "key"
+      ],
+      "title": "IterableMetadataDeleteKeyConfig",
+      "type": "object"
+    },
+    "IterableMetadataDeleteTableConfig": {
+      "properties": {
+        "operation": {
+          "const": "metadata_delete_table",
+          "default": "metadata_delete_table",
+          "title": "Delete a table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Delete a table",
+          "x-is-trigger": false
+        },
+        "table": {
+          "minLength": 1,
+          "title": "Table",
+          "type": "string"
+        }
+      },
+      "required": [
+        "table"
+      ],
+      "title": "IterableMetadataDeleteTableConfig",
+      "type": "object"
+    },
+    "IterableMetadataGetConfig": {
+      "properties": {
+        "operation": {
+          "const": "metadata_get",
+          "default": "metadata_get",
+          "title": "Get the metadata value of a single key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Get the metadata value of a single key",
+          "x-is-trigger": false
+        },
+        "table": {
+          "minLength": 1,
+          "title": "Table",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "table",
+        "key"
+      ],
+      "title": "IterableMetadataGetConfig",
+      "type": "object"
+    },
+    "IterableMetadataListConfig": {
+      "properties": {
+        "operation": {
+          "const": "metadata_list",
+          "default": "metadata_list",
+          "title": "List keys in a table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List keys in a table",
+          "x-is-trigger": false
+        },
+        "table": {
+          "minLength": 1,
+          "title": "Table",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: nextMarker",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "table"
+      ],
+      "title": "IterableMetadataListConfig",
+      "type": "object"
+    },
+    "IterableMetadataListTablesConfig": {
+      "properties": {
+        "operation": {
+          "const": "metadata_list_tables",
+          "default": "metadata_list_tables",
+          "title": "List available tables",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List available tables",
+          "x-is-trigger": false
+        }
+      },
+      "title": "IterableMetadataListTablesConfig",
+      "type": "object"
+    },
+    "IterableMetadataPutConfig": {
+      "properties": {
+        "operation": {
+          "const": "metadata_put",
+          "default": "metadata_put",
+          "title": "Create or replace metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Create or replace metadata",
+          "x-is-trigger": false
+        },
+        "table": {
+          "minLength": 1,
+          "title": "Table",
+          "type": "string"
+        },
+        "key": {
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Required keys: value",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "table",
+        "key",
+        "payload_json"
+      ],
+      "title": "IterableMetadataPutConfig",
+      "type": "object"
+    },
+    "IterablePushCancelConfig": {
+      "properties": {
+        "operation": {
+          "const": "push_cancel",
+          "default": "push_cancel",
+          "title": "Cancel a push notification to a user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Push",
+          "x-display-name": "Cancel a push notification to a user",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterablePushCancelConfig",
+      "type": "object"
+    },
+    "IterablePushTargetConfig": {
+      "properties": {
+        "operation": {
+          "const": "push_target",
+          "default": "push_target",
+          "title": "Send push notification to user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Push",
+          "x-display-name": "Send push notification to user",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: campaignId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterablePushTargetConfig",
+      "type": "object"
+    },
+    "IterableRcsCancelConfig": {
+      "properties": {
+        "operation": {
+          "const": "rcs_cancel",
+          "default": "rcs_cancel",
+          "title": "Cancel a scheduled RCS message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rcs",
+          "x-display-name": "Cancel a scheduled RCS message",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableRcsCancelConfig",
+      "type": "object"
+    },
+    "IterableRcsTargetConfig": {
+      "properties": {
+        "operation": {
+          "const": "rcs_target",
+          "default": "rcs_target",
+          "title": "Send an RCS message to a user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rcs",
+          "x-display-name": "Send an RCS message to a user",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: campaignId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableRcsTargetConfig",
+      "type": "object"
+    },
+    "IterableSmsCancelConfig": {
+      "properties": {
+        "operation": {
+          "const": "sms_cancel",
+          "default": "sms_cancel",
+          "title": "Cancel an SMS to a user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sms",
+          "x-display-name": "Cancel an SMS to a user",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableSmsCancelConfig",
+      "type": "object"
+    },
+    "IterableSmsTargetConfig": {
+      "properties": {
+        "operation": {
+          "const": "sms_target",
+          "default": "sms_target",
+          "title": "Send SMS notification to user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sms",
+          "x-display-name": "Send SMS notification to user",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: campaignId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableSmsTargetConfig",
+      "type": "object"
+    },
+    "IterableSnippetsCreateSnippetConfig": {
+      "properties": {
+        "operation": {
+          "const": "snippets_create_snippet",
+          "default": "snippets_create_snippet",
+          "title": "Create a snippet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Snippets",
+          "x-creates-resource": true,
+          "x-display-name": "Create a snippet",
+          "x-is-trigger": false,
+          "x-resource-type": "iterable_snippets_create_snippet"
+        },
+        "payload_json": {
+          "description": "Required keys: content, name",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableSnippetsCreateSnippetConfig",
+      "type": "object"
+    },
+    "IterableSnippetsDeleteSnippetConfig": {
+      "properties": {
+        "operation": {
+          "const": "snippets_delete_snippet",
+          "default": "snippets_delete_snippet",
+          "title": "Delete a snippet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Snippets",
+          "x-display-name": "Delete a snippet",
+          "x-is-trigger": false
+        },
+        "identifier": {
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "IterableSnippetsDeleteSnippetConfig",
+      "type": "object"
+    },
+    "IterableSnippetsGetSnippetConfig": {
+      "properties": {
+        "operation": {
+          "const": "snippets_get_snippet",
+          "default": "snippets_get_snippet",
+          "title": "Get snippet by ID or name",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Snippets",
+          "x-display-name": "Get snippet by ID or name",
+          "x-is-trigger": false
+        },
+        "identifier": {
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "IterableSnippetsGetSnippetConfig",
+      "type": "object"
+    },
+    "IterableSnippetsGetSnippetsConfig": {
+      "properties": {
+        "operation": {
+          "const": "snippets_get_snippets",
+          "default": "snippets_get_snippets",
+          "title": "Get all snippets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Snippets",
+          "x-display-name": "Get all snippets",
+          "x-is-trigger": false
+        }
+      },
+      "title": "IterableSnippetsGetSnippetsConfig",
+      "type": "object"
+    },
+    "IterableSnippetsUpdateSnippetConfig": {
+      "properties": {
+        "operation": {
+          "const": "snippets_update_snippet",
+          "default": "snippets_update_snippet",
+          "title": "Create or update a snippet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Snippets",
+          "x-display-name": "Create or update a snippet",
+          "x-is-trigger": false
+        },
+        "identifier": {
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Required keys: content",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "identifier",
+        "payload_json"
+      ],
+      "title": "IterableSnippetsUpdateSnippetConfig",
+      "type": "object"
+    },
+    "IterableSubscriptionsBulkSubscriptionActionConfig": {
+      "properties": {
+        "operation": {
+          "const": "subscriptions_bulk_subscription_action",
+          "default": "subscriptions_bulk_subscription_action",
+          "title": "Bulk subscription action on a list of users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Bulk subscription action on a list of users",
+          "x-is-trigger": false
+        },
+        "subscriptionGroup": {
+          "minLength": 1,
+          "title": "Subscription Group",
+          "type": "string"
+        },
+        "subscriptionGroupId": {
+          "minLength": 1,
+          "title": "Subscription Group Id",
+          "type": "string"
+        },
+        "query_action": {
+          "minLength": 1,
+          "title": "Action",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "subscriptionGroup",
+        "subscriptionGroupId",
+        "query_action",
+        "payload_json"
+      ],
+      "title": "IterableSubscriptionsBulkSubscriptionActionConfig",
+      "type": "object"
+    },
+    "IterableSubscriptionsSubscribeSingleUserByUserIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "subscriptions_subscribe_single_user_by_user_id",
+          "default": "subscriptions_subscribe_single_user_by_user_id",
+          "title": "Subscribe a single user by their userId",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Subscribe a single user by their userId",
+          "x-is-trigger": false
+        },
+        "subscriptionGroup": {
+          "minLength": 1,
+          "title": "Subscription Group",
+          "type": "string"
+        },
+        "subscriptionGroupId": {
+          "minLength": 1,
+          "title": "Subscription Group Id",
+          "type": "string"
+        },
+        "userId": {
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscriptionGroup",
+        "subscriptionGroupId",
+        "userId"
+      ],
+      "title": "IterableSubscriptionsSubscribeSingleUserByUserIdConfig",
+      "type": "object"
+    },
+    "IterableSubscriptionsSubscribeSingleUserConfig": {
+      "properties": {
+        "operation": {
+          "const": "subscriptions_subscribe_single_user",
+          "default": "subscriptions_subscribe_single_user",
+          "title": "Subscribe a single user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Subscribe a single user",
+          "x-is-trigger": false
+        },
+        "subscriptionGroup": {
+          "minLength": 1,
+          "title": "Subscription Group",
+          "type": "string"
+        },
+        "subscriptionGroupId": {
+          "minLength": 1,
+          "title": "Subscription Group Id",
+          "type": "string"
+        },
+        "userEmail": {
+          "minLength": 1,
+          "title": "User Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscriptionGroup",
+        "subscriptionGroupId",
+        "userEmail"
+      ],
+      "title": "IterableSubscriptionsSubscribeSingleUserConfig",
+      "type": "object"
+    },
+    "IterableSubscriptionsSubscribeSingleUserToDoubleOptInConfig": {
+      "properties": {
+        "operation": {
+          "const": "subscriptions_subscribe_single_user_to_double_opt_in",
+          "default": "subscriptions_subscribe_single_user_to_double_opt_in",
+          "title": "Trigger a double opt-in subscription flow",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Trigger a double opt-in subscription flow",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: messageTypeIds",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableSubscriptionsSubscribeSingleUserToDoubleOptInConfig",
+      "type": "object"
+    },
+    "IterableSubscriptionsUnsubscribeSingleUserByUserIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "subscriptions_unsubscribe_single_user_by_user_id",
+          "default": "subscriptions_unsubscribe_single_user_by_user_id",
+          "title": "Unsubscribe a single user by userId",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Unsubscribe a single user by userId",
+          "x-is-trigger": false
+        },
+        "subscriptionGroup": {
+          "minLength": 1,
+          "title": "Subscription Group",
+          "type": "string"
+        },
+        "subscriptionGroupId": {
+          "minLength": 1,
+          "title": "Subscription Group Id",
+          "type": "string"
+        },
+        "userId": {
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscriptionGroup",
+        "subscriptionGroupId",
+        "userId"
+      ],
+      "title": "IterableSubscriptionsUnsubscribeSingleUserByUserIdConfig",
+      "type": "object"
+    },
+    "IterableSubscriptionsUnsubscribeSingleUserConfig": {
+      "properties": {
+        "operation": {
+          "const": "subscriptions_unsubscribe_single_user",
+          "default": "subscriptions_unsubscribe_single_user",
+          "title": "Unsubscribe a single user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Unsubscribe a single user",
+          "x-is-trigger": false
+        },
+        "subscriptionGroup": {
+          "minLength": 1,
+          "title": "Subscription Group",
+          "type": "string"
+        },
+        "subscriptionGroupId": {
+          "minLength": 1,
+          "title": "Subscription Group Id",
+          "type": "string"
+        },
+        "userEmail": {
+          "minLength": 1,
+          "title": "User Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscriptionGroup",
+        "subscriptionGroupId",
+        "userEmail"
+      ],
+      "title": "IterableSubscriptionsUnsubscribeSingleUserConfig",
+      "type": "object"
+    },
+    "IterableTemplatesBulkDeleteTemplatesConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_bulk_delete_templates",
+          "default": "templates_bulk_delete_templates",
+          "title": "Bulk delete templates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Bulk delete templates",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: ids",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableTemplatesBulkDeleteTemplatesConfig",
+      "type": "object"
+    },
+    "IterableTemplatesEmailProofConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_email_proof",
+          "default": "templates_email_proof",
+          "title": "Send a proof of an email template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Send a proof of an email template",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: templateId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableTemplatesEmailProofConfig",
+      "type": "object"
+    },
+    "IterableTemplatesGetByClientTemplateIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_get_by_client_template_id",
+          "default": "templates_get_by_client_template_id",
+          "title": "Get an email template by clientTemplateId",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Get an email template by clientTemplateId",
+          "x-is-trigger": false
+        },
+        "query_client_template_id": {
+          "minLength": 1,
+          "title": "Client Template Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query_client_template_id"
+      ],
+      "title": "IterableTemplatesGetByClientTemplateIdConfig",
+      "type": "object"
+    },
+    "IterableTemplatesGetEmailTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_get_email_template",
+          "default": "templates_get_email_template",
+          "title": "Get an email template by templateId",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Get an email template by templateId",
+          "x-is-trigger": false
+        },
+        "query_template_id": {
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: locale",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "query_template_id"
+      ],
+      "title": "IterableTemplatesGetEmailTemplateConfig",
+      "type": "object"
+    },
+    "IterableTemplatesGetEmbeddedTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_get_embedded_template",
+          "default": "templates_get_embedded_template",
+          "title": "Get an embedded message template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Get an embedded message template",
+          "x-is-trigger": false
+        },
+        "query_template_id": {
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: locale",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "query_template_id"
+      ],
+      "title": "IterableTemplatesGetEmbeddedTemplateConfig",
+      "type": "object"
+    },
+    "IterableTemplatesGetInAppTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_get_in_app_template",
+          "default": "templates_get_in_app_template",
+          "title": "Get an in-app template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Get an in-app template",
+          "x-is-trigger": false
+        },
+        "query_template_id": {
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: locale",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "query_template_id"
+      ],
+      "title": "IterableTemplatesGetInAppTemplateConfig",
+      "type": "object"
+    },
+    "IterableTemplatesGetPushTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_get_push_template",
+          "default": "templates_get_push_template",
+          "title": "Get a push template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Get a push template",
+          "x-is-trigger": false
+        },
+        "query_template_id": {
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: locale",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "query_template_id"
+      ],
+      "title": "IterableTemplatesGetPushTemplateConfig",
+      "type": "object"
+    },
+    "IterableTemplatesGetSmstemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_get_smstemplate",
+          "default": "templates_get_smstemplate",
+          "title": "Get an SMS template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Get an SMS template",
+          "x-is-trigger": false
+        },
+        "query_template_id": {
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: locale",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "query_template_id"
+      ],
+      "title": "IterableTemplatesGetSmstemplateConfig",
+      "type": "object"
+    },
+    "IterableTemplatesGetTemplatesConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_get_templates",
+          "default": "templates_get_templates",
+          "title": "Get project templates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Get project templates",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: endDateTime, messageMedium, page, pageSize, sort, startDateTime, templateType",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "IterableTemplatesGetTemplatesConfig",
+      "type": "object"
+    },
+    "IterableTemplatesInappProofConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_inapp_proof",
+          "default": "templates_inapp_proof",
+          "title": "Send a proof of an in-app template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Send a proof of an in-app template",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: templateId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableTemplatesInappProofConfig",
+      "type": "object"
+    },
+    "IterableTemplatesPreviewEmailTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_preview_email_template",
+          "default": "templates_preview_email_template",
+          "title": "Preview email template with custom data",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Preview email template with custom data",
+          "x-is-trigger": false
+        },
+        "query_template_id": {
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: locale",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "query_template_id"
+      ],
+      "title": "IterableTemplatesPreviewEmailTemplateConfig",
+      "type": "object"
+    },
+    "IterableTemplatesPreviewInAppTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_preview_in_app_template",
+          "default": "templates_preview_in_app_template",
+          "title": "Preview in-app template with custom data",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Preview in-app template with custom data",
+          "x-is-trigger": false
+        },
+        "query_template_id": {
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: locale",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "query_template_id"
+      ],
+      "title": "IterableTemplatesPreviewInAppTemplateConfig",
+      "type": "object"
+    },
+    "IterableTemplatesPushProofConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_push_proof",
+          "default": "templates_push_proof",
+          "title": "Send a proof of a push template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Send a proof of a push template",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: templateId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableTemplatesPushProofConfig",
+      "type": "object"
+    },
+    "IterableTemplatesSmsProofConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_sms_proof",
+          "default": "templates_sms_proof",
+          "title": "Send a proof of an SMS template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Send a proof of an SMS template",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: templateId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableTemplatesSmsProofConfig",
+      "type": "object"
+    },
+    "IterableTemplatesUpdateEmailTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_update_email_template",
+          "default": "templates_update_email_template",
+          "title": "Update email template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Update email template",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: templateId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableTemplatesUpdateEmailTemplateConfig",
+      "type": "object"
+    },
+    "IterableTemplatesUpdateEmbeddedTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_update_embedded_template",
+          "default": "templates_update_embedded_template",
+          "title": "Update embedded message template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Update embedded message template",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: templateId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableTemplatesUpdateEmbeddedTemplateConfig",
+      "type": "object"
+    },
+    "IterableTemplatesUpdateInAppTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_update_in_app_template",
+          "default": "templates_update_in_app_template",
+          "title": "Update in-app template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Update in-app template",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: templateId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableTemplatesUpdateInAppTemplateConfig",
+      "type": "object"
+    },
+    "IterableTemplatesUpdatePushTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_update_push_template",
+          "default": "templates_update_push_template",
+          "title": "Update push template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Update push template",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: templateId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableTemplatesUpdatePushTemplateConfig",
+      "type": "object"
+    },
+    "IterableTemplatesUpdateSmstemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_update_smstemplate",
+          "default": "templates_update_smstemplate",
+          "title": "Update SMS template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Update SMS template",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: templateId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableTemplatesUpdateSmstemplateConfig",
+      "type": "object"
+    },
+    "IterableTemplatesUpsertEmailTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_upsert_email_template",
+          "default": "templates_upsert_email_template",
+          "title": "Create email template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-creates-resource": true,
+          "x-display-name": "Create email template",
+          "x-is-trigger": false,
+          "x-resource-type": "iterable_templates_upsert_email_template"
+        },
+        "payload_json": {
+          "description": "Required keys: clientTemplateId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableTemplatesUpsertEmailTemplateConfig",
+      "type": "object"
+    },
+    "IterableTemplatesUpsertEmbeddedTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_upsert_embedded_template",
+          "default": "templates_upsert_embedded_template",
+          "title": "Create an embedded message template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-creates-resource": true,
+          "x-display-name": "Create an embedded message template",
+          "x-is-trigger": false,
+          "x-resource-type": "iterable_templates_upsert_embedded_template"
+        },
+        "payload_json": {
+          "description": "Required keys: clientTemplateId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableTemplatesUpsertEmbeddedTemplateConfig",
+      "type": "object"
+    },
+    "IterableTemplatesUpsertInAppTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_upsert_in_app_template",
+          "default": "templates_upsert_in_app_template",
+          "title": "Create an in-app template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-creates-resource": true,
+          "x-display-name": "Create an in-app template",
+          "x-is-trigger": false,
+          "x-resource-type": "iterable_templates_upsert_in_app_template"
+        },
+        "payload_json": {
+          "description": "Required keys: clientTemplateId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableTemplatesUpsertInAppTemplateConfig",
+      "type": "object"
+    },
+    "IterableTemplatesUpsertPushTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_upsert_push_template",
+          "default": "templates_upsert_push_template",
+          "title": "Create a push template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-creates-resource": true,
+          "x-display-name": "Create a push template",
+          "x-is-trigger": false,
+          "x-resource-type": "iterable_templates_upsert_push_template"
+        },
+        "payload_json": {
+          "description": "Required keys: clientTemplateId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableTemplatesUpsertPushTemplateConfig",
+      "type": "object"
+    },
+    "IterableTemplatesUpsertSmstemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "templates_upsert_smstemplate",
+          "default": "templates_upsert_smstemplate",
+          "title": "Create an SMS template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-creates-resource": true,
+          "x-display-name": "Create an SMS template",
+          "x-is-trigger": false,
+          "x-resource-type": "iterable_templates_upsert_smstemplate"
+        },
+        "payload_json": {
+          "description": "Required keys: clientTemplateId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableTemplatesUpsertSmstemplateConfig",
+      "type": "object"
+    },
+    "IterableUsersBulkUpdateSubscriptionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_bulk_update_subscriptions",
+          "default": "users_bulk_update_subscriptions",
+          "title": "Bulk update user subscriptions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Bulk update user subscriptions",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: updateSubscriptionsRequests",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableUsersBulkUpdateSubscriptionsConfig",
+      "type": "object"
+    },
+    "IterableUsersBulkUpdateUserConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_bulk_update_user",
+          "default": "users_bulk_update_user",
+          "title": "Bulk update user data",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-creates-resource": true,
+          "x-display-name": "Bulk update user data",
+          "x-is-trigger": false,
+          "x-resource-type": "iterable_users_bulk_update_user"
+        },
+        "payload_json": {
+          "description": "Required keys: users",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableUsersBulkUpdateUserConfig",
+      "type": "object"
+    },
+    "IterableUsersDeleteEmailConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_delete_email",
+          "default": "users_delete_email",
+          "title": "Delete a user by email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Delete a user by email",
+          "x-is-trigger": false
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "IterableUsersDeleteEmailConfig",
+      "type": "object"
+    },
+    "IterableUsersDeleteUserIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_delete_user_id",
+          "default": "users_delete_user_id",
+          "title": "Delete user by userId",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Delete user by userId",
+          "x-is-trigger": false
+        },
+        "userId": {
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "userId"
+      ],
+      "title": "IterableUsersDeleteUserIdConfig",
+      "type": "object"
+    },
+    "IterableUsersDisableDeviceConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_disable_device",
+          "default": "users_disable_device",
+          "title": "Disable pushes to a mobile device",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Disable pushes to a mobile device",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required keys: token",
+          "title": "Request JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "IterableUsersDisableDeviceConfig",
+      "type": "object"
+    },
+    "IterableUsersExportProjectForgottenUserIdsConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_export_project_forgotten_user_ids",
+          "default": "users_export_project_forgotten_user_ids",
+          "title": "Get hashed forgotten userIds in compliance with GDPR",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get hashed forgotten userIds in compliance with GDPR",
+          "x-is-trigger": false
+        }
+      },
+      "title": "IterableUsersExportProjectForgottenUserIdsConfig",
+      "type": "object"
+    },
+    "IterableUsersExportProjectForgottenUsersConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_export_project_forgotten_users",
+          "default": "users_export_project_forgotten_users",
+          "title": "Get hashed forgotten users in compliance with GDPR",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get hashed forgotten users in compliance with GDPR",
+          "x-is-trigger": false
+        }
+      },
+      "title": "IterableUsersExportProjectForgottenUsersConfig",
+      "type": "object"
+    },
+    "IterableUsersForgetConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_forget",
+          "default": "users_forget",
+          "title": "Forget a user in compliance with GDPR",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Forget a user in compliance with GDPR",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableUsersForgetConfig",
+      "type": "object"
+    },
+    "IterableUsersGetSentMessagesConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_get_sent_messages",
+          "default": "users_get_sent_messages",
+          "title": "Get messages sent to a user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get messages sent to a user",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: campaignIds, email, endDateTime, excludeBlastCampaigns, limit, messageMedium, startDateTime, userId",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "IterableUsersGetSentMessagesConfig",
+      "type": "object"
+    },
+    "IterableUsersGetUserByIdByUserIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_get_user_by_id_by_user_id",
+          "default": "users_get_user_by_id_by_user_id",
+          "title": "Get a user by userId (query parameter)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get a user by userId (query parameter)",
+          "x-is-trigger": false
+        },
+        "query_user_id": {
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query_user_id"
+      ],
+      "title": "IterableUsersGetUserByIdByUserIdConfig",
+      "type": "object"
+    },
+    "IterableUsersGetUserByIdUserIdConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_get_user_by_id_user_id",
+          "default": "users_get_user_by_id_user_id",
+          "title": "Get a user by userId (path parameter)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get a user by userId (path parameter)",
+          "x-is-trigger": false
+        },
+        "userId": {
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "userId"
+      ],
+      "title": "IterableUsersGetUserByIdUserIdConfig",
+      "type": "object"
+    },
+    "IterableUsersGetUserEmailConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_get_user_email",
+          "default": "users_get_user_email",
+          "title": "Get a user by email (path parameter)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get a user by email (path parameter)",
+          "x-is-trigger": false
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "IterableUsersGetUserEmailConfig",
+      "type": "object"
+    },
+    "IterableUsersGetUserFieldsConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_get_user_fields",
+          "default": "users_get_user_fields",
+          "title": "Get all user fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get all user fields",
+          "x-is-trigger": false
+        }
+      },
+      "title": "IterableUsersGetUserFieldsConfig",
+      "type": "object"
+    },
+    "IterableUsersGetUserGetByEmailConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_get_user_get_by_email",
+          "default": "users_get_user_get_by_email",
+          "title": "Get a user by email (query parameter)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get a user by email (query parameter)",
+          "x-is-trigger": false
+        },
+        "query_email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query_email"
+      ],
+      "title": "IterableUsersGetUserGetByEmailConfig",
+      "type": "object"
+    },
+    "IterableUsersMergeUsersConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_merge_users",
+          "default": "users_merge_users",
+          "title": "Merge users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Merge users",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableUsersMergeUsersConfig",
+      "type": "object"
+    },
+    "IterableUsersRegisterBrowserTokenConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_register_browser_token",
+          "default": "users_register_browser_token",
+          "title": "Register a browser token for web push",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Register a browser token for web push",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: browserToken",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableUsersRegisterBrowserTokenConfig",
+      "type": "object"
+    },
+    "IterableUsersRegisterDeviceTokenConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_register_device_token",
+          "default": "users_register_device_token",
+          "title": "Register a device token for push",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Register a device token for push",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: device",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableUsersRegisterDeviceTokenConfig",
+      "type": "object"
+    },
+    "IterableUsersUnforgetConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_unforget",
+          "default": "users_unforget",
+          "title": "Unforget a user in compliance with GDPR",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Unforget a user in compliance with GDPR",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableUsersUnforgetConfig",
+      "type": "object"
+    },
+    "IterableUsersUpdateEmailConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_update_email",
+          "default": "users_update_email",
+          "title": "Update user email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Update user email",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: newEmail",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableUsersUpdateEmailConfig",
+      "type": "object"
+    },
+    "IterableUsersUpdateSubscriptionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_update_subscriptions",
+          "default": "users_update_subscriptions",
+          "title": "Update user subscriptions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Update user subscriptions",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableUsersUpdateSubscriptionsConfig",
+      "type": "object"
+    },
+    "IterableUsersUpdateUserConfig": {
+      "properties": {
+        "operation": {
+          "const": "users_update_user",
+          "default": "users_update_user",
+          "title": "Update user data",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-creates-resource": true,
+          "x-display-name": "Update user data",
+          "x-is-trigger": false,
+          "x-resource-type": "iterable_users_update_user"
+        },
+        "payload_json": {
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableUsersUpdateUserConfig",
+      "type": "object"
+    },
+    "IterableVerifyBeginSmsVerificationConfig": {
+      "properties": {
+        "operation": {
+          "const": "verify_begin_sms_verification",
+          "default": "verify_begin_sms_verification",
+          "title": "Begin SMS Verification",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Verify",
+          "x-display-name": "Begin SMS Verification",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: phoneNumber, verificationProfileId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableVerifyBeginSmsVerificationConfig",
+      "type": "object"
+    },
+    "IterableVerifyCheckSmsVerificationConfig": {
+      "properties": {
+        "operation": {
+          "const": "verify_check_sms_verification",
+          "default": "verify_check_sms_verification",
+          "title": "Check SMS Verification Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Verify",
+          "x-display-name": "Check SMS Verification Code",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: code, phoneNumber, verificationProfileId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableVerifyCheckSmsVerificationConfig",
+      "type": "object"
+    },
+    "IterableWebPushCancelConfig": {
+      "properties": {
+        "operation": {
+          "const": "web_push_cancel",
+          "default": "web_push_cancel",
+          "title": "Cancel a web push notification to a user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webpush",
+          "x-display-name": "Cancel a web push notification to a user",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableWebPushCancelConfig",
+      "type": "object"
+    },
+    "IterableWebPushTargetConfig": {
+      "properties": {
+        "operation": {
+          "const": "web_push_target",
+          "default": "web_push_target",
+          "title": "Send web push notification to user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webpush",
+          "x-display-name": "Send web push notification to user",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: campaignId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableWebPushTargetConfig",
+      "type": "object"
+    },
+    "IterableWebhooksGetWebhooksConfig": {
+      "properties": {
+        "operation": {
+          "const": "webhooks_get_webhooks",
+          "default": "webhooks_get_webhooks",
+          "title": "Get webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Get webhooks",
+          "x-is-trigger": false
+        }
+      },
+      "title": "IterableWebhooksGetWebhooksConfig",
+      "type": "object"
+    },
+    "IterableWebhooksUpdateWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "webhooks_update_webhook",
+          "default": "webhooks_update_webhook",
+          "title": "Update webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Update webhook",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: id",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableWebhooksUpdateWebhookConfig",
+      "type": "object"
+    },
+    "IterableWhatsAppCancelConfig": {
+      "properties": {
+        "operation": {
+          "const": "whats_app_cancel",
+          "default": "whats_app_cancel",
+          "title": "Cancel a scheduled WhatsApp message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Whatsapp",
+          "x-display-name": "Cancel a scheduled WhatsApp message",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Use Iterable's request body schema.",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableWhatsAppCancelConfig",
+      "type": "object"
+    },
+    "IterableWhatsAppTargetConfig": {
+      "properties": {
+        "operation": {
+          "const": "whats_app_target",
+          "default": "whats_app_target",
+          "title": "Send a WhatsApp message to a user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Whatsapp",
+          "x-display-name": "Send a WhatsApp message to a user",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: campaignId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableWhatsAppTargetConfig",
+      "type": "object"
+    },
+    "IterableWorkflowsGetJourneysConfig": {
+      "properties": {
+        "operation": {
+          "const": "workflows_get_journeys",
+          "default": "workflows_get_journeys",
+          "title": "Get journeys (workflows)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflows",
+          "x-display-name": "Get journeys (workflows)",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Iterable query keys: page, pageSize, sort, state",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "IterableWorkflowsGetJourneysConfig",
+      "type": "object"
+    },
+    "IterableWorkflowsTriggerWorkflowConfig": {
+      "properties": {
+        "operation": {
+          "const": "workflows_trigger_workflow",
+          "default": "workflows_trigger_workflow",
+          "title": "Trigger a journey (workflow)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflows",
+          "x-display-name": "Trigger a journey (workflow)",
+          "x-is-trigger": false
+        },
+        "payload_json": {
+          "description": "Required keys: workflowId",
+          "title": "Request JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "payload_json"
+      ],
+      "title": "IterableWorkflowsTriggerWorkflowConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "campaigns_abort_campaign": "#/$defs/IterableCampaignsAbortCampaignConfig",
+          "campaigns_activate_triggered_campaign": "#/$defs/IterableCampaignsActivateTriggeredCampaignConfig",
+          "campaigns_archive_campaigns": "#/$defs/IterableCampaignsArchiveCampaignsConfig",
+          "campaigns_campaigns": "#/$defs/IterableCampaignsCampaignsConfig",
+          "campaigns_cancel_campaign": "#/$defs/IterableCampaignsCancelCampaignConfig",
+          "campaigns_child_campaigns": "#/$defs/IterableCampaignsChildCampaignsConfig",
+          "campaigns_create_campaign": "#/$defs/IterableCampaignsCreateCampaignConfig",
+          "campaigns_deactivate_triggered_campaign": "#/$defs/IterableCampaignsDeactivateTriggeredCampaignConfig",
+          "campaigns_get_campaign": "#/$defs/IterableCampaignsGetCampaignConfig",
+          "campaigns_metrics": "#/$defs/IterableCampaignsMetricsConfig",
+          "campaigns_schedule_campaign": "#/$defs/IterableCampaignsScheduleCampaignConfig",
+          "campaigns_send_campaign": "#/$defs/IterableCampaignsSendCampaignConfig",
+          "campaigns_trigger_campaign": "#/$defs/IterableCampaignsTriggerCampaignConfig",
+          "catalogs_bulk_delete_catalog_items": "#/$defs/IterableCatalogsBulkDeleteCatalogItemsConfig",
+          "catalogs_bulk_update_catalog_items": "#/$defs/IterableCatalogsBulkUpdateCatalogItemsConfig",
+          "catalogs_create_catalog": "#/$defs/IterableCatalogsCreateCatalogConfig",
+          "catalogs_delete_catalog": "#/$defs/IterableCatalogsDeleteCatalogConfig",
+          "catalogs_delete_catalog_item": "#/$defs/IterableCatalogsDeleteCatalogItemConfig",
+          "catalogs_get_catalog_item": "#/$defs/IterableCatalogsGetCatalogItemConfig",
+          "catalogs_get_field_mappings": "#/$defs/IterableCatalogsGetFieldMappingsConfig",
+          "catalogs_index_catalog_item": "#/$defs/IterableCatalogsIndexCatalogItemConfig",
+          "catalogs_list_catalog_items": "#/$defs/IterableCatalogsListCatalogItemsConfig",
+          "catalogs_list_catalogs": "#/$defs/IterableCatalogsListCatalogsConfig",
+          "catalogs_partial_update_catalog_item": "#/$defs/IterableCatalogsPartialUpdateCatalogItemConfig",
+          "catalogs_update_field_types": "#/$defs/IterableCatalogsUpdateFieldTypesConfig",
+          "channels_channels": "#/$defs/IterableChannelsChannelsConfig",
+          "commerce_track_purchase": "#/$defs/IterableCommerceTrackPurchaseConfig",
+          "commerce_update_cart": "#/$defs/IterableCommerceUpdateCartConfig",
+          "email_cancel": "#/$defs/IterableEmailCancelConfig",
+          "email_target": "#/$defs/IterableEmailTargetConfig",
+          "embedded_messaging_messages": "#/$defs/IterableEmbeddedMessagingMessagesConfig",
+          "events_embedded_track_click": "#/$defs/IterableEventsEmbeddedTrackClickConfig",
+          "events_embedded_track_impression": "#/$defs/IterableEventsEmbeddedTrackImpressionConfig",
+          "events_embedded_track_received": "#/$defs/IterableEventsEmbeddedTrackReceivedConfig",
+          "events_in_app_consume": "#/$defs/IterableEventsInAppConsumeConfig",
+          "events_track": "#/$defs/IterableEventsTrackConfig",
+          "events_track_bulk": "#/$defs/IterableEventsTrackBulkConfig",
+          "events_track_in_app_click": "#/$defs/IterableEventsTrackInAppClickConfig",
+          "events_track_in_app_close": "#/$defs/IterableEventsTrackInAppCloseConfig",
+          "events_track_in_app_delivery": "#/$defs/IterableEventsTrackInAppDeliveryConfig",
+          "events_track_in_app_open": "#/$defs/IterableEventsTrackInAppOpenConfig",
+          "events_track_push_open": "#/$defs/IterableEventsTrackPushOpenConfig",
+          "events_track_web_push_click": "#/$defs/IterableEventsTrackWebPushClickConfig",
+          "events_user_events": "#/$defs/IterableEventsUserEventsConfig",
+          "events_user_events_by_user_id": "#/$defs/IterableEventsUserEventsByUserIdConfig",
+          "experiments_cancel": "#/$defs/IterableExperimentsCancelConfig",
+          "experiments_copy_variant": "#/$defs/IterableExperimentsCopyVariantConfig",
+          "experiments_create": "#/$defs/IterableExperimentsCreateConfig",
+          "experiments_declare_winner": "#/$defs/IterableExperimentsDeclareWinnerConfig",
+          "experiments_delete": "#/$defs/IterableExperimentsDeleteConfig",
+          "experiments_get": "#/$defs/IterableExperimentsGetConfig",
+          "experiments_list": "#/$defs/IterableExperimentsListConfig",
+          "experiments_metrics": "#/$defs/IterableExperimentsMetricsConfig",
+          "experiments_start": "#/$defs/IterableExperimentsStartConfig",
+          "experiments_totals": "#/$defs/IterableExperimentsTotalsConfig",
+          "experiments_trends": "#/$defs/IterableExperimentsTrendsConfig",
+          "experiments_update_settings": "#/$defs/IterableExperimentsUpdateSettingsConfig",
+          "experiments_variants": "#/$defs/IterableExperimentsVariantsConfig",
+          "export_cancel_export": "#/$defs/IterableExportCancelExportConfig",
+          "export_get_export_files": "#/$defs/IterableExportGetExportFilesConfig",
+          "export_get_export_jobs": "#/$defs/IterableExportGetExportJobsConfig",
+          "export_start_export": "#/$defs/IterableExportStartExportConfig",
+          "in_app_cancel": "#/$defs/IterableInAppCancelConfig",
+          "in_app_get_messages": "#/$defs/IterableInAppGetMessagesConfig",
+          "in_app_get_priority_message": "#/$defs/IterableInAppGetPriorityMessageConfig",
+          "in_app_target": "#/$defs/IterableInAppTargetConfig",
+          "in_app_web_get_messages": "#/$defs/IterableInAppWebGetMessagesConfig",
+          "list_lists": "#/$defs/IterableListListsConfig",
+          "lists_create": "#/$defs/IterableListsCreateConfig",
+          "lists_delete": "#/$defs/IterableListsDeleteConfig",
+          "lists_get_list_count": "#/$defs/IterableListsGetListCountConfig",
+          "lists_subscribe": "#/$defs/IterableListsSubscribeConfig",
+          "lists_unsubscribe": "#/$defs/IterableListsUnsubscribeConfig",
+          "message_types_message_types": "#/$defs/IterableMessageTypesMessageTypesConfig",
+          "metadata_delete_key": "#/$defs/IterableMetadataDeleteKeyConfig",
+          "metadata_delete_table": "#/$defs/IterableMetadataDeleteTableConfig",
+          "metadata_get": "#/$defs/IterableMetadataGetConfig",
+          "metadata_list": "#/$defs/IterableMetadataListConfig",
+          "metadata_list_tables": "#/$defs/IterableMetadataListTablesConfig",
+          "metadata_put": "#/$defs/IterableMetadataPutConfig",
+          "push_cancel": "#/$defs/IterablePushCancelConfig",
+          "push_target": "#/$defs/IterablePushTargetConfig",
+          "rcs_cancel": "#/$defs/IterableRcsCancelConfig",
+          "rcs_target": "#/$defs/IterableRcsTargetConfig",
+          "sms_cancel": "#/$defs/IterableSmsCancelConfig",
+          "sms_target": "#/$defs/IterableSmsTargetConfig",
+          "snippets_create_snippet": "#/$defs/IterableSnippetsCreateSnippetConfig",
+          "snippets_delete_snippet": "#/$defs/IterableSnippetsDeleteSnippetConfig",
+          "snippets_get_snippet": "#/$defs/IterableSnippetsGetSnippetConfig",
+          "snippets_get_snippets": "#/$defs/IterableSnippetsGetSnippetsConfig",
+          "snippets_update_snippet": "#/$defs/IterableSnippetsUpdateSnippetConfig",
+          "subscriptions_bulk_subscription_action": "#/$defs/IterableSubscriptionsBulkSubscriptionActionConfig",
+          "subscriptions_subscribe_single_user": "#/$defs/IterableSubscriptionsSubscribeSingleUserConfig",
+          "subscriptions_subscribe_single_user_by_user_id": "#/$defs/IterableSubscriptionsSubscribeSingleUserByUserIdConfig",
+          "subscriptions_subscribe_single_user_to_double_opt_in": "#/$defs/IterableSubscriptionsSubscribeSingleUserToDoubleOptInConfig",
+          "subscriptions_unsubscribe_single_user": "#/$defs/IterableSubscriptionsUnsubscribeSingleUserConfig",
+          "subscriptions_unsubscribe_single_user_by_user_id": "#/$defs/IterableSubscriptionsUnsubscribeSingleUserByUserIdConfig",
+          "templates_bulk_delete_templates": "#/$defs/IterableTemplatesBulkDeleteTemplatesConfig",
+          "templates_email_proof": "#/$defs/IterableTemplatesEmailProofConfig",
+          "templates_get_by_client_template_id": "#/$defs/IterableTemplatesGetByClientTemplateIdConfig",
+          "templates_get_email_template": "#/$defs/IterableTemplatesGetEmailTemplateConfig",
+          "templates_get_embedded_template": "#/$defs/IterableTemplatesGetEmbeddedTemplateConfig",
+          "templates_get_in_app_template": "#/$defs/IterableTemplatesGetInAppTemplateConfig",
+          "templates_get_push_template": "#/$defs/IterableTemplatesGetPushTemplateConfig",
+          "templates_get_smstemplate": "#/$defs/IterableTemplatesGetSmstemplateConfig",
+          "templates_get_templates": "#/$defs/IterableTemplatesGetTemplatesConfig",
+          "templates_inapp_proof": "#/$defs/IterableTemplatesInappProofConfig",
+          "templates_preview_email_template": "#/$defs/IterableTemplatesPreviewEmailTemplateConfig",
+          "templates_preview_in_app_template": "#/$defs/IterableTemplatesPreviewInAppTemplateConfig",
+          "templates_push_proof": "#/$defs/IterableTemplatesPushProofConfig",
+          "templates_sms_proof": "#/$defs/IterableTemplatesSmsProofConfig",
+          "templates_update_email_template": "#/$defs/IterableTemplatesUpdateEmailTemplateConfig",
+          "templates_update_embedded_template": "#/$defs/IterableTemplatesUpdateEmbeddedTemplateConfig",
+          "templates_update_in_app_template": "#/$defs/IterableTemplatesUpdateInAppTemplateConfig",
+          "templates_update_push_template": "#/$defs/IterableTemplatesUpdatePushTemplateConfig",
+          "templates_update_smstemplate": "#/$defs/IterableTemplatesUpdateSmstemplateConfig",
+          "templates_upsert_email_template": "#/$defs/IterableTemplatesUpsertEmailTemplateConfig",
+          "templates_upsert_embedded_template": "#/$defs/IterableTemplatesUpsertEmbeddedTemplateConfig",
+          "templates_upsert_in_app_template": "#/$defs/IterableTemplatesUpsertInAppTemplateConfig",
+          "templates_upsert_push_template": "#/$defs/IterableTemplatesUpsertPushTemplateConfig",
+          "templates_upsert_smstemplate": "#/$defs/IterableTemplatesUpsertSmstemplateConfig",
+          "users_bulk_update_subscriptions": "#/$defs/IterableUsersBulkUpdateSubscriptionsConfig",
+          "users_bulk_update_user": "#/$defs/IterableUsersBulkUpdateUserConfig",
+          "users_delete_email": "#/$defs/IterableUsersDeleteEmailConfig",
+          "users_delete_user_id": "#/$defs/IterableUsersDeleteUserIdConfig",
+          "users_disable_device": "#/$defs/IterableUsersDisableDeviceConfig",
+          "users_export_project_forgotten_user_ids": "#/$defs/IterableUsersExportProjectForgottenUserIdsConfig",
+          "users_export_project_forgotten_users": "#/$defs/IterableUsersExportProjectForgottenUsersConfig",
+          "users_forget": "#/$defs/IterableUsersForgetConfig",
+          "users_get_sent_messages": "#/$defs/IterableUsersGetSentMessagesConfig",
+          "users_get_user_by_id_by_user_id": "#/$defs/IterableUsersGetUserByIdByUserIdConfig",
+          "users_get_user_by_id_user_id": "#/$defs/IterableUsersGetUserByIdUserIdConfig",
+          "users_get_user_email": "#/$defs/IterableUsersGetUserEmailConfig",
+          "users_get_user_fields": "#/$defs/IterableUsersGetUserFieldsConfig",
+          "users_get_user_get_by_email": "#/$defs/IterableUsersGetUserGetByEmailConfig",
+          "users_merge_users": "#/$defs/IterableUsersMergeUsersConfig",
+          "users_register_browser_token": "#/$defs/IterableUsersRegisterBrowserTokenConfig",
+          "users_register_device_token": "#/$defs/IterableUsersRegisterDeviceTokenConfig",
+          "users_unforget": "#/$defs/IterableUsersUnforgetConfig",
+          "users_update_email": "#/$defs/IterableUsersUpdateEmailConfig",
+          "users_update_subscriptions": "#/$defs/IterableUsersUpdateSubscriptionsConfig",
+          "users_update_user": "#/$defs/IterableUsersUpdateUserConfig",
+          "verify_begin_sms_verification": "#/$defs/IterableVerifyBeginSmsVerificationConfig",
+          "verify_check_sms_verification": "#/$defs/IterableVerifyCheckSmsVerificationConfig",
+          "web_push_cancel": "#/$defs/IterableWebPushCancelConfig",
+          "web_push_target": "#/$defs/IterableWebPushTargetConfig",
+          "webhooks_get_webhooks": "#/$defs/IterableWebhooksGetWebhooksConfig",
+          "webhooks_update_webhook": "#/$defs/IterableWebhooksUpdateWebhookConfig",
+          "whats_app_cancel": "#/$defs/IterableWhatsAppCancelConfig",
+          "whats_app_target": "#/$defs/IterableWhatsAppTargetConfig",
+          "workflows_get_journeys": "#/$defs/IterableWorkflowsGetJourneysConfig",
+          "workflows_trigger_workflow": "#/$defs/IterableWorkflowsTriggerWorkflowConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/IterableCampaignsAbortCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCampaignsActivateTriggeredCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCampaignsArchiveCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCampaignsCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCampaignsCancelCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCampaignsChildCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCampaignsCreateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCampaignsDeactivateTriggeredCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCampaignsGetCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCampaignsMetricsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCampaignsScheduleCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCampaignsSendCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCampaignsTriggerCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCatalogsBulkDeleteCatalogItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCatalogsBulkUpdateCatalogItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCatalogsCreateCatalogConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCatalogsDeleteCatalogConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCatalogsDeleteCatalogItemConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCatalogsGetCatalogItemConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCatalogsGetFieldMappingsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCatalogsIndexCatalogItemConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCatalogsListCatalogItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCatalogsListCatalogsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCatalogsPartialUpdateCatalogItemConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCatalogsUpdateFieldTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableChannelsChannelsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCommerceTrackPurchaseConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableCommerceUpdateCartConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEmailCancelConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEmailTargetConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEmbeddedMessagingMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEventsEmbeddedTrackClickConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEventsEmbeddedTrackImpressionConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEventsEmbeddedTrackReceivedConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEventsInAppConsumeConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEventsTrackConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEventsTrackBulkConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEventsTrackInAppClickConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEventsTrackInAppCloseConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEventsTrackInAppDeliveryConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEventsTrackInAppOpenConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEventsTrackPushOpenConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEventsTrackWebPushClickConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEventsUserEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableEventsUserEventsByUserIdConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExperimentsCancelConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExperimentsCopyVariantConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExperimentsCreateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExperimentsDeclareWinnerConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExperimentsDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExperimentsGetConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExperimentsListConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExperimentsMetricsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExperimentsStartConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExperimentsTotalsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExperimentsTrendsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExperimentsUpdateSettingsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExperimentsVariantsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExportCancelExportConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExportGetExportFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExportGetExportJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableExportStartExportConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableInAppCancelConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableInAppGetMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableInAppGetPriorityMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableInAppTargetConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableInAppWebGetMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableListListsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableListsCreateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableListsDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableListsGetListCountConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableListsSubscribeConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableListsUnsubscribeConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableMessageTypesMessageTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableMetadataDeleteKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableMetadataDeleteTableConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableMetadataGetConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableMetadataListConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableMetadataListTablesConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableMetadataPutConfig"
+        },
+        {
+          "$ref": "#/$defs/IterablePushCancelConfig"
+        },
+        {
+          "$ref": "#/$defs/IterablePushTargetConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableRcsCancelConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableRcsTargetConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableSmsCancelConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableSmsTargetConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableSnippetsCreateSnippetConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableSnippetsDeleteSnippetConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableSnippetsGetSnippetConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableSnippetsGetSnippetsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableSnippetsUpdateSnippetConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableSubscriptionsBulkSubscriptionActionConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableSubscriptionsSubscribeSingleUserConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableSubscriptionsSubscribeSingleUserByUserIdConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableSubscriptionsSubscribeSingleUserToDoubleOptInConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableSubscriptionsUnsubscribeSingleUserConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableSubscriptionsUnsubscribeSingleUserByUserIdConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesBulkDeleteTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesEmailProofConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesGetByClientTemplateIdConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesGetEmailTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesGetEmbeddedTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesGetInAppTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesGetPushTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesGetSmstemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesGetTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesInappProofConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesPreviewEmailTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesPreviewInAppTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesPushProofConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesSmsProofConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesUpdateEmailTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesUpdateEmbeddedTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesUpdateInAppTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesUpdatePushTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesUpdateSmstemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesUpsertEmailTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesUpsertEmbeddedTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesUpsertInAppTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesUpsertPushTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableTemplatesUpsertSmstemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersBulkUpdateSubscriptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersBulkUpdateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersDeleteEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersDeleteUserIdConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersDisableDeviceConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersExportProjectForgottenUserIdsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersExportProjectForgottenUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersForgetConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersGetSentMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersGetUserByIdByUserIdConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersGetUserByIdUserIdConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersGetUserEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersGetUserFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersGetUserGetByEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersMergeUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersRegisterBrowserTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersRegisterDeviceTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersUnforgetConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersUpdateEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersUpdateSubscriptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableUsersUpdateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableVerifyBeginSmsVerificationConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableVerifyCheckSmsVerificationConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableWebPushCancelConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableWebPushTargetConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableWebhooksGetWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableWebhooksUpdateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableWhatsAppCancelConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableWhatsAppTargetConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableWorkflowsGetJourneysConfig"
+        },
+        {
+          "$ref": "#/$defs/IterableWorkflowsTriggerWorkflowConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/IterableApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Iterable Node Configuration",
+  "type": "object",
+  "x-agent-tool-provider": true,
+  "x-edit-examples": [
+    "Get Iterable lists and campaign performance",
+    "Add a user to an Iterable list",
+    "Update an Iterable user profile and track an event",
+    "Create an Iterable campaign from a template"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
