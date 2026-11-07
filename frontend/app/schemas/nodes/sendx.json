@@ -1,0 +1,1179 @@
+{
+  "$defs": {
+    "SendXCreateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "automation_effects_acknowledged": {
+          "const": true,
+          "description": "Contact/list/tag writes can trigger existing SendX automations. No notification-free, draft-isolation or account-ownership guarantee is established.",
+          "title": "Allow Possible Existing Automation Effects",
+          "type": "boolean"
+        },
+        "email": {
+          "description": "Required by the current RestEContact schema for both create and update. No identity/identify quickstart fields are accepted.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "Create Contact",
+          "x-is-trigger": false
+        },
+        "lists": {
+          "anyOf": [
+            {
+              "items": {
+                "pattern": "^(list_)?[a-zA-Z0-9]{22}$",
+                "type": "string"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional explicit currently allowed lists, checked by protected reads before create. Membership can trigger automations.",
+          "title": "Lists"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "pattern": "^(tag_)?[a-zA-Z0-9]{22}$",
+                "type": "string"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional explicit currently allowed tags, checked before create.",
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "automation_effects_acknowledged",
+        "email"
+      ],
+      "title": "SendXCreateContactConfig",
+      "type": "object"
+    },
+    "SendXCreateListConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "automation_effects_acknowledged": {
+          "const": true,
+          "description": "Contact/list/tag writes can trigger existing SendX automations. No notification-free, draft-isolation or account-ownership guarantee is established.",
+          "title": "Allow Possible Existing Automation Effects",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Create List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "Create List",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Only name is documented in RestEList; no opt-in type or suppression flag is sent.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "automation_effects_acknowledged",
+        "name"
+      ],
+      "title": "SendXCreateListConfig",
+      "type": "object"
+    },
+    "SendXCreateTagConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "automation_effects_acknowledged": {
+          "const": true,
+          "description": "Contact/list/tag writes can trigger existing SendX automations. No notification-free, draft-isolation or account-ownership guarantee is established.",
+          "title": "Allow Possible Existing Automation Effects",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Create Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "Create Tag",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name must be unique within the SendX team.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "automation_effects_acknowledged",
+        "name"
+      ],
+      "title": "SendXCreateTagConfig",
+      "type": "object"
+    },
+    "SendXDeleteContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "automation_effects_acknowledged": {
+          "const": true,
+          "description": "Contact/list/tag writes can trigger existing SendX automations. No notification-free, draft-isolation or account-ownership guarantee is established.",
+          "title": "Allow Possible Existing Automation Effects",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Soft Delete Owned Disposable Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "Soft Delete Owned Disposable Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "Explicit disposable target only. Soft deletion removes list memberships and cancels pending campaigns; history is retained.",
+          "pattern": "^contact_[a-zA-Z0-9]{22}$",
+          "title": "Contact Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "contact_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "automation_effects_acknowledged",
+        "contact_id"
+      ],
+      "title": "SendXDeleteContactConfig",
+      "type": "object"
+    },
+    "SendXDeleteListConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "automation_effects_acknowledged": {
+          "const": true,
+          "description": "Contact/list/tag writes can trigger existing SendX automations. No notification-free, draft-isolation or account-ownership guarantee is established.",
+          "title": "Allow Possible Existing Automation Effects",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "delete_list",
+          "default": "delete_list",
+          "title": "Delete Owned Disposable List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "Delete Owned Disposable List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "description": "Explicitly allowed current resource ID.",
+          "pattern": "^(list_)?[a-zA-Z0-9]{22}$",
+          "title": "List Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "automation_effects_acknowledged",
+        "list_id"
+      ],
+      "title": "SendXDeleteListConfig",
+      "type": "object"
+    },
+    "SendXDeleteTagConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "automation_effects_acknowledged": {
+          "const": true,
+          "description": "Contact/list/tag writes can trigger existing SendX automations. No notification-free, draft-isolation or account-ownership guarantee is established.",
+          "title": "Allow Possible Existing Automation Effects",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "delete_tag",
+          "default": "delete_tag",
+          "title": "Delete Owned Disposable Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "Delete Owned Disposable Tag",
+          "x-is-trigger": false
+        },
+        "tag_id": {
+          "description": "Explicitly allowed current resource ID.",
+          "pattern": "^(tag_)?[a-zA-Z0-9]{22}$",
+          "title": "Tag Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "tag_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "automation_effects_acknowledged",
+        "tag_id"
+      ],
+      "title": "SendXDeleteTagConfig",
+      "type": "object"
+    },
+    "SendXGetCampaignConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Get Allowed Campaign Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "Get Allowed Campaign Metadata",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "description": "Explicitly allowed current resource ID.",
+          "pattern": "^campaign_[a-zA-Z0-9]{22}$",
+          "title": "Campaign Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "campaign_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "SendXGetCampaignConfig",
+      "type": "object"
+    },
+    "SendXGetCampaignReportConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_campaign_report",
+          "default": "get_campaign_report",
+          "title": "Get Allowed Campaign Aggregate Report",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "Get Allowed Campaign Aggregate Report",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "description": "Protected campaign metadata is read first. Report link URLs and recipient records are not returned.",
+          "pattern": "^campaign_[a-zA-Z0-9]{22}$",
+          "title": "Campaign Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "campaign_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "SendXGetCampaignReportConfig",
+      "type": "object"
+    },
+    "SendXGetContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Allowed Contact Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "Get Allowed Contact Metadata",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "Explicitly allowed current resource ID.",
+          "pattern": "^contact_[a-zA-Z0-9]{22}$",
+          "title": "Contact Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "contact_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "SendXGetContactConfig",
+      "type": "object"
+    },
+    "SendXGetCustomFieldConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_custom_field",
+          "default": "get_custom_field",
+          "title": "Get Allowed Custom Field Definition",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "Get Allowed Custom Field Definition",
+          "x-is-trigger": false
+        },
+        "custom_field_id": {
+          "description": "Explicitly allowed current resource ID.",
+          "pattern": "^(custom_field_)?[a-zA-Z0-9]{22}$",
+          "title": "Custom Field Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "custom_field_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "custom_field_id"
+      ],
+      "title": "SendXGetCustomFieldConfig",
+      "type": "object"
+    },
+    "SendXGetListConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Get Allowed List Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "Get Allowed List Metadata",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "anyOf": [
+            {
+              "pattern": "^(list_)?[a-zA-Z0-9]{22}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to read the protected witness list.",
+          "title": "List Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "searchable": true
+          }
+        }
+      },
+      "title": "SendXGetListConfig",
+      "type": "object"
+    },
+    "SendXGetTagConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_tag",
+          "default": "get_tag",
+          "title": "Get Allowed Tag Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "Get Allowed Tag Metadata",
+          "x-is-trigger": false
+        },
+        "tag_id": {
+          "description": "Explicitly allowed current resource ID.",
+          "pattern": "^(tag_)?[a-zA-Z0-9]{22}$",
+          "title": "Tag Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "tag_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "SendXGetTagConfig",
+      "type": "object"
+    },
+    "SendXListCampaignsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "One provider page, with no automatic traversal.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Native cap follows the formal schema. Array length does not prove a last page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "List Allowed Campaign Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "List Allowed Campaign Metadata",
+          "x-is-trigger": false
+        },
+        "campaign_type": {
+          "default": "all",
+          "description": "Read filter only; this node cannot create, schedule or send campaigns.",
+          "enum": [
+            "all",
+            "draft",
+            "scheduled",
+            "sent"
+          ],
+          "title": "Campaign Type",
+          "type": "string"
+        }
+      },
+      "title": "SendXListCampaignsConfig",
+      "type": "object"
+    },
+    "SendXListContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "One provider page, with no automatic traversal.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Formal contact schema caps limit at 30; prose says 100. This node uses 30.",
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Allowed Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "List Allowed Contacts",
+          "x-is-trigger": false
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "SendXListContactsConfig",
+      "type": "object"
+    },
+    "SendXListCustomFieldsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "One provider page, with no automatic traversal.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Native cap follows the formal schema. Array length does not prove a last page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented partial search; omit to leave the filter unset.",
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_custom_fields",
+          "default": "list_custom_fields",
+          "title": "List Allowed Custom Field Definitions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "List Allowed Custom Field Definitions",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SendXListCustomFieldsConfig",
+      "type": "object"
+    },
+    "SendXListListsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "One provider page, with no automatic traversal.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Native cap follows the formal schema. Array length does not prove a last page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented partial search; omit to leave the filter unset.",
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "List Allowed Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "List Allowed Lists",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SendXListListsConfig",
+      "type": "object"
+    },
+    "SendXListTagsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "One provider page, with no automatic traversal.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Native cap follows the formal schema. Array length does not prove a last page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List Allowed Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "List Allowed Tags",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SendXListTagsConfig",
+      "type": "object"
+    },
+    "SendXTeamAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "sendx_team_api_key",
+          "default": "sendx_team_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Existing Team API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "witness_list_id": {
+          "description": "Read on connect and before operations. Keep this list separate from cleanup targets. Access proves resource reachability, not a named team or account identity.",
+          "pattern": "^(list_)?[a-zA-Z0-9]{22}$",
+          "title": "Existing Protected Witness List ID",
+          "type": "string"
+        },
+        "contact_ids": {
+          "items": {
+            "pattern": "^contact_[a-zA-Z0-9]{22}$",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Allowed Contact IDs",
+          "type": "array"
+        },
+        "list_ids": {
+          "description": "Include the witness. Optional list_ prefix is accepted by the documented path contract.",
+          "items": {
+            "pattern": "^(list_)?[a-zA-Z0-9]{22}$",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Allowed List IDs",
+          "type": "array"
+        },
+        "tag_ids": {
+          "items": {
+            "pattern": "^(tag_)?[a-zA-Z0-9]{22}$",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Allowed Tag IDs",
+          "type": "array"
+        },
+        "custom_field_ids": {
+          "items": {
+            "pattern": "^(custom_field_)?[a-zA-Z0-9]{22}$",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Allowed Custom Field IDs",
+          "type": "array"
+        },
+        "campaign_ids": {
+          "items": {
+            "pattern": "^campaign_[a-zA-Z0-9]{22}$",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Allowed Campaign Metadata IDs",
+          "type": "array"
+        },
+        "write_contact_ids": {
+          "items": {
+            "pattern": "^contact_[a-zA-Z0-9]{22}$",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Allowed Owned Contact Write IDs",
+          "type": "array"
+        },
+        "write_list_ids": {
+          "items": {
+            "pattern": "^(list_)?[a-zA-Z0-9]{22}$",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Allowed Owned List Write IDs",
+          "type": "array"
+        },
+        "write_tag_ids": {
+          "items": {
+            "pattern": "^(tag_)?[a-zA-Z0-9]{22}$",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Allowed Owned Tag Write IDs",
+          "type": "array"
+        },
+        "disposable_contact_ids": {
+          "description": "Explicit local cleanup declaration, not provider ownership evidence. Delete is soft and cancels pending campaigns.",
+          "items": {
+            "pattern": "^contact_[a-zA-Z0-9]{22}$",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Owned Disposable Contact IDs",
+          "type": "array"
+        },
+        "disposable_list_ids": {
+          "items": {
+            "pattern": "^(list_)?[a-zA-Z0-9]{22}$",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Owned Disposable List IDs",
+          "type": "array"
+        },
+        "disposable_tag_ids": {
+          "items": {
+            "pattern": "^(tag_)?[a-zA-Z0-9]{22}$",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Owned Disposable Tag IDs",
+          "type": "array"
+        },
+        "allowed_operations": {
+          "description": "Local restrictions do not grant SendX permissions. Get List is required for protected connection evidence. New IDs never automatically extend these restrictions.",
+          "items": {
+            "enum": [
+              "list_contacts",
+              "get_contact",
+              "list_lists",
+              "get_list",
+              "list_tags",
+              "get_tag",
+              "list_custom_fields",
+              "get_custom_field",
+              "list_campaigns",
+              "get_campaign",
+              "get_campaign_report",
+              "create_contact",
+              "update_contact",
+              "delete_contact",
+              "create_list",
+              "update_list",
+              "delete_list",
+              "create_tag",
+              "update_tag",
+              "delete_tag"
+            ],
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Allowed Operations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "api_key",
+        "witness_list_id",
+        "list_ids",
+        "allowed_operations"
+      ],
+      "title": "SendX Existing Team API Key",
+      "type": "object",
+      "x-credential-description": "Supply an existing key from SendX Settings \u2192 Team \u2192 API. This fixed-host REST integration uses X-Team-ApiKey. It does not issue keys or invent a self endpoint; protected list access is reachability evidence only.",
+      "x-credential-url": "https://docs.sendx.io/api-reference/introduction"
+    },
+    "SendXUpdateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "automation_effects_acknowledged": {
+          "const": true,
+          "description": "Contact/list/tag writes can trigger existing SendX automations. No notification-free, draft-isolation or account-ownership guarantee is established.",
+          "title": "Allow Possible Existing Automation Effects",
+          "type": "boolean"
+        },
+        "email": {
+          "description": "Required by the current RestEContact schema for both create and update. No identity/identify quickstart fields are accepted.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Owned Contact Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "Update Owned Contact Metadata",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "Explicitly allowed current resource ID.",
+          "pattern": "^contact_[a-zA-Z0-9]{22}$",
+          "title": "Contact Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "contact_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "automation_effects_acknowledged",
+        "email",
+        "contact_id"
+      ],
+      "title": "SendXUpdateContactConfig",
+      "type": "object"
+    },
+    "SendXUpdateListConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "automation_effects_acknowledged": {
+          "const": true,
+          "description": "Contact/list/tag writes can trigger existing SendX automations. No notification-free, draft-isolation or account-ownership guarantee is established.",
+          "title": "Allow Possible Existing Automation Effects",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "update_list",
+          "default": "update_list",
+          "title": "Rename Owned List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "Rename Owned List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "description": "Explicitly allowed current resource ID.",
+          "pattern": "^(list_)?[a-zA-Z0-9]{22}$",
+          "title": "List Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "automation_effects_acknowledged",
+        "list_id",
+        "name"
+      ],
+      "title": "SendXUpdateListConfig",
+      "type": "object"
+    },
+    "SendXUpdateTagConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "automation_effects_acknowledged": {
+          "const": true,
+          "description": "Contact/list/tag writes can trigger existing SendX automations. No notification-free, draft-isolation or account-ownership guarantee is established.",
+          "title": "Allow Possible Existing Automation Effects",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "update_tag",
+          "default": "update_tag",
+          "title": "Rename Owned Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Metadata",
+          "x-display-name": "Rename Owned Tag",
+          "x-is-trigger": false
+        },
+        "tag_id": {
+          "description": "Explicitly allowed current resource ID.",
+          "pattern": "^(tag_)?[a-zA-Z0-9]{22}$",
+          "title": "Tag Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "tag_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "automation_effects_acknowledged",
+        "tag_id",
+        "name"
+      ],
+      "title": "SendXUpdateTagConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/SendXCreateContactConfig",
+          "create_list": "#/$defs/SendXCreateListConfig",
+          "create_tag": "#/$defs/SendXCreateTagConfig",
+          "delete_contact": "#/$defs/SendXDeleteContactConfig",
+          "delete_list": "#/$defs/SendXDeleteListConfig",
+          "delete_tag": "#/$defs/SendXDeleteTagConfig",
+          "get_campaign": "#/$defs/SendXGetCampaignConfig",
+          "get_campaign_report": "#/$defs/SendXGetCampaignReportConfig",
+          "get_contact": "#/$defs/SendXGetContactConfig",
+          "get_custom_field": "#/$defs/SendXGetCustomFieldConfig",
+          "get_list": "#/$defs/SendXGetListConfig",
+          "get_tag": "#/$defs/SendXGetTagConfig",
+          "list_campaigns": "#/$defs/SendXListCampaignsConfig",
+          "list_contacts": "#/$defs/SendXListContactsConfig",
+          "list_custom_fields": "#/$defs/SendXListCustomFieldsConfig",
+          "list_lists": "#/$defs/SendXListListsConfig",
+          "list_tags": "#/$defs/SendXListTagsConfig",
+          "update_contact": "#/$defs/SendXUpdateContactConfig",
+          "update_list": "#/$defs/SendXUpdateListConfig",
+          "update_tag": "#/$defs/SendXUpdateTagConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SendXListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXListListsConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXGetListConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXGetTagConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXListCustomFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXGetCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXListCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXGetCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXGetCampaignReportConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXCreateListConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXUpdateListConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXDeleteListConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXUpdateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/SendXDeleteTagConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SendXTeamAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Sendx Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
