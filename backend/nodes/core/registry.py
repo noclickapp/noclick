@@ -136,6 +136,7 @@ from nodes.devin_node import DevinNode
 from nodes.asana_node import AsanaNode
 from nodes.mindbody_node import MindbodyNode
 from nodes.bytescale_node import BytescaleNode
+from nodes.linkwarden_node import LinkwardenNode
 from nodes.firestore_node import FirestoreNode
 from nodes.google_cloud_storage_node import GoogleCloudStorageNode
 from nodes.monday_node import MondayNode
@@ -321,6 +322,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-asana': AsanaNode,
     'automation-mindbody': MindbodyNode,
     'automation-bytescale': BytescaleNode,
+    'automation-linkwarden': LinkwardenNode,
     'automation-firestore': FirestoreNode,
     'automation-google-cloud-storage': GoogleCloudStorageNode,
     'automation-monday': MondayNode,

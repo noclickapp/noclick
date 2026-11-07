@@ -40,12 +40,6 @@
       "sha256": "2d5e096c5c3a2caaa2504f13e3b91680a98434a60416cdb433b45830b619a9d7"
     },
     {
-      "path": "frontend/public/icons/ringcentral.svg",
-      "source": "https://www.ringcentral.com/whyringcentral/pressimages.html → https://assets.ringcentral.com/us/brand-library/logos/ringcentral-logo.zip (SVG/RingCentral logo fullcolor.svg; unmodified)",
-      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
-      "sha256": "2d5e096c5c3a2caaa2504f13e3b91680a98434a60416cdb433b45830b619a9d7"
-    },
-    {
       "path": "frontend/public/icons/ashby-brand-vector.svg",
       "source": "https://www.ashbyhq.com (Ashby published brand artwork)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",

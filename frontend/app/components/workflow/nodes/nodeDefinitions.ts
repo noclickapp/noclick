@@ -153,6 +153,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-asana', 'AsanaNode'],
     ['automation-mindbody', 'MindbodyNode'],
     ['automation-bytescale', 'BytescaleNode'],
+    ['automation-linkwarden', 'LinkwardenNode'],
     ['automation-firestore', 'FirestoreNode'],
     ['automation-google-cloud-storage', 'GoogleCloudStorageNode'],
     ['automation-monday', 'MondayNode'],

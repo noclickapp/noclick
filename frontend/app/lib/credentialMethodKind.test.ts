@@ -19,6 +19,7 @@ const KNOWN_DISCRIMINATORS = ['oauth', 'qr_scan', 'purchase', 'script'];
 KNOWN_DISCRIMINATORS.push('porkbun_api_key');
 KNOWN_DISCRIMINATORS.push('kajabi_access_token');
 KNOWN_DISCRIMINATORS.push('bytescale_secret_api_key');
+KNOWN_DISCRIMINATORS.push('linkwarden_access_token');
 
 const schemasDir = join(dirname(fileURLToPath(import.meta.url)), '../schemas/nodes');
 
