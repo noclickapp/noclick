@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/sendgrid-brand-vector.svg",
+  "source": "https://sendgrid.com/ (brand artwork carried over from original integration noclickapp/noclick4#2430)",
+  "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+  "sha256": "a72264acfaeaf83569323c3472aa4af857e7d26d06aba4ea416297b1371c0426"
+}
