@@ -1,0 +1,923 @@
+{
+  "$defs": {
+    "SkuVaultAPITokensCredential": {
+      "description": "An existing approved TenantToken/UserToken pair; no login password.",
+      "properties": {
+        "credential_type": {
+          "const": "skuvault_api_tokens",
+          "default": "skuvault_api_tokens",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tenant_token": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Tenant token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "user_token": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "User token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "tenant_token",
+        "user_token"
+      ],
+      "title": "SkuVault API Tokens",
+      "type": "object",
+      "x-credential-url": "https://dev.skuvault.com/reference/gettokens"
+    },
+    "SkuVaultCreateProductConfig": {
+      "description": "Create a catalog product with existing classification/supplier/brand; no price or stock writes.",
+      "properties": {
+        "operation": {
+          "const": "create_product",
+          "default": "create_product",
+          "title": "Operation",
+          "type": "string"
+        },
+        "sku": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Sku",
+          "type": "string"
+        },
+        "classification": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Classification",
+          "type": "string"
+        },
+        "supplier": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Supplier",
+          "type": "string"
+        },
+        "brand": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Brand",
+          "type": "string"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SkuVaultProductMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "sku",
+        "classification",
+        "supplier",
+        "brand"
+      ],
+      "title": "SkuVaultCreateProductConfig",
+      "type": "object"
+    },
+    "SkuVaultGetProductConfig": {
+      "description": "Read a specific product by SKU through the Light-throttle route.",
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string"
+        },
+        "sku": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Sku",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sku"
+      ],
+      "title": "SkuVaultGetProductConfig",
+      "type": "object"
+    },
+    "SkuVaultGetWarehouseItemQuantityConfig": {
+      "description": "Read total quantity for one SKU in the explicitly requested regular warehouse.",
+      "properties": {
+        "operation": {
+          "const": "get_warehouse_item_quantity",
+          "default": "get_warehouse_item_quantity",
+          "title": "Operation",
+          "type": "string"
+        },
+        "warehouse_id": {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Warehouse Id",
+          "type": "integer"
+        },
+        "sku": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Sku",
+          "type": "string"
+        }
+      },
+      "required": [
+        "warehouse_id",
+        "sku"
+      ],
+      "title": "SkuVaultGetWarehouseItemQuantityConfig",
+      "type": "object"
+    },
+    "SkuVaultListAvailableQuantitiesConfig": {
+      "description": "Read available-to-sell counts with alternate SKU rows preserved.",
+      "properties": {
+        "page_number": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "modified_after_utc": {
+          "anyOf": [
+            {
+              "maxLength": 28,
+              "minLength": 20,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified After Utc"
+        },
+        "modified_before_utc": {
+          "anyOf": [
+            {
+              "maxLength": 28,
+              "minLength": 20,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified Before Utc"
+        },
+        "operation": {
+          "const": "list_available_quantities",
+          "default": "list_available_quantities",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page_size": {
+          "default": 1000,
+          "maximum": 5000,
+          "minimum": 1000,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "SkuVaultListAvailableQuantitiesConfig",
+      "type": "object"
+    },
+    "SkuVaultListBrandsConfig": {
+      "description": "Read one 1,000-record page of brand names/enabled state.",
+      "properties": {
+        "page_number": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_brands",
+          "default": "list_brands",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "SkuVaultListBrandsConfig",
+      "type": "object"
+    },
+    "SkuVaultListClassificationsConfig": {
+      "description": "Read one 1,000-record page of classification names/enabled state; no custom values.",
+      "properties": {
+        "page_number": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_classifications",
+          "default": "list_classifications",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "SkuVaultListClassificationsConfig",
+      "type": "object"
+    },
+    "SkuVaultListExternalWarehouseQuantitiesConfig": {
+      "description": "Read quantities for one external warehouse; total-FBA aggregation is disabled.",
+      "properties": {
+        "page_number": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_external_warehouse_quantities",
+          "default": "list_external_warehouse_quantities",
+          "title": "Operation",
+          "type": "string"
+        },
+        "warehouse_id": {
+          "description": "Numeric external warehouse ID from list_external_warehouses; regular IDs are a separate family",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Warehouse Id",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 1000,
+          "description": "Node cap 10,000; documented vendor range 1,000\u2013100,000",
+          "maximum": 10000,
+          "minimum": 1000,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "warehouse_id"
+      ],
+      "title": "SkuVaultListExternalWarehouseQuantitiesConfig",
+      "type": "object"
+    },
+    "SkuVaultListExternalWarehousesConfig": {
+      "description": "Read external warehouse IDs, codes and names; no paging parameters.",
+      "properties": {
+        "operation": {
+          "const": "list_external_warehouses",
+          "default": "list_external_warehouses",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "SkuVaultListExternalWarehousesConfig",
+      "type": "object"
+    },
+    "SkuVaultListInventoryByLocationConfig": {
+      "description": "Read SKU location/warehouse/count rows with optional SKU filters.",
+      "properties": {
+        "page_number": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_inventory_by_location",
+          "default": "list_inventory_by_location",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page_size": {
+          "default": 1000,
+          "maximum": 10000,
+          "minimum": 1000,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "skus": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 50,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Skus"
+        }
+      },
+      "title": "SkuVaultListInventoryByLocationConfig",
+      "type": "object"
+    },
+    "SkuVaultListItemQuantitiesConfig": {
+      "description": "Read product count metadata; optional filters use product codes, not guessed SKU fields.",
+      "properties": {
+        "page_number": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "modified_after_utc": {
+          "anyOf": [
+            {
+              "maxLength": 28,
+              "minLength": 20,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified After Utc"
+        },
+        "modified_before_utc": {
+          "anyOf": [
+            {
+              "maxLength": 28,
+              "minLength": 20,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified Before Utc"
+        },
+        "page_size": {
+          "default": 1000,
+          "description": "Vendor minimum 1,000. One page only, with bounded response bytes.",
+          "maximum": 10000,
+          "minimum": 1000,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_item_quantities",
+          "default": "list_item_quantities",
+          "title": "Operation",
+          "type": "string"
+        },
+        "codes": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 50,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Codes"
+        }
+      },
+      "title": "SkuVaultListItemQuantitiesConfig",
+      "type": "object"
+    },
+    "SkuVaultListKitQuantitiesConfig": {
+      "description": "Read one 10,000-kit page of available quantities. No undocumented before-date key.",
+      "properties": {
+        "page_number": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_kit_quantities",
+          "default": "list_kit_quantities",
+          "title": "Operation",
+          "type": "string"
+        },
+        "modified_after_utc": {
+          "anyOf": [
+            {
+              "maxLength": 28,
+              "minLength": 20,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified After Utc"
+        }
+      },
+      "title": "SkuVaultListKitQuantitiesConfig",
+      "type": "object"
+    },
+    "SkuVaultListKitsConfig": {
+      "description": "Read kit identifiers and bounded component definitions; cost/quantity expansion disabled.",
+      "properties": {
+        "page_number": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "modified_after_utc": {
+          "description": "Required documented UTC window start",
+          "maxLength": 28,
+          "minLength": 20,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
+          "title": "Modified After Utc",
+          "type": "string"
+        },
+        "modified_before_utc": {
+          "description": "Required documented UTC window end",
+          "maxLength": 28,
+          "minLength": 20,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
+          "title": "Modified Before Utc",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_kits",
+          "default": "list_kits",
+          "title": "Operation",
+          "type": "string"
+        },
+        "skus": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 50,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Skus"
+        }
+      },
+      "required": [
+        "modified_after_utc",
+        "modified_before_utc"
+      ],
+      "title": "SkuVaultListKitsConfig",
+      "type": "object"
+    },
+    "SkuVaultListLocationsConfig": {
+      "description": "Read location/warehouse metadata and current total quantity; no page fields.",
+      "properties": {
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "SkuVaultListLocationsConfig",
+      "type": "object"
+    },
+    "SkuVaultListProductsConfig": {
+      "description": "Read product identifiers/naming and inventory counts without cost or private fields.",
+      "properties": {
+        "page_number": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "modified_after_utc": {
+          "anyOf": [
+            {
+              "maxLength": 28,
+              "minLength": 20,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified After Utc"
+        },
+        "modified_before_utc": {
+          "anyOf": [
+            {
+              "maxLength": 28,
+              "minLength": 20,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified Before Utc"
+        },
+        "page_size": {
+          "default": 1000,
+          "description": "Vendor minimum 1,000. One page only, with bounded response bytes.",
+          "maximum": 10000,
+          "minimum": 1000,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string"
+        },
+        "skus": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 50,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Skus"
+        }
+      },
+      "title": "SkuVaultListProductsConfig",
+      "type": "object"
+    },
+    "SkuVaultListWarehouseItemQuantitiesConfig": {
+      "description": "Read SKU quantities from the explicitly requested regular warehouse.",
+      "properties": {
+        "page_number": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "modified_after_utc": {
+          "anyOf": [
+            {
+              "maxLength": 28,
+              "minLength": 20,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified After Utc"
+        },
+        "modified_before_utc": {
+          "anyOf": [
+            {
+              "maxLength": 28,
+              "minLength": 20,
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modified Before Utc"
+        },
+        "page_size": {
+          "default": 1000,
+          "description": "Vendor minimum 1,000. One page only, with bounded response bytes.",
+          "maximum": 10000,
+          "minimum": 1000,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_warehouse_item_quantities",
+          "default": "list_warehouse_item_quantities",
+          "title": "Operation",
+          "type": "string"
+        },
+        "warehouse_id": {
+          "description": "Numeric regular warehouse ID from list_warehouses; external IDs are a separate family",
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
+          "title": "Warehouse Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "warehouse_id"
+      ],
+      "title": "SkuVaultListWarehouseItemQuantitiesConfig",
+      "type": "object"
+    },
+    "SkuVaultListWarehousesConfig": {
+      "description": "Read regular warehouse IDs/codes. Severe throttle: one call per minute.",
+      "properties": {
+        "page_number": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_warehouses",
+          "default": "list_warehouses",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "SkuVaultListWarehousesConfig",
+      "type": "object"
+    },
+    "SkuVaultProductMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "short_description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Short Description"
+        },
+        "part_number": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Part Number"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code"
+        },
+        "brand": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Brand"
+        },
+        "classification": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Classification"
+        }
+      },
+      "title": "SkuVaultProductMetadata",
+      "type": "object"
+    },
+    "SkuVaultUpdateProductConfig": {
+      "description": "Update selected product metadata. Omitted fields stay untouched; explicit clear flags send blanks.",
+      "properties": {
+        "operation": {
+          "const": "update_product",
+          "default": "update_product",
+          "title": "Operation",
+          "type": "string"
+        },
+        "sku": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Sku",
+          "type": "string"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SkuVaultProductMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "clear_description": {
+          "default": false,
+          "title": "Clear Description",
+          "type": "boolean"
+        },
+        "clear_short_description": {
+          "default": false,
+          "title": "Clear Short Description",
+          "type": "boolean"
+        },
+        "clear_part_number": {
+          "default": false,
+          "title": "Clear Part Number",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "sku"
+      ],
+      "title": "SkuVaultUpdateProductConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "discriminator": {
+        "mapping": {
+          "create_product": "#/$defs/SkuVaultCreateProductConfig",
+          "get_product": "#/$defs/SkuVaultGetProductConfig",
+          "get_warehouse_item_quantity": "#/$defs/SkuVaultGetWarehouseItemQuantityConfig",
+          "list_available_quantities": "#/$defs/SkuVaultListAvailableQuantitiesConfig",
+          "list_brands": "#/$defs/SkuVaultListBrandsConfig",
+          "list_classifications": "#/$defs/SkuVaultListClassificationsConfig",
+          "list_external_warehouse_quantities": "#/$defs/SkuVaultListExternalWarehouseQuantitiesConfig",
+          "list_external_warehouses": "#/$defs/SkuVaultListExternalWarehousesConfig",
+          "list_inventory_by_location": "#/$defs/SkuVaultListInventoryByLocationConfig",
+          "list_item_quantities": "#/$defs/SkuVaultListItemQuantitiesConfig",
+          "list_kit_quantities": "#/$defs/SkuVaultListKitQuantitiesConfig",
+          "list_kits": "#/$defs/SkuVaultListKitsConfig",
+          "list_locations": "#/$defs/SkuVaultListLocationsConfig",
+          "list_products": "#/$defs/SkuVaultListProductsConfig",
+          "list_warehouse_item_quantities": "#/$defs/SkuVaultListWarehouseItemQuantitiesConfig",
+          "list_warehouses": "#/$defs/SkuVaultListWarehousesConfig",
+          "update_product": "#/$defs/SkuVaultUpdateProductConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SkuVaultListExternalWarehousesConfig"
+        },
+        {
+          "$ref": "#/$defs/SkuVaultListWarehousesConfig"
+        },
+        {
+          "$ref": "#/$defs/SkuVaultListLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/SkuVaultListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/SkuVaultGetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/SkuVaultListKitsConfig"
+        },
+        {
+          "$ref": "#/$defs/SkuVaultListBrandsConfig"
+        },
+        {
+          "$ref": "#/$defs/SkuVaultListClassificationsConfig"
+        },
+        {
+          "$ref": "#/$defs/SkuVaultListInventoryByLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/SkuVaultListItemQuantitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/SkuVaultListAvailableQuantitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/SkuVaultListKitQuantitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/SkuVaultListWarehouseItemQuantitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/SkuVaultGetWarehouseItemQuantityConfig"
+        },
+        {
+          "$ref": "#/$defs/SkuVaultListExternalWarehouseQuantitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/SkuVaultCreateProductConfig"
+        },
+        {
+          "$ref": "#/$defs/SkuVaultUpdateProductConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SkuVaultAPITokensCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Use an existing approved tenant/user token pair."
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Skuvault Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
