@@ -1,0 +1,1325 @@
+{
+  "$defs": {
+    "CheckConnection": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "CreateCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "fields_json": {
+          "description": "Array of native FieldValue objects with fieldId and one typed value. Fields must be in the saved write allowlist and current nonfinancial writable schema.",
+          "maxLength": 50000,
+          "title": "Metadata Fields JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "effects_confirmed": {
+          "description": "Changes may trigger existing CRM automations. Creation cannot be safely deduplicated by idempotencyId.",
+          "title": "Effects Confirmed",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "create_company",
+          "default": "create_company",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fields_json",
+        "effects_confirmed"
+      ],
+      "title": "CreateCompany",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "fields_json": {
+          "description": "Array of native FieldValue objects with fieldId and one typed value. Fields must be in the saved write allowlist and current nonfinancial writable schema.",
+          "maxLength": 50000,
+          "title": "Metadata Fields JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "effects_confirmed": {
+          "description": "Changes may trigger existing CRM automations. Creation cannot be safely deduplicated by idempotencyId.",
+          "title": "Effects Confirmed",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fields_json",
+        "effects_confirmed"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateOpportunity": {
+      "additionalProperties": false,
+      "properties": {
+        "fields_json": {
+          "description": "Array of native FieldValue objects with fieldId and one typed value. Fields must be in the saved write allowlist and current nonfinancial writable schema.",
+          "maxLength": 50000,
+          "title": "Metadata Fields JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "effects_confirmed": {
+          "description": "Changes may trigger existing CRM automations. Creation cannot be safely deduplicated by idempotencyId.",
+          "title": "Effects Confirmed",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "create_opportunity",
+          "default": "create_opportunity",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fields_json",
+        "effects_confirmed"
+      ],
+      "title": "CreateOpportunity",
+      "type": "object"
+    },
+    "GetAssociation": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_association",
+          "default": "get_association",
+          "title": "Operation",
+          "type": "string"
+        },
+        "association_id": {
+          "title": "Association Id",
+          "type": "string"
+        },
+        "association_type": {
+          "enum": [
+            "Contact-Company",
+            "Company-Company",
+            "Company-Opportunity",
+            "Contact-Opportunity"
+          ],
+          "title": "Association Type",
+          "type": "string"
+        },
+        "from_id": {
+          "title": "From Id",
+          "type": "string"
+        },
+        "to_id": {
+          "title": "To Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "association_id",
+        "association_type",
+        "from_id",
+        "to_id"
+      ],
+      "title": "GetAssociation",
+      "type": "object"
+    },
+    "GetCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "operation"
+            ],
+            "field_name": "record_id",
+            "searchable": true
+          },
+          "x-resource-type": "vendasta_record"
+        },
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "GetCompany",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "operation"
+            ],
+            "field_name": "record_id",
+            "searchable": true
+          },
+          "x-resource-type": "vendasta_record"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetFieldSchema": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_field_schema",
+          "default": "get_field_schema",
+          "title": "Operation",
+          "type": "string"
+        },
+        "object_type": {
+          "default": "Contact",
+          "enum": [
+            "Contact",
+            "Company",
+            "Opportunity"
+          ],
+          "title": "Object Type",
+          "type": "string"
+        },
+        "field_id": {
+          "title": "Field Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "object_type"
+            ],
+            "field_name": "field_id",
+            "searchable": true
+          },
+          "x-resource-type": "vendasta_field"
+        }
+      },
+      "required": [
+        "field_id"
+      ],
+      "title": "GetFieldSchema",
+      "type": "object"
+    },
+    "GetOpportunity": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "operation"
+            ],
+            "field_name": "record_id",
+            "searchable": true
+          },
+          "x-resource-type": "vendasta_record"
+        },
+        "operation": {
+          "const": "get_opportunity",
+          "default": "get_opportunity",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "GetOpportunity",
+      "type": "object"
+    },
+    "GetPipeline": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_pipeline",
+          "default": "get_pipeline",
+          "title": "Operation",
+          "type": "string"
+        },
+        "pipeline_id": {
+          "title": "Pipeline Id",
+          "type": "string"
+        },
+        "object_type": {
+          "default": "Opportunity",
+          "enum": [
+            "Contact",
+            "Company",
+            "Opportunity"
+          ],
+          "title": "Object Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pipeline_id"
+      ],
+      "title": "GetPipeline",
+      "type": "object"
+    },
+    "ListAssociations": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_associations",
+          "default": "list_associations",
+          "title": "Operation",
+          "type": "string"
+        },
+        "association_type": {
+          "enum": [
+            "Contact-Company",
+            "Company-Company",
+            "Company-Opportunity",
+            "Contact-Opportunity"
+          ],
+          "title": "Association Type",
+          "type": "string"
+        },
+        "from_id": {
+          "title": "Source Record ID",
+          "type": "string"
+        },
+        "to_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Optional Target Record ID"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "max_pages": {
+          "default": 1,
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Max Pages",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "association_type",
+        "from_id"
+      ],
+      "title": "ListAssociations",
+      "type": "object"
+    },
+    "ListCompanies": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "max_pages": {
+          "default": 1,
+          "description": "Bounded pages; incomplete results retain has_more and next_cursor.",
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Max Pages",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "filters_json": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional typed filtersV2 FilterGroup JSON. The entire query is repeated on every page.",
+          "title": "Filters Json",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "sort_json": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional array of fieldId/sortDirection objects; use actual fieldId for sorting.",
+          "title": "Sort Json",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "list_companies",
+          "default": "list_companies",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCompanies",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "max_pages": {
+          "default": 1,
+          "description": "Bounded pages; incomplete results retain has_more and next_cursor.",
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Max Pages",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "filters_json": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional typed filtersV2 FilterGroup JSON. The entire query is repeated on every page.",
+          "title": "Filters Json",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "sort_json": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional array of fieldId/sortDirection objects; use actual fieldId for sorting.",
+          "title": "Sort Json",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListFieldOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_field_options",
+          "default": "list_field_options",
+          "title": "Operation",
+          "type": "string"
+        },
+        "object_type": {
+          "default": "Contact",
+          "enum": [
+            "Contact",
+            "Company",
+            "Opportunity"
+          ],
+          "title": "Object Type",
+          "type": "string"
+        },
+        "field_id": {
+          "title": "Field Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "object_type"
+            ],
+            "field_name": "field_id",
+            "searchable": true
+          },
+          "x-resource-type": "vendasta_field"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "required": [
+        "field_id"
+      ],
+      "title": "ListFieldOptions",
+      "type": "object"
+    },
+    "ListFieldSchemas": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_field_schemas",
+          "default": "list_field_schemas",
+          "title": "Operation",
+          "type": "string"
+        },
+        "object_type": {
+          "default": "Contact",
+          "enum": [
+            "Contact",
+            "Company",
+            "Opportunity"
+          ],
+          "title": "Object Type",
+          "type": "string"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "max_pages": {
+          "default": 1,
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Max Pages",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ListFieldSchemas",
+      "type": "object"
+    },
+    "ListOpportunities": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "max_pages": {
+          "default": 1,
+          "description": "Bounded pages; incomplete results retain has_more and next_cursor.",
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Max Pages",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "filters_json": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional typed filtersV2 FilterGroup JSON. The entire query is repeated on every page.",
+          "title": "Filters Json",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "sort_json": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional array of fieldId/sortDirection objects; use actual fieldId for sorting.",
+          "title": "Sort Json",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "operation": {
+          "const": "list_opportunities",
+          "default": "list_opportunities",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListOpportunities",
+      "type": "object"
+    },
+    "ListPipelines": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_pipelines",
+          "default": "list_pipelines",
+          "title": "Operation",
+          "type": "string"
+        },
+        "object_type": {
+          "default": "Opportunity",
+          "enum": [
+            "Contact",
+            "Company",
+            "Opportunity"
+          ],
+          "title": "Object Type",
+          "type": "string"
+        }
+      },
+      "title": "ListPipelines",
+      "type": "object"
+    },
+    "RestoreCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "operation"
+            ],
+            "field_name": "record_id",
+            "searchable": true
+          },
+          "x-resource-type": "vendasta_record"
+        },
+        "effects_confirmed": {
+          "description": "Confirm soft deletion or restoration; soft deletion does not erase data.",
+          "title": "Effects Confirmed",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "restore_company",
+          "default": "restore_company",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id",
+        "effects_confirmed"
+      ],
+      "title": "RestoreCompany",
+      "type": "object"
+    },
+    "RestoreContact": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "operation"
+            ],
+            "field_name": "record_id",
+            "searchable": true
+          },
+          "x-resource-type": "vendasta_record"
+        },
+        "effects_confirmed": {
+          "description": "Confirm soft deletion or restoration; soft deletion does not erase data.",
+          "title": "Effects Confirmed",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "restore_contact",
+          "default": "restore_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id",
+        "effects_confirmed"
+      ],
+      "title": "RestoreContact",
+      "type": "object"
+    },
+    "RestoreOpportunity": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "operation"
+            ],
+            "field_name": "record_id",
+            "searchable": true
+          },
+          "x-resource-type": "vendasta_record"
+        },
+        "effects_confirmed": {
+          "description": "Confirm soft deletion or restoration; soft deletion does not erase data.",
+          "title": "Effects Confirmed",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "restore_opportunity",
+          "default": "restore_opportunity",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id",
+        "effects_confirmed"
+      ],
+      "title": "RestoreOpportunity",
+      "type": "object"
+    },
+    "SoftDeleteCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "operation"
+            ],
+            "field_name": "record_id",
+            "searchable": true
+          },
+          "x-resource-type": "vendasta_record"
+        },
+        "effects_confirmed": {
+          "description": "Confirm soft deletion or restoration; soft deletion does not erase data.",
+          "title": "Effects Confirmed",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "soft_delete_company",
+          "default": "soft_delete_company",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id",
+        "effects_confirmed"
+      ],
+      "title": "SoftDeleteCompany",
+      "type": "object"
+    },
+    "SoftDeleteContact": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "operation"
+            ],
+            "field_name": "record_id",
+            "searchable": true
+          },
+          "x-resource-type": "vendasta_record"
+        },
+        "effects_confirmed": {
+          "description": "Confirm soft deletion or restoration; soft deletion does not erase data.",
+          "title": "Effects Confirmed",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "soft_delete_contact",
+          "default": "soft_delete_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id",
+        "effects_confirmed"
+      ],
+      "title": "SoftDeleteContact",
+      "type": "object"
+    },
+    "SoftDeleteOpportunity": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "operation"
+            ],
+            "field_name": "record_id",
+            "searchable": true
+          },
+          "x-resource-type": "vendasta_record"
+        },
+        "effects_confirmed": {
+          "description": "Confirm soft deletion or restoration; soft deletion does not erase data.",
+          "title": "Effects Confirmed",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "soft_delete_opportunity",
+          "default": "soft_delete_opportunity",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id",
+        "effects_confirmed"
+      ],
+      "title": "SoftDeleteOpportunity",
+      "type": "object"
+    },
+    "UpdateCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "operation"
+            ],
+            "field_name": "record_id",
+            "searchable": true
+          },
+          "x-resource-type": "vendasta_record"
+        },
+        "fields_json": {
+          "description": "Array of native FieldValue objects with fieldId and one typed value. Fields must be in the saved write allowlist and current nonfinancial writable schema.",
+          "maxLength": 50000,
+          "title": "Metadata Fields JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "effects_confirmed": {
+          "description": "Changes may trigger existing CRM automations. Creation cannot be safely deduplicated by idempotencyId.",
+          "title": "Effects Confirmed",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "update_company",
+          "default": "update_company",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id",
+        "fields_json",
+        "effects_confirmed"
+      ],
+      "title": "UpdateCompany",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "operation"
+            ],
+            "field_name": "record_id",
+            "searchable": true
+          },
+          "x-resource-type": "vendasta_record"
+        },
+        "fields_json": {
+          "description": "Array of native FieldValue objects with fieldId and one typed value. Fields must be in the saved write allowlist and current nonfinancial writable schema.",
+          "maxLength": 50000,
+          "title": "Metadata Fields JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "effects_confirmed": {
+          "description": "Changes may trigger existing CRM automations. Creation cannot be safely deduplicated by idempotencyId.",
+          "title": "Effects Confirmed",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id",
+        "fields_json",
+        "effects_confirmed"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateOpportunity": {
+      "additionalProperties": false,
+      "properties": {
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "operation"
+            ],
+            "field_name": "record_id",
+            "searchable": true
+          },
+          "x-resource-type": "vendasta_record"
+        },
+        "fields_json": {
+          "description": "Array of native FieldValue objects with fieldId and one typed value. Fields must be in the saved write allowlist and current nonfinancial writable schema.",
+          "maxLength": 50000,
+          "title": "Metadata Fields JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "effects_confirmed": {
+          "description": "Changes may trigger existing CRM automations. Creation cannot be safely deduplicated by idempotencyId.",
+          "title": "Effects Confirmed",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "update_opportunity",
+          "default": "update_opportunity",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id",
+        "fields_json",
+        "effects_confirmed"
+      ],
+      "title": "UpdateOpportunity",
+      "type": "object"
+    },
+    "VendastaAccessTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "vendasta_access_token",
+          "default": "vendasta_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Access Token",
+          "type": "string",
+          "ui:sensitive": true,
+          "ui:widget": "password"
+        },
+        "environment": {
+          "enum": [
+            "prod",
+            "demo"
+          ],
+          "title": "Environment",
+          "type": "string"
+        },
+        "namespace": {
+          "description": "Partner ID or account group ID authorized for this token.",
+          "title": "CRM Namespace",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "Issuer-reported ISO timestamp with timezone; this is not inferred from the token.",
+          "title": "Token Expiration",
+          "type": "string"
+        },
+        "scope": {
+          "description": "Exact space-separated scopes returned by the issuer.",
+          "title": "Granted Scopes",
+          "type": "string"
+        },
+        "read_fields_csv": {
+          "default": "standard__first_name,standard__last_name,standard__company_name,standard__opportunity_name",
+          "description": "Explicit comma-separated field IDs or external IDs whose values may appear in outputs.",
+          "title": "Readable Metadata Fields",
+          "type": "string"
+        },
+        "write_fields_csv": {
+          "default": "standard__first_name,standard__last_name,standard__company_name,standard__opportunity_name,standard__opportunity_pipeline_id",
+          "description": "Explicit field IDs or external IDs allowed for record metadata mutations.",
+          "title": "Writable Metadata Fields",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "environment",
+        "namespace",
+        "expires_at",
+        "scope"
+      ],
+      "title": "Vendasta Access Token",
+      "type": "object",
+      "x-credential-instructions": "Enter an issued OAuth2 access token and its issuer-reported expiry/scopes. Choose its environment and one authorized CRM namespace. NoClick does not mint or renew this supplied token. CRM API access may require Trusted Tester entitlement.",
+      "x-credential-url": "https://developers.vendasta.com/getting-started/authorization/"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_connection": "#/$defs/CheckConnection",
+          "create_company": "#/$defs/CreateCompany",
+          "create_contact": "#/$defs/CreateContact",
+          "create_opportunity": "#/$defs/CreateOpportunity",
+          "get_association": "#/$defs/GetAssociation",
+          "get_company": "#/$defs/GetCompany",
+          "get_contact": "#/$defs/GetContact",
+          "get_field_schema": "#/$defs/GetFieldSchema",
+          "get_opportunity": "#/$defs/GetOpportunity",
+          "get_pipeline": "#/$defs/GetPipeline",
+          "list_associations": "#/$defs/ListAssociations",
+          "list_companies": "#/$defs/ListCompanies",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_field_options": "#/$defs/ListFieldOptions",
+          "list_field_schemas": "#/$defs/ListFieldSchemas",
+          "list_opportunities": "#/$defs/ListOpportunities",
+          "list_pipelines": "#/$defs/ListPipelines",
+          "restore_company": "#/$defs/RestoreCompany",
+          "restore_contact": "#/$defs/RestoreContact",
+          "restore_opportunity": "#/$defs/RestoreOpportunity",
+          "soft_delete_company": "#/$defs/SoftDeleteCompany",
+          "soft_delete_contact": "#/$defs/SoftDeleteContact",
+          "soft_delete_opportunity": "#/$defs/SoftDeleteOpportunity",
+          "update_company": "#/$defs/UpdateCompany",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_opportunity": "#/$defs/UpdateOpportunity"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/SoftDeleteContact"
+        },
+        {
+          "$ref": "#/$defs/RestoreContact"
+        },
+        {
+          "$ref": "#/$defs/ListCompanies"
+        },
+        {
+          "$ref": "#/$defs/GetCompany"
+        },
+        {
+          "$ref": "#/$defs/CreateCompany"
+        },
+        {
+          "$ref": "#/$defs/UpdateCompany"
+        },
+        {
+          "$ref": "#/$defs/SoftDeleteCompany"
+        },
+        {
+          "$ref": "#/$defs/RestoreCompany"
+        },
+        {
+          "$ref": "#/$defs/ListOpportunities"
+        },
+        {
+          "$ref": "#/$defs/GetOpportunity"
+        },
+        {
+          "$ref": "#/$defs/CreateOpportunity"
+        },
+        {
+          "$ref": "#/$defs/UpdateOpportunity"
+        },
+        {
+          "$ref": "#/$defs/SoftDeleteOpportunity"
+        },
+        {
+          "$ref": "#/$defs/RestoreOpportunity"
+        },
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/ListFieldSchemas"
+        },
+        {
+          "$ref": "#/$defs/GetFieldSchema"
+        },
+        {
+          "$ref": "#/$defs/ListFieldOptions"
+        },
+        {
+          "$ref": "#/$defs/ListAssociations"
+        },
+        {
+          "$ref": "#/$defs/GetAssociation"
+        },
+        {
+          "$ref": "#/$defs/ListPipelines"
+        },
+        {
+          "$ref": "#/$defs/GetPipeline"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VendastaAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Vendasta Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Read scoped CRM contacts, companies and opportunity metadata",
+    "Update explicitly granted fields using the current namespace schema",
+    "Inspect directional record associations"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
