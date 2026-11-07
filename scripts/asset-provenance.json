@@ -1226,6 +1226,12 @@
       "source": "https://github.com/noclickapp/noclick-cloud/commit/407abd723 (Pulsetic integration asset provenance note)",
       "license": "NoClick integration documentation",
       "sha256": "e829ba921a46b7b9e3e0e592db119ce2da04989316b054ff59a3be293e4ca521"
+    },
+    {
+      "path": "frontend/public/icons/sling-brand.png",
+      "source": "https://getsling.com/wp-content/uploads/2017/11/cropped-icon-192x192.png (unmodified Sling brand mark; byte-for-byte verified)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "f5ece502a60db5270405145fbe22380da114e49b03428610c8d6b3f149d4a461"
     }
   ],
   "excludedSourceAssets": [
