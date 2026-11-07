@@ -1,0 +1,943 @@
+{
+  "$defs": {
+    "CreateDraftPage": {
+      "additionalProperties": false,
+      "properties": {
+        "page_scope": {
+          "default": "global",
+          "description": "The pages endpoint returns global pages when space_id is omitted.",
+          "enum": [
+            "global",
+            "space"
+          ],
+          "title": "Page Location",
+          "type": "string"
+        },
+        "space_id": {
+          "anyOf": [
+            {
+              "maxLength": 18,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Space",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "space_id",
+            "searchable": true
+          },
+          "x-resource-type": "space_id"
+        },
+        "confirm_draft_change": {
+          "const": true,
+          "description": "Workvivo has no sandbox. Draft state limits visibility but does not guarantee quiet notifications, automation or a reversible deletion.",
+          "title": "Confirm Production Draft Change",
+          "type": "boolean"
+        },
+        "title": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "html_content": {
+          "description": "Literal page HTML. No files are uploaded and embedded URLs are not fetched.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "HTML Content",
+          "type": "string"
+        },
+        "subtitle": {
+          "default": "",
+          "maxLength": 1000,
+          "title": "Subtitle",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_draft_page",
+          "default": "create_draft_page",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "Create Draft Page",
+          "x-is-trigger": false,
+          "x-read-only": false
+        }
+      },
+      "required": [
+        "confirm_draft_change",
+        "title",
+        "html_content"
+      ],
+      "title": "CreateDraftPage",
+      "type": "object"
+    },
+    "DeleteDraftPage": {
+      "additionalProperties": false,
+      "properties": {
+        "page_scope": {
+          "default": "global",
+          "description": "The pages endpoint returns global pages when space_id is omitted.",
+          "enum": [
+            "global",
+            "space"
+          ],
+          "title": "Page Location",
+          "type": "string"
+        },
+        "space_id": {
+          "anyOf": [
+            {
+              "maxLength": 18,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Space",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "space_id",
+            "searchable": true
+          },
+          "x-resource-type": "space_id"
+        },
+        "confirm_draft_change": {
+          "const": true,
+          "description": "Workvivo has no sandbox. Draft state limits visibility but does not guarantee quiet notifications, automation or a reversible deletion.",
+          "title": "Confirm Production Draft Change",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "delete_draft_page",
+          "default": "delete_draft_page",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "Delete Owned Draft Page",
+          "x-is-trigger": false,
+          "x-read-only": false
+        },
+        "page_id": {
+          "maxLength": 18,
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "page_scope",
+            "field_name": "page_id",
+            "searchable": true
+          },
+          "x-resource-type": "page_id"
+        },
+        "max_scan_pages": {
+          "default": 5,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Maximum Preflight Pages",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "confirm_draft_change",
+        "page_id"
+      ],
+      "title": "DeleteDraftPage",
+      "type": "object"
+    },
+    "FindPage": {
+      "additionalProperties": false,
+      "properties": {
+        "page_scope": {
+          "default": "global",
+          "description": "The pages endpoint returns global pages when space_id is omitted.",
+          "enum": [
+            "global",
+            "space"
+          ],
+          "title": "Page Location",
+          "type": "string"
+        },
+        "space_id": {
+          "anyOf": [
+            {
+              "maxLength": 18,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Space",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "space_id",
+            "searchable": true
+          },
+          "x-resource-type": "space_id"
+        },
+        "operation": {
+          "const": "find_page",
+          "default": "find_page",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "Find Page Metadata by ID",
+          "x-is-trigger": false,
+          "x-read-only": true
+        },
+        "page_id": {
+          "maxLength": 18,
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "page_scope",
+            "field_name": "page_id",
+            "searchable": true
+          },
+          "x-resource-type": "page_id"
+        },
+        "max_scan_pages": {
+          "default": 5,
+          "description": "No page GET endpoint is documented. Scan at most this many pages of 100, following returned next_page links.",
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Maximum Collection Pages",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "FindPage",
+      "type": "object"
+    },
+    "GetArticle": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_article",
+          "default": "get_article",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Articles",
+          "x-display-name": "Get Article Metadata",
+          "x-is-trigger": false,
+          "x-read-only": true
+        },
+        "article_id": {
+          "maxLength": 18,
+          "title": "Article",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "article_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "article_id"
+        }
+      },
+      "required": [
+        "article_id"
+      ],
+      "title": "GetArticle",
+      "type": "object"
+    },
+    "GetEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Get Event Metadata",
+          "x-is-trigger": false,
+          "x-read-only": true
+        },
+        "event_id": {
+          "maxLength": 18,
+          "title": "Event",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "event_id"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "GetEvent",
+      "type": "object"
+    },
+    "GetSpace": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_space",
+          "default": "get_space",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Spaces",
+          "x-display-name": "Get Space Metadata",
+          "x-is-trigger": false,
+          "x-read-only": true
+        },
+        "space_id": {
+          "maxLength": 18,
+          "title": "Space",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "space_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "space_id"
+        }
+      },
+      "required": [
+        "space_id"
+      ],
+      "title": "GetSpace",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get User Metadata",
+          "x-is-trigger": false,
+          "x-read-only": true
+        },
+        "user_id": {
+          "maxLength": 18,
+          "title": "User",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "user_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "user_id"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetUser",
+      "type": "object"
+    },
+    "ListArticles": {
+      "additionalProperties": false,
+      "properties": {
+        "from_timestamp": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created From (Unix Seconds)"
+        },
+        "to_timestamp": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created Through (Unix Seconds)"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact next_page_url from this tenant, resource, filters and page size. No snapshot guarantee.",
+          "title": "Returned Next Page URL"
+        },
+        "operation": {
+          "const": "list_articles",
+          "default": "list_articles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Articles",
+          "x-display-name": "List Published Article Metadata",
+          "x-is-trigger": false,
+          "x-read-only": true
+        }
+      },
+      "title": "ListArticles",
+      "type": "object"
+    },
+    "ListEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "from_timestamp": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created From (Unix Seconds)"
+        },
+        "to_timestamp": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created Through (Unix Seconds)"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact next_page_url from this tenant, resource, filters and page size. No snapshot guarantee.",
+          "title": "Returned Next Page URL"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "List Event Metadata",
+          "x-is-trigger": false,
+          "x-read-only": true
+        },
+        "upcoming_only": {
+          "default": true,
+          "title": "Upcoming Only",
+          "type": "boolean"
+        }
+      },
+      "title": "ListEvents",
+      "type": "object"
+    },
+    "ListPages": {
+      "additionalProperties": false,
+      "properties": {
+        "from_timestamp": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created From (Unix Seconds)"
+        },
+        "to_timestamp": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created Through (Unix Seconds)"
+        },
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact next_page_url from this tenant, resource, filters and page size. No snapshot guarantee.",
+          "title": "Returned Next Page URL"
+        },
+        "page_scope": {
+          "default": "global",
+          "description": "The pages endpoint returns global pages when space_id is omitted.",
+          "enum": [
+            "global",
+            "space"
+          ],
+          "title": "Page Location",
+          "type": "string"
+        },
+        "space_id": {
+          "anyOf": [
+            {
+              "maxLength": 18,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Space",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "space_id",
+            "searchable": true
+          },
+          "x-resource-type": "space_id"
+        },
+        "operation": {
+          "const": "list_pages",
+          "default": "list_pages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "List Page Metadata",
+          "x-is-trigger": false,
+          "x-read-only": true
+        }
+      },
+      "title": "ListPages",
+      "type": "object"
+    },
+    "ListSpaces": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact next_page_url from this tenant, resource, filters and page size. No snapshot guarantee.",
+          "title": "Returned Next Page URL"
+        },
+        "operation": {
+          "const": "list_spaces",
+          "default": "list_spaces",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Spaces",
+          "x-display-name": "List Space Metadata",
+          "x-is-trigger": false,
+          "x-read-only": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name Contains"
+        },
+        "visibility": {
+          "anyOf": [
+            {
+              "enum": [
+                "public",
+                "private",
+                "hidden"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Private and hidden reads require corresponding app visibility permissions.",
+          "title": "Visibility",
+          "enum": [
+            "public",
+            "private",
+            "hidden"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListSpaces",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact next_page_url from this tenant, resource, filters and page size. No snapshot guarantee.",
+          "title": "Returned Next Page URL"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "List User Metadata",
+          "x-is-trigger": false,
+          "x-read-only": true
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "UpdateDraftPage": {
+      "additionalProperties": false,
+      "properties": {
+        "page_scope": {
+          "default": "global",
+          "description": "The pages endpoint returns global pages when space_id is omitted.",
+          "enum": [
+            "global",
+            "space"
+          ],
+          "title": "Page Location",
+          "type": "string"
+        },
+        "space_id": {
+          "anyOf": [
+            {
+              "maxLength": 18,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Space",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "space_id",
+            "searchable": true
+          },
+          "x-resource-type": "space_id"
+        },
+        "confirm_draft_change": {
+          "const": true,
+          "description": "Workvivo has no sandbox. Draft state limits visibility but does not guarantee quiet notifications, automation or a reversible deletion.",
+          "title": "Confirm Production Draft Change",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "update_draft_page",
+          "default": "update_draft_page",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "Update Draft Page Content",
+          "x-is-trigger": false,
+          "x-read-only": false
+        },
+        "page_id": {
+          "maxLength": 18,
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "page_scope",
+            "field_name": "page_id",
+            "searchable": true
+          },
+          "x-resource-type": "page_id"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Title"
+        },
+        "html_content": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New HTML Content"
+        },
+        "subtitle": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An empty string clears the subtitle; an omitted value preserves it.",
+          "title": "New Subtitle"
+        },
+        "max_scan_pages": {
+          "default": 5,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Maximum Preflight Pages",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "confirm_draft_change",
+        "page_id"
+      ],
+      "title": "UpdateDraftPage",
+      "type": "object"
+    },
+    "WorkvivoAPIKeyCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "workvivo_api_key",
+          "default": "workvivo_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_base": {
+          "description": "Copy the regional Base URL from API Keys & JWT Settings, adding /v1. For example https://api.workvivo.com/v1 or https://api.us2.workvivo.com/v1. All requests use production data.",
+          "maxLength": 256,
+          "title": "Tenant API Base URL",
+          "type": "string"
+        },
+        "workvivo_id": {
+          "description": "Exact Workvivo-Id header shown by your tenant administrator; not a user identity.",
+          "maxLength": 128,
+          "title": "Workvivo Organisation ID",
+          "type": "string"
+        },
+        "api_key": {
+          "description": "Static app API key with the endpoint and visibility permissions you need. This is not OAuth or a user login.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_base",
+        "workvivo_id",
+        "api_key"
+      ],
+      "title": "Workvivo API Key",
+      "type": "object",
+      "x-credential-url": "https://developer.workvivo.com/guides/quick-start"
+    }
+  },
+  "properties": {
+    "config": {
+      "discriminator": {
+        "mapping": {
+          "create_draft_page": "#/$defs/CreateDraftPage",
+          "delete_draft_page": "#/$defs/DeleteDraftPage",
+          "find_page": "#/$defs/FindPage",
+          "get_article": "#/$defs/GetArticle",
+          "get_event": "#/$defs/GetEvent",
+          "get_space": "#/$defs/GetSpace",
+          "get_user": "#/$defs/GetUser",
+          "list_articles": "#/$defs/ListArticles",
+          "list_events": "#/$defs/ListEvents",
+          "list_pages": "#/$defs/ListPages",
+          "list_spaces": "#/$defs/ListSpaces",
+          "list_users": "#/$defs/ListUsers",
+          "update_draft_page": "#/$defs/UpdateDraftPage"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/ListSpaces"
+        },
+        {
+          "$ref": "#/$defs/GetSpace"
+        },
+        {
+          "$ref": "#/$defs/ListPages"
+        },
+        {
+          "$ref": "#/$defs/FindPage"
+        },
+        {
+          "$ref": "#/$defs/CreateDraftPage"
+        },
+        {
+          "$ref": "#/$defs/UpdateDraftPage"
+        },
+        {
+          "$ref": "#/$defs/DeleteDraftPage"
+        },
+        {
+          "$ref": "#/$defs/ListArticles"
+        },
+        {
+          "$ref": "#/$defs/GetArticle"
+        },
+        {
+          "$ref": "#/$defs/ListEvents"
+        },
+        {
+          "$ref": "#/$defs/GetEvent"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WorkvivoAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Workvivo Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

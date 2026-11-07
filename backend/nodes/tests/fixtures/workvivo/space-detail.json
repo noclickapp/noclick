@@ -1,0 +1,32 @@
+{
+  "source": "https://developer.workvivo.com/openapi/api-reference.json",
+  "operation": "GET /v1/spaces/{id}",
+  "body": {
+    "data": {
+      "id": 1,
+      "parent_space_id": null,
+      "name": "Health & Wellbeing",
+      "avatar_url": null,
+      "description": "A space where we share updates on initiatives and helpful tips..",
+      "visibility": "public",
+      "is_external": false,
+      "is_corporate": false,
+      "is_mandatory": false,
+      "is_read_only": false,
+      "categories": [
+        {
+          "id": 1,
+          "name": "Health & Wellbeing",
+          "description": null,
+          "created_at": "2021-08-11T11:43:43Z",
+          "updated_at": "2021-08-11T11:43:43Z"
+        }
+      ],
+      "created_at": "2021-08-11T11:43:28Z",
+      "updated_at": "2023-06-15T08:55:19Z",
+      "permalink": "https://workvivo.com,/spaces/1"
+    },
+    "status": "success",
+    "meta": {}
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "source": "https://developer.workvivo.com/openapi/api-reference.json",
+  "operation": "GET /v1/pages",
+  "body": {
+    "data": [
+      {
+        "id": 301,
+        "title": "Be Active",
+        "slug": "be-active",
+        "subtitle": null,
+        "space_id": 112,
+        "language_code": "en",
+        "html_content": "<div class=\"activity-text\">\n<p>Working from home may sound like a dream &ndash; avoiding rush hour, taking calls from the couch &ndash; but telecommuting can quickly lead to a sedentary life. It may take some creative thinking and self-discipline, but it&rsquo;s important for both your physical and mental health to remain active even when working from home. Here are a few tips to help you get moving:</p>\n<h2><strong>Schedule Your Exercise</strong></h2>\n<p>First and foremost, stick to a routine that includes your regular exercise. Whether it&rsquo;s an early morning workout to get the juices flowing or a post-work jog on the treadmill, building exercise into your daily planner can help you stay on track.</p>\n<h2><strong>Get Up Every Hour</strong></h2>\n<p>Being sedentary for long periods is not good for your health. Even if you&rsquo;ve done your exercise routine for the day, sitting at a desk for hours on end can put you at increased risk for heart disease,&nbsp;<a href=\"https://www.pennmedicine.org/for-patients-and-visitors/patient-information/conditions-treated-a-to-z/type-2-diabetes\">Type 2 diabetes</a>,&nbsp;<a href=\"https://www.pennmedicine.org/for-patients-and-visitors/patient-information/conditions-treated-a-to-z/obesity\">obesity</a>, and&nbsp;<a href=\"https://www.pennmedicine.org/for-patients-and-visitors/patient-information/conditions-treated-a-to-z/hypertension\">high blood pressure</a>.</p>\n<p>The solution? Set a timer that will remind you to get up and move for a few minutes every hour. Many smartwatches and apps can be configured to ring once every hour or prompt you if you haven&rsquo;t taken a certain number of steps. When it goes off, get up and grab a healthy snack, walk up and down the stairs, or even do some quick jumping jacks to get your heart pumping and boost your energy.</p>\n<p><img src=\"https://workvivo.com/img/run.jpg\" alt=\"\" width=\"1399\" height=\"743\"></p>\n<h2><strong>Sneak in Extra Movement</strong></h2>\n<p>Throughout your work day, look for reasons to stand up and move. Walk while you are on the phone, or take five minutes every hour to get up and walk through each room in your house. Walking has been shown to improve mood, stimulate creativity, and enhance focus, making it an all-around win for your health and productivity.</p>\n<h2><strong>Go Digital</strong></h2>\n<p>YouTube and smartphone apps offer everything from yoga and Pilates to kickboxing and jazzercize&mdash;there&rsquo;s something for everyone and every ability level. Best of all, many workouts are free. You could even get creative and start a FaceTime or Skype workout group with a few friends or work colleagues. Just pick a time, dial in, and workout &ldquo;together&rdquo; from home.</p>\n<p><iframe style=\"display: table; margin-left: auto; margin-right: auto;\" src=\"https://www.youtube.com/embed/VaoV1PrYft4\" width=\"NaN\" height=\"NaN\" allowfullscreen=\"allowfullscreen\"></iframe></p>\n<h2><strong>Use What You Have</strong></h2>\n<p>No fancy gym equipment in your home? No problem. Sit-ups, push-ups, yoga, and many other types of exercise can be done with no equipment at all. Walking (or running) requires nothing more than a pair of sneakers. And simple household items such as a bag of sugar, cans of soup or a bottle of laundry detergent can be used as weights if you&rsquo;re starting out with strength training.</p>\n</div>",
+        "is_draft": false,
+        "is_standalone": false,
+        "is_sidebar_enabled": false,
+        "hide_title_and_subtitle": true,
+        "featured_image": null,
+        "audience": {
+          "is_global": false,
+          "spaces": [
+            {
+              "id": 3,
+              "name": "New Hires",
+              "permalink": "https://workvivo.com/spaces/3"
+            }
+          ],
+          "teams": []
+        },
+        "language_variants": [],
+        "created_at": "2024-08-21T10:54:26Z",
+        "updated_at": "2024-08-21T10:54:47Z",
+        "permalink": "https://webinar.server.test/pages/be-active"
+      }
+    ],
+    "status": "success",
+    "meta": {
+      "pagination": {
+        "skip": 0,
+        "take": 10,
+        "total_records": 1,
+        "next_page": null
+      }
+    }
+  }
+}
