@@ -4,6 +4,7 @@ import json
 
 import httpx
 import pytest
+from pydantic import ValidationError
 
 from nodes import baserow_node as module
 from nodes.baserow_node import (
@@ -191,3 +192,15 @@ async def test_rejects_non_https_instance(monkeypatch):
     node.config.credentials.base_url = "http://localhost:8000"
     with pytest.raises(ValueError, match="public HTTPS origin"):
         await node.execute({})
+
+
+@pytest.mark.parametrize("row", [{}, {"Name": "Grace"}, {"id": 0}])
+def test_batch_update_requires_a_positive_row_id(row):
+    with pytest.raises(ValidationError):
+        BaserowBatchUpdateRowsConfig(table_id=11, rows=[row])
+
+
+def test_batch_update_preserves_table_fields():
+    row = {"id": 2, "Name": "Grace", "Age": 25}
+    config = BaserowBatchUpdateRowsConfig(table_id=11, rows=[row])
+    assert config.rows == [row]

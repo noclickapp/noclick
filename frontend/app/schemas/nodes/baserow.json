@@ -102,6 +102,22 @@
       "title": "BaserowBatchDeleteRowsConfig",
       "type": "object"
     },
+    "BaserowBatchUpdateRow": {
+      "additionalProperties": true,
+      "description": "A row ID and the table-specific fields to update.",
+      "properties": {
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "BaserowBatchUpdateRow",
+      "type": "object"
+    },
     "BaserowBatchUpdateRowsConfig": {
       "properties": {
         "operation": {
@@ -135,8 +151,7 @@
         "rows": {
           "description": "Array of row objects; each requires an id and the fields to change.",
           "items": {
-            "additionalProperties": true,
-            "type": "object"
+            "$ref": "#/$defs/BaserowBatchUpdateRow"
           },
           "maxItems": 200,
           "minItems": 1,

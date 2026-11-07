@@ -13,6 +13,7 @@ from urllib.parse import urlparse
 
 import httpx
 from pydantic import BaseModel, ConfigDict, Discriminator, Field, Json
+from typing_extensions import TypedDict
 
 from nodes.core.base import NodeConfig, WorkflowNode
 from nodes.core.connection_evidence import ConnectionEvidence
@@ -189,12 +190,19 @@ class BaserowBatchCreateRowsConfig(BaseModel):
     user_field_names: bool = Field(True, title="Use Field Names")
 
 
+class BaserowBatchUpdateRow(TypedDict):
+    """A row ID and the table-specific fields to update."""
+
+    __pydantic_config__ = ConfigDict(extra="allow")
+    id: Annotated[int, Field(ge=1)]
+
+
 class BaserowBatchUpdateRowsConfig(BaseModel):
     operation: Literal["batch_update_rows"] = _op(
         "batch_update_rows", "Batch", "Batch Update Rows", ["bulk", "patch", "multiple"]
     )
     table_id: int = TABLE_FIELD
-    rows: List[Dict[str, Any]] = Field(
+    rows: List[BaserowBatchUpdateRow] = Field(
         ...,
         min_length=1,
         max_length=200,
