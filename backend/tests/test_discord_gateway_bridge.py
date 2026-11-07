@@ -233,8 +233,9 @@ class TestHttpForwarder:
             await fwd.forward(b"{}")
         assert len(calls) == 1
 
-    async def test_5xx_is_retried_then_raises(self):
+    async def test_5xx_is_retried_then_raises(self, monkeypatch):
         calls = []
+        monkeypatch.setattr(bridge_mod.asyncio, "sleep", AsyncMock())  # the backoff between attempts
 
         def handler(request):
             calls.append(1)

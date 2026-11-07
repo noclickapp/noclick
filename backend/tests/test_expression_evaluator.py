@@ -139,7 +139,10 @@ async def test_js_error_raises():
     assert "{{ $('node-1').csv.nope() }}" in str(exc.value)
 
 
-async def test_timeout_raises():
+async def test_timeout_raises(monkeypatch):
+    import utils.expression_evaluator as evaluator
+
+    monkeypatch.setattr(evaluator, "EXPRESSION_TIMEOUT_SEC", 0.5)  # the loop never ends: any limit proves it
     with pytest.raises(ExpressionEvaluationError):
         await evaluate_expressions("{{ $if(true, (function(){ while(true){} })(), 1) }}", NODE_OUTPUTS)
 

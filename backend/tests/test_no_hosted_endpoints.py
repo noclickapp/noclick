@@ -23,6 +23,9 @@ APPROVED_PUBLIC_HOSTS = frozenset(
 MANAGED_DOMAIN_RE = "|".join(
     re.escape(domain) for domain in (MANAGED_DOMAIN, PUBLIC_DOMAIN)
 )
+# What every MANAGED_HOST_RE match contains: found in a fraction of the time,
+# so only the few files that have it are read line by line.
+MANAGED_DOMAIN_MENTION = re.compile(MANAGED_DOMAIN_RE, re.IGNORECASE)
 MANAGED_HOST_RE = re.compile(
     rf"(?<![A-Za-z0-9.-])(?P<host>(?:[A-Za-z0-9-]+[.])+(?:{MANAGED_DOMAIN_RE}))(?![A-Za-z0-9.-])",
     re.IGNORECASE,
@@ -76,7 +79,10 @@ def test_managed_hostnames_only_in_reviewed_sdk_defaults():
     violations = []
     for path in _iter_public_files():
         relative = path.relative_to(REPO_ROOT).as_posix()
-        for lineno, line in enumerate(path.read_text(errors="ignore").splitlines(), 1):
+        text = path.read_text(errors="ignore")
+        if not MANAGED_DOMAIN_MENTION.search(text):
+            continue  # a managed hostname ends in a managed domain
+        for lineno, line in enumerate(text.splitlines(), 1):
             for match in MANAGED_HOST_RE.finditer(line):
                 host = match.group("host").lower()
                 if host in APPROVED_PUBLIC_HOSTS:
