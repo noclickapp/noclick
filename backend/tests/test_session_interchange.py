@@ -517,11 +517,19 @@ class TestMoveThread:
 
 
 class TestCommand:
-    """The engine runs as ``python -m …`` inside the target sandbox: one JSON
-    verdict on stdout, whatever happened."""
+    """The engine runs as ``python -m interchange`` inside the target sandbox,
+    from its own files: one JSON verdict on stdout, whatever happened."""
+
+    @pytest.fixture(autouse=True)
+    def _shipped(self, tmp_path_factory):
+        # Only the package's files, as a sandbox gets them: a backend import fails
+        # here as it would there (and run as nodes.agent.interchange, every call
+        # imported the whole node registry, ~20s).
+        self._root = tmp_path_factory.mktemp("shipped")
+        shutil.copytree(PACKAGE, self._root / "interchange", ignore=shutil.ignore_patterns("__pycache__"))
 
     def _run(self, *args):
-        proc = subprocess.run([sys.executable, "-m", "nodes.agent.interchange", *args], cwd=PACKAGE.parents[2],
+        proc = subprocess.run([sys.executable, "-m", "interchange", *args], cwd=self._root,
                               capture_output=True, text=True, timeout=120)
         assert proc.returncode == 0, proc.stderr
         return ic.parse_verdict(proc.stdout)
