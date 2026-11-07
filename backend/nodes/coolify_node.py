@@ -79,7 +79,7 @@ class CoolifyTokenCredential(BaseModel):
     })
     credential_type: Literal["coolify_token"] = Field(TYPE, json_schema_extra={"ui:hidden": True})
     api_url: Annotated[StrictStr, BeforeValidator(api_origin)] = Field("https://app.coolify.io", title="Coolify HTTPS Origin", description="Canonical lowercase public HTTPS origin only. An intentional non-default HTTPS port is allowed; no API path or trailing slash.")
-    team_id: Annotated[ID, BeforeValidator(form_id)] = Field(..., title="Bound Coolify Team ID", description="Positive ID of the team that issued this token.")
+    expected_team_id: Annotated[ID, BeforeValidator(form_id)] = Field(..., title="Bound Coolify Team ID", description="Positive ID of the team that issued this token.")
     api_token: Annotated[StrictStr, BeforeValidator(token)] = Field(..., title="Coolify API Token", repr=False, json_schema_extra={"ui:widget": "password"})
 
     @model_serializer(mode="wrap")
@@ -362,7 +362,7 @@ async def request(auth, method, path, *, body=None, params=None, success=(200,))
 
 async def current_team(auth):
     _, raw = await request(auth, "GET", "teams/current")
-    if not isinstance(raw, dict) or positive(raw.get("id")) != auth.credential.team_id: raise OutcomeUnverified("Coolify token is bound to a different team")
+    if not isinstance(raw, dict) or positive(raw.get("id")) != auth.credential.expected_team_id: raise OutcomeUnverified("Coolify token is bound to a different team")
     return {"id": raw["id"], "name": text(raw, "name"), "description": text(raw, "description", nullable=True), "binding": "token_team", "permissions": "not_inferred"}
 
 
@@ -473,18 +473,18 @@ class CoolifyNode(WorkflowNode):
     def get_config_model(cls): return CoolifyNodeConfig
 
     @classmethod
-    def parse_config(cls, data):
-        raw_guard(data)
-        return super().parse_config(data)
+    def parse_config(cls, config_data):
+        raw_guard(config_data)
+        return super().parse_config(config_data)
 
     @classmethod
-    def validate_config(cls, data):
-        raw_guard(data)
-        return super().validate_config(data)
+    def validate_config(cls, config_data):
+        raw_guard(config_data)
+        return super().validate_config(config_data)
 
     @classmethod
-    async def freshen_credential(cls, raw, *, pool=None, user_id=None, credential_id=None, organization_id=CURRENT_ORGANIZATION, workflow_id=None):
-        auth = await Authority.create(raw, pool=pool, user_id=user_id, credential_id=credential_id, organization_id=organization_id, workflow_id=workflow_id)
+    async def freshen_credential(cls, credential_data, *, pool=None, user_id=None, credential_id=None):
+        auth = await Authority.create(credential_data, pool=pool, user_id=user_id, credential_id=credential_id)
         return {**auth.credential.model_dump(), AUTH_KEY: auth}
 
     @classmethod

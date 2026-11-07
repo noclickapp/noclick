@@ -18,7 +18,7 @@ from nodes.core.credential_connect import validate_for_connect
 NT = "automation-coolify"
 USER = "11111111-1111-4111-8111-111111111111"
 CID = "22222222-2222-4222-8222-222222222222"
-TOKEN = {"credential_type": native.TYPE, "api_url": "https://coolify.fixture.com", "team_id": 7, "api_token": "12|syntheticPrivateToken0123456789"}
+TOKEN = {"credential_type": native.TYPE, "api_url": "https://coolify.fixture.com", "expected_team_id": 7, "api_token": "12|syntheticPrivateToken0123456789"}
 TEAM = {"id": 7, "name": "Synthetic team", "members": ["omit-person"], "custom_server_limit": 100}
 PROJECT = {"id": 8, "uuid": "projectFixture", "name": "Synthetic project", "description": "Fixture only", "team_id": 7, "environment_variables": ["omit-variable"]}
 ENV = {"id": 9, "uuid": "envFixture", "name": "Synthetic environment", "project_id": 8, "description": None, "applications": [{"docker_compose_raw": "omit-secret"}], "redis": [{"password": "omit-password"}]}
@@ -94,9 +94,9 @@ async def test_preparsed_foreign_blob_refuses_before_transport(transport):
 @pytest.mark.asyncio
 async def test_actual_visible_form_connect_tags_literal_and_proves_bound_team(transport):
     transport[1].append(TEAM)
-    visible = {"api_url": TOKEN["api_url"], "team_id": "7", "api_token": TOKEN["api_token"]}
+    visible = {"api_url": TOKEN["api_url"], "expected_team_id": "7", "api_token": TOKEN["api_token"]}
     verdict = await validate_for_connect(credential_type=native.TYPE, credential_data=visible, user_id=USER)
-    assert verdict.ok and verdict.credential_data["credential_type"] == native.TYPE and verdict.credential_data["team_id"] == 7
+    assert verdict.ok and verdict.credential_data["credential_type"] == native.TYPE and verdict.credential_data["expected_team_id"] == 7
     assert verdict.evidence.account_label == "Synthetic team"
     assert "omit" not in repr(verdict.evidence)
     assert transport[0][0].url.path == "/api/v1/teams/current"
@@ -204,7 +204,7 @@ async def test_saved_credential_change_during_response_blocks_output(stored, tra
     def changed():
         if change == "access": stored["accessible"] = False
         else:
-            key, value = {"kind": ("credential_type", "foreign"), "token": ("api_token", "12|replacementPrivateToken012345"), "team": ("team_id", 99), "origin": ("api_url", "https://other.fixture.com")}[change]
+            key, value = {"kind": ("credential_type", "foreign"), "token": ("api_token", "12|replacementPrivateToken012345"), "team": ("expected_team_id", 99), "origin": ("api_url", "https://other.fixture.com")}[change]
             stored["credential"][key] = value
         return TEAM
     transport[1].append(changed)
@@ -213,21 +213,21 @@ async def test_saved_credential_change_during_response_blocks_output(stored, tra
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("status", ["pending_approval", "rejected"])
-async def test_actual_socket_admission_precedes_freshen_and_provider(monkeypatch, transport, status):
+async def test_actual_socket_denies_inaccessible_saved_picker_before_provider(monkeypatch, transport):
     from wss.handlers import workflow_handler
     from wss.receiver.client_events import WorkflowNodeLoadOptionsRequest
-    monkeypatch.setattr("utils.credential_loader.load_credential", AsyncMock(return_value=deepcopy(TOKEN)))
-    admit = AsyncMock(return_value={"status": status, "credential_id": CID, "message": "Fixture approval pending", "approval_url": "https://frontend.example.test/approvals/fixture"})
-    monkeypatch.setattr("utils.credential_approval.admit_lookup", admit)
-    freshen = AsyncMock(wraps=native.CoolifyNode.freshen_credential)
-    monkeypatch.setattr(native.CoolifyNode, "freshen_credential", freshen)
+    conn = SimpleNamespace(fetchrow=AsyncMock(return_value=None))
+    @asynccontextmanager
+    async def acquire(): yield conn
+    monkeypatch.setattr(workflow_handler, "get_user_org_context", AsyncMock(return_value=None))
+    loader = AsyncMock(wraps=native.CoolifyNode.load_field_options)
+    monkeypatch.setattr(native.CoolifyNode, "load_field_options", loader)
     sent = AsyncMock(); monkeypatch.setattr(workflow_handler, "send_event", sent)
     handler = workflow_handler.WorkflowHandler.__new__(workflow_handler.WorkflowHandler)
     handler.sio = SimpleNamespace(get_session=AsyncMock(return_value={"user_id": USER}))
-    handler.get_pool = AsyncMock(return_value=object())
+    handler.get_pool = AsyncMock(return_value=SimpleNamespace(acquire=acquire))
     await handler.load_node_options("fixture-sid", WorkflowNodeLoadOptionsRequest(request_id="fixture-request", node_type=NT, credential_id=CID, field_name="project_uuid", context={}))
-    admit.assert_awaited_once(); freshen.assert_not_awaited()
+    conn.fetchrow.assert_awaited_once(); loader.assert_not_awaited()
     assert transport[0] == [] and sent.await_count == 1
 
 

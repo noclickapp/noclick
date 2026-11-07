@@ -33,7 +33,7 @@
           "title": "Coolify HTTPS Origin",
           "type": "string"
         },
-        "team_id": {
+        "expected_team_id": {
           "description": "Positive ID of the team that issued this token.",
           "maximum": 9007199254740991,
           "minimum": 1,
@@ -47,7 +47,7 @@
         }
       },
       "required": [
-        "team_id",
+        "expected_team_id",
         "api_token"
       ],
       "title": "Coolify Token",
