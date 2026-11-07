@@ -56,13 +56,18 @@ def exchange_request(provider: str) -> Type[BaseModel]:
     for model in vars(client_events).values():
         if inspect.isclass(model) and issubclass(model, BaseModel) and getattr(model, "event_name", None) == name:
             return model
-    raise LookupError(f"No {name} event")
+    from nodes.core.oauth_registry import get_oauth_provider
+    get_oauth_provider(provider)
+    return client_events.OAuthExchangeRequest
 
 
 def _handler(provider: str, socket: _Socket):
     """The provider's own exchange handler, answering on ``socket``."""
     from wss.schema import SocketIOHandler
 
+    if exchange_request(provider).event_name == "oauth:exchange":
+        from wss.handlers.oauth.generic_oauth_handler import GenericOAuthHandler
+        return GenericOAuthHandler(socket).exchange_oauth_code
     module = importlib.import_module(f"wss.handlers.oauth.{provider}_oauth_handler")
     name = f"{provider}:oauth:exchange"
     for cls in vars(module).values():
@@ -92,7 +97,7 @@ async def sign_in(provider: str, inputs: Dict[str, Any], *, user_id: str, tier: 
     model = exchange_request(provider)
     try:
         request = model.model_validate({**{k: v for k, v in inputs.items() if k in model.model_fields
-                                            and k not in _FILLED}, "request_id": _SID})
+                                            and k not in _FILLED}, "request_id": _SID, **({"provider": provider} if model.event_name == "oauth:exchange" else {})})
     except ValidationError as exc:
         error = exc.errors()[0]
         field = ".".join(str(part) for part in error["loc"]) or None

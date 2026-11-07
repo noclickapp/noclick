@@ -3568,3 +3568,27 @@ class PhoneNumberResubmitRequest(ClientEventBase):
     @classmethod
     def _answers(cls, value: Dict[str, str]) -> Dict[str, str]:
         return requirement_answers(value)
+
+
+class OAuthExchangeRequest(ClientEventBase):
+    """Exchange a standard OAuth provider's authorization code."""
+    event_name: ClassVar[str] = "oauth:exchange"
+    provider: str = Field(..., description="Declared OAuth provider id")
+    code: str = Field(..., description="Authorization code")
+    redirect_uri: str = Field(..., description="Configured OAuth callback URI")
+    code_verifier: Optional[str] = Field(None, description="PKCE code verifier")
+    scopes: List[str] = Field(default_factory=list, description="Requested OAuth scopes")
+
+
+class OAuthRefreshRequest(ClientEventBase):
+    """Refresh a credential through its declared provider."""
+    event_name: ClassVar[str] = "oauth:refresh"
+    provider: str = Field(..., description="Declared OAuth provider id")
+    credential_id: str = Field(..., description="Credential UUID")
+
+
+class OAuthValidateRequest(ClientEventBase):
+    """Validate a credential through its declared provider."""
+    event_name: ClassVar[str] = "oauth:validate"
+    provider: str = Field(..., description="Declared OAuth provider id")
+    credential_id: str = Field(..., description="Credential UUID")

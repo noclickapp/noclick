@@ -10,7 +10,7 @@ function providerFrom(
     suffix: 'authorize' | 'callback'
 ): string {
     const match = pathname.match(
-        new RegExp(`^/api/auth/([^/.]+)(?:[/.])${suffix}$`)
+        new RegExp(`^/api/auth/(?:oauth/)?([^/.]+)(?:[/.])${suffix}$`)
     );
     if (!match || !/^[a-z0-9_-]+$/i.test(match[1])) {
         throw new Response('Invalid OAuth route', { status: 400 });
@@ -18,12 +18,12 @@ function providerFrom(
     return match[1].toLowerCase();
 }
 
-function stateCookie(provider: string) {
+function stateCookie(provider: string, generic: boolean) {
     return createCookie(`nc_oauth_${provider}`, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        path: `/api/auth/${provider}`,
+        path: generic ? `/api/auth/oauth/${provider}` : `/api/auth/${provider}`,
         maxAge: MAX_STATE_AGE_MS / 1000,
         secrets: [getCookieSecret(`oauth-binding:${provider}`)],
     });
@@ -93,7 +93,7 @@ export async function oauthRedirect(
     const sealedState = sealState(rawState);
     providerUrl.searchParams.set('state', sealedState);
     const response = redirect(providerUrl.toString(), init);
-    const bindingCookie = stateCookie(provider);
+    const bindingCookie = stateCookie(provider, requestUrl.pathname.startsWith("/api/auth/oauth/"));
     const previous = await bindingCookie.parse(request.headers.get('Cookie'));
     const bindings = (Array.isArray(previous) ? previous : [previous])
         .filter((value): value is string => typeof value === 'string')
@@ -145,7 +145,7 @@ export async function oauthCallbackUrl(request: Request): Promise<URL> {
         throw new Response('Invalid or expired OAuth state', { status: 400 });
     }
 
-    const expected = await stateCookie(provider).parse(
+    const expected = await stateCookie(provider, url.pathname.startsWith("/api/auth/oauth/")).parse(
         request.headers.get('Cookie')
     );
     const actualDigest = stateDigest(sealedState);

@@ -12,11 +12,15 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { augmentScopes } from '~/utils/oauthProviders';
-import { useOAuthAuthorizeParams, useOAuthExchange } from './OAuthExchangeContext';
+import {
+    useOAuthAuthorizeParams,
+    useOAuthExchange,
+} from './OAuthExchangeContext';
 import { oauthChannelName } from '~/lib/oauthChannel';
 
 export interface OAuthHookResult {
     success: boolean;
+    provider?: string;
     credentialId?: string;
     credentialName?: string;
     name?: string;
@@ -33,6 +37,8 @@ export interface OAuthHookConfig {
     /** Provider key — drives the callback type (`{provider}-oauth-callback`) and the
      *  exchange event (`{provider}:oauth:exchange`). */
     provider: string;
+    /** Declared providers use the shared exchange event. */
+    generic?: boolean;
     /** Authorize route (default `/api/auth/{provider}/authorize`). */
     authorizePath?: string;
     /** Scopes requested when the caller passes none. */
@@ -96,11 +102,8 @@ export function buildAuthorizeUrl(
 
 /** Build a standard credential-OAuth hook from per-provider config. */
 export function createOAuthHook(config: OAuthHookConfig) {
-    const { provider, defaultScopes = [] } = config;
-    const callbackType = `${provider}-oauth-callback`;
-    const exchangeEvent = `${provider}:oauth:exchange`;
-
     function useOAuthHook(options: UseOAuthHookOptions = {}) {
+        const configRef = useRef(config);
         const [isConnecting, setIsConnecting] = useState(false);
         const [error, setError] = useState<string | null>(null);
         const optionsRef = useRef(options);
@@ -131,7 +134,9 @@ export function createOAuthHook(config: OAuthHookConfig) {
 
         useEffect(() => {
             const handleCallback = async (data: OAuthCallbackData) => {
-                if (data?.type !== callbackType) return;
+                const activeConfig = configRef.current;
+                const { provider, defaultScopes = [] } = activeConfig;
+                if (data?.type !== `${provider}-oauth-callback`) return;
                 // Only the instance that initiated this connect handles the callback.
                 if (!isConnectingRef.current) return;
                 isConnectingRef.current = false;
@@ -164,7 +169,10 @@ export function createOAuthHook(config: OAuthHookConfig) {
                 isExchangingRef.current = true;
                 try {
                     const response = await exchangeRef.current({
-                        event_name: exchangeEvent,
+                        event_name: activeConfig.generic
+                            ? 'oauth:exchange'
+                            : `${provider}:oauth:exchange`,
+                        ...(activeConfig.generic ? { provider } : {}),
                         request_id: `${provider}-oauth-${Date.now()}`,
                         code: data.code,
                         redirect_uri: data.redirectUri,
@@ -187,6 +195,7 @@ export function createOAuthHook(config: OAuthHookConfig) {
                         finishCallback(true);
                         optionsRef.current.onSuccess?.({
                             success: true,
+                            provider,
                             credentialId: response.credential_id ?? undefined,
                             credentialName:
                                 response.credential_name ?? undefined,
@@ -236,12 +245,16 @@ export function createOAuthHook(config: OAuthHookConfig) {
             (
                 credentialName: string,
                 scopes?: string[],
-                options?: OAuthConnectOptions
+                options?: OAuthConnectOptions,
+                overrideConfig?: OAuthHookConfig
             ) => {
+                const activeConfig = overrideConfig ?? config;
+                const { provider } = activeConfig;
                 // The shared credential form can cancel without unmounting this
                 // hook. A new connect replaces that pending attempt, but must not
                 // interrupt a callback already persisting its credential.
                 if (isExchangingRef.current) return;
+                configRef.current = activeConfig;
                 clearTimersRef.current();
                 channelRef.current?.close();
                 channelRef.current = null;
@@ -256,13 +269,20 @@ export function createOAuthHook(config: OAuthHookConfig) {
                 const top = window.screenY + (window.outerHeight - height) / 2;
 
                 const authorizeUrl = new URL(
-                    buildAuthorizeUrl(config, credentialName, scopes, options),
+                    buildAuthorizeUrl(
+                        activeConfig,
+                        credentialName,
+                        scopes,
+                        options
+                    ),
                     window.location.origin
                 );
-                for (const [field, value] of Object.entries(authorizeParamsRef.current)) {
+                for (const [field, value] of Object.entries(
+                    authorizeParamsRef.current
+                )) {
                     authorizeUrl.searchParams.set(field, value);
                 }
-                if (config.broadcastChannel) {
+                if (activeConfig.broadcastChannel) {
                     try {
                         const attempt = crypto.randomUUID();
                         const channel = new BroadcastChannel(
@@ -291,7 +311,7 @@ export function createOAuthHook(config: OAuthHookConfig) {
                 }
                 const popup = window.open(
                     authorizeUrl.pathname + authorizeUrl.search,
-                    config.broadcastChannel
+                    activeConfig.broadcastChannel
                         ? `${provider}-oauth-${authorizeUrl.searchParams.get('callback_channel')}`
                         : `${provider}-oauth`,
                     `width=${width},height=${height},left=${left},top=${top},popup=yes`
@@ -327,7 +347,7 @@ export function createOAuthHook(config: OAuthHookConfig) {
                 // COOP can report a detached WindowProxy as closed while its tab is
                 // still signing in. Channel flows use acknowledgement + watchdog.
                 let closeGrace: ReturnType<typeof setTimeout> | undefined;
-                const checkClosed = config.broadcastChannel
+                const checkClosed = activeConfig.broadcastChannel
                     ? undefined
                     : setInterval(() => {
                           try {
@@ -368,7 +388,17 @@ export function createOAuthHook(config: OAuthHookConfig) {
 
         const clearError = useCallback(() => setError(null), []);
 
-        return { connect, isConnecting, error, clearError };
+        return {
+            connect,
+            connectWithConfig: (
+                override: OAuthHookConfig,
+                name: string,
+                scopes?: string[]
+            ) => connect(name, scopes, undefined, override),
+            isConnecting,
+            error,
+            clearError,
+        };
     }
 
     // Carry the config so contract tests can pin each provider's authorize behavior.

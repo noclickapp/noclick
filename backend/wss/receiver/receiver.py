@@ -561,6 +561,7 @@ class SocketIOProxy:
         from wss.handlers.workflow_handler import WorkflowHandler
         from wss.handlers.workflow_mcp_handler import WorkflowMCPHandler
         from wss.handlers.credentials_handler import CredentialsHandler
+        from wss.handlers.oauth.generic_oauth_handler import GenericOAuthHandler
         from wss.handlers.oauth import (
             GoogleOAuthHandler, AirtableOAuthHandler, AtlassianOAuthHandler, CanvaOAuthHandler,
             DiscordOAuthHandler, DropboxOAuthHandler, FacebookOAuthHandler, FathomOAuthHandler, ThreadsOAuthHandler, InstagramLoginOAuthHandler, FacebookPagesOAuthHandler, GithubOAuthHandler,
@@ -667,6 +668,7 @@ class SocketIOProxy:
         # Initialize Monday OAuth handler (API only)
         monday_oauth_handler = MondayOAuthHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Initialize Attio OAuth handler (API only)
+        generic_oauth_handler = GenericOAuthHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         attio_oauth_handler = AttioOAuthHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Initialize Intercom OAuth handler (API only)
         intercom_oauth_handler = IntercomOAuthHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
@@ -809,6 +811,7 @@ class SocketIOProxy:
             Handler.BOX_OAUTH: box_oauth_handler,
             Handler.ASANA_OAUTH: asana_oauth_handler,
             Handler.MONDAY_OAUTH: monday_oauth_handler,
+            Handler.GENERIC_OAUTH: generic_oauth_handler,
             Handler.ATTIO_OAUTH: attio_oauth_handler,
             Handler.INTERCOM_OAUTH: intercom_oauth_handler,
             Handler.PIPEDRIVE_OAUTH: pipedrive_oauth_handler,

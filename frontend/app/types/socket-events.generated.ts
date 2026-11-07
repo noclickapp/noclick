@@ -4226,6 +4226,72 @@ export interface NotionOAuthValidateRequest {
   [k: string]: unknown;
 }
 /**
+ * Exchange a standard OAuth provider's authorization code.
+ */
+export interface OAuthExchangeRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * Declared OAuth provider id
+   */
+  provider: string;
+  /**
+   * Authorization code
+   */
+  code: string;
+  /**
+   * Configured OAuth callback URI
+   */
+  redirect_uri: string;
+  /**
+   * PKCE code verifier
+   */
+  code_verifier?: string | null;
+  /**
+   * Requested OAuth scopes
+   */
+  scopes?: string[];
+  [k: string]: unknown;
+}
+/**
+ * Refresh a credential through its declared provider.
+ */
+export interface OAuthRefreshRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * Declared OAuth provider id
+   */
+  provider: string;
+  /**
+   * Credential UUID
+   */
+  credential_id: string;
+  [k: string]: unknown;
+}
+/**
+ * Validate a credential through its declared provider.
+ */
+export interface OAuthValidateRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * Declared OAuth provider id
+   */
+  provider: string;
+  /**
+   * Credential UUID
+   */
+  credential_id: string;
+  [k: string]: unknown;
+}
+/**
  * Request to get user's onboarding completion state
  */
 export interface OnboardingCompletionGetRequest {
@@ -11131,6 +11197,32 @@ export interface NotionOAuthValidateResponse {
   message?: string | null;
 }
 /**
+ * Response for oauth:exchange request
+ */
+export interface OAuthExchangeResponse {
+  success: boolean;
+  credential_id?: string | null;
+  credential_name?: string | null;
+  name?: string | null;
+  message?: string | null;
+}
+/**
+ * Response for oauth:refresh request
+ */
+export interface OAuthRefreshResponse {
+  success: boolean;
+  expires_at?: string | null;
+  message?: string | null;
+}
+/**
+ * Response for oauth:validate request
+ */
+export interface OAuthValidateResponse {
+  valid: boolean;
+  expired?: boolean;
+  message?: string | null;
+}
+/**
  * Response for pagerduty:oauth:exchange request
  */
 export interface PagerDutyOAuthExchangeResponse {
@@ -14541,6 +14633,9 @@ export interface ClientToServerEvents {
   'notion:oauth:exchange': (data: NotionOAuthExchangeRequest) => void;
   'notion:oauth:refresh': (data: NotionOAuthRefreshRequest) => void;
   'notion:oauth:validate': (data: NotionOAuthValidateRequest) => void;
+  'oauth:exchange': (data: OAuthExchangeRequest) => void;
+  'oauth:refresh': (data: OAuthRefreshRequest) => void;
+  'oauth:validate': (data: OAuthValidateRequest) => void;
   'onboarding:completion:get': (data: OnboardingCompletionGetRequest) => void;
   'onboarding:completion:update': (data: OnboardingCompletionUpdateRequest) => void;
   'onboarding:skip': (data: OnboardingSkipRequest) => void;
@@ -14908,6 +15003,9 @@ export const ClientEventNames = {
   NotionOAuthExchangeRequest: 'notion:oauth:exchange',
   NotionOAuthRefreshRequest: 'notion:oauth:refresh',
   NotionOAuthValidateRequest: 'notion:oauth:validate',
+  OAuthExchangeRequest: 'oauth:exchange',
+  OAuthRefreshRequest: 'oauth:refresh',
+  OAuthValidateRequest: 'oauth:validate',
   OnboardingCompletionGetRequest: 'onboarding:completion:get',
   OnboardingCompletionUpdateRequest: 'onboarding:completion:update',
   OnboardingSkipRequest: 'onboarding:skip',
@@ -15271,6 +15369,9 @@ interface ClientEventMap {
   NotionOAuthExchangeRequest: NotionOAuthExchangeRequest
   NotionOAuthRefreshRequest: NotionOAuthRefreshRequest
   NotionOAuthValidateRequest: NotionOAuthValidateRequest
+  OAuthExchangeRequest: OAuthExchangeRequest
+  OAuthRefreshRequest: OAuthRefreshRequest
+  OAuthValidateRequest: OAuthValidateRequest
   OnboardingCompletionGetRequest: OnboardingCompletionGetRequest
   OnboardingCompletionUpdateRequest: OnboardingCompletionUpdateRequest
   OnboardingSkipRequest: OnboardingSkipRequest
@@ -15571,6 +15672,9 @@ export interface RequestResponseMap {
   NotionOAuthExchangeRequest: NotionOAuthExchangeResponse;
   NotionOAuthRefreshRequest: NotionOAuthRefreshResponse;
   NotionOAuthValidateRequest: NotionOAuthValidateResponse;
+  OAuthExchangeRequest: OAuthExchangeResponse;
+  OAuthRefreshRequest: OAuthRefreshResponse;
+  OAuthValidateRequest: OAuthValidateResponse;
   PagerDutyOAuthExchangeRequest: PagerDutyOAuthExchangeResponse;
   PagerDutyOAuthRefreshRequest: PagerDutyOAuthRefreshResponse;
   PagerDutyOAuthValidateRequest: PagerDutyOAuthValidateResponse;
@@ -16373,6 +16477,18 @@ export const NotionOAuthRefreshRequest = {
 export const NotionOAuthValidateRequest = {
   event_name: 'notion:oauth:validate' as const,
   create: (data: NotionOAuthValidateRequest) => ({ event_name: 'notion:oauth:validate' as const, ...data })
+};
+export const OAuthExchangeRequest = {
+  event_name: 'oauth:exchange' as const,
+  create: (data: OAuthExchangeRequest) => ({ event_name: 'oauth:exchange' as const, ...data })
+};
+export const OAuthRefreshRequest = {
+  event_name: 'oauth:refresh' as const,
+  create: (data: OAuthRefreshRequest) => ({ event_name: 'oauth:refresh' as const, ...data })
+};
+export const OAuthValidateRequest = {
+  event_name: 'oauth:validate' as const,
+  create: (data: OAuthValidateRequest) => ({ event_name: 'oauth:validate' as const, ...data })
 };
 export const OnboardingCompletionGetRequest = {
   event_name: 'onboarding:completion:get' as const,
@@ -17271,6 +17387,9 @@ export const EventRouting = {
   'notion:oauth:exchange': 'API',
   'notion:oauth:refresh': 'API',
   'notion:oauth:validate': 'API',
+  'oauth:exchange': 'API',
+  'oauth:refresh': 'API',
+  'oauth:validate': 'API',
   'onboarding:completion:get': 'API',
   'onboarding:completion:update': 'API',
   'onboarding:skip': 'API',

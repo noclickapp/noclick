@@ -16,6 +16,10 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
     """
     return SocketIORateLimitConfig(
         per_event_rate_limits={
+            "oauth:exchange": SocketIORateLimit(second=1, minute=10),
+            "oauth:refresh": SocketIORateLimit(second=1, minute=10),
+            "oauth:validate": SocketIORateLimit(second=2, minute=20),
+
             # YJS sync events
             "yjs:sync": SocketIORateLimit(second=50, minute=500),
 

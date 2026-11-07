@@ -103,7 +103,7 @@ export function provideLinkTransport(
         // --- Redirect OAuth exchange ---
         // The link runs the app's own sign-in, so it gets the event as the app's form sent it: the code, and the
         // form's own inputs (a site, a subdomain, a shop) beside it.
-        if (/:oauth:exchange$/.test(name)) {
+        if (name === 'oauth:exchange' || /:oauth:exchange$/.test(name)) {
             const { event_name: _name, code, redirect_uri, scopes, code_verifier, ...inputs } = event;
             const res = await fetch(`${base}/provide`, {
                 method: 'POST',

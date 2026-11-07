@@ -7,7 +7,19 @@ export interface NodeMetaEntry {
     platformVendorOperations?: string[];
 }
 
+export interface PublicOAuthProvider {
+    provider: string;
+    authorizeUrl: string;
+    scopes: string[];
+    pkce: boolean;
+    clientIdEnv: string;
+    redirectUriEnv: string;
+    authorizeParams: Record<string, string>;
+    credentialType: string;
+}
+
 export interface IntegrationMetadata {
+    oauthProviders?: PublicOAuthProvider[];
     type: string;
     nodeMeta: NodeMetaEntry;
     credentialTypes: Record<string, string>;
@@ -32,6 +44,7 @@ export function collectIntegrationMetadata(files: Record<string, IntegrationMeta
     let credentialTypes: Record<string, string> = {};
     let providerLabels: Record<string, string> = {};
     const autoSelectTypes: string[] = [];
+    const oauthProviders: Record<string, PublicOAuthProvider> = {};
     for (const [path, meta] of Object.entries(files).sort(([a], [b]) => a.localeCompare(b))) {
         const slug = path.slice(path.lastIndexOf('/') + 1, -'.json'.length);
         if (meta.type !== `automation-${slug}` || meta.type in nodeMeta) {
@@ -40,9 +53,14 @@ export function collectIntegrationMetadata(files: Record<string, IntegrationMeta
         nodeMeta = mergeDeclarations(nodeMeta, { [meta.type]: meta.nodeMeta });
         credentialTypes = mergeDeclarations(credentialTypes, meta.credentialTypes);
         providerLabels = mergeDeclarations(providerLabels, meta.providerLabels);
+        for (const spec of meta.oauthProviders ?? []) {
+            if (spec.provider in oauthProviders) throw new Error(`Duplicate OAuth provider: ${spec.provider}`);
+            if (!Object.values(meta.credentialTypes).includes(spec.credentialType)) throw new Error(`Unknown OAuth credential: ${spec.credentialType}`);
+            oauthProviders[spec.provider] = spec;
+        }
         if (meta.autoSelectCredential) autoSelectTypes.push(meta.type);
     }
-    return { nodeMeta, credentialTypes, providerLabels, autoSelectTypes };
+    return { nodeMeta, credentialTypes, providerLabels, autoSelectTypes, oauthProviders };
 }
 
 export const INTEGRATION_METADATA = collectIntegrationMetadata(

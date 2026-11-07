@@ -16,7 +16,7 @@ import { OAUTH_PROVIDER_SETUP } from '~/lib/oauthProviderSetup';
 const ROUTES_DIR = join(process.cwd(), 'app/routes/api/auth');
 
 const routes = readdirSync(ROUTES_DIR)
-    .filter((f) => f.endsWith('.authorize.tsx'))
+    .filter((f) => f.endsWith('.authorize.tsx') && !f.includes('$'))
     .map((file) => ({
         file,
         provider: file.split('.')[0],

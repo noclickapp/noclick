@@ -18,6 +18,7 @@
 // dark tokens (tailwind.css `.dark`) and is dark-only, matching every route
 // outside /dashboard.
 
+import { INTEGRATION_METADATA } from '~/utils/integrationMetadata';
 import { providerSetup } from '~/lib/oauthProviderSetup';
 
 const escapeHtml = (s: string) =>
@@ -34,7 +35,8 @@ export function callbackUrlFor(request: Request, provider: string): string {
     const proto = forwardedProto ? forwardedProto.split(',')[0].trim() : url.protocol.replace(':', '');
     const forwardedHost = request.headers.get('X-Forwarded-Host');
     const host = forwardedHost ? forwardedHost.split(',')[0].trim() : url.host;
-    return `${proto}://${host}/api/auth/${provider}/callback`;
+    const prefix = INTEGRATION_METADATA.oauthProviders[provider] ? `oauth/${provider}` : provider;
+    return `${proto}://${host}/api/auth/${prefix}/callback`;
 }
 
 export interface OAuthNotConfiguredOptions {

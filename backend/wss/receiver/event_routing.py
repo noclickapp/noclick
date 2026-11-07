@@ -48,6 +48,7 @@ class Handler(Enum):
     BOX_OAUTH = "box_oauth_handler"
     ASANA_OAUTH = "asana_oauth_handler"
     MONDAY_OAUTH = "monday_oauth_handler"
+    GENERIC_OAUTH = "generic_oauth_handler"
     ATTIO_OAUTH = "attio_oauth_handler"
     INTERCOM_OAUTH = "intercom_oauth_handler"
     PIPEDRIVE_OAUTH = "pipedrive_oauth_handler"
@@ -304,6 +305,9 @@ EVENT_ROUTING: Dict[str, Dict[str, HandlerKey]] = {
         "monday:oauth:validate": Handler.MONDAY_OAUTH,
 
         # Attio OAuth events
+        "oauth:exchange": Handler.GENERIC_OAUTH,
+        "oauth:refresh": Handler.GENERIC_OAUTH,
+        "oauth:validate": Handler.GENERIC_OAUTH,
         "attio:oauth:exchange": Handler.ATTIO_OAUTH,
         "attio:oauth:refresh": Handler.ATTIO_OAUTH,
         "attio:oauth:validate": Handler.ATTIO_OAUTH,

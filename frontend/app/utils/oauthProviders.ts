@@ -4,6 +4,7 @@
  */
 
 import { ComponentType, createElement } from 'react';
+import { INTEGRATION_METADATA } from './integrationMetadata';
 import {
     SiGoogle,
     SiAirtable,
@@ -1166,6 +1167,17 @@ export const PROVIDER_ALIASES: Record<string, OAuthProviderConfig> = {
     },
 };
 
+// Declarations extend provider lookup; explicit configurations retain precedence.
+export const GENERIC_OAUTH_PROVIDER_CONFIG: Record<string, OAuthProviderConfig> = Object.fromEntries(
+    Object.values(INTEGRATION_METADATA.oauthProviders).map(spec => [spec.provider, {
+        name: INTEGRATION_METADATA.providerLabels[spec.provider],
+        Icon: FiLayers,
+        oauthProvider: spec.provider,
+        credentialTypes: [spec.credentialType],
+        defaultScopes: spec.scopes,
+    }]),
+);
+
 // ============================================================================
 // Helper Functions
 // ============================================================================
@@ -1178,7 +1190,7 @@ export function getProviderConfig(
     providerKey: string | undefined
 ): OAuthProviderConfig | undefined {
     if (!providerKey) return undefined;
-    return OAUTH_PROVIDER_CONFIG[providerKey] || PROVIDER_ALIASES[providerKey];
+    return OAUTH_PROVIDER_CONFIG[providerKey] || PROVIDER_ALIASES[providerKey] || GENERIC_OAUTH_PROVIDER_CONFIG[providerKey];
 }
 
 /**
@@ -1241,7 +1253,7 @@ export function getProviderConfigNormalized(
 ): OAuthProviderConfig | undefined {
     if (!key) return undefined;
     const normalized = key.toLowerCase().replace(/-/g, '_');
-    return OAUTH_PROVIDER_CONFIG[normalized] || PROVIDER_ALIASES[normalized];
+    return OAUTH_PROVIDER_CONFIG[normalized] || PROVIDER_ALIASES[normalized] || GENERIC_OAUTH_PROVIDER_CONFIG[normalized];
 }
 
 /**
@@ -1275,7 +1287,7 @@ export function getProviderConfigByCredentialType(
     // Node-backed credential types are resolved by credentialIcons.tsx via the
     // registry-free node-icon singleton BEFORE falling back to this function,
     // so unknown types are simply undefined here (callers all handle it).
-    return undefined;
+    return Object.values(GENERIC_OAUTH_PROVIDER_CONFIG).find(config => config.credentialTypes.includes(credentialType));
 }
 
 /**
@@ -1289,12 +1301,12 @@ export function getProviderKeyFromCredentialType(
             return key;
         }
     }
-    return undefined;
+    return Object.keys(GENERIC_OAUTH_PROVIDER_CONFIG).find(key => GENERIC_OAUTH_PROVIDER_CONFIG[key].credentialTypes.includes(credentialType));
 }
 
 /**
  * Get all provider keys (for iteration).
  */
 export function getAllProviderKeys(): string[] {
-    return Object.keys(OAUTH_PROVIDER_CONFIG);
+    return [...new Set([...Object.keys(OAUTH_PROVIDER_CONFIG), ...Object.keys(GENERIC_OAUTH_PROVIDER_CONFIG)])];
 }

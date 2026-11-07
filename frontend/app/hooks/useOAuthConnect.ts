@@ -9,6 +9,9 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { toast } from 'sonner';
+import { createOAuthHook } from './oauth/createOAuthHook';
+import { INTEGRATION_METADATA } from '~/utils/integrationMetadata';
+
 import { isPlanLimitError } from '~/lib/planLimitErrors';
 import { providerSupportsOrgConsent } from '~/utils/oauthProviders';
 import {
@@ -23,6 +26,8 @@ import {
 } from '~/hooks/oauth';
 import type { AtlassianSiteSuggestion } from '~/hooks/oauth/useAtlassianOAuth';
 import { useOAuthSignInStandIn } from '~/hooks/oauth/OAuthExchangeContext';
+
+const useGenericOAuth = createOAuthHook({ provider: '', generic: true });
 
 export interface OAuthSelectionOption {
     id: string;
@@ -276,6 +281,10 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
         metaOAuth, instagramLoginOAuth,
     ]);
 
+    const genericOAuth = useGenericOAuth({
+        onSuccess: result => { if (result.provider) void createSuccessHandler(result.provider)(result); },
+        onError: message => createErrorHandler(connectingProvider ?? '')(message),
+    });
     const signInStandIn = useOAuthSignInStandIn();
     const connect = useCallback((
         provider: string,
@@ -287,7 +296,8 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
         customClientCredentials?: { client_id: string; client_secret: string },
     ) => {
         const hook = oauthHookMap[provider];
-        if (!hook) {
+        const spec = INTEGRATION_METADATA.oauthProviders[provider];
+        if (!hook && !spec) {
             const errorMsg = `Unknown OAuth provider: ${provider}`;
             setError(errorMsg);
             onError?.(errorMsg);
@@ -306,7 +316,12 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
             return;
         }
 
-        if (provider === 'shopify' && shopName) {
+        if (!hook && spec) {
+            genericOAuth.connectWithConfig({
+                provider, generic: true, defaultScopes: spec.scopes, scopeDelimiter: ' ',
+                authorizePath: `/api/auth/oauth/${provider}/authorize`,
+            }, name, scopes);
+        } else if (provider === 'shopify' && shopName) {
             hook.connect(name, shopName, scopes || [], customClientCredentials?.client_id, customClientCredentials?.client_secret);
         } else if (provider === 'zendesk' && shopName) {
             hook.connect(name, shopName, scopes || []);
@@ -334,7 +349,7 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
         } else {
             hook.connect(name, scopes || []);
         }
-    }, [oauthHookMap, onError, signInStandIn, createSuccessHandler, createErrorHandler]);
+    }, [oauthHookMap, genericOAuth, onError, signInStandIn, createSuccessHandler, createErrorHandler]);
 
     // Tenant-wide admin consent (Microsoft's "Need admin approval" wall): the same popup
     // engine, provider-gated. Only factory hooks take the options arg, and only they carry
@@ -359,7 +374,7 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
     // Auto-clear a stale connectingProvider when the active hook stops connecting
     // (popup closed) without firing our success/error handlers.
     const activeHookConnecting = connectingProvider
-        ? Boolean(oauthHookMap[connectingProvider]?.isConnecting)
+        ? Boolean(oauthHookMap[connectingProvider]?.isConnecting ?? genericOAuth.isConnecting)
         : false;
     useEffect(() => {
         if (!connectingProvider) return;

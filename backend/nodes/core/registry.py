@@ -575,6 +575,10 @@ class _NodeRegistry(Dict[str, Type[WorkflowNode]]):
         return alias is not None and dict.__contains__(self, alias)
 
 
+from nodes.core.oauth_registry import oauth_providers
+
+oauth_providers()  # Fail duplicate/invalid OAuth declarations during registry startup.
+
 DISCOVERED_NODE_ENTRIES = discover_nodes(Path(__file__).resolve().parents[1])
 NODE_REGISTRY: Dict[str, Type[WorkflowNode]] = _NodeRegistry(
     merge_node_entries(_NODE_REGISTRY_ENTRIES, DISCOVERED_NODE_ENTRIES)
