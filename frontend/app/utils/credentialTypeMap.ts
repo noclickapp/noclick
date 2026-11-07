@@ -30,6 +30,7 @@ export const CREDENTIAL_TYPE_MAP: Record<string, string> = {
     'Sematext Account API Key': 'sematext_account_api_key',
     'DropcontactAccessTokenCredential': 'dropcontact_access_token',
     'FountainPrivateHireCredential': 'fountain_private_hire',
+    'IlertAPIKeyCredential': 'ilert_api_key',
     'FormBuilder123TokenCredential': '123formbuilder_v2_token',
     'PorkbunCredential': 'porkbun_api_key',
     'HetrixToolsAPIKeyCredential': 'hetrixtools_api_key',

@@ -45,6 +45,7 @@ export const NODE_DEFINITION_FILES: ReadonlyArray<readonly [type: string, file: 
     ['automation-airtable', 'AirtableNode'],
     ['automation-nylas', 'NylasNode'],
     ['automation-aprimo', 'AprimoNode'],
+    ['automation-ilert', 'IlertNode'],
     ['automation-stripe', 'StripeNode'],
     ['automation-sling', 'SlingNode'],
     ['automation-cliniko', 'ClinikoNode'],

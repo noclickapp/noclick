@@ -1328,6 +1328,30 @@
       "source": "https://github.com/noclickapp/noclick-cloud/commit/0322f61a4 (integration-authored Google Classroom mark)",
       "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
       "sha256": "9837b69dd39af22bd5badefa2da8f8aaa8337727b5c74a1e4d5f7c44cebf720c"
+    },
+    {
+      "path": "frontend/public/icons/ilert-brand-vector.svg",
+      "source": "https://ilert.com (provider artwork; source recorded in commit 29cb9a6b9cfe440e98e4ae6094f1ade8f49162ae)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "5b67eb73399b6c773b3a04c345a0d0a7cedea7481d2254ce28e23ba18ec71a3c"
+    },
+    {
+      "path": "frontend/public/icons/ilert-brand.png",
+      "source": "https://www.ilert.com/ (provider artwork; source recorded in commit 0054fa0e51475569c797aa49adc2fdc8c6c79484)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "02fcfa1a4ea903ae92b623479e5cb20c8eb8828027fa90a45550cdcfe29f1a5b"
+    },
+    {
+      "path": "frontend/public/icons/ilert-preferred-brand.svg",
+      "source": "https://logos.composio.dev/api/ilert (ilert brand artwork; source recorded in commit 9e1dbd6fd91dff3126fe624dbb30ebb88982c188)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "2d1e6a73065279d8465128a041f6490814835190f9e45585c325d8ea564cc7ff"
+    },
+    {
+      "path": "frontend/public/icons/ilert.svg",
+      "source": "https://cdn.prod.website-files.com/606f59f19fb10864bac47260/660fc14f1929536638d8fb64_ilert-logo-white.svg (official ilert website wordmark; byte-for-byte verified)",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "5a77bfd267a87c360125bb436d3d353ed2fd51a8bd1786338fd4dbafe71057e9"
     }
   ],
   "excludedSourceAssets": [

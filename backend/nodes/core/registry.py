@@ -36,6 +36,7 @@ from nodes.bloomerang_node import BloomerangNode
 from nodes.nocodb_node import NocoDBNode
 from nodes.airtable_node import AirtableNode
 from nodes.nylas_node import NylasNode
+from nodes.ilert_node import IlertNode
 from nodes.stripe_node import StripeNode
 from nodes.sling_node import SlingNode
 from nodes.cliniko_node import ClinikoNode
@@ -258,6 +259,7 @@ _NODE_REGISTRY_ENTRIES: Dict[str, Type[WorkflowNode]] = {
     'automation-nocodb': NocoDBNode,
     'automation-airtable': AirtableNode,
     'automation-nylas': NylasNode,
+    'automation-ilert': IlertNode,
     'automation-stripe': StripeNode,
     'automation-sling': SlingNode,
     'automation-cliniko': ClinikoNode,
