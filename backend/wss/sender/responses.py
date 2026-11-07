@@ -7,6 +7,9 @@ from typing import List, Dict, Any, Optional, ClassVar
 from wss.sender.workflow_readiness_responses import WorkflowReadinessReport
 from pydantic import BaseModel, Field
 from datetime import datetime
+from wss.sender.oauth_responses import (
+    OAuthExchangeResponse, OAuthRefreshResponse, OAuthValidateResponse,
+)
 
 
 # Debug Operation Responses
