@@ -1,0 +1,801 @@
+{
+  "$defs": {
+    "ArchiveProduct": {
+      "additionalProperties": false,
+      "properties": {
+        "confirm_record_change": {
+          "const": true,
+          "description": "Changes Creem catalog or customer records. Product creation makes a product purchasable; archiving stops new purchases. Notification behavior is not verified.",
+          "title": "Confirm Record Change",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "archive_product",
+          "default": "archive_product",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "title": "Product Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "product_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "creem_product"
+        }
+      },
+      "required": [
+        "confirm_record_change",
+        "product_id"
+      ],
+      "title": "ArchiveProduct",
+      "type": "object"
+    },
+    "CreateCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "confirm_record_change": {
+          "const": true,
+          "description": "Changes Creem catalog or customer records. Product creation makes a product purchasable; archiving stops new purchases. Notification behavior is not verified.",
+          "title": "Confirm Record Change",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "description": "Creates a customer record using this email; no checkout or billing request is made.",
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        }
+      },
+      "required": [
+        "confirm_record_change",
+        "email",
+        "name"
+      ],
+      "title": "CreateCustomer",
+      "type": "object"
+    },
+    "CreateProduct": {
+      "additionalProperties": false,
+      "properties": {
+        "confirm_record_change": {
+          "const": true,
+          "description": "Changes Creem catalog or customer records. Product creation makes a product purchasable; archiving stops new purchases. Notification behavior is not verified.",
+          "title": "Confirm Record Change",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "create_product",
+          "default": "create_product",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "const": 0
+            },
+            {
+              "minimum": 100,
+              "type": "integer"
+            }
+          ],
+          "minimum": 0,
+          "title": "Price in Cents",
+          "type": "integer"
+        },
+        "currency": {
+          "enum": [
+            "EUR",
+            "USD"
+          ],
+          "title": "Currency",
+          "type": "string"
+        },
+        "tax_mode": {
+          "default": "inclusive",
+          "enum": [
+            "inclusive",
+            "exclusive"
+          ],
+          "title": "Tax Mode",
+          "type": "string"
+        },
+        "tax_category": {
+          "default": "saas",
+          "enum": [
+            "saas",
+            "digital-goods-service",
+            "ebooks"
+          ],
+          "title": "Tax Category",
+          "type": "string"
+        }
+      },
+      "required": [
+        "confirm_record_change",
+        "name",
+        "description",
+        "price",
+        "currency"
+      ],
+      "title": "CreateProduct",
+      "type": "object"
+    },
+    "CreemAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "creem_api_key",
+          "default": "creem_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "environment": {
+          "default": "test",
+          "description": "Test uses test-api.creem.io; Live uses api.creem.io.",
+          "enum": [
+            "test",
+            "prod"
+          ],
+          "title": "Environment",
+          "type": "string"
+        },
+        "api_key": {
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Creem API Key",
+      "type": "object",
+      "x-credential-instructions": "Use an already issued account-scoped API key. Select Test or Live explicitly; their keys and data are separate. No token is minted or renewed.",
+      "x-credential-url": "https://docs.creem.io/api-reference/introduction"
+    },
+    "GetCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "customer_id": {
+          "title": "Customer Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "customer_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "creem_customer"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "GetCustomer",
+      "type": "object"
+    },
+    "GetProduct": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "title": "Product Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "product_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "creem_product"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "GetProduct",
+      "type": "object"
+    },
+    "GetSubscription": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_subscription",
+          "default": "get_subscription",
+          "title": "Operation",
+          "type": "string"
+        },
+        "customer_id": {
+          "title": "Customer Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "customer_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "creem_customer"
+        },
+        "subscription_id": {
+          "title": "Subscription Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "customer_id",
+            "field_name": "subscription_id",
+            "searchable": true
+          },
+          "x-resource-type": "creem_subscription"
+        }
+      },
+      "required": [
+        "customer_id",
+        "subscription_id"
+      ],
+      "title": "GetSubscription",
+      "type": "object"
+    },
+    "ListCustomerLicenses": {
+      "additionalProperties": false,
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Local page bound of 100; the provider documents no maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "customer_id": {
+          "title": "Customer Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "customer_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "creem_customer"
+        },
+        "operation": {
+          "const": "list_customer_licenses",
+          "default": "list_customer_licenses",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "ListCustomerLicenses",
+      "type": "object"
+    },
+    "ListCustomerOrders": {
+      "additionalProperties": false,
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Local page bound of 100; the provider documents no maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "customer_id": {
+          "title": "Customer Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "customer_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "creem_customer"
+        },
+        "operation": {
+          "const": "list_customer_orders",
+          "default": "list_customer_orders",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "ListCustomerOrders",
+      "type": "object"
+    },
+    "ListCustomerSubscriptions": {
+      "additionalProperties": false,
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Local page bound of 100; the provider documents no maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "customer_id": {
+          "title": "Customer Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "customer_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "creem_customer"
+        },
+        "operation": {
+          "const": "list_customer_subscriptions",
+          "default": "list_customer_subscriptions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "ListCustomerSubscriptions",
+      "type": "object"
+    },
+    "ListCustomers": {
+      "additionalProperties": false,
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCustomers",
+      "type": "object"
+    },
+    "ListLicenseInstances": {
+      "additionalProperties": false,
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Local page bound of 100; the provider documents no maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "customer_id": {
+          "title": "Customer Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "customer_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "creem_customer"
+        },
+        "operation": {
+          "const": "list_license_instances",
+          "default": "list_license_instances",
+          "title": "Operation",
+          "type": "string"
+        },
+        "license_id": {
+          "title": "License Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "customer_id",
+            "field_name": "license_id",
+            "searchable": true
+          },
+          "x-resource-type": "creem_license"
+        },
+        "license_page": {
+          "default": 1,
+          "description": "The customer-license page containing this license, checked with page size 100 before reading instances.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "License Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "customer_id",
+        "license_id"
+      ],
+      "title": "ListLicenseInstances",
+      "type": "object"
+    },
+    "ListProducts": {
+      "additionalProperties": false,
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Local page bound of 100; the provider documents no maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "archived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "archived"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListProducts",
+      "type": "object"
+    },
+    "ListSubscriptions": {
+      "additionalProperties": false,
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "description": "Local page bound of 100; the provider documents no maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_subscriptions",
+          "default": "list_subscriptions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSubscriptions",
+      "type": "object"
+    },
+    "UpdateCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "confirm_record_change": {
+          "const": true,
+          "description": "Changes Creem catalog or customer records. Product creation makes a product purchasable; archiving stops new purchases. Notification behavior is not verified.",
+          "title": "Confirm Record Change",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "customer_id": {
+          "title": "Customer Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "customer_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "creem_customer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "clear_external_id": {
+          "default": false,
+          "title": "Clear External Id",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "confirm_record_change",
+        "customer_id"
+      ],
+      "title": "UpdateCustomer",
+      "type": "object"
+    },
+    "UpdateProduct": {
+      "additionalProperties": false,
+      "properties": {
+        "confirm_record_change": {
+          "const": true,
+          "description": "Changes Creem catalog or customer records. Product creation makes a product purchasable; archiving stops new purchases. Notification behavior is not verified.",
+          "title": "Confirm Record Change",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "update_product",
+          "default": "update_product",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "title": "Product Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "product_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "creem_product"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "clear_description": {
+          "default": false,
+          "title": "Clear Description",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "confirm_record_change",
+        "product_id"
+      ],
+      "title": "UpdateProduct",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_product": "#/$defs/ArchiveProduct",
+          "create_customer": "#/$defs/CreateCustomer",
+          "create_product": "#/$defs/CreateProduct",
+          "get_customer": "#/$defs/GetCustomer",
+          "get_product": "#/$defs/GetProduct",
+          "get_subscription": "#/$defs/GetSubscription",
+          "list_customer_licenses": "#/$defs/ListCustomerLicenses",
+          "list_customer_orders": "#/$defs/ListCustomerOrders",
+          "list_customer_subscriptions": "#/$defs/ListCustomerSubscriptions",
+          "list_customers": "#/$defs/ListCustomers",
+          "list_license_instances": "#/$defs/ListLicenseInstances",
+          "list_products": "#/$defs/ListProducts",
+          "list_subscriptions": "#/$defs/ListSubscriptions",
+          "update_customer": "#/$defs/UpdateCustomer",
+          "update_product": "#/$defs/UpdateProduct"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListProducts"
+        },
+        {
+          "$ref": "#/$defs/GetProduct"
+        },
+        {
+          "$ref": "#/$defs/CreateProduct"
+        },
+        {
+          "$ref": "#/$defs/UpdateProduct"
+        },
+        {
+          "$ref": "#/$defs/ArchiveProduct"
+        },
+        {
+          "$ref": "#/$defs/ListCustomers"
+        },
+        {
+          "$ref": "#/$defs/GetCustomer"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomer"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomer"
+        },
+        {
+          "$ref": "#/$defs/ListSubscriptions"
+        },
+        {
+          "$ref": "#/$defs/GetSubscription"
+        },
+        {
+          "$ref": "#/$defs/ListCustomerSubscriptions"
+        },
+        {
+          "$ref": "#/$defs/ListCustomerOrders"
+        },
+        {
+          "$ref": "#/$defs/ListCustomerLicenses"
+        },
+        {
+          "$ref": "#/$defs/ListLicenseInstances"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CreemAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Creem Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List my Creem products",
+    "Create a one-time catalog product",
+    "Update a customer name",
+    "Check a customer's subscription or license status"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
