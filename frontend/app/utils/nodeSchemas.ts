@@ -563,6 +563,7 @@ function getProviderLabel(providerKey: string): string {
         'linkedin': 'LinkedIn Account',
         'reddit': 'Reddit Account',
         'sematext': 'Sematext Account API Key',
+        'singlestore': 'SingleStore Organization',
         'telegram': 'Telegram Bot',
         'phone': 'Phone Number',
         'instagram': 'Instagram Account',
