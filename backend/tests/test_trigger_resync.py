@@ -344,7 +344,8 @@ async def test_turning_it_off_stops_a_pass_at_its_next_workflow(db):
 
     with patch.object(WebhookManager, "reconcile_node", turned_off_during_the_first):
         stats = await WebhookManager.resync_trigger_registrations(db.pool, limit=10_000)
-    assert len(visited) == 1 and stats["stopped"]
+    # The first workflow it reached may be another test's with several steps, each visited before it stops.
+    assert len(set(visited)) == 1 and stats["stopped"]
 
 
 async def test_of_two_passes_at_once_the_one_that_finds_the_lap_moved_stops(db):
@@ -360,7 +361,8 @@ async def test_of_two_passes_at_once_the_one_that_finds_the_lap_moved_stops(db):
 
     with patch.object(WebhookManager, "reconcile_node", another_pass_moves_the_lap):
         stats = await WebhookManager.resync_trigger_registrations(db.pool, limit=10_000)
-    assert len(visited) == 1 and stats["stopped"]
+    # The first workflow it reached may be another test's with several steps, each visited before it stops.
+    assert len(set(visited)) == 1 and stats["stopped"]
 
 
 # ── The switch and the dry run ───────────────────────────────────────────────
