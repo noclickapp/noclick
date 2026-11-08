@@ -1,0 +1,1234 @@
+{
+  "$defs": {
+    "DirectusCreateCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_collection",
+          "default": "create_collection",
+          "title": "Create Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "Create Collection",
+          "x-is-trigger": false
+        },
+        "collection_name": {
+          "description": "Name of the collection to create",
+          "title": "Collection Name",
+          "type": "string"
+        },
+        "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object with the item's fields or additional Directus schema/metadata",
+          "placeholder": "{\"title\":\"Example\"}",
+          "title": "JSON Data",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection_name"
+      ],
+      "title": "DirectusCreateCollectionConfig",
+      "type": "object"
+    },
+    "DirectusCreateFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_field",
+          "default": "create_field",
+          "title": "Create Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "Create Field",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "description": "Collection to operate on",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "collection",
+            "placeholder": "Select a collection",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "field_name": {
+          "description": "Field key in the collection",
+          "title": "Field Name",
+          "type": "string"
+        },
+        "field_type": {
+          "description": "Directus field type, such as string, integer, or boolean",
+          "title": "Field Type",
+          "type": "string"
+        },
+        "payload_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object with the item's fields or additional Directus schema/metadata",
+          "placeholder": "{\"title\":\"Example\"}",
+          "title": "JSON Data",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection",
+        "field_name",
+        "field_type"
+      ],
+      "title": "DirectusCreateFieldConfig",
+      "type": "object"
+    },
+    "DirectusCreateFolderConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Create Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Create Folder",
+          "x-is-trigger": false
+        },
+        "folder_name": {
+          "description": "Name of the folder",
+          "title": "Folder Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_name"
+      ],
+      "title": "DirectusCreateFolderConfig",
+      "type": "object"
+    },
+    "DirectusCreateItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_item",
+          "default": "create_item",
+          "title": "Create Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Content",
+          "x-display-name": "Create Item",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "description": "Collection to operate on",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "collection",
+            "placeholder": "Select a collection",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "payload_json": {
+          "description": "JSON object with the item's fields or additional Directus schema/metadata",
+          "placeholder": "{\"title\":\"Example\"}",
+          "title": "JSON Data",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection",
+        "payload_json"
+      ],
+      "title": "DirectusCreateItemConfig",
+      "type": "object"
+    },
+    "DirectusDeleteCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_collection",
+          "default": "delete_collection",
+          "title": "Delete Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "Delete Collection",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "description": "Collection to operate on",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "collection",
+            "placeholder": "Select a collection",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "DirectusDeleteCollectionConfig",
+      "type": "object"
+    },
+    "DirectusDeleteFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_field",
+          "default": "delete_field",
+          "title": "Delete Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "Delete Field",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "description": "Collection to operate on",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "collection",
+            "placeholder": "Select a collection",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "field_name": {
+          "description": "Field key in the collection",
+          "title": "Field Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection",
+        "field_name"
+      ],
+      "title": "DirectusDeleteFieldConfig",
+      "type": "object"
+    },
+    "DirectusDeleteFileConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_file",
+          "default": "delete_file",
+          "title": "Delete File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Delete File",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "UUID of the file",
+          "title": "File ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "DirectusDeleteFileConfig",
+      "type": "object"
+    },
+    "DirectusDeleteFolderConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_folder",
+          "default": "delete_folder",
+          "title": "Delete Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Delete Folder",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "description": "UUID of the folder",
+          "title": "Folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "DirectusDeleteFolderConfig",
+      "type": "object"
+    },
+    "DirectusDeleteItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_item",
+          "default": "delete_item",
+          "title": "Delete Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Content",
+          "x-display-name": "Delete Item",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "description": "Collection to operate on",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "collection",
+            "placeholder": "Select a collection",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "item_id": {
+          "description": "Primary key of the item",
+          "title": "Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection",
+        "item_id"
+      ],
+      "title": "DirectusDeleteItemConfig",
+      "type": "object"
+    },
+    "DirectusGetCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_collection",
+          "default": "get_collection",
+          "title": "Get Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "Get Collection",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "description": "Collection to operate on",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "collection",
+            "placeholder": "Select a collection",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "DirectusGetCollectionConfig",
+      "type": "object"
+    },
+    "DirectusGetCurrentUserConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Current User",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DirectusGetCurrentUserConfig",
+      "type": "object"
+    },
+    "DirectusGetFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_field",
+          "default": "get_field",
+          "title": "Get Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "Get Field",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "description": "Collection to operate on",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "collection",
+            "placeholder": "Select a collection",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "field_name": {
+          "description": "Field key in the collection",
+          "title": "Field Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection",
+        "field_name"
+      ],
+      "title": "DirectusGetFieldConfig",
+      "type": "object"
+    },
+    "DirectusGetFileConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Get File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Get File",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "UUID of the file",
+          "title": "File ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "DirectusGetFileConfig",
+      "type": "object"
+    },
+    "DirectusGetFolderConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_folder",
+          "default": "get_folder",
+          "title": "Get Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Get Folder",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "description": "UUID of the folder",
+          "title": "Folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "DirectusGetFolderConfig",
+      "type": "object"
+    },
+    "DirectusGetItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_item",
+          "default": "get_item",
+          "title": "Get Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Content",
+          "x-display-name": "Get Item",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "description": "Collection to operate on",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "collection",
+            "placeholder": "Select a collection",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "item_id": {
+          "description": "Primary key of the item",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated field names to return",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "collection",
+        "item_id"
+      ],
+      "title": "DirectusGetItemConfig",
+      "type": "object"
+    },
+    "DirectusListCollectionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "List Collections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "List Collections",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DirectusListCollectionsConfig",
+      "type": "object"
+    },
+    "DirectusListFieldsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_fields",
+          "default": "list_fields",
+          "title": "List Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "List Fields",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "description": "Collection to operate on",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "collection",
+            "placeholder": "Select a collection",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "DirectusListFieldsConfig",
+      "type": "object"
+    },
+    "DirectusListFilesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "List Files",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "List Files",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum results to return",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Results to skip",
+          "title": "Offset"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search across indexed fields",
+          "title": "Search"
+        }
+      },
+      "title": "DirectusListFilesConfig",
+      "type": "object"
+    },
+    "DirectusListFoldersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "List Folders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "List Folders",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum results to return",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Results to skip",
+          "title": "Offset"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search across indexed fields",
+          "title": "Search"
+        }
+      },
+      "title": "DirectusListFoldersConfig",
+      "type": "object"
+    },
+    "DirectusListItemsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_items",
+          "default": "list_items",
+          "title": "List Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Content",
+          "x-display-name": "List Items",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "description": "Collection to operate on",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "collection",
+            "placeholder": "Select a collection",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum results to return",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Results to skip",
+          "title": "Offset"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search across indexed fields",
+          "title": "Search"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields; prefix - for descending",
+          "title": "Sort"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated field names to return",
+          "title": "Fields"
+        },
+        "filter_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Directus filter object, for example {\"status\":{\"_eq\":\"published\"}}",
+          "title": "Filter (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "DirectusListItemsConfig",
+      "type": "object"
+    },
+    "DirectusListUsersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "List Users",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum results to return",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Results to skip",
+          "title": "Offset"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search across indexed fields",
+          "title": "Search"
+        }
+      },
+      "title": "DirectusListUsersConfig",
+      "type": "object"
+    },
+    "DirectusStaticTokenCredential": {
+      "description": "A static token from the Directus Data Studio user's settings.",
+      "properties": {
+        "credential_type": {
+          "const": "directus_static_token",
+          "default": "directus_static_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_url": {
+          "description": "Root URL of your Directus project, for example https://cms.example.com",
+          "placeholder": "https://cms.example.com",
+          "title": "Directus URL",
+          "type": "string"
+        },
+        "static_token": {
+          "description": "Create a static token in Data Studio > User Directory > your user",
+          "title": "Static Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "instance_url",
+        "static_token"
+      ],
+      "title": "Directus Static Token",
+      "type": "object",
+      "x-credential-url": "https://directus.io/docs/guides/authentication/tokens-cookies"
+    },
+    "DirectusUpdateCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_collection",
+          "default": "update_collection",
+          "title": "Update Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "Update Collection",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "description": "Collection to operate on",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "collection",
+            "placeholder": "Select a collection",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "payload_json": {
+          "description": "JSON object with the item's fields or additional Directus schema/metadata",
+          "placeholder": "{\"title\":\"Example\"}",
+          "title": "JSON Data",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection",
+        "payload_json"
+      ],
+      "title": "DirectusUpdateCollectionConfig",
+      "type": "object"
+    },
+    "DirectusUpdateFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_field",
+          "default": "update_field",
+          "title": "Update Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "Update Field",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "description": "Collection to operate on",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "collection",
+            "placeholder": "Select a collection",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "field_name": {
+          "description": "Field key in the collection",
+          "title": "Field Name",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "JSON object with the item's fields or additional Directus schema/metadata",
+          "placeholder": "{\"title\":\"Example\"}",
+          "title": "JSON Data",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection",
+        "field_name",
+        "payload_json"
+      ],
+      "title": "DirectusUpdateFieldConfig",
+      "type": "object"
+    },
+    "DirectusUpdateFileConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_file",
+          "default": "update_file",
+          "title": "Update File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Update File",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "UUID of the file",
+          "title": "File ID",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "JSON object with the item's fields or additional Directus schema/metadata",
+          "placeholder": "{\"title\":\"Example\"}",
+          "title": "JSON Data",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "file_id",
+        "payload_json"
+      ],
+      "title": "DirectusUpdateFileConfig",
+      "type": "object"
+    },
+    "DirectusUpdateFolderConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_folder",
+          "default": "update_folder",
+          "title": "Update Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Update Folder",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "description": "UUID of the folder",
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "folder_name": {
+          "description": "Name of the folder",
+          "title": "Folder Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "folder_name"
+      ],
+      "title": "DirectusUpdateFolderConfig",
+      "type": "object"
+    },
+    "DirectusUpdateItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_item",
+          "default": "update_item",
+          "title": "Update Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Content",
+          "x-display-name": "Update Item",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "description": "Collection to operate on",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "collection",
+            "placeholder": "Select a collection",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "item_id": {
+          "description": "Primary key of the item",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "payload_json": {
+          "description": "JSON object with the item's fields or additional Directus schema/metadata",
+          "placeholder": "{\"title\":\"Example\"}",
+          "title": "JSON Data",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection",
+        "item_id",
+        "payload_json"
+      ],
+      "title": "DirectusUpdateItemConfig",
+      "type": "object"
+    },
+    "DirectusUploadFileConfig": {
+      "properties": {
+        "operation": {
+          "const": "upload_file",
+          "default": "upload_file",
+          "title": "Upload File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Upload File",
+          "x-is-trigger": false
+        },
+        "file_name": {
+          "description": "Name for the uploaded file",
+          "title": "File Name",
+          "type": "string"
+        },
+        "mime_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional content type of the upload",
+          "title": "MIME Type"
+        },
+        "content_base64": {
+          "description": "Base64-encoded file contents, up to 8 MB",
+          "format": "byte",
+          "title": "File Content (Base64)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "file_name",
+        "content_base64"
+      ],
+      "title": "DirectusUploadFileConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_collection": "#/$defs/DirectusCreateCollectionConfig",
+          "create_field": "#/$defs/DirectusCreateFieldConfig",
+          "create_folder": "#/$defs/DirectusCreateFolderConfig",
+          "create_item": "#/$defs/DirectusCreateItemConfig",
+          "delete_collection": "#/$defs/DirectusDeleteCollectionConfig",
+          "delete_field": "#/$defs/DirectusDeleteFieldConfig",
+          "delete_file": "#/$defs/DirectusDeleteFileConfig",
+          "delete_folder": "#/$defs/DirectusDeleteFolderConfig",
+          "delete_item": "#/$defs/DirectusDeleteItemConfig",
+          "get_collection": "#/$defs/DirectusGetCollectionConfig",
+          "get_current_user": "#/$defs/DirectusGetCurrentUserConfig",
+          "get_field": "#/$defs/DirectusGetFieldConfig",
+          "get_file": "#/$defs/DirectusGetFileConfig",
+          "get_folder": "#/$defs/DirectusGetFolderConfig",
+          "get_item": "#/$defs/DirectusGetItemConfig",
+          "list_collections": "#/$defs/DirectusListCollectionsConfig",
+          "list_fields": "#/$defs/DirectusListFieldsConfig",
+          "list_files": "#/$defs/DirectusListFilesConfig",
+          "list_folders": "#/$defs/DirectusListFoldersConfig",
+          "list_items": "#/$defs/DirectusListItemsConfig",
+          "list_users": "#/$defs/DirectusListUsersConfig",
+          "update_collection": "#/$defs/DirectusUpdateCollectionConfig",
+          "update_field": "#/$defs/DirectusUpdateFieldConfig",
+          "update_file": "#/$defs/DirectusUpdateFileConfig",
+          "update_folder": "#/$defs/DirectusUpdateFolderConfig",
+          "update_item": "#/$defs/DirectusUpdateItemConfig",
+          "upload_file": "#/$defs/DirectusUploadFileConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DirectusGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusGetCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusCreateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusUpdateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusDeleteCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusListFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusGetFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusCreateFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusUpdateFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusDeleteFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusListItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusGetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusCreateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusUpdateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusDeleteItemConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusListFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusGetFileConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusUploadFileConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusUpdateFileConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusDeleteFileConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusListFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusGetFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusCreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusUpdateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/DirectusDeleteFolderConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DirectusStaticTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Directus Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List my Directus collections",
+    "Create an item in the articles collection",
+    "Update an article and read it back",
+    "Upload a file to Directus"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
