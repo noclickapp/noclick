@@ -1,0 +1,4671 @@
+{
+  "$defs": {
+    "AttachTag": {
+      "description": "Attach an existing tag to a card or sticky note.",
+      "properties": {
+        "operation": {
+          "const": "attach_tag",
+          "default": "attach_tag",
+          "title": "Attach Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Attach Tag",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "item_id": {
+          "title": "Item ID",
+          "type": "string"
+        },
+        "tag_id": {
+          "title": "Tag ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "tag_id"
+      ],
+      "title": "AttachTag",
+      "type": "object"
+    },
+    "CreateBoard": {
+      "description": "Create a board in the connected Miro team.",
+      "properties": {
+        "operation": {
+          "const": "create_board",
+          "default": "create_board",
+          "title": "Create Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-creates-resource": true,
+          "x-display-name": "Create Board",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "miro_board"
+        },
+        "name": {
+          "maxLength": 60,
+          "minLength": 1,
+          "title": "Board Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateBoard",
+      "type": "object"
+    },
+    "CreateCard": {
+      "description": "Create a Miro task card with a title and description.",
+      "properties": {
+        "operation": {
+          "const": "create_card",
+          "default": "create_card",
+          "title": "Create Card",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-creates-resource": true,
+          "x-display-name": "Create Card",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "miro_item"
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "board_id",
+        "title"
+      ],
+      "title": "CreateCard",
+      "type": "object"
+    },
+    "CreateStickyNote": {
+      "description": "Add a sticky note to a board.",
+      "properties": {
+        "operation": {
+          "const": "create_sticky_note",
+          "default": "create_sticky_note",
+          "title": "Create Sticky Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-creates-resource": true,
+          "x-display-name": "Create Sticky Note",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "miro_item"
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "content": {
+          "maxLength": 6000,
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "x": {
+          "default": 0,
+          "title": "X Position",
+          "type": "number"
+        },
+        "y": {
+          "default": 0,
+          "title": "Y Position",
+          "type": "number"
+        }
+      },
+      "required": [
+        "board_id",
+        "content"
+      ],
+      "title": "CreateStickyNote",
+      "type": "object"
+    },
+    "CreateTag": {
+      "description": "Create a board tag to categorize cards or sticky notes.",
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Create Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-creates-resource": true,
+          "x-display-name": "Create Tag",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "miro_tag"
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "title": {
+          "maxLength": 120,
+          "title": "Tag Title",
+          "type": "string"
+        },
+        "fill_color": {
+          "default": "red",
+          "enum": [
+            "red",
+            "magenta",
+            "violet",
+            "light_green",
+            "green",
+            "dark_green",
+            "cyan",
+            "blue",
+            "dark_blue",
+            "yellow",
+            "gray",
+            "black"
+          ],
+          "title": "Tag Color",
+          "type": "string"
+        }
+      },
+      "required": [
+        "board_id",
+        "title"
+      ],
+      "title": "CreateTag",
+      "type": "object"
+    },
+    "CreateText": {
+      "description": "Add a text item to a Miro board.",
+      "properties": {
+        "operation": {
+          "const": "create_text",
+          "default": "create_text",
+          "title": "Create Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-creates-resource": true,
+          "x-display-name": "Create Text",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "miro_item"
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "content": {
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "board_id",
+        "content"
+      ],
+      "title": "CreateText",
+      "type": "object"
+    },
+    "DeleteBoard": {
+      "description": "Permanently delete a Miro board.",
+      "properties": {
+        "operation": {
+          "const": "delete_board",
+          "default": "delete_board",
+          "title": "Delete Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Delete Board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "DeleteBoard",
+      "type": "object"
+    },
+    "DeleteItem": {
+      "description": "Remove an item from a board.",
+      "properties": {
+        "operation": {
+          "const": "delete_item",
+          "default": "delete_item",
+          "title": "Delete Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Delete Item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "item_id": {
+          "title": "Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "DeleteItem",
+      "type": "object"
+    },
+    "GetBoard": {
+      "description": "Read a board's details and sharing settings.",
+      "properties": {
+        "operation": {
+          "const": "get_board",
+          "default": "get_board",
+          "title": "Get Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Get Board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "GetBoard",
+      "type": "object"
+    },
+    "GetItem": {
+      "description": "Read any item on a board by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_item",
+          "default": "get_item",
+          "title": "Get Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Get Item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "item_id": {
+          "title": "Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "GetItem",
+      "type": "object"
+    },
+    "GetTag": {
+      "description": "Read one board tag.",
+      "properties": {
+        "operation": {
+          "const": "get_tag",
+          "default": "get_tag",
+          "title": "Get Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Get Tag",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "tag_id": {
+          "title": "Tag ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "board_id",
+        "tag_id"
+      ],
+      "title": "GetTag",
+      "type": "object"
+    },
+    "GetTokenContext": {
+      "description": "Identify the connected Miro user and team.",
+      "properties": {
+        "operation": {
+          "const": "get_token_context",
+          "default": "get_token_context",
+          "title": "Get Connected Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Connected Account",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetTokenContext",
+      "type": "object"
+    },
+    "ListBoardMembers": {
+      "description": "List people who have access to a board.",
+      "properties": {
+        "operation": {
+          "const": "list_board_members",
+          "default": "list_board_members",
+          "title": "List Board Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "List Board Members",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "ListBoardMembers",
+      "type": "object"
+    },
+    "ListBoards": {
+      "description": "List boards accessible to the connected user.",
+      "properties": {
+        "operation": {
+          "const": "list_boards",
+          "default": "list_boards",
+          "title": "List Boards",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "List Boards",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ListBoards",
+      "type": "object"
+    },
+    "ListItemTags": {
+      "description": "List tags attached to an item.",
+      "properties": {
+        "operation": {
+          "const": "list_item_tags",
+          "default": "list_item_tags",
+          "title": "List Item Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "List Item Tags",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "item_id": {
+          "title": "Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "ListItemTags",
+      "type": "object"
+    },
+    "ListItems": {
+      "description": "List items on a board, optionally by type or tag.",
+      "properties": {
+        "operation": {
+          "const": "list_items",
+          "default": "list_items",
+          "title": "List Board Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "List Board Items",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Page Cursor"
+        },
+        "item_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For example sticky_note, card, or text",
+          "title": "Item Type"
+        },
+        "tag_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag ID"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "ListItems",
+      "type": "object"
+    },
+    "ListTags": {
+      "description": "List the tags defined on a board.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List Board Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "List Board Tags",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "ListTags",
+      "type": "object"
+    },
+    "MiroApiCopyBoardConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_copy_board",
+          "default": "api_copy_board",
+          "title": "Copy board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Copy board",
+          "x-is-trigger": false
+        },
+        "copy_from": {
+          "title": "Copy From",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Creates a copy of an existing board. You can also update the name, description, sharing policy, and permissions policy for the new board in the request body. Required scope boards:write Rate limiting Level 4",
+          "title": "Request Body JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "copy_from"
+      ],
+      "title": "MiroApiCopyBoardConfig",
+      "type": "object"
+    },
+    "MiroApiCreateAppCardItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_create_app_card_item",
+          "default": "api_create_app_card_item",
+          "title": "Create app card item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "App Card Items",
+          "x-display-name": "Create app card item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Adds an app card item to a board. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "body_json"
+      ],
+      "title": "MiroApiCreateAppCardItemConfig",
+      "type": "object"
+    },
+    "MiroApiCreateCodeWidgetItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_create_code_widget_item",
+          "default": "api_create_code_widget_item",
+          "title": "Create code widget item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Code Widget Items (Experimental)",
+          "x-display-name": "Create code widget item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Adds a code widget item to a board. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "MiroApiCreateCodeWidgetItemConfig",
+      "type": "object"
+    },
+    "MiroApiCreateConnectorConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_create_connector",
+          "default": "api_create_connector",
+          "title": "Create connector",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connectors",
+          "x-display-name": "Create connector",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Adds a connector to a board. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "body_json"
+      ],
+      "title": "MiroApiCreateConnectorConfig",
+      "type": "object"
+    },
+    "MiroApiCreateDocFormatItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_create_doc_format_item",
+          "default": "api_create_doc_format_item",
+          "title": "Create doc format item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Doc Formats",
+          "x-display-name": "Create doc format item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Adds a doc format item to a board. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "body_json"
+      ],
+      "title": "MiroApiCreateDocFormatItemConfig",
+      "type": "object"
+    },
+    "MiroApiCreateDocumentItemUsingUrlConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_create_document_item_using_url",
+          "default": "api_create_document_item_using_url",
+          "title": "Create document item using URL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Items",
+          "x-display-name": "Create document item using URL",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Adds a document item to a board by specifying the URL where the document is hosted. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "body_json"
+      ],
+      "title": "MiroApiCreateDocumentItemUsingUrlConfig",
+      "type": "object"
+    },
+    "MiroApiCreateEmbedItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_create_embed_item",
+          "default": "api_create_embed_item",
+          "title": "Create embed item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Embed Items",
+          "x-display-name": "Create embed item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Adds an embed item containing external content to a board. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "body_json"
+      ],
+      "title": "MiroApiCreateEmbedItemConfig",
+      "type": "object"
+    },
+    "MiroApiCreateFrameItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_create_frame_item",
+          "default": "api_create_frame_item",
+          "title": "Create frame",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Frames",
+          "x-display-name": "Create frame",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Adds a frame to a board. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "body_json"
+      ],
+      "title": "MiroApiCreateFrameItemConfig",
+      "type": "object"
+    },
+    "MiroApiCreateImageItemUsingUrlConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_create_image_item_using_url",
+          "default": "api_create_image_item_using_url",
+          "title": "Create image item using URL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Image Items",
+          "x-display-name": "Create image item using URL",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Adds an image item to a board by specifying an image URL. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "body_json"
+      ],
+      "title": "MiroApiCreateImageItemUsingUrlConfig",
+      "type": "object"
+    },
+    "MiroApiCreateItemsConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_create_items",
+          "default": "api_create_items",
+          "title": "Create items in bulk",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Operations",
+          "x-display-name": "Create items in bulk",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Adds different types of items to a board. You can add up to 20 items of the same or different type per create call. For example, you can create 3 shape items, 4 card items, and 5 sticky notes in one create call. The bulk create operation\u2026",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "body_json"
+      ],
+      "title": "MiroApiCreateItemsConfig",
+      "type": "object"
+    },
+    "MiroApiCreateMindmapNodesExperimentalConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_create_mindmap_nodes_experimental",
+          "default": "api_create_mindmap_nodes_experimental",
+          "title": "Create mind map node",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mind Map Nodes (Experimental)",
+          "x-display-name": "Create mind map node",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Adds a mind map node to a board. A root node is the starting point of a mind map. A node that is created under a root node is a child node. For information on mind maps, use cases, mind map structure, and more, see the Mind Map Overview\u2026",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "body_json"
+      ],
+      "title": "MiroApiCreateMindmapNodesExperimentalConfig",
+      "type": "object"
+    },
+    "MiroApiCreateShapeItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_create_shape_item",
+          "default": "api_create_shape_item",
+          "title": "Create shape item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shape Items",
+          "x-display-name": "Create shape item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Adds a shape item to a board. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "body_json"
+      ],
+      "title": "MiroApiCreateShapeItemConfig",
+      "type": "object"
+    },
+    "MiroApiCreateShapeItemFlowchartConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_create_shape_item_flowchart",
+          "default": "api_create_shape_item_flowchart",
+          "title": "Create shape item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Flowchart Shapes (Experimental)",
+          "x-display-name": "Create shape item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Adds a flowchart shape item to a board. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "body_json"
+      ],
+      "title": "MiroApiCreateShapeItemFlowchartConfig",
+      "type": "object"
+    },
+    "MiroApiCreategroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_creategroup",
+          "default": "api_creategroup",
+          "title": "Create group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Create group",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Creates a group of items on a board. The group is created with the items that are passed in the request body. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "body_json"
+      ],
+      "title": "MiroApiCreategroupConfig",
+      "type": "object"
+    },
+    "MiroApiDeleteAppCardItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_delete_app_card_item",
+          "default": "api_delete_app_card_item",
+          "title": "Delete app card item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "App Card Items",
+          "x-display-name": "Delete app card item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiDeleteAppCardItemConfig",
+      "type": "object"
+    },
+    "MiroApiDeleteCardItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_delete_card_item",
+          "default": "api_delete_card_item",
+          "title": "Delete card item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Card Items",
+          "x-display-name": "Delete card item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiDeleteCardItemConfig",
+      "type": "object"
+    },
+    "MiroApiDeleteCodeWidgetItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_delete_code_widget_item",
+          "default": "api_delete_code_widget_item",
+          "title": "Delete code widget item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Code Widget Items (Experimental)",
+          "x-display-name": "Delete code widget item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiDeleteCodeWidgetItemConfig",
+      "type": "object"
+    },
+    "MiroApiDeleteConnectorConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_delete_connector",
+          "default": "api_delete_connector",
+          "title": "Delete connector",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connectors",
+          "x-display-name": "Delete connector",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "connector_id": {
+          "title": "Connector Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "connector_id"
+      ],
+      "title": "MiroApiDeleteConnectorConfig",
+      "type": "object"
+    },
+    "MiroApiDeleteDocFormatItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_delete_doc_format_item",
+          "default": "api_delete_doc_format_item",
+          "title": "Delete doc format item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Doc Formats",
+          "x-display-name": "Delete doc format item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiDeleteDocFormatItemConfig",
+      "type": "object"
+    },
+    "MiroApiDeleteDocumentItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_delete_document_item",
+          "default": "api_delete_document_item",
+          "title": "Delete document item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Items",
+          "x-display-name": "Delete document item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiDeleteDocumentItemConfig",
+      "type": "object"
+    },
+    "MiroApiDeleteEmbedItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_delete_embed_item",
+          "default": "api_delete_embed_item",
+          "title": "Delete embed item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Embed Items",
+          "x-display-name": "Delete embed item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiDeleteEmbedItemConfig",
+      "type": "object"
+    },
+    "MiroApiDeleteFrameItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_delete_frame_item",
+          "default": "api_delete_frame_item",
+          "title": "Delete frame",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Frames",
+          "x-display-name": "Delete frame",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiDeleteFrameItemConfig",
+      "type": "object"
+    },
+    "MiroApiDeleteImageItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_delete_image_item",
+          "default": "api_delete_image_item",
+          "title": "Delete image item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Image Items",
+          "x-display-name": "Delete image item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiDeleteImageItemConfig",
+      "type": "object"
+    },
+    "MiroApiDeleteItemExperimentalConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_delete_item_experimental",
+          "default": "api_delete_item_experimental",
+          "title": "Delete item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Delete item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiDeleteItemExperimentalConfig",
+      "type": "object"
+    },
+    "MiroApiDeleteMindmapNodeExperimentalConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_delete_mindmap_node_experimental",
+          "default": "api_delete_mindmap_node_experimental",
+          "title": "Delete mind map node",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mind Map Nodes (Experimental)",
+          "x-display-name": "Delete mind map node",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiDeleteMindmapNodeExperimentalConfig",
+      "type": "object"
+    },
+    "MiroApiDeleteShapeItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_delete_shape_item",
+          "default": "api_delete_shape_item",
+          "title": "Delete shape item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shape Items",
+          "x-display-name": "Delete shape item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiDeleteShapeItemConfig",
+      "type": "object"
+    },
+    "MiroApiDeleteShapeItemFlowchartConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_delete_shape_item_flowchart",
+          "default": "api_delete_shape_item_flowchart",
+          "title": "Delete shape item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Flowchart Shapes (Experimental)",
+          "x-display-name": "Delete shape item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiDeleteShapeItemFlowchartConfig",
+      "type": "object"
+    },
+    "MiroApiDeleteStickyNoteItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_delete_sticky_note_item",
+          "default": "api_delete_sticky_note_item",
+          "title": "Delete sticky note item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sticky Note Items",
+          "x-display-name": "Delete sticky note item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiDeleteStickyNoteItemConfig",
+      "type": "object"
+    },
+    "MiroApiDeleteTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_delete_tag",
+          "default": "api_delete_tag",
+          "title": "Delete tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Delete tag",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "tag_id": {
+          "title": "Tag Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "tag_id"
+      ],
+      "title": "MiroApiDeleteTagConfig",
+      "type": "object"
+    },
+    "MiroApiDeleteTextItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_delete_text_item",
+          "default": "api_delete_text_item",
+          "title": "Delete text item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Text Items",
+          "x-display-name": "Delete text item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiDeleteTextItemConfig",
+      "type": "object"
+    },
+    "MiroApiDeletegroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_deletegroup",
+          "default": "api_deletegroup",
+          "title": "Deletes the group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Deletes the group",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "group_id": {
+          "title": "Group Id",
+          "type": "string"
+        },
+        "delete_items": {
+          "title": "Delete Items",
+          "type": "boolean"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "group_id",
+        "delete_items"
+      ],
+      "title": "MiroApiDeletegroupConfig",
+      "type": "object"
+    },
+    "MiroApiGetAllGroupsConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_all_groups",
+          "default": "api_get_all_groups",
+          "title": "Get all groups on a board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Get all groups on a board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "MiroApiGetAllGroupsConfig",
+      "type": "object"
+    },
+    "MiroApiGetAppCardItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_app_card_item",
+          "default": "api_get_app_card_item",
+          "title": "Get app card item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "App Card Items",
+          "x-display-name": "Get app card item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiGetAppCardItemConfig",
+      "type": "object"
+    },
+    "MiroApiGetCardItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_card_item",
+          "default": "api_get_card_item",
+          "title": "Get card item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Card Items",
+          "x-display-name": "Get card item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiGetCardItemConfig",
+      "type": "object"
+    },
+    "MiroApiGetCodeWidgetItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_code_widget_item",
+          "default": "api_get_code_widget_item",
+          "title": "Get code widget item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Code Widget Items (Experimental)",
+          "x-display-name": "Get code widget item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiGetCodeWidgetItemConfig",
+      "type": "object"
+    },
+    "MiroApiGetCodeWidgetItemsConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_code_widget_items",
+          "default": "api_get_code_widget_items",
+          "title": "Get code widget items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Code Widget Items (Experimental)",
+          "x-display-name": "Get code widget items",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "MiroApiGetCodeWidgetItemsConfig",
+      "type": "object"
+    },
+    "MiroApiGetConnectorConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_connector",
+          "default": "api_get_connector",
+          "title": "Get specific connector",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connectors",
+          "x-display-name": "Get specific connector",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "connector_id": {
+          "title": "Connector Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "connector_id"
+      ],
+      "title": "MiroApiGetConnectorConfig",
+      "type": "object"
+    },
+    "MiroApiGetConnectorsConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_connectors",
+          "default": "api_get_connectors",
+          "title": "Get connectors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connectors",
+          "x-display-name": "Get connectors",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "MiroApiGetConnectorsConfig",
+      "type": "object"
+    },
+    "MiroApiGetDocFormatItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_doc_format_item",
+          "default": "api_get_doc_format_item",
+          "title": "Get doc format item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Doc Formats",
+          "x-display-name": "Get doc format item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiGetDocFormatItemConfig",
+      "type": "object"
+    },
+    "MiroApiGetDocumentItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_document_item",
+          "default": "api_get_document_item",
+          "title": "Get document item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Items",
+          "x-display-name": "Get document item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiGetDocumentItemConfig",
+      "type": "object"
+    },
+    "MiroApiGetEmbedItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_embed_item",
+          "default": "api_get_embed_item",
+          "title": "Get embed item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Embed Items",
+          "x-display-name": "Get embed item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiGetEmbedItemConfig",
+      "type": "object"
+    },
+    "MiroApiGetFrameItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_frame_item",
+          "default": "api_get_frame_item",
+          "title": "Get frame",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Frames",
+          "x-display-name": "Get frame",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiGetFrameItemConfig",
+      "type": "object"
+    },
+    "MiroApiGetImageItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_image_item",
+          "default": "api_get_image_item",
+          "title": "Get image item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Image Items",
+          "x-display-name": "Get image item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiGetImageItemConfig",
+      "type": "object"
+    },
+    "MiroApiGetItemsExperimentalConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_items_experimental",
+          "default": "api_get_items_experimental",
+          "title": "Get items on board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Flowchart Shapes (Experimental)",
+          "x-display-name": "Get items on board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "MiroApiGetItemsExperimentalConfig",
+      "type": "object"
+    },
+    "MiroApiGetMindmapNodeExperimentalConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_mindmap_node_experimental",
+          "default": "api_get_mindmap_node_experimental",
+          "title": "Get specific mind map node",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mind Map Nodes (Experimental)",
+          "x-display-name": "Get specific mind map node",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiGetMindmapNodeExperimentalConfig",
+      "type": "object"
+    },
+    "MiroApiGetMindmapNodesExperimentalConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_mindmap_nodes_experimental",
+          "default": "api_get_mindmap_nodes_experimental",
+          "title": "Get mind map nodes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mind Map Nodes (Experimental)",
+          "x-display-name": "Get mind map nodes",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "MiroApiGetMindmapNodesExperimentalConfig",
+      "type": "object"
+    },
+    "MiroApiGetShapeItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_shape_item",
+          "default": "api_get_shape_item",
+          "title": "Get shape item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shape Items",
+          "x-display-name": "Get shape item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiGetShapeItemConfig",
+      "type": "object"
+    },
+    "MiroApiGetShapeItemFlowchartConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_shape_item_flowchart",
+          "default": "api_get_shape_item_flowchart",
+          "title": "Get shape item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Flowchart Shapes (Experimental)",
+          "x-display-name": "Get shape item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiGetShapeItemFlowchartConfig",
+      "type": "object"
+    },
+    "MiroApiGetSpecificBoardMemberConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_specific_board_member",
+          "default": "api_get_specific_board_member",
+          "title": "Get specific board member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Board Members",
+          "x-display-name": "Get specific board member",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "board_member_id": {
+          "title": "Board Member Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "board_member_id"
+      ],
+      "title": "MiroApiGetSpecificBoardMemberConfig",
+      "type": "object"
+    },
+    "MiroApiGetSpecificItemExperimentalConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_specific_item_experimental",
+          "default": "api_get_specific_item_experimental",
+          "title": "Get specific item on board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Flowchart Shapes (Experimental)",
+          "x-display-name": "Get specific item on board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiGetSpecificItemExperimentalConfig",
+      "type": "object"
+    },
+    "MiroApiGetStickyNoteItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_sticky_note_item",
+          "default": "api_get_sticky_note_item",
+          "title": "Get sticky note item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sticky Note Items",
+          "x-display-name": "Get sticky note item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiGetStickyNoteItemConfig",
+      "type": "object"
+    },
+    "MiroApiGetTextItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_get_text_item",
+          "default": "api_get_text_item",
+          "title": "Get text item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Text Items",
+          "x-display-name": "Get text item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MiroApiGetTextItemConfig",
+      "type": "object"
+    },
+    "MiroApiGetgroupbyidConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_getgroupbyid",
+          "default": "api_getgroupbyid",
+          "title": "Get a group by its ID",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Get a group by its ID",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "group_id": {
+          "title": "Group Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "group_id"
+      ],
+      "title": "MiroApiGetgroupbyidConfig",
+      "type": "object"
+    },
+    "MiroApiGetitemsbygroupidConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_getitemsbygroupid",
+          "default": "api_getitemsbygroupid",
+          "title": "Get items of a group by ID",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Get items of a group by ID",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "group_item_id": {
+          "title": "Group Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "group_item_id"
+      ],
+      "title": "MiroApiGetitemsbygroupidConfig",
+      "type": "object"
+    },
+    "MiroApiMoveCodeWidgetItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_move_code_widget_item",
+          "default": "api_move_code_widget_item",
+          "title": "Move code widget item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Code Widget Items (Experimental)",
+          "x-display-name": "Move code widget item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Updates the position of a code widget item on a board. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "body_json"
+      ],
+      "title": "MiroApiMoveCodeWidgetItemConfig",
+      "type": "object"
+    },
+    "MiroApiRemoveBoardMemberConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_remove_board_member",
+          "default": "api_remove_board_member",
+          "title": "Remove board member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Board Members",
+          "x-display-name": "Remove board member",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "board_member_id": {
+          "title": "Board Member Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "board_member_id"
+      ],
+      "title": "MiroApiRemoveBoardMemberConfig",
+      "type": "object"
+    },
+    "MiroApiUngroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_ungroup",
+          "default": "api_ungroup",
+          "title": "Ungroup items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Ungroup items",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "group_id": {
+          "title": "Group Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "group_id"
+      ],
+      "title": "MiroApiUngroupConfig",
+      "type": "object"
+    },
+    "MiroApiUpdateAppCardItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_update_app_card_item",
+          "default": "api_update_app_card_item",
+          "title": "Update app card item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "App Card Items",
+          "x-display-name": "Update app card item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Updates an app card item on a board based on the data and style properties provided in the request body. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "body_json"
+      ],
+      "title": "MiroApiUpdateAppCardItemConfig",
+      "type": "object"
+    },
+    "MiroApiUpdateBoardMemberConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_update_board_member",
+          "default": "api_update_board_member",
+          "title": "Update board member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Board Members",
+          "x-display-name": "Update board member",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "board_member_id": {
+          "title": "Board Member Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Updates the role of a board member. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "board_member_id",
+        "body_json"
+      ],
+      "title": "MiroApiUpdateBoardMemberConfig",
+      "type": "object"
+    },
+    "MiroApiUpdateCodeWidgetItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_update_code_widget_item",
+          "default": "api_update_code_widget_item",
+          "title": "Update code widget item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Code Widget Items (Experimental)",
+          "x-display-name": "Update code widget item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Updates a code widget item on a board based on the data properties provided in the request body. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "body_json"
+      ],
+      "title": "MiroApiUpdateCodeWidgetItemConfig",
+      "type": "object"
+    },
+    "MiroApiUpdateConnectorConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_update_connector",
+          "default": "api_update_connector",
+          "title": "Update connector",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connectors",
+          "x-display-name": "Update connector",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "connector_id": {
+          "title": "Connector Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Updates a connector on a board based on the data and style properties provided in the request body. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "connector_id",
+        "body_json"
+      ],
+      "title": "MiroApiUpdateConnectorConfig",
+      "type": "object"
+    },
+    "MiroApiUpdateDocumentItemUsingUrlConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_update_document_item_using_url",
+          "default": "api_update_document_item_using_url",
+          "title": "Update document item using URL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Items",
+          "x-display-name": "Update document item using URL",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Updates a document item on a board Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "body_json"
+      ],
+      "title": "MiroApiUpdateDocumentItemUsingUrlConfig",
+      "type": "object"
+    },
+    "MiroApiUpdateEmbedItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_update_embed_item",
+          "default": "api_update_embed_item",
+          "title": "Update embed item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Embed Items",
+          "x-display-name": "Update embed item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Updates an embed item on a board based on the data properties provided in the request body. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "body_json"
+      ],
+      "title": "MiroApiUpdateEmbedItemConfig",
+      "type": "object"
+    },
+    "MiroApiUpdateFrameItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_update_frame_item",
+          "default": "api_update_frame_item",
+          "title": "Update frame",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Frames",
+          "x-display-name": "Update frame",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Updates a frame on a board based on the data, style, or geometry properties provided in the request body. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "body_json"
+      ],
+      "title": "MiroApiUpdateFrameItemConfig",
+      "type": "object"
+    },
+    "MiroApiUpdateImageItemUsingUrlConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_update_image_item_using_url",
+          "default": "api_update_image_item_using_url",
+          "title": "Update image item using URL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Image Items",
+          "x-display-name": "Update image item using URL",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Updates an image item on a board. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "body_json"
+      ],
+      "title": "MiroApiUpdateImageItemUsingUrlConfig",
+      "type": "object"
+    },
+    "MiroApiUpdateItemPositionOrParentConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_update_item_position_or_parent",
+          "default": "api_update_item_position_or_parent",
+          "title": "Update item position or parent",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Update item position or parent",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Updates the position or the parent of an item on a board. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "body_json"
+      ],
+      "title": "MiroApiUpdateItemPositionOrParentConfig",
+      "type": "object"
+    },
+    "MiroApiUpdateShapeItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_update_shape_item",
+          "default": "api_update_shape_item",
+          "title": "Update shape item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shape Items",
+          "x-display-name": "Update shape item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Updates a shape item on a board based on the data and style properties provided in the request body. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "body_json"
+      ],
+      "title": "MiroApiUpdateShapeItemConfig",
+      "type": "object"
+    },
+    "MiroApiUpdateShapeItemFlowchartConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_update_shape_item_flowchart",
+          "default": "api_update_shape_item_flowchart",
+          "title": "Update shape item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Flowchart Shapes (Experimental)",
+          "x-display-name": "Update shape item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Updates a flowchart shape item on a board based on the data and style properties provided in the request body. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "body_json"
+      ],
+      "title": "MiroApiUpdateShapeItemFlowchartConfig",
+      "type": "object"
+    },
+    "MiroApiUpdateTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_update_tag",
+          "default": "api_update_tag",
+          "title": "Update tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Update tag",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "tag_id": {
+          "title": "Tag Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Updates a tag based on the data properties provided in the request body. Note: Updates to tags made via the REST API will not be reflected on the board in realtime. To see REST API updates to tags on a board, you need to refresh the board\u2026",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "tag_id",
+        "body_json"
+      ],
+      "title": "MiroApiUpdateTagConfig",
+      "type": "object"
+    },
+    "MiroApiUpdateTextItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_update_text_item",
+          "default": "api_update_text_item",
+          "title": "Update text item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Text Items",
+          "x-display-name": "Update text item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "item_id": {
+          "title": "Item Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "Updates a text item on a board based on the data and style properties provided in the request body. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "body_json"
+      ],
+      "title": "MiroApiUpdateTextItemConfig",
+      "type": "object"
+    },
+    "MiroApiUpdategroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "api_updategroup",
+          "default": "api_updategroup",
+          "title": "Updates a group with new items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Updates a group with new items",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board Id",
+          "type": "string"
+        },
+        "group_id": {
+          "title": "Group Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Miro filters and pagination as a JSON object.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "description": "This endpoint updates an existing group by replacing it entirely with a new group. When the update is made, the original group is completely replaced, and a new group ID is assigned. Required scope boards:write Rate limiting Level 2",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "group_id",
+        "body_json"
+      ],
+      "title": "MiroApiUpdategroupConfig",
+      "type": "object"
+    },
+    "MiroOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "miro_oauth",
+          "default": "miro_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "team_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Team ID"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User ID"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Miro OAuth",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://miro.com/app/settings/user-profile/apps",
+      "x-oauth-provider": "miro",
+      "x-oauth-scopes": [
+        "boards:read",
+        "boards:write"
+      ]
+    },
+    "RemoveTag": {
+      "description": "Remove an attached tag from a card or sticky note.",
+      "properties": {
+        "operation": {
+          "const": "remove_tag",
+          "default": "remove_tag",
+          "title": "Remove Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Remove Tag",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "item_id": {
+          "title": "Item ID",
+          "type": "string"
+        },
+        "tag_id": {
+          "title": "Tag ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "tag_id"
+      ],
+      "title": "RemoveTag",
+      "type": "object"
+    },
+    "ShareBoard": {
+      "description": "Invite an email address to a board.",
+      "properties": {
+        "operation": {
+          "const": "share_board",
+          "default": "share_board",
+          "title": "Share Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Share Board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "email": {
+          "title": "Invitee Email",
+          "type": "string"
+        },
+        "role": {
+          "default": "viewer",
+          "enum": [
+            "viewer",
+            "editor",
+            "commenter"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invitation Message"
+        }
+      },
+      "required": [
+        "board_id",
+        "email"
+      ],
+      "title": "ShareBoard",
+      "type": "object"
+    },
+    "UpdateBoard": {
+      "description": "Rename a board or change its description.",
+      "properties": {
+        "operation": {
+          "const": "update_board",
+          "default": "update_board",
+          "title": "Update Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Update Board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 60,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Description"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "UpdateBoard",
+      "type": "object"
+    },
+    "UpdateCard": {
+      "description": "Update a card's title or description.",
+      "properties": {
+        "operation": {
+          "const": "update_card",
+          "default": "update_card",
+          "title": "Update Card",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Update Card",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "item_id": {
+          "title": "Card ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Description"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "UpdateCard",
+      "type": "object"
+    },
+    "UpdateStickyNote": {
+      "description": "Change the content of an existing sticky note.",
+      "properties": {
+        "operation": {
+          "const": "update_sticky_note",
+          "default": "update_sticky_note",
+          "title": "Update Sticky Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Update Sticky Note",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "item_id": {
+          "title": "Sticky Note ID",
+          "type": "string"
+        },
+        "content": {
+          "maxLength": 6000,
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "content"
+      ],
+      "title": "UpdateStickyNote",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "api_copy_board": "#/$defs/MiroApiCopyBoardConfig",
+          "api_create_app_card_item": "#/$defs/MiroApiCreateAppCardItemConfig",
+          "api_create_code_widget_item": "#/$defs/MiroApiCreateCodeWidgetItemConfig",
+          "api_create_connector": "#/$defs/MiroApiCreateConnectorConfig",
+          "api_create_doc_format_item": "#/$defs/MiroApiCreateDocFormatItemConfig",
+          "api_create_document_item_using_url": "#/$defs/MiroApiCreateDocumentItemUsingUrlConfig",
+          "api_create_embed_item": "#/$defs/MiroApiCreateEmbedItemConfig",
+          "api_create_frame_item": "#/$defs/MiroApiCreateFrameItemConfig",
+          "api_create_image_item_using_url": "#/$defs/MiroApiCreateImageItemUsingUrlConfig",
+          "api_create_items": "#/$defs/MiroApiCreateItemsConfig",
+          "api_create_mindmap_nodes_experimental": "#/$defs/MiroApiCreateMindmapNodesExperimentalConfig",
+          "api_create_shape_item": "#/$defs/MiroApiCreateShapeItemConfig",
+          "api_create_shape_item_flowchart": "#/$defs/MiroApiCreateShapeItemFlowchartConfig",
+          "api_creategroup": "#/$defs/MiroApiCreategroupConfig",
+          "api_delete_app_card_item": "#/$defs/MiroApiDeleteAppCardItemConfig",
+          "api_delete_card_item": "#/$defs/MiroApiDeleteCardItemConfig",
+          "api_delete_code_widget_item": "#/$defs/MiroApiDeleteCodeWidgetItemConfig",
+          "api_delete_connector": "#/$defs/MiroApiDeleteConnectorConfig",
+          "api_delete_doc_format_item": "#/$defs/MiroApiDeleteDocFormatItemConfig",
+          "api_delete_document_item": "#/$defs/MiroApiDeleteDocumentItemConfig",
+          "api_delete_embed_item": "#/$defs/MiroApiDeleteEmbedItemConfig",
+          "api_delete_frame_item": "#/$defs/MiroApiDeleteFrameItemConfig",
+          "api_delete_image_item": "#/$defs/MiroApiDeleteImageItemConfig",
+          "api_delete_item_experimental": "#/$defs/MiroApiDeleteItemExperimentalConfig",
+          "api_delete_mindmap_node_experimental": "#/$defs/MiroApiDeleteMindmapNodeExperimentalConfig",
+          "api_delete_shape_item": "#/$defs/MiroApiDeleteShapeItemConfig",
+          "api_delete_shape_item_flowchart": "#/$defs/MiroApiDeleteShapeItemFlowchartConfig",
+          "api_delete_sticky_note_item": "#/$defs/MiroApiDeleteStickyNoteItemConfig",
+          "api_delete_tag": "#/$defs/MiroApiDeleteTagConfig",
+          "api_delete_text_item": "#/$defs/MiroApiDeleteTextItemConfig",
+          "api_deletegroup": "#/$defs/MiroApiDeletegroupConfig",
+          "api_get_all_groups": "#/$defs/MiroApiGetAllGroupsConfig",
+          "api_get_app_card_item": "#/$defs/MiroApiGetAppCardItemConfig",
+          "api_get_card_item": "#/$defs/MiroApiGetCardItemConfig",
+          "api_get_code_widget_item": "#/$defs/MiroApiGetCodeWidgetItemConfig",
+          "api_get_code_widget_items": "#/$defs/MiroApiGetCodeWidgetItemsConfig",
+          "api_get_connector": "#/$defs/MiroApiGetConnectorConfig",
+          "api_get_connectors": "#/$defs/MiroApiGetConnectorsConfig",
+          "api_get_doc_format_item": "#/$defs/MiroApiGetDocFormatItemConfig",
+          "api_get_document_item": "#/$defs/MiroApiGetDocumentItemConfig",
+          "api_get_embed_item": "#/$defs/MiroApiGetEmbedItemConfig",
+          "api_get_frame_item": "#/$defs/MiroApiGetFrameItemConfig",
+          "api_get_image_item": "#/$defs/MiroApiGetImageItemConfig",
+          "api_get_items_experimental": "#/$defs/MiroApiGetItemsExperimentalConfig",
+          "api_get_mindmap_node_experimental": "#/$defs/MiroApiGetMindmapNodeExperimentalConfig",
+          "api_get_mindmap_nodes_experimental": "#/$defs/MiroApiGetMindmapNodesExperimentalConfig",
+          "api_get_shape_item": "#/$defs/MiroApiGetShapeItemConfig",
+          "api_get_shape_item_flowchart": "#/$defs/MiroApiGetShapeItemFlowchartConfig",
+          "api_get_specific_board_member": "#/$defs/MiroApiGetSpecificBoardMemberConfig",
+          "api_get_specific_item_experimental": "#/$defs/MiroApiGetSpecificItemExperimentalConfig",
+          "api_get_sticky_note_item": "#/$defs/MiroApiGetStickyNoteItemConfig",
+          "api_get_text_item": "#/$defs/MiroApiGetTextItemConfig",
+          "api_getgroupbyid": "#/$defs/MiroApiGetgroupbyidConfig",
+          "api_getitemsbygroupid": "#/$defs/MiroApiGetitemsbygroupidConfig",
+          "api_move_code_widget_item": "#/$defs/MiroApiMoveCodeWidgetItemConfig",
+          "api_remove_board_member": "#/$defs/MiroApiRemoveBoardMemberConfig",
+          "api_ungroup": "#/$defs/MiroApiUngroupConfig",
+          "api_update_app_card_item": "#/$defs/MiroApiUpdateAppCardItemConfig",
+          "api_update_board_member": "#/$defs/MiroApiUpdateBoardMemberConfig",
+          "api_update_code_widget_item": "#/$defs/MiroApiUpdateCodeWidgetItemConfig",
+          "api_update_connector": "#/$defs/MiroApiUpdateConnectorConfig",
+          "api_update_document_item_using_url": "#/$defs/MiroApiUpdateDocumentItemUsingUrlConfig",
+          "api_update_embed_item": "#/$defs/MiroApiUpdateEmbedItemConfig",
+          "api_update_frame_item": "#/$defs/MiroApiUpdateFrameItemConfig",
+          "api_update_image_item_using_url": "#/$defs/MiroApiUpdateImageItemUsingUrlConfig",
+          "api_update_item_position_or_parent": "#/$defs/MiroApiUpdateItemPositionOrParentConfig",
+          "api_update_shape_item": "#/$defs/MiroApiUpdateShapeItemConfig",
+          "api_update_shape_item_flowchart": "#/$defs/MiroApiUpdateShapeItemFlowchartConfig",
+          "api_update_tag": "#/$defs/MiroApiUpdateTagConfig",
+          "api_update_text_item": "#/$defs/MiroApiUpdateTextItemConfig",
+          "api_updategroup": "#/$defs/MiroApiUpdategroupConfig",
+          "attach_tag": "#/$defs/AttachTag",
+          "create_board": "#/$defs/CreateBoard",
+          "create_card": "#/$defs/CreateCard",
+          "create_sticky_note": "#/$defs/CreateStickyNote",
+          "create_tag": "#/$defs/CreateTag",
+          "create_text": "#/$defs/CreateText",
+          "delete_board": "#/$defs/DeleteBoard",
+          "delete_item": "#/$defs/DeleteItem",
+          "get_board": "#/$defs/GetBoard",
+          "get_item": "#/$defs/GetItem",
+          "get_tag": "#/$defs/GetTag",
+          "get_token_context": "#/$defs/GetTokenContext",
+          "list_board_members": "#/$defs/ListBoardMembers",
+          "list_boards": "#/$defs/ListBoards",
+          "list_item_tags": "#/$defs/ListItemTags",
+          "list_items": "#/$defs/ListItems",
+          "list_tags": "#/$defs/ListTags",
+          "remove_tag": "#/$defs/RemoveTag",
+          "share_board": "#/$defs/ShareBoard",
+          "update_board": "#/$defs/UpdateBoard",
+          "update_card": "#/$defs/UpdateCard",
+          "update_sticky_note": "#/$defs/UpdateStickyNote"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetTokenContext"
+        },
+        {
+          "$ref": "#/$defs/ListBoards"
+        },
+        {
+          "$ref": "#/$defs/GetBoard"
+        },
+        {
+          "$ref": "#/$defs/CreateBoard"
+        },
+        {
+          "$ref": "#/$defs/UpdateBoard"
+        },
+        {
+          "$ref": "#/$defs/DeleteBoard"
+        },
+        {
+          "$ref": "#/$defs/ListBoardMembers"
+        },
+        {
+          "$ref": "#/$defs/ShareBoard"
+        },
+        {
+          "$ref": "#/$defs/ListItems"
+        },
+        {
+          "$ref": "#/$defs/GetItem"
+        },
+        {
+          "$ref": "#/$defs/CreateStickyNote"
+        },
+        {
+          "$ref": "#/$defs/UpdateStickyNote"
+        },
+        {
+          "$ref": "#/$defs/CreateCard"
+        },
+        {
+          "$ref": "#/$defs/UpdateCard"
+        },
+        {
+          "$ref": "#/$defs/CreateText"
+        },
+        {
+          "$ref": "#/$defs/DeleteItem"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/GetTag"
+        },
+        {
+          "$ref": "#/$defs/ListItemTags"
+        },
+        {
+          "$ref": "#/$defs/CreateTag"
+        },
+        {
+          "$ref": "#/$defs/AttachTag"
+        },
+        {
+          "$ref": "#/$defs/RemoveTag"
+        },
+        {
+          "$ref": "#/$defs/MiroApiCreateDocFormatItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetDocFormatItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeleteDocFormatItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiCopyBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiCreateAppCardItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetAppCardItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiUpdateAppCardItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeleteAppCardItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetCardItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeleteCardItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiCreateConnectorConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetConnectorsConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetConnectorConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiUpdateConnectorConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeleteConnectorConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiCreateDocumentItemUsingUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetDocumentItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiUpdateDocumentItemUsingUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeleteDocumentItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiCreateEmbedItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetEmbedItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiUpdateEmbedItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeleteEmbedItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiCreateImageItemUsingUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetImageItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiUpdateImageItemUsingUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeleteImageItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiUpdateItemPositionOrParentConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetSpecificBoardMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiUpdateBoardMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiRemoveBoardMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiCreateShapeItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetShapeItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiUpdateShapeItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeleteShapeItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetStickyNoteItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeleteStickyNoteItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetTextItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiUpdateTextItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeleteTextItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiCreateItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiCreateFrameItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetFrameItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiUpdateFrameItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeleteFrameItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetMindmapNodeExperimentalConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeleteMindmapNodeExperimentalConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetMindmapNodesExperimentalConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiCreateMindmapNodesExperimentalConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetItemsExperimentalConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetSpecificItemExperimentalConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeleteItemExperimentalConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiCreateShapeItemFlowchartConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetShapeItemFlowchartConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiUpdateShapeItemFlowchartConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeleteShapeItemFlowchartConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetCodeWidgetItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiCreateCodeWidgetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetCodeWidgetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiUpdateCodeWidgetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeleteCodeWidgetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiMoveCodeWidgetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiCreategroupConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetAllGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetitemsbygroupidConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiGetgroupbyidConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiUngroupConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiUpdategroupConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeletegroupConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiUpdateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/MiroApiDeleteTagConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MiroOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Miro Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List my Miro boards",
+    "Add a sticky note to a Miro board",
+    "Create a Miro board for a project",
+    "Share a Miro board with a teammate"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
