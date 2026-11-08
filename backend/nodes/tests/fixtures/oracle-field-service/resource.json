@@ -1,0 +1,61 @@
+{
+  "body": {
+    "resourceId": "11102",
+    "status": "active",
+    "parentResourceId": "11100",
+    "resourceType": "PR",
+    "name": "(afternoon) HARTWIG, Luis",
+    "email": "11102@sunrise.demo",
+    "phone": "555001110200",
+    "language": "en",
+    "timeZoneDiff": -240,
+    "timeZone": "Eastern",
+    "dateFormat": 12,
+    "timeFormat": 14,
+    "Resource type": "2",
+    "gender": "2",
+    "inventories": {
+      "links": [
+        {
+          "rel": "canonical",
+          "href": "https://<instance_name>.fs.ocs.oraclecloud.com/rest/ofscCore//v1/resources/11102/inventories"
+        }
+      ]
+    },
+    "users": {
+      "links": [
+        {
+          "rel": "canonical",
+          "href": "https://<instance_name>.fs.ocs.oraclecloud.com/rest/ofscCore//v1/resources/11102/users"
+        }
+      ]
+    },
+    "workZones": {
+      "links": [
+        {
+          "rel": "canonical",
+          "href": "https://<instance_name>.fs.ocs.oraclecloud.com/rest/ofscCore//v1/resources/11102/workZones"
+        }
+      ]
+    },
+    "workSkills": {
+      "links": [
+        {
+          "rel": "canonical",
+          "href": "https://<instance_name>.fs.ocs.oraclecloud.com/rest/ofscCore//v1/resources/11102/workSkills"
+        }
+      ]
+    },
+    "links": [
+      {
+        "rel": "canonical",
+        "href": "https://<instance_name>.fs.ocs.oraclecloud.com/rest/ofscCore//v1/resources/11102"
+      },
+      {
+        "rel": "describedby",
+        "href": "https://<instance_name>.fs.ocs.oraclecloud.com/rest/ofscCore//v1/metadata-catalog/resources"
+      }
+    ]
+  },
+  "source": "https://docs.oracle.com/en/cloud/saas/field-service/cxfsc/op-rest-ofsccore-v1-resources-resourceid-get.html"
+}

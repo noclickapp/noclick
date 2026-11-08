@@ -228,3 +228,24 @@ def test_capacity_preserves_documented_integer_values_without_invented_minimum()
     assert p.capacity_record(payload, "area", {"2026-10-06"})["items"][0]["areas"][0]["available"][0]["minutes"] == [-30]
     payload["items"][0]["areas"][0]["available"][0]["count"] = [True]
     with pytest.raises(ValueError): p.capacity_record(payload, "area", {"2026-10-06"})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("node_type", ["automation-oracle-field-service"])
+async def test_documented_resource_with_numeric_format_codes_projects_metadata(wire, node_type):
+    # Oracle's whole published response uses integer date/time format codes;
+    # the pinned API schema incorrectly declares those unused fields strings.
+    from pathlib import Path
+    fixture = json.loads((Path(__file__).parent / "fixtures/oracle-field-service/resource.json").read_text())
+    body = fixture["body"]
+    assert type(body["dateFormat"]) is int and type(body["timeFormat"]) is int
+    replies, calls = wire
+    replies.append((200, body))
+    instance = NodeFactory.create_node("fixture", node_type, {
+        "config": {"operation": "get_resource", "resource_id": "11102"},
+        "credentials": deepcopy(KEY),
+    }, user_id="fixture-owner")
+    result = await instance.execute({})
+    assert calls[0][0] == "GET" and calls[0][1].endswith("/resources/11102")
+    assert result == {"id": "11102", "resourceType": "PR", "status": "active", "parentResourceId": "11100"}
+    assert body["name"] not in json.dumps(result)
