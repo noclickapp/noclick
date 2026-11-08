@@ -1,0 +1,506 @@
+{
+  "$defs": {
+    "CorrentlyMeterCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "corrently_meter_secret",
+          "default": "corrently_meter_secret",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account": {
+          "description": "Existing Stromkonto meter address.",
+          "minLength": 1,
+          "title": "Meter account",
+          "type": "string"
+        },
+        "secret": {
+          "minLength": 1,
+          "title": "Meter secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "account",
+        "secret"
+      ],
+      "title": "Corrently Meter Secret",
+      "type": "object",
+      "x-credential-instructions": "Enter your existing Stromkonto meter account and the secret chosen on its first reading update. Public reads only establish reachability; they cannot verify the secret or account ownership. The secret is sent only in the JSON body of meter updates.",
+      "x-credential-url": "https://corrently.io/"
+    },
+    "GetBalances": {
+      "additionalProperties": false,
+      "description": "Balances",
+      "properties": {
+        "operation": {
+          "const": "get_balances",
+          "default": "get_balances",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetBalances",
+      "type": "object"
+    },
+    "GetBestHour": {
+      "additionalProperties": false,
+      "description": "Get best hour (with most regional green energy) in a given timeframe.",
+      "properties": {
+        "operation": {
+          "const": "get_best_hour",
+          "default": "get_best_hour",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "zip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zipcode (Postleitzahl) of a city in Germany.",
+          "title": "Zip"
+        },
+        "key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Any valid Stromkonto account (address).",
+          "title": "Key"
+        },
+        "timeframe": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of hours to check (default 24 hours from now).",
+          "title": "Timeframe"
+        },
+        "hours": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How many hours in row do you need the device turned on?",
+          "title": "Hours"
+        }
+      },
+      "title": "GetBestHour",
+      "type": "object"
+    },
+    "GetDispatch": {
+      "additionalProperties": false,
+      "description": "Dispatch (Green Energy Distribution Schedule)",
+      "properties": {
+        "operation": {
+          "const": "get_dispatch",
+          "default": "get_dispatch",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "zip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zipcode (Postleitzahl) of a city in Germany.",
+          "title": "Zip"
+        },
+        "key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Any valid Stromkonto account (address).",
+          "title": "Key"
+        }
+      },
+      "title": "GetDispatch",
+      "type": "object"
+    },
+    "GetMarketData": {
+      "additionalProperties": false,
+      "description": "Marketdata",
+      "properties": {
+        "operation": {
+          "const": "get_market_data",
+          "default": "get_market_data",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "zip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zipcode (Postleitzahl) of a city in Germany.",
+          "title": "Zip"
+        }
+      },
+      "title": "GetMarketData",
+      "type": "object"
+    },
+    "GetMeterReading": {
+      "additionalProperties": false,
+      "description": "Meter Reading",
+      "properties": {
+        "operation": {
+          "const": "get_meter_reading",
+          "default": "get_meter_reading",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetMeterReading",
+      "type": "object"
+    },
+    "GetPrediction": {
+      "additionalProperties": false,
+      "description": "Prediction",
+      "properties": {
+        "operation": {
+          "const": "get_prediction",
+          "default": "get_prediction",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "zip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zipcode (Postleitzahl) of a city in Germany.",
+          "title": "Zip"
+        },
+        "key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Any valid Stromkonto account (address).",
+          "title": "Key"
+        }
+      },
+      "title": "GetPrediction",
+      "type": "object"
+    },
+    "GetTariff": {
+      "additionalProperties": false,
+      "description": "Energy Tariff information",
+      "properties": {
+        "operation": {
+          "const": "get_tariff",
+          "default": "get_tariff",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "zipcode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zipcode (Postzleitzahl) of a city in Germany.",
+          "title": "Zipcode"
+        }
+      },
+      "title": "GetTariff",
+      "type": "object"
+    },
+    "GetTariffComponents": {
+      "additionalProperties": false,
+      "description": "Energy Tariff price components",
+      "properties": {
+        "operation": {
+          "const": "get_tariff_components",
+          "default": "get_tariff_components",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "zipcode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zipcode (Postzleitzahl) of a city in Germany.",
+          "title": "Zipcode"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Valid email address to assign request to (pre offer generation). Ensure GDPR (DSGVO) at any time",
+          "title": "Email"
+        },
+        "kwha": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Total amount of energy in kilo-watt-hours per year. (sample 2100)",
+          "title": "Kwha"
+        },
+        "milliseconds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided all results will be scaled to this timeframe",
+          "title": "Milliseconds"
+        },
+        "wh": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided together with milliseconds, a cost component stament for a particular event (like charging a car) will be created.",
+          "title": "Wh"
+        }
+      },
+      "title": "GetTariffComponents",
+      "type": "object"
+    },
+    "ListOpenMeterActivities": {
+      "additionalProperties": false,
+      "description": "Public shared smart meters installed in Germany and available for subservices and exploration.",
+      "properties": {
+        "operation": {
+          "const": "list_open_meter_activities",
+          "default": "list_open_meter_activities",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListOpenMeterActivities",
+      "type": "object"
+    },
+    "ListOpenMeterReadings": {
+      "additionalProperties": false,
+      "description": "Public shared smart meters installed in Germany and available for subservices and exploration.",
+      "properties": {
+        "operation": {
+          "const": "list_open_meter_readings",
+          "default": "list_open_meter_readings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListOpenMeterReadings",
+      "type": "object"
+    },
+    "ListOpenMeters": {
+      "additionalProperties": false,
+      "description": "Public shared smart meters installed in Germany and available for subservices and exploration.",
+      "properties": {
+        "operation": {
+          "const": "list_open_meters",
+          "default": "list_open_meters",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListOpenMeters",
+      "type": "object"
+    },
+    "PostMeterReading": {
+      "additionalProperties": false,
+      "description": "Meter Reading",
+      "properties": {
+        "operation": {
+          "const": "post_meter_reading",
+          "default": "post_meter_reading",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "energy": {
+          "description": "Cumulative meter reading in Wh (documented energy alias for 1.8.0).",
+          "minimum": 0,
+          "title": "Energy",
+          "type": "integer"
+        },
+        "zip": {
+          "description": "German postcode of the metered location.",
+          "minLength": 1,
+          "title": "Zip",
+          "type": "string"
+        }
+      },
+      "required": [
+        "energy",
+        "zip"
+      ],
+      "title": "PostMeterReading",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_balances": "#/$defs/GetBalances",
+          "get_best_hour": "#/$defs/GetBestHour",
+          "get_dispatch": "#/$defs/GetDispatch",
+          "get_market_data": "#/$defs/GetMarketData",
+          "get_meter_reading": "#/$defs/GetMeterReading",
+          "get_prediction": "#/$defs/GetPrediction",
+          "get_tariff": "#/$defs/GetTariff",
+          "get_tariff_components": "#/$defs/GetTariffComponents",
+          "list_open_meter_activities": "#/$defs/ListOpenMeterActivities",
+          "list_open_meter_readings": "#/$defs/ListOpenMeterReadings",
+          "list_open_meters": "#/$defs/ListOpenMeters",
+          "post_meter_reading": "#/$defs/PostMeterReading"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetBalances"
+        },
+        {
+          "$ref": "#/$defs/GetMeterReading"
+        },
+        {
+          "$ref": "#/$defs/PostMeterReading"
+        },
+        {
+          "$ref": "#/$defs/GetPrediction"
+        },
+        {
+          "$ref": "#/$defs/GetDispatch"
+        },
+        {
+          "$ref": "#/$defs/GetMarketData"
+        },
+        {
+          "$ref": "#/$defs/GetBestHour"
+        },
+        {
+          "$ref": "#/$defs/GetTariff"
+        },
+        {
+          "$ref": "#/$defs/GetTariffComponents"
+        },
+        {
+          "$ref": "#/$defs/ListOpenMeters"
+        },
+        {
+          "$ref": "#/$defs/ListOpenMeterReadings"
+        },
+        {
+          "$ref": "#/$defs/ListOpenMeterActivities"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CorrentlyMeterCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Corrently Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
