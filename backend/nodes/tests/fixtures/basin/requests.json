@@ -1,0 +1,264 @@
+[
+  {
+    "config": {
+      "operation": "list_projects"
+    },
+    "method": "GET",
+    "path": "/api/v1/projects",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_project",
+      "id": "123"
+    },
+    "method": "GET",
+    "path": "/api/v1/projects/123",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "create_project",
+      "name": "Example project"
+    },
+    "method": "POST",
+    "path": "/api/v1/projects/",
+    "body": {
+      "project": {
+        "name": "Example project"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_project",
+      "id": "123",
+      "name": "New project name"
+    },
+    "method": "PUT",
+    "path": "/api/v1/projects/123",
+    "body": {
+      "project": {
+        "name": "New project name"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_project",
+      "id": "123"
+    },
+    "method": "DELETE",
+    "path": "/api/v1/projects/123",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_forms"
+    },
+    "method": "GET",
+    "path": "/api/v1/forms",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_form",
+      "id": "123"
+    },
+    "method": "GET",
+    "path": "/api/v1/forms/123",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "create_form",
+      "name": "Example Form",
+      "project_id": 0
+    },
+    "method": "POST",
+    "path": "/api/v1/forms/",
+    "body": {
+      "form": {
+        "name": "Example Form",
+        "project_id": 0
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_form",
+      "id": "123",
+      "name": "New form name"
+    },
+    "method": "PUT",
+    "path": "/api/v1/forms/123",
+    "body": {
+      "form": {
+        "name": "New form name"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_form",
+      "id": "123"
+    },
+    "method": "DELETE",
+    "path": "/api/v1/forms/123",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_form_webhooks"
+    },
+    "method": "GET",
+    "path": "/api/v1/form_webhooks",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_form_webhook",
+      "id": "123"
+    },
+    "method": "GET",
+    "path": "/api/v1/form_webhooks/123",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "create_form_webhook",
+      "name": "Test webhook",
+      "form_id": 0,
+      "url": "http://example.com",
+      "format": "slack"
+    },
+    "method": "POST",
+    "path": "/api/v1/form_webhooks/",
+    "body": {
+      "form_webhook": {
+        "name": "Test webhook",
+        "form_id": 0,
+        "url": "http://example.com",
+        "format": "slack"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_form_webhook",
+      "id": "123",
+      "name": "New form_webhook name"
+    },
+    "method": "PUT",
+    "path": "/api/v1/form_webhooks/123",
+    "body": {
+      "form_webhook": {
+        "name": "New form_webhook name"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_form_webhook",
+      "id": "123"
+    },
+    "method": "DELETE",
+    "path": "/api/v1/form_webhooks/123",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_submissions"
+    },
+    "method": "GET",
+    "path": "/api/v1/submissions/",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_submission",
+      "id": "123"
+    },
+    "method": "GET",
+    "path": "/api/v1/submissions/123",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "update_submission",
+      "id": "123",
+      "spam": true,
+      "read": false,
+      "trash": false
+    },
+    "method": "PATCH",
+    "path": "/api/v1/submissions/123",
+    "body": {
+      "submission": {
+        "spam": true,
+        "read": false,
+        "trash": false
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_submission",
+      "id": "123"
+    },
+    "method": "DELETE",
+    "path": "/api/v1/submissions/123",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "refire_submission_webhooks",
+      "id": "123"
+    },
+    "method": "POST",
+    "path": "/api/v1/submissions/123/refire_webhooks",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "refire_multiple_submission_webhooks",
+      "submission_ids": [
+        123,
+        456
+      ]
+    },
+    "method": "POST",
+    "path": "/api/v1/submissions/refire_webhooks",
+    "body": {
+      "submission_ids": [
+        123,
+        456
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "list_form_views"
+    },
+    "method": "GET",
+    "path": "/api/v1/form_views",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_form_view",
+      "id": "123"
+    },
+    "method": "GET",
+    "path": "/api/v1/form_views/123",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_domains"
+    },
+    "method": "GET",
+    "path": "/api/v1/domains",
+    "body": null
+  }
+]
