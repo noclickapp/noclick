@@ -11,6 +11,7 @@ const EverhourIcon = ({ className, style }: { className?: string; style?: CSSPro
 
 export const EverhourNode: NodeDefinition = {
     type: 'automation-everhour', label: 'Everhour',
+    category: 'productivity',
     description: 'Manage clients, projects, tasks, time records and timers',
     Icon: EverhourIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
