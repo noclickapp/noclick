@@ -1,0 +1,1866 @@
+{
+  "$defs": {
+    "AgentMailAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "agent_mail_api_key",
+          "default": "agent_mail_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "AgentMail API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste an API key from the AgentMail Console. Use a US-region key with access to the inboxes and operations you need. NoClick verifies the key by reading its identity; it does not create an account or send a verification email.",
+      "x-credential-url": "https://console.agentmail.to"
+    },
+    "CreateDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "to": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To"
+        },
+        "cc": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cc"
+        },
+        "bcc": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bcc"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply To"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Html"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_draft",
+          "default": "create_draft",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "in_reply_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "In Reply To"
+        },
+        "forward_of": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Forward Of"
+        },
+        "reply_all": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply All"
+        },
+        "send_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 scheduled send time.",
+          "title": "Send At"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        }
+      },
+      "required": [
+        "inbox_id"
+      ],
+      "title": "CreateDraft",
+      "type": "object"
+    },
+    "CreateInbox": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_inbox",
+          "default": "create_inbox",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Username"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        }
+      },
+      "title": "CreateInbox",
+      "type": "object"
+    },
+    "DeleteDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "draft_id": {
+          "minLength": 1,
+          "title": "Draft Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_draft",
+          "default": "delete_draft",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id",
+        "draft_id"
+      ],
+      "title": "DeleteDraft",
+      "type": "object"
+    },
+    "DeleteInbox": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_inbox",
+          "default": "delete_inbox",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id"
+      ],
+      "title": "DeleteInbox",
+      "type": "object"
+    },
+    "DeleteMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "message_id": {
+          "minLength": 1,
+          "title": "Message Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_message",
+          "default": "delete_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id",
+        "message_id"
+      ],
+      "title": "DeleteMessage",
+      "type": "object"
+    },
+    "DeleteThread": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "thread_id": {
+          "minLength": 1,
+          "title": "Thread Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_thread",
+          "default": "delete_thread",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id",
+        "thread_id"
+      ],
+      "title": "DeleteThread",
+      "type": "object"
+    },
+    "ForwardMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "to": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "To",
+          "type": "array"
+        },
+        "cc": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cc"
+        },
+        "bcc": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bcc"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply To"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Html"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "message_id": {
+          "minLength": 1,
+          "title": "Message Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "forward_message",
+          "default": "forward_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "to",
+        "inbox_id",
+        "message_id"
+      ],
+      "title": "ForwardMessage",
+      "type": "object"
+    },
+    "GetDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "draft_id": {
+          "minLength": 1,
+          "title": "Draft Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_draft",
+          "default": "get_draft",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id",
+        "draft_id"
+      ],
+      "title": "GetDraft",
+      "type": "object"
+    },
+    "GetIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_identity",
+          "default": "get_identity",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetIdentity",
+      "type": "object"
+    },
+    "GetInbox": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_inbox",
+          "default": "get_inbox",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id"
+      ],
+      "title": "GetInbox",
+      "type": "object"
+    },
+    "GetMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "message_id": {
+          "minLength": 1,
+          "title": "Message Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_message",
+          "default": "get_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id",
+        "message_id"
+      ],
+      "title": "GetMessage",
+      "type": "object"
+    },
+    "GetThread": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "thread_id": {
+          "minLength": 1,
+          "title": "Thread Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_thread",
+          "default": "get_thread",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id",
+        "thread_id"
+      ],
+      "title": "GetThread",
+      "type": "object"
+    },
+    "ListDrafts": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Maximum items in this page. Use next_page_token from the result to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_page_token from the preceding response.",
+          "title": "Page Token"
+        },
+        "ascending": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ascending"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter before this RFC 3339 timestamp.",
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter after this RFC 3339 timestamp.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_drafts",
+          "default": "list_drafts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id"
+      ],
+      "title": "ListDrafts",
+      "type": "object"
+    },
+    "ListInboxes": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum items in this page. Use next_page_token from the result to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_page_token from the preceding response.",
+          "title": "Page Token"
+        },
+        "ascending": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ascending"
+        },
+        "operation": {
+          "const": "list_inboxes",
+          "default": "list_inboxes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListInboxes",
+      "type": "object"
+    },
+    "ListMessages": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Maximum items in this page. Use next_page_token from the result to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_page_token from the preceding response.",
+          "title": "Page Token"
+        },
+        "ascending": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ascending"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter before this RFC 3339 timestamp.",
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter after this RFC 3339 timestamp.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id"
+      ],
+      "title": "ListMessages",
+      "type": "object"
+    },
+    "ListThreads": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Maximum items in this page. Use next_page_token from the result to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_page_token from the preceding response.",
+          "title": "Page Token"
+        },
+        "ascending": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ascending"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter before this RFC 3339 timestamp.",
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter after this RFC 3339 timestamp.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_threads",
+          "default": "list_threads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id"
+      ],
+      "title": "ListThreads",
+      "type": "object"
+    },
+    "ReplyAllMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply To"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Html"
+        },
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "message_id": {
+          "minLength": 1,
+          "title": "Message Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "reply_all_message",
+          "default": "reply_all_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id",
+        "message_id"
+      ],
+      "title": "ReplyAllMessage",
+      "type": "object"
+    },
+    "ReplyToMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "to": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To"
+        },
+        "cc": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cc"
+        },
+        "bcc": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bcc"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply To"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Html"
+        },
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "message_id": {
+          "minLength": 1,
+          "title": "Message Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "reply_to_message",
+          "default": "reply_to_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reply_all": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply All"
+        }
+      },
+      "required": [
+        "inbox_id",
+        "message_id"
+      ],
+      "title": "ReplyToMessage",
+      "type": "object"
+    },
+    "SendDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "add_labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Add Labels"
+        },
+        "remove_labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remove Labels"
+        },
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "draft_id": {
+          "minLength": 1,
+          "title": "Draft Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "send_draft",
+          "default": "send_draft",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id",
+        "draft_id"
+      ],
+      "title": "SendDraft",
+      "type": "object"
+    },
+    "SendMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "to": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "To",
+          "type": "array"
+        },
+        "cc": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cc"
+        },
+        "bcc": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bcc"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Labels"
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply To"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Html"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "to",
+        "inbox_id"
+      ],
+      "title": "SendMessage",
+      "type": "object"
+    },
+    "UpdateDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "add_labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Add Labels"
+        },
+        "remove_labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remove Labels"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To"
+        },
+        "cc": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cc"
+        },
+        "bcc": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bcc"
+        },
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "draft_id": {
+          "minLength": 1,
+          "title": "Draft Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_draft",
+          "default": "update_draft",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply To"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Html"
+        }
+      },
+      "required": [
+        "inbox_id",
+        "draft_id"
+      ],
+      "title": "UpdateDraft",
+      "type": "object"
+    },
+    "UpdateInbox": {
+      "additionalProperties": false,
+      "properties": {
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_inbox",
+          "default": "update_inbox",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "deactivated"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deactivating stops both sending and receiving mail.",
+          "title": "Status",
+          "enum": [
+            "active",
+            "deactivated"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "inbox_id"
+      ],
+      "title": "UpdateInbox",
+      "type": "object"
+    },
+    "UpdateMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "add_labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Add Labels"
+        },
+        "remove_labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remove Labels"
+        },
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "message_id": {
+          "minLength": 1,
+          "title": "Message Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_message",
+          "default": "update_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id",
+        "message_id"
+      ],
+      "title": "UpdateMessage",
+      "type": "object"
+    },
+    "UpdateThread": {
+      "additionalProperties": false,
+      "properties": {
+        "add_labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Add Labels"
+        },
+        "remove_labels": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remove Labels"
+        },
+        "inbox_id": {
+          "description": "Inbox address / ID returned by AgentMail.",
+          "minLength": 1,
+          "title": "Inbox Id",
+          "type": "string"
+        },
+        "thread_id": {
+          "minLength": 1,
+          "title": "Thread Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_thread",
+          "default": "update_thread",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "inbox_id",
+        "thread_id"
+      ],
+      "title": "UpdateThread",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_draft": "#/$defs/CreateDraft",
+          "create_inbox": "#/$defs/CreateInbox",
+          "delete_draft": "#/$defs/DeleteDraft",
+          "delete_inbox": "#/$defs/DeleteInbox",
+          "delete_message": "#/$defs/DeleteMessage",
+          "delete_thread": "#/$defs/DeleteThread",
+          "forward_message": "#/$defs/ForwardMessage",
+          "get_draft": "#/$defs/GetDraft",
+          "get_identity": "#/$defs/GetIdentity",
+          "get_inbox": "#/$defs/GetInbox",
+          "get_message": "#/$defs/GetMessage",
+          "get_thread": "#/$defs/GetThread",
+          "list_drafts": "#/$defs/ListDrafts",
+          "list_inboxes": "#/$defs/ListInboxes",
+          "list_messages": "#/$defs/ListMessages",
+          "list_threads": "#/$defs/ListThreads",
+          "reply_all_message": "#/$defs/ReplyAllMessage",
+          "reply_to_message": "#/$defs/ReplyToMessage",
+          "send_draft": "#/$defs/SendDraft",
+          "send_message": "#/$defs/SendMessage",
+          "update_draft": "#/$defs/UpdateDraft",
+          "update_inbox": "#/$defs/UpdateInbox",
+          "update_message": "#/$defs/UpdateMessage",
+          "update_thread": "#/$defs/UpdateThread"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetIdentity"
+        },
+        {
+          "$ref": "#/$defs/ListInboxes"
+        },
+        {
+          "$ref": "#/$defs/CreateInbox"
+        },
+        {
+          "$ref": "#/$defs/GetInbox"
+        },
+        {
+          "$ref": "#/$defs/UpdateInbox"
+        },
+        {
+          "$ref": "#/$defs/DeleteInbox"
+        },
+        {
+          "$ref": "#/$defs/ListThreads"
+        },
+        {
+          "$ref": "#/$defs/GetThread"
+        },
+        {
+          "$ref": "#/$defs/UpdateThread"
+        },
+        {
+          "$ref": "#/$defs/DeleteThread"
+        },
+        {
+          "$ref": "#/$defs/ListMessages"
+        },
+        {
+          "$ref": "#/$defs/GetMessage"
+        },
+        {
+          "$ref": "#/$defs/UpdateMessage"
+        },
+        {
+          "$ref": "#/$defs/DeleteMessage"
+        },
+        {
+          "$ref": "#/$defs/SendMessage"
+        },
+        {
+          "$ref": "#/$defs/ReplyToMessage"
+        },
+        {
+          "$ref": "#/$defs/ReplyAllMessage"
+        },
+        {
+          "$ref": "#/$defs/ForwardMessage"
+        },
+        {
+          "$ref": "#/$defs/ListDrafts"
+        },
+        {
+          "$ref": "#/$defs/CreateDraft"
+        },
+        {
+          "$ref": "#/$defs/GetDraft"
+        },
+        {
+          "$ref": "#/$defs/UpdateDraft"
+        },
+        {
+          "$ref": "#/$defs/DeleteDraft"
+        },
+        {
+          "$ref": "#/$defs/SendDraft"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AgentMailAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Agent-mail Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
