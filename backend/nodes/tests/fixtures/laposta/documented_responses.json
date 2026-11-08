@@ -1,0 +1,602 @@
+{
+  "list_lists": {
+    "body": {
+      "data": [
+        {
+          "list": {
+            "list_id": "BaImMu3JZA",
+            "timezone": "Europe/Amsterdam",
+            "created": "string",
+            "created_iso": "string",
+            "modified": "string",
+            "modified_iso": "string",
+            "state": "active",
+            "name": "Nieuwsbrief",
+            "locked": true,
+            "remarks": "string",
+            "subscribe_notification_email": "string",
+            "unsubscribe_notification_email": "string",
+            "members": {},
+            "account_id": "wFiUS4HL4e"
+          }
+        }
+      ]
+    },
+    "source": "https://docs.laposta.org/lijsten/alle-lijsten-opvragen"
+  },
+  "update_list": {
+    "body": {
+      "list": {
+        "list_id": "BaImMu3JZA",
+        "timezone": "Europe/Amsterdam",
+        "created": "string",
+        "created_iso": "string",
+        "modified": "string",
+        "modified_iso": "string",
+        "state": "active",
+        "name": "Nieuwsbrief",
+        "locked": true,
+        "remarks": "string",
+        "subscribe_notification_email": "string",
+        "unsubscribe_notification_email": "string",
+        "members": {},
+        "account_id": "wFiUS4HL4e"
+      }
+    },
+    "source": "https://docs.laposta.org/lijsten/lijst-wijzigen"
+  },
+  "get_list": {
+    "body": {
+      "list": {
+        "list_id": "BaImMu3JZA",
+        "timezone": "Europe/Amsterdam",
+        "created": "string",
+        "created_iso": "string",
+        "modified": "string",
+        "modified_iso": "string",
+        "state": "active",
+        "name": "Nieuwsbrief",
+        "locked": true,
+        "remarks": "string",
+        "subscribe_notification_email": "string",
+        "unsubscribe_notification_email": "string",
+        "members": {},
+        "account_id": "wFiUS4HL4e"
+      }
+    },
+    "source": "https://docs.laposta.org/lijsten/lijst-opvragen"
+  },
+  "create_list": {
+    "body": {
+      "list": {
+        "list_id": "BaImMu3JZA",
+        "timezone": "Europe/Amsterdam",
+        "created": "string",
+        "created_iso": "string",
+        "modified": "string",
+        "modified_iso": "string",
+        "state": "active",
+        "name": "Nieuwsbrief",
+        "locked": true,
+        "remarks": "string",
+        "subscribe_notification_email": "string",
+        "unsubscribe_notification_email": "string",
+        "members": {},
+        "account_id": "wFiUS4HL4e"
+      }
+    },
+    "source": "https://docs.laposta.org/lijsten/lijst-toevoegen"
+  },
+  "create_member": {
+    "body": {
+      "member": {
+        "member_id": "ZKfjhLJHfl",
+        "list_id": "BaImMu3JZA",
+        "email": "relatie@example.net",
+        "state": "active",
+        "timezone": "Europe/Amsterdam",
+        "signup_date": "string",
+        "signup_date_iso": "string",
+        "modified": "string",
+        "modified_iso": "string",
+        "confirm_date": "string",
+        "confirm_date_iso": "string",
+        "ip": "string",
+        "source_url": "string",
+        "custom_fields": {}
+      }
+    },
+    "source": "https://docs.laposta.org/relaties/relatie-toevoegen"
+  },
+  "update_member": {
+    "body": {
+      "member": {
+        "member_id": "ZKfjhLJHfl",
+        "list_id": "BaImMu3JZA",
+        "email": "relatie@example.net",
+        "state": "active",
+        "timezone": "Europe/Amsterdam",
+        "signup_date": "string",
+        "signup_date_iso": "string",
+        "modified": "string",
+        "modified_iso": "string",
+        "confirm_date": "string",
+        "confirm_date_iso": "string",
+        "ip": "string",
+        "source_url": "string",
+        "custom_fields": {}
+      }
+    },
+    "source": "https://docs.laposta.org/relaties/relatie-wijzigen"
+  },
+  "delete_member": {
+    "body": {
+      "member": {
+        "member_id": "ZKfjhLJHfl",
+        "list_id": "BaImMu3JZA",
+        "email": "relatie@example.net",
+        "state": "active",
+        "timezone": "Europe/Amsterdam",
+        "signup_date": "string",
+        "signup_date_iso": "string",
+        "modified": "string",
+        "modified_iso": "string",
+        "confirm_date": "string",
+        "confirm_date_iso": "string",
+        "ip": "string",
+        "source_url": "string",
+        "custom_fields": {}
+      }
+    },
+    "source": "https://docs.laposta.org/relaties/relatie-verwijderen"
+  },
+  "list_fields": {
+    "body": {
+      "data": [
+        {
+          "field": {
+            "field_id": "Z87ysHha9A",
+            "list_id": "BaImMu3JZA",
+            "timezone": "Europe/Amsterdam",
+            "created": "string",
+            "created_iso": "string",
+            "modified": "string",
+            "state": "active",
+            "name": "Nieuwsbrief",
+            "tag": "string",
+            "custom_name": "string",
+            "defaultvalue": "string",
+            "datatype": "text",
+            "datatype_display": "select",
+            "options": [
+              "string"
+            ],
+            "options_full": [
+              "string"
+            ],
+            "required": true,
+            "in_form": true,
+            "in_list": true,
+            "autocomplete": "string",
+            "pos": "string",
+            "is_email": true
+          }
+        }
+      ]
+    },
+    "source": "https://docs.laposta.org/velden/alle-velden-opvragen"
+  },
+  "delete_list": {
+    "body": {
+      "list": {
+        "list_id": "BaImMu3JZA",
+        "timezone": "Europe/Amsterdam",
+        "created": "string",
+        "created_iso": "string",
+        "modified": "string",
+        "modified_iso": "string",
+        "state": "active",
+        "name": "Nieuwsbrief",
+        "locked": true,
+        "remarks": "string",
+        "subscribe_notification_email": "string",
+        "unsubscribe_notification_email": "string",
+        "members": {},
+        "account_id": "wFiUS4HL4e"
+      }
+    },
+    "source": "https://docs.laposta.org/lijsten/lijst-verwijderen"
+  },
+  "list_members": {
+    "body": {
+      "data": [
+        {
+          "member": {
+            "member_id": "ZKfjhLJHfl",
+            "list_id": "BaImMu3JZA",
+            "email": "relatie@example.net",
+            "state": "active",
+            "timezone": "Europe/Amsterdam",
+            "signup_date": "string",
+            "signup_date_iso": "string",
+            "modified": "string",
+            "modified_iso": "string",
+            "confirm_date": "string",
+            "confirm_date_iso": "string",
+            "ip": "string",
+            "source_url": "string",
+            "custom_fields": {}
+          }
+        }
+      ]
+    },
+    "source": "https://docs.laposta.org/relaties/alle-relaties-opvragen"
+  },
+  "update_field": {
+    "body": {
+      "field": {
+        "field_id": "Z87ysHha9A",
+        "list_id": "BaImMu3JZA",
+        "timezone": "Europe/Amsterdam",
+        "created": "string",
+        "created_iso": "string",
+        "modified": "string",
+        "state": "active",
+        "name": "Nieuwsbrief",
+        "tag": "string",
+        "custom_name": "string",
+        "defaultvalue": "string",
+        "datatype": "text",
+        "datatype_display": "select",
+        "options": [
+          "string"
+        ],
+        "options_full": [
+          "string"
+        ],
+        "required": true,
+        "in_form": true,
+        "in_list": true,
+        "autocomplete": "string",
+        "pos": "string",
+        "is_email": true
+      }
+    },
+    "source": "https://docs.laposta.org/velden/veld-wijzigen"
+  },
+  "get_field": {
+    "body": {
+      "field": {
+        "field_id": "Z87ysHha9A",
+        "list_id": "BaImMu3JZA",
+        "timezone": "Europe/Amsterdam",
+        "created": "string",
+        "created_iso": "string",
+        "modified": "string",
+        "state": "active",
+        "name": "Nieuwsbrief",
+        "tag": "string",
+        "custom_name": "string",
+        "defaultvalue": "string",
+        "datatype": "text",
+        "datatype_display": "select",
+        "options": [
+          "string"
+        ],
+        "options_full": [
+          "string"
+        ],
+        "required": true,
+        "in_form": true,
+        "in_list": true,
+        "autocomplete": "string",
+        "pos": "string",
+        "is_email": true
+      }
+    },
+    "source": "https://docs.laposta.org/velden/veld-opvragen"
+  },
+  "create_field": {
+    "body": {
+      "field": {
+        "field_id": "Z87ysHha9A",
+        "list_id": "BaImMu3JZA",
+        "timezone": "Europe/Amsterdam",
+        "created": "string",
+        "created_iso": "string",
+        "modified": "string",
+        "state": "active",
+        "name": "Nieuwsbrief",
+        "tag": "string",
+        "custom_name": "string",
+        "defaultvalue": "string",
+        "datatype": "text",
+        "datatype_display": "select",
+        "options": [
+          "string"
+        ],
+        "options_full": [
+          "string"
+        ],
+        "required": true,
+        "in_form": true,
+        "in_list": true,
+        "autocomplete": "string",
+        "pos": "string",
+        "is_email": true
+      }
+    },
+    "source": "https://docs.laposta.org/velden/veld-toevoegen"
+  },
+  "delete_field": {
+    "body": {
+      "field": {
+        "field_id": "Z87ysHha9A",
+        "list_id": "BaImMu3JZA",
+        "timezone": "Europe/Amsterdam",
+        "created": "string",
+        "created_iso": "string",
+        "modified": "string",
+        "state": "active",
+        "name": "Nieuwsbrief",
+        "tag": "string",
+        "custom_name": "string",
+        "defaultvalue": "string",
+        "datatype": "text",
+        "datatype_display": "select",
+        "options": [
+          "string"
+        ],
+        "options_full": [
+          "string"
+        ],
+        "required": true,
+        "in_form": true,
+        "in_list": true,
+        "autocomplete": "string",
+        "pos": "string",
+        "is_email": true
+      }
+    },
+    "source": "https://docs.laposta.org/velden/veld-verwijderen"
+  },
+  "update_campaign": {
+    "body": {
+      "campaign": {
+        "account_id": "wFiUS4HL4e",
+        "campaign_id": "njhgaf61ye",
+        "timezone": "Europe/Amsterdam",
+        "created": "string",
+        "created_iso": "string",
+        "modified": "string",
+        "modified_iso": "string",
+        "type": "string",
+        "delivery_requested": "string",
+        "delivery_requested_iso": "string",
+        "delivery_started": "string",
+        "delivery_started_iso": "string",
+        "delivery_ended": "string",
+        "delivery_ended_iso": "string",
+        "name": "Nieuwsbrief",
+        "subject": "string",
+        "from": {},
+        "reply_to": "string",
+        "list_ids": {},
+        "stats": {},
+        "web": "string",
+        "screenshot": {},
+        "previewtext": "string"
+      }
+    },
+    "source": "https://docs.laposta.org/campagnes/campagne-wijzigen"
+  },
+  "delete_campaign": {
+    "body": {
+      "campaign": {
+        "account_id": "wFiUS4HL4e",
+        "campaign_id": "njhgaf61ye",
+        "timezone": "Europe/Amsterdam",
+        "created": "string",
+        "created_iso": "string",
+        "modified": "string",
+        "modified_iso": "string",
+        "type": "string",
+        "delivery_requested": "string",
+        "delivery_requested_iso": "string",
+        "delivery_started": "string",
+        "delivery_started_iso": "string",
+        "delivery_ended": "string",
+        "delivery_ended_iso": "string",
+        "name": "Nieuwsbrief",
+        "subject": "string",
+        "from": {},
+        "reply_to": "string",
+        "list_ids": {},
+        "stats": {},
+        "web": "string",
+        "screenshot": {},
+        "previewtext": "string"
+      }
+    },
+    "source": "https://docs.laposta.org/campagnes/campagne-verwijderen"
+  },
+  "get_member": {
+    "body": {
+      "member": {
+        "member_id": "ZKfjhLJHfl",
+        "list_id": "BaImMu3JZA",
+        "email": "relatie@example.net",
+        "state": "active",
+        "timezone": "Europe/Amsterdam",
+        "signup_date": "string",
+        "signup_date_iso": "string",
+        "modified": "string",
+        "modified_iso": "string",
+        "confirm_date": "string",
+        "confirm_date_iso": "string",
+        "ip": "string",
+        "source_url": "string",
+        "custom_fields": {}
+      }
+    },
+    "source": "https://docs.laposta.org/relaties/relatie-opvragen"
+  },
+  "set_campaign_content": {
+    "body": {
+      "campaign": {
+        "account_id": "string",
+        "campaign_id": "string",
+        "html": "string",
+        "plaintext": "string",
+        "report": {
+          "javascript": true,
+          "flash": true,
+          "no_unsubscribe": true,
+          "empty_unsubscribe": true,
+          "css": [
+            "string"
+          ],
+          "images": [
+            "string"
+          ]
+        }
+      }
+    },
+    "source": "https://docs.laposta.org/campagnes/campagne-content-vullen"
+  },
+  "list_reports": {
+    "body": {
+      "data": [
+        {
+          "report": {
+            "account_id": "wFiUS4HL4e",
+            "campaign_id": "njhgaf61ye",
+            "sent": 1,
+            "accepted": 1,
+            "cleaned": 1,
+            "complained": 1,
+            "hardbounced": 1,
+            "unsubscribed": 1,
+            "opened_unique": 1,
+            "clicked_unique": 1,
+            "webversion_unique": 1,
+            "accepted_ratio": 1.1,
+            "opened_ratio": 1.1,
+            "clicked_ratio": 1.1,
+            "from_automation": true
+          }
+        }
+      ]
+    },
+    "source": "https://docs.laposta.org/resultaten/alle-resultaten-opvragen"
+  },
+  "get_report": {
+    "body": {
+      "report": {
+        "account_id": "wFiUS4HL4e",
+        "campaign_id": "njhgaf61ye",
+        "sent": 1,
+        "accepted": 1,
+        "cleaned": 1,
+        "complained": 1,
+        "hardbounced": 1,
+        "unsubscribed": 1,
+        "opened_unique": 1,
+        "clicked_unique": 1,
+        "webversion_unique": 1,
+        "accepted_ratio": 1.1,
+        "opened_ratio": 1.1,
+        "clicked_ratio": 1.1,
+        "from_automation": true
+      }
+    },
+    "source": "https://docs.laposta.org/resultaten/campagneresultaten-opvragen"
+  },
+  "list_campaigns": {
+    "body": {
+      "data": [
+        {
+          "campaign": {
+            "account_id": "wFiUS4HL4e",
+            "campaign_id": "njhgaf61ye",
+            "timezone": "Europe/Amsterdam",
+            "created": "string",
+            "created_iso": "string",
+            "modified": "string",
+            "modified_iso": "string",
+            "type": "string",
+            "delivery_requested": "string",
+            "delivery_requested_iso": "string",
+            "delivery_started": "string",
+            "delivery_started_iso": "string",
+            "delivery_ended": "string",
+            "delivery_ended_iso": "string",
+            "name": "Nieuwsbrief",
+            "subject": "string",
+            "from": {},
+            "reply_to": "string",
+            "list_ids": {},
+            "stats": {},
+            "web": "string",
+            "screenshot": {},
+            "previewtext": "string"
+          }
+        }
+      ]
+    },
+    "source": "https://docs.laposta.org/campagnes/alle-campagnes-opvragen"
+  },
+  "get_campaign_content": {
+    "body": {
+      "campaign": {
+        "account_id": "string",
+        "campaign_id": "string",
+        "html": "string",
+        "plaintext": "string",
+        "report": {
+          "javascript": true,
+          "flash": true,
+          "no_unsubscribe": true,
+          "empty_unsubscribe": true,
+          "css": [
+            "string"
+          ],
+          "images": [
+            "string"
+          ]
+        }
+      }
+    },
+    "source": "https://docs.laposta.org/campagnes/campagne-content-opvragen"
+  },
+  "get_campaign": {
+    "body": {
+      "campaign": {
+        "account_id": "wFiUS4HL4e",
+        "campaign_id": "njhgaf61ye",
+        "timezone": "Europe/Amsterdam",
+        "created": "string",
+        "created_iso": "string",
+        "modified": "string",
+        "modified_iso": "string",
+        "type": "string",
+        "delivery_requested": "string",
+        "delivery_requested_iso": "string",
+        "delivery_started": "string",
+        "delivery_started_iso": "string",
+        "delivery_ended": "string",
+        "delivery_ended_iso": "string",
+        "name": "Nieuwsbrief",
+        "subject": "string",
+        "from": {},
+        "reply_to": "string",
+        "list_ids": {},
+        "stats": {},
+        "web": "string",
+        "screenshot": {},
+        "previewtext": "string"
+      }
+    },
+    "source": "https://docs.laposta.org/campagnes/campagne-opvragen"
+  }
+}

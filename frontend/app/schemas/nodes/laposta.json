@@ -1,0 +1,931 @@
+{
+  "$defs": {
+    "LapostaAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "laposta_api_key",
+          "default": "laposta_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Laposta API Key",
+      "type": "object",
+      "x-credential-instructions": "In Laposta, open Koppelingen and create an API key. Copy it while it is visible and paste it here. NoClick sends it as the Basic authentication username with an empty password to api.laposta.nl.",
+      "x-credential-url": "https://docs.laposta.org/hoe-kom-ik-aan-een-api-sleutel"
+    },
+    "LapostaCreateFieldConfig": {
+      "additionalProperties": false,
+      "description": "Create field.",
+      "properties": {
+        "operation": {
+          "const": "create_field",
+          "default": "create_field",
+          "title": "Create Field",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "title": "List Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "datatype": {
+          "default": "text",
+          "description": "Create a scalar custom field.",
+          "enum": [
+            "text",
+            "numeric",
+            "date"
+          ],
+          "title": "Datatype",
+          "type": "string"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "in_form": {
+          "default": true,
+          "title": "In Form",
+          "type": "boolean"
+        },
+        "in_list": {
+          "default": true,
+          "title": "In List",
+          "type": "boolean"
+        },
+        "defaultvalue": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Defaultvalue"
+        }
+      },
+      "required": [
+        "list_id",
+        "name"
+      ],
+      "title": "LapostaCreateFieldConfig",
+      "type": "object"
+    },
+    "LapostaCreateListConfig": {
+      "additionalProperties": false,
+      "description": "Create list.",
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Create List",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "remarks": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remarks"
+        },
+        "locked": {
+          "default": false,
+          "title": "Locked",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "LapostaCreateListConfig",
+      "type": "object"
+    },
+    "LapostaCreateMemberConfig": {
+      "additionalProperties": false,
+      "description": "Add a subscriber. List double opt-in and notification settings apply.",
+      "properties": {
+        "operation": {
+          "const": "create_member",
+          "default": "create_member",
+          "title": "Create Member",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "title": "List Id",
+          "type": "string"
+        },
+        "email": {
+          "title": "Email",
+          "type": "string"
+        },
+        "ip": {
+          "description": "IP address of the subscriber who signed up, not the server.",
+          "title": "Ip",
+          "type": "string"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Url"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Keys are field custom_name values; arrays support multiple selections and labels.",
+          "title": "Custom Fields"
+        }
+      },
+      "required": [
+        "list_id",
+        "email",
+        "ip"
+      ],
+      "title": "LapostaCreateMemberConfig",
+      "type": "object"
+    },
+    "LapostaDeleteCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Delete campaign.",
+      "properties": {
+        "operation": {
+          "const": "delete_campaign",
+          "default": "delete_campaign",
+          "title": "Delete Campaign",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign_id": {
+          "title": "Campaign Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "LapostaDeleteCampaignConfig",
+      "type": "object"
+    },
+    "LapostaDeleteFieldConfig": {
+      "additionalProperties": false,
+      "description": "Delete field.",
+      "properties": {
+        "operation": {
+          "const": "delete_field",
+          "default": "delete_field",
+          "title": "Delete Field",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "title": "List Id",
+          "type": "string"
+        },
+        "field_id": {
+          "title": "Field Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "field_id"
+      ],
+      "title": "LapostaDeleteFieldConfig",
+      "type": "object"
+    },
+    "LapostaDeleteListConfig": {
+      "additionalProperties": false,
+      "description": "Permanently delete the list and its subscribers.",
+      "properties": {
+        "operation": {
+          "const": "delete_list",
+          "default": "delete_list",
+          "title": "Delete List",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "title": "List Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "LapostaDeleteListConfig",
+      "type": "object"
+    },
+    "LapostaDeleteMemberConfig": {
+      "additionalProperties": false,
+      "description": "Permanently remove a subscriber from the selected list.",
+      "properties": {
+        "operation": {
+          "const": "delete_member",
+          "default": "delete_member",
+          "title": "Delete Member",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "title": "List Id",
+          "type": "string"
+        },
+        "member_id": {
+          "title": "Member Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "member_id"
+      ],
+      "title": "LapostaDeleteMemberConfig",
+      "type": "object"
+    },
+    "LapostaGetCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Get campaign.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Get Campaign",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign_id": {
+          "title": "Campaign Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "LapostaGetCampaignConfig",
+      "type": "object"
+    },
+    "LapostaGetCampaignContentConfig": {
+      "additionalProperties": false,
+      "description": "Get campaign content.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign_content",
+          "default": "get_campaign_content",
+          "title": "Get Campaign Content",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign_id": {
+          "title": "Campaign Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "LapostaGetCampaignContentConfig",
+      "type": "object"
+    },
+    "LapostaGetFieldConfig": {
+      "additionalProperties": false,
+      "description": "Get field.",
+      "properties": {
+        "operation": {
+          "const": "get_field",
+          "default": "get_field",
+          "title": "Get Field",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "title": "List Id",
+          "type": "string"
+        },
+        "field_id": {
+          "title": "Field Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "field_id"
+      ],
+      "title": "LapostaGetFieldConfig",
+      "type": "object"
+    },
+    "LapostaGetListConfig": {
+      "additionalProperties": false,
+      "description": "Get list.",
+      "properties": {
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Get List",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "title": "List Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "LapostaGetListConfig",
+      "type": "object"
+    },
+    "LapostaGetMemberConfig": {
+      "additionalProperties": false,
+      "description": "Get member.",
+      "properties": {
+        "operation": {
+          "const": "get_member",
+          "default": "get_member",
+          "title": "Get Member",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "title": "List Id",
+          "type": "string"
+        },
+        "member_id": {
+          "title": "Member Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "member_id"
+      ],
+      "title": "LapostaGetMemberConfig",
+      "type": "object"
+    },
+    "LapostaGetReportConfig": {
+      "additionalProperties": false,
+      "description": "Get report.",
+      "properties": {
+        "operation": {
+          "const": "get_report",
+          "default": "get_report",
+          "title": "Get Report",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign_id": {
+          "title": "Campaign Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "LapostaGetReportConfig",
+      "type": "object"
+    },
+    "LapostaListCampaignsConfig": {
+      "additionalProperties": false,
+      "description": "List campaigns.",
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "List Campaigns",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "LapostaListCampaignsConfig",
+      "type": "object"
+    },
+    "LapostaListFieldsConfig": {
+      "additionalProperties": false,
+      "description": "List fields.",
+      "properties": {
+        "operation": {
+          "const": "list_fields",
+          "default": "list_fields",
+          "title": "List Fields",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "title": "List Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "LapostaListFieldsConfig",
+      "type": "object"
+    },
+    "LapostaListListsConfig": {
+      "additionalProperties": false,
+      "description": "List lists.",
+      "properties": {
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "List Lists",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "LapostaListListsConfig",
+      "type": "object"
+    },
+    "LapostaListMembersConfig": {
+      "additionalProperties": false,
+      "description": "List members.",
+      "properties": {
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "List Members",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "title": "List Id",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "deleted"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "active",
+            "deleted"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "LapostaListMembersConfig",
+      "type": "object"
+    },
+    "LapostaListReportsConfig": {
+      "additionalProperties": false,
+      "description": "List reports.",
+      "properties": {
+        "operation": {
+          "const": "list_reports",
+          "default": "list_reports",
+          "title": "List Reports",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "LapostaListReportsConfig",
+      "type": "object"
+    },
+    "LapostaSetCampaignContentConfig": {
+      "additionalProperties": false,
+      "description": "Replace campaign HTML. Does not send or schedule the campaign.",
+      "properties": {
+        "operation": {
+          "const": "set_campaign_content",
+          "default": "set_campaign_content",
+          "title": "Set Campaign Content",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign_id": {
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "html": {
+          "maxLength": 500000,
+          "minLength": 1,
+          "title": "Html",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "inline_css": {
+          "default": false,
+          "title": "Inline Css",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "html"
+      ],
+      "title": "LapostaSetCampaignContentConfig",
+      "type": "object"
+    },
+    "LapostaUpdateCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Update campaign.",
+      "properties": {
+        "operation": {
+          "const": "update_campaign",
+          "default": "update_campaign",
+          "title": "Update Campaign",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign_id": {
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply To"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "name"
+      ],
+      "title": "LapostaUpdateCampaignConfig",
+      "type": "object"
+    },
+    "LapostaUpdateFieldConfig": {
+      "additionalProperties": false,
+      "description": "Update field.",
+      "properties": {
+        "operation": {
+          "const": "update_field",
+          "default": "update_field",
+          "title": "Update Field",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "title": "List Id",
+          "type": "string"
+        },
+        "field_id": {
+          "title": "Field Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "required": {
+          "description": "Whether this custom field is required.",
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "list_id",
+        "field_id",
+        "name",
+        "required"
+      ],
+      "title": "LapostaUpdateFieldConfig",
+      "type": "object"
+    },
+    "LapostaUpdateListConfig": {
+      "additionalProperties": false,
+      "description": "Update list.",
+      "properties": {
+        "operation": {
+          "const": "update_list",
+          "default": "update_list",
+          "title": "Update List",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "title": "List Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "remarks": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remarks"
+        }
+      },
+      "required": [
+        "list_id",
+        "name"
+      ],
+      "title": "LapostaUpdateListConfig",
+      "type": "object"
+    },
+    "LapostaUpdateMemberConfig": {
+      "additionalProperties": false,
+      "description": "Update member.",
+      "properties": {
+        "operation": {
+          "const": "update_member",
+          "default": "update_member",
+          "title": "Update Member",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "title": "List Id",
+          "type": "string"
+        },
+        "member_id": {
+          "title": "Member Id",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Fields"
+        }
+      },
+      "required": [
+        "list_id",
+        "member_id"
+      ],
+      "title": "LapostaUpdateMemberConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_field": "#/$defs/LapostaCreateFieldConfig",
+          "create_list": "#/$defs/LapostaCreateListConfig",
+          "create_member": "#/$defs/LapostaCreateMemberConfig",
+          "delete_campaign": "#/$defs/LapostaDeleteCampaignConfig",
+          "delete_field": "#/$defs/LapostaDeleteFieldConfig",
+          "delete_list": "#/$defs/LapostaDeleteListConfig",
+          "delete_member": "#/$defs/LapostaDeleteMemberConfig",
+          "get_campaign": "#/$defs/LapostaGetCampaignConfig",
+          "get_campaign_content": "#/$defs/LapostaGetCampaignContentConfig",
+          "get_field": "#/$defs/LapostaGetFieldConfig",
+          "get_list": "#/$defs/LapostaGetListConfig",
+          "get_member": "#/$defs/LapostaGetMemberConfig",
+          "get_report": "#/$defs/LapostaGetReportConfig",
+          "list_campaigns": "#/$defs/LapostaListCampaignsConfig",
+          "list_fields": "#/$defs/LapostaListFieldsConfig",
+          "list_lists": "#/$defs/LapostaListListsConfig",
+          "list_members": "#/$defs/LapostaListMembersConfig",
+          "list_reports": "#/$defs/LapostaListReportsConfig",
+          "set_campaign_content": "#/$defs/LapostaSetCampaignContentConfig",
+          "update_campaign": "#/$defs/LapostaUpdateCampaignConfig",
+          "update_field": "#/$defs/LapostaUpdateFieldConfig",
+          "update_list": "#/$defs/LapostaUpdateListConfig",
+          "update_member": "#/$defs/LapostaUpdateMemberConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LapostaListListsConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaGetListConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaCreateListConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaUpdateListConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaDeleteListConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaListMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaGetMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaCreateMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaUpdateMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaDeleteMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaListFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaGetFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaCreateFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaUpdateFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaDeleteFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaListCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaGetCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaUpdateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaDeleteCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaGetCampaignContentConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaSetCampaignContentConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaListReportsConfig"
+        },
+        {
+          "$ref": "#/$defs/LapostaGetReportConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LapostaAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Laposta Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

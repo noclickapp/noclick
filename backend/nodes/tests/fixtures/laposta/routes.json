@@ -1,0 +1,153 @@
+{
+  "list_lists": {
+    "method": "GET",
+    "path": "/list",
+    "query": [],
+    "envelope": "list"
+  },
+  "get_list": {
+    "method": "GET",
+    "path": "/list/{list_id}",
+    "query": [],
+    "envelope": "list"
+  },
+  "create_list": {
+    "method": "POST",
+    "path": "/list",
+    "query": [],
+    "envelope": "list"
+  },
+  "update_list": {
+    "method": "POST",
+    "path": "/list/{list_id}",
+    "query": [],
+    "envelope": "list"
+  },
+  "delete_list": {
+    "method": "DELETE",
+    "path": "/list/{list_id}",
+    "query": [],
+    "envelope": "list"
+  },
+  "list_members": {
+    "method": "GET",
+    "path": "/member",
+    "query": [
+      "list_id",
+      "state"
+    ],
+    "envelope": "member"
+  },
+  "get_member": {
+    "method": "GET",
+    "path": "/member/{member_id}",
+    "query": [
+      "list_id"
+    ],
+    "envelope": "member"
+  },
+  "create_member": {
+    "method": "POST",
+    "path": "/member",
+    "query": [],
+    "envelope": "member"
+  },
+  "update_member": {
+    "method": "POST",
+    "path": "/member/{member_id}",
+    "query": [],
+    "envelope": "member"
+  },
+  "delete_member": {
+    "method": "DELETE",
+    "path": "/member/{member_id}",
+    "query": [
+      "list_id"
+    ],
+    "envelope": "member"
+  },
+  "list_fields": {
+    "method": "GET",
+    "path": "/field",
+    "query": [
+      "list_id"
+    ],
+    "envelope": "field"
+  },
+  "get_field": {
+    "method": "GET",
+    "path": "/field/{field_id}",
+    "query": [
+      "list_id"
+    ],
+    "envelope": "field"
+  },
+  "create_field": {
+    "method": "POST",
+    "path": "/field",
+    "query": [],
+    "envelope": "field"
+  },
+  "update_field": {
+    "method": "POST",
+    "path": "/field/{field_id}",
+    "query": [],
+    "envelope": "field"
+  },
+  "delete_field": {
+    "method": "DELETE",
+    "path": "/field/{field_id}",
+    "query": [
+      "list_id"
+    ],
+    "envelope": "field"
+  },
+  "list_campaigns": {
+    "method": "GET",
+    "path": "/campaign",
+    "query": [],
+    "envelope": "campaign"
+  },
+  "get_campaign": {
+    "method": "GET",
+    "path": "/campaign/{campaign_id}",
+    "query": [],
+    "envelope": "campaign"
+  },
+  "update_campaign": {
+    "method": "POST",
+    "path": "/campaign/{campaign_id}",
+    "query": [],
+    "envelope": "campaign"
+  },
+  "delete_campaign": {
+    "method": "DELETE",
+    "path": "/campaign/{campaign_id}",
+    "query": [],
+    "envelope": "campaign"
+  },
+  "get_campaign_content": {
+    "method": "GET",
+    "path": "/campaign/{campaign_id}/content",
+    "query": [],
+    "envelope": "campaign"
+  },
+  "set_campaign_content": {
+    "method": "POST",
+    "path": "/campaign/{campaign_id}/content",
+    "query": [],
+    "envelope": "campaign"
+  },
+  "list_reports": {
+    "method": "GET",
+    "path": "/report",
+    "query": [],
+    "envelope": "report"
+  },
+  "get_report": {
+    "method": "GET",
+    "path": "/report/{campaign_id}",
+    "query": [],
+    "envelope": "report"
+  }
+}
