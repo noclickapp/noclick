@@ -181,8 +181,12 @@ class ListComposeDeployments(_Compose):
     operation: Literal["list_compose_deployments"] = Field("list_compose_deployments", title="List Existing Compose Deployments")
 
 
+DISPOSABLE_NAME_PATTERN = r"^noclick-[a-z0-9][a-z0-9-]{1,75}$"
+DisposableName = Annotated[str, Field(min_length=9, max_length=83, pattern=DISPOSABLE_NAME_PATTERN)]
+
+
 def disposable_name(value):
-    if not isinstance(value, str) or not re.fullmatch(r"noclick-[a-z0-9][a-z0-9-]{1,75}", value):
+    if not isinstance(value, str) or not re.fullmatch(DISPOSABLE_NAME_PATTERN, value):
         raise ValueError("Use a unique disposable name beginning noclick-")
     return value
 
@@ -200,18 +204,18 @@ class _OwnedWrite(_Operation):
 
 class CreateProject(_OwnedWrite):
     operation: Literal["create_project"] = Field("create_project", title="Create Empty Disposable Project", description="Also creates Dokploy's default production environment and provider permission/audit records. No service is created.")
-    name: str = Field(..., title="Disposable Project Name")
+    name: DisposableName = Field(..., title="Disposable Project Name")
     _name = field_validator("name", mode="before")(disposable_name)
 
 
 class _ExistingWrite(_OwnedWrite, _Project):
-    expected_project_name: str = Field(..., title="Current Disposable Project Name", description="Exact name check before mutation; all known service collections must be empty.")
+    expected_project_name: DisposableName = Field(..., title="Current Disposable Project Name", description="Exact name check before mutation; all known service collections must be empty.")
     _name = field_validator("expected_project_name", mode="before")(disposable_name)
 
 
 class UpdateProject(_ExistingWrite):
     operation: Literal["update_project"] = Field("update_project", title="Update Empty Project Metadata")
-    name: str = Field(..., title="New Disposable Project Name")
+    name: DisposableName = Field(..., title="New Disposable Project Name")
     _new_name = field_validator("name", mode="before")(disposable_name)
 
 
@@ -221,18 +225,18 @@ class DeleteProject(_ExistingWrite):
 
 class CreateEnvironment(_ExistingWrite):
     operation: Literal["create_environment"] = Field("create_environment", title="Create Empty Disposable Environment")
-    name: str = Field(..., title="Disposable Environment Name")
+    name: DisposableName = Field(..., title="Disposable Environment Name")
     _new_name = field_validator("name", mode="before")(disposable_name)
 
 
 class _ExistingEnvironmentWrite(_ExistingWrite, _Environment):
-    expected_environment_name: str = Field(..., title="Current Disposable Environment Name")
+    expected_environment_name: DisposableName = Field(..., title="Current Disposable Environment Name")
     _env_name = field_validator("expected_environment_name", mode="before")(disposable_name)
 
 
 class UpdateEnvironment(_ExistingEnvironmentWrite):
     operation: Literal["update_environment"] = Field("update_environment", title="Update Empty Environment Metadata")
-    name: str = Field(..., title="New Disposable Environment Name")
+    name: DisposableName = Field(..., title="New Disposable Environment Name")
     _new_name = field_validator("name", mode="before")(disposable_name)
 
 

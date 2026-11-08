@@ -213,3 +213,17 @@ async def test_current_provider_owner_role_change_blocks_post(world):
 def test_invalid_instance_origin_and_foreign_family_refuse(origin):
     with pytest.raises(ValueError): D.credential({**AUTH, "instance_url": origin})
     with pytest.raises(ValueError): D.DokployNode.parse_config({"config": args("get_current_user"), "credentials": {**AUTH, "credential_type": "slack_oauth"}})
+
+
+def test_disposable_name_constraints_are_visible_in_generated_schema():
+    schema = D.DokployNodeConfig.model_json_schema()
+    for operation in D.OPS:
+        if not operation.startswith(("create_", "update_", "delete_")):
+            continue
+        config = TypeAdapter(D.DokployOperation).validate_python(args(operation))
+        definition = schema["$defs"][type(config).__name__]
+        for name in ("name", "expected_project_name", "expected_environment_name"):
+            if name in definition["properties"]:
+                field = definition["properties"][name]
+                assert field["pattern"] == D.DISPOSABLE_NAME_PATTERN
+                assert (field["minLength"], field["maxLength"]) == (9, 83)

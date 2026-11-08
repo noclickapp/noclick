@@ -35,6 +35,9 @@
         },
         "expected_project_name": {
           "description": "Exact name check before mutation; all known service collections must be empty.",
+          "maxLength": 83,
+          "minLength": 9,
+          "pattern": "^noclick-[a-z0-9][a-z0-9-]{1,75}$",
           "title": "Current Disposable Project Name",
           "type": "string"
         },
@@ -45,6 +48,9 @@
           "type": "string"
         },
         "name": {
+          "maxLength": 83,
+          "minLength": 9,
+          "pattern": "^noclick-[a-z0-9][a-z0-9-]{1,75}$",
           "title": "Disposable Environment Name",
           "type": "string"
         }
@@ -88,6 +94,9 @@
           "type": "string"
         },
         "name": {
+          "maxLength": 83,
+          "minLength": 9,
+          "pattern": "^noclick-[a-z0-9][a-z0-9-]{1,75}$",
           "title": "Disposable Project Name",
           "type": "string"
         }
@@ -159,10 +168,16 @@
         },
         "expected_project_name": {
           "description": "Exact name check before mutation; all known service collections must be empty.",
+          "maxLength": 83,
+          "minLength": 9,
+          "pattern": "^noclick-[a-z0-9][a-z0-9-]{1,75}$",
           "title": "Current Disposable Project Name",
           "type": "string"
         },
         "expected_environment_name": {
+          "maxLength": 83,
+          "minLength": 9,
+          "pattern": "^noclick-[a-z0-9][a-z0-9-]{1,75}$",
           "title": "Current Disposable Environment Name",
           "type": "string"
         },
@@ -219,6 +234,9 @@
         },
         "expected_project_name": {
           "description": "Exact name check before mutation; all known service collections must be empty.",
+          "maxLength": 83,
+          "minLength": 9,
+          "pattern": "^noclick-[a-z0-9][a-z0-9-]{1,75}$",
           "title": "Current Disposable Project Name",
           "type": "string"
         },
@@ -700,10 +718,16 @@
         },
         "expected_project_name": {
           "description": "Exact name check before mutation; all known service collections must be empty.",
+          "maxLength": 83,
+          "minLength": 9,
+          "pattern": "^noclick-[a-z0-9][a-z0-9-]{1,75}$",
           "title": "Current Disposable Project Name",
           "type": "string"
         },
         "expected_environment_name": {
+          "maxLength": 83,
+          "minLength": 9,
+          "pattern": "^noclick-[a-z0-9][a-z0-9-]{1,75}$",
           "title": "Current Disposable Environment Name",
           "type": "string"
         },
@@ -714,6 +738,9 @@
           "type": "string"
         },
         "name": {
+          "maxLength": 83,
+          "minLength": 9,
+          "pattern": "^noclick-[a-z0-9][a-z0-9-]{1,75}$",
           "title": "New Disposable Environment Name",
           "type": "string"
         }
@@ -764,6 +791,9 @@
         },
         "expected_project_name": {
           "description": "Exact name check before mutation; all known service collections must be empty.",
+          "maxLength": 83,
+          "minLength": 9,
+          "pattern": "^noclick-[a-z0-9][a-z0-9-]{1,75}$",
           "title": "Current Disposable Project Name",
           "type": "string"
         },
@@ -774,6 +804,9 @@
           "type": "string"
         },
         "name": {
+          "maxLength": 83,
+          "minLength": 9,
+          "pattern": "^noclick-[a-z0-9][a-z0-9-]{1,75}$",
           "title": "New Disposable Project Name",
           "type": "string"
         }
