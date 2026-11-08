@@ -1,0 +1,327 @@
+{
+  "get_account": {
+    "config": {},
+    "method": "GET",
+    "path": "/user",
+    "path_fields": [],
+    "query_fields": []
+  },
+  "list_collections": {
+    "config": {},
+    "method": "GET",
+    "path": "/collection",
+    "path_fields": [],
+    "query_fields": []
+  },
+  "create_collection": {
+    "config": {
+      "name": "My New Collection",
+      "description": "Collection for my videos",
+      "is_public": false
+    },
+    "method": "POST",
+    "path": "/collection",
+    "path_fields": [],
+    "query_fields": []
+  },
+  "get_collection": {
+    "config": {
+      "collection_id": "default"
+    },
+    "method": "GET",
+    "path": "/collection/{collection_id}",
+    "path_fields": [
+      "collection_id"
+    ],
+    "query_fields": []
+  },
+  "update_collection": {
+    "config": {
+      "collection_id": "default",
+      "name": "Updated Collection Name",
+      "description": "Updated description",
+      "is_public": true
+    },
+    "method": "PATCH",
+    "path": "/collection/{collection_id}",
+    "path_fields": [
+      "collection_id"
+    ],
+    "query_fields": []
+  },
+  "delete_collection": {
+    "config": {
+      "collection_id": "default"
+    },
+    "method": "DELETE",
+    "path": "/collection/{collection_id}",
+    "path_fields": [
+      "collection_id"
+    ],
+    "query_fields": []
+  },
+  "upload_media": {
+    "config": {
+      "collection_id": "default",
+      "url": "https://example.com/video.mp4",
+      "name": "My Video",
+      "media_type": "video",
+      "callback_url": "https://webhook.example.com/callback"
+    },
+    "method": "POST",
+    "path": "/collection/{collection_id}/upload",
+    "path_fields": [
+      "collection_id"
+    ],
+    "query_fields": []
+  },
+  "search_collection": {
+    "config": {
+      "collection_id": "default",
+      "query": "search query",
+      "index_type": "spoken_word",
+      "search_type": "semantic",
+      "score_threshold": 0.2,
+      "result_threshold": 10,
+      "stitch": true,
+      "rerank": false,
+      "filter": []
+    },
+    "method": "POST",
+    "path": "/collection/{collection_id}/search/",
+    "path_fields": [
+      "collection_id"
+    ],
+    "query_fields": []
+  },
+  "list_videos": {
+    "config": {
+      "collection_id": "default",
+      "page_index": 0,
+      "count": 50
+    },
+    "method": "GET",
+    "path": "/video/",
+    "path_fields": [],
+    "query_fields": [
+      "collection_id",
+      "page_index",
+      "count"
+    ]
+  },
+  "get_video": {
+    "config": {
+      "video_id": "m-12345",
+      "collection_id": "default"
+    },
+    "method": "GET",
+    "path": "/video/{video_id}",
+    "path_fields": [
+      "video_id"
+    ],
+    "query_fields": [
+      "collection_id"
+    ]
+  },
+  "update_video": {
+    "config": {
+      "video_id": "m-12345",
+      "name": "Updated Video Name"
+    },
+    "method": "PATCH",
+    "path": "/video/{video_id}",
+    "path_fields": [
+      "video_id"
+    ],
+    "query_fields": []
+  },
+  "delete_video": {
+    "config": {
+      "video_id": "m-12345"
+    },
+    "method": "DELETE",
+    "path": "/video/{video_id}",
+    "path_fields": [
+      "video_id"
+    ],
+    "query_fields": []
+  },
+  "create_video_stream": {
+    "config": {
+      "video_id": "m-12345",
+      "format": "mp4",
+      "quality": "high"
+    },
+    "method": "POST",
+    "path": "/video/{video_id}/stream/",
+    "path_fields": [
+      "video_id"
+    ],
+    "query_fields": []
+  },
+  "get_video_transcription": {
+    "config": {
+      "video_id": "m-12345",
+      "engine": "default",
+      "start": 10.5,
+      "end": 60,
+      "segmenter": "word",
+      "length": 1
+    },
+    "method": "GET",
+    "path": "/video/{video_id}/transcription/",
+    "path_fields": [
+      "video_id"
+    ],
+    "query_fields": [
+      "engine",
+      "start",
+      "end",
+      "segmenter",
+      "length"
+    ]
+  },
+  "generate_video_transcription": {
+    "config": {
+      "video_id": "m-12345",
+      "engine": "default",
+      "force": false,
+      "language_code": "en-US",
+      "callback_url": "https://webhook.example.com/callback",
+      "callback_data": {
+        "reference": "fixture"
+      }
+    },
+    "method": "POST",
+    "path": "/video/{video_id}/transcription/",
+    "path_fields": [
+      "video_id"
+    ],
+    "query_fields": []
+  },
+  "get_video_index": {
+    "config": {
+      "video_id": "m-12345",
+      "index_type": "spoken_word",
+      "engine": "default"
+    },
+    "method": "GET",
+    "path": "/video/{video_id}/index/",
+    "path_fields": [
+      "video_id"
+    ],
+    "query_fields": [
+      "index_type",
+      "engine"
+    ]
+  },
+  "create_video_index": {
+    "config": {
+      "video_id": "m-12345",
+      "index_type": "spoken_word",
+      "engine": "default",
+      "force": false,
+      "language_code": "en-US",
+      "segmentation_type": "sentence",
+      "callback_url": "https://webhook.example.com/callback"
+    },
+    "method": "POST",
+    "path": "/video/{video_id}/index/",
+    "path_fields": [
+      "video_id"
+    ],
+    "query_fields": []
+  },
+  "search_video": {
+    "config": {
+      "video_id": "m-12345",
+      "query": "search query",
+      "index_type": "spoken_word",
+      "search_type": "semantic",
+      "score_threshold": 0.2,
+      "result_threshold": 10,
+      "stitch": true,
+      "scene_index_id": "idx-12345",
+      "filter": []
+    },
+    "method": "POST",
+    "path": "/video/{video_id}/search/",
+    "path_fields": [
+      "video_id"
+    ],
+    "query_fields": []
+  },
+  "get_video_scenes": {
+    "config": {
+      "video_id": "m-12345"
+    },
+    "method": "GET",
+    "path": "/video/{video_id}/scenes/",
+    "path_fields": [
+      "video_id"
+    ],
+    "query_fields": []
+  },
+  "create_video_scenes": {
+    "config": {
+      "video_id": "m-12345",
+      "scene_type": "shot",
+      "callback_url": "https://webhook.example.com/callback"
+    },
+    "method": "POST",
+    "path": "/video/{video_id}/scenes/",
+    "path_fields": [
+      "video_id"
+    ],
+    "query_fields": []
+  },
+  "generate_video_clip": {
+    "config": {
+      "video_id": "m-12345",
+      "prompt": "Create a clip about the introduction",
+      "content_type": "spoken",
+      "model_name": "basic",
+      "scene_index_id": "idx-12345",
+      "callback_url": "https://webhook.example.com/callback"
+    },
+    "method": "POST",
+    "path": "/video/{video_id}/clip",
+    "path_fields": [
+      "video_id"
+    ],
+    "query_fields": []
+  },
+  "list_audios": {
+    "config": {
+      "collection_id": "default"
+    },
+    "method": "GET",
+    "path": "/audio/",
+    "path_fields": [],
+    "query_fields": [
+      "collection_id"
+    ]
+  },
+  "list_images": {
+    "config": {
+      "collection_id": "default"
+    },
+    "method": "GET",
+    "path": "/image/",
+    "path_fields": [],
+    "query_fields": [
+      "collection_id"
+    ]
+  },
+  "get_async_result": {
+    "config": {
+      "response_id": "job-12345"
+    },
+    "method": "GET",
+    "path": "/async-response/{response_id}",
+    "path_fields": [
+      "response_id"
+    ],
+    "query_fields": []
+  }
+}

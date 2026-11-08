@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1056 1056">
+  <!-- VideoDB mark. The orange triangle is constant; the slash adapts to the
+       system theme (dark on light chrome, white on dark chrome) per the
+       prefers-color-scheme media query below. -->
+  <style>
+    .vd-slash { fill: #262626; }
+    @media (prefers-color-scheme: dark) {
+      .vd-slash { fill: #ffffff; }
+    }
+  </style>
+  <polygon fill="#F24E1E" points="12,86 628,86 320,688" />
+  <polygon class="vd-slash" points="802,86 1046,86 582,942 338,942" />
+</svg>
