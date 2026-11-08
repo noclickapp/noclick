@@ -1,0 +1,451 @@
+{
+  "GET /k/v1/app.json": {
+    "body": {
+      "appId": "1",
+      "code": "",
+      "name": "ToDo App",
+      "description": "This is a great app!",
+      "spaceId": "2",
+      "threadId": "3",
+      "createdAt": "2025-04-06T02:24:03.000Z",
+      "creator": {
+        "code": "user1",
+        "name": "User1"
+      },
+      "modifiedAt": "2025-04-06T03:06:57.000Z",
+      "modifier": {
+        "code": "login-name",
+        "name": "Display Name"
+      }
+    },
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/apps/get-app/"
+  },
+  "GET /k/v1/app/form/fields.json": {
+    "body": {
+      "properties": {
+        "Text__single_line_1": {
+          "type": "SINGLE_LINE_TEXT",
+          "code": "Text__single_line_1",
+          "label": "Text (single-line)",
+          "noLabel": false,
+          "required": true,
+          "unique": true,
+          "maxLength": "64",
+          "minLength": "0",
+          "defaultValue": "",
+          "expression": "",
+          "hideExpression": false
+        },
+        "Number": {
+          "type": "NUMBER",
+          "code": "Number",
+          "label": "Number",
+          "noLabel": true,
+          "required": false,
+          "unique": false,
+          "maxValue": "64",
+          "minValue": "0",
+          "defaultValue": "12345",
+          "expression": "",
+          "digit": true,
+          "displayScale": "",
+          "unit": "$",
+          "unitPosition": "BEFORE"
+        },
+        "Radio_Button": {
+          "type": "RADIO_BUTTON",
+          "code": "Radio_Button",
+          "defaultValue": "sample2",
+          "label": "Radio Button",
+          "noLabel": false,
+          "required": true,
+          "options": {
+            "sample1": {
+              "label": "sample1",
+              "index": 0
+            },
+            "sample2": {
+              "label": "sample2",
+              "index": 1
+            },
+            "sample3": {
+              "label": "sample3",
+              "index": 2
+            }
+          },
+          "align": "horizontal"
+        }
+      },
+      "revision": "2"
+    },
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/apps/get-form-fields/"
+  },
+  "GET /k/v1/app/views.json": {
+    "body": {
+      "views": {
+        "View1": {
+          "type": "LIST",
+          "name": "View1",
+          "id": "20733",
+          "filterCond": "Date_2 > LAST_WEEK()",
+          "sort": "Record_number asc",
+          "index": "1",
+          "fields": [
+            "Record_number",
+            "Author"
+          ]
+        },
+        "Calendar View1": {
+          "type": "CALENDAR",
+          "name": "Calendar View1",
+          "id": "20735",
+          "filterCond": "",
+          "sort": "Record_number asc",
+          "index": "2",
+          "date": "Updated_datetime",
+          "title": "Rich_text"
+        },
+        "Custom View1": {
+          "type": "CUSTOM",
+          "name": "Custom View1",
+          "id": "20736",
+          "filterCond": "Updated_datetime >= LAST_WEEK() and Updated_datetime <= TODAY()",
+          "sort": "Updated_datetime desc",
+          "index": "3",
+          "html": "<div>Custom View HTML</div>",
+          "pager": true
+        },
+        "(Assigned to me)": {
+          "type": "LIST",
+          "name": "(Assigned to me)",
+          "id": "9668",
+          "filterCond": "Assignee in (LOGINUSER())",
+          "sort": "Date asc",
+          "index": "0",
+          "fields": [
+            "Date",
+            "Single_line_text",
+            "Drop_down",
+            "Single_line_text_2",
+            "Total_Expenses",
+            "Attachment",
+            "Itemized_Expenses"
+          ],
+          "builtinType": "ASSIGNEE"
+        }
+      },
+      "revision": "19"
+    },
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/apps/get-views/"
+  },
+  "GET /k/v1/app/status.json": {
+    "body": {
+      "enable": true,
+      "states": {
+        "Not started": {
+          "name": "Not started",
+          "index": "0",
+          "assignee": {
+            "type": "ONE",
+            "entities": []
+          }
+        },
+        "In progress": {
+          "name": "In progress",
+          "index": "1",
+          "assignee": {
+            "type": "ALL",
+            "entities": [
+              {
+                "entity": {
+                  "type": "USER",
+                  "code": "user1"
+                },
+                "includeSubs": false
+              },
+              {
+                "entity": {
+                  "type": "FIELD_ENTITY",
+                  "code": "creator"
+                },
+                "includeSubs": false
+              },
+              {
+                "entity": {
+                  "type": "CUSTOM_FIELD",
+                  "code": "Boss"
+                },
+                "includeSubs": false
+              }
+            ]
+          }
+        },
+        "Completed": {
+          "name": "Completed",
+          "index": "2",
+          "assignee": {
+            "type": "ONE",
+            "entities": []
+          }
+        }
+      },
+      "actions": [
+        {
+          "name": "Start",
+          "from": "Not started",
+          "to": "In progress",
+          "filterCond": "Record_number = \"1\""
+        },
+        {
+          "name": "Complete",
+          "from": "In progress",
+          "to": "Completed",
+          "filterCond": ""
+        }
+      ],
+      "revision": "3"
+    },
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/apps/get-process-management-settings/"
+  },
+  "GET /k/v1/record.json": {
+    "body": {
+      "record": {
+        "Updated_datetime": {
+          "type": "UPDATED_TIME",
+          "value": "2019-03-11T04:50:00Z"
+        },
+        "Created_datetime": {
+          "type": "CREATED_TIME",
+          "value": "2019-03-11T04:50:00Z"
+        },
+        "Number": {
+          "type": "NUMBER",
+          "value": "1"
+        },
+        "Record_number": {
+          "type": "RECORD_NUMBER",
+          "value": "100"
+        },
+        "Text": {
+          "type": "SINGLE_LINE_TEXT",
+          "value": "sample"
+        },
+        "Created_by": {
+          "type": "CREATOR",
+          "value": {
+            "code": "Administrator",
+            "name": "Administrator"
+          }
+        },
+        "$revision": {
+          "type": "__REVISION__",
+          "value": "1"
+        },
+        "Updated_by": {
+          "type": "MODIFIER",
+          "value": {
+            "code": "Administrator",
+            "name": "Administrator"
+          }
+        },
+        "$id": {
+          "type": "__ID__",
+          "value": "100"
+        }
+      }
+    },
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/records/get-record/"
+  },
+  "GET /k/v1/records.json": {
+    "body": {
+      "records": [
+        {
+          "Created_datetime": {
+            "type": "CREATED_TIME",
+            "value": "2024-11-11T04:50:00Z"
+          },
+          "Created_by": {
+            "type": "CREATOR",
+            "value": {
+              "code": "Administrator",
+              "name": "Administrator"
+            }
+          },
+          "$id": {
+            "type": "__ID__",
+            "value": "1"
+          }
+        },
+        {
+          "Created_datetime": {
+            "type": "CREATED_TIME",
+            "value": "2024-11-11T06:42:00Z"
+          },
+          "Created_by": {
+            "type": "CREATOR",
+            "value": {
+              "code": "Administrator",
+              "name": "Administrator"
+            }
+          },
+          "$id": {
+            "type": "__ID__",
+            "value": "2"
+          }
+        }
+      ],
+      "totalCount": null
+    },
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/records/get-records/"
+  },
+  "POST /k/v1/record.json": {
+    "body": {
+      "id": "1",
+      "revision": "1"
+    },
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/records/add-record/"
+  },
+  "PUT /k/v1/record.json": {
+    "body": {
+      "revision": "5"
+    },
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/records/update-record/"
+  },
+  "POST /k/v1/records.json": {
+    "body": {
+      "ids": [
+        "77",
+        "78"
+      ],
+      "revisions": [
+        "1",
+        "1"
+      ]
+    },
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/records/add-records/"
+  },
+  "PUT /k/v1/records.json": {
+    "body": {
+      "records": [
+        {
+          "id": "1",
+          "revision": "5"
+        },
+        {
+          "id": "2",
+          "revision": "2"
+        }
+      ]
+    },
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/records/update-records/"
+  },
+  "DELETE /k/v1/records.json": {
+    "body": {},
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/records/delete-records/"
+  },
+  "GET /k/v1/record/comments.json": {
+    "body": {
+      "comments": [
+        {
+          "id": "3",
+          "text": "user14 Thank you! Looks great.",
+          "createdAt": "2016-05-09T18:29:05Z",
+          "creator": {
+            "code": "user13",
+            "name": "user13"
+          },
+          "mentions": [
+            {
+              "code": "user14",
+              "type": "USER"
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "text": "user13 Global Sales APAC Taskforce \nHere is today's report.",
+          "createdAt": "2016-05-09T18:27:54Z",
+          "creator": {
+            "code": "user14",
+            "name": "user14"
+          },
+          "mentions": [
+            {
+              "code": "user13",
+              "type": "USER"
+            },
+            {
+              "code": "Global Sales_1BNZeQ",
+              "type": "ORGANIZATION"
+            },
+            {
+              "code": "APAC Taskforce_DJrvzu",
+              "type": "GROUP"
+            }
+          ]
+        }
+      ],
+      "older": false,
+      "newer": false
+    },
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/records/get-comments/"
+  },
+  "POST /k/v1/record/comment.json": {
+    "body": {
+      "id": "4"
+    },
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/records/add-comment/"
+  },
+  "DELETE /k/v1/record/comment.json": {
+    "body": {},
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/records/delete-comment/"
+  },
+  "POST /k/v1/records/cursor.json": {
+    "body": {
+      "id": "9a9716fe-1394-4677-a1c7-2199a5d28215",
+      "totalCount": "123456"
+    },
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/records/add-cursor/"
+  },
+  "GET /k/v1/records/cursor.json": {
+    "body": {
+      "records": [
+        {
+          "$id": {
+            "type": "__ID__",
+            "value": "1"
+          },
+          "Created_by": {
+            "type": "CREATOR",
+            "value": {
+              "code": "Administrator",
+              "name": "Administrator"
+            }
+          },
+          "Created_datetime": {
+            "type": "CREATED_TIME",
+            "value": "2019-05-23T04:50:00Z"
+          }
+        }
+      ],
+      "next": false
+    },
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/records/get-cursor/"
+  },
+  "DELETE /k/v1/records/cursor.json": {
+    "body": {},
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/records/delete-cursor/"
+  },
+  "PUT /k/v1/record/status.json": {
+    "body": {
+      "revision": "3"
+    },
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/records/update-status/"
+  },
+  "PUT /k/v1/record/assignees.json": {
+    "body": {
+      "revision": "4"
+    },
+    "source": "https://kintone.dev/en/docs/kintone/rest-api/records/update-assignees/"
+  }
+}

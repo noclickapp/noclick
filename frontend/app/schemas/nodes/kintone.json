@@ -1,0 +1,1079 @@
+{
+  "$defs": {
+    "KintoneAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kintone_api_token",
+          "default": "kintone_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "tenant_url": {
+          "description": "Your HTTPS tenant origin, such as https://example.kintone.com or https://example.cybozu.com.",
+          "title": "Tenant URL",
+          "type": "string"
+        },
+        "app_id": {
+          "description": "The numeric ID in your app URL. Used as the default app and for the connection check.",
+          "minimum": 1,
+          "title": "App ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "api_token",
+        "tenant_url",
+        "app_id"
+      ],
+      "title": "Kintone API Token",
+      "type": "object",
+      "x-credential-instructions": "In your app settings, open API Token, generate a token with the permissions your workflow needs, and update the app. Paste the token, your tenant URL, and that app's ID. Enable View records for reads; enable Add, Edit, or Delete records for writes. The app-name connection check requires View or Add records permission. App settings reads may require App management permission. Multiple app tokens for lookup fields can be separated by commas. NoClick checks the app name to verify access.",
+      "x-credential-url": "https://kintone.dev/en/docs/common/authentication/"
+    },
+    "KintoneAddComment": {
+      "additionalProperties": false,
+      "description": "Add a comment and optional user, group or organization mentions.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "record_id": {
+          "minimum": 1,
+          "title": "Record Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "add_comment",
+          "default": "add_comment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 65535,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "mentions": {
+          "items": {
+            "$ref": "#/$defs/Mention"
+          },
+          "maxItems": 10,
+          "title": "Mentions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "record_id",
+        "text"
+      ],
+      "title": "KintoneAddComment",
+      "type": "object"
+    },
+    "KintoneCreateCursor": {
+      "additionalProperties": false,
+      "description": "Create an export cursor. The query accepts conditions only, without order by, limit or offset.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "create_cursor",
+          "default": "create_cursor",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 16384,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fields"
+        },
+        "size": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "title": "KintoneCreateCursor",
+      "type": "object"
+    },
+    "KintoneCreateRecord": {
+      "additionalProperties": false,
+      "description": "Add one record with field codes mapped to value objects.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "create_record",
+          "default": "create_record",
+          "title": "Operation",
+          "type": "string"
+        },
+        "record": {
+          "additionalProperties": {
+            "$ref": "#/$defs/WritableField"
+          },
+          "title": "Record",
+          "type": "object"
+        }
+      },
+      "required": [
+        "record"
+      ],
+      "title": "KintoneCreateRecord",
+      "type": "object"
+    },
+    "KintoneCreateRecords": {
+      "additionalProperties": false,
+      "description": "Add up to 100 records in one request.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "create_records",
+          "default": "create_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "records": {
+          "items": {
+            "additionalProperties": {
+              "$ref": "#/$defs/WritableField"
+            },
+            "type": "object"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Records",
+          "type": "array"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "title": "KintoneCreateRecords",
+      "type": "object"
+    },
+    "KintoneDeleteComment": {
+      "additionalProperties": false,
+      "description": "Delete one comment by ID.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "record_id": {
+          "minimum": 1,
+          "title": "Record Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_comment",
+          "default": "delete_comment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "comment_id": {
+          "minimum": 1,
+          "title": "Comment Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "record_id",
+        "comment_id"
+      ],
+      "title": "KintoneDeleteComment",
+      "type": "object"
+    },
+    "KintoneDeleteCursor": {
+      "additionalProperties": false,
+      "description": "Delete an unfinished export cursor.",
+      "properties": {
+        "operation": {
+          "const": "delete_cursor",
+          "default": "delete_cursor",
+          "title": "Operation",
+          "type": "string"
+        },
+        "cursor_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Cursor Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cursor_id"
+      ],
+      "title": "KintoneDeleteCursor",
+      "type": "object"
+    },
+    "KintoneDeleteRecords": {
+      "additionalProperties": false,
+      "description": "Delete up to 100 records. Revisions, when supplied, correspond to IDs in order.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "delete_records",
+          "default": "delete_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "ids": {
+          "items": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Ids",
+          "type": "array"
+        },
+        "revisions": {
+          "anyOf": [
+            {
+              "items": {
+                "minimum": -1,
+                "type": "integer"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revisions"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "KintoneDeleteRecords",
+      "type": "object"
+    },
+    "KintoneGetApp": {
+      "additionalProperties": false,
+      "description": "Get general app information, including its name.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "get_app",
+          "default": "get_app",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "KintoneGetApp",
+      "type": "object"
+    },
+    "KintoneGetComments": {
+      "additionalProperties": false,
+      "description": "Read one page of comments; newer and older indicate remaining pages.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "record_id": {
+          "minimum": 1,
+          "title": "Record Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_comments",
+          "default": "get_comments",
+          "title": "Operation",
+          "type": "string"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "order": {
+          "default": "DESC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "Order",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "KintoneGetComments",
+      "type": "object"
+    },
+    "KintoneGetCursor": {
+      "additionalProperties": false,
+      "description": "Read the next cursor page; repeat until next is false. Reading advances the cursor.",
+      "properties": {
+        "operation": {
+          "const": "get_cursor",
+          "default": "get_cursor",
+          "title": "Operation",
+          "type": "string"
+        },
+        "cursor_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Cursor Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cursor_id"
+      ],
+      "title": "KintoneGetCursor",
+      "type": "object"
+    },
+    "KintoneGetFields": {
+      "additionalProperties": false,
+      "description": "Get field codes, types and settings.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "get_fields",
+          "default": "get_fields",
+          "title": "Operation",
+          "type": "string"
+        },
+        "lang": {
+          "default": "default",
+          "enum": [
+            "default",
+            "user",
+            "en",
+            "ja",
+            "zh"
+          ],
+          "title": "Lang",
+          "type": "string"
+        }
+      },
+      "title": "KintoneGetFields",
+      "type": "object"
+    },
+    "KintoneGetProcess": {
+      "additionalProperties": false,
+      "description": "Get process management states and actions.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "get_process",
+          "default": "get_process",
+          "title": "Operation",
+          "type": "string"
+        },
+        "lang": {
+          "default": "default",
+          "enum": [
+            "default",
+            "user",
+            "en",
+            "ja",
+            "zh"
+          ],
+          "title": "Lang",
+          "type": "string"
+        }
+      },
+      "title": "KintoneGetProcess",
+      "type": "object"
+    },
+    "KintoneGetRecord": {
+      "additionalProperties": false,
+      "description": "Read a record by its numeric ID.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "record_id": {
+          "minimum": 1,
+          "title": "Record Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_record",
+          "default": "get_record",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "KintoneGetRecord",
+      "type": "object"
+    },
+    "KintoneGetViews": {
+      "additionalProperties": false,
+      "description": "Get the app's configured views.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "get_views",
+          "default": "get_views",
+          "title": "Operation",
+          "type": "string"
+        },
+        "lang": {
+          "default": "default",
+          "enum": [
+            "default",
+            "user",
+            "en",
+            "ja",
+            "zh"
+          ],
+          "title": "Lang",
+          "type": "string"
+        }
+      },
+      "title": "KintoneGetViews",
+      "type": "object"
+    },
+    "KintoneListRecords": {
+      "additionalProperties": false,
+      "description": "Read one page. Use Kintone query syntax with limit (max 500) and offset (max 10000), or use cursors for larger exports.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "list_records",
+          "default": "list_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 16384,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Kintone query, not SQL. Get field codes with Get fields first.",
+          "title": "Query"
+        },
+        "total_count": {
+          "default": false,
+          "title": "Total Count",
+          "type": "boolean"
+        }
+      },
+      "title": "KintoneListRecords",
+      "type": "object"
+    },
+    "KintoneUpdateAssignees": {
+      "additionalProperties": false,
+      "description": "Replace process assignees; an empty list clears them.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "record_id": {
+          "minimum": 1,
+          "title": "Record Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_assignees",
+          "default": "update_assignees",
+          "title": "Operation",
+          "type": "string"
+        },
+        "assignees": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Assignees",
+          "type": "array"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "minimum": -1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        }
+      },
+      "required": [
+        "record_id",
+        "assignees"
+      ],
+      "title": "KintoneUpdateAssignees",
+      "type": "object"
+    },
+    "KintoneUpdateRecord": {
+      "additionalProperties": false,
+      "description": "Update specified fields of one record, optionally checking its revision.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "record_id": {
+          "minimum": 1,
+          "title": "Record Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_record",
+          "default": "update_record",
+          "title": "Operation",
+          "type": "string"
+        },
+        "record": {
+          "additionalProperties": {
+            "$ref": "#/$defs/WritableField"
+          },
+          "title": "Record",
+          "type": "object"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "minimum": -1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        }
+      },
+      "required": [
+        "record_id",
+        "record"
+      ],
+      "title": "KintoneUpdateRecord",
+      "type": "object"
+    },
+    "KintoneUpdateRecords": {
+      "additionalProperties": false,
+      "description": "Update up to 100 records by ID in one request.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "operation": {
+          "const": "update_records",
+          "default": "update_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "records": {
+          "items": {
+            "$ref": "#/$defs/RecordUpdate"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Records",
+          "type": "array"
+        }
+      },
+      "required": [
+        "records"
+      ],
+      "title": "KintoneUpdateRecords",
+      "type": "object"
+    },
+    "KintoneUpdateStatus": {
+      "additionalProperties": false,
+      "description": "Run a configured process action, optionally choosing the next assignee.",
+      "properties": {
+        "app_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use the credential's app ID.",
+          "title": "App Id"
+        },
+        "record_id": {
+          "minimum": 1,
+          "title": "Record Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_status",
+          "default": "update_status",
+          "title": "Operation",
+          "type": "string"
+        },
+        "action": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Action",
+          "type": "string"
+        },
+        "assignee": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "minimum": -1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        }
+      },
+      "required": [
+        "record_id",
+        "action"
+      ],
+      "title": "KintoneUpdateStatus",
+      "type": "object"
+    },
+    "Mention": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "USER",
+            "GROUP",
+            "ORGANIZATION"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "type"
+      ],
+      "title": "Mention",
+      "type": "object"
+    },
+    "RecordUpdate": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "record": {
+          "additionalProperties": {
+            "$ref": "#/$defs/WritableField"
+          },
+          "title": "Record",
+          "type": "object"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "minimum": -1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        }
+      },
+      "required": [
+        "id",
+        "record"
+      ],
+      "title": "RecordUpdate",
+      "type": "object"
+    },
+    "WritableField": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "description": "Kintone field value, matching the app's field type. For attachments, use existing fileKey objects.",
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "WritableField",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_comment": "#/$defs/KintoneAddComment",
+          "create_cursor": "#/$defs/KintoneCreateCursor",
+          "create_record": "#/$defs/KintoneCreateRecord",
+          "create_records": "#/$defs/KintoneCreateRecords",
+          "delete_comment": "#/$defs/KintoneDeleteComment",
+          "delete_cursor": "#/$defs/KintoneDeleteCursor",
+          "delete_records": "#/$defs/KintoneDeleteRecords",
+          "get_app": "#/$defs/KintoneGetApp",
+          "get_comments": "#/$defs/KintoneGetComments",
+          "get_cursor": "#/$defs/KintoneGetCursor",
+          "get_fields": "#/$defs/KintoneGetFields",
+          "get_process": "#/$defs/KintoneGetProcess",
+          "get_record": "#/$defs/KintoneGetRecord",
+          "get_views": "#/$defs/KintoneGetViews",
+          "list_records": "#/$defs/KintoneListRecords",
+          "update_assignees": "#/$defs/KintoneUpdateAssignees",
+          "update_record": "#/$defs/KintoneUpdateRecord",
+          "update_records": "#/$defs/KintoneUpdateRecords",
+          "update_status": "#/$defs/KintoneUpdateStatus"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/KintoneGetApp"
+        },
+        {
+          "$ref": "#/$defs/KintoneGetFields"
+        },
+        {
+          "$ref": "#/$defs/KintoneGetViews"
+        },
+        {
+          "$ref": "#/$defs/KintoneGetProcess"
+        },
+        {
+          "$ref": "#/$defs/KintoneGetRecord"
+        },
+        {
+          "$ref": "#/$defs/KintoneListRecords"
+        },
+        {
+          "$ref": "#/$defs/KintoneCreateRecord"
+        },
+        {
+          "$ref": "#/$defs/KintoneUpdateRecord"
+        },
+        {
+          "$ref": "#/$defs/KintoneCreateRecords"
+        },
+        {
+          "$ref": "#/$defs/KintoneUpdateRecords"
+        },
+        {
+          "$ref": "#/$defs/KintoneDeleteRecords"
+        },
+        {
+          "$ref": "#/$defs/KintoneGetComments"
+        },
+        {
+          "$ref": "#/$defs/KintoneAddComment"
+        },
+        {
+          "$ref": "#/$defs/KintoneDeleteComment"
+        },
+        {
+          "$ref": "#/$defs/KintoneCreateCursor"
+        },
+        {
+          "$ref": "#/$defs/KintoneGetCursor"
+        },
+        {
+          "$ref": "#/$defs/KintoneDeleteCursor"
+        },
+        {
+          "$ref": "#/$defs/KintoneUpdateStatus"
+        },
+        {
+          "$ref": "#/$defs/KintoneUpdateAssignees"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KintoneAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Kintone Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
