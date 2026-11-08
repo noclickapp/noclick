@@ -1,0 +1,1454 @@
+{
+  "$defs": {
+    "CreateDatabase": {
+      "properties": {
+        "operation": {
+          "const": "create_database",
+          "default": "create_database",
+          "title": "Create Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Databases",
+          "x-display-name": "Create Database",
+          "x-is-trigger": false
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Database Name",
+          "type": "string"
+        },
+        "tables_json": {
+          "default": "[{\"name\":\"Entries\",\"fields\":[{\"name\":\"Name\",\"type\":\"single_line_text\",\"template\":{}}]}]",
+          "description": "JSON array of tables. Each table needs a name and fields; each field needs name, type, and template.",
+          "title": "Tables JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateDatabase",
+      "type": "object"
+    },
+    "CreateDatabaseWebhook": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_database_webhook",
+          "default": "create_database_webhook",
+          "title": "Create Database Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database Webhooks",
+          "x-display-name": "Create Database Webhook",
+          "x-is-trigger": false
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Webhook URL",
+          "type": "string"
+        },
+        "events_json": {
+          "default": "[\"record.created\"]",
+          "description": "Array of record, table, or field events",
+          "title": "Events JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "table_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank for all tables",
+          "title": "Table ID"
+        }
+      },
+      "required": [
+        "database_id",
+        "url"
+      ],
+      "title": "CreateDatabaseWebhook",
+      "type": "object"
+    },
+    "CreateField": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter table ID",
+            "depends_on": "database_id",
+            "field_name": "table_id",
+            "placeholder": "Choose table",
+            "searchable": true
+          }
+        },
+        "operation": {
+          "const": "create_field",
+          "default": "create_field",
+          "title": "Create Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Fields",
+          "x-display-name": "Create Field",
+          "x-is-trigger": false
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Field Name",
+          "type": "string"
+        },
+        "field_type": {
+          "default": "single_line_text",
+          "description": "Zite field type, such as single_line_text, email, number, or date",
+          "title": "Field Type",
+          "type": "string"
+        },
+        "template_json": {
+          "default": "{}",
+          "description": "Field-specific configuration object",
+          "title": "Template JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "name"
+      ],
+      "title": "CreateField",
+      "type": "object"
+    },
+    "CreateFormWebhook": {
+      "properties": {
+        "form_id": {
+          "title": "Form",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter form ID",
+            "field_name": "form_id",
+            "placeholder": "Choose form",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_form_webhook",
+          "default": "create_form_webhook",
+          "title": "Create Form Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form Webhooks",
+          "x-display-name": "Create Form Webhook",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "HTTPS endpoint that will receive form submissions",
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Webhook URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id",
+        "url"
+      ],
+      "title": "CreateFormWebhook",
+      "type": "object"
+    },
+    "CreateRecord": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter table ID",
+            "depends_on": "database_id",
+            "field_name": "table_id",
+            "placeholder": "Choose table",
+            "searchable": true
+          }
+        },
+        "operation": {
+          "const": "create_record",
+          "default": "create_record",
+          "title": "Create Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Create Record",
+          "x-is-trigger": false
+        },
+        "record_json": {
+          "description": "Object of field names or IDs to values, such as {\"Name\":\"Example\"}",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "record_json"
+      ],
+      "title": "CreateRecord",
+      "type": "object"
+    },
+    "CreateSubmissions": {
+      "properties": {
+        "form_id": {
+          "title": "Form",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter form ID",
+            "field_name": "form_id",
+            "placeholder": "Choose form",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_submissions",
+          "default": "create_submissions",
+          "title": "Create Submissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Submissions",
+          "x-display-name": "Create Submissions",
+          "x-is-trigger": false
+        },
+        "submissions_json": {
+          "description": "JSON array of up to 10 submissions. Each has a questions array with question id and value.",
+          "title": "Submissions JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "form_id",
+        "submissions_json"
+      ],
+      "title": "CreateSubmissions",
+      "type": "object"
+    },
+    "CreateTable": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_table",
+          "default": "create_table",
+          "title": "Create Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Create Table",
+          "x-is-trigger": false
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Table Name",
+          "type": "string"
+        },
+        "fields_json": {
+          "default": "[{\"name\":\"Name\",\"type\":\"single_line_text\",\"template\":{}}]",
+          "description": "JSON array of fields, each with name, type, and template.",
+          "title": "Fields JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "database_id",
+        "name"
+      ],
+      "title": "CreateTable",
+      "type": "object"
+    },
+    "DeleteDatabase": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_database",
+          "default": "delete_database",
+          "title": "Delete Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Databases",
+          "x-display-name": "Delete Database",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "database_id"
+      ],
+      "title": "DeleteDatabase",
+      "type": "object"
+    },
+    "DeleteDatabaseWebhook": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_database_webhook",
+          "default": "delete_database_webhook",
+          "title": "Delete Database Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database Webhooks",
+          "x-display-name": "Delete Database Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "database_id",
+        "webhook_id"
+      ],
+      "title": "DeleteDatabaseWebhook",
+      "type": "object"
+    },
+    "DeleteField": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter table ID",
+            "depends_on": "database_id",
+            "field_name": "table_id",
+            "placeholder": "Choose table",
+            "searchable": true
+          }
+        },
+        "operation": {
+          "const": "delete_field",
+          "default": "delete_field",
+          "title": "Delete Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Fields",
+          "x-display-name": "Delete Field",
+          "x-is-trigger": false
+        },
+        "field_id": {
+          "title": "Field",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter field ID",
+            "depends_on": "table_id",
+            "field_name": "field_id",
+            "placeholder": "Choose field",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "field_id"
+      ],
+      "title": "DeleteField",
+      "type": "object"
+    },
+    "DeleteFormWebhook": {
+      "properties": {
+        "operation": {
+          "const": "delete_form_webhook",
+          "default": "delete_form_webhook",
+          "title": "Remove Form Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form Webhooks",
+          "x-display-name": "Remove Form Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "DeleteFormWebhook",
+      "type": "object"
+    },
+    "DeleteRecord": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter table ID",
+            "depends_on": "database_id",
+            "field_name": "table_id",
+            "placeholder": "Choose table",
+            "searchable": true
+          }
+        },
+        "record_id": {
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_record",
+          "default": "delete_record",
+          "title": "Delete Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Delete Record",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "record_id"
+      ],
+      "title": "DeleteRecord",
+      "type": "object"
+    },
+    "DeleteSubmission": {
+      "properties": {
+        "form_id": {
+          "title": "Form",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter form ID",
+            "field_name": "form_id",
+            "placeholder": "Choose form",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_submission",
+          "default": "delete_submission",
+          "title": "Delete Submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Submissions",
+          "x-display-name": "Delete Submission",
+          "x-is-trigger": false
+        },
+        "submission_id": {
+          "title": "Submission ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id",
+        "submission_id"
+      ],
+      "title": "DeleteSubmission",
+      "type": "object"
+    },
+    "DeleteTable": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter table ID",
+            "depends_on": "database_id",
+            "field_name": "table_id",
+            "placeholder": "Choose table",
+            "searchable": true
+          }
+        },
+        "operation": {
+          "const": "delete_table",
+          "default": "delete_table",
+          "title": "Delete Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Delete Table",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id"
+      ],
+      "title": "DeleteTable",
+      "type": "object"
+    },
+    "FilloutApiKeyCredential": {
+      "description": "One key grants access to Forms and Database APIs in the chosen region.",
+      "properties": {
+        "credential_type": {
+          "const": "fillout_api_key",
+          "default": "fillout_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Generate this in Zite / Fillout \u2192 Settings \u2192 Developer \u2192 API key",
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_region": {
+          "default": "zite",
+          "description": "Choose the Forms API base URL shown in Developer settings",
+          "enum": [
+            "zite",
+            "fillout_us",
+            "fillout_eu"
+          ],
+          "title": "API Region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Fillout API Key",
+      "type": "object",
+      "x-credential-instructions": "Enable the REST API in Settings \u2192 Developer, then copy its API key. The same key works for forms and databases.",
+      "x-credential-url": "https://app.zite.com/home/settings/developer"
+    },
+    "GetDatabase": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_database",
+          "default": "get_database",
+          "title": "Get Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Databases",
+          "x-display-name": "Get Database",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "database_id"
+      ],
+      "title": "GetDatabase",
+      "type": "object"
+    },
+    "GetForm": {
+      "properties": {
+        "form_id": {
+          "title": "Form",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter form ID",
+            "field_name": "form_id",
+            "placeholder": "Choose form",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_form",
+          "default": "get_form",
+          "title": "Get Form Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "Get Form Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "GetForm",
+      "type": "object"
+    },
+    "GetRecord": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter table ID",
+            "depends_on": "database_id",
+            "field_name": "table_id",
+            "placeholder": "Choose table",
+            "searchable": true
+          }
+        },
+        "record_id": {
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_record",
+          "default": "get_record",
+          "title": "Get Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Get Record",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "record_id"
+      ],
+      "title": "GetRecord",
+      "type": "object"
+    },
+    "GetSubmission": {
+      "properties": {
+        "form_id": {
+          "title": "Form",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter form ID",
+            "field_name": "form_id",
+            "placeholder": "Choose form",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_submission",
+          "default": "get_submission",
+          "title": "Get Submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Submissions",
+          "x-display-name": "Get Submission",
+          "x-is-trigger": false
+        },
+        "submission_id": {
+          "title": "Submission ID",
+          "type": "string"
+        },
+        "include_edit_link": {
+          "default": false,
+          "title": "Include Edit Link",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "form_id",
+        "submission_id"
+      ],
+      "title": "GetSubmission",
+      "type": "object"
+    },
+    "ListDatabaseWebhooks": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_database_webhooks",
+          "default": "list_database_webhooks",
+          "title": "List Database Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database Webhooks",
+          "x-display-name": "List Database Webhooks",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "database_id"
+      ],
+      "title": "ListDatabaseWebhooks",
+      "type": "object"
+    },
+    "ListDatabases": {
+      "properties": {
+        "operation": {
+          "const": "list_databases",
+          "default": "list_databases",
+          "title": "List Databases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Databases",
+          "x-display-name": "List Databases",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListDatabases",
+      "type": "object"
+    },
+    "ListFields": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter table ID",
+            "depends_on": "database_id",
+            "field_name": "table_id",
+            "placeholder": "Choose table",
+            "searchable": true
+          }
+        },
+        "operation": {
+          "const": "list_fields",
+          "default": "list_fields",
+          "title": "List Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Fields",
+          "x-display-name": "List Fields",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id"
+      ],
+      "title": "ListFields",
+      "type": "object"
+    },
+    "ListForms": {
+      "properties": {
+        "operation": {
+          "const": "list_forms",
+          "default": "list_forms",
+          "title": "List Forms",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "List Forms",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListForms",
+      "type": "object"
+    },
+    "ListRecords": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter table ID",
+            "depends_on": "database_id",
+            "field_name": "table_id",
+            "placeholder": "Choose table",
+            "searchable": true
+          }
+        },
+        "operation": {
+          "const": "list_records",
+          "default": "list_records",
+          "title": "List Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "List Records",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 2000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "filter_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Zite filter object",
+          "title": "Filter JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "sort_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional array of Zite sort objects",
+          "title": "Sort JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id"
+      ],
+      "title": "ListRecords",
+      "type": "object"
+    },
+    "ListSubmissions": {
+      "properties": {
+        "form_id": {
+          "title": "Form",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter form ID",
+            "field_name": "form_id",
+            "placeholder": "Choose form",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_submissions",
+          "default": "list_submissions",
+          "title": "List Submissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Submissions",
+          "x-display-name": "List Submissions",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 150,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "after_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date-time",
+          "title": "After Date"
+        },
+        "before_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date-time",
+          "title": "Before Date"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "finished",
+                "in_progress"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "finished",
+            "in_progress"
+          ],
+          "x-enum-searchable": true
+        },
+        "include_edit_link": {
+          "default": false,
+          "title": "Include Edit Link",
+          "type": "boolean"
+        },
+        "include_preview": {
+          "default": false,
+          "title": "Include Preview Responses",
+          "type": "boolean"
+        },
+        "sort": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "ListSubmissions",
+      "type": "object"
+    },
+    "UpdateField": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter table ID",
+            "depends_on": "database_id",
+            "field_name": "table_id",
+            "placeholder": "Choose table",
+            "searchable": true
+          }
+        },
+        "operation": {
+          "const": "update_field",
+          "default": "update_field",
+          "title": "Update Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Fields",
+          "x-display-name": "Update Field",
+          "x-is-trigger": false
+        },
+        "field_id": {
+          "title": "Field",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter field ID",
+            "depends_on": "table_id",
+            "field_name": "field_id",
+            "placeholder": "Choose field",
+            "searchable": true
+          }
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Name"
+        },
+        "template_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional field-specific configuration object",
+          "title": "Template JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "field_id"
+      ],
+      "title": "UpdateField",
+      "type": "object"
+    },
+    "UpdateRecord": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter table ID",
+            "depends_on": "database_id",
+            "field_name": "table_id",
+            "placeholder": "Choose table",
+            "searchable": true
+          }
+        },
+        "record_id": {
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_record",
+          "default": "update_record",
+          "title": "Update Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Update Record",
+          "x-is-trigger": false
+        },
+        "record_json": {
+          "description": "Object of field names or IDs to values",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "record_id",
+        "record_json"
+      ],
+      "title": "UpdateRecord",
+      "type": "object"
+    },
+    "UpdateTable": {
+      "properties": {
+        "database_id": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter database ID",
+            "field_name": "database_id",
+            "placeholder": "Choose database",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_id": {
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter table ID",
+            "depends_on": "database_id",
+            "field_name": "table_id",
+            "placeholder": "Choose table",
+            "searchable": true
+          }
+        },
+        "operation": {
+          "const": "update_table",
+          "default": "update_table",
+          "title": "Rename Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Rename Table",
+          "x-is-trigger": false
+        },
+        "name": {
+          "minLength": 1,
+          "title": "New Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "name"
+      ],
+      "title": "UpdateTable",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_database": "#/$defs/CreateDatabase",
+          "create_database_webhook": "#/$defs/CreateDatabaseWebhook",
+          "create_field": "#/$defs/CreateField",
+          "create_form_webhook": "#/$defs/CreateFormWebhook",
+          "create_record": "#/$defs/CreateRecord",
+          "create_submissions": "#/$defs/CreateSubmissions",
+          "create_table": "#/$defs/CreateTable",
+          "delete_database": "#/$defs/DeleteDatabase",
+          "delete_database_webhook": "#/$defs/DeleteDatabaseWebhook",
+          "delete_field": "#/$defs/DeleteField",
+          "delete_form_webhook": "#/$defs/DeleteFormWebhook",
+          "delete_record": "#/$defs/DeleteRecord",
+          "delete_submission": "#/$defs/DeleteSubmission",
+          "delete_table": "#/$defs/DeleteTable",
+          "get_database": "#/$defs/GetDatabase",
+          "get_form": "#/$defs/GetForm",
+          "get_record": "#/$defs/GetRecord",
+          "get_submission": "#/$defs/GetSubmission",
+          "list_database_webhooks": "#/$defs/ListDatabaseWebhooks",
+          "list_databases": "#/$defs/ListDatabases",
+          "list_fields": "#/$defs/ListFields",
+          "list_forms": "#/$defs/ListForms",
+          "list_records": "#/$defs/ListRecords",
+          "list_submissions": "#/$defs/ListSubmissions",
+          "update_field": "#/$defs/UpdateField",
+          "update_record": "#/$defs/UpdateRecord",
+          "update_table": "#/$defs/UpdateTable"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListForms"
+        },
+        {
+          "$ref": "#/$defs/GetForm"
+        },
+        {
+          "$ref": "#/$defs/ListSubmissions"
+        },
+        {
+          "$ref": "#/$defs/GetSubmission"
+        },
+        {
+          "$ref": "#/$defs/CreateSubmissions"
+        },
+        {
+          "$ref": "#/$defs/DeleteSubmission"
+        },
+        {
+          "$ref": "#/$defs/CreateFormWebhook"
+        },
+        {
+          "$ref": "#/$defs/DeleteFormWebhook"
+        },
+        {
+          "$ref": "#/$defs/ListDatabases"
+        },
+        {
+          "$ref": "#/$defs/GetDatabase"
+        },
+        {
+          "$ref": "#/$defs/CreateDatabase"
+        },
+        {
+          "$ref": "#/$defs/DeleteDatabase"
+        },
+        {
+          "$ref": "#/$defs/CreateTable"
+        },
+        {
+          "$ref": "#/$defs/UpdateTable"
+        },
+        {
+          "$ref": "#/$defs/DeleteTable"
+        },
+        {
+          "$ref": "#/$defs/ListFields"
+        },
+        {
+          "$ref": "#/$defs/CreateField"
+        },
+        {
+          "$ref": "#/$defs/UpdateField"
+        },
+        {
+          "$ref": "#/$defs/DeleteField"
+        },
+        {
+          "$ref": "#/$defs/ListRecords"
+        },
+        {
+          "$ref": "#/$defs/GetRecord"
+        },
+        {
+          "$ref": "#/$defs/CreateRecord"
+        },
+        {
+          "$ref": "#/$defs/UpdateRecord"
+        },
+        {
+          "$ref": "#/$defs/DeleteRecord"
+        },
+        {
+          "$ref": "#/$defs/ListDatabaseWebhooks"
+        },
+        {
+          "$ref": "#/$defs/CreateDatabaseWebhook"
+        },
+        {
+          "$ref": "#/$defs/DeleteDatabaseWebhook"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FilloutApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Fillout Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List my Fillout forms and their submissions",
+    "Save a new record in my Zite database",
+    "Update a database record after a form response",
+    "Find submissions from this week"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
