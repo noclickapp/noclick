@@ -1,0 +1,509 @@
+{
+  "$defs": {
+    "CancelRequest": {
+      "additionalProperties": false,
+      "description": "Cancel a queued request; acceptance does not prove cancellation has completed.",
+      "properties": {
+        "request_id": {
+          "format": "uuid",
+          "title": "Request Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "request_id",
+            "placeholder": "Choose verification request or paste request UUID",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "cancel_request",
+          "default": "cancel_request",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "CancelRequest",
+      "type": "object"
+    },
+    "DeleteRequest": {
+      "additionalProperties": false,
+      "description": "Permanently delete finished request inputs, outputs, prompt and parameters. Billing records remain.",
+      "properties": {
+        "request_id": {
+          "format": "uuid",
+          "title": "Request Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "request_id",
+            "placeholder": "Choose verification request or paste request UUID",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_request",
+          "default": "delete_request",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "DeleteRequest",
+      "type": "object"
+    },
+    "GenerateHailuoImageVideo": {
+      "additionalProperties": false,
+      "description": "Submit MiniMax Hailuo 2.3 image-to-video.",
+      "properties": {
+        "image_url": {
+          "description": "Publicly accessible input image URL",
+          "format": "uri",
+          "title": "Image Url",
+          "type": "string"
+        },
+        "prompt": {
+          "title": "Prompt",
+          "type": "string"
+        },
+        "duration": {
+          "default": 6,
+          "enum": [
+            6,
+            10
+          ],
+          "title": "Duration",
+          "type": "integer"
+        },
+        "prompt_optimizer": {
+          "default": true,
+          "title": "Prompt Optimizer",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "generate_hailuo_image_video",
+          "default": "generate_hailuo_image_video",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image_url",
+        "prompt"
+      ],
+      "title": "GenerateHailuoImageVideo",
+      "type": "object"
+    },
+    "GenerateHailuoTextVideo": {
+      "additionalProperties": false,
+      "description": "Submit MiniMax Hailuo 2.3 text-to-video.",
+      "properties": {
+        "prompt": {
+          "title": "Prompt",
+          "type": "string"
+        },
+        "duration": {
+          "default": 6,
+          "enum": [
+            6,
+            10
+          ],
+          "title": "Duration",
+          "type": "integer"
+        },
+        "prompt_optimizer": {
+          "default": true,
+          "title": "Prompt Optimizer",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "generate_hailuo_text_video",
+          "default": "generate_hailuo_text_video",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "GenerateHailuoTextVideo",
+      "type": "object"
+    },
+    "GenerateKlingProImageVideo": {
+      "additionalProperties": false,
+      "description": "Submit Kling 2.5 Turbo Pro image-to-video.",
+      "properties": {
+        "image_url": {
+          "description": "Publicly accessible input image URL",
+          "format": "uri",
+          "title": "Image Url",
+          "type": "string"
+        },
+        "prompt": {
+          "title": "Prompt",
+          "type": "string"
+        },
+        "duration": {
+          "default": 5,
+          "enum": [
+            5,
+            10
+          ],
+          "title": "Duration",
+          "type": "integer"
+        },
+        "cfg_scale": {
+          "default": 0.5,
+          "maximum": 1,
+          "minimum": 0,
+          "multipleOf": 0.01,
+          "title": "Cfg Scale",
+          "type": "number"
+        },
+        "negative_prompt": {
+          "default": "",
+          "title": "Negative Prompt",
+          "type": "string"
+        },
+        "operation": {
+          "const": "generate_kling_pro_image_video",
+          "default": "generate_kling_pro_image_video",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image_url",
+        "prompt"
+      ],
+      "title": "GenerateKlingProImageVideo",
+      "type": "object"
+    },
+    "GenerateKlingProTextVideo": {
+      "additionalProperties": false,
+      "description": "Submit Kling 2.5 Turbo Pro text-to-video.",
+      "properties": {
+        "prompt": {
+          "title": "Prompt",
+          "type": "string"
+        },
+        "duration": {
+          "default": 5,
+          "enum": [
+            5,
+            10
+          ],
+          "title": "Duration",
+          "type": "integer"
+        },
+        "cfg_scale": {
+          "default": 0.5,
+          "maximum": 1,
+          "minimum": 0,
+          "multipleOf": 0.01,
+          "title": "Cfg Scale",
+          "type": "number"
+        },
+        "negative_prompt": {
+          "default": "",
+          "title": "Negative Prompt",
+          "type": "string"
+        },
+        "operation": {
+          "const": "generate_kling_pro_text_video",
+          "default": "generate_kling_pro_text_video",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "GenerateKlingProTextVideo",
+      "type": "object"
+    },
+    "GenerateKlingStandardImageVideo": {
+      "additionalProperties": false,
+      "description": "Submit Kling 2.5 Turbo Standard image-to-video.",
+      "properties": {
+        "image_url": {
+          "description": "Publicly accessible input image URL",
+          "format": "uri",
+          "title": "Image Url",
+          "type": "string"
+        },
+        "prompt": {
+          "title": "Prompt",
+          "type": "string"
+        },
+        "duration": {
+          "default": 5,
+          "enum": [
+            5,
+            10
+          ],
+          "title": "Duration",
+          "type": "integer"
+        },
+        "cfg_scale": {
+          "default": 0.5,
+          "maximum": 1,
+          "minimum": 0,
+          "multipleOf": 0.01,
+          "title": "Cfg Scale",
+          "type": "number"
+        },
+        "negative_prompt": {
+          "default": "",
+          "title": "Negative Prompt",
+          "type": "string"
+        },
+        "operation": {
+          "const": "generate_kling_standard_image_video",
+          "default": "generate_kling_standard_image_video",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image_url",
+        "prompt"
+      ],
+      "title": "GenerateKlingStandardImageVideo",
+      "type": "object"
+    },
+    "GenerateSoulImage": {
+      "additionalProperties": false,
+      "description": "Submit a SOUL standard image generation; retrieve outputs after completion.",
+      "properties": {
+        "operation": {
+          "const": "generate_soul_image",
+          "default": "generate_soul_image",
+          "title": "Operation",
+          "type": "string"
+        },
+        "prompt": {
+          "title": "Prompt",
+          "type": "string"
+        },
+        "num_images": {
+          "default": 1,
+          "maximum": 4,
+          "minimum": 1,
+          "title": "Num Images",
+          "type": "integer"
+        },
+        "resolution": {
+          "default": "2K",
+          "enum": [
+            "2K",
+            "4K"
+          ],
+          "title": "Resolution",
+          "type": "string"
+        },
+        "aspect_ratio": {
+          "default": "4:3",
+          "enum": [
+            "1:1",
+            "4:3",
+            "3:4",
+            "3:2",
+            "2:3",
+            "5:4",
+            "4:5",
+            "16:9",
+            "9:16",
+            "21:9"
+          ],
+          "title": "Aspect Ratio",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "GenerateSoulImage",
+      "type": "object"
+    },
+    "GetRequestOutputs": {
+      "additionalProperties": false,
+      "description": "Read output URLs once; outputs_ready is false until completed. Does not download files.",
+      "properties": {
+        "request_id": {
+          "format": "uuid",
+          "title": "Request Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "request_id",
+            "placeholder": "Choose verification request or paste request UUID",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_request_outputs",
+          "default": "get_request_outputs",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "GetRequestOutputs",
+      "type": "object"
+    },
+    "GetRequestStatus": {
+      "additionalProperties": false,
+      "description": "Read a request's current state and metadata once.",
+      "properties": {
+        "request_id": {
+          "format": "uuid",
+          "title": "Request Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "request_id",
+            "placeholder": "Choose verification request or paste request UUID",
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_request_status",
+          "default": "get_request_status",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "GetRequestStatus",
+      "type": "object"
+    },
+    "HiggsfieldAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "higgsfield_api_key",
+          "default": "higgsfield_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key_id": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key ID",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_key_secret": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "verification_request_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional existing request UUID owned by this account. Used only for the connection read and request picker.",
+          "title": "Verification request ID"
+        }
+      },
+      "required": [
+        "api_key_id",
+        "api_key_secret"
+      ],
+      "title": "Higgsfield API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Higgsfield Console key ID and secret. Optionally paste an existing request ID from this account to verify access with a read. Without a request ID the connection is saved as unverified. No generation is submitted during connection.",
+      "x-credential-url": "https://console.higgsfield.ai"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_request": "#/$defs/CancelRequest",
+          "delete_request": "#/$defs/DeleteRequest",
+          "generate_hailuo_image_video": "#/$defs/GenerateHailuoImageVideo",
+          "generate_hailuo_text_video": "#/$defs/GenerateHailuoTextVideo",
+          "generate_kling_pro_image_video": "#/$defs/GenerateKlingProImageVideo",
+          "generate_kling_pro_text_video": "#/$defs/GenerateKlingProTextVideo",
+          "generate_kling_standard_image_video": "#/$defs/GenerateKlingStandardImageVideo",
+          "generate_soul_image": "#/$defs/GenerateSoulImage",
+          "get_request_outputs": "#/$defs/GetRequestOutputs",
+          "get_request_status": "#/$defs/GetRequestStatus"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GenerateSoulImage"
+        },
+        {
+          "$ref": "#/$defs/GenerateKlingProImageVideo"
+        },
+        {
+          "$ref": "#/$defs/GenerateKlingProTextVideo"
+        },
+        {
+          "$ref": "#/$defs/GenerateKlingStandardImageVideo"
+        },
+        {
+          "$ref": "#/$defs/GenerateHailuoImageVideo"
+        },
+        {
+          "$ref": "#/$defs/GenerateHailuoTextVideo"
+        },
+        {
+          "$ref": "#/$defs/GetRequestStatus"
+        },
+        {
+          "$ref": "#/$defs/GetRequestOutputs"
+        },
+        {
+          "$ref": "#/$defs/CancelRequest"
+        },
+        {
+          "$ref": "#/$defs/DeleteRequest"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HiggsfieldAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Higgsfield Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
