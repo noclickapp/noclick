@@ -1,0 +1,98 @@
+{
+  "list_customers": {
+    "method": "GET",
+    "path": "/customers"
+  },
+  "get_customer": {
+    "method": "GET",
+    "path": "/customers/{customer_id}"
+  },
+  "list_tags": {
+    "method": "GET",
+    "path": "/tags"
+  },
+  "get_tag": {
+    "method": "GET",
+    "path": "/tags/{tag_id}"
+  },
+  "list_lists": {
+    "method": "GET",
+    "path": "/lists"
+  },
+  "get_list": {
+    "method": "GET",
+    "path": "/lists/{list_id}"
+  },
+  "list_products": {
+    "method": "GET",
+    "path": "/products"
+  },
+  "get_product": {
+    "method": "GET",
+    "path": "/products/{product_id}"
+  },
+  "list_purchases": {
+    "method": "GET",
+    "path": "/purchases"
+  },
+  "get_purchase": {
+    "method": "GET",
+    "path": "/purchases/{purchase_id}"
+  },
+  "list_automations": {
+    "method": "GET",
+    "path": "/automations"
+  },
+  "get_automation": {
+    "method": "GET",
+    "path": "/automations/{automation_id}"
+  },
+  "list_subscriptions": {
+    "method": "GET",
+    "path": "/subscriptions"
+  },
+  "get_subscription": {
+    "method": "GET",
+    "path": "/subscriptions/{subscription_id}"
+  },
+  "create_customer": {
+    "method": "POST",
+    "path": "/customers"
+  },
+  "update_customer": {
+    "method": "PATCH",
+    "path": "/customers/{customer_id}"
+  },
+  "update_tag": {
+    "method": "PATCH",
+    "path": "/tags/{tag_id}"
+  },
+  "add_tag": {
+    "method": "POST",
+    "path": "/customers/{customer_id}/actions/add_tag"
+  },
+  "remove_tag": {
+    "method": "POST",
+    "path": "/customers/{customer_id}/actions/remove_tag"
+  },
+  "start_automation": {
+    "method": "POST",
+    "path": "/customers/{customer_id}/actions/start_automation"
+  },
+  "stop_automation": {
+    "method": "POST",
+    "path": "/customers/{customer_id}/actions/stop_automation"
+  },
+  "unsubscribe": {
+    "method": "POST",
+    "path": "/subscriptions/{subscription_id}/actions/unsubscribe"
+  },
+  "create_list": {
+    "method": "POST",
+    "path": "/lists"
+  },
+  "subscribe_contact": {
+    "method": "POST",
+    "path": "/customers/{customer_id}/actions/list_subscribe"
+  }
+}
