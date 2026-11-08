@@ -275,3 +275,11 @@ def test_real_native_schema_and_manual_family_form_contract():
     assert c["title"] == "Vendasta Access Token" and "x-credential-type" not in c
     assert c["properties"]["access_token"]["ui:widget"] == "password"
     assert {"environment", "namespace", "expires_at", "scope"} <= set(c["required"])
+
+@pytest.mark.parametrize("model,args", [(v.WriteRecord, {"fields_json": "[]"}), (v.ChangeState, {"record_id": "record"})])
+def test_confirmation_schema_exposes_runtime_true_requirement(model, args):
+    assert model.model_json_schema()["properties"]["effects_confirmed"]["const"] is True
+    assert model.model_validate({**args, "effects_confirmed": True}).effects_confirmed is True
+    for value in (False, 1, "true"):
+        with pytest.raises(ValueError):
+            model.model_validate({**args, "effects_confirmed": value})

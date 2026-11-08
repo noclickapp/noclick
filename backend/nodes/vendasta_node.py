@@ -127,9 +127,20 @@ class GetRecord(Config):
 
 
 class WriteRecord(Config):
-    fields_json: str = Field(..., max_length=50000, title="Metadata Fields JSON", json_schema_extra={"ui:widget": "code_editor", "x-code-language": "json"},
+    fields_json: str = Field(..., max_length=50000, title="Metadata Fields JSON", json_schema_extra={"ui:widget": "code_editor", "x-code-language": "json", "contentMediaType": "application/json",
+        "contentSchema": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"oneOf": [
+            {"type": "object", "additionalProperties": False,
+             "properties": {"fieldId": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$"}, key: value},
+             "required": ["fieldId", key]}
+            for key, value in [
+                ("stringValue", {"type": "string", "maxLength": 4000}),
+                ("booleanValue", {"type": "boolean"}),
+                ("integerValue", {"type": "string", "pattern": "^-?[0-9]+$"}),
+                ("stringValues", {"type": "object", "additionalProperties": False,
+                    "properties": {"values": {"type": "array", "maxItems": 30, "items": {"type": "string", "maxLength": 500}}}, "required": ["values"]}),
+            ]]}}},
         description="Array of native FieldValue objects with fieldId and one typed value. Fields must be in the saved write allowlist and current nonfinancial writable schema.")
-    effects_confirmed: bool = Field(..., strict=True, description="Changes may trigger existing CRM automations. Creation cannot be safely deduplicated by idempotencyId.")
+    effects_confirmed: bool = Field(..., strict=True, json_schema_extra={"const": True}, description="Changes may trigger existing CRM automations. Creation cannot be safely deduplicated by idempotencyId.")
     @field_validator("effects_confirmed")
     @classmethod
     def confirmed(cls, value):
@@ -142,7 +153,7 @@ class UpdateRecord(WriteRecord, GetRecord):
 
 
 class ChangeState(GetRecord):
-    effects_confirmed: bool = Field(..., strict=True, description="Confirm soft deletion or restoration; soft deletion does not erase data.")
+    effects_confirmed: bool = Field(..., strict=True, json_schema_extra={"const": True}, description="Confirm soft deletion or restoration; soft deletion does not erase data.")
     @field_validator("effects_confirmed")
     @classmethod
     def confirmed(cls, value):

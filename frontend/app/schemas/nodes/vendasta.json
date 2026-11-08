@@ -17,6 +17,100 @@
       "additionalProperties": false,
       "properties": {
         "fields_json": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "oneOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "stringValue": {
+                      "maxLength": 4000,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "stringValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "booleanValue": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "booleanValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "integerValue": {
+                      "pattern": "^-?[0-9]+$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "integerValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "stringValues": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "values": {
+                          "items": {
+                            "maxLength": 500,
+                            "type": "string"
+                          },
+                          "maxItems": 30,
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "values"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "stringValues"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "type": "array"
+          },
           "description": "Array of native FieldValue objects with fieldId and one typed value. Fields must be in the saved write allowlist and current nonfinancial writable schema.",
           "maxLength": 50000,
           "title": "Metadata Fields JSON",
@@ -25,6 +119,7 @@
           "x-code-language": "json"
         },
         "effects_confirmed": {
+          "const": true,
           "description": "Changes may trigger existing CRM automations. Creation cannot be safely deduplicated by idempotencyId.",
           "title": "Effects Confirmed",
           "type": "boolean"
@@ -47,6 +142,100 @@
       "additionalProperties": false,
       "properties": {
         "fields_json": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "oneOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "stringValue": {
+                      "maxLength": 4000,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "stringValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "booleanValue": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "booleanValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "integerValue": {
+                      "pattern": "^-?[0-9]+$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "integerValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "stringValues": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "values": {
+                          "items": {
+                            "maxLength": 500,
+                            "type": "string"
+                          },
+                          "maxItems": 30,
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "values"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "stringValues"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "type": "array"
+          },
           "description": "Array of native FieldValue objects with fieldId and one typed value. Fields must be in the saved write allowlist and current nonfinancial writable schema.",
           "maxLength": 50000,
           "title": "Metadata Fields JSON",
@@ -55,6 +244,7 @@
           "x-code-language": "json"
         },
         "effects_confirmed": {
+          "const": true,
           "description": "Changes may trigger existing CRM automations. Creation cannot be safely deduplicated by idempotencyId.",
           "title": "Effects Confirmed",
           "type": "boolean"
@@ -77,6 +267,100 @@
       "additionalProperties": false,
       "properties": {
         "fields_json": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "oneOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "stringValue": {
+                      "maxLength": 4000,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "stringValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "booleanValue": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "booleanValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "integerValue": {
+                      "pattern": "^-?[0-9]+$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "integerValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "stringValues": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "values": {
+                          "items": {
+                            "maxLength": 500,
+                            "type": "string"
+                          },
+                          "maxItems": 30,
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "values"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "stringValues"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "type": "array"
+          },
           "description": "Array of native FieldValue objects with fieldId and one typed value. Fields must be in the saved write allowlist and current nonfinancial writable schema.",
           "maxLength": 50000,
           "title": "Metadata Fields JSON",
@@ -85,6 +369,7 @@
           "x-code-language": "json"
         },
         "effects_confirmed": {
+          "const": true,
           "description": "Changes may trigger existing CRM automations. Creation cannot be safely deduplicated by idempotencyId.",
           "title": "Effects Confirmed",
           "type": "boolean"
@@ -790,6 +1075,7 @@
           "x-resource-type": "vendasta_record"
         },
         "effects_confirmed": {
+          "const": true,
           "description": "Confirm soft deletion or restoration; soft deletion does not erase data.",
           "title": "Effects Confirmed",
           "type": "boolean"
@@ -825,6 +1111,7 @@
           "x-resource-type": "vendasta_record"
         },
         "effects_confirmed": {
+          "const": true,
           "description": "Confirm soft deletion or restoration; soft deletion does not erase data.",
           "title": "Effects Confirmed",
           "type": "boolean"
@@ -860,6 +1147,7 @@
           "x-resource-type": "vendasta_record"
         },
         "effects_confirmed": {
+          "const": true,
           "description": "Confirm soft deletion or restoration; soft deletion does not erase data.",
           "title": "Effects Confirmed",
           "type": "boolean"
@@ -895,6 +1183,7 @@
           "x-resource-type": "vendasta_record"
         },
         "effects_confirmed": {
+          "const": true,
           "description": "Confirm soft deletion or restoration; soft deletion does not erase data.",
           "title": "Effects Confirmed",
           "type": "boolean"
@@ -930,6 +1219,7 @@
           "x-resource-type": "vendasta_record"
         },
         "effects_confirmed": {
+          "const": true,
           "description": "Confirm soft deletion or restoration; soft deletion does not erase data.",
           "title": "Effects Confirmed",
           "type": "boolean"
@@ -965,6 +1255,7 @@
           "x-resource-type": "vendasta_record"
         },
         "effects_confirmed": {
+          "const": true,
           "description": "Confirm soft deletion or restoration; soft deletion does not erase data.",
           "title": "Effects Confirmed",
           "type": "boolean"
@@ -1000,6 +1291,100 @@
           "x-resource-type": "vendasta_record"
         },
         "fields_json": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "oneOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "stringValue": {
+                      "maxLength": 4000,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "stringValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "booleanValue": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "booleanValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "integerValue": {
+                      "pattern": "^-?[0-9]+$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "integerValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "stringValues": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "values": {
+                          "items": {
+                            "maxLength": 500,
+                            "type": "string"
+                          },
+                          "maxItems": 30,
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "values"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "stringValues"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "type": "array"
+          },
           "description": "Array of native FieldValue objects with fieldId and one typed value. Fields must be in the saved write allowlist and current nonfinancial writable schema.",
           "maxLength": 50000,
           "title": "Metadata Fields JSON",
@@ -1008,6 +1393,7 @@
           "x-code-language": "json"
         },
         "effects_confirmed": {
+          "const": true,
           "description": "Changes may trigger existing CRM automations. Creation cannot be safely deduplicated by idempotencyId.",
           "title": "Effects Confirmed",
           "type": "boolean"
@@ -1044,6 +1430,100 @@
           "x-resource-type": "vendasta_record"
         },
         "fields_json": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "oneOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "stringValue": {
+                      "maxLength": 4000,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "stringValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "booleanValue": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "booleanValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "integerValue": {
+                      "pattern": "^-?[0-9]+$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "integerValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "stringValues": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "values": {
+                          "items": {
+                            "maxLength": 500,
+                            "type": "string"
+                          },
+                          "maxItems": 30,
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "values"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "stringValues"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "type": "array"
+          },
           "description": "Array of native FieldValue objects with fieldId and one typed value. Fields must be in the saved write allowlist and current nonfinancial writable schema.",
           "maxLength": 50000,
           "title": "Metadata Fields JSON",
@@ -1052,6 +1532,7 @@
           "x-code-language": "json"
         },
         "effects_confirmed": {
+          "const": true,
           "description": "Changes may trigger existing CRM automations. Creation cannot be safely deduplicated by idempotencyId.",
           "title": "Effects Confirmed",
           "type": "boolean"
@@ -1088,6 +1569,100 @@
           "x-resource-type": "vendasta_record"
         },
         "fields_json": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "oneOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "stringValue": {
+                      "maxLength": 4000,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "stringValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "booleanValue": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "booleanValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "integerValue": {
+                      "pattern": "^-?[0-9]+$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "integerValue"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "fieldId": {
+                      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$",
+                      "type": "string"
+                    },
+                    "stringValues": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "values": {
+                          "items": {
+                            "maxLength": 500,
+                            "type": "string"
+                          },
+                          "maxItems": 30,
+                          "type": "array"
+                        }
+                      },
+                      "required": [
+                        "values"
+                      ],
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "fieldId",
+                    "stringValues"
+                  ],
+                  "type": "object"
+                }
+              ]
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "type": "array"
+          },
           "description": "Array of native FieldValue objects with fieldId and one typed value. Fields must be in the saved write allowlist and current nonfinancial writable schema.",
           "maxLength": 50000,
           "title": "Metadata Fields JSON",
@@ -1096,6 +1671,7 @@
           "x-code-language": "json"
         },
         "effects_confirmed": {
+          "const": true,
           "description": "Changes may trigger existing CRM automations. Creation cannot be safely deduplicated by idempotencyId.",
           "title": "Effects Confirmed",
           "type": "boolean"
