@@ -454,7 +454,11 @@ class PostizUploadFileConfig(BaseModel):
     'Upload a file'
     model_config = ConfigDict(populate_by_name=True, extra="forbid")
     operation: Literal['upload_file'] = Field('upload_file', json_schema_extra={'const': 'upload_file', 'ui:hidden': True, 'x-category': 'Media', 'x-operation-name': 'Upload File'})
-    file_base64: str = Field(..., title='File Base64', description='Base64-encoded file bytes from a previous node. No local filesystem paths are accepted.')
+    file_base64: str = Field(
+        ..., min_length=4,
+        pattern=r"^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+        title='File Base64', description='Base64-encoded file bytes from a previous node. No local filesystem paths are accepted.',
+    )
     filename: str = Field(..., title='Filename', min_length=1)
     content_type: str | None = Field('application/octet-stream', title='Content Type')
 

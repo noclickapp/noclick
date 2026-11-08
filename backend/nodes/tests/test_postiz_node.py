@@ -76,3 +76,36 @@ def test_non_draft_posts_require_content_and_zoned_date():
         PostizCreatePostConfig(type="now", date="2026-10-09T12:00:00Z", shortLink=False, tags=[])
     with pytest.raises(ValueError):
         PostizCreatePostConfig(type="draft", date="2026-10-09T12:00:00", shortLink=False, tags=[])
+
+
+@pytest.mark.parametrize("file_base64", ["", "1", "%%%", "aGVs\nbG8="])
+def test_upload_rejects_invalid_base64_during_configuration(file_base64):
+    with pytest.raises(ValueError):
+        PostizNodeConfig(
+            config={"operation": "upload_file", "file_base64": file_base64, "filename": "photo.jpg"},
+            credentials=PostizApiKeyCredential(api_key="test-key"),
+        )
+
+
+@pytest.mark.asyncio
+async def test_preserves_documented_upload_response():
+    # https://docs.postiz.com/public-api/uploads/upload-file — Example response.
+    body = {
+        "id": "01HXYZ123ABCDEF",
+        "path": "https://uploads.postiz.com/photo.jpg",
+        "status": "ready",
+    }
+    client = AsyncMock()
+    client.request.return_value = httpx.Response(200, json=body)
+    context = MagicMock()
+    context.__aenter__ = AsyncMock(return_value=client)
+    context.__aexit__ = AsyncMock(return_value=None)
+    config = PostizNodeConfig(
+        config={"operation": "upload_file", "file_base64": "aGVsbG8=", "filename": "sample.txt", "content_type": "text/plain"},
+        credentials=PostizApiKeyCredential(api_key="test-key"),
+    )
+    node = PostizNode("test", "automation-postiz", {}, config=config)
+    with patch("nodes.postiz_node.httpx.AsyncClient", return_value=context):
+        result = await node.execute({})
+    assert result["status"] == "success"
+    assert result["data"] == body

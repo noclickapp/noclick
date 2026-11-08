@@ -2498,6 +2498,8 @@
         },
         "file_base64": {
           "description": "Base64-encoded file bytes from a previous node. No local filesystem paths are accepted.",
+          "minLength": 4,
+          "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
           "title": "File Base64",
           "type": "string"
         },
