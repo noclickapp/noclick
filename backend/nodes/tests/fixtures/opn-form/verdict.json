@@ -1,0 +1,14 @@
+{
+ "provider": "opn-form",
+ "ready": true,
+ "blocking": [],
+ "advisory": [],
+ "stats": {
+  "operations": 17,
+  "skipped": 0,
+  "request_ok": 17,
+  "authored_parser_ok": 2,
+  "generated_only": 15,
+  "local_ok": 0
+ }
+}

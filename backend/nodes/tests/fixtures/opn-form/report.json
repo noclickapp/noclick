@@ -1,0 +1,687 @@
+[
+  {
+    "provider": "opn-form",
+    "node_type": "automation-opn-form",
+    "checked": 17,
+    "passed": 17,
+    "failed": 0,
+    "fixture_errors": 0,
+    "response_checked": 17,
+    "auth_checked": 16,
+    "scope_checked": 0,
+    "skipped": 0,
+    "coverage": {
+      "implemented": 17,
+      "total": 36
+    },
+    "operations": [
+      {
+        "operation": "list_workspaces",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.opnform.com/open/workspaces",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "authorization": "Bearer conformance-fake-token"
+            },
+            "spec_operation": "GET /open/workspaces",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "6cdfc97c4e97689e7acc6e30cf848bdf9f53f71f09f5ac35e9a5592f1f4508ec"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_workspaces"
+        },
+        "passed": true
+      },
+      {
+        "operation": "create_workspace",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.opnform.com/open/workspaces/create",
+            "content_type": "application/json",
+            "body": "{\"name\":\"1\",\"emoji\":\"1\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "authorization": "Bearer conformance-fake-token",
+              "content-length": "24",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /open/workspaces/create",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "1b0a6f0c319fe5e48a211bd561334f32a7f1c4a62f0cfd431c22450ed48aaf25"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_workspace",
+          "name": "1",
+          "emoji": "1"
+        },
+        "passed": true
+      },
+      {
+        "operation": "update_workspace",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PUT",
+            "url": "https://api.opnform.com/open/workspaces/1",
+            "content_type": "application/json",
+            "body": "{\"name\":\"1\",\"icon\":\"1\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "authorization": "Bearer conformance-fake-token",
+              "content-length": "23",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PUT /open/workspaces/{workspaceId}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "da3788381ef7e81eb4ea654dc0442f375c918e7a1ffd7515f84a098123a59a16"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "update_workspace",
+          "workspace_id": 1,
+          "body": {
+            "name": "1",
+            "icon": "1"
+          }
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_workspace_users",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.opnform.com/open/workspaces/1/users",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "authorization": "Bearer conformance-fake-token"
+            },
+            "spec_operation": "GET /open/workspaces/{workspaceId}/users",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "67df2e17853b3dd2be0c1f6d0fb502d7e1820aa9c4696c3eabee7f56c7cb58d7"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_workspace_users",
+          "workspace_id": 1
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_forms",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.opnform.com/open/workspaces/1/forms?page=1&per_page=10",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "authorization": "Bearer conformance-fake-token"
+            },
+            "spec_operation": "GET /open/workspaces/{workspaceId}/forms",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "ca083c92a312f2876f750e33c54743d57b518d218479efdd80f77d659d96a4af"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_forms",
+          "workspace_id": 1,
+          "page": 1,
+          "per_page": 10
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_form",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.opnform.com/open/forms/2024-01-01",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "authorization": "Bearer conformance-fake-token"
+            },
+            "spec_operation": "GET /open/forms/{slug}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "93d9b2cfb2cc95089ee309beb7d526a3b58886715b51e277b106be33073b9b24"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_form",
+          "slug": "2024-01-01"
+        },
+        "passed": true
+      },
+      {
+        "operation": "create_form",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.opnform.com/open/forms",
+            "content_type": "application/json",
+            "body": "{\"workspace_id\":1,\"title\":\"1\",\"visibility\":\"public\",\"properties\":[{}],\"tags\":[\"1\"],\"language\":\"1\",\"submit_button_text\":\"1\",\"submitted_text\":\"1\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "authorization": "Bearer conformance-fake-token",
+              "content-length": "144",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /open/forms",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 201,
+            "response_sha256": "93d9b2cfb2cc95089ee309beb7d526a3b58886715b51e277b106be33073b9b24"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_form",
+          "body": {
+            "workspace_id": 1,
+            "title": "1",
+            "visibility": "public",
+            "properties": [
+              {}
+            ],
+            "tags": [
+              "1"
+            ],
+            "language": "1",
+            "submit_button_text": "1",
+            "submitted_text": "1"
+          }
+        },
+        "passed": true
+      },
+      {
+        "operation": "update_form",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PUT",
+            "url": "https://api.opnform.com/open/forms/1",
+            "content_type": "application/json",
+            "body": "{\"workspace_id\":1,\"title\":\"1\",\"visibility\":\"public\",\"properties\":[{}],\"tags\":[\"1\"],\"language\":\"1\",\"submit_button_text\":\"1\",\"submitted_text\":\"1\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "authorization": "Bearer conformance-fake-token",
+              "content-length": "144",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PUT /open/forms/{id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "93d9b2cfb2cc95089ee309beb7d526a3b58886715b51e277b106be33073b9b24"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "update_form",
+          "form_id": 1,
+          "body": {
+            "workspace_id": 1,
+            "title": "1",
+            "visibility": "public",
+            "properties": [
+              {}
+            ],
+            "tags": [
+              "1"
+            ],
+            "language": "1",
+            "submit_button_text": "1",
+            "submitted_text": "1"
+          }
+        },
+        "passed": true
+      },
+      {
+        "operation": "delete_form",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://api.opnform.com/open/forms/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "authorization": "Bearer conformance-fake-token"
+            },
+            "spec_operation": "DELETE /open/forms/{id}",
+            "security_declared": true,
+            "response_status": 204,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_form",
+          "form_id": 1
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_submissions",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.opnform.com/open/forms/1/submissions?page=1&per_page=100&search=1&status=completed",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "authorization": "Bearer conformance-fake-token"
+            },
+            "spec_operation": "GET /open/forms/{id}/submissions",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f50c4a23087106e9c15f529792b7d8bd6d8d79bbcf723e770ebec7c5adac3532"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_submissions",
+          "form_id": 1,
+          "page": 1,
+          "per_page": 100,
+          "search": "1",
+          "status": "completed"
+        },
+        "passed": true
+      },
+      {
+        "operation": "create_submission",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.opnform.com/forms/2024-01-01/answer",
+            "content_type": "application/json",
+            "body": "{}",
+            "auth_placement": null,
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "content-length": "2",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /forms/{slug}/answer",
+            "security_declared": false,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "5eedb209ca8b4bd0e74a8e6063ff01349619f37ac6afcf3f83734b4b6e27d623"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_submission",
+          "slug": "2024-01-01",
+          "body": {}
+        },
+        "passed": true
+      },
+      {
+        "operation": "delete_submission",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://api.opnform.com/open/forms/1/submissions/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "authorization": "Bearer conformance-fake-token"
+            },
+            "spec_operation": "DELETE /open/forms/{id}/submissions/{submission_id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f49b0d30da7fbf291cfec00e24f0364236a0bb6ca17dd1d2d9de513fe9873011"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_submission",
+          "form_id": 1,
+          "submission_id": 1
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_integrations",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.opnform.com/open/forms/1/integrations",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "authorization": "Bearer conformance-fake-token"
+            },
+            "spec_operation": "GET /open/forms/{form}/integrations",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "25268bae58689637c24e9bd2d012b5a8df9d90e966a90229e68f9e6bebe66577"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_integrations",
+          "form_id": 1
+        },
+        "passed": true
+      },
+      {
+        "operation": "create_webhook",
+        "scenario": "create_webhook",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://api.opnform.com/open/forms/123/integrations",
+            "content_type": "application/json",
+            "body": "{\"integration_id\":\"webhook\",\"status\":\"active\",\"data\":{\"webhook_url\":\"https://example.com/opnform-hook\"}}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "authorization": "Bearer conformance-fake-token",
+              "content-length": "104",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /open/forms/{form}/integrations",
+            "security_declared": true,
+            "response_source": "docs",
+            "response_witness": "POST /open/forms/{form}/integrations",
+            "response_source_url": "https://docs.opnform.com/api-reference/integrations/create-webhook-integration",
+            "response_status": 200,
+            "response_sha256": "ef15b43bfeac6a925b029e822dd34ea50aada3f496b905ab8fc22465467eaa05"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_webhook",
+          "form_id": 123,
+          "body": {
+            "integration_id": "webhook",
+            "status": "active",
+            "data": {
+              "webhook_url": "https://example.com/opnform-hook"
+            }
+          }
+        },
+        "passed": true
+      },
+      {
+        "operation": "update_webhook",
+        "scenario": "update_webhook",
+        "requests": [
+          {
+            "method": "PUT",
+            "url": "https://api.opnform.com/open/forms/123/integrations/42",
+            "content_type": "application/json",
+            "body": "{\"integration_id\":\"webhook\",\"status\":\"active\",\"data\":{\"webhook_url\":\"https://example.com/opnform-hook\"}}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "authorization": "Bearer conformance-fake-token",
+              "content-length": "104",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PUT /open/forms/{form}/integrations/{integrationid}",
+            "security_declared": true,
+            "response_source": "docs",
+            "response_witness": "PUT /open/forms/{form}/integrations/{integrationid}",
+            "response_source_url": "https://docs.opnform.com/api-reference/integrations/update-webhook-integration",
+            "response_status": 200,
+            "response_sha256": "25d88711bda6d90c70720e60ef1374ca24e6c748a4885350fd49dc1cf6508ec7"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "update_webhook",
+          "form_id": 123,
+          "integration_id": 42,
+          "body": {
+            "integration_id": "webhook",
+            "status": "active",
+            "data": {
+              "webhook_url": "https://example.com/opnform-hook"
+            }
+          }
+        },
+        "passed": true
+      },
+      {
+        "operation": "delete_webhook",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://api.opnform.com/open/forms/1/integrations/1",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "authorization": "Bearer conformance-fake-token"
+            },
+            "spec_operation": "DELETE /open/forms/{form}/integrations/{integrationid}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f996790d74b737d0fc3301b3105f61541cf2c56d9bf519c7fc61593516a2cbbf"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_webhook",
+          "form_id": 1,
+          "integration_id": 1
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_webhook_events",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://api.opnform.com/open/forms/1/integrations/1/events",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "api.opnform.com",
+              "accept-encoding": "gzip, deflate, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "accept": "application/json",
+              "authorization": "Bearer conformance-fake-token"
+            },
+            "spec_operation": "GET /open/forms/{form}/integrations/{integrationid}/events",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "fad5f023b8ac901cbb37e2d97f7a9d3092491a9fd997f14197b9911104ab9b0d"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_webhook_events",
+          "form_id": 1,
+          "integration_id": 1
+        },
+        "passed": true
+      }
+    ]
+  }
+]

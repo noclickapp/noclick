@@ -1,0 +1,31 @@
+{
+  "create_webhook": {
+    "config": {
+      "operation": "create_webhook",
+      "form_id": 123,
+      "body": {
+        "integration_id": "webhook",
+        "status": "active",
+        "data": {
+          "webhook_url": "https://example.com/opnform-hook"
+        }
+      }
+    },
+    "source": "https://docs.opnform.com/api-reference/integrations/create-webhook-integration"
+  },
+  "update_webhook": {
+    "config": {
+      "operation": "update_webhook",
+      "form_id": 123,
+      "integration_id": 42,
+      "body": {
+        "integration_id": "webhook",
+        "status": "active",
+        "data": {
+          "webhook_url": "https://example.com/opnform-hook"
+        }
+      }
+    },
+    "source": "https://docs.opnform.com/api-reference/integrations/update-webhook-integration"
+  }
+}

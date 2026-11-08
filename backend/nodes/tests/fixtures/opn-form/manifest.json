@@ -1,0 +1,13 @@
+{
+  "opn-form": {
+    "node_type": "automation-opn-form",
+    "credential": {
+      "credential_type": "opn_form_api_token",
+      "api_token": "<token>"
+    },
+    "file": "openapi.yaml",
+    "sha256": "1d721adeb69e0bc2a7615f51fb047d2b1dfaf80e2016be09b3eb215c79800403",
+    "version": "1.0.0",
+    "source_url": "https://raw.githubusercontent.com/OpnForm/OpnForm/main/docs/api-reference/openapi.yaml"
+  }
+}

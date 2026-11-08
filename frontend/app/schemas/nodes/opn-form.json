@@ -1,0 +1,780 @@
+{
+  "$defs": {
+    "CreateForm": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_form",
+          "default": "create_form",
+          "title": "Operation",
+          "type": "string"
+        },
+        "body": {
+          "$ref": "#/$defs/FormBody"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "CreateForm",
+      "type": "object"
+    },
+    "CreateSubmission": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_submission",
+          "default": "create_submission",
+          "title": "Operation",
+          "type": "string"
+        },
+        "slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Slug",
+          "type": "string"
+        },
+        "body": {
+          "additionalProperties": true,
+          "description": "Answers keyed by form field IDs, with optional completion_time, is_partial and tracking_parameters. Validation follows the target form.",
+          "title": "Body",
+          "type": "object"
+        }
+      },
+      "required": [
+        "slug",
+        "body"
+      ],
+      "title": "CreateSubmission",
+      "type": "object"
+    },
+    "CreateWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Operation",
+          "type": "string"
+        },
+        "form_id": {
+          "exclusiveMinimum": 0,
+          "title": "Form Id",
+          "type": "integer"
+        },
+        "body": {
+          "$ref": "#/$defs/WebhookBody"
+        }
+      },
+      "required": [
+        "form_id",
+        "body"
+      ],
+      "title": "CreateWebhook",
+      "type": "object"
+    },
+    "CreateWorkspace": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_workspace",
+          "default": "create_workspace",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "emoji": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emoji"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateWorkspace",
+      "type": "object"
+    },
+    "DeleteForm": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_form",
+          "default": "delete_form",
+          "title": "Operation",
+          "type": "string"
+        },
+        "form_id": {
+          "exclusiveMinimum": 0,
+          "title": "Form Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "DeleteForm",
+      "type": "object"
+    },
+    "DeleteSubmission": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_submission",
+          "default": "delete_submission",
+          "title": "Operation",
+          "type": "string"
+        },
+        "form_id": {
+          "exclusiveMinimum": 0,
+          "title": "Form Id",
+          "type": "integer"
+        },
+        "submission_id": {
+          "exclusiveMinimum": 0,
+          "title": "Submission Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "form_id",
+        "submission_id"
+      ],
+      "title": "DeleteSubmission",
+      "type": "object"
+    },
+    "DeleteWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Operation",
+          "type": "string"
+        },
+        "form_id": {
+          "exclusiveMinimum": 0,
+          "title": "Form Id",
+          "type": "integer"
+        },
+        "integration_id": {
+          "exclusiveMinimum": 0,
+          "title": "Integration Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "form_id",
+        "integration_id"
+      ],
+      "title": "DeleteWebhook",
+      "type": "object"
+    },
+    "FormBody": {
+      "additionalProperties": false,
+      "properties": {
+        "workspace_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workspace Id"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "visibility": {
+          "anyOf": [
+            {
+              "enum": [
+                "public",
+                "draft",
+                "closed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visibility",
+          "enum": [
+            "public",
+            "draft",
+            "closed"
+          ],
+          "x-enum-searchable": true
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Properties"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "submit_button_text": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Submit Button Text"
+        },
+        "submitted_text": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Submitted Text"
+        }
+      },
+      "title": "FormBody",
+      "type": "object"
+    },
+    "GetForm": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_form",
+          "default": "get_form",
+          "title": "Operation",
+          "type": "string"
+        },
+        "slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slug"
+      ],
+      "title": "GetForm",
+      "type": "object"
+    },
+    "ListForms": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_forms",
+          "default": "list_forms",
+          "title": "Operation",
+          "type": "string"
+        },
+        "workspace_id": {
+          "exclusiveMinimum": 0,
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "ListForms",
+      "type": "object"
+    },
+    "ListIntegrations": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_integrations",
+          "default": "list_integrations",
+          "title": "Operation",
+          "type": "string"
+        },
+        "form_id": {
+          "exclusiveMinimum": 0,
+          "title": "Form Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "ListIntegrations",
+      "type": "object"
+    },
+    "ListSubmissions": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_submissions",
+          "default": "list_submissions",
+          "title": "Operation",
+          "type": "string"
+        },
+        "form_id": {
+          "exclusiveMinimum": 0,
+          "title": "Form Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "status": {
+          "default": "all",
+          "enum": [
+            "completed",
+            "partial",
+            "all"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "ListSubmissions",
+      "type": "object"
+    },
+    "ListWebhookEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_webhook_events",
+          "default": "list_webhook_events",
+          "title": "Operation",
+          "type": "string"
+        },
+        "form_id": {
+          "exclusiveMinimum": 0,
+          "title": "Form Id",
+          "type": "integer"
+        },
+        "integration_id": {
+          "exclusiveMinimum": 0,
+          "title": "Integration Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "form_id",
+        "integration_id"
+      ],
+      "title": "ListWebhookEvents",
+      "type": "object"
+    },
+    "ListWorkspaceUsers": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_workspace_users",
+          "default": "list_workspace_users",
+          "title": "Operation",
+          "type": "string"
+        },
+        "workspace_id": {
+          "exclusiveMinimum": 0,
+          "title": "Workspace Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "ListWorkspaceUsers",
+      "type": "object"
+    },
+    "ListWorkspaces": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListWorkspaces",
+      "type": "object"
+    },
+    "OpnFormToken": {
+      "properties": {
+        "credential_type": {
+          "const": "opn_form_api_token",
+          "default": "opn_form_api_token",
+          "title": "Credential Type",
+          "type": "string"
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Opn Form API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste a Personal Access Token from OpnForm Settings \u2192 Access Tokens. Include workspaces-read for connection evidence, forms-read for form reads, forms-write for changes, workspace-users-read for members, and manage-integrations for webhooks. Workspace changes need workspaces-write. NoClick sends the token only to api.opnform.com.",
+      "x-credential-url": "https://docs.opnform.com/api-reference/introduction"
+    },
+    "UpdateForm": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_form",
+          "default": "update_form",
+          "title": "Operation",
+          "type": "string"
+        },
+        "form_id": {
+          "exclusiveMinimum": 0,
+          "title": "Form Id",
+          "type": "integer"
+        },
+        "body": {
+          "$ref": "#/$defs/FormBody"
+        }
+      },
+      "required": [
+        "form_id",
+        "body"
+      ],
+      "title": "UpdateForm",
+      "type": "object"
+    },
+    "UpdateWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_webhook",
+          "default": "update_webhook",
+          "title": "Operation",
+          "type": "string"
+        },
+        "form_id": {
+          "exclusiveMinimum": 0,
+          "title": "Form Id",
+          "type": "integer"
+        },
+        "integration_id": {
+          "exclusiveMinimum": 0,
+          "title": "Integration Id",
+          "type": "integer"
+        },
+        "body": {
+          "$ref": "#/$defs/WebhookBody"
+        }
+      },
+      "required": [
+        "form_id",
+        "integration_id",
+        "body"
+      ],
+      "title": "UpdateWebhook",
+      "type": "object"
+    },
+    "UpdateWorkspace": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_workspace",
+          "default": "update_workspace",
+          "title": "Operation",
+          "type": "string"
+        },
+        "workspace_id": {
+          "exclusiveMinimum": 0,
+          "title": "Workspace Id",
+          "type": "integer"
+        },
+        "body": {
+          "$ref": "#/$defs/WorkspaceBody"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "body"
+      ],
+      "title": "UpdateWorkspace",
+      "type": "object"
+    },
+    "WebhookBody": {
+      "additionalProperties": false,
+      "properties": {
+        "integration_id": {
+          "const": "webhook",
+          "default": "webhook",
+          "title": "Integration Id",
+          "type": "string"
+        },
+        "status": {
+          "default": "active",
+          "enum": [
+            "active",
+            "inactive"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "data": {
+          "$ref": "#/$defs/WebhookData"
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "title": "WebhookBody",
+      "type": "object"
+    },
+    "WebhookData": {
+      "additionalProperties": false,
+      "properties": {
+        "webhook_url": {
+          "description": "HTTPS destination for submission events.",
+          "title": "Webhook Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_url"
+      ],
+      "title": "WebhookData",
+      "type": "object"
+    },
+    "WorkspaceBody": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "icon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Icon"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "WorkspaceBody",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_form": "#/$defs/CreateForm",
+          "create_submission": "#/$defs/CreateSubmission",
+          "create_webhook": "#/$defs/CreateWebhook",
+          "create_workspace": "#/$defs/CreateWorkspace",
+          "delete_form": "#/$defs/DeleteForm",
+          "delete_submission": "#/$defs/DeleteSubmission",
+          "delete_webhook": "#/$defs/DeleteWebhook",
+          "get_form": "#/$defs/GetForm",
+          "list_forms": "#/$defs/ListForms",
+          "list_integrations": "#/$defs/ListIntegrations",
+          "list_submissions": "#/$defs/ListSubmissions",
+          "list_webhook_events": "#/$defs/ListWebhookEvents",
+          "list_workspace_users": "#/$defs/ListWorkspaceUsers",
+          "list_workspaces": "#/$defs/ListWorkspaces",
+          "update_form": "#/$defs/UpdateForm",
+          "update_webhook": "#/$defs/UpdateWebhook",
+          "update_workspace": "#/$defs/UpdateWorkspace"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListWorkspaces"
+        },
+        {
+          "$ref": "#/$defs/CreateWorkspace"
+        },
+        {
+          "$ref": "#/$defs/UpdateWorkspace"
+        },
+        {
+          "$ref": "#/$defs/ListWorkspaceUsers"
+        },
+        {
+          "$ref": "#/$defs/ListForms"
+        },
+        {
+          "$ref": "#/$defs/GetForm"
+        },
+        {
+          "$ref": "#/$defs/CreateForm"
+        },
+        {
+          "$ref": "#/$defs/UpdateForm"
+        },
+        {
+          "$ref": "#/$defs/DeleteForm"
+        },
+        {
+          "$ref": "#/$defs/ListSubmissions"
+        },
+        {
+          "$ref": "#/$defs/CreateSubmission"
+        },
+        {
+          "$ref": "#/$defs/DeleteSubmission"
+        },
+        {
+          "$ref": "#/$defs/ListIntegrations"
+        },
+        {
+          "$ref": "#/$defs/CreateWebhook"
+        },
+        {
+          "$ref": "#/$defs/UpdateWebhook"
+        },
+        {
+          "$ref": "#/$defs/DeleteWebhook"
+        },
+        {
+          "$ref": "#/$defs/ListWebhookEvents"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OpnFormToken"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Opn-form Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
