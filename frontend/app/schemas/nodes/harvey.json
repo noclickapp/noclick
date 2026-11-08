@@ -1,0 +1,1289 @@
+{
+  "$defs": {
+    "HarveyAddReviewTableRowConfig": {
+      "additionalProperties": false,
+      "description": "Add Row to Review Table. https://developers.harvey.ai/api-reference/vault/add-row-to-review-table",
+      "properties": {
+        "operation": {
+          "const": "add_review_table_row",
+          "default": "add_review_table_row",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "review_table_id": {
+          "description": "The review table ID (integer). This is the same value as `review_table_ids` entries returned by Get Vault Project Metadata and as `review_table_id` returned by Get Review Table Metadata.",
+          "title": "Review Table Id",
+          "type": "integer"
+        },
+        "file_ids": {
+          "description": "The IDs of the files to add. One file is added as its own row; two or more are grouped into a file group that occupies a single row. Every file must belong to the review table's Vault project, must have finished processing, and must not already have a row or group membership in the table. Duplicate IDs are rejected with `400`. Capped at 25 files per request by default; workspaces with a raised file-group limit may send more.",
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 25,
+          "minItems": 1,
+          "title": "File Ids",
+          "type": "array"
+        },
+        "group_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional name for the file group created when two or more files are added. Defaults to the first file's name. Ignored for single-file requests.",
+          "title": "Group Name"
+        }
+      },
+      "required": [
+        "review_table_id",
+        "file_ids"
+      ],
+      "title": "HarveyAddReviewTableRowConfig",
+      "type": "object"
+    },
+    "HarveyClientInput": {
+      "additionalProperties": false,
+      "properties": {
+        "client_id": {
+          "description": "The firm's client identifier, the upsert key within the workspace. Not the Harvey client UUID that `GET /api/v1/client_matters` returns in its own `client_id` field. Empty after stripping, or over 128 characters, fails per row with `invalid_client_id`.",
+          "title": "Client Id",
+          "type": "string"
+        },
+        "client_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Friendly label for the client. Over 256 characters fails per row with `invalid_client_name`.",
+          "title": "Client Name"
+        }
+      },
+      "required": [
+        "client_id"
+      ],
+      "title": "HarveyClientInput",
+      "type": "object"
+    },
+    "HarveyCreateIntakeRequestConfig": {
+      "additionalProperties": false,
+      "description": "Create Request. https://developers.harvey.ai/api-reference/intake/create-request",
+      "properties": {
+        "operation": {
+          "const": "create_intake_request",
+          "default": "create_intake_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "idempotency_key": {
+          "description": "An identifier you choose for this request, unique within your workspace. A retry carrying a key Harvey has already accepted returns the original request with `200` instead of creating a second one. Must not be blank or whitespace only.",
+          "minLength": 1,
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "title": {
+          "description": "Short summary of what is being asked for. Surrounding whitespace is stripped, and the result must not be empty.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The full request, in as much detail as the reviewer needs.",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "title"
+      ],
+      "title": "HarveyCreateIntakeRequestConfig",
+      "type": "object"
+    },
+    "HarveyCreateProjectConfig": {
+      "additionalProperties": false,
+      "description": "Create a new Vault project. https://developers.harvey.ai/api-reference/vault/create-a-new-vault-project",
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "The name of the new project",
+          "title": "Name",
+          "type": "string"
+        },
+        "client_matter_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When set, associates the new project with this client matter. Use the client matter UUID (from Client Matters API responses), not the human-readable matter number.",
+          "title": "Client Matter Id"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "HarveyCreateProjectConfig",
+      "type": "object"
+    },
+    "HarveyDeleteClientsConfig": {
+      "additionalProperties": false,
+      "description": "Delete Clients. https://developers.harvey.ai/api-reference/delete/delete-clients",
+      "properties": {
+        "operation": {
+          "const": "delete_clients",
+          "default": "delete_clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_ids": {
+          "description": "The firm's client identifiers, the client_id values used in v2 upserts. Not client labels or Harvey client UUIDs. Surrounding whitespace is trimmed.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Client Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "client_ids"
+      ],
+      "title": "HarveyDeleteClientsConfig",
+      "type": "object"
+    },
+    "HarveyDeleteFileConfig": {
+      "additionalProperties": false,
+      "description": "Delete a file from a Vault project. https://developers.harvey.ai/api-reference/vault/delete-a-file-from-a-vault-project",
+      "properties": {
+        "operation": {
+          "const": "delete_file",
+          "default": "delete_file",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "file_id": {
+          "description": "The unique identifier of the file to delete",
+          "format": "uuid",
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "HarveyDeleteFileConfig",
+      "type": "object"
+    },
+    "HarveyDeleteMattersConfig": {
+      "additionalProperties": false,
+      "description": "Delete Matters. https://developers.harvey.ai/api-reference/delete/delete-matters",
+      "properties": {
+        "operation": {
+          "const": "delete_matters",
+          "default": "delete_matters",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "matters": {
+          "items": {
+            "$ref": "#/$defs/HarveyMatterIdentifier"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Matters",
+          "type": "array"
+        }
+      },
+      "required": [
+        "matters"
+      ],
+      "title": "HarveyDeleteMattersConfig",
+      "type": "object"
+    },
+    "HarveyDeleteProjectConfig": {
+      "additionalProperties": false,
+      "description": "Delete an entire vault project and all its contents. https://developers.harvey.ai/api-reference/vault/delete-an-entire-vault-project-and-all-its-contents",
+      "properties": {
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "The unique identifier of the project to delete",
+          "format": "uuid",
+          "title": "Project Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "HarveyDeleteProjectConfig",
+      "type": "object"
+    },
+    "HarveyGetClientMattersConfig": {
+      "additionalProperties": false,
+      "description": "Get Client Matters. https://developers.harvey.ai/api-reference/retrieve/get-client-matters",
+      "properties": {
+        "operation": {
+          "const": "get_client_matters",
+          "default": "get_client_matters",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "HarveyGetClientMattersConfig",
+      "type": "object"
+    },
+    "HarveyGetFilesConfig": {
+      "additionalProperties": false,
+      "description": "Get File Details. https://developers.harvey.ai/api-reference/vault/get-file-details",
+      "properties": {
+        "operation": {
+          "const": "get_files",
+          "default": "get_files",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "file_ids": {
+          "description": "Comma-separated list of file IDs to retrieve details for.",
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "File Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "file_ids"
+      ],
+      "title": "HarveyGetFilesConfig",
+      "type": "object"
+    },
+    "HarveyGetIntakeRequestConfig": {
+      "additionalProperties": false,
+      "description": "Get Request. https://developers.harvey.ai/api-reference/intake/get-request",
+      "properties": {
+        "operation": {
+          "const": "get_intake_request",
+          "default": "get_intake_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "description": "The unique identifier of the intake request, as returned when it was submitted.",
+          "format": "uuid",
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "HarveyGetIntakeRequestConfig",
+      "type": "object"
+    },
+    "HarveyGetProjectConfig": {
+      "additionalProperties": false,
+      "description": "Get Vault Project Metadata. https://developers.harvey.ai/api-reference/vault/get-vault-project-metadata",
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "The project ID.",
+          "title": "Project Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "HarveyGetProjectConfig",
+      "type": "object"
+    },
+    "HarveyGetReviewTableConfig": {
+      "additionalProperties": false,
+      "description": "Get Review Table Metadata. https://developers.harvey.ai/api-reference/vault/get-review-table-metadata",
+      "properties": {
+        "operation": {
+          "const": "get_review_table",
+          "default": "get_review_table",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "review_table_id": {
+          "description": "The integer ID of the review table. Obtain this from the `review_table_ids` array in the Get Vault Project Metadata response.",
+          "title": "Review Table Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "review_table_id"
+      ],
+      "title": "HarveyGetReviewTableConfig",
+      "type": "object"
+    },
+    "HarveyGetReviewTableRowConfig": {
+      "additionalProperties": false,
+      "description": "Get Review Table Row Details. https://developers.harvey.ai/api-reference/vault/get-review-table-row-details",
+      "properties": {
+        "operation": {
+          "const": "get_review_table_row",
+          "default": "get_review_table_row",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "review_table_id": {
+          "description": "The review table ID (integer). This is the same value as `review_table_ids` entries returned by Get Vault Project Metadata and as `review_table_id` returned by Get Review Table Metadata.",
+          "title": "Review Table Id",
+          "type": "integer"
+        },
+        "file_id": {
+          "description": "The file ID corresponding to the row. A file that is part of a file group resolves to the group's row.",
+          "format": "uuid",
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "review_table_id",
+        "file_id"
+      ],
+      "title": "HarveyGetReviewTableRowConfig",
+      "type": "object"
+    },
+    "HarveyListIntakeCommentsConfig": {
+      "additionalProperties": false,
+      "description": "List Comments. https://developers.harvey.ai/api-reference/intake/list-comments",
+      "properties": {
+        "operation": {
+          "const": "list_intake_comments",
+          "default": "list_intake_comments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "description": "The unique identifier of the intake request, as returned when it was submitted.",
+          "format": "uuid",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "description": "The page size. Values outside the range are clamped rather than rejected.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The `pagination.next_cursor` from the previous page of this request's comments.",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "HarveyListIntakeCommentsConfig",
+      "type": "object"
+    },
+    "HarveyListIntakeRequestsConfig": {
+      "additionalProperties": false,
+      "description": "List Requests. https://developers.harvey.ai/api-reference/intake/list-requests",
+      "properties": {
+        "operation": {
+          "const": "list_intake_requests",
+          "default": "list_intake_requests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 20,
+          "description": "The page size. Values outside the range are clamped rather than rejected.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The `pagination.next_cursor` from the previous page. Send the same filters with it, since a cursor resumes only the list it was issued for.",
+          "title": "Cursor"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "TODO",
+                  "IN_PROGRESS",
+                  "READY_FOR_REVIEW",
+                  "DONE",
+                  "CANCELLED"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Returns only requests in one of these statuses. Repeat it for several, as in `status=TODO&status=IN_PROGRESS`. No other parameter may repeat.",
+          "title": "Status"
+        },
+        "created_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Returns only requests created at or after this time. The value must include a UTC offset.",
+          "title": "Created After"
+        },
+        "created_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Returns only requests created before this time. The value must include a UTC offset.",
+          "title": "Created Before"
+        }
+      },
+      "title": "HarveyListIntakeRequestsConfig",
+      "type": "object"
+    },
+    "HarveyListProjectFilesConfig": {
+      "additionalProperties": false,
+      "description": "List Files in a Vault Project. https://developers.harvey.ai/api-reference/vault/list-files-in-a-vault-project",
+      "properties": {
+        "operation": {
+          "const": "list_project_files",
+          "default": "list_project_files",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "The unique identifier of the vault project",
+          "format": "uuid",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination cursor returned in the previous response's `next_cursor` field. Omit on the first request.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Maximum number of files to return per page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case-insensitive substring match on file name. `%` and `_` are treated as literals, not SQL `LIKE` wildcards.",
+          "title": "Name"
+        },
+        "content_type": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by MIME type. Repeat the query parameter to match any of multiple values (e.g. `?content_type=application/pdf&content_type=text/plain`). Up to 20 values, each at most 256 characters.",
+          "title": "Content Type"
+        },
+        "processing_status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "UPLOADED",
+                  "PROCESSING",
+                  "READY_TO_QUERY",
+                  "READY_TO_REVIEW",
+                  "RECOVERABLE_FAILURE",
+                  "UNRECOVERABLE_FAILURE"
+                ],
+                "type": "string"
+              },
+              "maxItems": 20,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by processing status. Repeat the query parameter to match any of multiple values. Accepted case-insensitively (`READY_TO_QUERY` and `ready_to_query` are equivalent). Internal-only statuses are rejected. Up to 20 values.",
+          "title": "Processing Status"
+        },
+        "uploaded_after": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive lower bound on the file's upload time, as a UTC Unix epoch timestamp in seconds. Must be strictly less than `uploaded_before` when both are provided.",
+          "title": "Uploaded After"
+        },
+        "uploaded_before": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive upper bound on the file's upload time, as a UTC Unix epoch timestamp in seconds.",
+          "title": "Uploaded Before"
+        },
+        "sort_by": {
+          "default": "uploaded_at",
+          "description": "Field to sort the results by. Accepted case-insensitively.",
+          "enum": [
+            "name",
+            "uploaded_at",
+            "size"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sort_order": {
+          "default": "desc",
+          "description": "Sort direction. Accepted case-insensitively. Results include the file `id` as a deterministic tiebreaker so cursor-paginated ordering is stable across pages.",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "HarveyListProjectFilesConfig",
+      "type": "object"
+    },
+    "HarveyListProjectUsersConfig": {
+      "additionalProperties": false,
+      "description": "List Project Users. https://developers.harvey.ai/api-reference/vault/list-project-users",
+      "properties": {
+        "operation": {
+          "const": "list_project_users",
+          "default": "list_project_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "The unique identifier of the Vault project",
+          "format": "uuid",
+          "title": "Project Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "HarveyListProjectUsersConfig",
+      "type": "object"
+    },
+    "HarveyListProjectsConfig": {
+      "additionalProperties": false,
+      "description": "List Vault Projects and Knowledge Bases. https://developers.harvey.ai/api-reference/vault/list-vault-projects-and-knowledge-bases",
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number for pagination (default: 1)",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "Number of items per page (default: 20, max: 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case-insensitive substring match on project name.",
+          "title": "Name"
+        },
+        "is_knowledge_base": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by knowledge base flag. `true` returns only knowledge base projects, `false` excludes them, and omitting the parameter returns both.",
+          "title": "Is Knowledge Base"
+        },
+        "created_after": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive lower bound on project creation time, expressed as a UTC Unix epoch timestamp in seconds. Only projects with `created_at >= created_after` are returned. Must be strictly less than `created_before` when both are provided.",
+          "title": "Created After"
+        },
+        "created_before": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclusive upper bound on project creation time, expressed as a UTC Unix epoch timestamp in seconds. Only projects with `created_at < created_before` are returned.",
+          "title": "Created Before"
+        },
+        "sort_by": {
+          "default": "date",
+          "description": "Field to sort the results by. `date` sorts by the project's last content-update timestamp (the default ordering). `name` sorts alphabetically by project name.",
+          "enum": [
+            "date",
+            "name"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sort_order": {
+          "default": "desc",
+          "description": "Sort direction to order results list.",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        }
+      },
+      "title": "HarveyListProjectsConfig",
+      "type": "object"
+    },
+    "HarveyListRecycledProjectsConfig": {
+      "additionalProperties": false,
+      "description": "List Vaults in the Recycle Bin. https://developers.harvey.ai/api-reference/vault/list-vaults-in-the-recycle-bin",
+      "properties": {
+        "operation": {
+          "const": "list_recycled_projects",
+          "default": "list_recycled_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case-insensitive substring filter on the vault name.",
+          "title": "Search Text"
+        },
+        "client_matter_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict results to vaults associated with this client matter (the client matter UUID, not the human-readable matter number).",
+          "title": "Client Matter Id"
+        }
+      },
+      "title": "HarveyListRecycledProjectsConfig",
+      "type": "object"
+    },
+    "HarveyMatterIdentifier": {
+      "additionalProperties": false,
+      "properties": {
+        "client_id": {
+          "description": "The firm's client identifier, the client_id used in v2 upserts. Not the Harvey client UUID.",
+          "title": "Client Id",
+          "type": "string"
+        },
+        "matter_id": {
+          "description": "The firm's matter identifier, the matter_id used in v2 upserts. Not the Harvey matter UUID (harvey_id) or the full stored name.",
+          "title": "Matter Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_id",
+        "matter_id"
+      ],
+      "title": "HarveyMatterIdentifier",
+      "type": "object"
+    },
+    "HarveyMatterInput": {
+      "additionalProperties": false,
+      "properties": {
+        "client_id": {
+          "description": "The firm's client identifier as sent to `POST /api/v2/clients`. Not the Harvey client UUID that `GET /api/v1/client_matters` returns in its own `client_id` field. Must resolve to a live client; this endpoint never creates clients. Empty after stripping fails per row with `invalid_client_id`; an unknown client fails per row with `client_not_found`.",
+          "title": "Client Id",
+          "type": "string"
+        },
+        "matter_id": {
+          "description": "The firm's matter identifier. `GET /api/v1/client_matters` returns this value as `matter_number`. Empty after stripping fails per row with `invalid_matter_id`.",
+          "title": "Matter Id",
+          "type": "string"
+        },
+        "matter_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Matter label. Over 256 characters fails per row with `invalid_matter_name`.",
+          "title": "Matter Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Matter description. More than 200 characters after trimming whitespace fails per row with description_too_long.",
+          "title": "Description"
+        },
+        "allowed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether users can select the matter. Omit to leave the stored value unchanged; a new matter defaults to true. Sending `allowed` requires the disallowed-matters permission; without it the whole batch is 403. Must be a JSON boolean; null fails the whole request with `invalid_request`.",
+          "title": "Allowed"
+        },
+        "notice": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Selection notice shown to users when they pick the matter, at most 2000 characters after stripping. A longer value fails per row with `notice_too_long`. Omit to leave the stored notice unchanged. Send null or a blank string to clear it. A whitespace-only value clears and never fails. Requires the same client matters write permission as the route.",
+          "title": "Notice"
+        }
+      },
+      "required": [
+        "client_id",
+        "matter_id"
+      ],
+      "title": "HarveyMatterInput",
+      "type": "object"
+    },
+    "HarveySearchProjectConfig": {
+      "additionalProperties": false,
+      "description": "Semantic search over a vault project. https://developers.harvey.ai/api-reference/vault/semantic-search-over-a-vault-project",
+      "properties": {
+        "operation": {
+          "const": "search_project",
+          "default": "search_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "UUID of the vault project to search in",
+          "format": "uuid",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "query": {
+          "description": "Natural language search query.",
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "include_file_names": {
+          "default": false,
+          "description": "When true, each chunk in the response includes a file_name field (display name of the source file, or null if the file was deleted after indexing). Omit or set to false for backward compatibility.",
+          "title": "Include File Names",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "query"
+      ],
+      "title": "HarveySearchProjectConfig",
+      "type": "object"
+    },
+    "HarveyTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "harvey_api_token",
+          "default": "harvey_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "description": "Create a token in Harvey workspace settings \u2192 API Tokens. Paste it without the Bearer prefix. Enable Vault, Client Matters and Intake permissions for the operations you use.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Harvey API Token",
+      "type": "object",
+      "x-credential-url": "https://developers.harvey.ai/api-reference/authentication"
+    },
+    "HarveyUpdateIntakeRequestConfig": {
+      "additionalProperties": false,
+      "description": "Update Request. https://developers.harvey.ai/api-reference/intake/update-request",
+      "properties": {
+        "operation": {
+          "const": "update_intake_request",
+          "default": "update_intake_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "description": "The unique identifier of the intake request, as returned when it was submitted.",
+          "format": "uuid",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The new title. Surrounding whitespace is removed, and it cannot be null or blank.",
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The new description as plain text. Send `null` to remove it.",
+          "title": "Description"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "TODO",
+                "IN_PROGRESS",
+                "READY_FOR_REVIEW",
+                "DONE",
+                "CANCELLED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lifecycle state of an intake request.",
+          "title": "Status",
+          "enum": [
+            "TODO",
+            "IN_PROGRESS",
+            "READY_FOR_REVIEW",
+            "DONE",
+            "CANCELLED"
+          ],
+          "x-enum-searchable": true
+        },
+        "due_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The new due date as `YYYY-MM-DD`. Send `null` to remove it.",
+          "title": "Due At"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "HarveyUpdateIntakeRequestConfig",
+      "type": "object"
+    },
+    "HarveyUpsertClientsConfig": {
+      "additionalProperties": false,
+      "description": "Upsert Clients. https://developers.harvey.ai/api-reference/upsert/upsert-clients",
+      "properties": {
+        "operation": {
+          "const": "upsert_clients",
+          "default": "upsert_clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "clients": {
+          "items": {
+            "$ref": "#/$defs/HarveyClientInput"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Clients",
+          "type": "array"
+        }
+      },
+      "required": [
+        "clients"
+      ],
+      "title": "HarveyUpsertClientsConfig",
+      "type": "object"
+    },
+    "HarveyUpsertMattersConfig": {
+      "additionalProperties": false,
+      "description": "Upsert Matters. https://developers.harvey.ai/api-reference/upsert/upsert-matters",
+      "properties": {
+        "operation": {
+          "const": "upsert_matters",
+          "default": "upsert_matters",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "matters": {
+          "items": {
+            "$ref": "#/$defs/HarveyMatterInput"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Matters",
+          "type": "array"
+        }
+      },
+      "required": [
+        "matters"
+      ],
+      "title": "HarveyUpsertMattersConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_review_table_row": "#/$defs/HarveyAddReviewTableRowConfig",
+          "create_intake_request": "#/$defs/HarveyCreateIntakeRequestConfig",
+          "create_project": "#/$defs/HarveyCreateProjectConfig",
+          "delete_clients": "#/$defs/HarveyDeleteClientsConfig",
+          "delete_file": "#/$defs/HarveyDeleteFileConfig",
+          "delete_matters": "#/$defs/HarveyDeleteMattersConfig",
+          "delete_project": "#/$defs/HarveyDeleteProjectConfig",
+          "get_client_matters": "#/$defs/HarveyGetClientMattersConfig",
+          "get_files": "#/$defs/HarveyGetFilesConfig",
+          "get_intake_request": "#/$defs/HarveyGetIntakeRequestConfig",
+          "get_project": "#/$defs/HarveyGetProjectConfig",
+          "get_review_table": "#/$defs/HarveyGetReviewTableConfig",
+          "get_review_table_row": "#/$defs/HarveyGetReviewTableRowConfig",
+          "list_intake_comments": "#/$defs/HarveyListIntakeCommentsConfig",
+          "list_intake_requests": "#/$defs/HarveyListIntakeRequestsConfig",
+          "list_project_files": "#/$defs/HarveyListProjectFilesConfig",
+          "list_project_users": "#/$defs/HarveyListProjectUsersConfig",
+          "list_projects": "#/$defs/HarveyListProjectsConfig",
+          "list_recycled_projects": "#/$defs/HarveyListRecycledProjectsConfig",
+          "search_project": "#/$defs/HarveySearchProjectConfig",
+          "update_intake_request": "#/$defs/HarveyUpdateIntakeRequestConfig",
+          "upsert_clients": "#/$defs/HarveyUpsertClientsConfig",
+          "upsert_matters": "#/$defs/HarveyUpsertMattersConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HarveyListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyListRecycledProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyGetReviewTableConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyGetFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyGetReviewTableRowConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyAddReviewTableRowConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyListProjectFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyListProjectUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyCreateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveySearchProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyDeleteFileConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyDeleteProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyGetClientMattersConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyUpsertClientsConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyDeleteClientsConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyUpsertMattersConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyDeleteMattersConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyCreateIntakeRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyListIntakeRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyGetIntakeRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyUpdateIntakeRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/HarveyListIntakeCommentsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HarveyTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Harvey Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
