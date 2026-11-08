@@ -1,0 +1,1040 @@
+{
+  "$defs": {
+    "BootInstance": {
+      "additionalProperties": false,
+      "description": "Start booting an instance; completion is asynchronous.",
+      "properties": {
+        "operation": {
+          "const": "boot_instance",
+          "default": "boot_instance",
+          "title": "Operation",
+          "type": "string"
+        },
+        "linode_id": {
+          "exclusiveMinimum": 0,
+          "title": "Linode Id",
+          "type": "integer"
+        },
+        "config_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Config Id"
+        }
+      },
+      "required": [
+        "linode_id"
+      ],
+      "title": "BootInstance",
+      "type": "object"
+    },
+    "CreateDomain": {
+      "additionalProperties": false,
+      "description": "Create a primary DNS zone for a domain you own.",
+      "properties": {
+        "operation": {
+          "const": "create_domain",
+          "default": "create_domain",
+          "title": "Operation",
+          "type": "string"
+        },
+        "domain": {
+          "maxLength": 253,
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        },
+        "type": {
+          "const": "master",
+          "default": "master",
+          "title": "Type",
+          "type": "string"
+        },
+        "soa_email": {
+          "format": "email",
+          "title": "Soa Email",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 253,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "ttl_sec": {
+          "anyOf": [
+            {
+              "maximum": 2419200,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ttl Sec"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 255,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "domain",
+        "soa_email"
+      ],
+      "title": "CreateDomain",
+      "type": "object"
+    },
+    "CreateInstance": {
+      "additionalProperties": false,
+      "description": "Create a billable Linode, optionally deploying an image.",
+      "properties": {
+        "label": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 255,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "operation": {
+          "const": "create_instance",
+          "default": "create_instance",
+          "title": "Operation",
+          "type": "string"
+        },
+        "region": {
+          "description": "Region ID from List Regions, such as us-east.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Region",
+          "type": "string"
+        },
+        "type": {
+          "description": "Plan ID from List Types, such as g6-standard-2. Creation incurs provider charges.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        },
+        "image": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Image ID from List Images; omit for an empty instance.",
+          "title": "Image"
+        },
+        "root_pass": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 7,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when deploying an image under this API contract.",
+          "title": "Root Pass",
+          "ui:widget": "password",
+          "writeOnly": true
+        },
+        "authorized_keys": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Public SSH keys to install when deploying an image.",
+          "title": "Authorized Keys"
+        },
+        "booted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Booted"
+        },
+        "private_ip": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Private Ip"
+        },
+        "backups_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enrolling in backups incurs an additional charge.",
+          "title": "Backups Enabled"
+        }
+      },
+      "required": [
+        "region",
+        "type"
+      ],
+      "title": "CreateInstance",
+      "type": "object"
+    },
+    "CreateRecord": {
+      "additionalProperties": false,
+      "description": "Create an A, AAAA, CNAME, MX or TXT record.",
+      "properties": {
+        "operation": {
+          "const": "create_record",
+          "default": "create_record",
+          "title": "Operation",
+          "type": "string"
+        },
+        "domain_id": {
+          "exclusiveMinimum": 0,
+          "title": "Domain Id",
+          "type": "integer"
+        },
+        "type": {
+          "enum": [
+            "A",
+            "AAAA",
+            "CNAME",
+            "MX",
+            "TXT"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for the zone apex; CNAME requires a hostname.",
+          "title": "Name"
+        },
+        "target": {
+          "maxLength": 65535,
+          "minLength": 1,
+          "title": "Target",
+          "type": "string"
+        },
+        "ttl_sec": {
+          "anyOf": [
+            {
+              "maximum": 2419200,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ttl Sec"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "maximum": 255,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        }
+      },
+      "required": [
+        "domain_id",
+        "type",
+        "target"
+      ],
+      "title": "CreateRecord",
+      "type": "object"
+    },
+    "DeleteDomain": {
+      "additionalProperties": false,
+      "description": "Delete a DNS zone and all of its records.",
+      "properties": {
+        "operation": {
+          "const": "delete_domain",
+          "default": "delete_domain",
+          "title": "Operation",
+          "type": "string"
+        },
+        "domain_id": {
+          "exclusiveMinimum": 0,
+          "title": "Domain Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "domain_id"
+      ],
+      "title": "DeleteDomain",
+      "type": "object"
+    },
+    "DeleteInstance": {
+      "additionalProperties": false,
+      "description": "Permanently delete an instance and its disks.",
+      "properties": {
+        "operation": {
+          "const": "delete_instance",
+          "default": "delete_instance",
+          "title": "Operation",
+          "type": "string"
+        },
+        "linode_id": {
+          "exclusiveMinimum": 0,
+          "title": "Linode Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "linode_id"
+      ],
+      "title": "DeleteInstance",
+      "type": "object"
+    },
+    "DeleteRecord": {
+      "additionalProperties": false,
+      "description": "Delete one record from its explicit parent DNS zone.",
+      "properties": {
+        "operation": {
+          "const": "delete_record",
+          "default": "delete_record",
+          "title": "Operation",
+          "type": "string"
+        },
+        "domain_id": {
+          "exclusiveMinimum": 0,
+          "title": "Domain Id",
+          "type": "integer"
+        },
+        "record_id": {
+          "exclusiveMinimum": 0,
+          "title": "Record Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "domain_id",
+        "record_id"
+      ],
+      "title": "DeleteRecord",
+      "type": "object"
+    },
+    "GetDomain": {
+      "additionalProperties": false,
+      "description": "Read one DNS zone.",
+      "properties": {
+        "operation": {
+          "const": "get_domain",
+          "default": "get_domain",
+          "title": "Operation",
+          "type": "string"
+        },
+        "domain_id": {
+          "exclusiveMinimum": 0,
+          "title": "Domain Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "domain_id"
+      ],
+      "title": "GetDomain",
+      "type": "object"
+    },
+    "GetInstance": {
+      "additionalProperties": false,
+      "description": "Read one instance's current state.",
+      "properties": {
+        "operation": {
+          "const": "get_instance",
+          "default": "get_instance",
+          "title": "Operation",
+          "type": "string"
+        },
+        "linode_id": {
+          "exclusiveMinimum": 0,
+          "title": "Linode Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "linode_id"
+      ],
+      "title": "GetInstance",
+      "type": "object"
+    },
+    "GetProfile": {
+      "additionalProperties": false,
+      "description": "Read the current token's user profile.",
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetProfile",
+      "type": "object"
+    },
+    "LinodeTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "linode_personal_access_token",
+          "default": "linode_personal_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Linode Personal Access Token",
+      "type": "object",
+      "x-credential-instructions": "Create a personal access token in Cloud Manager > My Profile > API Tokens and paste it here. Grant only the categories needed: Linodes and Domains Read/Write for mutations, Images, Volumes and Events Read Only for reads. The profile read checks the current user; it does not verify every operation's permissions.",
+      "x-credential-url": "https://cloud.linode.com/profile/tokens"
+    },
+    "ListDomains": {
+      "additionalProperties": false,
+      "description": "List one page of account DNS zones.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read; use next_page from the previous response.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 25,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_domains",
+          "default": "list_domains",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListDomains",
+      "type": "object"
+    },
+    "ListEvents": {
+      "additionalProperties": false,
+      "description": "List one page of account events, including asynchronous job status.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read; use next_page from the previous response.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 25,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListEvents",
+      "type": "object"
+    },
+    "ListImages": {
+      "additionalProperties": false,
+      "description": "List official and account images available to the token.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read; use next_page from the previous response.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 25,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_images",
+          "default": "list_images",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListImages",
+      "type": "object"
+    },
+    "ListInstances": {
+      "additionalProperties": false,
+      "description": "List one page of your Linode instances.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read; use next_page from the previous response.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 25,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_instances",
+          "default": "list_instances",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListInstances",
+      "type": "object"
+    },
+    "ListRecords": {
+      "additionalProperties": false,
+      "description": "List one page of records in a DNS zone.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read; use next_page from the previous response.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 25,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_records",
+          "default": "list_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "domain_id": {
+          "exclusiveMinimum": 0,
+          "title": "Domain Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "domain_id"
+      ],
+      "title": "ListRecords",
+      "type": "object"
+    },
+    "ListRegions": {
+      "additionalProperties": false,
+      "description": "List the public catalogue of available regions.",
+      "properties": {
+        "operation": {
+          "const": "list_regions",
+          "default": "list_regions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListRegions",
+      "type": "object"
+    },
+    "ListTypes": {
+      "additionalProperties": false,
+      "description": "List the public catalogue of instance plans and prices.",
+      "properties": {
+        "operation": {
+          "const": "list_types",
+          "default": "list_types",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTypes",
+      "type": "object"
+    },
+    "ListVolumes": {
+      "additionalProperties": false,
+      "description": "List one page of account block storage volumes.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page to read; use next_page from the previous response.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 25,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_volumes",
+          "default": "list_volumes",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListVolumes",
+      "type": "object"
+    },
+    "RebootInstance": {
+      "additionalProperties": false,
+      "description": "Start rebooting an instance; completion is asynchronous.",
+      "properties": {
+        "operation": {
+          "const": "reboot_instance",
+          "default": "reboot_instance",
+          "title": "Operation",
+          "type": "string"
+        },
+        "linode_id": {
+          "exclusiveMinimum": 0,
+          "title": "Linode Id",
+          "type": "integer"
+        },
+        "config_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Config Id"
+        }
+      },
+      "required": [
+        "linode_id"
+      ],
+      "title": "RebootInstance",
+      "type": "object"
+    },
+    "ShutdownInstance": {
+      "additionalProperties": false,
+      "description": "Start shutting down an instance; completion is asynchronous.",
+      "properties": {
+        "operation": {
+          "const": "shutdown_instance",
+          "default": "shutdown_instance",
+          "title": "Operation",
+          "type": "string"
+        },
+        "linode_id": {
+          "exclusiveMinimum": 0,
+          "title": "Linode Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "linode_id"
+      ],
+      "title": "ShutdownInstance",
+      "type": "object"
+    },
+    "UpdateInstance": {
+      "additionalProperties": false,
+      "description": "Update an instance label, tags or shutdown watchdog.",
+      "properties": {
+        "label": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 255,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "operation": {
+          "const": "update_instance",
+          "default": "update_instance",
+          "title": "Operation",
+          "type": "string"
+        },
+        "linode_id": {
+          "exclusiveMinimum": 0,
+          "title": "Linode Id",
+          "type": "integer"
+        },
+        "watchdog_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Watchdog Enabled"
+        }
+      },
+      "required": [
+        "linode_id"
+      ],
+      "title": "UpdateInstance",
+      "type": "object"
+    },
+    "UpdateRecord": {
+      "additionalProperties": false,
+      "description": "Update selected fields of an existing record without changing its type.",
+      "properties": {
+        "operation": {
+          "const": "update_record",
+          "default": "update_record",
+          "title": "Operation",
+          "type": "string"
+        },
+        "domain_id": {
+          "exclusiveMinimum": 0,
+          "title": "Domain Id",
+          "type": "integer"
+        },
+        "record_id": {
+          "exclusiveMinimum": 0,
+          "title": "Record Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "maxLength": 65535,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "ttl_sec": {
+          "anyOf": [
+            {
+              "maximum": 2419200,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ttl Sec"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "maximum": 255,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        }
+      },
+      "required": [
+        "domain_id",
+        "record_id"
+      ],
+      "title": "UpdateRecord",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "boot_instance": "#/$defs/BootInstance",
+          "create_domain": "#/$defs/CreateDomain",
+          "create_instance": "#/$defs/CreateInstance",
+          "create_record": "#/$defs/CreateRecord",
+          "delete_domain": "#/$defs/DeleteDomain",
+          "delete_instance": "#/$defs/DeleteInstance",
+          "delete_record": "#/$defs/DeleteRecord",
+          "get_domain": "#/$defs/GetDomain",
+          "get_instance": "#/$defs/GetInstance",
+          "get_profile": "#/$defs/GetProfile",
+          "list_domains": "#/$defs/ListDomains",
+          "list_events": "#/$defs/ListEvents",
+          "list_images": "#/$defs/ListImages",
+          "list_instances": "#/$defs/ListInstances",
+          "list_records": "#/$defs/ListRecords",
+          "list_regions": "#/$defs/ListRegions",
+          "list_types": "#/$defs/ListTypes",
+          "list_volumes": "#/$defs/ListVolumes",
+          "reboot_instance": "#/$defs/RebootInstance",
+          "shutdown_instance": "#/$defs/ShutdownInstance",
+          "update_instance": "#/$defs/UpdateInstance",
+          "update_record": "#/$defs/UpdateRecord"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetProfile"
+        },
+        {
+          "$ref": "#/$defs/ListInstances"
+        },
+        {
+          "$ref": "#/$defs/GetInstance"
+        },
+        {
+          "$ref": "#/$defs/CreateInstance"
+        },
+        {
+          "$ref": "#/$defs/UpdateInstance"
+        },
+        {
+          "$ref": "#/$defs/DeleteInstance"
+        },
+        {
+          "$ref": "#/$defs/BootInstance"
+        },
+        {
+          "$ref": "#/$defs/ShutdownInstance"
+        },
+        {
+          "$ref": "#/$defs/RebootInstance"
+        },
+        {
+          "$ref": "#/$defs/ListRegions"
+        },
+        {
+          "$ref": "#/$defs/ListTypes"
+        },
+        {
+          "$ref": "#/$defs/ListImages"
+        },
+        {
+          "$ref": "#/$defs/ListDomains"
+        },
+        {
+          "$ref": "#/$defs/GetDomain"
+        },
+        {
+          "$ref": "#/$defs/CreateDomain"
+        },
+        {
+          "$ref": "#/$defs/DeleteDomain"
+        },
+        {
+          "$ref": "#/$defs/ListRecords"
+        },
+        {
+          "$ref": "#/$defs/CreateRecord"
+        },
+        {
+          "$ref": "#/$defs/UpdateRecord"
+        },
+        {
+          "$ref": "#/$defs/DeleteRecord"
+        },
+        {
+          "$ref": "#/$defs/ListVolumes"
+        },
+        {
+          "$ref": "#/$defs/ListEvents"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LinodeTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Linode Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

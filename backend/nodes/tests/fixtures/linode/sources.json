@@ -1,0 +1,6 @@
+{
+  "profile": "https://techdocs.akamai.com/linode-api/reference/get-profile",
+  "instances": "https://techdocs.akamai.com/linode-api/reference/get-linode-instances",
+  "contract": "https://api.apis.guru/v2/specs/linode.com/4.145.0/openapi.json",
+  "version": "4.145.0"
+}
