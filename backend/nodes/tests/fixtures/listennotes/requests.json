@@ -1,0 +1,418 @@
+[
+  {
+    "config": {
+      "operation": "search",
+      "q": "star wars",
+      "type": "episode",
+      "offset": 0,
+      "safe_mode": 1
+    },
+    "method": "GET",
+    "path": "/search",
+    "query": {
+      "q": "star wars",
+      "type": "episode",
+      "offset": "0",
+      "safe_mode": "1"
+    },
+    "form": {},
+    "response": {
+      "results": []
+    }
+  },
+  {
+    "config": {
+      "operation": "typeahead",
+      "q": "star wars",
+      "show_podcasts": 1
+    },
+    "method": "GET",
+    "path": "/typeahead",
+    "query": {
+      "q": "star wars",
+      "show_podcasts": "1"
+    },
+    "form": {},
+    "response": {
+      "terms": []
+    }
+  },
+  {
+    "config": {
+      "operation": "search_episode_titles",
+      "q": "Jerusalem Demsas on The Dispossessed"
+    },
+    "method": "GET",
+    "path": "/search_episode_titles",
+    "query": {
+      "q": "Jerusalem Demsas on The Dispossessed"
+    },
+    "form": {},
+    "response": {
+      "results": []
+    }
+  },
+  {
+    "config": {
+      "operation": "get_trending_searches"
+    },
+    "method": "GET",
+    "path": "/trending_searches",
+    "query": {},
+    "form": {},
+    "response": {
+      "terms": []
+    }
+  },
+  {
+    "config": {
+      "operation": "get_related_searches",
+      "q": "evergrande"
+    },
+    "method": "GET",
+    "path": "/related_searches",
+    "query": {
+      "q": "evergrande"
+    },
+    "form": {},
+    "response": {
+      "terms": []
+    }
+  },
+  {
+    "config": {
+      "operation": "spellcheck",
+      "q": "microsft stock"
+    },
+    "method": "GET",
+    "path": "/spellcheck",
+    "query": {
+      "q": "microsft stock"
+    },
+    "form": {},
+    "response": {
+      "tokens": []
+    }
+  },
+  {
+    "config": {
+      "operation": "get_best_podcasts",
+      "genre_id": "93",
+      "page": 2
+    },
+    "method": "GET",
+    "path": "/best_podcasts",
+    "query": {
+      "genre_id": "93",
+      "page": "2"
+    },
+    "form": {},
+    "response": {
+      "podcasts": []
+    }
+  },
+  {
+    "config": {
+      "operation": "get_podcast",
+      "id": "3302bc71139541baa46ecb27dbf6071a",
+      "sort": "recent_first",
+      "next_episode_pub_date": 1557394247000
+    },
+    "method": "GET",
+    "path": "/podcasts/3302bc71139541baa46ecb27dbf6071a",
+    "query": {
+      "sort": "recent_first",
+      "next_episode_pub_date": "1557394247000"
+    },
+    "form": {},
+    "response": {
+      "episodes": [],
+      "id": "3302bc71139541baa46ecb27dbf6071a"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_episode",
+      "id": "e53e6992a5b7492f9ea6fcd85d9ad95f",
+      "show_transcript": 1
+    },
+    "method": "GET",
+    "path": "/episodes/e53e6992a5b7492f9ea6fcd85d9ad95f",
+    "query": {
+      "show_transcript": "1"
+    },
+    "form": {},
+    "response": {
+      "id": "e53e6992a5b7492f9ea6fcd85d9ad95f"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_episodes",
+      "ids": "c577d55b2b2b483c969fae3ceb58e362,0f34a9099579490993eec9e8c8cebb82"
+    },
+    "method": "POST",
+    "path": "/episodes",
+    "query": {},
+    "form": {
+      "ids": "c577d55b2b2b483c969fae3ceb58e362,0f34a9099579490993eec9e8c8cebb82"
+    },
+    "response": {
+      "episodes": []
+    }
+  },
+  {
+    "config": {
+      "operation": "get_podcasts",
+      "ids": "3302bc71139541baa46ecb27dbf6071a,68faf62be97149c280ebcc25178aa731",
+      "show_latest_episodes": 1
+    },
+    "method": "POST",
+    "path": "/podcasts",
+    "query": {},
+    "form": {
+      "ids": "3302bc71139541baa46ecb27dbf6071a,68faf62be97149c280ebcc25178aa731",
+      "show_latest_episodes": "1"
+    },
+    "response": {
+      "podcasts": []
+    }
+  },
+  {
+    "config": {
+      "operation": "get_curated_list",
+      "id": "SDFKduyJ47r"
+    },
+    "method": "GET",
+    "path": "/curated_podcasts/SDFKduyJ47r",
+    "query": {},
+    "form": {},
+    "response": {
+      "podcasts": [],
+      "id": "SDFKduyJ47r"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_curated_lists",
+      "page": 1
+    },
+    "method": "GET",
+    "path": "/curated_podcasts",
+    "query": {
+      "page": "1"
+    },
+    "form": {},
+    "response": {
+      "curated_lists": []
+    }
+  },
+  {
+    "config": {
+      "operation": "get_genres",
+      "top_level_only": 1
+    },
+    "method": "GET",
+    "path": "/genres",
+    "query": {
+      "top_level_only": "1"
+    },
+    "form": {},
+    "response": {
+      "genres": []
+    }
+  },
+  {
+    "config": {
+      "operation": "get_podcast_recommendations",
+      "id": "3302bc71139541baa46ecb27dbf6071a",
+      "safe_mode": 1
+    },
+    "method": "GET",
+    "path": "/podcasts/3302bc71139541baa46ecb27dbf6071a/recommendations",
+    "query": {
+      "safe_mode": "1"
+    },
+    "form": {},
+    "response": {
+      "recommendations": []
+    }
+  },
+  {
+    "config": {
+      "operation": "get_episode_recommendations",
+      "id": "e53e6992a5b7492f9ea6fcd85d9ad95f",
+      "safe_mode": 1
+    },
+    "method": "GET",
+    "path": "/episodes/e53e6992a5b7492f9ea6fcd85d9ad95f/recommendations",
+    "query": {
+      "safe_mode": "1"
+    },
+    "form": {},
+    "response": {
+      "recommendations": []
+    }
+  },
+  {
+    "config": {
+      "operation": "submit_podcast",
+      "rss": "https://feeds.megaphone.fm/committed",
+      "email": "hello@example.com"
+    },
+    "method": "POST",
+    "path": "/podcasts/submit",
+    "query": {},
+    "form": {
+      "rss": "https://feeds.megaphone.fm/committed",
+      "email": "hello@example.com"
+    },
+    "response": {
+      "status": "acknowledged"
+    }
+  },
+  {
+    "config": {
+      "operation": "refresh_podcast_rss",
+      "id": "3302bc71139541baa46ecb27dbf6071a"
+    },
+    "method": "POST",
+    "path": "/podcasts/3302bc71139541baa46ecb27dbf6071a/rss",
+    "query": {},
+    "form": {},
+    "response": {
+      "status": "acknowledged"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_playlists",
+      "page": 1,
+      "sort": "recent_added_first"
+    },
+    "method": "GET",
+    "path": "/playlists",
+    "query": {
+      "page": "1",
+      "sort": "recent_added_first"
+    },
+    "form": {},
+    "response": {
+      "playlists": []
+    }
+  },
+  {
+    "config": {
+      "operation": "get_playlist",
+      "id": "m1pe7z60bsw",
+      "type": "episode_list",
+      "last_timestamp_ms": 1595567004958
+    },
+    "method": "GET",
+    "path": "/playlists/m1pe7z60bsw",
+    "query": {
+      "type": "episode_list",
+      "last_timestamp_ms": "1595567004958"
+    },
+    "form": {},
+    "response": {
+      "items": [],
+      "id": "m1pe7z60bsw"
+    }
+  },
+  {
+    "config": {
+      "operation": "create_playlist",
+      "name": "My favorite podcasts",
+      "description": "Podcasts and episodes to revisit.",
+      "visibility": "public",
+      "type": "episode_list"
+    },
+    "method": "POST",
+    "path": "/playlists",
+    "query": {},
+    "form": {
+      "name": "My favorite podcasts",
+      "description": "Podcasts and episodes to revisit.",
+      "visibility": "public",
+      "type": "episode_list"
+    },
+    "response": {
+      "id": "m1pe7z60bsw"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_playlist",
+      "id": "m1pe7z60bsw",
+      "name": "My favorite podcasts",
+      "type": "podcast_list"
+    },
+    "method": "PUT",
+    "path": "/playlists/m1pe7z60bsw",
+    "query": {},
+    "form": {
+      "name": "My favorite podcasts",
+      "type": "podcast_list"
+    },
+    "response": {
+      "id": "m1pe7z60bsw"
+    }
+  },
+  {
+    "config": {
+      "operation": "add_playlist_item",
+      "id": "m1pe7z60bsw",
+      "episode_id": "e53e6992a5b7492f9ea6fcd85d9ad95f",
+      "notes": "Worth a listen."
+    },
+    "method": "POST",
+    "path": "/playlists/m1pe7z60bsw/items",
+    "query": {},
+    "form": {
+      "episode_id": "e53e6992a5b7492f9ea6fcd85d9ad95f",
+      "notes": "Worth a listen."
+    },
+    "response": {
+      "id": 23,
+      "data": {
+        "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_playlist_item",
+      "id": "m1pe7z60bsw",
+      "item_id": 23,
+      "notes": "Worth a listen."
+    },
+    "method": "PUT",
+    "path": "/playlists/m1pe7z60bsw/items/23",
+    "query": {},
+    "form": {
+      "notes": "Worth a listen."
+    },
+    "response": {
+      "id": 23,
+      "data": {
+        "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_playlist_item",
+      "id": "m1pe7z60bsw",
+      "item_id": 23
+    },
+    "method": "DELETE",
+    "path": "/playlists/m1pe7z60bsw/items/23",
+    "query": {},
+    "form": {},
+    "response": {
+      "id": 23,
+      "deleted": true
+    }
+  }
+]
