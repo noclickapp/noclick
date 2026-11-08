@@ -1,0 +1,373 @@
+{
+  "DELETE /brand-assets/images/delete/{id}": {
+    "body": {
+      "message": "Asset successfully deleted",
+      "id": "101"
+    },
+    "source": "https://orshot.com/docs/api-reference/brand-assets-delete"
+  },
+  "GET /brand-assets/images/get": {
+    "body": {
+      "data": [
+        {
+          "id": 101,
+          "created_at": "2025-09-10T15:30:45.123Z",
+          "direct_url": "https://storage.orshot.com/cloud/w-50/renders/brand_assets/brand-asset-1694444444png-Xk3v9Qp1aBc.png",
+          "file_name": "brand-asset-1694444444.png",
+          "file_size": 42568,
+          "meta": {
+            "description": "Company logo",
+            "category": "logos"
+          },
+          "tags": [
+            "logo",
+            "brand"
+          ],
+          "workspace_id": 50,
+          "user_id": "abcdef01-2345-6789-abcd-ef0123456789"
+        }
+      ]
+    },
+    "source": "https://orshot.com/docs/api-reference/brand-assets-get"
+  },
+  "POST /brand-assets/images/add": {
+    "body": {
+      "data": {
+        "asset": {
+          "id": 102,
+          "created_at": "2025-09-11T10:15:30.123Z",
+          "direct_url": "https://storage.orshot.com/cloud/w-50/renders/brand_assets/company-logopng-R7tL2mWq8Zd.png",
+          "file_name": "company-logo.png",
+          "file_size": 24680,
+          "tags": [
+            "logo",
+            "brand"
+          ],
+          "workspace_id": 50,
+          "user_id": "abcdef01-2345-6789-abcd-ef0123456789"
+        },
+        "url": "https://storage.orshot.com/cloud/w-50/renders/brand_assets/company-logopng-R7tL2mWq8Zd.png"
+      }
+    },
+    "source": "https://orshot.com/docs/api-reference/brand-assets-post"
+  },
+  "PATCH /brand-assets/images/update/{id}": {
+    "body": {
+      "data": {
+        "id": 101,
+        "created_at": "2025-09-10T15:30:45.123Z",
+        "direct_url": "https://storage.orshot.com/cloud/w-50/renders/brand_assets/brand-asset-1694444444png-Xk3v9Qp1aBc.png",
+        "file_name": "brand-asset-1694444444.png",
+        "file_size": 42568,
+        "meta": {},
+        "tags": [
+          "logo",
+          "brand",
+          "website"
+        ],
+        "workspace_id": 50,
+        "user_id": "abcdef01-2345-6789-abcd-ef0123456789"
+      }
+    },
+    "source": "https://orshot.com/docs/api-reference/brand-assets-update"
+  },
+  "DELETE /brand-assets/colors/delete/{id}": {
+    "body": {
+      "message": "Color successfully deleted",
+      "id": "123"
+    },
+    "source": "https://orshot.com/docs/api-reference/brand-colors-delete"
+  },
+  "GET /brand-assets/colors/get": {
+    "body": {
+      "data": [
+        {
+          "id": 123,
+          "created_at": "2025-09-10T15:30:45.123Z",
+          "type": "hex",
+          "value": "#FF5733",
+          "tags": [
+            "primary",
+            "brand"
+          ],
+          "workspace_id": 50,
+          "user_id": "abcdef01-2345-6789-abcd-ef0123456789"
+        },
+        {
+          "id": 124,
+          "created_at": "2025-09-10T14:20:30.456Z",
+          "type": "gradient",
+          "value": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          "tags": [
+            "brand"
+          ],
+          "workspace_id": 50,
+          "user_id": "abcdef01-2345-6789-abcd-ef0123456789"
+        }
+      ]
+    },
+    "source": "https://orshot.com/docs/api-reference/brand-colors-get"
+  },
+  "POST /brand-assets/colors/add": {
+    "body": {
+      "data": {
+        "id": 125,
+        "created_at": "2025-09-11T10:15:30.123Z",
+        "type": "hex",
+        "value": "#FF5733",
+        "tags": [
+          "primary",
+          "brand"
+        ],
+        "workspace_id": 50,
+        "user_id": "abcdef01-2345-6789-abcd-ef0123456789"
+      }
+    },
+    "source": "https://orshot.com/docs/api-reference/brand-colors-post"
+  },
+  "POST /studio/render": {
+    "body": {
+      "data": [
+        {
+          "page": 1,
+          "pageId": "a1b2c3d4-\u2026",
+          "content": "https://storage.orshot.com/\u2026/Xk3v9Qp1aBc.png"
+        },
+        {
+          "page": 2,
+          "pageId": "b2c3d4e5-\u2026",
+          "content": "https://storage.orshot.com/\u2026/Lm7Tz2Wq8Rd.png"
+        }
+      ],
+      "format": "png",
+      "type": "url",
+      "responseTime": 3166.01,
+      "totalPages": 3,
+      "renderedPages": 3
+    },
+    "source": "https://orshot.com/docs/api-reference/render-from-studio-template"
+  },
+  "DELETE /studio/templates/{templateId}/delete": {
+    "body": {
+      "message": "Template successfully deleted",
+      "id": "123"
+    },
+    "source": "https://orshot.com/docs/api-reference/studio-template-delete"
+  },
+  "GET /studio/templates/{templateId}": {
+    "body": {
+      "id": 123,
+      "created_at": "2025-09-10T15:30:45.123Z",
+      "workspace_id": 890,
+      "canvas_width": 1200,
+      "canvas_height": 630,
+      "updated_at": "2025-10-15T10:20:30.456Z",
+      "name": "Social Media Post",
+      "description": "Template for social media posts",
+      "tags": [
+        "social",
+        "marketing"
+      ],
+      "thumbnail_url": "https://storage.orshot.com/thumbnails/template-123.png",
+      "embed_user_id": null,
+      "modifications": [
+        {
+          "key": "title",
+          "id": "title",
+          "type": "text",
+          "description": "Title \u2014 Text content",
+          "help_text": "Title \u2014 Text content",
+          "element_name": "Title",
+          "example": "Hello World",
+          "page_number": 1,
+          "page_id": "a1b2c3d4-5e6f-7890-abcd-ef1234567890"
+        },
+        {
+          "key": "subtitle",
+          "id": "subtitle",
+          "type": "text",
+          "description": "Subtitle \u2014 Text content",
+          "help_text": "Subtitle \u2014 Text content",
+          "element_name": "Subtitle",
+          "example": "Welcome to Orshot",
+          "page_number": 1,
+          "page_id": "a1b2c3d4-5e6f-7890-abcd-ef1234567890"
+        },
+        {
+          "key": "logo",
+          "id": "logo",
+          "type": "imageUrl",
+          "description": "Logo \u2014 Image URL",
+          "help_text": "Logo \u2014 Image URL",
+          "element_name": "Logo",
+          "example": "https://example.com/logo.png",
+          "page_number": 1,
+          "page_id": "a1b2c3d4-5e6f-7890-abcd-ef1234567890"
+        }
+      ],
+      "modifications_json": {},
+      "pages_data": [
+        {
+          "page_id": "a1b2c3d4-5e6f-7890-abcd-ef1234567890",
+          "name": "Page 1",
+          "thumbnail_url": "https://storage.orshot.com/thumbnails/page-1.png",
+          "video_thumbnail_url": null,
+          "has_motion": false
+        }
+      ]
+    },
+    "source": "https://orshot.com/docs/api-reference/studio-template-get"
+  },
+  "GET /studio/templates/all": {
+    "body": {
+      "data": [
+        {
+          "id": 123,
+          "created_at": "2025-09-10T15:30:45.123Z",
+          "workspace_id": 890,
+          "canvas_width": 1200,
+          "canvas_height": 630,
+          "updated_at": "2025-10-15T10:20:30.456Z",
+          "name": "Social Media Post",
+          "description": "Template for social media posts",
+          "tags": [
+            "social",
+            "marketing"
+          ],
+          "thumbnail_url": "https://storage.orshot.com/thumbnails/template-123.png",
+          "embed_user_id": null,
+          "pages_data": [
+            {
+              "page_id": "a1b2c3d4-5e6f-7890-abcd-ef1234567890",
+              "name": "Page 1",
+              "thumbnail_url": "https://storage.orshot.com/thumbnails/page-1.png",
+              "video_thumbnail_url": null,
+              "has_motion": false
+            }
+          ],
+          "modifications": [
+            {
+              "key": "title",
+              "id": "title",
+              "type": "text",
+              "description": "Heading \u2014 Text content",
+              "help_text": "Heading \u2014 Text content",
+              "element_name": "Heading",
+              "example": "Hello World",
+              "page_number": 1,
+              "page_id": "a1b2c3d4-5e6f-7890-abcd-ef1234567890"
+            }
+          ]
+        }
+      ],
+      "pagination": {
+        "page": 1,
+        "limit": 10,
+        "totalTemplates": 45,
+        "totalPages": 5
+      }
+    },
+    "source": "https://orshot.com/docs/api-reference/studio-templates-list"
+  },
+  "PATCH /studio/templates/{templateId}/folder": {
+    "body": {
+      "success": true,
+      "template_id": 123,
+      "folder_id": 11
+    },
+    "source": "https://orshot.com/docs/api-reference/template-folder-assign"
+  },
+  "DELETE /studio/folders/{folderId}": {
+    "body": {
+      "success": true
+    },
+    "source": "https://orshot.com/docs/api-reference/template-folders-delete"
+  },
+  "PATCH /studio/folders/{folderId}": {
+    "body": {
+      "folder": {
+        "id": 11,
+        "name": "Instagram Posts"
+      }
+    },
+    "source": "https://orshot.com/docs/api-reference/template-folders-update"
+  },
+  "GET /studio/folders": {
+    "body": {
+      "folders": [
+        {
+          "id": 11,
+          "name": "Social Posts",
+          "sort_order": 0,
+          "created_at": "2026-07-11T08:04:37.768124+00:00",
+          "updated_at": "2026-07-11T08:04:37.768124+00:00"
+        },
+        {
+          "id": 12,
+          "name": "Certificates",
+          "sort_order": 1,
+          "created_at": "2026-07-11T09:12:02.114201+00:00",
+          "updated_at": "2026-07-11T09:12:02.114201+00:00"
+        }
+      ]
+    },
+    "source": "https://orshot.com/docs/api-reference/template-folders-get"
+  },
+  "POST /studio/folders": {
+    "body": {
+      "folder": {
+        "id": 11,
+        "name": "Social Posts",
+        "sort_order": 0,
+        "created_at": "2026-07-11T08:04:37.768124+00:00"
+      }
+    },
+    "source": "https://orshot.com/docs/api-reference/template-folders-post"
+  },
+  "GET /workspace": {
+    "body": {
+      "data": {
+        "id": 890,
+        "title": "My Workspace",
+        "slug": "my-workspace",
+        "url": "https://orshot.com/workspace/my-workspace",
+        "website_url": "https://acme.com",
+        "icon_url": null,
+        "created_at": "2026-03-27T00:04:45.557267+00:00"
+      }
+    },
+    "source": "https://orshot.com/docs/api-reference/workspace-get"
+  },
+  "GET /workspace/logs": {
+    "body": {
+      "data": [
+        {
+          "id": 15384,
+          "created_at": "2026-06-29T07:14:02.118Z",
+          "status": 200,
+          "source": "api",
+          "source_client": null,
+          "template_id": "tweet-image",
+          "template_type": "library",
+          "format": "jpg",
+          "type": "url",
+          "response_time_ms": 8082.03,
+          "response": {
+            "url": "https://cdn.orshot.com/renders/abc123.jpg",
+            "totalPages": 1,
+            "renderedPages": 1
+          },
+          "credits_used": 1,
+          "is_overage": false,
+          "error": null
+        }
+      ],
+      "pagination": {
+        "limit": 50,
+        "has_more": true,
+        "next_cursor": 15384
+      }
+    },
+    "source": "https://orshot.com/docs/api-reference/workspace-logs"
+  }
+}

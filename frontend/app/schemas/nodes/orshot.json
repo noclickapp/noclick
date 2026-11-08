@@ -1,0 +1,1027 @@
+{
+  "$defs": {
+    "AddColor": {
+      "additionalProperties": false,
+      "description": "Add Color. https://orshot.com/docs/api-reference/brand-colors-post",
+      "properties": {
+        "operation": {
+          "const": "add_color",
+          "default": "add_color",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "value": {
+          "description": "CSS color or gradient, for example #FF5733.",
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        },
+        "type": {
+          "default": "hex",
+          "enum": [
+            "hex",
+            "rgb",
+            "hsl",
+            "gradient"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "AddColor",
+      "type": "object"
+    },
+    "CancelRenderJob": {
+      "additionalProperties": false,
+      "description": "Cancel a Render Job. https://orshot.com/docs/api-reference/async-render-job-cancel",
+      "properties": {
+        "operation": {
+          "const": "cancel_render_job",
+          "default": "cancel_render_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Queued render job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "CancelRenderJob",
+      "type": "object"
+    },
+    "CreateFolder": {
+      "additionalProperties": false,
+      "description": "Create Template Folder. https://orshot.com/docs/api-reference/template-folders-post",
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateFolder",
+      "type": "object"
+    },
+    "DeleteColor": {
+      "additionalProperties": false,
+      "description": "Delete Color. https://orshot.com/docs/api-reference/brand-colors-delete",
+      "properties": {
+        "operation": {
+          "const": "delete_color",
+          "default": "delete_color",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Color ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteColor",
+      "type": "object"
+    },
+    "DeleteFolder": {
+      "additionalProperties": false,
+      "description": "Delete Template Folder. https://orshot.com/docs/api-reference/template-folders-delete",
+      "properties": {
+        "operation": {
+          "const": "delete_folder",
+          "default": "delete_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folderId": {
+          "exclusiveMinimum": 0,
+          "title": "Folder ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "folderId"
+      ],
+      "title": "DeleteFolder",
+      "type": "object"
+    },
+    "DeleteImage": {
+      "additionalProperties": false,
+      "description": "Delete Brand Image. https://orshot.com/docs/api-reference/brand-assets-delete",
+      "properties": {
+        "operation": {
+          "const": "delete_image",
+          "default": "delete_image",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Image ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteImage",
+      "type": "object"
+    },
+    "DeleteTemplate": {
+      "additionalProperties": false,
+      "description": "Delete Studio Template. https://orshot.com/docs/api-reference/studio-template-delete",
+      "properties": {
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "templateId": {
+          "description": "Permanently delete this studio template.",
+          "exclusiveMinimum": 0,
+          "title": "Template ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "templateId"
+      ],
+      "title": "DeleteTemplate",
+      "type": "object"
+    },
+    "GetRenderJob": {
+      "additionalProperties": false,
+      "description": "Get a Render Job. https://orshot.com/docs/api-reference/async-render-job-get",
+      "properties": {
+        "operation": {
+          "const": "get_render_job",
+          "default": "get_render_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Render job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetRenderJob",
+      "type": "object"
+    },
+    "GetTemplate": {
+      "additionalProperties": false,
+      "description": "Get Studio Template. https://orshot.com/docs/api-reference/studio-template-get",
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "templateId": {
+          "pattern": "^[1-9][0-9]*$",
+          "title": "Template ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "templateId"
+      ],
+      "title": "GetTemplate",
+      "type": "object"
+    },
+    "GetWorkspace": {
+      "additionalProperties": false,
+      "description": "Get Workspace. https://orshot.com/docs/api-reference/workspace-get",
+      "properties": {
+        "operation": {
+          "const": "get_workspace",
+          "default": "get_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetWorkspace",
+      "type": "object"
+    },
+    "ListColors": {
+      "additionalProperties": false,
+      "description": "Get Colors. https://orshot.com/docs/api-reference/brand-colors-get",
+      "properties": {
+        "operation": {
+          "const": "list_colors",
+          "default": "list_colors",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tags; all must match.",
+          "title": "Tag"
+        }
+      },
+      "title": "ListColors",
+      "type": "object"
+    },
+    "ListFolders": {
+      "additionalProperties": false,
+      "description": "List Template Folders. https://orshot.com/docs/api-reference/template-folders-get",
+      "properties": {
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListFolders",
+      "type": "object"
+    },
+    "ListImages": {
+      "additionalProperties": false,
+      "description": "Get Brand Images. https://orshot.com/docs/api-reference/brand-assets-get",
+      "properties": {
+        "operation": {
+          "const": "list_images",
+          "default": "list_images",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tags; all must match.",
+          "title": "Tag"
+        }
+      },
+      "title": "ListImages",
+      "type": "object"
+    },
+    "ListRenderJobs": {
+      "additionalProperties": false,
+      "description": "List Render Jobs. https://orshot.com/docs/api-reference/async-render-jobs-list",
+      "properties": {
+        "operation": {
+          "const": "list_render_jobs",
+          "default": "list_render_jobs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "queued",
+                "processing",
+                "succeeded",
+                "failed",
+                "canceled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "queued",
+            "processing",
+            "succeeded",
+            "failed",
+            "canceled"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "pagination.next_cursor from the preceding response.",
+          "title": "Cursor"
+        }
+      },
+      "title": "ListRenderJobs",
+      "type": "object"
+    },
+    "ListTemplates": {
+      "additionalProperties": false,
+      "description": "Get All Studio Templates. https://orshot.com/docs/api-reference/studio-templates-list",
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 40,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tags; all must match.",
+          "title": "Tags"
+        }
+      },
+      "title": "ListTemplates",
+      "type": "object"
+    },
+    "ListWorkspaceLogs": {
+      "additionalProperties": false,
+      "description": "List Workspace Logs. https://orshot.com/docs/api-reference/workspace-logs",
+      "properties": {
+        "operation": {
+          "const": "list_workspace_logs",
+          "default": "list_workspace_logs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "next_cursor from the preceding response.",
+          "title": "Cursor"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "source_client": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Client"
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template Id"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Format"
+        },
+        "from_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO timestamp, inclusive lower bound.",
+          "title": "From Time"
+        },
+        "to_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO timestamp, inclusive upper bound.",
+          "title": "To Time"
+        }
+      },
+      "title": "ListWorkspaceLogs",
+      "type": "object"
+    },
+    "MoveTemplateToFolder": {
+      "additionalProperties": false,
+      "description": "Move Template to Folder. https://orshot.com/docs/api-reference/template-folder-assign",
+      "properties": {
+        "operation": {
+          "const": "move_template_to_folder",
+          "default": "move_template_to_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "templateId": {
+          "exclusiveMinimum": 0,
+          "title": "Template ID",
+          "type": "integer"
+        },
+        "folder_id": {
+          "exclusiveMinimum": 0,
+          "title": "Destination folder ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "templateId",
+        "folder_id"
+      ],
+      "title": "MoveTemplateToFolder",
+      "type": "object"
+    },
+    "OrshotAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "orshot_api_key",
+          "default": "orshot_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Orshot API Key",
+      "type": "object",
+      "x-credential-instructions": "In your Orshot workspace, open API Keys and copy a workspace API key. Paste only the key. NoClick sends it as a Bearer token to api.orshot.com. Connecting reads your workspace; rendering uses Orshot credits and template folders require a paid plan.",
+      "x-credential-url": "https://orshot.com/workspace"
+    },
+    "RenameFolder": {
+      "additionalProperties": false,
+      "description": "Rename Template Folder. https://orshot.com/docs/api-reference/template-folders-update",
+      "properties": {
+        "operation": {
+          "const": "rename_folder",
+          "default": "rename_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folderId": {
+          "exclusiveMinimum": 0,
+          "title": "Folder ID",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folderId",
+        "name"
+      ],
+      "title": "RenameFolder",
+      "type": "object"
+    },
+    "RenderResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "format": {
+          "default": "png",
+          "enum": [
+            "png",
+            "webp",
+            "jpg",
+            "avif",
+            "pdf",
+            "mp4",
+            "webm",
+            "mov",
+            "mkv",
+            "gif"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "mode": {
+          "default": "sync",
+          "enum": [
+            "sync",
+            "async"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "scale": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scale"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "quality": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quality"
+        },
+        "fileName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        }
+      },
+      "title": "RenderResponse",
+      "type": "object"
+    },
+    "RenderTemplate": {
+      "additionalProperties": false,
+      "description": "Render from Studio Template. https://orshot.com/docs/api-reference/render-from-studio-template",
+      "properties": {
+        "operation": {
+          "const": "render_template",
+          "default": "render_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "templateId": {
+          "exclusiveMinimum": 0,
+          "title": "Template ID",
+          "type": "integer"
+        },
+        "modifications": {
+          "additionalProperties": true,
+          "description": "Dynamic values keyed by template parameter ID.",
+          "title": "Modifications",
+          "type": "object"
+        },
+        "response": {
+          "$ref": "#/$defs/RenderResponse",
+          "description": "Output format and mode; content is always returned as URLs."
+        },
+        "pdfOptions": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pdfoptions"
+        },
+        "videoOptions": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Videooptions"
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lang"
+        }
+      },
+      "required": [
+        "templateId"
+      ],
+      "title": "RenderTemplate",
+      "type": "object"
+    },
+    "UpdateImageTags": {
+      "additionalProperties": false,
+      "description": "Update Image Tags. https://orshot.com/docs/api-reference/brand-assets-update",
+      "properties": {
+        "operation": {
+          "const": "update_image_tags",
+          "default": "update_image_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Image ID",
+          "type": "integer"
+        },
+        "tags": {
+          "description": "Replace all tags; an empty list clears them.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "tags"
+      ],
+      "title": "UpdateImageTags",
+      "type": "object"
+    },
+    "UploadImage": {
+      "additionalProperties": false,
+      "description": "Upload Brand Image. https://orshot.com/docs/api-reference/brand-assets-post",
+      "properties": {
+        "operation": {
+          "const": "upload_image",
+          "default": "upload_image",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "file": {
+          "description": "Public image URL or a data URI accepted by Orshot.",
+          "minLength": 1,
+          "title": "File",
+          "type": "string"
+        },
+        "fileName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "fileType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filetype"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Meta"
+        }
+      },
+      "required": [
+        "file"
+      ],
+      "title": "UploadImage",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_color": "#/$defs/AddColor",
+          "cancel_render_job": "#/$defs/CancelRenderJob",
+          "create_folder": "#/$defs/CreateFolder",
+          "delete_color": "#/$defs/DeleteColor",
+          "delete_folder": "#/$defs/DeleteFolder",
+          "delete_image": "#/$defs/DeleteImage",
+          "delete_template": "#/$defs/DeleteTemplate",
+          "get_render_job": "#/$defs/GetRenderJob",
+          "get_template": "#/$defs/GetTemplate",
+          "get_workspace": "#/$defs/GetWorkspace",
+          "list_colors": "#/$defs/ListColors",
+          "list_folders": "#/$defs/ListFolders",
+          "list_images": "#/$defs/ListImages",
+          "list_render_jobs": "#/$defs/ListRenderJobs",
+          "list_templates": "#/$defs/ListTemplates",
+          "list_workspace_logs": "#/$defs/ListWorkspaceLogs",
+          "move_template_to_folder": "#/$defs/MoveTemplateToFolder",
+          "rename_folder": "#/$defs/RenameFolder",
+          "render_template": "#/$defs/RenderTemplate",
+          "update_image_tags": "#/$defs/UpdateImageTags",
+          "upload_image": "#/$defs/UploadImage"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RenderTemplate"
+        },
+        {
+          "$ref": "#/$defs/GetRenderJob"
+        },
+        {
+          "$ref": "#/$defs/ListRenderJobs"
+        },
+        {
+          "$ref": "#/$defs/CancelRenderJob"
+        },
+        {
+          "$ref": "#/$defs/ListTemplates"
+        },
+        {
+          "$ref": "#/$defs/GetTemplate"
+        },
+        {
+          "$ref": "#/$defs/DeleteTemplate"
+        },
+        {
+          "$ref": "#/$defs/ListFolders"
+        },
+        {
+          "$ref": "#/$defs/CreateFolder"
+        },
+        {
+          "$ref": "#/$defs/RenameFolder"
+        },
+        {
+          "$ref": "#/$defs/DeleteFolder"
+        },
+        {
+          "$ref": "#/$defs/MoveTemplateToFolder"
+        },
+        {
+          "$ref": "#/$defs/ListImages"
+        },
+        {
+          "$ref": "#/$defs/UploadImage"
+        },
+        {
+          "$ref": "#/$defs/UpdateImageTags"
+        },
+        {
+          "$ref": "#/$defs/DeleteImage"
+        },
+        {
+          "$ref": "#/$defs/ListColors"
+        },
+        {
+          "$ref": "#/$defs/AddColor"
+        },
+        {
+          "$ref": "#/$defs/DeleteColor"
+        },
+        {
+          "$ref": "#/$defs/GetWorkspace"
+        },
+        {
+          "$ref": "#/$defs/ListWorkspaceLogs"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OrshotAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Orshot Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
