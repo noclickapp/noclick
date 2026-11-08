@@ -199,3 +199,10 @@ def test_raw_family_explicit_environment_and_closed_schema():
     assert ops == {"list_domains", "get_domain", "list_records"}
     assert "page" not in schema["$defs"]["DNSMadeEasyDomainsConfig"]["properties"]
     assert "environment" in schema["$defs"]["DNSMadeEasyAPIKeyCredential"]["required"]
+
+
+def test_required_domain_picker_uses_central_sole_option_autofill():
+    schema = DNSMadeEasyNode.get_config_schema()
+    for name in ("DNSMadeEasyDomainConfig", "DNSMadeEasyRecordsConfig"):
+        field = schema["$defs"][name]["properties"]["domain_id"]
+        assert field["x-dynamic-options"]["auto_select_sole_option"] is True

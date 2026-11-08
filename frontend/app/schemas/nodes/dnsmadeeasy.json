@@ -58,8 +58,8 @@
           "type": "integer",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
-            "field_name": "domain_id"
+            "field_name": "domain_id",
+            "auto_select_sole_option": true
           },
           "x-resource-type": "domain_id"
         },
@@ -115,8 +115,8 @@
           "type": "integer",
           "x-dynamic-options": {
             "allow_custom": true,
-            "auto_select_sole_option": false,
-            "field_name": "domain_id"
+            "field_name": "domain_id",
+            "auto_select_sole_option": true
           },
           "x-resource-type": "domain_id"
         },

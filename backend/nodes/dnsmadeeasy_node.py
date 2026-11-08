@@ -115,7 +115,7 @@ class _Config(BaseModel):
 
 
 class _Domain(_Config):
-    domain_id: int = Field(..., title="Current Credential-bound Domain", json_schema_extra={"x-resource-type": "domain_id", "x-dynamic-options": {"field_name": "domain_id", "allow_custom": True, "auto_select_sole_option": False}})
+    domain_id: int = Field(..., title="Current Credential-bound Domain", json_schema_extra={"x-resource-type": "domain_id", "x-dynamic-options": {"field_name": "domain_id", "allow_custom": True}})
     @field_validator("domain_id", mode="before")
     @classmethod
     def validate_domain(cls, value): return _id(value)
