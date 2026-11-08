@@ -31,6 +31,8 @@ from utils.discord_gateway_bridge import (
 )
 from utils.webhook_signatures import verify_hmac_sha256_hex
 
+from tests.fixtures.capabilities import claimed_accounts, deliveries_run_workflows  # noqa: F401  (fixtures)
+
 pytestmark = pytest.mark.usefixtures("claimed_accounts", "deliveries_run_workflows")
 
 WF = str(uuid.uuid4())

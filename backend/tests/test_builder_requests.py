@@ -18,6 +18,8 @@ from utils import capabilities, task_notifications
 from utils.builder_request import PublicationOptions
 from utils.capabilities import INTERFACE_PUBLISH
 
+from tests.fixtures.capabilities import claimed_accounts  # noqa: F401  (fixtures)
+
 pytestmark = [pytest.mark.asyncio, pytest.mark.usefixtures("claimed_accounts")]
 USER = "00000000-0000-0000-0000-000000000001"
 

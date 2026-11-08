@@ -24,6 +24,8 @@ from coder.workflow.workflow_ops import (
 from nodes.agent_node import AgentNode
 from nodes.core.base import ConfigValidationError
 
+from tests.fixtures.capabilities import no_answer_pictures  # noqa: F401  (fixtures)
+
 pytestmark = pytest.mark.usefixtures("no_answer_pictures")
 
 FIRED = {'_triggerPayload': {'a': 1}}

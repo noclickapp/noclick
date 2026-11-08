@@ -24,6 +24,8 @@ from nodes.whatsapp_node import WhatsAppNode
 from utils import capabilities, webhook_routes
 from utils.capabilities import TRIGGER_DELIVERY
 
+from tests.fixtures.capabilities import claimed_accounts  # noqa: F401  (fixtures)
+
 pytestmark = pytest.mark.usefixtures("claimed_accounts")
 
 RECEIVE = {"operation": "receive_message"}

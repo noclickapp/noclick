@@ -14,6 +14,8 @@ from fastapi import FastAPI
 from utils import capabilities, webhook_routes
 from utils.capabilities import TRIGGER_DELIVERY
 
+from tests.fixtures.capabilities import claimed_accounts  # noqa: F401  (fixtures)
+
 pytestmark = pytest.mark.usefixtures("claimed_accounts")
 
 WORKFLOW = str(uuid.uuid4())

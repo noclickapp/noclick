@@ -20,6 +20,8 @@ import pytest
 from nodes.slack_node import SlackNode
 from utils.ssrf import SSRFError
 
+from tests.fixtures.capabilities import claimed_accounts, deliveries_run_workflows  # noqa: F401  (fixtures)
+
 pytestmark = pytest.mark.usefixtures("claimed_accounts", "deliveries_run_workflows")
 
 SLACK_CFG = {"operation": "on_channel_message", "credentialIds": {"slack_oauth": "cred-1"}}

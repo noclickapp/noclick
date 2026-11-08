@@ -18,6 +18,8 @@ import pytest
 from utils import app_event_dedup, fire_budget
 from utils.app_webhooks import _slack_drop_event, _slack_event_id
 
+from tests.fixtures.capabilities import claimed_accounts, deliveries_run_workflows  # noqa: F401  (fixtures)
+
 pytestmark = pytest.mark.usefixtures("claimed_accounts", "deliveries_run_workflows")
 
 

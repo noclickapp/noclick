@@ -8,6 +8,8 @@ import pytest
 
 from nodes.agent.turn_clock import TURN_CLOCK_KEY, clock_line, clock_of
 
+from tests.fixtures.capabilities import no_answer_pictures  # noqa: F401  (fixtures)
+
 pytestmark = pytest.mark.usefixtures("no_answer_pictures")
 
 
