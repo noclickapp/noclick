@@ -1,0 +1,847 @@
+{
+  "$defs": {
+    "Dpd2Credential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "dpd2_api_password",
+          "default": "dpd2_api_password",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Username",
+          "type": "string"
+        },
+        "api_password": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "username",
+        "api_password"
+      ],
+      "title": "Dpd2 API Password",
+      "type": "object",
+      "x-credential-instructions": "Enter your DPD username and the API password from your profile in the DPD admin. Use the API password, not your account password. NoClick sends these using HTTP Basic authentication to api.getdpd.com. Connecting reads your storefronts; reactivating a purchase emails its buyer and can optionally refulfill it.",
+      "x-credential-url": "https://docs.getdpd.com/api/"
+    },
+    "Dpd2GetCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Get a customer.",
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Dpd2GetCustomerConfig",
+      "type": "object"
+    },
+    "Dpd2GetProductConfig": {
+      "additionalProperties": false,
+      "description": "Get a product.",
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Dpd2GetProductConfig",
+      "type": "object"
+    },
+    "Dpd2GetPurchaseConfig": {
+      "additionalProperties": false,
+      "description": "Get a purchase.",
+      "properties": {
+        "operation": {
+          "const": "get_purchase",
+          "default": "get_purchase",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Dpd2GetPurchaseConfig",
+      "type": "object"
+    },
+    "Dpd2GetStorefrontConfig": {
+      "additionalProperties": false,
+      "description": "Get a storefront.",
+      "properties": {
+        "operation": {
+          "const": "get_storefront",
+          "default": "get_storefront",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Dpd2GetStorefrontConfig",
+      "type": "object"
+    },
+    "Dpd2GetSubscriberConfig": {
+      "additionalProperties": false,
+      "description": "Get a subscriber.",
+      "properties": {
+        "operation": {
+          "const": "get_subscriber",
+          "default": "get_subscriber",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "storefront_id": {
+          "minimum": 1,
+          "title": "Storefront Id",
+          "type": "integer"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "storefront_id",
+        "id"
+      ],
+      "title": "Dpd2GetSubscriberConfig",
+      "type": "object"
+    },
+    "Dpd2ListCustomersConfig": {
+      "additionalProperties": false,
+      "description": "List customers.",
+      "properties": {
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Matches the start of the address, not case sensitive.",
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Matches the start of the name, not case sensitive.",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Matches the start of the name, not case sensitive.",
+          "title": "Last Name"
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only customers who bought this product.",
+          "title": "Product Id"
+        },
+        "receives_newsletters": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only customers who do (or don't) get your product update emails.",
+          "title": "Receives Newsletters"
+        },
+        "date_min": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created after this date (anything PHP's `strtotime()` accepts).",
+          "title": "Date Min"
+        },
+        "date_max": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created before this date (anything PHP's `strtotime()` accepts).",
+          "title": "Date Max"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number, 100 records per page. Request next_page until an empty NOTFOUND page. Each run reads one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "Dpd2ListCustomersConfig",
+      "type": "object"
+    },
+    "Dpd2ListProductsConfig": {
+      "additionalProperties": false,
+      "description": "List products.",
+      "properties": {
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "storefront_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only products in this storefront. Defaults to all storefronts.",
+          "title": "Storefront Id"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number, 100 records per page. Request next_page until an empty NOTFOUND page. Each run reads one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "Dpd2ListProductsConfig",
+      "type": "object"
+    },
+    "Dpd2ListPurchasesConfig": {
+      "additionalProperties": false,
+      "description": "List purchases.",
+      "properties": {
+        "operation": {
+          "const": "list_purchases",
+          "default": "list_purchases",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "ACT",
+                "PND",
+                "RFD",
+                "ERR",
+                "CAN",
+                "HLD"
+              ],
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "ACT",
+            "PND",
+            "RFD",
+            "ERR",
+            "CAN",
+            "HLD"
+          ],
+          "x-enum-searchable": true
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Id"
+        },
+        "storefront_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Storefront Id"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "customer_email": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Customer email address. Matches the start of the address, not case sensitive.",
+          "title": "Customer Email"
+        },
+        "customer_first_name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Matches the start of the name, not case sensitive.",
+          "title": "Customer First Name"
+        },
+        "customer_last_name": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Matches the start of the name, not case sensitive.",
+          "title": "Customer Last Name"
+        },
+        "date_min": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created after this date (anything PHP's `strtotime()` accepts).",
+          "title": "Date Min"
+        },
+        "date_max": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Created before this date (anything PHP's `strtotime()` accepts).",
+          "title": "Date Max"
+        },
+        "total": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Purchase total, compared with `total_op`.",
+          "title": "Total"
+        },
+        "total_op": {
+          "anyOf": [
+            {
+              "enum": [
+                "eq",
+                "ne",
+                "gt",
+                "lt"
+              ],
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How to compare `total`.",
+          "title": "Total Op",
+          "enum": [
+            "eq",
+            "ne",
+            "gt",
+            "lt"
+          ],
+          "x-enum-searchable": true
+        },
+        "ship": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only purchases with physical goods that haven't shipped yet.",
+          "title": "Ship"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number, 100 records per page. Request next_page until an empty NOTFOUND page. Each run reads one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "Dpd2ListPurchasesConfig",
+      "type": "object"
+    },
+    "Dpd2ListStorefrontsConfig": {
+      "additionalProperties": false,
+      "description": "List storefronts.",
+      "properties": {
+        "operation": {
+          "const": "list_storefronts",
+          "default": "list_storefronts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number, 100 records per page. Request next_page until an empty NOTFOUND page. Each run reads one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "Dpd2ListStorefrontsConfig",
+      "type": "object"
+    },
+    "Dpd2ListSubscribersConfig": {
+      "additionalProperties": false,
+      "description": "List subscribers.",
+      "properties": {
+        "operation": {
+          "const": "list_subscribers",
+          "default": "list_subscribers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "storefront_id": {
+          "minimum": 1,
+          "title": "Storefront Id",
+          "type": "integer"
+        },
+        "username": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The subscriber's username (their email address).",
+          "title": "Username"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number, 100 records per page. Request next_page until an empty NOTFOUND page. Each run reads one page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "storefront_id"
+      ],
+      "title": "Dpd2ListSubscribersConfig",
+      "type": "object"
+    },
+    "Dpd2PingConfig": {
+      "additionalProperties": false,
+      "description": "Ping.",
+      "properties": {
+        "operation": {
+          "const": "ping",
+          "default": "ping",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "Dpd2PingConfig",
+      "type": "object"
+    },
+    "Dpd2ReactivatePurchaseConfig": {
+      "additionalProperties": false,
+      "description": "Email an active purchase to its buyer again, optionally changing their address or refulfilling it.",
+      "properties": {
+        "operation": {
+          "const": "reactivate_purchase",
+          "default": "reactivate_purchase",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "buyer_email": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: change the purchase email address and resend to it. Leaving this blank uses the existing buyer email.",
+          "title": "Buyer Email"
+        },
+        "refulfill": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Also send the purchase to its fulfillment service again. This can have external fulfillment effects.",
+          "title": "Refulfill"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Dpd2ReactivatePurchaseConfig",
+      "type": "object"
+    },
+    "Dpd2VerifyNotificationConfig": {
+      "additionalProperties": false,
+      "description": "Verify a purchase notification.",
+      "properties": {
+        "operation": {
+          "const": "verify_notification",
+          "default": "verify_notification",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "verify_sign": {
+          "description": "The signature DPD sent with the notification.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Verify Sign",
+          "type": "string"
+        },
+        "notification_fields": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Every other original notification POST parameter, unchanged; verify_sign is entered separately.",
+          "title": "Notification Fields",
+          "type": "object"
+        }
+      },
+      "required": [
+        "verify_sign"
+      ],
+      "title": "Dpd2VerifyNotificationConfig",
+      "type": "object"
+    },
+    "Dpd2VerifySubscriberConfig": {
+      "additionalProperties": false,
+      "description": "Verify a subscriber.",
+      "properties": {
+        "operation": {
+          "const": "verify_subscriber",
+          "default": "verify_subscriber",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "storefront_id": {
+          "minimum": 1,
+          "title": "Storefront Id",
+          "type": "integer"
+        },
+        "username": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The subscriber's username (their email address).",
+          "title": "Username"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The subscriber ID. Used instead of `username` when both are given.",
+          "title": "Id"
+        }
+      },
+      "required": [
+        "storefront_id"
+      ],
+      "title": "Dpd2VerifySubscriberConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_customer": "#/$defs/Dpd2GetCustomerConfig",
+          "get_product": "#/$defs/Dpd2GetProductConfig",
+          "get_purchase": "#/$defs/Dpd2GetPurchaseConfig",
+          "get_storefront": "#/$defs/Dpd2GetStorefrontConfig",
+          "get_subscriber": "#/$defs/Dpd2GetSubscriberConfig",
+          "list_customers": "#/$defs/Dpd2ListCustomersConfig",
+          "list_products": "#/$defs/Dpd2ListProductsConfig",
+          "list_purchases": "#/$defs/Dpd2ListPurchasesConfig",
+          "list_storefronts": "#/$defs/Dpd2ListStorefrontsConfig",
+          "list_subscribers": "#/$defs/Dpd2ListSubscribersConfig",
+          "ping": "#/$defs/Dpd2PingConfig",
+          "reactivate_purchase": "#/$defs/Dpd2ReactivatePurchaseConfig",
+          "verify_notification": "#/$defs/Dpd2VerifyNotificationConfig",
+          "verify_subscriber": "#/$defs/Dpd2VerifySubscriberConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Dpd2PingConfig"
+        },
+        {
+          "$ref": "#/$defs/Dpd2VerifyNotificationConfig"
+        },
+        {
+          "$ref": "#/$defs/Dpd2ListStorefrontsConfig"
+        },
+        {
+          "$ref": "#/$defs/Dpd2GetStorefrontConfig"
+        },
+        {
+          "$ref": "#/$defs/Dpd2ListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/Dpd2GetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/Dpd2ListPurchasesConfig"
+        },
+        {
+          "$ref": "#/$defs/Dpd2GetPurchaseConfig"
+        },
+        {
+          "$ref": "#/$defs/Dpd2ReactivatePurchaseConfig"
+        },
+        {
+          "$ref": "#/$defs/Dpd2ListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/Dpd2GetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/Dpd2ListSubscribersConfig"
+        },
+        {
+          "$ref": "#/$defs/Dpd2VerifySubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/Dpd2GetSubscriberConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Dpd2Credential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Dpd2 Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
