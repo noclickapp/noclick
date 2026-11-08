@@ -1,0 +1,1788 @@
+{
+  "$defs": {
+    "ClaimLine": {
+      "additionalProperties": false,
+      "properties": {
+        "dueDate": {
+          "description": "Payment deadline of this invoice.",
+          "format": "date-time",
+          "title": "Duedate",
+          "type": "string"
+        },
+        "amount": {
+          "description": "The outstanding balance on this invoice in the case currency \u2014 what the debtor still owes on it,",
+          "exclusiveMinimum": 0,
+          "title": "Amount",
+          "type": "number"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: your own invoice number for this line. Used only to make validation errors readable",
+          "title": "Reference"
+        }
+      },
+      "required": [
+        "dueDate",
+        "amount"
+      ],
+      "title": "ClaimLine",
+      "type": "object"
+    },
+    "DebituraAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "debitura_api_key",
+          "default": "debitura_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Debitura API Key",
+      "type": "object",
+      "x-credential-instructions": "In the Debitura Client Portal, open API Keys and generate a key for your own creditor account. Paste the key below. NoClick sends it in the XApiKey header and verifies it by reading your creditor profile. Referral partner tokens are not supported.",
+      "x-credential-url": "https://app.debitura.com/CreditorApiKey"
+    },
+    "DebituraArchiveDivisionConfig": {
+      "additionalProperties": false,
+      "description": "Archive a division.",
+      "properties": {
+        "operation": {
+          "const": "archive_division",
+          "default": "archive_division",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "division_id": {
+          "format": "uuid",
+          "title": "Division Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "division_id"
+      ],
+      "title": "DebituraArchiveDivisionConfig",
+      "type": "object"
+    },
+    "DebituraCheckEligibilityConfig": {
+      "additionalProperties": false,
+      "description": "Check case eligibility and get assigned partner.",
+      "properties": {
+        "countryAlpha2": {
+          "description": "Debtor country (2-letter ISO code, e.g., \"DK\", \"US\", \"DE\")",
+          "minLength": 1,
+          "title": "Countryalpha2",
+          "type": "string"
+        },
+        "stateAlpha2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "US state code for US debtors (e.g., \"CA\", \"NY\"). Required if CountryAlpha2 = \"US\"",
+          "title": "Statealpha2"
+        },
+        "debtorType": {
+          "description": "Debtor type: \"Company\" or \"Private\"",
+          "minLength": 1,
+          "title": "Debtortype",
+          "type": "string"
+        },
+        "amount": {
+          "description": "Amount to recover in specified currency",
+          "maximum": 1.7976931348623157e+308,
+          "minimum": 0.01,
+          "title": "Amount",
+          "type": "number"
+        },
+        "currencyCode": {
+          "description": "Currency code (e.g., \"USD\", \"EUR\", \"DKK\")",
+          "minLength": 1,
+          "title": "Currencycode",
+          "type": "string"
+        },
+        "operation": {
+          "const": "check_eligibility",
+          "default": "check_eligibility",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "countryAlpha2",
+        "debtorType",
+        "amount",
+        "currencyCode"
+      ],
+      "title": "DebituraCheckEligibilityConfig",
+      "type": "object"
+    },
+    "DebituraCreateCaseConfig": {
+      "additionalProperties": false,
+      "description": "Create collection case.",
+      "properties": {
+        "currencyCode": {
+          "maxLength": 3,
+          "minLength": 3,
+          "title": "Currencycode",
+          "type": "string"
+        },
+        "date": {
+          "description": "Invoice date; no future dates.",
+          "format": "date-time",
+          "title": "Date",
+          "type": "string"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date or date-time accepted by Debitura.",
+          "title": "Duedate"
+        },
+        "comments": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comments about the case, e.g. payment history or communication context.",
+          "title": "Comments"
+        },
+        "claimDescription": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Client provided description of the claim",
+          "title": "Claimdescription"
+        },
+        "creditorReference": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creditorreference"
+        },
+        "debtor": {
+          "$ref": "#/$defs/Debtor"
+        },
+        "creditorDivisionId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creditordivisionid"
+        },
+        "amountToRecover": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The TOTAL amount to recover for this case.",
+          "title": "Amounttorecover"
+        },
+        "amountToRecoverOver6Months": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OPTIONAL - MULTI-INVOICE AGE BUCKET PRICING (PRICING ZONE 180-DAY THRESHOLD)",
+          "title": "Amounttorecoverover6Months"
+        },
+        "amountToRecoverOver12Months": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OPTIONAL - MULTI-INVOICE AGE BUCKET PRICING",
+          "title": "Amounttorecoverover12Months"
+        },
+        "amountToRecoverOver24Months": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OPTIONAL - MULTI-INVOICE AGE BUCKET PRICING",
+          "title": "Amounttorecoverover24Months"
+        },
+        "claimLines": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ClaimLine"
+              },
+              "maxItems": 1000,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OPTIONAL - the unpaid invoices making up this claim, one line per invoice, each carrying its",
+          "title": "Claimlines"
+        },
+        "allowPendingContracts": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When true, cases with unsigned contracts (SDCA/POA) are accepted in 'PendingContractSigning'",
+          "title": "Allowpendingcontracts"
+        },
+        "isTest": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When true, creates a test case that IS persisted to the database but marked as test data.",
+          "title": "Istest"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional tag for scoped test data grouping (e.g. \"suite-run-{uuid}\").",
+          "title": "Tag"
+        },
+        "assignedUserEmail": {
+          "anyOf": [
+            {
+              "format": "email",
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: Email address of the creditor team member to assign as the case owner.",
+          "title": "Assigneduseremail"
+        },
+        "returnUrl": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: URL the creditor user should land on after completing any",
+          "title": "Returnurl"
+        },
+        "operation": {
+          "const": "create_case",
+          "default": "create_case",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional retry key. Reuse only with an identical request body.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "currencyCode",
+        "date",
+        "debtor"
+      ],
+      "title": "DebituraCreateCaseConfig",
+      "type": "object"
+    },
+    "DebituraCreateDivisionConfig": {
+      "additionalProperties": false,
+      "description": "Create a new division.",
+      "properties": {
+        "companyName": {
+          "maxLength": 200,
+          "minLength": 0,
+          "title": "Companyname",
+          "type": "string"
+        },
+        "registrationNumber": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Registrationnumber"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "zipCode": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zipcode"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "city": {
+          "minLength": 1,
+          "title": "City",
+          "type": "string"
+        },
+        "countryCode": {
+          "maxLength": 2,
+          "minLength": 2,
+          "title": "Countrycode",
+          "type": "string"
+        },
+        "officeEmail": {
+          "anyOf": [
+            {
+              "format": "email",
+              "maxLength": 250,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Officeemail"
+        },
+        "officePhone": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Officephone"
+        },
+        "operation": {
+          "const": "create_division",
+          "default": "create_division",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional retry key. Reuse only with an identical request body.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "companyName",
+        "city",
+        "countryCode"
+      ],
+      "title": "DebituraCreateDivisionConfig",
+      "type": "object"
+    },
+    "DebituraGetCaseByCreditorReferenceConfig": {
+      "additionalProperties": false,
+      "description": "Fetch case by creditor reference.",
+      "properties": {
+        "operation": {
+          "const": "get_case_by_creditor_reference",
+          "default": "get_case_by_creditor_reference",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "creditor_reference": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Creditor Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "creditor_reference"
+      ],
+      "title": "DebituraGetCaseByCreditorReferenceConfig",
+      "type": "object"
+    },
+    "DebituraGetCaseConfig": {
+      "additionalProperties": false,
+      "description": "Fetch case by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_case",
+          "default": "get_case",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "case_id": {
+          "format": "uuid",
+          "title": "Case Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "case_id"
+      ],
+      "title": "DebituraGetCaseConfig",
+      "type": "object"
+    },
+    "DebituraGetCaseTimelineConfig": {
+      "additionalProperties": false,
+      "description": "Fetch case timeline.",
+      "properties": {
+        "operation": {
+          "const": "get_case_timeline",
+          "default": "get_case_timeline",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "case_id": {
+          "format": "uuid",
+          "title": "Case Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "case_id"
+      ],
+      "title": "DebituraGetCaseTimelineConfig",
+      "type": "object"
+    },
+    "DebituraGetContractStatusConfig": {
+      "additionalProperties": false,
+      "description": "Get debt collection contract status.",
+      "properties": {
+        "operation": {
+          "const": "get_contract_status",
+          "default": "get_contract_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DebituraGetContractStatusConfig",
+      "type": "object"
+    },
+    "DebituraGetDivisionConfig": {
+      "additionalProperties": false,
+      "description": "Get a single division by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_division",
+          "default": "get_division",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "division_id": {
+          "format": "uuid",
+          "title": "Division Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "division_id"
+      ],
+      "title": "DebituraGetDivisionConfig",
+      "type": "object"
+    },
+    "DebituraGetMeConfig": {
+      "additionalProperties": false,
+      "description": "Verifies the provided authentication and returns the current Creditor profile.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DebituraGetMeConfig",
+      "type": "object"
+    },
+    "DebituraGetPaymentConfig": {
+      "additionalProperties": false,
+      "description": "Fetch payment by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_payment",
+          "default": "get_payment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "payment_id": {
+          "format": "uuid",
+          "title": "Payment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "payment_id"
+      ],
+      "title": "DebituraGetPaymentConfig",
+      "type": "object"
+    },
+    "DebituraListCaseChatsConfig": {
+      "additionalProperties": false,
+      "description": "Fetch case chats.",
+      "properties": {
+        "operation": {
+          "const": "list_case_chats",
+          "default": "list_case_chats",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "case_id": {
+          "format": "uuid",
+          "title": "Case Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "case_id"
+      ],
+      "title": "DebituraListCaseChatsConfig",
+      "type": "object"
+    },
+    "DebituraListCaseFilesConfig": {
+      "additionalProperties": false,
+      "description": "Get case files.",
+      "properties": {
+        "operation": {
+          "const": "list_case_files",
+          "default": "list_case_files",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "case_id": {
+          "format": "uuid",
+          "title": "Case Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "case_id"
+      ],
+      "title": "DebituraListCaseFilesConfig",
+      "type": "object"
+    },
+    "DebituraListCasePaymentsConfig": {
+      "additionalProperties": false,
+      "description": "Fetch case payments.",
+      "properties": {
+        "operation": {
+          "const": "list_case_payments",
+          "default": "list_case_payments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "case_id": {
+          "format": "uuid",
+          "title": "Case Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "case_id"
+      ],
+      "title": "DebituraListCasePaymentsConfig",
+      "type": "object"
+    },
+    "DebituraListCaseTasksConfig": {
+      "additionalProperties": false,
+      "description": "List tasks for a case.",
+      "properties": {
+        "operation": {
+          "const": "list_case_tasks",
+          "default": "list_case_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "case_id": {
+          "format": "uuid",
+          "title": "Case Id",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Open",
+          "title": "Status"
+        },
+        "task_types": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Types"
+        }
+      },
+      "required": [
+        "case_id"
+      ],
+      "title": "DebituraListCaseTasksConfig",
+      "type": "object"
+    },
+    "DebituraListCasesConfig": {
+      "additionalProperties": false,
+      "description": "List collection cases.",
+      "properties": {
+        "operation": {
+          "const": "list_cases",
+          "default": "list_cases",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Page Size"
+        },
+        "debtor_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Debtor Ids"
+        },
+        "ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ids"
+        },
+        "statuses": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Statuses"
+        },
+        "division_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Division Ids"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        }
+      },
+      "title": "DebituraListCasesConfig",
+      "type": "object"
+    },
+    "DebituraListCoverageConfig": {
+      "additionalProperties": false,
+      "description": "List all jurisdiction coverage.",
+      "properties": {
+        "operation": {
+          "const": "list_coverage",
+          "default": "list_coverage",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DebituraListCoverageConfig",
+      "type": "object"
+    },
+    "DebituraListDivisionsConfig": {
+      "additionalProperties": false,
+      "description": "List divisions for the authenticated creditor.",
+      "properties": {
+        "operation": {
+          "const": "list_divisions",
+          "default": "list_divisions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Page Size"
+        },
+        "include_archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "title": "Include Archived"
+        }
+      },
+      "title": "DebituraListDivisionsConfig",
+      "type": "object"
+    },
+    "DebituraListPaymentsConfig": {
+      "additionalProperties": false,
+      "description": "List payments.",
+      "properties": {
+        "operation": {
+          "const": "list_payments",
+          "default": "list_payments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Page Size"
+        }
+      },
+      "title": "DebituraListPaymentsConfig",
+      "type": "object"
+    },
+    "DebituraListTasksConfig": {
+      "additionalProperties": false,
+      "description": "List your open tasks.",
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Open",
+          "title": "Status"
+        },
+        "task_types": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Types"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Page Size"
+        }
+      },
+      "title": "DebituraListTasksConfig",
+      "type": "object"
+    },
+    "DebituraListUsersConfig": {
+      "additionalProperties": false,
+      "description": "Lists team members belonging to the authenticated creditor.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Page Size"
+        }
+      },
+      "title": "DebituraListUsersConfig",
+      "type": "object"
+    },
+    "DebituraPreviewCaseConfig": {
+      "additionalProperties": false,
+      "description": "Preview case eligibility and requirements.",
+      "properties": {
+        "amountToRecover": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The TOTAL amount to recover for this case.",
+          "title": "Amounttorecover"
+        },
+        "currencyCode": {
+          "description": "ISO 4217 currency code for the amount (e.g., \"DKK\", \"EUR\", \"USD\")",
+          "maxLength": 3,
+          "minLength": 3,
+          "title": "Currencycode",
+          "type": "string"
+        },
+        "debtor": {
+          "$ref": "#/$defs/PreviewDebtor"
+        },
+        "amountToRecoverOver6Months": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OPTIONAL - MULTI-INVOICE AGE BUCKET PRICING (PRICING ZONE 180-DAY THRESHOLD)",
+          "title": "Amounttorecoverover6Months"
+        },
+        "amountToRecoverOver12Months": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OPTIONAL - MULTI-INVOICE AGE BUCKET PRICING",
+          "title": "Amounttorecoverover12Months"
+        },
+        "amountToRecoverOver24Months": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OPTIONAL - MULTI-INVOICE AGE BUCKET PRICING",
+          "title": "Amounttorecoverover24Months"
+        },
+        "claimLines": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ClaimLine"
+              },
+              "maxItems": 1000,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OPTIONAL - the unpaid invoices making up this claim, one line per invoice, each carrying its",
+          "title": "Claimlines"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional invoice due date. Mutually exclusive with age bucket fields and with ClaimLines.",
+          "title": "Duedate"
+        },
+        "returnUrl": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: URL the creditor user should land on after completing any",
+          "title": "Returnurl"
+        },
+        "operation": {
+          "const": "preview_case",
+          "default": "preview_case",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "currencyCode",
+        "debtor"
+      ],
+      "title": "DebituraPreviewCaseConfig",
+      "type": "object"
+    },
+    "DebituraSendCaseChatConfig": {
+      "additionalProperties": false,
+      "description": "Send a chat message.",
+      "properties": {
+        "message": {
+          "description": "The chat message content to send.",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the team member sending this message.",
+          "title": "Userid"
+        },
+        "userEmail": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address of the team member sending this message.",
+          "title": "Useremail"
+        },
+        "operation": {
+          "const": "send_case_chat",
+          "default": "send_case_chat",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "case_id": {
+          "format": "uuid",
+          "title": "Case Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message",
+        "case_id"
+      ],
+      "title": "DebituraSendCaseChatConfig",
+      "type": "object"
+    },
+    "DebituraUpdateDivisionConfig": {
+      "additionalProperties": false,
+      "description": "Update a division.",
+      "properties": {
+        "companyName": {
+          "maxLength": 200,
+          "minLength": 0,
+          "title": "Companyname",
+          "type": "string"
+        },
+        "registrationNumber": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Registrationnumber"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "zipCode": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zipcode"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "city": {
+          "minLength": 1,
+          "title": "City",
+          "type": "string"
+        },
+        "countryCode": {
+          "maxLength": 2,
+          "minLength": 2,
+          "title": "Countrycode",
+          "type": "string"
+        },
+        "officeEmail": {
+          "anyOf": [
+            {
+              "format": "email",
+              "maxLength": 250,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Officeemail"
+        },
+        "officePhone": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Officephone"
+        },
+        "operation": {
+          "const": "update_division",
+          "default": "update_division",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "division_id": {
+          "format": "uuid",
+          "title": "Division Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "companyName",
+        "city",
+        "countryCode",
+        "division_id"
+      ],
+      "title": "DebituraUpdateDivisionConfig",
+      "type": "object"
+    },
+    "Debtor": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "description": "Debtor type. Valid values: \"Company\" or \"Private\" (case-insensitive)",
+          "enum": [
+            "Company",
+            "Private"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "name": {
+          "description": "Debtor name (company name or person's full name)",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "contactPerson": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact person at the company (required for companies, not used for persons)",
+          "title": "Contactperson"
+        },
+        "companyRegistrationNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company registration number (VAT number, CVR, org number, etc.)",
+          "title": "Companyregistrationnumber"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Street address",
+          "title": "Address"
+        },
+        "zipCode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postal/ZIP code",
+          "title": "Zipcode"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City name",
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "State/region/province name",
+          "title": "State"
+        },
+        "stateAlpha2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "US state: two-letter code (e.g., \"CA\"), ISO 3166-2 format (e.g., \"US-CA\"), or full name (e.g., \"California\")",
+          "title": "Statealpha2"
+        },
+        "countryAlpha2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country code (ISO 3166-1 alpha-2 format)",
+          "title": "Countryalpha2"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Country name",
+          "title": "Country"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address for debtor contact",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone number (include country code)",
+          "title": "Phone"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "title": "Debtor",
+      "type": "object"
+    },
+    "PreviewDebtor": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "description": "Debtor type. Valid values: \"Company\" or \"Private\"",
+          "enum": [
+            "Company",
+            "Private"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "countryAlpha2": {
+          "description": "Country code (ISO 3166-1 alpha-2 format, e.g., \"DK\", \"US\", \"PL\")",
+          "maxLength": 2,
+          "minLength": 2,
+          "title": "Countryalpha2",
+          "type": "string"
+        },
+        "stateAlpha2": {
+          "anyOf": [
+            {
+              "maxLength": 2,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "US state code (e.g., \"CA\", \"NY\")",
+          "title": "Statealpha2"
+        }
+      },
+      "required": [
+        "type",
+        "countryAlpha2"
+      ],
+      "title": "PreviewDebtor",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_division": "#/$defs/DebituraArchiveDivisionConfig",
+          "check_eligibility": "#/$defs/DebituraCheckEligibilityConfig",
+          "create_case": "#/$defs/DebituraCreateCaseConfig",
+          "create_division": "#/$defs/DebituraCreateDivisionConfig",
+          "get_case": "#/$defs/DebituraGetCaseConfig",
+          "get_case_by_creditor_reference": "#/$defs/DebituraGetCaseByCreditorReferenceConfig",
+          "get_case_timeline": "#/$defs/DebituraGetCaseTimelineConfig",
+          "get_contract_status": "#/$defs/DebituraGetContractStatusConfig",
+          "get_division": "#/$defs/DebituraGetDivisionConfig",
+          "get_me": "#/$defs/DebituraGetMeConfig",
+          "get_payment": "#/$defs/DebituraGetPaymentConfig",
+          "list_case_chats": "#/$defs/DebituraListCaseChatsConfig",
+          "list_case_files": "#/$defs/DebituraListCaseFilesConfig",
+          "list_case_payments": "#/$defs/DebituraListCasePaymentsConfig",
+          "list_case_tasks": "#/$defs/DebituraListCaseTasksConfig",
+          "list_cases": "#/$defs/DebituraListCasesConfig",
+          "list_coverage": "#/$defs/DebituraListCoverageConfig",
+          "list_divisions": "#/$defs/DebituraListDivisionsConfig",
+          "list_payments": "#/$defs/DebituraListPaymentsConfig",
+          "list_tasks": "#/$defs/DebituraListTasksConfig",
+          "list_users": "#/$defs/DebituraListUsersConfig",
+          "preview_case": "#/$defs/DebituraPreviewCaseConfig",
+          "send_case_chat": "#/$defs/DebituraSendCaseChatConfig",
+          "update_division": "#/$defs/DebituraUpdateDivisionConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DebituraGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraListCasesConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraCreateCaseConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraPreviewCaseConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraGetCaseConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraGetCaseByCreditorReferenceConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraGetCaseTimelineConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraListCaseChatsConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraSendCaseChatConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraListCasePaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraListCaseTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraListCaseFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraGetContractStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraListCoverageConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraCheckEligibilityConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraListDivisionsConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraGetDivisionConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraCreateDivisionConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraUpdateDivisionConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraArchiveDivisionConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraListPaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraGetPaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/DebituraListUsersConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DebituraAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Debitura Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,334 @@
+{
+  "get_me": {
+    "method": "GET",
+    "path": "/me",
+    "config": {
+      "operation": "get_me"
+    },
+    "status": 200,
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "companyName": "Acme Corporation"
+    }
+  },
+  "list_cases": {
+    "method": "GET",
+    "path": "/cases",
+    "config": {
+      "operation": "list_cases"
+    },
+    "status": 200,
+    "response": {
+      "page": {
+        "currentPage": 1,
+        "pageSize": 10,
+        "totalResults": 0,
+        "skipped": 0
+      },
+      "cases": []
+    }
+  },
+  "create_case": {
+    "method": "POST",
+    "path": "/cases",
+    "config": {
+      "operation": "create_case",
+      "currencyCode": "EUR",
+      "date": "2025-01-15",
+      "dueDate": "2025-02-15",
+      "amountToRecover": 5000.0,
+      "creditorReference": "INV-2025-001",
+      "claimDescription": "Consulting services - January 2025",
+      "debtor": {
+        "type": "Company",
+        "name": "Example GmbH",
+        "companyRegistrationNumber": "HRB 12345",
+        "address": "Hauptstrasse 1",
+        "city": "Berlin",
+        "zipCode": "10115",
+        "countryAlpha2": "DE",
+        "email": "accounts@example.de",
+        "phone": "+49 30 12345678"
+      }
+    },
+    "status": 200,
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  },
+  "preview_case": {
+    "method": "POST",
+    "path": "/cases/preview",
+    "config": {
+      "operation": "preview_case",
+      "amountToRecover": 5000,
+      "currencyCode": "EUR",
+      "debtor": {
+        "type": "Company",
+        "countryAlpha2": "DE"
+      }
+    },
+    "status": 200,
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  },
+  "get_case": {
+    "method": "GET",
+    "path": "/cases/3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "config": {
+      "operation": "get_case",
+      "case_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    },
+    "status": 200,
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  },
+  "get_case_by_creditor_reference": {
+    "method": "GET",
+    "path": "/cases/by-creditor-reference/INV-2025-001",
+    "config": {
+      "operation": "get_case_by_creditor_reference",
+      "creditor_reference": "INV-2025-001"
+    },
+    "status": 200,
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  },
+  "get_case_timeline": {
+    "method": "GET",
+    "path": "/cases/3fa85f64-5717-4562-b3fc-2c963f66afa6/timeline",
+    "config": {
+      "operation": "get_case_timeline",
+      "case_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    },
+    "status": 200,
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  },
+  "list_case_chats": {
+    "method": "GET",
+    "path": "/cases/3fa85f64-5717-4562-b3fc-2c963f66afa6/chats",
+    "config": {
+      "operation": "list_case_chats",
+      "case_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    },
+    "status": 200,
+    "response": []
+  },
+  "send_case_chat": {
+    "method": "POST",
+    "path": "/cases/3fa85f64-5717-4562-b3fc-2c963f66afa6/chats",
+    "config": {
+      "operation": "send_case_chat",
+      "case_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "message": "Please provide the signed contract for this case.",
+      "userEmail": "john.doe@example.com"
+    },
+    "status": 200,
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  },
+  "list_case_payments": {
+    "method": "GET",
+    "path": "/cases/3fa85f64-5717-4562-b3fc-2c963f66afa6/payments",
+    "config": {
+      "operation": "list_case_payments",
+      "case_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    },
+    "status": 200,
+    "response": []
+  },
+  "list_case_tasks": {
+    "method": "GET",
+    "path": "/cases/3fa85f64-5717-4562-b3fc-2c963f66afa6/tasks",
+    "config": {
+      "operation": "list_case_tasks",
+      "case_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    },
+    "status": 200,
+    "response": []
+  },
+  "list_case_files": {
+    "method": "GET",
+    "path": "/cases/3fa85f64-5717-4562-b3fc-2c963f66afa6/files",
+    "config": {
+      "operation": "list_case_files",
+      "case_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    },
+    "status": 200,
+    "response": []
+  },
+  "get_contract_status": {
+    "method": "GET",
+    "path": "/contracts/debt-collection/status",
+    "config": {
+      "operation": "get_contract_status"
+    },
+    "status": 200,
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  },
+  "list_coverage": {
+    "method": "GET",
+    "path": "/coverage",
+    "config": {
+      "operation": "list_coverage"
+    },
+    "status": 200,
+    "response": []
+  },
+  "check_eligibility": {
+    "method": "POST",
+    "path": "/coverage/check-eligibility",
+    "config": {
+      "operation": "check_eligibility",
+      "countryAlpha2": "PL",
+      "debtorType": "Company",
+      "amount": 2500,
+      "currencyCode": "EUR"
+    },
+    "status": 200,
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  },
+  "list_divisions": {
+    "method": "GET",
+    "path": "/divisions",
+    "config": {
+      "operation": "list_divisions"
+    },
+    "status": 200,
+    "response": {
+      "page": {
+        "currentPage": 1,
+        "pageSize": 10,
+        "totalResults": 0,
+        "skipped": 0
+      },
+      "divisions": []
+    }
+  },
+  "get_division": {
+    "method": "GET",
+    "path": "/divisions/3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "config": {
+      "operation": "get_division",
+      "division_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    },
+    "status": 200,
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  },
+  "create_division": {
+    "method": "POST",
+    "path": "/divisions",
+    "config": {
+      "operation": "create_division",
+      "companyName": "Acme Corporation",
+      "city": "Copenhagen",
+      "countryCode": "DK"
+    },
+    "status": 201,
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  },
+  "update_division": {
+    "method": "PUT",
+    "path": "/divisions/3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "config": {
+      "operation": "update_division",
+      "division_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "companyName": "Acme Corporation",
+      "city": "Copenhagen",
+      "countryCode": "DK"
+    },
+    "status": 200,
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  },
+  "archive_division": {
+    "method": "POST",
+    "path": "/divisions/3fa85f64-5717-4562-b3fc-2c963f66afa6/archive",
+    "config": {
+      "operation": "archive_division",
+      "division_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    },
+    "status": 200,
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  },
+  "list_payments": {
+    "method": "GET",
+    "path": "/Payments",
+    "config": {
+      "operation": "list_payments"
+    },
+    "status": 200,
+    "response": {
+      "page": {
+        "currentPage": 1,
+        "pageSize": 10,
+        "totalResults": 0,
+        "skipped": 0
+      },
+      "payments": []
+    }
+  },
+  "get_payment": {
+    "method": "GET",
+    "path": "/Payments/3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "config": {
+      "operation": "get_payment",
+      "payment_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    },
+    "status": 200,
+    "response": {
+      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    }
+  },
+  "list_tasks": {
+    "method": "GET",
+    "path": "/tasks",
+    "config": {
+      "operation": "list_tasks"
+    },
+    "status": 200,
+    "response": {
+      "page": {
+        "currentPage": 1,
+        "pageSize": 10,
+        "totalResults": 0,
+        "skipped": 0
+      },
+      "tasks": []
+    }
+  },
+  "list_users": {
+    "method": "GET",
+    "path": "/users",
+    "config": {
+      "operation": "list_users"
+    },
+    "status": 200,
+    "response": {
+      "page": {
+        "currentPage": 1,
+        "pageSize": 10,
+        "totalResults": 0,
+        "skipped": 0
+      },
+      "users": []
+    }
+  }
+}
