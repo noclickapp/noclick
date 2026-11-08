@@ -1,0 +1,756 @@
+{
+  "$defs": {
+    "AnthropicMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "user",
+            "assistant"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "content": {
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "content"
+      ],
+      "title": "AnthropicMessage",
+      "type": "object"
+    },
+    "ChatMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "system",
+            "user",
+            "assistant",
+            "developer"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "content": {
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "content"
+      ],
+      "title": "ChatMessage",
+      "type": "object"
+    },
+    "CometAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "cometapi_api_key",
+          "default": "cometapi_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Cometapi API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in the CometAPI console and paste it without the Bearer prefix. Connecting reads this key's name and quota. Generation calls consume your CometAPI credits.",
+      "x-credential-url": "https://www.cometapi.com/console/token"
+    },
+    "CreateChatCompletion": {
+      "additionalProperties": false,
+      "description": "Create a non-streaming chat completion from text conversation history.",
+      "properties": {
+        "operation": {
+          "const": "create_chat_completion",
+          "default": "create_chat_completion",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "description": "CometAPI model ID from the model catalog.",
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "messages": {
+          "items": {
+            "$ref": "#/$defs/ChatMessage"
+          },
+          "minItems": 1,
+          "title": "Messages",
+          "type": "array"
+        },
+        "max_completion_tokens": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Completion Tokens"
+        },
+        "reasoning_effort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reasoning Effort"
+        },
+        "temperature": {
+          "anyOf": [
+            {
+              "maximum": 2,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for models that do not support sampling overrides.",
+          "title": "Temperature"
+        }
+      },
+      "required": [
+        "model",
+        "messages"
+      ],
+      "title": "CreateChatCompletion",
+      "type": "object"
+    },
+    "CreateEmbeddings": {
+      "additionalProperties": false,
+      "description": "Create numeric vectors for one text or a batch of texts.",
+      "properties": {
+        "operation": {
+          "const": "create_embeddings",
+          "default": "create_embeddings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "input": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "minLength": 1,
+          "title": "Text Input"
+        },
+        "dimensions": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dimensions"
+        }
+      },
+      "required": [
+        "model",
+        "input"
+      ],
+      "title": "CreateEmbeddings",
+      "type": "object"
+    },
+    "CreateFluxImage": {
+      "additionalProperties": false,
+      "description": "Submit a FLUX image task; poll its ID with Get FLUX Result.",
+      "properties": {
+        "operation": {
+          "const": "create_flux_image",
+          "default": "create_flux_image",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "description": "Native FLUX model ID, for example flux-2-pro.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+          "title": "Model",
+          "type": "string"
+        },
+        "prompt": {
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Format"
+        }
+      },
+      "required": [
+        "model",
+        "prompt"
+      ],
+      "title": "CreateFluxImage",
+      "type": "object"
+    },
+    "CreateMessage": {
+      "additionalProperties": false,
+      "description": "Create a non-streaming Anthropic-format text message.",
+      "properties": {
+        "operation": {
+          "const": "create_message",
+          "default": "create_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "messages": {
+          "items": {
+            "$ref": "#/$defs/AnthropicMessage"
+          },
+          "minItems": 1,
+          "title": "Messages",
+          "type": "array"
+        },
+        "max_tokens": {
+          "minimum": 1,
+          "title": "Max Tokens",
+          "type": "integer"
+        },
+        "system": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "System"
+        }
+      },
+      "required": [
+        "model",
+        "messages",
+        "max_tokens"
+      ],
+      "title": "CreateMessage",
+      "type": "object"
+    },
+    "CreateMidjourneyImage": {
+      "additionalProperties": false,
+      "description": "Submit a Midjourney or Niji imagine task.",
+      "properties": {
+        "operation": {
+          "const": "create_midjourney_image",
+          "default": "create_midjourney_image",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "botType": {
+          "default": "MID_JOURNEY",
+          "enum": [
+            "MID_JOURNEY",
+            "NIJI_JOURNEY"
+          ],
+          "title": "Bot Type",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional tracking value echoed by the provider.",
+          "title": "State"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "CreateMidjourneyImage",
+      "type": "object"
+    },
+    "CreateModeration": {
+      "additionalProperties": false,
+      "description": "Classify text or a batch of texts for moderation.",
+      "properties": {
+        "operation": {
+          "const": "create_moderation",
+          "default": "create_moderation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "default": "omni-moderation-latest",
+          "title": "Model",
+          "type": "string"
+        },
+        "input": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "minLength": 1,
+          "title": "Text to Classify"
+        }
+      },
+      "required": [
+        "input"
+      ],
+      "title": "CreateModeration",
+      "type": "object"
+    },
+    "CreateResponse": {
+      "additionalProperties": false,
+      "description": "Create a non-streaming model response from text input.",
+      "properties": {
+        "operation": {
+          "const": "create_response",
+          "default": "create_response",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "input": {
+          "minLength": 1,
+          "title": "Input Text",
+          "type": "string"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructions"
+        },
+        "max_output_tokens": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Output Tokens"
+        },
+        "reasoning": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Reasoning"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "model",
+        "input"
+      ],
+      "title": "CreateResponse",
+      "type": "object"
+    },
+    "CreateRunwayVideo": {
+      "additionalProperties": false,
+      "description": "Submit a Runway Gen-4.5 text-to-video task.",
+      "properties": {
+        "operation": {
+          "const": "create_runway_video",
+          "default": "create_runway_video",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "const": "gen4.5",
+          "default": "gen4.5",
+          "title": "Model",
+          "type": "string"
+        },
+        "promptText": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "ratio": {
+          "default": "1280:720",
+          "enum": [
+            "1280:720",
+            "720:1280"
+          ],
+          "title": "Ratio",
+          "type": "string"
+        },
+        "duration": {
+          "default": 5,
+          "description": "Duration in whole seconds.",
+          "maximum": 10,
+          "minimum": 2,
+          "title": "Duration",
+          "type": "integer"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "required": [
+        "promptText"
+      ],
+      "title": "CreateRunwayVideo",
+      "type": "object"
+    },
+    "GetCurrentKey": {
+      "additionalProperties": false,
+      "description": "Get the connected API key's name, usage, quota and model limits.",
+      "properties": {
+        "operation": {
+          "const": "get_current_key",
+          "default": "get_current_key",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCurrentKey",
+      "type": "object"
+    },
+    "GetFluxResult": {
+      "additionalProperties": false,
+      "description": "Read FLUX task status and the image URL when ready.",
+      "properties": {
+        "task_id": {
+          "description": "Task ID returned by the matching create operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Task Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_flux_result",
+          "default": "get_flux_result",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "GetFluxResult",
+      "type": "object"
+    },
+    "GetMidjourneyTask": {
+      "additionalProperties": false,
+      "description": "Fetch Midjourney task status, progress, result URLs and buttons.",
+      "properties": {
+        "task_id": {
+          "description": "Task ID returned by the matching create operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Task Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_midjourney_task",
+          "default": "get_midjourney_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "GetMidjourneyTask",
+      "type": "object"
+    },
+    "GetRunwayTask": {
+      "additionalProperties": false,
+      "description": "Read Runway task status and output URLs when available.",
+      "properties": {
+        "task_id": {
+          "description": "Task ID returned by the matching create operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Task Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_runway_task",
+          "default": "get_runway_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "GetRunwayTask",
+      "type": "object"
+    },
+    "ListModels": {
+      "additionalProperties": false,
+      "description": "List the public model catalog; it does not prove account access.",
+      "properties": {
+        "operation": {
+          "const": "list_models",
+          "default": "list_models",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListModels",
+      "type": "object"
+    },
+    "Reasoning": {
+      "additionalProperties": false,
+      "properties": {
+        "effort": {
+          "enum": [
+            "none",
+            "minimal",
+            "low",
+            "medium",
+            "high",
+            "xhigh"
+          ],
+          "title": "Effort",
+          "type": "string"
+        }
+      },
+      "required": [
+        "effort"
+      ],
+      "title": "Reasoning",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_chat_completion": "#/$defs/CreateChatCompletion",
+          "create_embeddings": "#/$defs/CreateEmbeddings",
+          "create_flux_image": "#/$defs/CreateFluxImage",
+          "create_message": "#/$defs/CreateMessage",
+          "create_midjourney_image": "#/$defs/CreateMidjourneyImage",
+          "create_moderation": "#/$defs/CreateModeration",
+          "create_response": "#/$defs/CreateResponse",
+          "create_runway_video": "#/$defs/CreateRunwayVideo",
+          "get_current_key": "#/$defs/GetCurrentKey",
+          "get_flux_result": "#/$defs/GetFluxResult",
+          "get_midjourney_task": "#/$defs/GetMidjourneyTask",
+          "get_runway_task": "#/$defs/GetRunwayTask",
+          "list_models": "#/$defs/ListModels"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCurrentKey"
+        },
+        {
+          "$ref": "#/$defs/ListModels"
+        },
+        {
+          "$ref": "#/$defs/CreateChatCompletion"
+        },
+        {
+          "$ref": "#/$defs/CreateMessage"
+        },
+        {
+          "$ref": "#/$defs/CreateResponse"
+        },
+        {
+          "$ref": "#/$defs/CreateEmbeddings"
+        },
+        {
+          "$ref": "#/$defs/CreateModeration"
+        },
+        {
+          "$ref": "#/$defs/CreateFluxImage"
+        },
+        {
+          "$ref": "#/$defs/GetFluxResult"
+        },
+        {
+          "$ref": "#/$defs/CreateMidjourneyImage"
+        },
+        {
+          "$ref": "#/$defs/GetMidjourneyTask"
+        },
+        {
+          "$ref": "#/$defs/CreateRunwayVideo"
+        },
+        {
+          "$ref": "#/$defs/GetRunwayTask"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CometAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Cometapi Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

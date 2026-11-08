@@ -1,0 +1,479 @@
+{
+  "get_current_key": {
+    "method": "GET",
+    "path": "/api/usage/token",
+    "response": {
+      "code": true,
+      "message": "ok",
+      "data": {
+        "object": "token_usage",
+        "name": "production",
+        "total_granted": 150000,
+        "total_used": 50000,
+        "total_available": 100000,
+        "unlimited_quota": false,
+        "model_limits": {
+          "gpt-4.1": true
+        },
+        "model_limits_enabled": true,
+        "expires_at": 0
+      }
+    },
+    "config": {
+      "operation": "get_current_key"
+    },
+    "source": "https://apidoc.cometapi.com/api/openapi/api-keys/get-current-api-key.openapi.json"
+  },
+  "list_models": {
+    "method": "GET",
+    "path": "/api/models",
+    "response": {
+      "success": true,
+      "page": 0,
+      "page_size": 0,
+      "total": 301,
+      "data": [
+        {
+          "created": 1776391310,
+          "id": "gpt-image-2",
+          "code": "gpt-image-2",
+          "provider": "OpenAI",
+          "provider_code": "openai",
+          "description": "Image generation model for text-to-image and editing workflows.",
+          "tags": [],
+          "name": "GPT Image 2",
+          "model_type": "image",
+          "context_length": null,
+          "max_completion_tokens": null,
+          "features": [
+            "text-to-image"
+          ],
+          "endpoints": "{\n  \"openai-image\": {\n    \"path\": \"/v1/images/generations\",\n    \"method\": \"POST\"\n  }\n}",
+          "pricing": {
+            "currency": "USD / M Tokens",
+            "input": 4,
+            "output": 24,
+            "per_request": null,
+            "per_second": null
+          },
+          "api_doc_url": "https://apidoc.cometapi.com/api/image/openai/images",
+          "upcoming": false
+        }
+      ]
+    },
+    "config": {
+      "operation": "list_models"
+    },
+    "source": "https://apidoc.cometapi.com/api/openapi/overview/get-models.openapi.json"
+  },
+  "create_chat_completion": {
+    "method": "POST",
+    "path": "/v1/chat/completions",
+    "response": {
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "logprobs": null,
+          "message": {
+            "annotations": [],
+            "content": "Hi! How can I help you today?",
+            "refusal": null,
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1788763703,
+      "id": "chatcmpl_example",
+      "model": "gpt-6-astra",
+      "object": "chat.completion",
+      "usage": {
+        "completion_tokens": 12,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 18,
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "total_tokens": 30
+      }
+    },
+    "config": {
+      "operation": "create_chat_completion",
+      "model": "gpt-6-astra",
+      "messages": [
+        {
+          "role": "developer",
+          "content": "You are a helpful assistant."
+        },
+        {
+          "role": "user",
+          "content": "Hello!"
+        }
+      ],
+      "reasoning_effort": "low"
+    },
+    "source": "https://apidoc.cometapi.com/api/openapi/text/post-chat.openapi.json"
+  },
+  "create_message": {
+    "method": "POST",
+    "path": "/v1/messages",
+    "response": {
+      "id": "msg_example",
+      "type": "message",
+      "role": "assistant",
+      "model": "claude-opus-5",
+      "content": [
+        {
+          "type": "text",
+          "text": "Here are three search queries covering different angles of the topic:\n\n1. **\"grid-scale battery storage cost trends 2024 2025\"**\n \u2014 Targets economics and recent price data for lithium-ion and other utility-scale systems.\n\n2. **\"long-duration energy storage technologies comparison flow battery vs compressed air vs thermal\"**\n \u2014 Surfaces technical comparisons of options for storage beyond the 4\u20138 hour range, where lithium-ion becomes less cost-effective.\n\n3. **\"green hydrogen seasonal storage feasibility round-trip efficiency\"**\n \u2014 Digs into the viability of hydrogen for multi-week or seasonal balancing, including its efficiency penalties.\n\n**A few tips for refining these:**\n- Add `site:.gov` or `site:.edu` to prioritize research and agency reports (e.g., NREL, IEA, DOE).\n- Append a region like `Europe`, `India`, or `California` if you need location-specific policy or deployment data.\n- Try `filetype:pdf` to pull up technical white papers and government studies directly.\n\nWant me to tailor these toward a specific use case \u2014 academic research, investment analysis, or policy work?"
+        }
+      ],
+      "stop_reason": "end_turn",
+      "stop_sequence": null,
+      "usage": {
+        "input_tokens": 23,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 437,
+        "output_tokens_details": {
+          "thinking_tokens": 50
+        }
+      }
+    },
+    "config": {
+      "operation": "create_message",
+      "model": "claude-opus-5",
+      "max_tokens": 1000,
+      "messages": [
+        {
+          "role": "user",
+          "content": "Suggest three search queries about renewable energy storage."
+        }
+      ]
+    },
+    "source": "https://apidoc.cometapi.com/api/openapi/text/post-anthropic-messages.openapi.json"
+  },
+  "create_response": {
+    "method": "POST",
+    "path": "/v1/responses",
+    "response": {
+      "id": "resp_example",
+      "object": "response",
+      "created_at": 1788763707,
+      "status": "completed",
+      "background": false,
+      "completed_at": 1788763711,
+      "error": null,
+      "incomplete_details": null,
+      "model": "gpt-6-astra",
+      "output": [
+        {
+          "id": "msg_example",
+          "type": "message",
+          "status": "completed",
+          "content": [
+            {
+              "type": "output_text",
+              "annotations": [],
+              "logprobs": [],
+              "text": "A little unicorn named Luna followed a trail of silver fireflies to a meadow where the flowers chimed softly in the breeze. She curled beneath a willow tree, tucked her hooves into the cool grass, and wished sweet dreams for every creature in the forest. As the moon wrapped the meadow in gentle light, Luna closed her eyes and drifted into dreams of dancing among the stars."
+            }
+          ],
+          "phase": "final_answer",
+          "role": "assistant"
+        }
+      ],
+      "parallel_tool_calls": true,
+      "previous_response_id": null,
+      "reasoning": {
+        "context": "all_turns",
+        "effort": "low",
+        "mode": "standard",
+        "summary": null
+      },
+      "store": true,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "usage": {
+        "input_tokens": 17,
+        "input_tokens_details": {
+          "cache_write_tokens": 0,
+          "cached_tokens": 0
+        },
+        "output_tokens": 81,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 98
+      }
+    },
+    "config": {
+      "operation": "create_response",
+      "model": "gpt-6-astra",
+      "input": "Tell me a three sentence bedtime story about a unicorn.",
+      "reasoning": {
+        "effort": "low"
+      }
+    },
+    "source": "https://apidoc.cometapi.com/api/openapi/text/post-responses.openapi.json"
+  },
+  "create_embeddings": {
+    "method": "POST",
+    "path": "/v1/embeddings",
+    "response": {
+      "object": "list",
+      "data": [
+        {
+          "object": "embedding",
+          "index": 0,
+          "embedding": [
+            -0.0021,
+            -0.0491,
+            0.0209,
+            0.0314,
+            -0.0453
+          ]
+        }
+      ],
+      "model": "text-embedding-3-small",
+      "usage": {
+        "prompt_tokens": 2,
+        "total_tokens": 2
+      }
+    },
+    "config": {
+      "operation": "create_embeddings",
+      "model": "text-embedding-3-small",
+      "input": "The food was delicious and the waiter was friendly."
+    },
+    "source": "https://apidoc.cometapi.com/api/openapi/text/post-embeddings.openapi.json"
+  },
+  "create_moderation": {
+    "method": "POST",
+    "path": "/v1/moderations",
+    "response": {
+      "id": "modr-1594",
+      "model": "omni-moderation-latest",
+      "results": [
+        {
+          "flagged": false,
+          "categories": {
+            "harassment": false,
+            "harassment/threatening": false,
+            "hate": false,
+            "hate/threatening": false,
+            "illicit": false,
+            "illicit/violent": false,
+            "self-harm": false,
+            "self-harm/intent": false,
+            "self-harm/instructions": false,
+            "sexual": false,
+            "sexual/minors": false,
+            "violence": false,
+            "violence/graphic": false
+          },
+          "category_scores": {
+            "harassment": 0.0001,
+            "harassment/threatening": 0.0001,
+            "hate": 0.0001,
+            "hate/threatening": 0.0001,
+            "illicit": 0.0001,
+            "illicit/violent": 0.0001,
+            "self-harm": 0.0001,
+            "self-harm/intent": 0.0001,
+            "self-harm/instructions": 0.0001,
+            "sexual": 0.0001,
+            "sexual/minors": 0.0001,
+            "violence": 0.0001,
+            "violence/graphic": 0.0001
+          },
+          "category_applied_input_types": {
+            "harassment": [
+              "text"
+            ],
+            "harassment/threatening": [
+              "text"
+            ],
+            "hate": [
+              "text"
+            ],
+            "hate/threatening": [
+              "text"
+            ],
+            "illicit": [
+              "text"
+            ],
+            "illicit/violent": [
+              "text"
+            ],
+            "self-harm": [
+              "text"
+            ],
+            "self-harm/intent": [
+              "text"
+            ],
+            "self-harm/instructions": [
+              "text"
+            ],
+            "sexual": [
+              "text"
+            ],
+            "sexual/minors": [
+              "text"
+            ],
+            "violence": [
+              "text"
+            ],
+            "violence/graphic": [
+              "text"
+            ]
+          }
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 12,
+        "completion_tokens": 0,
+        "total_tokens": 12,
+        "input_tokens": 12,
+        "output_tokens": 0,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "input_tokens_details": null,
+        "claude_cache_creation_1_h_tokens": 0,
+        "claude_cache_creation_5_m_tokens": 0
+      }
+    },
+    "config": {
+      "operation": "create_moderation",
+      "model": "omni-moderation-latest",
+      "input": "I want to bake cookies for my family."
+    },
+    "source": "https://apidoc.cometapi.com/api/openapi/content-moderation/create-moderation.openapi.json"
+  },
+  "create_flux_image": {
+    "method": "POST",
+    "path": "/flux/v1/{model}",
+    "response": {
+      "id": "<task_id>",
+      "status": "Pending",
+      "result": {},
+      "polling_url": "https://api.cometapi.com/flux/v1/get_result?id=<task_id>"
+    },
+    "config": {
+      "operation": "create_flux_image",
+      "prompt": "A clean editorial photograph of a red ceramic teapot on a pale blue table, a small yellow lemon on the right, soft window light, no text.",
+      "seed": 424242,
+      "width": 1280,
+      "height": 768,
+      "output_format": "png",
+      "model": "flux-2-pro"
+    },
+    "source": "https://apidoc.cometapi.com/api/openapi/image/flux/post-flux-generate-image.openapi.json"
+  },
+  "get_flux_result": {
+    "method": "GET",
+    "path": "/flux/v1/get_result",
+    "response": {
+      "id": "<task_id>",
+      "status": "Pending",
+      "result": null
+    },
+    "config": {
+      "operation": "get_flux_result",
+      "task_id": "<task_id>"
+    },
+    "source": "https://apidoc.cometapi.com/api/openapi/image/flux/get-flux-query.openapi.json"
+  },
+  "create_midjourney_image": {
+    "method": "POST",
+    "path": "/mj/submit/imagine",
+    "response": {
+      "code": 1,
+      "description": "Submission successful",
+      "result": "1773314942177684",
+      "properties": {
+        "discordChannelId": "5e6ca8e1f40e4de6",
+        "discordInstanceId": "5e6ca8e1f40e4de6"
+      }
+    },
+    "config": {
+      "operation": "create_midjourney_image",
+      "botType": "MID_JOURNEY",
+      "prompt": "a paper boat floating on calm water at sunrise --v 6.1"
+    },
+    "source": "https://apidoc.cometapi.com/api/openapi/image/midjourney/post-imagine.openapi.json"
+  },
+  "get_midjourney_task": {
+    "method": "GET",
+    "path": "/mj/task/{id}/fetch",
+    "response": {
+      "id": "1773314942177684",
+      "status": "SUCCESS",
+      "progress": "100%",
+      "imageUrl": "https://api.cometapi.com/mj/image/1773314942177684",
+      "videoUrl": "",
+      "buttons": [
+        {
+          "customId": "MJ::JOB::upsample::1::example",
+          "emoji": "",
+          "label": "U1",
+          "type": 2,
+          "style": 1
+        }
+      ]
+    },
+    "config": {
+      "operation": "get_midjourney_task",
+      "task_id": "1773314942177684"
+    },
+    "source": "https://apidoc.cometapi.com/api/openapi/image/midjourney/task-fetching-api/get-fetch-single-task.openapi.json"
+  },
+  "create_runway_video": {
+    "method": "POST",
+    "path": "/runwayml/v1/text_to_video",
+    "response": {
+      "id": "00000000-0000-4000-8000-000000000001"
+    },
+    "config": {
+      "operation": "create_runway_video",
+      "model": "gen4.5",
+      "promptText": "A paper boat drifts on calm water at sunrise.",
+      "ratio": "1280:720",
+      "duration": 5
+    },
+    "source": "https://apidoc.cometapi.com/api/openapi/video/runway/official-format/post-generate-a-video-from-text.openapi.json"
+  },
+  "get_runway_task": {
+    "method": "GET",
+    "path": "/runwayml/v1/tasks/{id}",
+    "response": {
+      "id": "00000000-0000-4000-8000-000000000001"
+    },
+    "config": {
+      "operation": "get_runway_task",
+      "task_id": "00000000-0000-4000-8000-000000000001"
+    },
+    "source": "https://apidoc.cometapi.com/api/openapi/video/runway/official-format/get-runway-to-get-task-details.openapi.json"
+  }
+}
