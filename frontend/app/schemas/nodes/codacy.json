@@ -1,0 +1,1420 @@
+{
+  "$defs": {
+    "CodacyAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "codacy_api_token",
+          "default": "codacy_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Codacy API Token",
+      "type": "object",
+      "x-credential-instructions": "In Codacy, open your account \u2192 Access management and click Create API token under Account API tokens. Paste it here. NoClick sends it in the api-token header to api.codacy.com. Repository tokens do not support all these operations. Access follows your Codacy account permissions.",
+      "x-credential-url": "https://docs.codacy.com/codacy-api/api-tokens/#account-api-tokens"
+    },
+    "CodacyFollowRepositoryConfig": {
+      "additionalProperties": false,
+      "description": "Follow a repository that was already added to Codacy",
+      "properties": {
+        "operation": {
+          "const": "follow_repository",
+          "default": "follow_repository",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository"
+      ],
+      "title": "CodacyFollowRepositoryConfig",
+      "type": "object"
+    },
+    "CodacyGetCommitConfig": {
+      "additionalProperties": false,
+      "description": "Get analysis results for a commit",
+      "properties": {
+        "operation": {
+          "const": "get_commit",
+          "default": "get_commit",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        },
+        "commit_uuid": {
+          "description": "UUID or SHA string that identifies the commit",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Commit Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository",
+        "commit_uuid"
+      ],
+      "title": "CodacyGetCommitConfig",
+      "type": "object"
+    },
+    "CodacyGetIssueConfig": {
+      "additionalProperties": false,
+      "description": "Get information about an open issue in a repository",
+      "properties": {
+        "operation": {
+          "const": "get_issue",
+          "default": "get_issue",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        },
+        "issue_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Issue Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository",
+        "issue_id"
+      ],
+      "title": "CodacyGetIssueConfig",
+      "type": "object"
+    },
+    "CodacyGetPullRequestConfig": {
+      "additionalProperties": false,
+      "description": "Get pull request from a repository",
+      "properties": {
+        "operation": {
+          "const": "get_pull_request",
+          "default": "get_pull_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        },
+        "pull_request_number": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Pull Request Number",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository",
+        "pull_request_number"
+      ],
+      "title": "CodacyGetPullRequestConfig",
+      "type": "object"
+    },
+    "CodacyGetPullRequestCoverageConfig": {
+      "additionalProperties": false,
+      "description": "Get pull request coverage information from a repository",
+      "properties": {
+        "operation": {
+          "const": "get_pull_request_coverage",
+          "default": "get_pull_request_coverage",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        },
+        "pull_request_number": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Pull Request Number",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository",
+        "pull_request_number"
+      ],
+      "title": "CodacyGetPullRequestCoverageConfig",
+      "type": "object"
+    },
+    "CodacyGetRepositoryAnalysisConfig": {
+      "additionalProperties": false,
+      "description": "Get a repository with analysis information for the authenticated user",
+      "properties": {
+        "operation": {
+          "const": "get_repository_analysis",
+          "default": "get_repository_analysis",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        },
+        "branch": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Branch"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository"
+      ],
+      "title": "CodacyGetRepositoryAnalysisConfig",
+      "type": "object"
+    },
+    "CodacyGetRepositoryConfig": {
+      "additionalProperties": false,
+      "description": "Fetch the specified repository",
+      "properties": {
+        "operation": {
+          "const": "get_repository",
+          "default": "get_repository",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository"
+      ],
+      "title": "CodacyGetRepositoryConfig",
+      "type": "object"
+    },
+    "CodacyGetUserConfig": {
+      "additionalProperties": false,
+      "description": "Get the authenticated user",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CodacyGetUserConfig",
+      "type": "object"
+    },
+    "CodacyListBranchesConfig": {
+      "additionalProperties": false,
+      "description": "List repository branches",
+      "properties": {
+        "operation": {
+          "const": "list_branches",
+          "default": "list_branches",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "description": "One page only; pass the returned pagination cursor to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository"
+      ],
+      "title": "CodacyListBranchesConfig",
+      "type": "object"
+    },
+    "CodacyListCommitsConfig": {
+      "additionalProperties": false,
+      "description": "Return analysis results for the commits in a branch",
+      "properties": {
+        "operation": {
+          "const": "list_commits",
+          "default": "list_commits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        },
+        "branch": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Branch"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "description": "One page only; pass the returned pagination cursor to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository"
+      ],
+      "title": "CodacyListCommitsConfig",
+      "type": "object"
+    },
+    "CodacyListFilesConfig": {
+      "additionalProperties": false,
+      "description": "List files in a repository",
+      "properties": {
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        },
+        "branch": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Branch"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "description": "One page only; pass the returned pagination cursor to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository"
+      ],
+      "title": "CodacyListFilesConfig",
+      "type": "object"
+    },
+    "CodacyListIgnoredFilesConfig": {
+      "additionalProperties": false,
+      "description": "List ignored files in a repository",
+      "properties": {
+        "operation": {
+          "const": "list_ignored_files",
+          "default": "list_ignored_files",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        },
+        "branch": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Branch"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "description": "One page only; pass the returned pagination cursor to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository"
+      ],
+      "title": "CodacyListIgnoredFilesConfig",
+      "type": "object"
+    },
+    "CodacyListOrganizationsConfig": {
+      "additionalProperties": false,
+      "description": "List organizations for the authenticated user",
+      "properties": {
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "description": "One page only; pass the returned pagination cursor to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "CodacyListOrganizationsConfig",
+      "type": "object"
+    },
+    "CodacyListPullRequestIssuesConfig": {
+      "additionalProperties": false,
+      "description": "List issues found in a pull request",
+      "properties": {
+        "operation": {
+          "const": "list_pull_request_issues",
+          "default": "list_pull_request_issues",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        },
+        "pull_request_number": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Pull Request Number",
+          "type": "integer"
+        },
+        "issue_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "all",
+                "new",
+                "fixed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issue Status",
+          "enum": [
+            "all",
+            "new",
+            "fixed"
+          ],
+          "x-enum-searchable": true
+        },
+        "only_potential": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Only Potential"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "description": "One page only; pass the returned pagination cursor to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository",
+        "pull_request_number"
+      ],
+      "title": "CodacyListPullRequestIssuesConfig",
+      "type": "object"
+    },
+    "CodacyListPullRequestsConfig": {
+      "additionalProperties": false,
+      "description": "List pull requests from a repository that the user has access to",
+      "properties": {
+        "operation": {
+          "const": "list_pull_requests",
+          "default": "list_pull_requests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "description": "One page only; pass the returned pagination cursor to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository"
+      ],
+      "title": "CodacyListPullRequestsConfig",
+      "type": "object"
+    },
+    "CodacyListRepositoriesConfig": {
+      "additionalProperties": false,
+      "description": "List organization repositories for the authenticated user",
+      "properties": {
+        "operation": {
+          "const": "list_repositories",
+          "default": "list_repositories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "description": "One page only; pass the returned pagination cursor to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "required": [
+        "provider",
+        "organization"
+      ],
+      "title": "CodacyListRepositoriesConfig",
+      "type": "object"
+    },
+    "CodacyListRepositoryAnalysisConfig": {
+      "additionalProperties": false,
+      "description": "List organization repositories with analysis information for the authenticated user",
+      "properties": {
+        "operation": {
+          "const": "list_repository_analysis",
+          "default": "list_repository_analysis",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "description": "One page only; pass the returned pagination cursor to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "required": [
+        "provider",
+        "organization"
+      ],
+      "title": "CodacyListRepositoryAnalysisConfig",
+      "type": "object"
+    },
+    "CodacyReanalyzeCommitConfig": {
+      "additionalProperties": false,
+      "description": "Reanalyze a specific commit in a repository",
+      "properties": {
+        "operation": {
+          "const": "reanalyze_commit",
+          "default": "reanalyze_commit",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        },
+        "commit_uuid": {
+          "description": "Commit SHA or UUID to queue for analysis.",
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Commit Uuid",
+          "type": "string"
+        },
+        "clean_cache": {
+          "default": false,
+          "title": "Clean Cache",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository",
+        "commit_uuid"
+      ],
+      "title": "CodacyReanalyzeCommitConfig",
+      "type": "object"
+    },
+    "CodacyUnfollowRepositoryConfig": {
+      "additionalProperties": false,
+      "description": "Unfollow a repository",
+      "properties": {
+        "operation": {
+          "const": "unfollow_repository",
+          "default": "unfollow_repository",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository"
+      ],
+      "title": "CodacyUnfollowRepositoryConfig",
+      "type": "object"
+    },
+    "CodacyUpdateFileStateConfig": {
+      "additionalProperties": false,
+      "description": "Ignore or unignore a file",
+      "properties": {
+        "operation": {
+          "const": "update_file_state",
+          "default": "update_file_state",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        },
+        "filepath": {
+          "description": "Relative file path in the repository.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Filepath",
+          "type": "string"
+        },
+        "ignored": {
+          "title": "Ignored",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository",
+        "filepath",
+        "ignored"
+      ],
+      "title": "CodacyUpdateFileStateConfig",
+      "type": "object"
+    },
+    "CodacyUpdateIssueStateConfig": {
+      "additionalProperties": false,
+      "description": "Ignore or unignore an issue",
+      "properties": {
+        "operation": {
+          "const": "update_issue_state",
+          "default": "update_issue_state",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "provider": {
+          "description": "Git provider identifier (e.g., gh for GitHub, gl for GitLab, bb for Bitbucket)",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "organization": {
+          "description": "Organization name on the Git provider",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Organization",
+          "type": "string"
+        },
+        "repository": {
+          "description": "Repository name on the Git provider organization",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        },
+        "issue_id": {
+          "description": "Issue identifier",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Issue Id",
+          "type": "string"
+        },
+        "ignored": {
+          "title": "Ignored",
+          "type": "boolean"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "AcceptedUse",
+                "FalsePositive",
+                "NotExploitable",
+                "TestCode",
+                "ExternalCode"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason",
+          "enum": [
+            "AcceptedUse",
+            "FalsePositive",
+            "NotExploitable",
+            "TestCode",
+            "ExternalCode"
+          ],
+          "x-enum-searchable": true
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Comment"
+        }
+      },
+      "required": [
+        "provider",
+        "organization",
+        "repository",
+        "issue_id",
+        "ignored"
+      ],
+      "title": "CodacyUpdateIssueStateConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "follow_repository": "#/$defs/CodacyFollowRepositoryConfig",
+          "get_commit": "#/$defs/CodacyGetCommitConfig",
+          "get_issue": "#/$defs/CodacyGetIssueConfig",
+          "get_pull_request": "#/$defs/CodacyGetPullRequestConfig",
+          "get_pull_request_coverage": "#/$defs/CodacyGetPullRequestCoverageConfig",
+          "get_repository": "#/$defs/CodacyGetRepositoryConfig",
+          "get_repository_analysis": "#/$defs/CodacyGetRepositoryAnalysisConfig",
+          "get_user": "#/$defs/CodacyGetUserConfig",
+          "list_branches": "#/$defs/CodacyListBranchesConfig",
+          "list_commits": "#/$defs/CodacyListCommitsConfig",
+          "list_files": "#/$defs/CodacyListFilesConfig",
+          "list_ignored_files": "#/$defs/CodacyListIgnoredFilesConfig",
+          "list_organizations": "#/$defs/CodacyListOrganizationsConfig",
+          "list_pull_request_issues": "#/$defs/CodacyListPullRequestIssuesConfig",
+          "list_pull_requests": "#/$defs/CodacyListPullRequestsConfig",
+          "list_repositories": "#/$defs/CodacyListRepositoriesConfig",
+          "list_repository_analysis": "#/$defs/CodacyListRepositoryAnalysisConfig",
+          "reanalyze_commit": "#/$defs/CodacyReanalyzeCommitConfig",
+          "unfollow_repository": "#/$defs/CodacyUnfollowRepositoryConfig",
+          "update_file_state": "#/$defs/CodacyUpdateFileStateConfig",
+          "update_issue_state": "#/$defs/CodacyUpdateIssueStateConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CodacyGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyListOrganizationsConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyListRepositoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyGetRepositoryConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyListBranchesConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyListRepositoryAnalysisConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyGetRepositoryAnalysisConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyListPullRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyGetPullRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyGetPullRequestCoverageConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyListFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyListIgnoredFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyFollowRepositoryConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyUnfollowRepositoryConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyReanalyzeCommitConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyUpdateFileStateConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyListCommitsConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyGetCommitConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyGetIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyUpdateIssueStateConfig"
+        },
+        {
+          "$ref": "#/$defs/CodacyListPullRequestIssuesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CodacyAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Codacy Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

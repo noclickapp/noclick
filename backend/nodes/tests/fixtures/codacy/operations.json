@@ -1,0 +1,235 @@
+{
+  "get_user": {
+    "config": {
+      "operation": "get_user"
+    },
+    "method": "GET",
+    "path": "/user",
+    "operation_id": "getUser"
+  },
+  "list_organizations": {
+    "config": {
+      "operation": "list_organizations"
+    },
+    "method": "GET",
+    "path": "/user/organizations",
+    "operation_id": "listUserOrganizations"
+  },
+  "list_repositories": {
+    "config": {
+      "operation": "list_repositories",
+      "provider": "gh",
+      "organization": "codacy"
+    },
+    "method": "GET",
+    "path": "/organizations/{provider}/{remoteOrganizationName}/repositories",
+    "operation_id": "listOrganizationRepositories"
+  },
+  "get_repository": {
+    "config": {
+      "operation": "get_repository",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo"
+    },
+    "method": "GET",
+    "path": "/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}",
+    "operation_id": "getRepository"
+  },
+  "list_branches": {
+    "config": {
+      "operation": "list_branches",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo"
+    },
+    "method": "GET",
+    "path": "/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/branches",
+    "operation_id": "listRepositoryBranches"
+  },
+  "list_repository_analysis": {
+    "config": {
+      "operation": "list_repository_analysis",
+      "provider": "gh",
+      "organization": "codacy"
+    },
+    "method": "GET",
+    "path": "/analysis/organizations/{provider}/{remoteOrganizationName}/repositories",
+    "operation_id": "listOrganizationRepositoriesWithAnalysis"
+  },
+  "get_repository_analysis": {
+    "config": {
+      "operation": "get_repository_analysis",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo"
+    },
+    "method": "GET",
+    "path": "/analysis/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}",
+    "operation_id": "getRepositoryWithAnalysis"
+  },
+  "list_pull_requests": {
+    "config": {
+      "operation": "list_pull_requests",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo"
+    },
+    "method": "GET",
+    "path": "/analysis/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/pull-requests",
+    "operation_id": "listRepositoryPullRequests"
+  },
+  "get_pull_request": {
+    "config": {
+      "operation": "get_pull_request",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo",
+      "pull_request_number": 738490
+    },
+    "method": "GET",
+    "path": "/analysis/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/pull-requests/{pullRequestNumber}",
+    "operation_id": "getRepositoryPullRequest"
+  },
+  "get_pull_request_coverage": {
+    "config": {
+      "operation": "get_pull_request_coverage",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo",
+      "pull_request_number": 738490
+    },
+    "method": "GET",
+    "path": "/coverage/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/pull-requests/{pullRequestNumber}",
+    "operation_id": "getRepositoryPullRequestCoverage"
+  },
+  "list_files": {
+    "config": {
+      "operation": "list_files",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo"
+    },
+    "method": "GET",
+    "path": "/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/files",
+    "operation_id": "listFiles"
+  },
+  "list_ignored_files": {
+    "config": {
+      "operation": "list_ignored_files",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo"
+    },
+    "method": "GET",
+    "path": "/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/ignored-files",
+    "operation_id": "listIgnoredFiles"
+  },
+  "follow_repository": {
+    "config": {
+      "operation": "follow_repository",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo"
+    },
+    "method": "POST",
+    "path": "/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/follow",
+    "operation_id": "followAddedRepository"
+  },
+  "unfollow_repository": {
+    "config": {
+      "operation": "unfollow_repository",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo"
+    },
+    "method": "DELETE",
+    "path": "/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/follow",
+    "operation_id": "unfollowRepository"
+  },
+  "reanalyze_commit": {
+    "config": {
+      "operation": "reanalyze_commit",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo",
+      "commit_uuid": "2957025d42e8daadf937d4044516f991d21deea4"
+    },
+    "method": "POST",
+    "path": "/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/reanalyzeCommit",
+    "operation_id": "reanalyzeCommitById"
+  },
+  "update_file_state": {
+    "config": {
+      "operation": "update_file_state",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo",
+      "filepath": "src/main/scala/main/Main.scala",
+      "ignored": true
+    },
+    "method": "PATCH",
+    "path": "/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/file",
+    "operation_id": "updateFileState"
+  },
+  "list_commits": {
+    "config": {
+      "operation": "list_commits",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo"
+    },
+    "method": "GET",
+    "path": "/analysis/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/commits",
+    "operation_id": "listRepositoryCommits"
+  },
+  "get_commit": {
+    "config": {
+      "operation": "get_commit",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo",
+      "commit_uuid": "2957025d42e8daadf937d4044516f991d21deea4"
+    },
+    "method": "GET",
+    "path": "/analysis/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/commits/{commitUuid}",
+    "operation_id": "getCommit"
+  },
+  "get_issue": {
+    "config": {
+      "operation": "get_issue",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo",
+      "issue_id": 1
+    },
+    "method": "GET",
+    "path": "/analysis/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/issues/{issueId}",
+    "operation_id": "getIssue"
+  },
+  "update_issue_state": {
+    "config": {
+      "operation": "update_issue_state",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo",
+      "issue_id": 1,
+      "ignored": true
+    },
+    "method": "PATCH",
+    "path": "/analysis/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/issues/{issueId}",
+    "operation_id": "updateIssueState"
+  },
+  "list_pull_request_issues": {
+    "config": {
+      "operation": "list_pull_request_issues",
+      "provider": "gh",
+      "organization": "codacy",
+      "repository": "awesome-repo",
+      "pull_request_number": 738490
+    },
+    "method": "GET",
+    "path": "/analysis/organizations/{provider}/{remoteOrganizationName}/repositories/{repositoryName}/pull-requests/{pullRequestNumber}/issues",
+    "operation_id": "listPullRequestIssues"
+  }
+}
