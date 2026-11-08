@@ -1,0 +1,1257 @@
+{
+  "$defs": {
+    "RootlyAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "rootly_api_key",
+          "default": "rootly_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Rootly API Key",
+      "type": "object",
+      "x-credential-instructions": "In Rootly, open the organization dropdown, then Organization Settings > API Keys. Create a key with access to the incidents and resources you want to automate, and paste the key here without the Bearer prefix. NoClick sends it only to api.rootly.com. Connecting reads your incidents; write permissions depend on the key's access.",
+      "x-credential-url": "https://docs.rootly.com/api-reference/overview"
+    },
+    "RootlyCreateActionItem": {
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 50000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "task",
+                "follow_up"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind",
+          "enum": [
+            "task",
+            "follow_up"
+          ],
+          "x-enum-searchable": true
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "in_progress",
+                "cancelled",
+                "done"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "open",
+            "in_progress",
+            "cancelled",
+            "done"
+          ],
+          "x-enum-searchable": true
+        },
+        "assigned_to_user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned To User Id"
+        },
+        "assigned_to_group_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned team IDs"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date accepted by Rootly, for example 2026-11-30.",
+          "title": "Due Date"
+        },
+        "operation": {
+          "const": "create_action_item",
+          "default": "create_action_item",
+          "title": "Operation",
+          "type": "string"
+        },
+        "incident_id": {
+          "title": "Incident Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "summary",
+        "incident_id"
+      ],
+      "title": "RootlyCreateActionItem",
+      "type": "object"
+    },
+    "RootlyCreateIncident": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "maxLength": 50000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "in_triage",
+                "started",
+                "detected",
+                "acknowledged",
+                "mitigated",
+                "resolved",
+                "closed",
+                "cancelled",
+                "scheduled",
+                "in_progress",
+                "completed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "in_triage",
+            "started",
+            "detected",
+            "acknowledged",
+            "mitigated",
+            "resolved",
+            "closed",
+            "cancelled",
+            "scheduled",
+            "in_progress",
+            "completed"
+          ],
+          "x-enum-searchable": true
+        },
+        "severity_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Severity Id"
+        },
+        "service_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Service IDs to attach. An empty list clears the selection.",
+          "title": "Service Ids"
+        },
+        "group_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rootly calls these group_ids. An empty list clears the selection.",
+          "title": "Team IDs"
+        },
+        "operation": {
+          "const": "create_incident",
+          "default": "create_incident",
+          "title": "Operation",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse the same key when retrying this creation within 24 hours to prevent duplicates.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "RootlyCreateIncident",
+      "type": "object"
+    },
+    "RootlyCreateIncidentEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_incident_event",
+          "default": "create_incident_event",
+          "title": "Operation",
+          "type": "string"
+        },
+        "incident_id": {
+          "title": "Incident Id",
+          "type": "string"
+        },
+        "event": {
+          "description": "Timeline event summary.",
+          "maxLength": 50000,
+          "minLength": 1,
+          "title": "Event",
+          "type": "string"
+        },
+        "visibility": {
+          "anyOf": [
+            {
+              "enum": [
+                "internal",
+                "external"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visibility",
+          "enum": [
+            "internal",
+            "external"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "incident_id",
+        "event"
+      ],
+      "title": "RootlyCreateIncidentEvent",
+      "type": "object"
+    },
+    "RootlyDeleteIncident": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_incident",
+          "default": "delete_incident",
+          "title": "Operation",
+          "type": "string"
+        },
+        "incident_id": {
+          "description": "Incident to delete permanently.",
+          "title": "Incident Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "RootlyDeleteIncident",
+      "type": "object"
+    },
+    "RootlyGetActionItem": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_action_item",
+          "default": "get_action_item",
+          "title": "Operation",
+          "type": "string"
+        },
+        "action_item_id": {
+          "title": "Action Item Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "action_item_id"
+      ],
+      "title": "RootlyGetActionItem",
+      "type": "object"
+    },
+    "RootlyGetCurrentUser": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "RootlyGetCurrentUser",
+      "type": "object"
+    },
+    "RootlyGetIncident": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_incident",
+          "default": "get_incident",
+          "title": "Operation",
+          "type": "string"
+        },
+        "incident_id": {
+          "title": "Incident Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "RootlyGetIncident",
+      "type": "object"
+    },
+    "RootlyGetService": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_service",
+          "default": "get_service",
+          "title": "Operation",
+          "type": "string"
+        },
+        "service_id": {
+          "title": "Service Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "service_id"
+      ],
+      "title": "RootlyGetService",
+      "type": "object"
+    },
+    "RootlyGetSeverity": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_severity",
+          "default": "get_severity",
+          "title": "Operation",
+          "type": "string"
+        },
+        "severity_id": {
+          "title": "Severity Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "severity_id"
+      ],
+      "title": "RootlyGetSeverity",
+      "type": "object"
+    },
+    "RootlyGetTeam": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_team",
+          "default": "get_team",
+          "title": "Operation",
+          "type": "string"
+        },
+        "team_id": {
+          "title": "Team Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "RootlyGetTeam",
+      "type": "object"
+    },
+    "RootlyGetUser": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string"
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "RootlyGetUser",
+      "type": "object"
+    },
+    "RootlyListActionItems": {
+      "additionalProperties": false,
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Increment the page number to fetch another page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Maximum number of records requested in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_action_items",
+          "default": "list_action_items",
+          "title": "Operation",
+          "type": "string"
+        },
+        "incident_id": {
+          "title": "Incident Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "RootlyListActionItems",
+      "type": "object"
+    },
+    "RootlyListIncidentEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Increment the page number to fetch another page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Maximum number of records requested in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_incident_events",
+          "default": "list_incident_events",
+          "title": "Operation",
+          "type": "string"
+        },
+        "incident_id": {
+          "title": "Incident Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "RootlyListIncidentEvents",
+      "type": "object"
+    },
+    "RootlyListIncidents": {
+      "additionalProperties": false,
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Increment the page number to fetch another page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Maximum number of records requested in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_incidents",
+          "default": "list_incidents",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rootly incident search filter.",
+          "title": "Search"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rootly status filter, for example started or resolved.",
+          "title": "Status"
+        },
+        "severity_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Severity Id"
+        }
+      },
+      "title": "RootlyListIncidents",
+      "type": "object"
+    },
+    "RootlyListServices": {
+      "additionalProperties": false,
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Increment the page number to fetch another page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Maximum number of records requested in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_services",
+          "default": "list_services",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "RootlyListServices",
+      "type": "object"
+    },
+    "RootlyListSeverities": {
+      "additionalProperties": false,
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Increment the page number to fetch another page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Maximum number of records requested in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_severities",
+          "default": "list_severities",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "RootlyListSeverities",
+      "type": "object"
+    },
+    "RootlyListTeams": {
+      "additionalProperties": false,
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Increment the page number to fetch another page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Maximum number of records requested in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "RootlyListTeams",
+      "type": "object"
+    },
+    "RootlyListUsers": {
+      "additionalProperties": false,
+      "properties": {
+        "page_number": {
+          "default": 1,
+          "description": "Read one page. Increment the page number to fetch another page.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Maximum number of records requested in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "RootlyListUsers",
+      "type": "object"
+    },
+    "RootlyUpdateActionItem": {
+      "additionalProperties": false,
+      "properties": {
+        "summary": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 50000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "task",
+                "follow_up"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind",
+          "enum": [
+            "task",
+            "follow_up"
+          ],
+          "x-enum-searchable": true
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "in_progress",
+                "cancelled",
+                "done"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "open",
+            "in_progress",
+            "cancelled",
+            "done"
+          ],
+          "x-enum-searchable": true
+        },
+        "assigned_to_user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned To User Id"
+        },
+        "assigned_to_group_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned team IDs"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date accepted by Rootly, for example 2026-11-30.",
+          "title": "Due Date"
+        },
+        "operation": {
+          "const": "update_action_item",
+          "default": "update_action_item",
+          "title": "Operation",
+          "type": "string"
+        },
+        "action_item_id": {
+          "title": "Action Item Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "action_item_id"
+      ],
+      "title": "RootlyUpdateActionItem",
+      "type": "object"
+    },
+    "RootlyUpdateIncident": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "maxLength": 50000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "in_triage",
+                "started",
+                "detected",
+                "acknowledged",
+                "mitigated",
+                "resolved",
+                "closed",
+                "cancelled",
+                "scheduled",
+                "in_progress",
+                "completed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "in_triage",
+            "started",
+            "detected",
+            "acknowledged",
+            "mitigated",
+            "resolved",
+            "closed",
+            "cancelled",
+            "scheduled",
+            "in_progress",
+            "completed"
+          ],
+          "x-enum-searchable": true
+        },
+        "severity_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Severity Id"
+        },
+        "service_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Service IDs to attach. An empty list clears the selection.",
+          "title": "Service Ids"
+        },
+        "group_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rootly calls these group_ids. An empty list clears the selection.",
+          "title": "Team IDs"
+        },
+        "operation": {
+          "const": "update_incident",
+          "default": "update_incident",
+          "title": "Operation",
+          "type": "string"
+        },
+        "incident_id": {
+          "title": "Incident Id",
+          "type": "string"
+        },
+        "resolution_message": {
+          "anyOf": [
+            {
+              "maxLength": 50000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolution Message"
+        },
+        "mitigation_message": {
+          "anyOf": [
+            {
+              "maxLength": 50000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mitigation Message"
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "RootlyUpdateIncident",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_action_item": "#/$defs/RootlyCreateActionItem",
+          "create_incident": "#/$defs/RootlyCreateIncident",
+          "create_incident_event": "#/$defs/RootlyCreateIncidentEvent",
+          "delete_incident": "#/$defs/RootlyDeleteIncident",
+          "get_action_item": "#/$defs/RootlyGetActionItem",
+          "get_current_user": "#/$defs/RootlyGetCurrentUser",
+          "get_incident": "#/$defs/RootlyGetIncident",
+          "get_service": "#/$defs/RootlyGetService",
+          "get_severity": "#/$defs/RootlyGetSeverity",
+          "get_team": "#/$defs/RootlyGetTeam",
+          "get_user": "#/$defs/RootlyGetUser",
+          "list_action_items": "#/$defs/RootlyListActionItems",
+          "list_incident_events": "#/$defs/RootlyListIncidentEvents",
+          "list_incidents": "#/$defs/RootlyListIncidents",
+          "list_services": "#/$defs/RootlyListServices",
+          "list_severities": "#/$defs/RootlyListSeverities",
+          "list_teams": "#/$defs/RootlyListTeams",
+          "list_users": "#/$defs/RootlyListUsers",
+          "update_action_item": "#/$defs/RootlyUpdateActionItem",
+          "update_incident": "#/$defs/RootlyUpdateIncident"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RootlyListIncidents"
+        },
+        {
+          "$ref": "#/$defs/RootlyGetIncident"
+        },
+        {
+          "$ref": "#/$defs/RootlyCreateIncident"
+        },
+        {
+          "$ref": "#/$defs/RootlyUpdateIncident"
+        },
+        {
+          "$ref": "#/$defs/RootlyDeleteIncident"
+        },
+        {
+          "$ref": "#/$defs/RootlyListIncidentEvents"
+        },
+        {
+          "$ref": "#/$defs/RootlyCreateIncidentEvent"
+        },
+        {
+          "$ref": "#/$defs/RootlyListActionItems"
+        },
+        {
+          "$ref": "#/$defs/RootlyCreateActionItem"
+        },
+        {
+          "$ref": "#/$defs/RootlyGetActionItem"
+        },
+        {
+          "$ref": "#/$defs/RootlyUpdateActionItem"
+        },
+        {
+          "$ref": "#/$defs/RootlyListTeams"
+        },
+        {
+          "$ref": "#/$defs/RootlyGetTeam"
+        },
+        {
+          "$ref": "#/$defs/RootlyListServices"
+        },
+        {
+          "$ref": "#/$defs/RootlyGetService"
+        },
+        {
+          "$ref": "#/$defs/RootlyListSeverities"
+        },
+        {
+          "$ref": "#/$defs/RootlyGetSeverity"
+        },
+        {
+          "$ref": "#/$defs/RootlyListUsers"
+        },
+        {
+          "$ref": "#/$defs/RootlyGetUser"
+        },
+        {
+          "$ref": "#/$defs/RootlyGetCurrentUser"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RootlyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Rootly Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/rootly.png",
+  "source": "https://rootly-heroku.s3.us-east-1.amazonaws.com/swagger/v1/logo.png",
+  "license": "Rootly trademark; used to identify the Rootly integration",
+  "sha256": "09b814bbede073c643bfc5dec952fc90afd82ef41927bc8ddd2f40fe2675f1a6"
+}

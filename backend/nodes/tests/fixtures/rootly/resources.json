@@ -1,0 +1,51 @@
+{
+  "incidents": {
+    "id": "inc1",
+    "type": "incidents",
+    "attributes": {
+      "title": "Database unavailable"
+    }
+  },
+  "incident_events": {
+    "id": "evt1",
+    "type": "incident_events",
+    "attributes": {
+      "event": "Mitigation deployed"
+    }
+  },
+  "incident_action_items": {
+    "id": "act1",
+    "type": "incident_action_items",
+    "attributes": {
+      "summary": "Add failover"
+    }
+  },
+  "groups": {
+    "id": "team1",
+    "type": "groups",
+    "attributes": {
+      "name": "Platform"
+    }
+  },
+  "services": {
+    "id": "svc1",
+    "type": "services",
+    "attributes": {
+      "name": "Database"
+    }
+  },
+  "severities": {
+    "id": "sev1",
+    "type": "severities",
+    "attributes": {
+      "name": "SEV1"
+    }
+  },
+  "users": {
+    "id": "123",
+    "type": "users",
+    "attributes": {
+      "name": "Fixture User"
+    }
+  }
+}
