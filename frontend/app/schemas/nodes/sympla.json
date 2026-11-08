@@ -1,0 +1,1586 @@
+{
+  "$defs": {
+    "SymplaCheckInByTicketConfig": {
+      "additionalProperties": false,
+      "description": "Check in by ticket using the Sympla producer API.",
+      "properties": {
+        "operation": {
+          "const": "check_in_by_ticket",
+          "default": "check_in_by_ticket",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "ticket_number": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Ticket Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id",
+        "ticket_number"
+      ],
+      "title": "SymplaCheckInByTicketConfig",
+      "type": "object"
+    },
+    "SymplaCheckInParticipantConfig": {
+      "additionalProperties": false,
+      "description": "Check in participant using the Sympla producer API.",
+      "properties": {
+        "operation": {
+          "const": "check_in_participant",
+          "default": "check_in_participant",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "participant_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Participant Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id",
+        "participant_id"
+      ],
+      "title": "SymplaCheckInParticipantConfig",
+      "type": "object"
+    },
+    "SymplaCheckInQrCodeConfig": {
+      "additionalProperties": false,
+      "description": "Check in qr code using the Sympla producer API.",
+      "properties": {
+        "operation": {
+          "const": "check_in_qr_code",
+          "default": "check_in_qr_code",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "qr_code": {
+          "$ref": "#/$defs/SymplaQrCode",
+          "description": "The signed QR payload from the ticket; preserve its values."
+        }
+      },
+      "required": [
+        "event_id",
+        "qr_code"
+      ],
+      "title": "SymplaCheckInQrCodeConfig",
+      "type": "object"
+    },
+    "SymplaGetEventConfig": {
+      "additionalProperties": false,
+      "description": "Get event using the Sympla producer API.",
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to return. Omit to use provider defaults.",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "SymplaGetEventConfig",
+      "type": "object"
+    },
+    "SymplaGetOrderConfig": {
+      "additionalProperties": false,
+      "description": "Get order using the Sympla producer API.",
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "order_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Order Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id",
+        "order_id"
+      ],
+      "title": "SymplaGetOrderConfig",
+      "type": "object"
+    },
+    "SymplaGetParticipantByTicketConfig": {
+      "additionalProperties": false,
+      "description": "Get participant by ticket using the Sympla producer API.",
+      "properties": {
+        "operation": {
+          "const": "get_participant_by_ticket",
+          "default": "get_participant_by_ticket",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "ticket_number": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Ticket Number",
+          "type": "string"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to return. Omit to use provider defaults.",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "event_id",
+        "ticket_number"
+      ],
+      "title": "SymplaGetParticipantByTicketConfig",
+      "type": "object"
+    },
+    "SymplaGetParticipantConfig": {
+      "additionalProperties": false,
+      "description": "Get participant using the Sympla producer API.",
+      "properties": {
+        "operation": {
+          "const": "get_participant",
+          "default": "get_participant",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "participant_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Participant Id",
+          "type": "string"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to return. Omit to use provider defaults.",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "event_id",
+        "participant_id"
+      ],
+      "title": "SymplaGetParticipantConfig",
+      "type": "object"
+    },
+    "SymplaGetPresentationConfig": {
+      "additionalProperties": false,
+      "description": "Get presentation using the Sympla producer API.",
+      "properties": {
+        "operation": {
+          "const": "get_presentation",
+          "default": "get_presentation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "presentation_id": {
+          "title": "Presentation Id",
+          "type": "integer"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to return. Omit to use provider defaults.",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "event_id",
+        "presentation_id"
+      ],
+      "title": "SymplaGetPresentationConfig",
+      "type": "object"
+    },
+    "SymplaListEventsConfig": {
+      "additionalProperties": false,
+      "description": "List events using the Sympla producer API.",
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "published": {
+          "default": "published",
+          "enum": [
+            "published",
+            "not_published",
+            "all",
+            "true",
+            "false"
+          ],
+          "title": "Published",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 local time in the selected timezone, for example 2025-09-08T00:00:00.",
+          "title": "From Date"
+        },
+        "timezone": {
+          "default": "America/Sao_Paulo",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "sort": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort",
+          "type": "string"
+        },
+        "field_sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Sort"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to return. Omit to use provider defaults.",
+          "title": "Fields"
+        }
+      },
+      "title": "SymplaListEventsConfig",
+      "type": "object"
+    },
+    "SymplaListOrderParticipantsConfig": {
+      "additionalProperties": false,
+      "description": "List order participants using the Sympla producer API.",
+      "properties": {
+        "operation": {
+          "const": "list_order_participants",
+          "default": "list_order_participants",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "order_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Order Id",
+          "type": "string"
+        },
+        "fields": {
+          "default": [
+            "ticket_number",
+            "first_name",
+            "email"
+          ],
+          "description": "Fields to return for each participant.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Fields",
+          "type": "array"
+        },
+        "timezone": {
+          "default": "America/Sao_Paulo",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "cancelled_filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "none",
+                "include",
+                "only"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cancelled Filter",
+          "enum": [
+            "none",
+            "include",
+            "only"
+          ],
+          "x-enum-searchable": true
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "field_sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Sort"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "event_id",
+        "order_id"
+      ],
+      "title": "SymplaListOrderParticipantsConfig",
+      "type": "object"
+    },
+    "SymplaListOrdersConfig": {
+      "additionalProperties": false,
+      "description": "List orders using the Sympla producer API.",
+      "properties": {
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 local time in the selected timezone, for example 2025-09-08T00:00:00.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 local time in the selected timezone, for example 2025-09-08T00:00:00.",
+          "title": "To Date"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to return. Omit to use provider defaults.",
+          "title": "Fields"
+        },
+        "cancelled_filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "none",
+                "include",
+                "only"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cancelled Filter",
+          "enum": [
+            "none",
+            "include",
+            "only"
+          ],
+          "x-enum-searchable": true
+        },
+        "buyer_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Buyer Email"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "field_sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Sort"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "SymplaListOrdersConfig",
+      "type": "object"
+    },
+    "SymplaListParticipantsConfig": {
+      "additionalProperties": false,
+      "description": "List participants using the Sympla producer API.",
+      "properties": {
+        "operation": {
+          "const": "list_participants",
+          "default": "list_participants",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "cancelled_filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "none",
+                "include",
+                "only"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cancelled Filter",
+          "enum": [
+            "none",
+            "include",
+            "only"
+          ],
+          "x-enum-searchable": true
+        },
+        "participant_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Participant Email"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 local time in the selected timezone, for example 2025-09-08T00:00:00.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 local time in the selected timezone, for example 2025-09-08T00:00:00.",
+          "title": "To Date"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to return. Omit to use provider defaults.",
+          "title": "Fields"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "field_sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Sort"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "SymplaListParticipantsConfig",
+      "type": "object"
+    },
+    "SymplaListPresentationOrdersConfig": {
+      "additionalProperties": false,
+      "description": "List presentation orders using the Sympla producer API.",
+      "properties": {
+        "operation": {
+          "const": "list_presentation_orders",
+          "default": "list_presentation_orders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "presentation_id": {
+          "title": "Presentation Id",
+          "type": "integer"
+        },
+        "cancelled_filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "none",
+                "include",
+                "only"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cancelled Filter",
+          "enum": [
+            "none",
+            "include",
+            "only"
+          ],
+          "x-enum-searchable": true
+        },
+        "buyer_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Buyer Email"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 local time in the selected timezone, for example 2025-09-08T00:00:00.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 local time in the selected timezone, for example 2025-09-08T00:00:00.",
+          "title": "To Date"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to return. Omit to use provider defaults.",
+          "title": "Fields"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "field_sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Sort"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "event_id",
+        "presentation_id"
+      ],
+      "title": "SymplaListPresentationOrdersConfig",
+      "type": "object"
+    },
+    "SymplaListPresentationParticipantsConfig": {
+      "additionalProperties": false,
+      "description": "List presentation participants using the Sympla producer API.",
+      "properties": {
+        "operation": {
+          "const": "list_presentation_participants",
+          "default": "list_presentation_participants",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "presentation_id": {
+          "title": "Presentation Id",
+          "type": "integer"
+        },
+        "cancelled_filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "none",
+                "include",
+                "only"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cancelled Filter",
+          "enum": [
+            "none",
+            "include",
+            "only"
+          ],
+          "x-enum-searchable": true
+        },
+        "participant_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Participant Email"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 local time in the selected timezone, for example 2025-09-08T00:00:00.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 local time in the selected timezone, for example 2025-09-08T00:00:00.",
+          "title": "To Date"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to return. Omit to use provider defaults.",
+          "title": "Fields"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "field_sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Sort"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "event_id",
+        "presentation_id"
+      ],
+      "title": "SymplaListPresentationParticipantsConfig",
+      "type": "object"
+    },
+    "SymplaListPresentationsConfig": {
+      "additionalProperties": false,
+      "description": "List presentations using the Sympla producer API.",
+      "properties": {
+        "operation": {
+          "const": "list_presentations",
+          "default": "list_presentations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "published": {
+          "default": true,
+          "title": "Published",
+          "type": "boolean"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 local time in the selected timezone, for example 2025-09-08T00:00:00.",
+          "title": "From Date"
+        },
+        "timezone": {
+          "default": "America/Sao_Paulo",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "sort": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort",
+          "type": "string"
+        },
+        "field_sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Sort"
+        },
+        "filter_online_sector": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter Online Sector"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to return. Omit to use provider defaults.",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "SymplaListPresentationsConfig",
+      "type": "object"
+    },
+    "SymplaQrCode": {
+      "additionalProperties": false,
+      "properties": {
+        "itemId": {
+          "minLength": 1,
+          "title": "Itemid",
+          "type": "string"
+        },
+        "signature": {
+          "maxLength": 132,
+          "minLength": 130,
+          "title": "Signature",
+          "type": "string"
+        },
+        "timestamp": {
+          "title": "Timestamp",
+          "type": "integer"
+        },
+        "version": {
+          "title": "Version",
+          "type": "number"
+        },
+        "walletId": {
+          "minLength": 1,
+          "title": "Walletid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "itemId",
+        "signature",
+        "timestamp",
+        "version",
+        "walletId"
+      ],
+      "title": "SymplaQrCode",
+      "type": "object"
+    },
+    "SymplaTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "sympla_api_token",
+          "default": "sympla_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Sympla API Token",
+      "type": "object",
+      "x-credential-instructions": "In Sympla, open Minha Conta > Integracoes and generate an API token. Paste the token here. NoClick sends it in the s_token header to the Sympla Public API.",
+      "x-credential-url": "https://developers.sympla.com.br/docs#section/Autenticacao"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_in_by_ticket": "#/$defs/SymplaCheckInByTicketConfig",
+          "check_in_participant": "#/$defs/SymplaCheckInParticipantConfig",
+          "check_in_qr_code": "#/$defs/SymplaCheckInQrCodeConfig",
+          "get_event": "#/$defs/SymplaGetEventConfig",
+          "get_order": "#/$defs/SymplaGetOrderConfig",
+          "get_participant": "#/$defs/SymplaGetParticipantConfig",
+          "get_participant_by_ticket": "#/$defs/SymplaGetParticipantByTicketConfig",
+          "get_presentation": "#/$defs/SymplaGetPresentationConfig",
+          "list_events": "#/$defs/SymplaListEventsConfig",
+          "list_order_participants": "#/$defs/SymplaListOrderParticipantsConfig",
+          "list_orders": "#/$defs/SymplaListOrdersConfig",
+          "list_participants": "#/$defs/SymplaListParticipantsConfig",
+          "list_presentation_orders": "#/$defs/SymplaListPresentationOrdersConfig",
+          "list_presentation_participants": "#/$defs/SymplaListPresentationParticipantsConfig",
+          "list_presentations": "#/$defs/SymplaListPresentationsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SymplaListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/SymplaGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/SymplaListOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/SymplaGetOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/SymplaListOrderParticipantsConfig"
+        },
+        {
+          "$ref": "#/$defs/SymplaListParticipantsConfig"
+        },
+        {
+          "$ref": "#/$defs/SymplaGetParticipantByTicketConfig"
+        },
+        {
+          "$ref": "#/$defs/SymplaCheckInByTicketConfig"
+        },
+        {
+          "$ref": "#/$defs/SymplaGetParticipantConfig"
+        },
+        {
+          "$ref": "#/$defs/SymplaCheckInParticipantConfig"
+        },
+        {
+          "$ref": "#/$defs/SymplaListPresentationsConfig"
+        },
+        {
+          "$ref": "#/$defs/SymplaGetPresentationConfig"
+        },
+        {
+          "$ref": "#/$defs/SymplaListPresentationOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/SymplaListPresentationParticipantsConfig"
+        },
+        {
+          "$ref": "#/$defs/SymplaCheckInQrCodeConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SymplaTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Sympla Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

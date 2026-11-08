@@ -1,0 +1,77 @@
+{
+  "list_events": {
+    "operation": "list_events"
+  },
+  "get_event": {
+    "operation": "get_event",
+    "event_id": "abc123def456"
+  },
+  "list_orders": {
+    "operation": "list_orders",
+    "event_id": "abc123def456"
+  },
+  "get_order": {
+    "operation": "get_order",
+    "event_id": "abc123def456",
+    "order_id": "abc123def456"
+  },
+  "list_order_participants": {
+    "operation": "list_order_participants",
+    "event_id": "abc123def456",
+    "order_id": "12345"
+  },
+  "list_participants": {
+    "operation": "list_participants",
+    "event_id": "abc123def456"
+  },
+  "get_participant_by_ticket": {
+    "operation": "get_participant_by_ticket",
+    "event_id": "abc123def456",
+    "ticket_number": "94461180000001"
+  },
+  "check_in_by_ticket": {
+    "operation": "check_in_by_ticket",
+    "event_id": "abc123def456",
+    "ticket_number": "abc123def456"
+  },
+  "get_participant": {
+    "operation": "get_participant",
+    "event_id": "abc123def456",
+    "participant_id": "12345"
+  },
+  "check_in_participant": {
+    "operation": "check_in_participant",
+    "event_id": "abc123def456",
+    "participant_id": "12345"
+  },
+  "list_presentations": {
+    "operation": "list_presentations",
+    "event_id": "abc123def456"
+  },
+  "get_presentation": {
+    "operation": "get_presentation",
+    "event_id": "abc123def456",
+    "presentation_id": 12345
+  },
+  "list_presentation_orders": {
+    "operation": "list_presentation_orders",
+    "event_id": "abc123def456",
+    "presentation_id": 12345
+  },
+  "list_presentation_participants": {
+    "operation": "list_presentation_participants",
+    "event_id": "abc123def456",
+    "presentation_id": 12345
+  },
+  "check_in_qr_code": {
+    "operation": "check_in_qr_code",
+    "event_id": "abc123def456",
+    "qr_code": {
+      "itemId": "ticket",
+      "signature": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "timestamp": 1698770407738,
+      "version": 1,
+      "walletId": "wallet"
+    }
+  }
+}
