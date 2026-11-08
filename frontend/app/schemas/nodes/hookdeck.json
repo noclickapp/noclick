@@ -1,0 +1,1265 @@
+{
+  "$defs": {
+    "CancelEvent": {
+      "description": "Cancel pending delivery of an event.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_event",
+          "default": "cancel_event",
+          "title": "Cancel Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Cancel Event",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "CancelEvent",
+      "type": "object"
+    },
+    "CreateConnection": {
+      "description": "Connect an existing source to an existing destination.",
+      "properties": {
+        "source_id": {
+          "title": "Source ID",
+          "type": "string"
+        },
+        "destination_id": {
+          "title": "Destination ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 155,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Connection Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "operation": {
+          "const": "create_connection",
+          "default": "create_connection",
+          "title": "Create Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connections",
+          "x-display-name": "Create Connection",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "source_id",
+        "destination_id"
+      ],
+      "title": "CreateConnection",
+      "type": "object"
+    },
+    "CreateDestination": {
+      "description": "Create an HTTP endpoint or mock destination.",
+      "properties": {
+        "name": {
+          "maxLength": 155,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Destination Name",
+          "type": "string"
+        },
+        "destination_type": {
+          "default": "HTTP",
+          "enum": [
+            "HTTP",
+            "MOCK_API"
+          ],
+          "title": "Destination Type",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for HTTP destinations. Use HTTPS for public endpoints.",
+          "title": "HTTP URL"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "operation": {
+          "const": "create_destination",
+          "default": "create_destination",
+          "title": "Create Destination",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Destinations",
+          "x-display-name": "Create Destination",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateDestination",
+      "type": "object"
+    },
+    "CreateSource": {
+      "description": "Create a webhook source for inbound events.",
+      "properties": {
+        "name": {
+          "maxLength": 155,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Source Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "operation": {
+          "const": "create_source",
+          "default": "create_source",
+          "title": "Create Source",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sources",
+          "x-display-name": "Create Source",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateSource",
+      "type": "object"
+    },
+    "DeleteConnection": {
+      "description": "Delete a connection by ID.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_connection",
+          "default": "delete_connection",
+          "title": "Delete Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connections",
+          "x-display-name": "Delete Connection",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteConnection",
+      "type": "object"
+    },
+    "DeleteDestination": {
+      "description": "Delete a destination by ID.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_destination",
+          "default": "delete_destination",
+          "title": "Delete Destination",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Destinations",
+          "x-display-name": "Delete Destination",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteDestination",
+      "type": "object"
+    },
+    "DeleteSource": {
+      "description": "Delete a webhook source by ID.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_source",
+          "default": "delete_source",
+          "title": "Delete Source",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sources",
+          "x-display-name": "Delete Source",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteSource",
+      "type": "object"
+    },
+    "GetConnection": {
+      "description": "Read a connection and its routing details.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_connection",
+          "default": "get_connection",
+          "title": "Get Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connections",
+          "x-display-name": "Get Connection",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetConnection",
+      "type": "object"
+    },
+    "GetDestination": {
+      "description": "Read a destination by ID.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_destination",
+          "default": "get_destination",
+          "title": "Get Destination",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Destinations",
+          "x-display-name": "Get Destination",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetDestination",
+      "type": "object"
+    },
+    "GetEvent": {
+      "description": "Read an event and its delivery attempts.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Get Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Get Event",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetEvent",
+      "type": "object"
+    },
+    "GetIssue": {
+      "description": "Read one delivery or ingestion issue.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_issue",
+          "default": "get_issue",
+          "title": "Get Issue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "Get Issue",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetIssue",
+      "type": "object"
+    },
+    "GetRequest": {
+      "description": "Read a specific incoming webhook request.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_request",
+          "default": "get_request",
+          "title": "Get Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "Get Request",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetRequest",
+      "type": "object"
+    },
+    "GetSource": {
+      "description": "Read a webhook source by ID, including its inbound URL.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_source",
+          "default": "get_source",
+          "title": "Get Source",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sources",
+          "x-display-name": "Get Source",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetSource",
+      "type": "object"
+    },
+    "HookdeckApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "hookdeck_api_key",
+          "default": "hookdeck_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "Project API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Hookdeck API Key",
+      "type": "object",
+      "x-credential-instructions": "Create a project API key in Settings > Project > Secrets, then paste it here.",
+      "x-credential-url": "https://dashboard.hookdeck.com/settings/project/secrets"
+    },
+    "ListConnections": {
+      "description": "List source-to-destination routes, optionally filtered by either end.",
+      "properties": {
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "title": "Limit"
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next cursor"
+        },
+        "prev": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previous cursor"
+        },
+        "operation": {
+          "const": "list_connections",
+          "default": "list_connections",
+          "title": "List Connections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connections",
+          "x-display-name": "List Connections",
+          "x-is-trigger": false
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source ID Filter"
+        },
+        "destination_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Destination ID Filter"
+        }
+      },
+      "title": "ListConnections",
+      "type": "object"
+    },
+    "ListDestinations": {
+      "description": "List HTTP and mock destinations in the project.",
+      "properties": {
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "title": "Limit"
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next cursor"
+        },
+        "prev": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previous cursor"
+        },
+        "operation": {
+          "const": "list_destinations",
+          "default": "list_destinations",
+          "title": "List Destinations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Destinations",
+          "x-display-name": "List Destinations",
+          "x-is-trigger": false
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name Filter"
+        }
+      },
+      "title": "ListDestinations",
+      "type": "object"
+    },
+    "ListEvents": {
+      "description": "List events and delivery status for a source or destination.",
+      "properties": {
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "title": "Limit"
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next cursor"
+        },
+        "prev": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previous cursor"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "List Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "List Events",
+          "x-is-trigger": false
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source ID Filter"
+        },
+        "destination_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Destination ID Filter"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Filter"
+        }
+      },
+      "title": "ListEvents",
+      "type": "object"
+    },
+    "ListIssues": {
+      "description": "List Hookdeck delivery and ingestion issues.",
+      "properties": {
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "title": "Limit"
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next cursor"
+        },
+        "prev": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previous cursor"
+        },
+        "operation": {
+          "const": "list_issues",
+          "default": "list_issues",
+          "title": "List Issues",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "List Issues",
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Filter"
+        }
+      },
+      "title": "ListIssues",
+      "type": "object"
+    },
+    "ListRequests": {
+      "description": "List incoming webhook requests and ingestion status.",
+      "properties": {
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "title": "Limit"
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next cursor"
+        },
+        "prev": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previous cursor"
+        },
+        "operation": {
+          "const": "list_requests",
+          "default": "list_requests",
+          "title": "List Requests",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Requests",
+          "x-display-name": "List Requests",
+          "x-is-trigger": false
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source ID Filter"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Filter"
+        }
+      },
+      "title": "ListRequests",
+      "type": "object"
+    },
+    "ListSources": {
+      "description": "List webhook sources with pagination and an optional name filter.",
+      "properties": {
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "title": "Limit"
+        },
+        "next": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next cursor"
+        },
+        "prev": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previous cursor"
+        },
+        "operation": {
+          "const": "list_sources",
+          "default": "list_sources",
+          "title": "List Sources",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sources",
+          "x-display-name": "List Sources",
+          "x-is-trigger": false
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name Filter"
+        }
+      },
+      "title": "ListSources",
+      "type": "object"
+    },
+    "PauseConnection": {
+      "description": "Pause delivery on a connection without deleting it.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "pause_connection",
+          "default": "pause_connection",
+          "title": "Pause Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connections",
+          "x-display-name": "Pause Connection",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "PauseConnection",
+      "type": "object"
+    },
+    "RetryEvent": {
+      "description": "Retry delivery of a failed event.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "retry_event",
+          "default": "retry_event",
+          "title": "Retry Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Retry Event",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RetryEvent",
+      "type": "object"
+    },
+    "UnpauseConnection": {
+      "description": "Resume delivery on a paused connection.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "unpause_connection",
+          "default": "unpause_connection",
+          "title": "Unpause Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connections",
+          "x-display-name": "Unpause Connection",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UnpauseConnection",
+      "type": "object"
+    },
+    "UpdateConnection": {
+      "description": "Rename or describe an existing connection.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_connection",
+          "default": "update_connection",
+          "title": "Update Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connections",
+          "x-display-name": "Update Connection",
+          "x-is-trigger": false
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 155,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateConnection",
+      "type": "object"
+    },
+    "UpdateDestination": {
+      "description": "Change a destination name, description, or HTTP URL.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_destination",
+          "default": "update_destination",
+          "title": "Update Destination",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Destinations",
+          "x-display-name": "Update Destination",
+          "x-is-trigger": false
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 155,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Name"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "HTTP URL"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateDestination",
+      "type": "object"
+    },
+    "UpdateSource": {
+      "description": "Rename or describe an existing source.",
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_source",
+          "default": "update_source",
+          "title": "Update Source",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sources",
+          "x-display-name": "Update Source",
+          "x-is-trigger": false
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 155,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateSource",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_event": "#/$defs/CancelEvent",
+          "create_connection": "#/$defs/CreateConnection",
+          "create_destination": "#/$defs/CreateDestination",
+          "create_source": "#/$defs/CreateSource",
+          "delete_connection": "#/$defs/DeleteConnection",
+          "delete_destination": "#/$defs/DeleteDestination",
+          "delete_source": "#/$defs/DeleteSource",
+          "get_connection": "#/$defs/GetConnection",
+          "get_destination": "#/$defs/GetDestination",
+          "get_event": "#/$defs/GetEvent",
+          "get_issue": "#/$defs/GetIssue",
+          "get_request": "#/$defs/GetRequest",
+          "get_source": "#/$defs/GetSource",
+          "list_connections": "#/$defs/ListConnections",
+          "list_destinations": "#/$defs/ListDestinations",
+          "list_events": "#/$defs/ListEvents",
+          "list_issues": "#/$defs/ListIssues",
+          "list_requests": "#/$defs/ListRequests",
+          "list_sources": "#/$defs/ListSources",
+          "pause_connection": "#/$defs/PauseConnection",
+          "retry_event": "#/$defs/RetryEvent",
+          "unpause_connection": "#/$defs/UnpauseConnection",
+          "update_connection": "#/$defs/UpdateConnection",
+          "update_destination": "#/$defs/UpdateDestination",
+          "update_source": "#/$defs/UpdateSource"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListSources"
+        },
+        {
+          "$ref": "#/$defs/GetSource"
+        },
+        {
+          "$ref": "#/$defs/CreateSource"
+        },
+        {
+          "$ref": "#/$defs/UpdateSource"
+        },
+        {
+          "$ref": "#/$defs/DeleteSource"
+        },
+        {
+          "$ref": "#/$defs/ListDestinations"
+        },
+        {
+          "$ref": "#/$defs/GetDestination"
+        },
+        {
+          "$ref": "#/$defs/CreateDestination"
+        },
+        {
+          "$ref": "#/$defs/UpdateDestination"
+        },
+        {
+          "$ref": "#/$defs/DeleteDestination"
+        },
+        {
+          "$ref": "#/$defs/ListConnections"
+        },
+        {
+          "$ref": "#/$defs/GetConnection"
+        },
+        {
+          "$ref": "#/$defs/CreateConnection"
+        },
+        {
+          "$ref": "#/$defs/UpdateConnection"
+        },
+        {
+          "$ref": "#/$defs/DeleteConnection"
+        },
+        {
+          "$ref": "#/$defs/PauseConnection"
+        },
+        {
+          "$ref": "#/$defs/UnpauseConnection"
+        },
+        {
+          "$ref": "#/$defs/ListEvents"
+        },
+        {
+          "$ref": "#/$defs/GetEvent"
+        },
+        {
+          "$ref": "#/$defs/RetryEvent"
+        },
+        {
+          "$ref": "#/$defs/CancelEvent"
+        },
+        {
+          "$ref": "#/$defs/ListRequests"
+        },
+        {
+          "$ref": "#/$defs/GetRequest"
+        },
+        {
+          "$ref": "#/$defs/ListIssues"
+        },
+        {
+          "$ref": "#/$defs/GetIssue"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HookdeckApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Hookdeck Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List recent Hookdeck events and their delivery status",
+    "Create a webhook source and connect it to an HTTP destination",
+    "Pause a Hookdeck connection while the downstream service is under maintenance"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
