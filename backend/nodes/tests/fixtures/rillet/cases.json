@@ -1,0 +1,405 @@
+{
+  "contract": {
+    "source": "https://docs.api.rillet.com/openapi/rillet-accounting-api.json",
+    "version": "v4.0",
+    "sha256": "6b3663cc746f78984d5ab17ee87afe35cf3b7b8367f7da78ab2165108d93e582"
+  },
+  "cases": [
+    {
+      "operation": "get_organization",
+      "config": {},
+      "method": "GET",
+      "path": "/organizations/self",
+      "response": {
+        "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40",
+        "trade_name": "Rillet Inc.",
+        "currency": "USD",
+        "timezone": "America/New_York"
+      }
+    },
+    {
+      "operation": "list_accounts",
+      "config": {},
+      "method": "GET",
+      "path": "/accounts",
+      "response": {
+        "accounts": [
+          {
+            "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "list_subsidiaries",
+      "config": {},
+      "method": "GET",
+      "path": "/subsidiaries",
+      "response": {
+        "subsidiaries": [
+          {
+            "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "list_customers",
+      "config": {},
+      "method": "GET",
+      "path": "/customers",
+      "response": {
+        "customers": [
+          {
+            "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+          }
+        ],
+        "pagination": {
+          "next_cursor": "iLQvkEj3sh3UiweC"
+        }
+      }
+    },
+    {
+      "operation": "get_customer",
+      "config": {
+        "customer_id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      },
+      "method": "GET",
+      "path": "/customers/0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40",
+      "response": {
+        "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      }
+    },
+    {
+      "operation": "create_customer",
+      "config": {
+        "name": "Bob",
+        "name_on_invoice": "Bob Johnson",
+        "payment_terms": 0,
+        "send_invoices_automatically": false,
+        "address": {
+          "line1": "123 Main St",
+          "city": "Nashville",
+          "state": "TN",
+          "zip_code": "37201",
+          "country": "US"
+        },
+        "emails": [
+          {
+            "email": "bobjohnson@somedomain.com",
+            "type": "MAIN_SENDER"
+          }
+        ],
+        "external_references": [
+          {
+            "type": "xyzSystemId",
+            "id": "234",
+            "url": "https://xyzsystempage.com/ids/234"
+          }
+        ]
+      },
+      "method": "POST",
+      "path": "/customers",
+      "response": {
+        "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      }
+    },
+    {
+      "operation": "list_vendors",
+      "config": {},
+      "method": "GET",
+      "path": "/vendors",
+      "response": {
+        "vendors": [
+          {
+            "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+          }
+        ],
+        "pagination": {
+          "next_cursor": "iLQvkEj3sh3UiweC"
+        }
+      }
+    },
+    {
+      "operation": "get_vendor",
+      "config": {
+        "vendor_id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      },
+      "method": "GET",
+      "path": "/vendors/0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40",
+      "response": {
+        "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      }
+    },
+    {
+      "operation": "create_vendor",
+      "config": {
+        "name": "MyVendor",
+        "account_code": "11112",
+        "payment_terms": 30,
+        "ten_ninety_nine_eligible": false
+      },
+      "method": "POST",
+      "path": "/vendors",
+      "response": {
+        "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      }
+    },
+    {
+      "operation": "list_products",
+      "config": {},
+      "method": "GET",
+      "path": "/products",
+      "response": {
+        "products": [
+          {
+            "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+          }
+        ],
+        "pagination": {
+          "next_cursor": "iLQvkEj3sh3UiweC"
+        }
+      }
+    },
+    {
+      "operation": "get_product",
+      "config": {
+        "product_id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      },
+      "method": "GET",
+      "path": "/products/0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40",
+      "response": {
+        "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      }
+    },
+    {
+      "operation": "list_contracts",
+      "config": {},
+      "method": "GET",
+      "path": "/contracts",
+      "response": {
+        "contracts": [
+          {
+            "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+          }
+        ],
+        "pagination": {
+          "next_cursor": "iLQvkEj3sh3UiweC"
+        }
+      }
+    },
+    {
+      "operation": "get_contract",
+      "config": {
+        "contract_id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      },
+      "method": "GET",
+      "path": "/contracts/0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40",
+      "response": {
+        "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      }
+    },
+    {
+      "operation": "list_invoices",
+      "config": {},
+      "method": "GET",
+      "path": "/invoices",
+      "response": {
+        "invoices": [
+          {
+            "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+          }
+        ],
+        "pagination": {
+          "next_cursor": "iLQvkEj3sh3UiweC"
+        }
+      }
+    },
+    {
+      "operation": "get_invoice",
+      "config": {
+        "invoice_id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      },
+      "method": "GET",
+      "path": "/invoices/0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40",
+      "response": {
+        "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      }
+    },
+    {
+      "operation": "create_invoice",
+      "config": {
+        "customer_id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40",
+        "invoice_date": "2026-01-01",
+        "items": [
+          {
+            "description": "English subscription",
+            "price": {
+              "product_id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40",
+              "quantity": 2,
+              "amount_per_unit": {
+                "amount": "1.01",
+                "currency": "USD"
+              }
+            }
+          }
+        ],
+        "idempotency_key": "f0e9a51e-905d-4caf-a5dc-64d326574646"
+      },
+      "method": "POST",
+      "path": "/invoices",
+      "response": {
+        "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      }
+    },
+    {
+      "operation": "list_bills",
+      "config": {},
+      "method": "GET",
+      "path": "/bills",
+      "response": {
+        "bills": [
+          {
+            "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+          }
+        ],
+        "pagination": {
+          "next_cursor": "iLQvkEj3sh3UiweC"
+        }
+      }
+    },
+    {
+      "operation": "get_bill",
+      "config": {
+        "bill_id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      },
+      "method": "GET",
+      "path": "/bills/0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40",
+      "response": {
+        "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      }
+    },
+    {
+      "operation": "create_bill",
+      "config": {
+        "vendor_id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40",
+        "expense_number": "B123",
+        "bill_date": "2026-01-01",
+        "due_date": "2026-01-31",
+        "items": [
+          {
+            "account_code": "11112",
+            "description": "API Bill",
+            "amount": {
+              "amount": "1.01",
+              "currency": "USD"
+            }
+          }
+        ]
+      },
+      "method": "POST",
+      "path": "/bills",
+      "response": {
+        "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      }
+    },
+    {
+      "operation": "list_journal_entries",
+      "config": {},
+      "method": "GET",
+      "path": "/journal-entries",
+      "response": {
+        "journal_entries": [
+          {
+            "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+          }
+        ],
+        "pagination": {
+          "next_cursor": "iLQvkEj3sh3UiweC"
+        }
+      }
+    },
+    {
+      "operation": "get_journal_entry",
+      "config": {
+        "journal_entry_id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      },
+      "method": "GET",
+      "path": "/journal-entries/0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40",
+      "response": {
+        "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      }
+    },
+    {
+      "operation": "create_journal_entry",
+      "config": {
+        "name": "Accrual",
+        "currency": "USD",
+        "date": "2026-01-01",
+        "items": [
+          {
+            "account_code": "11112",
+            "side": "DEBIT",
+            "amount": {
+              "amount": "1.01",
+              "currency": "USD"
+            }
+          },
+          {
+            "account_code": "22222",
+            "side": "CREDIT",
+            "amount": {
+              "amount": "1.01",
+              "currency": "USD"
+            }
+          }
+        ]
+      },
+      "method": "POST",
+      "path": "/journal-entries",
+      "response": {
+        "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+      }
+    },
+    {
+      "operation": "update_invoice_sent_status",
+      "config": {
+        "invoice_id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40",
+        "sent": false
+      },
+      "method": "PUT",
+      "path": "/invoices/0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40/sent-status",
+      "response": null
+    },
+    {
+      "operation": "list_bank_accounts",
+      "config": {},
+      "method": "GET",
+      "path": "/bank-accounts",
+      "response": {
+        "accounts": [
+          {
+            "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "list_bank_transactions",
+      "config": {},
+      "method": "GET",
+      "path": "/bank-transactions",
+      "response": {
+        "bank_transactions": [
+          {
+            "id": "0193a6f2-4c1e-7b8a-9d3f-2e5c8a1b7f40"
+          }
+        ],
+        "pagination": {
+          "next_cursor": "iLQvkEj3sh3UiweC"
+        }
+      }
+    }
+  ],
+  "note": "Synthetic transport replies for route tests, not provider-authored response witnesses. Pinned-contract validation is recorded in the external conformance catalog."
+}

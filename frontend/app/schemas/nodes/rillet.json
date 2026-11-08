@@ -1,0 +1,2274 @@
+{
+  "$defs": {
+    "Address": {
+      "additionalProperties": false,
+      "properties": {
+        "line1": {
+          "title": "Line1",
+          "type": "string"
+        },
+        "line2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line2"
+        },
+        "city": {
+          "title": "City",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for United States addresses.",
+          "title": "State"
+        },
+        "zip_code": {
+          "title": "Zip Code",
+          "type": "string"
+        },
+        "country": {
+          "pattern": "^[A-Z]{2}$",
+          "title": "Country",
+          "type": "string"
+        }
+      },
+      "required": [
+        "line1",
+        "city",
+        "zip_code",
+        "country"
+      ],
+      "title": "Address",
+      "type": "object"
+    },
+    "BillItem": {
+      "additionalProperties": false,
+      "properties": {
+        "account_code": {
+          "title": "Account Code",
+          "type": "string"
+        },
+        "amount": {
+          "$ref": "#/$defs/MonetaryAmount"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "service_period": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CalendarPeriod"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "account_code",
+        "amount"
+      ],
+      "title": "BillItem",
+      "type": "object"
+    },
+    "CalendarPeriod": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "format": "date",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "format": "date",
+          "title": "End",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "CalendarPeriod",
+      "type": "object"
+    },
+    "CustomerEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "title": "Email",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "MAIN_SENDER",
+            "CC",
+            "BCC"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "type"
+      ],
+      "title": "CustomerEmail",
+      "type": "object"
+    },
+    "ExternalReference": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        }
+      },
+      "required": [
+        "type",
+        "id"
+      ],
+      "title": "ExternalReference",
+      "type": "object"
+    },
+    "InvoiceItem": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "price": {
+          "$ref": "#/$defs/InvoicePrice"
+        },
+        "revenue": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InvoiceRevenue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "description",
+        "price"
+      ],
+      "title": "InvoiceItem",
+      "type": "object"
+    },
+    "InvoicePrice": {
+      "additionalProperties": false,
+      "properties": {
+        "product_id": {
+          "format": "uuid",
+          "title": "Product Id",
+          "type": "string"
+        },
+        "quantity": {
+          "title": "Quantity",
+          "type": "number"
+        },
+        "amount_per_unit": {
+          "$ref": "#/$defs/MonetaryAmount"
+        }
+      },
+      "required": [
+        "product_id",
+        "quantity",
+        "amount_per_unit"
+      ],
+      "title": "InvoicePrice",
+      "type": "object"
+    },
+    "InvoiceRevenue": {
+      "additionalProperties": false,
+      "properties": {
+        "period": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CalendarPeriod"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "account_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Code"
+        }
+      },
+      "title": "InvoiceRevenue",
+      "type": "object"
+    },
+    "JournalItem": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "$ref": "#/$defs/MonetaryAmount"
+        },
+        "account_code": {
+          "title": "Account Code",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "DEBIT",
+            "CREDIT"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "amount",
+        "account_code",
+        "side"
+      ],
+      "title": "JournalItem",
+      "type": "object"
+    },
+    "MonetaryAmount": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "description": "Decimal string; round bill and journal amounts to the currency's decimal places.",
+          "pattern": "^-?[0-9]+(?:\\.[0-9]+)?$",
+          "title": "Amount",
+          "type": "string"
+        },
+        "currency": {
+          "pattern": "^[A-Z]{3}$",
+          "title": "Currency",
+          "type": "string"
+        }
+      },
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "title": "MonetaryAmount",
+      "type": "object"
+    },
+    "RilletAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "rillet_api_key",
+          "default": "rillet_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "environment": {
+          "default": "production",
+          "enum": [
+            "production",
+            "sandbox"
+          ],
+          "title": "Environment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Rillet API Key",
+      "type": "object",
+      "x-credential-instructions": "Ask your Rillet team to enable API access, then create an API key in Organization Settings \u2192 API access. Paste the key without the Bearer prefix. Choose the environment that issued your key.",
+      "x-credential-url": "https://app.rillet.io/settings/api-access"
+    },
+    "RilletCreateBillConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[!-~]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique key reused only when retrying this same creation. Rillet retains it for 24 hours.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "create_bill",
+          "default": "create_bill",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "vendor_id": {
+          "format": "uuid",
+          "title": "Vendor Id",
+          "type": "string"
+        },
+        "expense_number": {
+          "title": "Expense Number",
+          "type": "string"
+        },
+        "items": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/BillItem"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "title": "Items",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "bill_date": {
+          "format": "date",
+          "title": "Bill Date",
+          "type": "string"
+        },
+        "due_date": {
+          "format": "date",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "impact_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Impact Date"
+        },
+        "subsidiary_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subsidiary Id"
+        },
+        "external_references": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "items": {
+                  "$ref": "#/$defs/ExternalReference"
+                },
+                "type": "array"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External References",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "vendor_id",
+        "expense_number",
+        "items",
+        "bill_date",
+        "due_date"
+      ],
+      "title": "RilletCreateBillConfig",
+      "type": "object"
+    },
+    "RilletCreateCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Create a customer with optional billing/shipping addresses and emails.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[!-~]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique key reused only when retrying this same creation. Rillet retains it for 24 hours.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "name_on_invoice": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name On Invoice"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "$ref": "#/$defs/Address"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "shipping_address": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "$ref": "#/$defs/Address"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shipping Address",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "items": {
+                  "$ref": "#/$defs/CustomerEmail"
+                },
+                "type": "array"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emails",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "external_references": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "items": {
+                  "$ref": "#/$defs/ExternalReference"
+                },
+                "type": "array"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External References",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "payment_terms": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Terms"
+        },
+        "send_invoices_automatically": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Send Invoices Automatically"
+        },
+        "send_payment_reminders": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Send Payment Reminders"
+        },
+        "allow_online_payments": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allow Online Payments"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "RilletCreateCustomerConfig",
+      "type": "object"
+    },
+    "RilletCreateInvoiceConfig": {
+      "additionalProperties": false,
+      "description": "Create a full AR/revenue invoice; HTTP 202 means held for approval.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[!-~]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique key reused only when retrying this same creation. Rillet retains it for 24 hours.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "create_invoice",
+          "default": "create_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scope": {
+          "const": "FULL",
+          "default": "FULL",
+          "title": "Scope",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "format": "uuid",
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "invoice_date": {
+          "format": "date",
+          "title": "Invoice Date",
+          "type": "string"
+        },
+        "items": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/InvoiceItem"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "title": "Items",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due Date"
+        },
+        "subsidiary_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subsidiary Id"
+        },
+        "purchase_order_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purchase Order Number"
+        },
+        "memo": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Memo"
+        },
+        "bank_account_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bank Account Id"
+        },
+        "external_references": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "items": {
+                  "$ref": "#/$defs/ExternalReference"
+                },
+                "type": "array"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External References",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "customer_id",
+        "invoice_date",
+        "items"
+      ],
+      "title": "RilletCreateInvoiceConfig",
+      "type": "object"
+    },
+    "RilletCreateJournalEntryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[!-~]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique key reused only when retrying this same creation. Rillet retains it for 24 hours.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "create_journal_entry",
+          "default": "create_journal_entry",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "currency": {
+          "pattern": "^[A-Z]{3}$",
+          "title": "Currency",
+          "type": "string"
+        },
+        "items": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "$ref": "#/$defs/JournalItem"
+            },
+            "minItems": 2,
+            "type": "array"
+          },
+          "title": "Items",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "reversal_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reversal Date"
+        },
+        "subsidiary_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subsidiary Id"
+        },
+        "book_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Book Id"
+        }
+      },
+      "required": [
+        "date",
+        "name",
+        "currency",
+        "items"
+      ],
+      "title": "RilletCreateJournalEntryConfig",
+      "type": "object"
+    },
+    "RilletCreateVendorConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[!-~]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique key reused only when retrying this same creation. Rillet retains it for 24 hours.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "create_vendor",
+          "default": "create_vendor",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "account_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Code"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "$ref": "#/$defs/Address"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "email",
+          "title": "Email"
+        },
+        "payment_terms": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Terms"
+        },
+        "external_references": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "items": {
+                  "$ref": "#/$defs/ExternalReference"
+                },
+                "type": "array"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External References",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "ten_ninety_nine_eligible": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ten Ninety Nine Eligible"
+        },
+        "tax_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tax Id"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "RilletCreateVendorConfig",
+      "type": "object"
+    },
+    "RilletGetBillConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_bill",
+          "default": "get_bill",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "bill_id": {
+          "format": "uuid",
+          "title": "Bill Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bill_id"
+      ],
+      "title": "RilletGetBillConfig",
+      "type": "object"
+    },
+    "RilletGetContractConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contract",
+          "default": "get_contract",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contract_id": {
+          "format": "uuid",
+          "title": "Contract Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contract_id"
+      ],
+      "title": "RilletGetContractConfig",
+      "type": "object"
+    },
+    "RilletGetCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "format": "uuid",
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "RilletGetCustomerConfig",
+      "type": "object"
+    },
+    "RilletGetInvoiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "format": "uuid",
+          "title": "Invoice Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "RilletGetInvoiceConfig",
+      "type": "object"
+    },
+    "RilletGetJournalEntryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_journal_entry",
+          "default": "get_journal_entry",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "journal_entry_id": {
+          "format": "uuid",
+          "title": "Journal Entry Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "journal_entry_id"
+      ],
+      "title": "RilletGetJournalEntryConfig",
+      "type": "object"
+    },
+    "RilletGetOrganizationConfig": {
+      "additionalProperties": false,
+      "description": "Read the organization associated with this API key.",
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "RilletGetOrganizationConfig",
+      "type": "object"
+    },
+    "RilletGetProductConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "product_id": {
+          "format": "uuid",
+          "title": "Product Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "RilletGetProductConfig",
+      "type": "object"
+    },
+    "RilletGetVendorConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_vendor",
+          "default": "get_vendor",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "vendor_id": {
+          "format": "uuid",
+          "title": "Vendor Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "vendor_id"
+      ],
+      "title": "RilletGetVendorConfig",
+      "type": "object"
+    },
+    "RilletListAccountsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Records updated after this timestamp (updated.gt).",
+          "title": "Updated After"
+        },
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "RilletListAccountsConfig",
+      "type": "object"
+    },
+    "RilletListBankAccountsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_bank_accounts",
+          "default": "list_bank_accounts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subsidiary_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subsidiary Id"
+        }
+      },
+      "title": "RilletListBankAccountsConfig",
+      "type": "object"
+    },
+    "RilletListBankTransactionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Records updated after this timestamp (updated.gt).",
+          "title": "Updated After"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous page. Cursors expire after two hours; expired cursors restart the sequence.",
+          "title": "Cursor"
+        },
+        "subsidiary_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subsidiary Id"
+        },
+        "operation": {
+          "const": "list_bank_transactions",
+          "default": "list_bank_transactions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "bank_account_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bank Account Id"
+        },
+        "date_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date From"
+        },
+        "date_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date To"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "created",
+                "updated"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By",
+          "enum": [
+            "created",
+            "updated"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "RilletListBankTransactionsConfig",
+      "type": "object"
+    },
+    "RilletListBillsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Records updated after this timestamp (updated.gt).",
+          "title": "Updated After"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous page. Cursors expire after two hours; expired cursors restart the sequence.",
+          "title": "Cursor"
+        },
+        "subsidiary_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subsidiary Id"
+        },
+        "operation": {
+          "const": "list_bills",
+          "default": "list_bills",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "vendor_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vendor Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "UNPAID",
+                "PAID",
+                "PARTIALLY_PAID",
+                "CREDITED",
+                "PARTIALLY_CREDITED",
+                "APPLIED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "UNPAID",
+            "PAID",
+            "PARTIALLY_PAID",
+            "CREDITED",
+            "PARTIALLY_CREDITED",
+            "APPLIED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "RilletListBillsConfig",
+      "type": "object"
+    },
+    "RilletListContractsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous page. Cursors expire after two hours; expired cursors restart the sequence.",
+          "title": "Cursor"
+        },
+        "subsidiary_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subsidiary Id"
+        },
+        "operation": {
+          "const": "list_contracts",
+          "default": "list_contracts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "ACTIVE",
+                "IN_EFFECT",
+                "CANCELLED",
+                "ENDED",
+                "AMENDED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "ACTIVE",
+            "IN_EFFECT",
+            "CANCELLED",
+            "ENDED",
+            "AMENDED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "RilletListContractsConfig",
+      "type": "object"
+    },
+    "RilletListCustomersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "external_reference_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Reference Id"
+        },
+        "external_reference_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Reference Type"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Records updated after this timestamp (updated.gt).",
+          "title": "Updated After"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous page. Cursors expire after two hours; expired cursors restart the sequence.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "created",
+                "updated"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By",
+          "enum": [
+            "created",
+            "updated"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "RilletListCustomersConfig",
+      "type": "object"
+    },
+    "RilletListInvoicesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "external_reference_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Reference Id"
+        },
+        "external_reference_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Reference Type"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Records updated after this timestamp (updated.gt).",
+          "title": "Updated After"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous page. Cursors expire after two hours; expired cursors restart the sequence.",
+          "title": "Cursor"
+        },
+        "subsidiary_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subsidiary Id"
+        },
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "overdue": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Overdue"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "UNPAID",
+                "PAID",
+                "PARTIALLY_PAID",
+                "UNBILLED",
+                "CREDITED",
+                "PARTIALLY_CREDITED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "UNPAID",
+            "PAID",
+            "PARTIALLY_PAID",
+            "UNBILLED",
+            "CREDITED",
+            "PARTIALLY_CREDITED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "RilletListInvoicesConfig",
+      "type": "object"
+    },
+    "RilletListJournalEntriesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Records updated after this timestamp (updated.gt).",
+          "title": "Updated After"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous page. Cursors expire after two hours; expired cursors restart the sequence.",
+          "title": "Cursor"
+        },
+        "subsidiary_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subsidiary Id"
+        },
+        "operation": {
+          "const": "list_journal_entries",
+          "default": "list_journal_entries",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "book_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Book Id"
+        },
+        "date_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date From"
+        },
+        "date_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date To"
+        },
+        "account_ids": {
+          "anyOf": [
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "items": {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Ids",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "created",
+                "updated"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By",
+          "enum": [
+            "created",
+            "updated"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "RilletListJournalEntriesConfig",
+      "type": "object"
+    },
+    "RilletListProductsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous page. Cursors expire after two hours; expired cursors restart the sequence.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "product_types": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "PRODUCT",
+                  "BUNDLE"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Types"
+        }
+      },
+      "title": "RilletListProductsConfig",
+      "type": "object"
+    },
+    "RilletListSubsidiariesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_subsidiaries",
+          "default": "list_subsidiaries",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "RilletListSubsidiariesConfig",
+      "type": "object"
+    },
+    "RilletListVendorsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Records updated after this timestamp (updated.gt).",
+          "title": "Updated After"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_cursor from the previous page. Cursors expire after two hours; expired cursors restart the sequence.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_vendors",
+          "default": "list_vendors",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "RilletListVendorsConfig",
+      "type": "object"
+    },
+    "RilletUpdateInvoiceSentStatusConfig": {
+      "additionalProperties": false,
+      "description": "Record delivery status after delivery is confirmed; does not send email.",
+      "properties": {
+        "operation": {
+          "const": "update_invoice_sent_status",
+          "default": "update_invoice_sent_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "format": "uuid",
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "sent": {
+          "title": "Sent",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "invoice_id",
+        "sent"
+      ],
+      "title": "RilletUpdateInvoiceSentStatusConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_bill": "#/$defs/RilletCreateBillConfig",
+          "create_customer": "#/$defs/RilletCreateCustomerConfig",
+          "create_invoice": "#/$defs/RilletCreateInvoiceConfig",
+          "create_journal_entry": "#/$defs/RilletCreateJournalEntryConfig",
+          "create_vendor": "#/$defs/RilletCreateVendorConfig",
+          "get_bill": "#/$defs/RilletGetBillConfig",
+          "get_contract": "#/$defs/RilletGetContractConfig",
+          "get_customer": "#/$defs/RilletGetCustomerConfig",
+          "get_invoice": "#/$defs/RilletGetInvoiceConfig",
+          "get_journal_entry": "#/$defs/RilletGetJournalEntryConfig",
+          "get_organization": "#/$defs/RilletGetOrganizationConfig",
+          "get_product": "#/$defs/RilletGetProductConfig",
+          "get_vendor": "#/$defs/RilletGetVendorConfig",
+          "list_accounts": "#/$defs/RilletListAccountsConfig",
+          "list_bank_accounts": "#/$defs/RilletListBankAccountsConfig",
+          "list_bank_transactions": "#/$defs/RilletListBankTransactionsConfig",
+          "list_bills": "#/$defs/RilletListBillsConfig",
+          "list_contracts": "#/$defs/RilletListContractsConfig",
+          "list_customers": "#/$defs/RilletListCustomersConfig",
+          "list_invoices": "#/$defs/RilletListInvoicesConfig",
+          "list_journal_entries": "#/$defs/RilletListJournalEntriesConfig",
+          "list_products": "#/$defs/RilletListProductsConfig",
+          "list_subsidiaries": "#/$defs/RilletListSubsidiariesConfig",
+          "list_vendors": "#/$defs/RilletListVendorsConfig",
+          "update_invoice_sent_status": "#/$defs/RilletUpdateInvoiceSentStatusConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RilletGetOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletListAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletListSubsidiariesConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletGetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletCreateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletListVendorsConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletGetVendorConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletCreateVendorConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletGetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletListContractsConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletGetContractConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletListInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletGetInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletCreateInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletUpdateInvoiceSentStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletListBillsConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletGetBillConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletCreateBillConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletListJournalEntriesConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletGetJournalEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletCreateJournalEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletListBankAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/RilletListBankTransactionsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RilletAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Rillet Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
