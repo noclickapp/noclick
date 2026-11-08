@@ -1,0 +1,142 @@
+{
+  "search_au_addresses": {
+    "config": {
+      "operation": "search_au_addresses",
+      "q": "Unit 2, 21 Kent Road"
+    },
+    "path": "/au/address/autocomplete",
+    "operation_id": "au-address-autocomplete-api"
+  },
+  "get_au_address_metadata": {
+    "config": {
+      "operation": "get_au_address_metadata",
+      "id": "a9cd30a9-d682-ee4a-91aa-ab9a66446934"
+    },
+    "path": "/au/address/metadata",
+    "operation_id": "au-address-metadata-api"
+  },
+  "verify_au_address": {
+    "config": {
+      "operation": "verify_au_address",
+      "q": "274 Harbour Drive, COFFS HARBOUR NSW 2450"
+    },
+    "path": "/au/address/v2/verification",
+    "operation_id": "au-address-verification-api"
+  },
+  "search_au_locations": {
+    "config": {
+      "operation": "search_au_locations",
+      "q": "Kent Road, MASCOT"
+    },
+    "path": "/au/location/autocomplete",
+    "operation_id": "au-location-autocomplete-api"
+  },
+  "get_au_location_metadata": {
+    "config": {
+      "operation": "get_au_location_metadata",
+      "id": "90089d44-f86e-11ef-8948-2e2a976ffd19"
+    },
+    "path": "/au/location/metadata",
+    "operation_id": "au-location-metadata-api"
+  },
+  "search_nz_addresses": {
+    "config": {
+      "operation": "search_nz_addresses",
+      "q": "184 will"
+    },
+    "path": "/nz/address/autocomplete",
+    "operation_id": "nz-address-autocomplete-api"
+  },
+  "get_nz_address_metadata": {
+    "config": {
+      "operation": "get_nz_address_metadata",
+      "pxid": "2-.F.1W.p.0G1Jx"
+    },
+    "path": "/nz/address/metadata",
+    "operation_id": "nz-address-metadata-api"
+  },
+  "verify_nz_address": {
+    "config": {
+      "operation": "verify_nz_address",
+      "q": "1 Ghuznee Street, Te Aro, Wellington 6011"
+    },
+    "path": "/nz/address/verification",
+    "operation_id": "nz-address-verification-api"
+  },
+  "search_nz_locations": {
+    "config": {
+      "operation": "search_nz_locations",
+      "q": "rankin"
+    },
+    "path": "/nz/location/autocomplete",
+    "operation_id": "nz-location-autocomplete-api"
+  },
+  "get_nz_location_metadata": {
+    "config": {
+      "operation": "get_nz_location_metadata",
+      "pxid": "1-.B.11.4.2H"
+    },
+    "path": "/nz/location/metadata",
+    "operation_id": "nz-location-metadata-api"
+  },
+  "search_nz_points_of_interest": {
+    "config": {
+      "operation": "search_nz_points_of_interest",
+      "q": "auckland hospital"
+    },
+    "path": "/nz/points_of_interest/autocomplete",
+    "operation_id": "nz-poi-autocomplete-api"
+  },
+  "get_nz_point_of_interest_metadata": {
+    "config": {
+      "operation": "get_nz_point_of_interest_metadata",
+      "id": "2457"
+    },
+    "path": "/nz/points_of_interest/metadata",
+    "operation_id": "nz-poi-metadata-api"
+  },
+  "get_nz_reverse_geocode": {
+    "config": {
+      "operation": "get_nz_reverse_geocode",
+      "x": "174.773068233188",
+      "y": "-41.2917018846201"
+    },
+    "path": "/nz/address/reverse_geocode",
+    "operation_id": "nz-address-reverse-geocode-api"
+  },
+  "verify_email": {
+    "config": {
+      "operation": "verify_email",
+      "email": "john.doe@addressfinder.com"
+    },
+    "path": "/email/v1/verification",
+    "operation_id": "email-verification-api"
+  },
+  "verify_phone": {
+    "config": {
+      "operation": "verify_phone",
+      "phone_number": "61285038000",
+      "default_country_code": "AU"
+    },
+    "path": "/phone/v1/verification",
+    "operation_id": "phone-verification-api"
+  },
+  "search_international_addresses": {
+    "config": {
+      "operation": "search_international_addresses",
+      "country": "fr",
+      "q": "15 Rue Sa"
+    },
+    "path": "/{country}/address/v2/autocomplete",
+    "operation_id": "int-address-autocomplete-api"
+  },
+  "get_international_address_metadata": {
+    "config": {
+      "operation": "get_international_address_metadata",
+      "country": "fr",
+      "id": "_wExNQD-UiYL_lMED0XM_k1PCPX_BDkyMjMwAP5HM4tt8JcbCg"
+    },
+    "path": "/{country}/address/v2/metadata",
+    "operation_id": "int-address-metadata-api"
+  }
+}
