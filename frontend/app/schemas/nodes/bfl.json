@@ -1,0 +1,2286 @@
+{
+  "$defs": {
+    "BflAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "bfl_api_key",
+          "default": "bfl_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "BFL API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in your BFL dashboard, then paste it here. NoClick sends it in the x-key header to BFL. Reading your credit balance checks access without spending credits; generation and editing spend your BFL credits.",
+      "x-credential-url": "https://dashboard.bfl.ai"
+    },
+    "BflDeleteFinetuneConfig": {
+      "additionalProperties": false,
+      "description": "Delete Finetune.",
+      "properties": {
+        "operation": {
+          "const": "delete_finetune",
+          "default": "delete_finetune",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "finetune_id": {
+          "description": "Name of the LoRA to delete.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Finetune Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "finetune_id"
+      ],
+      "title": "BflDeleteFinetuneConfig",
+      "type": "object"
+    },
+    "BflExpandImageConfig": {
+      "additionalProperties": false,
+      "description": "Expand an image with FLUX.1 Expand [pro] by adding pixels on any side.",
+      "properties": {
+        "operation": {
+          "const": "expand_image",
+          "default": "expand_image",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "image": {
+          "description": "A Base64-encoded string representing the image you wish to expand.",
+          "maxLength": 12000000,
+          "title": "Image",
+          "type": "string"
+        },
+        "top": {
+          "anyOf": [
+            {
+              "maximum": 2048.0,
+              "minimum": 0.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of pixels to expand at the top of the image",
+          "title": "Top"
+        },
+        "bottom": {
+          "anyOf": [
+            {
+              "maximum": 2048.0,
+              "minimum": 0.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of pixels to expand at the bottom of the image",
+          "title": "Bottom"
+        },
+        "left": {
+          "anyOf": [
+            {
+              "maximum": 2048.0,
+              "minimum": 0.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of pixels to expand on the left side of the image",
+          "title": "Left"
+        },
+        "right": {
+          "anyOf": [
+            {
+              "maximum": 2048.0,
+              "minimum": 0.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of pixels to expand on the right side of the image",
+          "title": "Right"
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "",
+          "description": "The description of the changes you want to make. This text guides the expansion process, allowing you to specify features, styles, or modifications for the expanded areas.",
+          "title": "Prompt"
+        },
+        "steps": {
+          "anyOf": [
+            {
+              "maximum": 50.0,
+              "minimum": 15.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Number of steps for the image generation process",
+          "title": "Steps"
+        },
+        "prompt_upsampling": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Whether to perform upsampling on the prompt. If active, automatically modifies the prompt for more creative generation",
+          "title": "Prompt Upsampling"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional seed for reproducibility",
+          "title": "Seed"
+        },
+        "guidance": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 1.5,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 60,
+          "description": "Guidance strength for the image generation process",
+          "title": "Guidance"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "jpeg",
+          "description": "Output format for the generated image. Can be 'jpeg', 'png', or 'webp'.",
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        },
+        "safety_tolerance": {
+          "default": 2,
+          "description": "Tolerance level for input and output moderation. Between 0 and 6, 0 being most strict, 6 being least strict.",
+          "maximum": 6.0,
+          "minimum": 0.0,
+          "title": "Safety Tolerance",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "image"
+      ],
+      "title": "BflExpandImageConfig",
+      "type": "object"
+    },
+    "BflFillImageConfig": {
+      "additionalProperties": false,
+      "description": "Inpaint an image with FLUX.1 Fill [pro] using an input image and mask.",
+      "properties": {
+        "operation": {
+          "const": "fill_image",
+          "default": "fill_image",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "image": {
+          "description": "A Base64-encoded string representing the image you wish to modify. Can contain alpha mask if desired.",
+          "maxLength": 12000000,
+          "title": "Image",
+          "type": "string"
+        },
+        "mask": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A Base64-encoded string representing a mask for the areas you want to modify in the image. The mask should be the same dimensions as the image and in black and white. Black areas (0%) indicate no modification, while white areas (100%) specify areas for inpainting. Optional if you provide an alpha mask in the original image. Validation: The endpoint verifies that the dimensions of the mask match the original image.",
+          "title": "Mask"
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "",
+          "description": "The description of the changes you want to make. This text guides the inpainting process, allowing you to specify features, styles, or modifications for the masked area.",
+          "title": "Prompt"
+        },
+        "steps": {
+          "anyOf": [
+            {
+              "maximum": 50.0,
+              "minimum": 15.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Number of steps for the image generation process",
+          "title": "Steps"
+        },
+        "prompt_upsampling": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Whether to perform upsampling on the prompt. If active, automatically modifies the prompt for more creative generation",
+          "title": "Prompt Upsampling"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional seed for reproducibility",
+          "title": "Seed"
+        },
+        "guidance": {
+          "anyOf": [
+            {
+              "maximum": 100.0,
+              "minimum": 1.5,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 60,
+          "description": "Guidance strength for the image generation process",
+          "title": "Guidance"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "jpeg",
+          "description": "Output format for the generated image. Can be 'jpeg', 'png', or 'webp'.",
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        },
+        "safety_tolerance": {
+          "default": 2,
+          "description": "Tolerance level for input and output moderation. Between 0 and 6, 0 being most strict, 6 being least strict.",
+          "maximum": 6.0,
+          "minimum": 0.0,
+          "title": "Safety Tolerance",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "image"
+      ],
+      "title": "BflFillImageConfig",
+      "type": "object"
+    },
+    "BflGenerateFinetunedUltraConfig": {
+      "additionalProperties": false,
+      "description": "Generate an image with FLUX 1.1 [pro] finetune with ultra mode..",
+      "properties": {
+        "operation": {
+          "const": "generate_finetuned_ultra",
+          "default": "generate_finetuned_ultra",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "finetune_id": {
+          "description": "Name of the LoRA to use. For LoRAs from other organizations (public or shared), use the format 'org-id/lora-name'.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Finetune Id",
+          "type": "string"
+        },
+        "finetune_strength": {
+          "default": 1.2,
+          "description": "Strength of the fine-tuned model. 0.0 means no influence, 1.0 means full influence. Allowed values up to 2.0",
+          "maximum": 2.0,
+          "minimum": 0.0,
+          "title": "Finetune Strength",
+          "type": "number"
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "",
+          "description": "The prompt to use for image generation.",
+          "title": "Prompt"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional seed for reproducibility. If not provided, a random seed will be used.",
+          "title": "Seed"
+        },
+        "aspect_ratio": {
+          "default": "16:9",
+          "description": "Aspect ratio of the image between 21:9 and 9:21",
+          "maxLength": 32000,
+          "title": "Aspect Ratio",
+          "type": "string"
+        },
+        "safety_tolerance": {
+          "default": 2,
+          "description": "Tolerance level for input and output moderation. Between 0 and 6, 0 being most strict, 6 being least strict.",
+          "maximum": 6.0,
+          "minimum": 0.0,
+          "title": "Safety Tolerance",
+          "type": "integer"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "jpeg",
+          "description": "Output format for the generated image. Can be 'jpeg', 'png', or 'webp'.",
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        },
+        "image_prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional image to remix in base64 format",
+          "title": "Image Prompt"
+        },
+        "image_prompt_strength": {
+          "default": 0.1,
+          "description": "Blend between the prompt and the image prompt",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Image Prompt Strength",
+          "type": "number"
+        },
+        "prompt_upsampling": {
+          "default": false,
+          "description": "Whether to perform upsampling on the prompt. If active, automatically modifies the prompt for more creative generation",
+          "title": "Prompt Upsampling",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "finetune_id"
+      ],
+      "title": "BflGenerateFinetunedUltraConfig",
+      "type": "object"
+    },
+    "BflGenerateFlux2FlexConfig": {
+      "additionalProperties": false,
+      "description": "Generate or edit an image with FLUX.2 [flex].",
+      "properties": {
+        "operation": {
+          "const": "generate_flux_2_flex",
+          "default": "generate_flux_2_flex",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "description": "Text prompt for image generation.",
+          "maxLength": 32000,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "prompt_upsampling": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Whether to use prompt upsampling.",
+          "title": "Prompt Upsampling"
+        },
+        "input_image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the input image.",
+          "title": "Input Image"
+        },
+        "input_image_2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the second input image.",
+          "title": "Input Image 2"
+        },
+        "input_image_3": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the third input image.",
+          "title": "Input Image 3"
+        },
+        "input_image_4": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the fourth input image.",
+          "title": "Input Image 4"
+        },
+        "input_image_5": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the fifth input image.",
+          "title": "Input Image 5"
+        },
+        "input_image_6": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the sixth input image.",
+          "title": "Input Image 6"
+        },
+        "input_image_7": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the seventh input image.",
+          "title": "Input Image 7"
+        },
+        "input_image_8": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the eighth input image.",
+          "title": "Input Image 8"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional seed for reproducibility.",
+          "title": "Seed"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "minimum": 64.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Width of the image",
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "minimum": 64.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Height of the image",
+          "title": "Height"
+        },
+        "guidance": {
+          "anyOf": [
+            {
+              "maximum": 10.0,
+              "minimum": 1.5,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 5.0,
+          "description": "Guidance scale for image generation. High guidance scales improve prompt adherence at the cost of reduced realism.",
+          "title": "Guidance"
+        },
+        "steps": {
+          "anyOf": [
+            {
+              "maximum": 50.0,
+              "minimum": 1.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Number of steps for image generation. Higher steps lead to more detailed and realistic images.",
+          "title": "Steps"
+        },
+        "safety_tolerance": {
+          "default": 2,
+          "description": "Harm moderation tolerance from 0 to 7, with 0 the strictest. The route and organization determine the approved maximum and per-category ceilings. Unapproved levels return 422 with approved levels.",
+          "maximum": 7.0,
+          "minimum": 0.0,
+          "title": "Safety Tolerance",
+          "type": "integer"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "jpeg",
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "BflGenerateFlux2FlexConfig",
+      "type": "object"
+    },
+    "BflGenerateFlux2Klein4BConfig": {
+      "additionalProperties": false,
+      "description": "Generate or edit an image with FLUX.2 [klein] 4B.",
+      "properties": {
+        "operation": {
+          "const": "generate_flux_2_klein_4b",
+          "default": "generate_flux_2_klein_4b",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "description": "Text prompt for image generation.",
+          "maxLength": 32000,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "input_image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the input image.",
+          "title": "Input Image"
+        },
+        "input_image_2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the second input image.",
+          "title": "Input Image 2"
+        },
+        "input_image_3": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the third input image.",
+          "title": "Input Image 3"
+        },
+        "input_image_4": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the fourth input image.",
+          "title": "Input Image 4"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional seed for reproducibility.",
+          "title": "Seed"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "minimum": 64.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Width of the image",
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "minimum": 64.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Height of the image",
+          "title": "Height"
+        },
+        "safety_tolerance": {
+          "default": 2,
+          "description": "Harm moderation tolerance from 0 to 7, with 0 the strictest. The route and organization determine the approved maximum and per-category ceilings. Unapproved levels return 422 with approved levels.",
+          "maximum": 7.0,
+          "minimum": 0.0,
+          "title": "Safety Tolerance",
+          "type": "integer"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "jpeg",
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "BflGenerateFlux2Klein4BConfig",
+      "type": "object"
+    },
+    "BflGenerateFlux2Klein9BConfig": {
+      "additionalProperties": false,
+      "description": "Generate or edit an image with FLUX.2 [klein] 9B.",
+      "properties": {
+        "operation": {
+          "const": "generate_flux_2_klein_9b",
+          "default": "generate_flux_2_klein_9b",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "description": "Text prompt for image generation.",
+          "maxLength": 32000,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "input_image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the input image.",
+          "title": "Input Image"
+        },
+        "input_image_2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the second input image.",
+          "title": "Input Image 2"
+        },
+        "input_image_3": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the third input image.",
+          "title": "Input Image 3"
+        },
+        "input_image_4": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the fourth input image.",
+          "title": "Input Image 4"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional seed for reproducibility.",
+          "title": "Seed"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "minimum": 64.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Width of the image",
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "minimum": 64.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Height of the image",
+          "title": "Height"
+        },
+        "safety_tolerance": {
+          "default": 2,
+          "description": "Harm moderation tolerance from 0 to 7, with 0 the strictest. The route and organization determine the approved maximum and per-category ceilings. Unapproved levels return 422 with approved levels.",
+          "maximum": 7.0,
+          "minimum": 0.0,
+          "title": "Safety Tolerance",
+          "type": "integer"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "jpeg",
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "BflGenerateFlux2Klein9BConfig",
+      "type": "object"
+    },
+    "BflGenerateFlux2MaxConfig": {
+      "additionalProperties": false,
+      "description": "Generate or edit an image with FLUX.2 [max].",
+      "properties": {
+        "operation": {
+          "const": "generate_flux_2_max",
+          "default": "generate_flux_2_max",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "description": "Text prompt for image generation.",
+          "maxLength": 32000,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "disable_pup": {
+          "default": false,
+          "description": "Disable automatic prompt upsampling for this request. FLUX.2 [pro] and [max] apply prompt upsampling by default; set this to true to generate from your prompt exactly as written.",
+          "title": "Disable Pup",
+          "type": "boolean"
+        },
+        "input_image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the input image.",
+          "title": "Input Image"
+        },
+        "input_image_2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the second input image.",
+          "title": "Input Image 2"
+        },
+        "input_image_3": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the third input image.",
+          "title": "Input Image 3"
+        },
+        "input_image_4": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the fourth input image.",
+          "title": "Input Image 4"
+        },
+        "input_image_5": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the fifth input image.",
+          "title": "Input Image 5"
+        },
+        "input_image_6": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the sixth input image.",
+          "title": "Input Image 6"
+        },
+        "input_image_7": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the seventh input image.",
+          "title": "Input Image 7"
+        },
+        "input_image_8": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the eighth input image.",
+          "title": "Input Image 8"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional seed for reproducibility.",
+          "title": "Seed"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "minimum": 64.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Width of the image",
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "minimum": 64.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Height of the image",
+          "title": "Height"
+        },
+        "safety_tolerance": {
+          "default": 2,
+          "description": "Harm moderation tolerance from 0 to 7, with 0 the strictest. The route and organization determine the approved maximum and per-category ceilings. Unapproved levels return 422 with approved levels.",
+          "maximum": 7.0,
+          "minimum": 0.0,
+          "title": "Safety Tolerance",
+          "type": "integer"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "jpeg",
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "BflGenerateFlux2MaxConfig",
+      "type": "object"
+    },
+    "BflGenerateFlux2ProConfig": {
+      "additionalProperties": false,
+      "description": "Generate or edit an image with FLUX.2 [pro].",
+      "properties": {
+        "operation": {
+          "const": "generate_flux_2_pro",
+          "default": "generate_flux_2_pro",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "description": "Text prompt for image generation.",
+          "maxLength": 32000,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "disable_pup": {
+          "default": false,
+          "description": "Disable automatic prompt upsampling for this request. FLUX.2 [pro] and [max] apply prompt upsampling by default; set this to true to generate from your prompt exactly as written.",
+          "title": "Disable Pup",
+          "type": "boolean"
+        },
+        "input_image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the input image.",
+          "title": "Input Image"
+        },
+        "input_image_2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the second input image.",
+          "title": "Input Image 2"
+        },
+        "input_image_3": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the third input image.",
+          "title": "Input Image 3"
+        },
+        "input_image_4": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the fourth input image.",
+          "title": "Input Image 4"
+        },
+        "input_image_5": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the fifth input image.",
+          "title": "Input Image 5"
+        },
+        "input_image_6": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the sixth input image.",
+          "title": "Input Image 6"
+        },
+        "input_image_7": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the seventh input image.",
+          "title": "Input Image 7"
+        },
+        "input_image_8": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the eighth input image.",
+          "title": "Input Image 8"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional seed for reproducibility.",
+          "title": "Seed"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "minimum": 64.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Width of the image",
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "minimum": 64.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Height of the image",
+          "title": "Height"
+        },
+        "safety_tolerance": {
+          "default": 2,
+          "description": "Harm moderation tolerance from 0 to 7, with 0 the strictest. The route and organization determine the approved maximum and per-category ceilings. Unapproved levels return 422 with approved levels.",
+          "maximum": 7.0,
+          "minimum": 0.0,
+          "title": "Safety Tolerance",
+          "type": "integer"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "jpeg",
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "BflGenerateFlux2ProConfig",
+      "type": "object"
+    },
+    "BflGenerateFluxDevConfig": {
+      "additionalProperties": false,
+      "description": "Generate an image with FLUX.1 [dev].",
+      "properties": {
+        "operation": {
+          "const": "generate_flux_dev",
+          "default": "generate_flux_dev",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "default": "",
+          "description": "Text prompt for image generation.",
+          "maxLength": 32000,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "image_prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional base64 encoded image to use as a prompt for generation.",
+          "title": "Image Prompt"
+        },
+        "width": {
+          "default": 1024,
+          "description": "Width of the generated image in pixels. Must be a multiple of 32.",
+          "maximum": 1440.0,
+          "minimum": 256.0,
+          "multipleOf": 32.0,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "default": 768,
+          "description": "Height of the generated image in pixels. Must be a multiple of 32.",
+          "maximum": 1440.0,
+          "minimum": 256.0,
+          "multipleOf": 32.0,
+          "title": "Height",
+          "type": "integer"
+        },
+        "steps": {
+          "anyOf": [
+            {
+              "maximum": 50.0,
+              "minimum": 1.0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 28,
+          "description": "Number of steps for the image generation process.",
+          "title": "Steps"
+        },
+        "prompt_upsampling": {
+          "default": false,
+          "description": "Whether to perform upsampling on the prompt. If active, automatically modifies the prompt for more creative generation.",
+          "title": "Prompt Upsampling",
+          "type": "boolean"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional seed for reproducibility.",
+          "title": "Seed"
+        },
+        "guidance": {
+          "anyOf": [
+            {
+              "maximum": 5.0,
+              "minimum": 1.5,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 3.0,
+          "description": "Guidance scale for image generation. High guidance scales improve prompt adherence at the cost of reduced realism.",
+          "title": "Guidance"
+        },
+        "safety_tolerance": {
+          "default": 2,
+          "description": "Tolerance level for input and output moderation. Between 0 and 6, 0 being most strict, 6 being least strict.",
+          "maximum": 6.0,
+          "minimum": 0.0,
+          "title": "Safety Tolerance",
+          "type": "integer"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "jpeg",
+          "description": "Output format for the generated image. Can be 'jpeg', 'png', or 'webp'.",
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "BflGenerateFluxDevConfig",
+      "type": "object"
+    },
+    "BflGenerateFluxPro11Config": {
+      "additionalProperties": false,
+      "description": "Generate an image with FLUX1.1 [pro].",
+      "properties": {
+        "operation": {
+          "const": "generate_flux_pro_11",
+          "default": "generate_flux_pro_11",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "",
+          "description": "Text prompt for image generation.",
+          "title": "Prompt"
+        },
+        "image_prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional base64 encoded image to use with Flux Redux.",
+          "title": "Image Prompt"
+        },
+        "width": {
+          "default": 1024,
+          "description": "Width of the generated image in pixels. Must be a multiple of 32.",
+          "maximum": 1440.0,
+          "minimum": 256.0,
+          "multipleOf": 32.0,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "default": 768,
+          "description": "Height of the generated image in pixels. Must be a multiple of 32.",
+          "maximum": 1440.0,
+          "minimum": 256.0,
+          "multipleOf": 32.0,
+          "title": "Height",
+          "type": "integer"
+        },
+        "prompt_upsampling": {
+          "default": false,
+          "description": "Whether to perform upsampling on the prompt. If active, automatically modifies the prompt for more creative generation.",
+          "title": "Prompt Upsampling",
+          "type": "boolean"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional seed for reproducibility.",
+          "title": "Seed"
+        },
+        "safety_tolerance": {
+          "default": 2,
+          "description": "Tolerance level for input and output moderation. Between 0 and 6, 0 being most strict, 6 being least strict.",
+          "maximum": 6.0,
+          "minimum": 0.0,
+          "title": "Safety Tolerance",
+          "type": "integer"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "jpeg",
+          "description": "Output format for the generated image. Can be 'jpeg', 'png', or 'webp'.",
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "BflGenerateFluxPro11Config",
+      "type": "object"
+    },
+    "BflGenerateFluxUltraConfig": {
+      "additionalProperties": false,
+      "description": "Generate an image with FLUX1.1 [pro] ultra mode.",
+      "properties": {
+        "operation": {
+          "const": "generate_flux_ultra",
+          "default": "generate_flux_ultra",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "",
+          "description": "The prompt to use for image generation.",
+          "title": "Prompt"
+        },
+        "prompt_upsampling": {
+          "default": false,
+          "description": "Whether to perform upsampling on the prompt. If active, automatically modifies the prompt for more creative generation.",
+          "title": "Prompt Upsampling",
+          "type": "boolean"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional seed for reproducibility. If not provided, a random seed will be used.",
+          "title": "Seed"
+        },
+        "aspect_ratio": {
+          "default": "16:9",
+          "description": "Aspect ratio of the image between 21:9 and 9:21",
+          "maxLength": 32000,
+          "title": "Aspect Ratio",
+          "type": "string"
+        },
+        "safety_tolerance": {
+          "default": 2,
+          "description": "Tolerance level for input and output moderation. Between 0 and 6, 0 being most strict, 6 being least strict.",
+          "maximum": 6.0,
+          "minimum": 0.0,
+          "title": "Safety Tolerance",
+          "type": "integer"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "jpeg",
+          "description": "Output format for the generated image. Can be 'jpeg', 'png', or 'webp'.",
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        },
+        "raw": {
+          "default": false,
+          "description": "Generate less processed, more natural-looking images",
+          "title": "Raw",
+          "type": "boolean"
+        },
+        "image_prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional image to remix in base64 format",
+          "title": "Image Prompt"
+        },
+        "image_prompt_strength": {
+          "default": 0.1,
+          "description": "Blend between the prompt and the image prompt",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Image Prompt Strength",
+          "type": "number"
+        }
+      },
+      "title": "BflGenerateFluxUltraConfig",
+      "type": "object"
+    },
+    "BflGenerateKontextMaxConfig": {
+      "additionalProperties": false,
+      "description": "Edit or create an image with FLUX.1 Kontext [max].",
+      "properties": {
+        "operation": {
+          "const": "generate_kontext_max",
+          "default": "generate_kontext_max",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "description": "Text prompt for image generation.",
+          "maxLength": 32000,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "input_image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base64 encoded image or URL to use with Kontext.",
+          "title": "Input Image"
+        },
+        "input_image_2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base64 encoded image or URL to use with Kontext. *Experimental Multiref*",
+          "title": "Input Image 2"
+        },
+        "input_image_3": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base64 encoded image or URL to use with Kontext. *Experimental Multiref*",
+          "title": "Input Image 3"
+        },
+        "input_image_4": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base64 encoded image or URL to use with Kontext. *Experimental Multiref*",
+          "title": "Input Image 4"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional seed for reproducibility.",
+          "title": "Seed"
+        },
+        "aspect_ratio": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Aspect ratio of the image between 21:9 and 9:21",
+          "title": "Aspect Ratio"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "png",
+          "description": "Output format for the generated image. Can be 'jpeg', 'png', or 'webp'.",
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        },
+        "prompt_upsampling": {
+          "default": false,
+          "description": "Whether to perform upsampling on the prompt. If active, automatically modifies the prompt for more creative generation.",
+          "title": "Prompt Upsampling",
+          "type": "boolean"
+        },
+        "safety_tolerance": {
+          "default": 2,
+          "description": "Tolerance level for input and output moderation. Between 0 and 6, 0 being most strict, 6 being least strict.",
+          "maximum": 6.0,
+          "minimum": 0.0,
+          "title": "Safety Tolerance",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "BflGenerateKontextMaxConfig",
+      "type": "object"
+    },
+    "BflGenerateKontextProConfig": {
+      "additionalProperties": false,
+      "description": "Edit or create an image with FLUX.1 Kontext [pro].",
+      "properties": {
+        "operation": {
+          "const": "generate_kontext_pro",
+          "default": "generate_kontext_pro",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "description": "Text prompt for image generation.",
+          "maxLength": 32000,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "input_image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base64 encoded image or URL to use with Kontext.",
+          "title": "Input Image"
+        },
+        "input_image_2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base64 encoded image or URL to use with Kontext. *Experimental Multiref*",
+          "title": "Input Image 2"
+        },
+        "input_image_3": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base64 encoded image or URL to use with Kontext. *Experimental Multiref*",
+          "title": "Input Image 3"
+        },
+        "input_image_4": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base64 encoded image or URL to use with Kontext. *Experimental Multiref*",
+          "title": "Input Image 4"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional seed for reproducibility.",
+          "title": "Seed"
+        },
+        "aspect_ratio": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Aspect ratio of the image between 21:9 and 9:21",
+          "title": "Aspect Ratio"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpeg",
+                "png",
+                "webp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "png",
+          "description": "Output format for the generated image. Can be 'jpeg', 'png', or 'webp'.",
+          "title": "Output Format",
+          "enum": [
+            "jpeg",
+            "png",
+            "webp"
+          ],
+          "x-enum-searchable": true
+        },
+        "prompt_upsampling": {
+          "default": false,
+          "description": "Whether to perform upsampling on the prompt. If active, automatically modifies the prompt for more creative generation.",
+          "title": "Prompt Upsampling",
+          "type": "boolean"
+        },
+        "safety_tolerance": {
+          "default": 2,
+          "description": "Tolerance level for input and output moderation. Between 0 and 6, 0 being most strict, 6 being least strict.",
+          "maximum": 6.0,
+          "minimum": 0.0,
+          "title": "Safety Tolerance",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "BflGenerateKontextProConfig",
+      "type": "object"
+    },
+    "BflGetCreditsConfig": {
+      "additionalProperties": false,
+      "description": "Get the user's credits.",
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "BflGetCreditsConfig",
+      "type": "object"
+    },
+    "BflGetFinetuneDetailsConfig": {
+      "additionalProperties": false,
+      "description": "Finetune Details.",
+      "properties": {
+        "operation": {
+          "const": "get_finetune_details",
+          "default": "get_finetune_details",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "finetune_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Finetune Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "finetune_id"
+      ],
+      "title": "BflGetFinetuneDetailsConfig",
+      "type": "object"
+    },
+    "BflGetResultConfig": {
+      "additionalProperties": false,
+      "description": "Get Result.",
+      "properties": {
+        "operation": {
+          "const": "get_result",
+          "default": "get_result",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "polling_url": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "",
+          "description": "Use the polling_url from the generation response for global or regional routing. The id must match this task. Omit only for a task whose endpoint is api.bfl.ai.",
+          "title": "Polling Url"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "BflGetResultConfig",
+      "type": "object"
+    },
+    "BflListFinetunesConfig": {
+      "additionalProperties": false,
+      "description": "My Finetunes.",
+      "properties": {
+        "operation": {
+          "const": "list_finetunes",
+          "default": "list_finetunes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "BflListFinetunesConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "delete_finetune": "#/$defs/BflDeleteFinetuneConfig",
+          "expand_image": "#/$defs/BflExpandImageConfig",
+          "fill_image": "#/$defs/BflFillImageConfig",
+          "generate_finetuned_ultra": "#/$defs/BflGenerateFinetunedUltraConfig",
+          "generate_flux_2_flex": "#/$defs/BflGenerateFlux2FlexConfig",
+          "generate_flux_2_klein_4b": "#/$defs/BflGenerateFlux2Klein4BConfig",
+          "generate_flux_2_klein_9b": "#/$defs/BflGenerateFlux2Klein9BConfig",
+          "generate_flux_2_max": "#/$defs/BflGenerateFlux2MaxConfig",
+          "generate_flux_2_pro": "#/$defs/BflGenerateFlux2ProConfig",
+          "generate_flux_dev": "#/$defs/BflGenerateFluxDevConfig",
+          "generate_flux_pro_11": "#/$defs/BflGenerateFluxPro11Config",
+          "generate_flux_ultra": "#/$defs/BflGenerateFluxUltraConfig",
+          "generate_kontext_max": "#/$defs/BflGenerateKontextMaxConfig",
+          "generate_kontext_pro": "#/$defs/BflGenerateKontextProConfig",
+          "get_credits": "#/$defs/BflGetCreditsConfig",
+          "get_finetune_details": "#/$defs/BflGetFinetuneDetailsConfig",
+          "get_result": "#/$defs/BflGetResultConfig",
+          "list_finetunes": "#/$defs/BflListFinetunesConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BflGetCreditsConfig"
+        },
+        {
+          "$ref": "#/$defs/BflListFinetunesConfig"
+        },
+        {
+          "$ref": "#/$defs/BflGetFinetuneDetailsConfig"
+        },
+        {
+          "$ref": "#/$defs/BflDeleteFinetuneConfig"
+        },
+        {
+          "$ref": "#/$defs/BflGetResultConfig"
+        },
+        {
+          "$ref": "#/$defs/BflGenerateFluxPro11Config"
+        },
+        {
+          "$ref": "#/$defs/BflGenerateFluxDevConfig"
+        },
+        {
+          "$ref": "#/$defs/BflGenerateFluxUltraConfig"
+        },
+        {
+          "$ref": "#/$defs/BflFillImageConfig"
+        },
+        {
+          "$ref": "#/$defs/BflExpandImageConfig"
+        },
+        {
+          "$ref": "#/$defs/BflGenerateFinetunedUltraConfig"
+        },
+        {
+          "$ref": "#/$defs/BflGenerateFlux2FlexConfig"
+        },
+        {
+          "$ref": "#/$defs/BflGenerateFlux2Klein9BConfig"
+        },
+        {
+          "$ref": "#/$defs/BflGenerateFlux2Klein4BConfig"
+        },
+        {
+          "$ref": "#/$defs/BflGenerateFlux2MaxConfig"
+        },
+        {
+          "$ref": "#/$defs/BflGenerateFlux2ProConfig"
+        },
+        {
+          "$ref": "#/$defs/BflGenerateKontextMaxConfig"
+        },
+        {
+          "$ref": "#/$defs/BflGenerateKontextProConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BflAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bfl Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

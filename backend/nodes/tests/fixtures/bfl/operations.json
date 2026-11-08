@@ -1,0 +1,118 @@
+{
+  "get_credits": {
+    "config": {},
+    "method": "GET",
+    "path": "/v1/credits"
+  },
+  "list_finetunes": {
+    "config": {},
+    "method": "GET",
+    "path": "/v1/my_finetunes"
+  },
+  "get_finetune_details": {
+    "config": {
+      "finetune_id": "fixture-finetune"
+    },
+    "method": "GET",
+    "path": "/v1/finetune_details"
+  },
+  "delete_finetune": {
+    "config": {
+      "finetune_id": "my-finetune"
+    },
+    "method": "POST",
+    "path": "/v1/delete_finetune"
+  },
+  "get_result": {
+    "config": {
+      "id": "fixture-task"
+    },
+    "method": "GET",
+    "path": "/v1/get_result"
+  },
+  "generate_flux_pro_11": {
+    "config": {},
+    "method": "POST",
+    "path": "/v1/flux-pro-1.1"
+  },
+  "generate_flux_dev": {
+    "config": {},
+    "method": "POST",
+    "path": "/v1/flux-dev"
+  },
+  "generate_flux_ultra": {
+    "config": {},
+    "method": "POST",
+    "path": "/v1/flux-pro-1.1-ultra"
+  },
+  "fill_image": {
+    "config": {
+      "image": "ZmFrZS1pbWFnZQ=="
+    },
+    "method": "POST",
+    "path": "/v1/flux-pro-1.0-fill"
+  },
+  "expand_image": {
+    "config": {
+      "image": "ZmFrZS1pbWFnZQ=="
+    },
+    "method": "POST",
+    "path": "/v1/flux-pro-1.0-expand"
+  },
+  "generate_finetuned_ultra": {
+    "config": {
+      "finetune_id": "my-finetune"
+    },
+    "method": "POST",
+    "path": "/v1/flux-pro-1.1-ultra-finetuned"
+  },
+  "generate_flux_2_flex": {
+    "config": {
+      "prompt": "ein fantastisches bild"
+    },
+    "method": "POST",
+    "path": "/v1/flux-2-flex"
+  },
+  "generate_flux_2_klein_9b": {
+    "config": {
+      "prompt": "ein fantastisches bild"
+    },
+    "method": "POST",
+    "path": "/v1/flux-2-klein-9b"
+  },
+  "generate_flux_2_klein_4b": {
+    "config": {
+      "prompt": "ein fantastisches bild"
+    },
+    "method": "POST",
+    "path": "/v1/flux-2-klein-4b"
+  },
+  "generate_flux_2_max": {
+    "config": {
+      "prompt": "ein fantastisches bild"
+    },
+    "method": "POST",
+    "path": "/v1/flux-2-max"
+  },
+  "generate_flux_2_pro": {
+    "config": {
+      "prompt": "ein fantastisches bild"
+    },
+    "method": "POST",
+    "path": "/v1/flux-2-pro"
+  },
+  "generate_kontext_max": {
+    "config": {
+      "prompt": "ein fantastisches bild"
+    },
+    "method": "POST",
+    "path": "/v1/flux-kontext-max"
+  },
+  "generate_kontext_pro": {
+    "config": {
+      "prompt": "ein fantastisches bild"
+    },
+    "method": "POST",
+    "path": "/v1/flux-kontext-pro"
+  }
+}
