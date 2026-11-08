@@ -1,0 +1,1043 @@
+{
+  "$defs": {
+    "HalopsaAccessTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "halopsa_access_token",
+          "default": "halopsa_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_url": {
+          "description": "For example https://yourcompany.halopsa.com",
+          "title": "Instance URL",
+          "type": "string"
+        },
+        "access_token": {
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "instance_url",
+        "access_token"
+      ],
+      "title": "HaloPSA Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing HaloPSA API access token and your hosted instance URL. Obtain a token using your Halo API application's configured authentication flow. Grant permissions for the operations you use. Tokens expire; replace the token when it expires. This connection does not refresh tokens. Hosted halopsa.com instances are supported.",
+      "x-credential-url": "https://halopsa.com/guides/article/?kbid=1499"
+    },
+    "HalopsaCreateActionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_action",
+          "default": "create_action",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ticket_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Ticket Id",
+          "type": "integer"
+        },
+        "note": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Outcome"
+        },
+        "timetaken": {
+          "anyOf": [
+            {
+              "maximum": 100000,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timetaken"
+        }
+      },
+      "required": [
+        "ticket_id",
+        "note"
+      ],
+      "title": "HalopsaCreateActionConfig",
+      "type": "object"
+    },
+    "HalopsaCreateClientConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_client",
+          "default": "create_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "HalopsaCreateClientConfig",
+      "type": "object"
+    },
+    "HalopsaCreateSiteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_site",
+          "default": "create_site",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "client_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Client Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "client_id"
+      ],
+      "title": "HalopsaCreateSiteConfig",
+      "type": "object"
+    },
+    "HalopsaCreateTicketConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_ticket",
+          "default": "create_ticket",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "summary": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        },
+        "site_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Id"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Id"
+        },
+        "priority_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority Id"
+        },
+        "tickettype_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tickettype Id"
+        },
+        "agent_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agent Id"
+        }
+      },
+      "required": [
+        "summary"
+      ],
+      "title": "HalopsaCreateTicketConfig",
+      "type": "object"
+    },
+    "HalopsaCreateUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "emailaddress": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emailaddress"
+        },
+        "site_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Site Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "site_id"
+      ],
+      "title": "HalopsaCreateUserConfig",
+      "type": "object"
+    },
+    "HalopsaGetActionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_action",
+          "default": "get_action",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "ticket_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Ticket Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "ticket_id"
+      ],
+      "title": "HalopsaGetActionConfig",
+      "type": "object"
+    },
+    "HalopsaGetClientConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_client",
+          "default": "get_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Record ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "HalopsaGetClientConfig",
+      "type": "object"
+    },
+    "HalopsaGetSiteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_site",
+          "default": "get_site",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Record ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "HalopsaGetSiteConfig",
+      "type": "object"
+    },
+    "HalopsaGetTicketConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_ticket",
+          "default": "get_ticket",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Record ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "HalopsaGetTicketConfig",
+      "type": "object"
+    },
+    "HalopsaGetUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Record ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "HalopsaGetUserConfig",
+      "type": "object"
+    },
+    "HalopsaListActionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_actions",
+          "default": "list_actions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ticket_id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Ticket Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "ticket_id"
+      ],
+      "title": "HalopsaListActionsConfig",
+      "type": "object"
+    },
+    "HalopsaListClientConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page_no": {
+          "default": 1,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page No",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_clients",
+          "default": "list_clients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "HalopsaListClientConfig",
+      "type": "object"
+    },
+    "HalopsaListSiteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page_no": {
+          "default": 1,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page No",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_sites",
+          "default": "list_sites",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "HalopsaListSiteConfig",
+      "type": "object"
+    },
+    "HalopsaListTicketConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page_no": {
+          "default": 1,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page No",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_tickets",
+          "default": "list_tickets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "HalopsaListTicketConfig",
+      "type": "object"
+    },
+    "HalopsaListUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page_no": {
+          "default": 1,
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page No",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "HalopsaListUserConfig",
+      "type": "object"
+    },
+    "HalopsaUpdateClientConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Record ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_client",
+          "default": "update_client",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "HalopsaUpdateClientConfig",
+      "type": "object"
+    },
+    "HalopsaUpdateSiteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Record ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_site",
+          "default": "update_site",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "HalopsaUpdateSiteConfig",
+      "type": "object"
+    },
+    "HalopsaUpdateTicketConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Record ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_ticket",
+          "default": "update_ticket",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Id"
+        },
+        "site_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Id"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "status_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status Id"
+        },
+        "priority_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority Id"
+        },
+        "tickettype_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tickettype Id"
+        },
+        "agent_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agent Id"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "HalopsaUpdateTicketConfig",
+      "type": "object"
+    },
+    "HalopsaUpdateUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Record ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "emailaddress": {
+          "anyOf": [
+            {
+              "maxLength": 20000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emailaddress"
+        },
+        "site_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Id"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "HalopsaUpdateUserConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_action": "#/$defs/HalopsaCreateActionConfig",
+          "create_client": "#/$defs/HalopsaCreateClientConfig",
+          "create_site": "#/$defs/HalopsaCreateSiteConfig",
+          "create_ticket": "#/$defs/HalopsaCreateTicketConfig",
+          "create_user": "#/$defs/HalopsaCreateUserConfig",
+          "get_action": "#/$defs/HalopsaGetActionConfig",
+          "get_client": "#/$defs/HalopsaGetClientConfig",
+          "get_site": "#/$defs/HalopsaGetSiteConfig",
+          "get_ticket": "#/$defs/HalopsaGetTicketConfig",
+          "get_user": "#/$defs/HalopsaGetUserConfig",
+          "list_actions": "#/$defs/HalopsaListActionsConfig",
+          "list_clients": "#/$defs/HalopsaListClientConfig",
+          "list_sites": "#/$defs/HalopsaListSiteConfig",
+          "list_tickets": "#/$defs/HalopsaListTicketConfig",
+          "list_users": "#/$defs/HalopsaListUserConfig",
+          "update_client": "#/$defs/HalopsaUpdateClientConfig",
+          "update_site": "#/$defs/HalopsaUpdateSiteConfig",
+          "update_ticket": "#/$defs/HalopsaUpdateTicketConfig",
+          "update_user": "#/$defs/HalopsaUpdateUserConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HalopsaListTicketConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaGetTicketConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaCreateTicketConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaUpdateTicketConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaListClientConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaGetClientConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaCreateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaUpdateClientConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaListUserConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaCreateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaUpdateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaListSiteConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaGetSiteConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaCreateSiteConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaUpdateSiteConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaListActionsConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaGetActionConfig"
+        },
+        {
+          "$ref": "#/$defs/HalopsaCreateActionConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HalopsaAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Halopsa Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
