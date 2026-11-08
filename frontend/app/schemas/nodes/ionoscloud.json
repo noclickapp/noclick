@@ -1,0 +1,265 @@
+{
+  "$defs": {
+    "CheckConnection": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "GetDatacenter": {
+      "additionalProperties": false,
+      "properties": {
+        "datacenter_id": {
+          "title": "Datacenter",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "datacenter_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "ionoscloud_datacenter"
+        },
+        "operation": {
+          "const": "get_datacenter",
+          "default": "get_datacenter",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "datacenter_id"
+      ],
+      "title": "GetDatacenter",
+      "type": "object"
+    },
+    "GetServer": {
+      "additionalProperties": false,
+      "properties": {
+        "datacenter_id": {
+          "title": "Datacenter",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "datacenter_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "ionoscloud_datacenter"
+        },
+        "operation": {
+          "const": "get_server",
+          "default": "get_server",
+          "title": "Operation",
+          "type": "string"
+        },
+        "server_id": {
+          "title": "Server",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "datacenter_id",
+            "field_name": "server_id",
+            "searchable": true
+          },
+          "x-resource-type": "ionoscloud_server"
+        }
+      },
+      "required": [
+        "datacenter_id",
+        "server_id"
+      ],
+      "title": "GetServer",
+      "type": "object"
+    },
+    "IONOSCloudBearerCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "ionoscloud_bearer",
+          "default": "ionoscloud_bearer",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "token": {
+          "title": "Bearer Token",
+          "type": "string",
+          "ui:sensitive": true,
+          "ui:widget": "password"
+        },
+        "contract_number": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": -2147483648,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional exact existing X-Contract-Number integer. Bound to every request; no contract fallback.",
+          "title": "Contract Number"
+        },
+        "approved_datacenter_ids_json": {
+          "default": "[]",
+          "description": "JSON string array of existing resource IDs, at most 50. Example: [\"15f67991-0f51-4efc-a8ad-ef1fb31a480c\"].",
+          "title": "Approved Datacenter IDs",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "include_labels": {
+          "default": false,
+          "description": "Opt in to datacenter/server names only. All links, entities, hostnames, users, network, boot and configuration data remain excluded.",
+          "title": "Include Resource Names",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "token"
+      ],
+      "title": "IONOS Cloud Bearer Token",
+      "type": "object",
+      "x-credential-instructions": "Enter an existing Cloud API Bearer token and approved existing datacenter IDs. Supply a contract number only when your existing account requires one. Protected catalog access does not identify a principal or prove ownership.",
+      "x-help-url": "https://api.ionos.com/docs/cloud/v6/"
+    },
+    "ListDatacenters": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Documented zero-based offset. Each operation returns one bounded provider page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Explicit provider page size, locally limited to 100. No total count is inferred.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_datacenters",
+          "default": "list_datacenters",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListDatacenters",
+      "type": "object"
+    },
+    "ListServers": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Documented zero-based offset. Each operation returns one bounded provider page.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Explicit provider page size, locally limited to 100. No total count is inferred.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "datacenter_id": {
+          "title": "Datacenter",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "datacenter_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "ionoscloud_datacenter"
+        },
+        "operation": {
+          "const": "list_servers",
+          "default": "list_servers",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "datacenter_id"
+      ],
+      "title": "ListServers",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_connection": "#/$defs/CheckConnection",
+          "get_datacenter": "#/$defs/GetDatacenter",
+          "get_server": "#/$defs/GetServer",
+          "list_datacenters": "#/$defs/ListDatacenters",
+          "list_servers": "#/$defs/ListServers"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/ListDatacenters"
+        },
+        {
+          "$ref": "#/$defs/GetDatacenter"
+        },
+        {
+          "$ref": "#/$defs/ListServers"
+        },
+        {
+          "$ref": "#/$defs/GetServer"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/IONOSCloudBearerCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Ionoscloud Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Read metadata for an approved IONOS datacenter",
+    "List server states under an approved datacenter",
+    "Get status for a server returned by its current parent catalog"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
