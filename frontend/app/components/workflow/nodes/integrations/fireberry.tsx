@@ -25,6 +25,7 @@ FireberryIcon.displayName = 'FireberryIcon';
 export const FireberryNode: NodeDefinition = {
     type: 'automation-fireberry',
     label: 'Fireberry',
+    category: 'crm-sales',
     description:
         'Create, read, update and delete CRM accounts, contacts, opportunities and tasks',
     Icon: FireberryIcon,
