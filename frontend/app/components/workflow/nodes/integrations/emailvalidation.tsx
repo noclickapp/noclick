@@ -11,6 +11,7 @@ const EmailvalidationIcon = ({ className, style }: { className?: string; style?:
 
 export const EmailvalidationNode: NodeDefinition = {
     type: 'automation-emailvalidation', label: 'Emailvalidation',
+    category: 'marketing',
     description: 'Validate email addresses, verify bulk lists and track account quota',
     keywords: ['emailvalidation.io', 'email verification', 'deliverability', 'bulk email'],
     Icon: EmailvalidationIcon, iconColor: '',
