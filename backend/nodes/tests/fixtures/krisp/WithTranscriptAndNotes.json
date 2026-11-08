@@ -1,0 +1,73 @@
+{
+  "id": "019a4988d3f4755ea05e0ad1c5a1eaea",
+  "title": "Q3 Planning \u2014 Product & Eng",
+  "started_at": "2025-11-05T10:45:48+04:00",
+  "duration": 1800,
+  "status": "ready",
+  "meeting_type": "All Hands",
+  "source": "Zoom",
+  "language": "en",
+  "tags": [
+    "product",
+    "planning"
+  ],
+  "ownership": "owned",
+  "transcript": {
+    "language": "en",
+    "segments": [
+      {
+        "speaker": 1,
+        "text": "Let's start with the roadmap update.",
+        "start": 0,
+        "end": 5.216
+      }
+    ]
+  },
+  "notes": {
+    "blocks": [
+      {
+        "type": "detailed_summaries",
+        "children": [
+          {
+            "type": "heading",
+            "text": "Overview",
+            "children": [
+              {
+                "type": "bullet_list_item",
+                "text": "Team aligned on Q3 priorities and approved the onboarding redesign."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "key_points",
+        "children": [
+          {
+            "type": "key_point",
+            "text": "Team aligned on Q3 priorities. {{02:19}}"
+          }
+        ]
+      },
+      {
+        "type": "action_items",
+        "children": [
+          {
+            "type": "action_item",
+            "text": "Send the revised proposal to the client by Friday",
+            "completed": false,
+            "assignee": null
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "text": "Custom template section"
+      },
+      {
+        "type": "paragraph",
+        "text": "Any blocks a custom note template produced appear here too."
+      }
+    ]
+  }
+}
