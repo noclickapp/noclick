@@ -11,6 +11,7 @@ const NanonetsOcrIcon = ({ className, style }: { className?: string; style?: CSS
 
 export const NanonetsOcrNode: NodeDefinition = {
     type: 'automation-nanonets-ocr', label: 'Nanonets OCR',
+    category: 'documents',
     description: 'Extract text and tables, predict documents, upload training data and manage OCR and classification models',
     Icon: NanonetsOcrIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
