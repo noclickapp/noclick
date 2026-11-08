@@ -13,6 +13,7 @@ const ClearoutIcon = ({ className, style }: { className?: string; style?: CSSPro
 
 export const ClearoutNode: NodeDefinition = {
     type: 'automation-clearout', label: 'Clearout',
+    category: 'marketing',
     description: 'Verify and find emails, manage bulk jobs and read account credits',
     Icon: ClearoutIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
