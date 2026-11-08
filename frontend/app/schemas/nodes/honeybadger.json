@@ -1,0 +1,1099 @@
+{
+  "$defs": {
+    "CreateComment": {
+      "additionalProperties": false,
+      "description": "Add a fault comment (faults:write). @mentions notify project members.",
+      "properties": {
+        "project_id": {
+          "description": "v3 project ID, from List projects (for example Xk9mZp).",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "fault_id": {
+          "description": "Fault ID as a string, from List faults.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Fault Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "body": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Comment text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "fault_id",
+        "body"
+      ],
+      "title": "CreateComment",
+      "type": "object"
+    },
+    "CreateProject": {
+      "additionalProperties": false,
+      "description": "Create a project (projects:create).",
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "disable_email_notifications": {
+          "default": false,
+          "description": "Switch off email notifications for members added with the new project.",
+          "title": "Disable Email Notifications",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateProject",
+      "type": "object"
+    },
+    "DeleteComment": {
+      "additionalProperties": false,
+      "description": "Permanently delete a fault comment (faults:write).",
+      "properties": {
+        "project_id": {
+          "description": "v3 project ID, from List projects (for example Xk9mZp).",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "fault_id": {
+          "description": "Fault ID as a string, from List faults.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Fault Id",
+          "type": "string"
+        },
+        "comment_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Comment Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_comment",
+          "default": "delete_comment",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "fault_id",
+        "comment_id"
+      ],
+      "title": "DeleteComment",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "description": "Read account details (account:read).",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetAccountUsage": {
+      "additionalProperties": false,
+      "description": "Read account quota and consumption (account:read).",
+      "properties": {
+        "operation": {
+          "const": "get_account_usage",
+          "default": "get_account_usage",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAccountUsage",
+      "type": "object"
+    },
+    "GetComment": {
+      "additionalProperties": false,
+      "description": "Read one comment (faults:read).",
+      "properties": {
+        "project_id": {
+          "description": "v3 project ID, from List projects (for example Xk9mZp).",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "fault_id": {
+          "description": "Fault ID as a string, from List faults.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Fault Id",
+          "type": "string"
+        },
+        "comment_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Comment Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_comment",
+          "default": "get_comment",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "fault_id",
+        "comment_id"
+      ],
+      "title": "GetComment",
+      "type": "object"
+    },
+    "GetFault": {
+      "additionalProperties": false,
+      "description": "Read one fault (faults:read).",
+      "properties": {
+        "project_id": {
+          "description": "v3 project ID, from List projects (for example Xk9mZp).",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "fault_id": {
+          "description": "Fault ID as a string, from List faults.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Fault Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_fault",
+          "default": "get_fault",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "fault_id"
+      ],
+      "title": "GetFault",
+      "type": "object"
+    },
+    "GetNotice": {
+      "additionalProperties": false,
+      "description": "Read one notice including its breadcrumbs (faults:read).",
+      "properties": {
+        "operation": {
+          "const": "get_notice",
+          "default": "get_notice",
+          "title": "Operation",
+          "type": "string"
+        },
+        "uuid": {
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Uuid",
+          "type": "string"
+        },
+        "unmapped": {
+          "default": false,
+          "title": "Unmapped",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "GetNotice",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "description": "Read a project (projects:read).",
+      "properties": {
+        "project_id": {
+          "description": "v3 project ID, from List projects (for example Xk9mZp).",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GetProject",
+      "type": "object"
+    },
+    "GetProjectStats": {
+      "additionalProperties": false,
+      "description": "Read error and notice counts (projects:read).",
+      "properties": {
+        "project_id": {
+          "description": "v3 project ID, from List projects (for example Xk9mZp).",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_project_stats",
+          "default": "get_project_stats",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GetProjectStats",
+      "type": "object"
+    },
+    "GetToken": {
+      "additionalProperties": false,
+      "description": "Read the token's account, project visibility and granted scopes.",
+      "properties": {
+        "operation": {
+          "const": "get_token",
+          "default": "get_token",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetToken",
+      "type": "object"
+    },
+    "HoneybadgerAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "honeybadger_api_token",
+          "default": "honeybadger_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "us",
+          "description": "Use the region where your Honeybadger account is hosted.",
+          "enum": [
+            "us",
+            "eu"
+          ],
+          "title": "Account region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Honeybadger API Token",
+      "type": "object",
+      "x-credential-instructions": "API v3 is in preview: ask Honeybadger support to enable API tokens for your account, then create a v3 API token and paste it here. v2 personal auth tokens and project ingestion keys do not work. Choose your account's region. Grant only the scopes needed: account:read, projects:read, projects:create, projects:write, faults:read, faults:write and deploys:read. Connection checks read the token's account ID; they do not verify every operation's permissions.",
+      "x-credential-url": "https://docs.honeybadger.io/api/v3/authentication/"
+    },
+    "ListComments": {
+      "additionalProperties": false,
+      "description": "Read fault comments (faults:read), one page at a time.",
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from links.older; fetch older items.",
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from links.newer; fetch newer items.",
+          "title": "After"
+        },
+        "project_id": {
+          "description": "v3 project ID, from List projects (for example Xk9mZp).",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "fault_id": {
+          "description": "Fault ID as a string, from List faults.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Fault Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "fault_id"
+      ],
+      "title": "ListComments",
+      "type": "object"
+    },
+    "ListDeploys": {
+      "additionalProperties": false,
+      "description": "Read deployment history (deploys:read), one page at a time.",
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from links.older; fetch older items.",
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from links.newer; fetch newer items.",
+          "title": "After"
+        },
+        "project_id": {
+          "description": "v3 project ID, from List projects (for example Xk9mZp).",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_deploys",
+          "default": "list_deploys",
+          "title": "Operation",
+          "type": "string"
+        },
+        "environment": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Environment"
+        },
+        "local_username": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Local Username"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ListDeploys",
+      "type": "object"
+    },
+    "ListFaults": {
+      "additionalProperties": false,
+      "description": "Search project faults (faults:read), one page at a time.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; read links.next for the next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "project_id": {
+          "description": "v3 project ID, from List projects (for example Xk9mZp).",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_faults",
+          "default": "list_faults",
+          "title": "Operation",
+          "type": "string"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Honeybadger error search, e.g. environment:production is:unresolved.",
+          "title": "Q"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "recent",
+                "frequent"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "recent",
+            "frequent"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "created_after": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp in seconds.",
+          "title": "Created After"
+        },
+        "occurred_after": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp in seconds.",
+          "title": "Occurred After"
+        },
+        "occurred_before": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp in seconds.",
+          "title": "Occurred Before"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ListFaults",
+      "type": "object"
+    },
+    "ListNotices": {
+      "additionalProperties": false,
+      "description": "Read individual error occurrences (faults:read), one page at a time.",
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from links.older; fetch older items.",
+          "title": "Before"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from links.newer; fetch newer items.",
+          "title": "After"
+        },
+        "project_id": {
+          "description": "v3 project ID, from List projects (for example Xk9mZp).",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "fault_id": {
+          "description": "Fault ID as a string, from List faults.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Fault Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_notices",
+          "default": "list_notices",
+          "title": "Operation",
+          "type": "string"
+        },
+        "unmapped": {
+          "default": false,
+          "title": "Unmapped",
+          "type": "boolean"
+        },
+        "breadcrumbs": {
+          "default": false,
+          "title": "Breadcrumbs",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "project_id",
+        "fault_id"
+      ],
+      "title": "ListNotices",
+      "type": "object"
+    },
+    "ListProjects": {
+      "additionalProperties": false,
+      "description": "List accessible projects (projects:read), one page at a time.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; read links.next for the next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact project name filter.",
+          "title": "Name"
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "UpdateComment": {
+      "additionalProperties": false,
+      "description": "Edit a comment (faults:write). @mentions notify project members.",
+      "properties": {
+        "project_id": {
+          "description": "v3 project ID, from List projects (for example Xk9mZp).",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "fault_id": {
+          "description": "Fault ID as a string, from List faults.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Fault Id",
+          "type": "string"
+        },
+        "comment_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Comment Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_comment",
+          "default": "update_comment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "body": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Comment text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "fault_id",
+        "comment_id",
+        "body"
+      ],
+      "title": "UpdateComment",
+      "type": "object"
+    },
+    "UpdateFault": {
+      "additionalProperties": false,
+      "description": "Resolve, ignore, tag or schedule resolution of a fault (faults:write).",
+      "properties": {
+        "project_id": {
+          "description": "v3 project ID, from List projects (for example Xk9mZp).",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "fault_id": {
+          "description": "Fault ID as a string, from List faults.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Fault Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_fault",
+          "default": "update_fault",
+          "title": "Operation",
+          "type": "string"
+        },
+        "resolved": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolved"
+        },
+        "ignored": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ignored"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replace tags; [] clears them; null clears them.",
+          "title": "Tags"
+        },
+        "resolve_on_deploy": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Resolve on the next deploy; ignored or resolved faults cannot have a pending resolution.",
+          "title": "Resolve On Deploy"
+        }
+      },
+      "required": [
+        "project_id",
+        "fault_id"
+      ],
+      "title": "UpdateFault",
+      "type": "object"
+    },
+    "UpdateProject": {
+      "additionalProperties": false,
+      "description": "Change supplied project settings (projects:write); omitted fields stay unchanged.",
+      "properties": {
+        "project_id": {
+          "description": "v3 project ID, from List projects (for example Xk9mZp).",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Null clears the primary language.",
+          "title": "Language"
+        },
+        "resolve_errors_on_deploy": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Resolve open faults when a deploy is recorded. Null resets to true.",
+          "title": "Resolve Errors On Deploy"
+        },
+        "disable_public_links": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Disallow public fault links. Null resets to false.",
+          "title": "Disable Public Links"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "UpdateProject",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_comment": "#/$defs/CreateComment",
+          "create_project": "#/$defs/CreateProject",
+          "delete_comment": "#/$defs/DeleteComment",
+          "get_account": "#/$defs/GetAccount",
+          "get_account_usage": "#/$defs/GetAccountUsage",
+          "get_comment": "#/$defs/GetComment",
+          "get_fault": "#/$defs/GetFault",
+          "get_notice": "#/$defs/GetNotice",
+          "get_project": "#/$defs/GetProject",
+          "get_project_stats": "#/$defs/GetProjectStats",
+          "get_token": "#/$defs/GetToken",
+          "list_comments": "#/$defs/ListComments",
+          "list_deploys": "#/$defs/ListDeploys",
+          "list_faults": "#/$defs/ListFaults",
+          "list_notices": "#/$defs/ListNotices",
+          "list_projects": "#/$defs/ListProjects",
+          "update_comment": "#/$defs/UpdateComment",
+          "update_fault": "#/$defs/UpdateFault",
+          "update_project": "#/$defs/UpdateProject"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetToken"
+        },
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/GetAccountUsage"
+        },
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/CreateProject"
+        },
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/UpdateProject"
+        },
+        {
+          "$ref": "#/$defs/GetProjectStats"
+        },
+        {
+          "$ref": "#/$defs/ListFaults"
+        },
+        {
+          "$ref": "#/$defs/GetFault"
+        },
+        {
+          "$ref": "#/$defs/UpdateFault"
+        },
+        {
+          "$ref": "#/$defs/ListComments"
+        },
+        {
+          "$ref": "#/$defs/CreateComment"
+        },
+        {
+          "$ref": "#/$defs/GetComment"
+        },
+        {
+          "$ref": "#/$defs/UpdateComment"
+        },
+        {
+          "$ref": "#/$defs/DeleteComment"
+        },
+        {
+          "$ref": "#/$defs/ListNotices"
+        },
+        {
+          "$ref": "#/$defs/GetNotice"
+        },
+        {
+          "$ref": "#/$defs/ListDeploys"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HoneybadgerAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Honeybadger Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find unresolved production errors",
+    "Resolve this fault",
+    "Comment on the error after a rollback",
+    "List recent deployments"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
