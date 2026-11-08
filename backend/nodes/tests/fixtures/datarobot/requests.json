@@ -1,0 +1,377 @@
+[
+  [
+    "list_projects",
+    {
+      "project_name": "Churn",
+      "limit": 25,
+      "offset": 50
+    },
+    "GET",
+    "/projects/",
+    {
+      "projectName": "Churn",
+      "limit": "25",
+      "offset": "50"
+    },
+    null,
+    200,
+    [
+      {
+        "id": "p1",
+        "projectName": "Churn"
+      }
+    ]
+  ],
+  [
+    "get_project",
+    {
+      "project_id": "p1"
+    },
+    "GET",
+    "/projects/p1/",
+    {},
+    null,
+    200,
+    {
+      "id": "p1"
+    }
+  ],
+  [
+    "create_project",
+    {
+      "dataset_id": "d1",
+      "project_name": "Churn"
+    },
+    "POST",
+    "/projects/",
+    {},
+    {
+      "datasetId": "d1",
+      "projectName": "Churn"
+    },
+    202,
+    {
+      "pid": "p1"
+    }
+  ],
+  [
+    "update_project",
+    {
+      "project_id": "p1",
+      "project_name": "Churn",
+      "project_description": "Updated"
+    },
+    "PATCH",
+    "/projects/p1/",
+    {},
+    {
+      "projectName": "Churn",
+      "projectDescription": "Updated"
+    },
+    200,
+    null
+  ],
+  [
+    "delete_project",
+    {
+      "project_id": "p1"
+    },
+    "DELETE",
+    "/projects/p1/",
+    {},
+    null,
+    204,
+    null
+  ],
+  [
+    "get_project_status",
+    {
+      "project_id": "p1"
+    },
+    "GET",
+    "/projects/p1/status/",
+    {},
+    null,
+    200,
+    {
+      "stage": "modeling"
+    }
+  ],
+  [
+    "list_models",
+    {
+      "project_id": "p1",
+      "name": "XGBoost",
+      "order_by": "-metric"
+    },
+    "GET",
+    "/projects/p1/models/",
+    {
+      "name": "XGBoost",
+      "orderBy": "-metric"
+    },
+    null,
+    200,
+    []
+  ],
+  [
+    "get_model",
+    {
+      "project_id": "p1",
+      "model_id": "m1"
+    },
+    "GET",
+    "/projects/p1/models/m1/",
+    {},
+    null,
+    200,
+    {
+      "id": "m1"
+    }
+  ],
+  [
+    "update_model",
+    {
+      "project_id": "p1",
+      "model_id": "m1",
+      "is_starred": false,
+      "prediction_threshold": 0
+    },
+    "PATCH",
+    "/projects/p1/models/m1/",
+    {},
+    {
+      "isStarred": false,
+      "predictionThreshold": 0
+    },
+    204,
+    null
+  ],
+  [
+    "delete_model",
+    {
+      "project_id": "p1",
+      "model_id": "m1"
+    },
+    "DELETE",
+    "/projects/p1/models/m1/",
+    {},
+    null,
+    204,
+    null
+  ],
+  [
+    "list_features",
+    {
+      "project_id": "p1",
+      "search_for": "age"
+    },
+    "GET",
+    "/projects/p1/features/",
+    {
+      "searchFor": "age"
+    },
+    null,
+    200,
+    []
+  ],
+  [
+    "list_datasets",
+    {
+      "category": "TRAINING"
+    },
+    "GET",
+    "/datasets/",
+    {
+      "category": "TRAINING",
+      "limit": "100",
+      "offset": "0"
+    },
+    null,
+    200,
+    {
+      "data": [],
+      "next": null
+    }
+  ],
+  [
+    "get_dataset",
+    {
+      "dataset_id": "d1"
+    },
+    "GET",
+    "/datasets/d1/",
+    {},
+    null,
+    200,
+    {
+      "id": "d1"
+    }
+  ],
+  [
+    "update_dataset",
+    {
+      "dataset_id": "d1",
+      "name": "Churn data"
+    },
+    "PATCH",
+    "/datasets/d1/",
+    {},
+    {
+      "name": "Churn data"
+    },
+    200,
+    {
+      "id": "d1",
+      "name": "Churn data"
+    }
+  ],
+  [
+    "delete_dataset",
+    {
+      "dataset_id": "d1"
+    },
+    "DELETE",
+    "/datasets/d1/",
+    {},
+    null,
+    204,
+    null
+  ],
+  [
+    "list_deployments",
+    {
+      "search": "Churn"
+    },
+    "GET",
+    "/deployments/",
+    {
+      "search": "Churn",
+      "limit": "100",
+      "offset": "0"
+    },
+    null,
+    200,
+    {
+      "data": [],
+      "next": null
+    }
+  ],
+  [
+    "get_deployment",
+    {
+      "deployment_id": "dep1"
+    },
+    "GET",
+    "/deployments/dep1/",
+    {},
+    null,
+    200,
+    {
+      "id": "dep1"
+    }
+  ],
+  [
+    "update_deployment",
+    {
+      "deployment_id": "dep1",
+      "label": "Churn",
+      "description": "Updated",
+      "importance": "HIGH"
+    },
+    "PATCH",
+    "/deployments/dep1/",
+    {},
+    {
+      "label": "Churn",
+      "description": "Updated",
+      "importance": "HIGH"
+    },
+    204,
+    null
+  ],
+  [
+    "list_use_cases",
+    {
+      "search": "Churn"
+    },
+    "GET",
+    "/useCases/",
+    {
+      "search": "Churn",
+      "limit": "100",
+      "offset": "0",
+      "sort": "id",
+      "orderBy": "id",
+      "usecaseType": "all"
+    },
+    null,
+    200,
+    {
+      "data": [],
+      "next": null
+    }
+  ],
+  [
+    "get_use_case",
+    {
+      "use_case_id": "u1"
+    },
+    "GET",
+    "/useCases/u1/",
+    {},
+    null,
+    200,
+    {
+      "id": "u1"
+    }
+  ],
+  [
+    "create_use_case",
+    {
+      "name": "Churn",
+      "description": "Predict churn"
+    },
+    "POST",
+    "/useCases/",
+    {},
+    {
+      "name": "Churn",
+      "description": "Predict churn"
+    },
+    200,
+    {
+      "id": "u1",
+      "name": "Churn"
+    }
+  ],
+  [
+    "update_use_case",
+    {
+      "use_case_id": "u1",
+      "name": "Churn",
+      "description": "Updated"
+    },
+    "PATCH",
+    "/useCases/u1/",
+    {},
+    {
+      "name": "Churn",
+      "description": "Updated"
+    },
+    204,
+    null
+  ],
+  [
+    "delete_use_case",
+    {
+      "use_case_id": "u1"
+    },
+    "DELETE",
+    "/useCases/u1/",
+    {},
+    null,
+    204,
+    null
+  ]
+]
