@@ -1,0 +1,587 @@
+[
+  {
+    "config": {
+      "operation": "get_me"
+    },
+    "method": "GET",
+    "path": "/v1/me",
+    "response": {
+      "user_id": "59fbe5f2-040b-46d5-8325-868bb8f23eb2",
+      "team_id": "5ea6f6bd-7815-4b8a-9135-28b2d7ba6722",
+      "zdr_status": "no_zdr",
+      "team_blocked": false,
+      "api_key": {
+        "redacted_api_key": "xai-...b14o",
+        "api_key_id": "ae1e1841-4326-4b36-a8a9-8a1a7237db11",
+        "blocked": false,
+        "disabled": false
+      }
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "list_models"
+    },
+    "method": "GET",
+    "path": "/v1/models",
+    "response": {
+      "data": [
+        {
+          "id": "latest",
+          "aliases": [],
+          "context_length": 131072,
+          "created": 1776556800,
+          "object": "model",
+          "owned_by": "xai",
+          "prompt_text_token_price": 12500,
+          "cached_prompt_text_token_price": 2000,
+          "prompt_image_token_price": 12500,
+          "completion_text_token_price": 25000
+        },
+        {
+          "id": "grok-420-reasoning",
+          "aliases": [],
+          "context_length": 256000,
+          "created": 1768003200,
+          "object": "model",
+          "owned_by": "xai",
+          "prompt_text_token_price": 20000,
+          "cached_prompt_text_token_price": 2000,
+          "prompt_image_token_price": 0,
+          "completion_text_token_price": 80000,
+          "prompt_text_token_price_long_context": 40000,
+          "completion_text_token_price_long_context": 160000,
+          "long_context_threshold": 128000,
+          "capabilities": {
+            "reasoning_effort": [
+              "low",
+              "medium",
+              "high",
+              "xhigh"
+            ],
+            "default_reasoning_effort": "high"
+          }
+        },
+        {
+          "id": "grok-imagine-image",
+          "aliases": [],
+          "context_length": 1024,
+          "created": 1769472000,
+          "object": "model",
+          "owned_by": "xai",
+          "image_price": 200000000
+        }
+      ],
+      "object": "list"
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "list_language_models"
+    },
+    "method": "GET",
+    "path": "/v1/language-models",
+    "response": {
+      "models": [
+        {
+          "id": "latest",
+          "fingerprint": "fp_777a9f8466",
+          "created": 1776556800,
+          "object": "model",
+          "owned_by": "xai",
+          "version": "1.0",
+          "input_modalities": [
+            "text",
+            "image"
+          ],
+          "output_modalities": [
+            "text"
+          ],
+          "prompt_text_token_price": 12500,
+          "cached_prompt_text_token_price": 2000,
+          "prompt_image_token_price": 12500,
+          "completion_text_token_price": 25000,
+          "search_price": 0,
+          "prompt_text_token_price_long_context": 0,
+          "cached_prompt_text_token_price_long_context": 0,
+          "completion_text_token_price_long_context": 0,
+          "long_context_threshold": 0,
+          "aliases": [
+            "grok-4.3-latest"
+          ]
+        },
+        {
+          "id": "grok-420-reasoning",
+          "fingerprint": "fp_5319828d69",
+          "created": 1768003200,
+          "object": "model",
+          "owned_by": "xai",
+          "version": "1.0",
+          "input_modalities": [
+            "text"
+          ],
+          "output_modalities": [
+            "text"
+          ],
+          "prompt_text_token_price": 20000,
+          "cached_prompt_text_token_price": 2000,
+          "prompt_image_token_price": 0,
+          "completion_text_token_price": 80000,
+          "search_price": 0,
+          "prompt_text_token_price_long_context": 40000,
+          "cached_prompt_text_token_price_long_context": 0,
+          "completion_text_token_price_long_context": 160000,
+          "long_context_threshold": 128000,
+          "aliases": [],
+          "capabilities": {
+            "reasoning_effort": [
+              "low",
+              "medium",
+              "high",
+              "xhigh"
+            ],
+            "default_reasoning_effort": "high"
+          }
+        }
+      ]
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "get_model",
+      "model_id": "latest"
+    },
+    "method": "GET",
+    "path": "/v1/models/{model_id}",
+    "response": {
+      "id": "latest",
+      "created": 1776556800,
+      "object": "model",
+      "owned_by": "xai",
+      "prompt_text_token_price": 12500,
+      "cached_prompt_text_token_price": 2000,
+      "prompt_image_token_price": 12500,
+      "completion_text_token_price": 25000
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "create_chat_completion",
+      "model": "latest",
+      "messages": [
+        {
+          "role": "user",
+          "content": "What is 101*3?"
+        }
+      ]
+    },
+    "method": "POST",
+    "path": "/v1/chat/completions",
+    "response": {
+      "id": "a3d1008e-4544-40d4-d075-11527e794e4a",
+      "object": "chat.completion",
+      "created": 1752854522,
+      "model": "latest",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "101 multiplied by 3 is 303.",
+            "refusal": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 32,
+        "completion_tokens": 9,
+        "total_tokens": 135,
+        "prompt_tokens_details": {
+          "text_tokens": 32,
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "cached_tokens": 6
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 94,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "num_sources_used": 0
+      },
+      "system_fingerprint": "fp_3a7881249c"
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "create_response",
+      "model": "latest",
+      "input": "What is 101*3?"
+    },
+    "method": "POST",
+    "path": "/v1/responses",
+    "response": {
+      "created_at": 1754475266,
+      "id": "ad5663da-63e6-86c6-e0be-ff15effa8357",
+      "max_output_tokens": null,
+      "model": "latest",
+      "object": "response",
+      "output": [
+        {
+          "content": [
+            {
+              "type": "output_text",
+              "text": "101 multiplied by 3 is 303.",
+              "logprobs": null,
+              "annotations": []
+            }
+          ],
+          "id": "msg_ad5663da-63e6-86c6-e0be-ff15effa8357",
+          "role": "assistant",
+          "type": "message",
+          "status": "completed"
+        }
+      ],
+      "parallel_tool_calls": true,
+      "previous_response_id": null,
+      "reasoning": null,
+      "temperature": null,
+      "text": {
+        "format": {
+          "type": "text"
+        }
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_p": null,
+      "usage": {
+        "input_tokens": 32,
+        "input_tokens_details": {
+          "cached_tokens": 8
+        },
+        "output_tokens": 9,
+        "output_tokens_details": {
+          "reasoning_tokens": 110
+        },
+        "total_tokens": 151,
+        "num_sources_used": 0,
+        "num_server_side_tools_used": 0
+      },
+      "user": null,
+      "incomplete_details": null,
+      "status": "completed",
+      "store": true
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "get_response",
+      "response_id": "ad5663da-63e6-86c6-e0be-ff15effa8357"
+    },
+    "method": "GET",
+    "path": "/v1/responses/{response_id}",
+    "response": {
+      "created_at": 1754475266,
+      "id": "ad5663da-63e6-86c6-e0be-ff15effa8357",
+      "max_output_tokens": null,
+      "model": "latest",
+      "object": "response",
+      "output": [
+        {
+          "content": [
+            {
+              "type": "output_text",
+              "text": "101 multiplied by 3 is 303.",
+              "logprobs": null,
+              "annotations": []
+            }
+          ],
+          "id": "msg_ad5663da-63e6-86c6-e0be-ff15effa8357",
+          "role": "assistant",
+          "type": "message",
+          "status": "completed"
+        },
+        {
+          "id": "",
+          "summary": [
+            {
+              "text": "First, the user asked: \"What is 101*3?\"\n\nThis is a simple multiplication: 101 multiplied by 3.\n\nCalculating: 100 * 3 = 300, and 1 * 3 = 3, so 300 + 3 = 303.\n\nI should respond helpfully and directly, as per my system prompt: \"You are a helpful assistant that can answer questions and help with tasks.\"\n\nKeep the response concise and accurate. No need for extra fluff unless it adds value.\n\nFinal answer: 303.",
+              "type": "summary_text"
+            }
+          ],
+          "type": "reasoning",
+          "status": "completed"
+        }
+      ],
+      "parallel_tool_calls": true,
+      "previous_response_id": null,
+      "reasoning": null,
+      "temperature": null,
+      "text": {
+        "format": {
+          "type": "text"
+        }
+      },
+      "tool_choice": "auto",
+      "tools": [],
+      "top_p": null,
+      "usage": {
+        "prompt_tokens": 32,
+        "completion_tokens": 9,
+        "total_tokens": 151,
+        "prompt_tokens_details": {
+          "text_tokens": 32,
+          "audio_tokens": 0,
+          "image_tokens": 0,
+          "cached_tokens": 8
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 110,
+          "audio_tokens": 0,
+          "accepted_prediction_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "num_sources_used": 0
+      },
+      "user": null,
+      "incomplete_details": null,
+      "status": "completed",
+      "store": true
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "delete_response",
+      "response_id": "ad5663da-63e6-86c6-e0be-ff15effa8357"
+    },
+    "method": "DELETE",
+    "path": "/v1/responses/{response_id}",
+    "response": {
+      "id": "ad5663da-63e6-86c6-e0be-ff15effa8357",
+      "object": "response",
+      "deleted": true
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "create_embeddings",
+      "model": "v1",
+      "input": [
+        "This is an example content to embed..."
+      ]
+    },
+    "method": "POST",
+    "path": "/v1/embeddings",
+    "response": {
+      "object": "list",
+      "model": "v1",
+      "data": [
+        {
+          "index": 0,
+          "embedding": [
+            0.01567895,
+            0.063257694,
+            0.045925662
+          ],
+          "object": "embedding"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 1,
+        "total_tokens": 1
+      }
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "generate_image",
+      "model": "grok-imagine-image",
+      "prompt": "A cat in a tree",
+      "n": 2
+    },
+    "method": "POST",
+    "path": "/v1/images/generations",
+    "response": {
+      "data": [
+        {
+          "url": "..."
+        },
+        {
+          "url": "..."
+        }
+      ]
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "get_image_result",
+      "request_id": "a3d1008e-4544-40d4-d075-11527e794e4a"
+    },
+    "method": "GET",
+    "path": "/v1/images/{request_id}",
+    "response": {
+      "request_id": "e5b1b4d4-7b6a-4a0e-9c0d-7f3c7d8a1b2c",
+      "status": "done",
+      "data": [
+        {
+          "url": "..."
+        }
+      ],
+      "usage": {
+        "total_tokens": 0,
+        "image_cost": 2000000
+      }
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "generate_video",
+      "model": "grok-imagine-video",
+      "prompt": "A cat playing with a ball",
+      "duration": 6
+    },
+    "method": "POST",
+    "path": "/v1/videos/generations",
+    "response": {
+      "request_id": "a3d1008e-4544-40d4-d075-11527e794e4a"
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "get_video_result",
+      "request_id": "a3d1008e-4544-40d4-d075-11527e794e4a"
+    },
+    "method": "GET",
+    "path": "/v1/videos/{request_id}",
+    "response": {
+      "status": "done",
+      "video": {
+        "url": "https://vidgen.x.ai/xai-vidgen-bucket/xai-video-{request_id}.mp4",
+        "duration": 6,
+        "respect_moderation": true
+      },
+      "model": "grok-imagine-video"
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "tokenize_text",
+      "model": "latest",
+      "text": "Hello world!"
+    },
+    "method": "POST",
+    "path": "/v1/tokenize-text",
+    "response": {
+      "token_ids": [
+        {
+          "token_id": 13902,
+          "string_token": "Hello",
+          "token_bytes": [
+            72,
+            101,
+            108,
+            108,
+            111
+          ]
+        },
+        {
+          "token_id": 1749,
+          "string_token": " world",
+          "token_bytes": [
+            32,
+            119,
+            111,
+            114,
+            108,
+            100
+          ]
+        },
+        {
+          "token_id": 161,
+          "string_token": "!",
+          "token_bytes": [
+            33
+          ]
+        }
+      ]
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "list_files"
+    },
+    "method": "GET",
+    "path": "/v1/files",
+    "response": {
+      "data": [
+        {
+          "id": "file_a128090d-f0c9-4873-bd84-e499777e7417",
+          "object": "file",
+          "bytes": 12345,
+          "created_at": 1762345678,
+          "expires_at": null,
+          "filename": "document.pdf",
+          "purpose": ""
+        }
+      ],
+      "pagination_token": "file_a128090d-f0c9-4873-bd84-e499777e7417"
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "delete_file",
+      "file_id": "file_a128090d-f0c9-4873-bd84-e499777e7417"
+    },
+    "method": "DELETE",
+    "path": "/v1/files/{file_id}",
+    "response": {
+      "id": "file_a128090d-f0c9-4873-bd84-e499777e7417",
+      "deleted": true
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "create_file_public_url",
+      "file_id": "file_a128090d-f0c9-4873-bd84-e499777e7417"
+    },
+    "method": "POST",
+    "path": "/v1/files/{file_id}/public-url",
+    "response": {
+      "public_url": "https://files-cdn.x.ai/ZsqeMtdcSYWPPHTQdxXDKQ/file_a128090d-f0c9-4873-bd84-e499777e7417.png",
+      "expires_at": 1755600000
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  },
+  {
+    "config": {
+      "operation": "revoke_file_public_url",
+      "file_id": "file_a128090d-f0c9-4873-bd84-e499777e7417"
+    },
+    "method": "POST",
+    "path": "/v1/files/{file_id}/public-url/revoke",
+    "response": {
+      "id": "file_a128090d-f0c9-4873-bd84-e499777e7417",
+      "revoked": true,
+      "public_url": "https://files-cdn.x.ai/ZsqeMtdcSYWPPHTQdxXDKQ/file_a128090d-f0c9-4873-bd84-e499777e7417.png"
+    },
+    "source": "https://docs.x.ai/openapi.json"
+  }
+]

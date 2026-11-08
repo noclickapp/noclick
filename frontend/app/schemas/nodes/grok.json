@@ -1,0 +1,947 @@
+{
+  "$defs": {
+    "ChatMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "system",
+            "developer",
+            "user",
+            "assistant"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "content": {
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "content"
+      ],
+      "title": "ChatMessage",
+      "type": "object"
+    },
+    "CreateChatCompletion": {
+      "additionalProperties": false,
+      "description": "Generate a non-streaming chat completion from text messages.",
+      "properties": {
+        "operation": {
+          "const": "create_chat_completion",
+          "default": "create_chat_completion",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "description": "Model ID returned by List Models.",
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "messages": {
+          "items": {
+            "$ref": "#/$defs/ChatMessage"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "Messages",
+          "type": "array"
+        },
+        "max_completion_tokens": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Completion Tokens"
+        },
+        "temperature": {
+          "anyOf": [
+            {
+              "maximum": 2,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Temperature"
+        }
+      },
+      "required": [
+        "model",
+        "messages"
+      ],
+      "title": "CreateChatCompletion",
+      "type": "object"
+    },
+    "CreateEmbeddings": {
+      "additionalProperties": false,
+      "description": "Embed one or more texts, returning numeric vectors.",
+      "properties": {
+        "operation": {
+          "const": "create_embeddings",
+          "default": "create_embeddings",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "input": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 128,
+          "minItems": 1,
+          "title": "Input",
+          "type": "array"
+        },
+        "dimensions": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dimensions"
+        }
+      },
+      "required": [
+        "model",
+        "input"
+      ],
+      "title": "CreateEmbeddings",
+      "type": "object"
+    },
+    "CreateFilePublicURL": {
+      "additionalProperties": false,
+      "description": "Publish an unauthenticated URL for a file; anyone with it can read it.",
+      "properties": {
+        "operation": {
+          "const": "create_file_public_url",
+          "default": "create_file_public_url",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file_id": {
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        },
+        "expires_after": {
+          "anyOf": [
+            {
+              "maximum": 2592000,
+              "minimum": 3600,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lifetime in seconds. Omit to inherit file expiry or publish indefinitely.",
+          "title": "Expires After"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "CreateFilePublicURL",
+      "type": "object"
+    },
+    "CreateResponse": {
+      "additionalProperties": false,
+      "description": "Generate a stored text response, optionally continuing an existing response.",
+      "properties": {
+        "operation": {
+          "const": "create_response",
+          "default": "create_response",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "input": {
+          "description": "Text prompt.",
+          "minLength": 1,
+          "title": "Input",
+          "type": "string"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructions"
+        },
+        "previous_response_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Previous Response Id"
+        },
+        "max_output_tokens": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Output Tokens"
+        },
+        "store": {
+          "default": true,
+          "description": "Stored responses last 30 days. ZDR teams may need to disable storage.",
+          "title": "Store",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "model",
+        "input"
+      ],
+      "title": "CreateResponse",
+      "type": "object"
+    },
+    "DeleteFile": {
+      "additionalProperties": false,
+      "description": "Permanently delete a team file and its attachment availability.",
+      "properties": {
+        "operation": {
+          "const": "delete_file",
+          "default": "delete_file",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file_id": {
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "DeleteFile",
+      "type": "object"
+    },
+    "DeleteResponse": {
+      "additionalProperties": false,
+      "description": "Permanently delete a stored response.",
+      "properties": {
+        "operation": {
+          "const": "delete_response",
+          "default": "delete_response",
+          "title": "Operation",
+          "type": "string"
+        },
+        "response_id": {
+          "minLength": 1,
+          "title": "Response Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "response_id"
+      ],
+      "title": "DeleteResponse",
+      "type": "object"
+    },
+    "GenerateImage": {
+      "additionalProperties": false,
+      "description": "Generate images as URLs. Enable deferred to obtain a request ID to poll.",
+      "properties": {
+        "operation": {
+          "const": "generate_image",
+          "default": "generate_image",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "prompt": {
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "n": {
+          "default": 1,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "N",
+          "type": "integer"
+        },
+        "deferred": {
+          "default": false,
+          "title": "Deferred",
+          "type": "boolean"
+        },
+        "aspect_ratio": {
+          "anyOf": [
+            {
+              "enum": [
+                "1:1",
+                "3:4",
+                "4:3",
+                "9:16",
+                "16:9",
+                "2:3",
+                "3:2",
+                "9:19.5",
+                "19.5:9",
+                "9:20",
+                "20:9",
+                "1:2",
+                "2:1",
+                "21:9",
+                "5:2",
+                "auto"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Aspect Ratio",
+          "enum": [
+            "1:1",
+            "3:4",
+            "4:3",
+            "9:16",
+            "16:9",
+            "2:3",
+            "3:2",
+            "9:19.5",
+            "19.5:9",
+            "9:20",
+            "20:9",
+            "1:2",
+            "2:1",
+            "21:9",
+            "5:2",
+            "auto"
+          ],
+          "x-enum-searchable": true
+        },
+        "resolution": {
+          "anyOf": [
+            {
+              "enum": [
+                "1k",
+                "2k",
+                "1.5k"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolution",
+          "enum": [
+            "1k",
+            "2k",
+            "1.5k"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "model",
+        "prompt"
+      ],
+      "title": "GenerateImage",
+      "type": "object"
+    },
+    "GenerateVideo": {
+      "additionalProperties": false,
+      "description": "Start text-to-video generation; poll the returned request_id separately.",
+      "properties": {
+        "operation": {
+          "const": "generate_video",
+          "default": "generate_video",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "prompt": {
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "duration": {
+          "default": 8,
+          "maximum": 15,
+          "minimum": 1,
+          "title": "Duration",
+          "type": "integer"
+        },
+        "aspect_ratio": {
+          "anyOf": [
+            {
+              "enum": [
+                "1:1",
+                "16:9",
+                "9:16",
+                "4:3",
+                "3:4",
+                "3:2",
+                "2:3",
+                "21:9",
+                "5:2"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Aspect Ratio",
+          "enum": [
+            "1:1",
+            "16:9",
+            "9:16",
+            "4:3",
+            "3:4",
+            "3:2",
+            "2:3",
+            "21:9",
+            "5:2"
+          ],
+          "x-enum-searchable": true
+        },
+        "resolution": {
+          "anyOf": [
+            {
+              "enum": [
+                "480p",
+                "720p",
+                "1080p"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolution",
+          "enum": [
+            "480p",
+            "720p",
+            "1080p"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "model",
+        "prompt"
+      ],
+      "title": "GenerateVideo",
+      "type": "object"
+    },
+    "GetFile": {
+      "additionalProperties": false,
+      "description": "Retrieve metadata for one team file.",
+      "properties": {
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file_id": {
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GetFile",
+      "type": "object"
+    },
+    "GetImageResult": {
+      "additionalProperties": false,
+      "description": "Poll one deferred image job; HTTP 202 means it is still pending.",
+      "properties": {
+        "operation": {
+          "const": "get_image_result",
+          "default": "get_image_result",
+          "title": "Operation",
+          "type": "string"
+        },
+        "request_id": {
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "GetImageResult",
+      "type": "object"
+    },
+    "GetMe": {
+      "additionalProperties": false,
+      "description": "Read the authenticated user's ID, team and zero data retention status.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetMe",
+      "type": "object"
+    },
+    "GetModel": {
+      "additionalProperties": false,
+      "description": "Retrieve a model's information and pricing.",
+      "properties": {
+        "operation": {
+          "const": "get_model",
+          "default": "get_model",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model_id": {
+          "minLength": 1,
+          "title": "Model Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "title": "GetModel",
+      "type": "object"
+    },
+    "GetResponse": {
+      "additionalProperties": false,
+      "description": "Retrieve a response created with storage enabled.",
+      "properties": {
+        "operation": {
+          "const": "get_response",
+          "default": "get_response",
+          "title": "Operation",
+          "type": "string"
+        },
+        "response_id": {
+          "minLength": 1,
+          "title": "Response Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "response_id"
+      ],
+      "title": "GetResponse",
+      "type": "object"
+    },
+    "GetVideoResult": {
+      "additionalProperties": false,
+      "description": "Poll one video job; surface pending and failed jobs without retrying.",
+      "properties": {
+        "operation": {
+          "const": "get_video_result",
+          "default": "get_video_result",
+          "title": "Operation",
+          "type": "string"
+        },
+        "request_id": {
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "GetVideoResult",
+      "type": "object"
+    },
+    "GrokAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "grok_api_key",
+          "default": "grok_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Grok API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in the xAI console and paste it here. Your xAI team pays for generation. NoClick verifies the user and team with GET /v1/me; individual model and write permissions may differ.",
+      "x-credential-url": "https://console.x.ai/team/default/api-keys"
+    },
+    "ListFiles": {
+      "additionalProperties": false,
+      "description": "Read one team file page. A full page may have more; pass pagination_token.",
+      "properties": {
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "sort_by": {
+          "default": "created_at",
+          "enum": [
+            "created_at",
+            "filename",
+            "size"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "pagination_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pagination Token"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented AIP-160 file filter expression.",
+          "title": "Filter"
+        }
+      },
+      "title": "ListFiles",
+      "type": "object"
+    },
+    "ListLanguageModels": {
+      "additionalProperties": false,
+      "description": "List chat and image-understanding model modalities and aliases.",
+      "properties": {
+        "operation": {
+          "const": "list_language_models",
+          "default": "list_language_models",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListLanguageModels",
+      "type": "object"
+    },
+    "ListModels": {
+      "additionalProperties": false,
+      "description": "List the models available to this key, including pricing metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_models",
+          "default": "list_models",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListModels",
+      "type": "object"
+    },
+    "ListResponseInputs": {
+      "additionalProperties": false,
+      "description": "Read one page of a stored response's input items; use last_id as after.",
+      "properties": {
+        "operation": {
+          "const": "list_response_inputs",
+          "default": "list_response_inputs",
+          "title": "Operation",
+          "type": "string"
+        },
+        "response_id": {
+          "minLength": 1,
+          "title": "Response Id",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "order": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        }
+      },
+      "required": [
+        "response_id"
+      ],
+      "title": "ListResponseInputs",
+      "type": "object"
+    },
+    "RevokeFilePublicURL": {
+      "additionalProperties": false,
+      "description": "Revoke the file's public URL while retaining its authenticated content.",
+      "properties": {
+        "operation": {
+          "const": "revoke_file_public_url",
+          "default": "revoke_file_public_url",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file_id": {
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "RevokeFilePublicURL",
+      "type": "object"
+    },
+    "TokenizeText": {
+      "additionalProperties": false,
+      "description": "Count and inspect a model's tokens for text.",
+      "properties": {
+        "operation": {
+          "const": "tokenize_text",
+          "default": "tokenize_text",
+          "title": "Operation",
+          "type": "string"
+        },
+        "model": {
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model",
+        "text"
+      ],
+      "title": "TokenizeText",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_chat_completion": "#/$defs/CreateChatCompletion",
+          "create_embeddings": "#/$defs/CreateEmbeddings",
+          "create_file_public_url": "#/$defs/CreateFilePublicURL",
+          "create_response": "#/$defs/CreateResponse",
+          "delete_file": "#/$defs/DeleteFile",
+          "delete_response": "#/$defs/DeleteResponse",
+          "generate_image": "#/$defs/GenerateImage",
+          "generate_video": "#/$defs/GenerateVideo",
+          "get_file": "#/$defs/GetFile",
+          "get_image_result": "#/$defs/GetImageResult",
+          "get_me": "#/$defs/GetMe",
+          "get_model": "#/$defs/GetModel",
+          "get_response": "#/$defs/GetResponse",
+          "get_video_result": "#/$defs/GetVideoResult",
+          "list_files": "#/$defs/ListFiles",
+          "list_language_models": "#/$defs/ListLanguageModels",
+          "list_models": "#/$defs/ListModels",
+          "list_response_inputs": "#/$defs/ListResponseInputs",
+          "revoke_file_public_url": "#/$defs/RevokeFilePublicURL",
+          "tokenize_text": "#/$defs/TokenizeText"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetMe"
+        },
+        {
+          "$ref": "#/$defs/ListModels"
+        },
+        {
+          "$ref": "#/$defs/ListLanguageModels"
+        },
+        {
+          "$ref": "#/$defs/GetModel"
+        },
+        {
+          "$ref": "#/$defs/CreateChatCompletion"
+        },
+        {
+          "$ref": "#/$defs/CreateResponse"
+        },
+        {
+          "$ref": "#/$defs/GetResponse"
+        },
+        {
+          "$ref": "#/$defs/DeleteResponse"
+        },
+        {
+          "$ref": "#/$defs/ListResponseInputs"
+        },
+        {
+          "$ref": "#/$defs/CreateEmbeddings"
+        },
+        {
+          "$ref": "#/$defs/GenerateImage"
+        },
+        {
+          "$ref": "#/$defs/GetImageResult"
+        },
+        {
+          "$ref": "#/$defs/GenerateVideo"
+        },
+        {
+          "$ref": "#/$defs/GetVideoResult"
+        },
+        {
+          "$ref": "#/$defs/TokenizeText"
+        },
+        {
+          "$ref": "#/$defs/ListFiles"
+        },
+        {
+          "$ref": "#/$defs/GetFile"
+        },
+        {
+          "$ref": "#/$defs/DeleteFile"
+        },
+        {
+          "$ref": "#/$defs/CreateFilePublicURL"
+        },
+        {
+          "$ref": "#/$defs/RevokeFilePublicURL"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GrokAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Grok Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
