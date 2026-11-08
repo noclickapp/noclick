@@ -1,0 +1,1234 @@
+{
+  "$defs": {
+    "ArchiveNote": {
+      "additionalProperties": false,
+      "description": "Archive a note.",
+      "properties": {
+        "note_id": {
+          "description": "The numeric ID returned by List Notes or Create Note.",
+          "minimum": 1,
+          "title": "Note ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "archive_note",
+          "default": "archive_note",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "ArchiveNote",
+      "type": "object"
+    },
+    "CreateContainer": {
+      "additionalProperties": false,
+      "description": "Create a folder with optional parent and AI instructions.",
+      "properties": {
+        "emoji": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emoji"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Folder ID"
+        },
+        "llm_instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder AI Instructions",
+          "ui:widget": "textarea"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "operation": {
+          "const": "create_container",
+          "default": "create_container",
+          "title": "Create Folder",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Folder Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateContainer",
+      "type": "object"
+    },
+    "CreateNote": {
+      "additionalProperties": false,
+      "description": "Create a Markdown note; omitted folder means inbox.",
+      "properties": {
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 262144,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Markdown Body",
+          "ui:widget": "textarea"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source URL"
+        },
+        "container_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to leave the folder unchanged on update, or use the inbox on create.",
+          "title": "Folder ID"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "tag_list": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tags. On update this replaces all tags; use Clear Tags to remove every tag.",
+          "title": "Tag Names"
+        },
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateNote",
+      "type": "object"
+    },
+    "CreateTag": {
+      "additionalProperties": false,
+      "description": "Create a tag.",
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Tag Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateTag",
+      "type": "object"
+    },
+    "DeleteContainer": {
+      "additionalProperties": false,
+      "description": "Move a folder and its contents to Trash.",
+      "properties": {
+        "container_id": {
+          "description": "The numeric folder (container) ID returned by List Folders.",
+          "minimum": 1,
+          "title": "Folder ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_container",
+          "default": "delete_container",
+          "title": "Trash Folder",
+          "type": "string"
+        }
+      },
+      "required": [
+        "container_id"
+      ],
+      "title": "DeleteContainer",
+      "type": "object"
+    },
+    "DeleteNote": {
+      "additionalProperties": false,
+      "description": "Move a note to Trash; does not permanently delete it.",
+      "properties": {
+        "note_id": {
+          "description": "The numeric ID returned by List Notes or Create Note.",
+          "minimum": 1,
+          "title": "Note ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_note",
+          "default": "delete_note",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "DeleteNote",
+      "type": "object"
+    },
+    "DeleteTag": {
+      "additionalProperties": false,
+      "description": "Delete a tag, removing it from every note.",
+      "properties": {
+        "tag_id": {
+          "description": "The numeric ID returned by List Tags.",
+          "minimum": 1,
+          "title": "Tag ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_tag",
+          "default": "delete_tag",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "DeleteTag",
+      "type": "object"
+    },
+    "FavoriteNote": {
+      "additionalProperties": false,
+      "description": "Favorite a note.",
+      "properties": {
+        "note_id": {
+          "description": "The numeric ID returned by List Notes or Create Note.",
+          "minimum": 1,
+          "title": "Note ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "favorite_note",
+          "default": "favorite_note",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "FavoriteNote",
+      "type": "object"
+    },
+    "GetContainer": {
+      "additionalProperties": false,
+      "description": "Read one folder.",
+      "properties": {
+        "container_id": {
+          "description": "The numeric folder (container) ID returned by List Folders.",
+          "minimum": 1,
+          "title": "Folder ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_container",
+          "default": "get_container",
+          "title": "Get Folder",
+          "type": "string"
+        }
+      },
+      "required": [
+        "container_id"
+      ],
+      "title": "GetContainer",
+      "type": "object"
+    },
+    "GetMe": {
+      "additionalProperties": false,
+      "description": "Read the account identity and the token's access grants.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetMe",
+      "type": "object"
+    },
+    "GetNote": {
+      "additionalProperties": false,
+      "description": "Read one note including its Markdown body.",
+      "properties": {
+        "note_id": {
+          "description": "The numeric ID returned by List Notes or Create Note.",
+          "minimum": 1,
+          "title": "Note ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_note",
+          "default": "get_note",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "GetNote",
+      "type": "object"
+    },
+    "GetTag": {
+      "additionalProperties": false,
+      "description": "Read one tag.",
+      "properties": {
+        "tag_id": {
+          "description": "The numeric ID returned by List Tags.",
+          "minimum": 1,
+          "title": "Tag ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_tag",
+          "default": "get_tag",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "GetTag",
+      "type": "object"
+    },
+    "HjarniAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "hjarni_api_token",
+          "default": "hjarni_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Hjarni API Token",
+      "type": "object",
+      "x-credential-instructions": "In Hjarni, open Settings > Connections and create an API token. Choose the folders and Read or Write access your workflow needs, then paste the token here without the Bearer prefix. NoClick checks the account with GET /me. Restricted tokens can access only their granted folders; some account-wide operations require full access.",
+      "x-credential-url": "https://hjarni.com/docs/agent-tokens"
+    },
+    "ListContainerNotes": {
+      "additionalProperties": false,
+      "description": "List one page of notes in a folder.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per Page",
+          "type": "integer"
+        },
+        "container_id": {
+          "description": "The numeric folder (container) ID returned by List Folders.",
+          "minimum": 1,
+          "title": "Folder ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_container_notes",
+          "default": "list_container_notes",
+          "title": "List Folder Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "container_id"
+      ],
+      "title": "ListContainerNotes",
+      "type": "object"
+    },
+    "ListContainers": {
+      "additionalProperties": false,
+      "description": "List one page of accessible folders.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_containers",
+          "default": "list_containers",
+          "title": "List Folders",
+          "type": "string"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "enum": [
+                "all",
+                "archived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope",
+          "enum": [
+            "all",
+            "archived"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListContainers",
+      "type": "object"
+    },
+    "ListNotes": {
+      "additionalProperties": false,
+      "description": "List one page of accessible notes with optional filters.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "enum": [
+                "archived",
+                "inbox",
+                "favorited"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope",
+          "enum": [
+            "archived",
+            "inbox",
+            "favorited"
+          ],
+          "x-enum-searchable": true
+        },
+        "container_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder ID"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag Name"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Query"
+        },
+        "exclude_body": {
+          "default": false,
+          "title": "Exclude Note Bodies",
+          "type": "boolean"
+        }
+      },
+      "title": "ListNotes",
+      "type": "object"
+    },
+    "ListTagNotes": {
+      "additionalProperties": false,
+      "description": "List one page of notes carrying a tag.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per Page",
+          "type": "integer"
+        },
+        "tag_id": {
+          "description": "The numeric ID returned by List Tags.",
+          "minimum": 1,
+          "title": "Tag ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tag_notes",
+          "default": "list_tag_notes",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "ListTagNotes",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "description": "List one page of the account's tags.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "MoveNote": {
+      "additionalProperties": false,
+      "description": "Move a note to a folder, or to the inbox if Folder ID is omitted.",
+      "properties": {
+        "note_id": {
+          "description": "The numeric ID returned by List Notes or Create Note.",
+          "minimum": 1,
+          "title": "Note ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "move_note",
+          "default": "move_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "container_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave empty to move to the inbox.",
+          "title": "Destination Folder ID"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "MoveNote",
+      "type": "object"
+    },
+    "RestoreNote": {
+      "additionalProperties": false,
+      "description": "Restore a note from Trash.",
+      "properties": {
+        "note_id": {
+          "description": "The numeric ID returned by List Notes or Create Note.",
+          "minimum": 1,
+          "title": "Note ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "restore_note",
+          "default": "restore_note",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "RestoreNote",
+      "type": "object"
+    },
+    "SearchNotes": {
+      "additionalProperties": false,
+      "description": "Search accessible notes across personal or team spaces.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "search_notes",
+          "default": "search_notes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "q": {
+          "minLength": 1,
+          "title": "Search Query",
+          "type": "string"
+        },
+        "search_scope": {
+          "default": "all",
+          "pattern": "^(personal|all|team:[0-9]+)$",
+          "title": "Search Scope",
+          "type": "string"
+        },
+        "exclude_body": {
+          "default": false,
+          "title": "Exclude Note Bodies",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "SearchNotes",
+      "type": "object"
+    },
+    "UnarchiveNote": {
+      "additionalProperties": false,
+      "description": "Unarchive a note.",
+      "properties": {
+        "note_id": {
+          "description": "The numeric ID returned by List Notes or Create Note.",
+          "minimum": 1,
+          "title": "Note ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "unarchive_note",
+          "default": "unarchive_note",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "UnarchiveNote",
+      "type": "object"
+    },
+    "UnfavoriteNote": {
+      "additionalProperties": false,
+      "description": "Remove a note from favorites.",
+      "properties": {
+        "note_id": {
+          "description": "The numeric ID returned by List Notes or Create Note.",
+          "minimum": 1,
+          "title": "Note ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "unfavorite_note",
+          "default": "unfavorite_note",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "UnfavoriteNote",
+      "type": "object"
+    },
+    "UpdateContainer": {
+      "additionalProperties": false,
+      "description": "Update supplied folder fields. Root folders cannot be changed.",
+      "properties": {
+        "emoji": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Emoji"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Folder ID"
+        },
+        "llm_instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder AI Instructions",
+          "ui:widget": "textarea"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "container_id": {
+          "description": "The numeric folder (container) ID returned by List Folders.",
+          "minimum": 1,
+          "title": "Folder ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_container",
+          "default": "update_container",
+          "title": "Update Folder",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Name"
+        }
+      },
+      "required": [
+        "container_id"
+      ],
+      "title": "UpdateContainer",
+      "type": "object"
+    },
+    "UpdateNote": {
+      "additionalProperties": false,
+      "description": "Update only supplied note fields; optionally guard against concurrent edits.",
+      "properties": {
+        "body": {
+          "anyOf": [
+            {
+              "maxLength": 262144,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Markdown Body",
+          "ui:widget": "textarea"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source URL"
+        },
+        "container_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to leave the folder unchanged on update, or use the inbox on create.",
+          "title": "Folder ID"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "tag_list": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tags. On update this replaces all tags; use Clear Tags to remove every tag.",
+          "title": "Tag Names"
+        },
+        "note_id": {
+          "description": "The numeric ID returned by List Notes or Create Note.",
+          "minimum": 1,
+          "title": "Note ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_note",
+          "default": "update_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "expected_lock_version": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use lock_version from Get Note; stale writes return 409.",
+          "title": "Expected Lock Version"
+        },
+        "append_body": {
+          "anyOf": [
+            {
+              "maxLength": 262144,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Append Markdown"
+        },
+        "clear_tags": {
+          "default": false,
+          "title": "Clear Tags",
+          "type": "boolean"
+        },
+        "clear_body": {
+          "default": false,
+          "title": "Clear Body",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "UpdateNote",
+      "type": "object"
+    },
+    "UpdateTag": {
+      "additionalProperties": false,
+      "description": "Rename a tag.",
+      "properties": {
+        "tag_id": {
+          "description": "The numeric ID returned by List Tags.",
+          "minimum": 1,
+          "title": "Tag ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_tag",
+          "default": "update_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Tag Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id",
+        "name"
+      ],
+      "title": "UpdateTag",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_note": "#/$defs/ArchiveNote",
+          "create_container": "#/$defs/CreateContainer",
+          "create_note": "#/$defs/CreateNote",
+          "create_tag": "#/$defs/CreateTag",
+          "delete_container": "#/$defs/DeleteContainer",
+          "delete_note": "#/$defs/DeleteNote",
+          "delete_tag": "#/$defs/DeleteTag",
+          "favorite_note": "#/$defs/FavoriteNote",
+          "get_container": "#/$defs/GetContainer",
+          "get_me": "#/$defs/GetMe",
+          "get_note": "#/$defs/GetNote",
+          "get_tag": "#/$defs/GetTag",
+          "list_container_notes": "#/$defs/ListContainerNotes",
+          "list_containers": "#/$defs/ListContainers",
+          "list_notes": "#/$defs/ListNotes",
+          "list_tag_notes": "#/$defs/ListTagNotes",
+          "list_tags": "#/$defs/ListTags",
+          "move_note": "#/$defs/MoveNote",
+          "restore_note": "#/$defs/RestoreNote",
+          "search_notes": "#/$defs/SearchNotes",
+          "unarchive_note": "#/$defs/UnarchiveNote",
+          "unfavorite_note": "#/$defs/UnfavoriteNote",
+          "update_container": "#/$defs/UpdateContainer",
+          "update_note": "#/$defs/UpdateNote",
+          "update_tag": "#/$defs/UpdateTag"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetMe"
+        },
+        {
+          "$ref": "#/$defs/SearchNotes"
+        },
+        {
+          "$ref": "#/$defs/ListNotes"
+        },
+        {
+          "$ref": "#/$defs/GetNote"
+        },
+        {
+          "$ref": "#/$defs/CreateNote"
+        },
+        {
+          "$ref": "#/$defs/UpdateNote"
+        },
+        {
+          "$ref": "#/$defs/DeleteNote"
+        },
+        {
+          "$ref": "#/$defs/ArchiveNote"
+        },
+        {
+          "$ref": "#/$defs/UnarchiveNote"
+        },
+        {
+          "$ref": "#/$defs/MoveNote"
+        },
+        {
+          "$ref": "#/$defs/FavoriteNote"
+        },
+        {
+          "$ref": "#/$defs/UnfavoriteNote"
+        },
+        {
+          "$ref": "#/$defs/RestoreNote"
+        },
+        {
+          "$ref": "#/$defs/ListContainers"
+        },
+        {
+          "$ref": "#/$defs/GetContainer"
+        },
+        {
+          "$ref": "#/$defs/CreateContainer"
+        },
+        {
+          "$ref": "#/$defs/UpdateContainer"
+        },
+        {
+          "$ref": "#/$defs/DeleteContainer"
+        },
+        {
+          "$ref": "#/$defs/ListContainerNotes"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/GetTag"
+        },
+        {
+          "$ref": "#/$defs/CreateTag"
+        },
+        {
+          "$ref": "#/$defs/UpdateTag"
+        },
+        {
+          "$ref": "#/$defs/DeleteTag"
+        },
+        {
+          "$ref": "#/$defs/ListTagNotes"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HjarniAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Hjarni Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
