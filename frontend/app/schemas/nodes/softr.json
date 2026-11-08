@@ -1,0 +1,1131 @@
+{
+  "$defs": {
+    "AddTableField": {
+      "additionalProperties": false,
+      "description": "Add Table Field. Add a new field to a table.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "table_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_table_field",
+          "default": "add_table_field",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "field_type": {
+          "description": "Softr field type, for example SINGLE_LINE_TEXT or NUMBER.",
+          "minLength": 1,
+          "title": "Field Type",
+          "type": "string"
+        },
+        "options_json": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "type": "object"
+          },
+          "default": null,
+          "description": "Field options as a JSON object.",
+          "title": "Options Json",
+          "ui:options": {
+            "language": "json"
+          },
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "name",
+        "field_type"
+      ],
+      "title": "AddTableField",
+      "type": "object"
+    },
+    "CreateDatabase": {
+      "additionalProperties": false,
+      "description": "Create a Database. Create a new database in the specified workspace.",
+      "properties": {
+        "operation": {
+          "const": "create_database",
+          "default": "create_database",
+          "title": "Operation",
+          "type": "string"
+        },
+        "workspace_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "name"
+      ],
+      "title": "CreateDatabase",
+      "type": "object"
+    },
+    "CreateRecord": {
+      "additionalProperties": false,
+      "description": "Create Record. Create a new record in the specified table.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "table_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_record",
+          "default": "create_record",
+          "title": "Operation",
+          "type": "string"
+        },
+        "fields_json": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "type": "object"
+          },
+          "description": "Map of field IDs to values, as a JSON object.",
+          "maxLength": 100000,
+          "title": "Fields Json",
+          "type": "string",
+          "ui:options": {
+            "language": "json"
+          },
+          "ui:widget": "code_editor"
+        },
+        "field_names": {
+          "default": false,
+          "title": "Field Names",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "fields_json"
+      ],
+      "title": "CreateRecord",
+      "type": "object"
+    },
+    "CreateTable": {
+      "additionalProperties": false,
+      "description": "Create Table. Create a new table in the specified database.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_table",
+          "default": "create_table",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "primary_field_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Primary Field Name"
+        }
+      },
+      "required": [
+        "database_id",
+        "name"
+      ],
+      "title": "CreateTable",
+      "type": "object"
+    },
+    "DeleteDatabase": {
+      "additionalProperties": false,
+      "description": "Delete Database. Delete a specific database by its ID. It can only be deleted if it is empty, unless the 'force' parameter is used.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_database",
+          "default": "delete_database",
+          "title": "Operation",
+          "type": "string"
+        },
+        "force": {
+          "default": false,
+          "description": "Delete even when the database is not empty. Destructive.",
+          "title": "Force",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "database_id"
+      ],
+      "title": "DeleteDatabase",
+      "type": "object"
+    },
+    "DeleteRecord": {
+      "additionalProperties": false,
+      "description": "Delete Record. Delete a specific record by its ID.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "table_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "record_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_record",
+          "default": "delete_record",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "record_id"
+      ],
+      "title": "DeleteRecord",
+      "type": "object"
+    },
+    "DeleteTable": {
+      "additionalProperties": false,
+      "description": "Delete Table. Delete a specific table by its ID. It can only be deleted if it is empty, unless the 'force' parameter is used.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "table_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_table",
+          "default": "delete_table",
+          "title": "Operation",
+          "type": "string"
+        },
+        "force": {
+          "default": false,
+          "description": "Delete even when the table is not empty. Destructive.",
+          "title": "Force",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id"
+      ],
+      "title": "DeleteTable",
+      "type": "object"
+    },
+    "DeleteTableField": {
+      "additionalProperties": false,
+      "description": "Delete Table Field. Delete a specific field from a table.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "table_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "field_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Field ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_table_field",
+          "default": "delete_table_field",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "field_id"
+      ],
+      "title": "DeleteTableField",
+      "type": "object"
+    },
+    "GetDatabase": {
+      "additionalProperties": false,
+      "description": "Get Single Database. Retrieve details of a specific database by its ID.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_database",
+          "default": "get_database",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "database_id"
+      ],
+      "title": "GetDatabase",
+      "type": "object"
+    },
+    "GetRecord": {
+      "additionalProperties": false,
+      "description": "Get Single Record. Retrieve details of a specific record by its ID.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "table_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "record_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_record",
+          "default": "get_record",
+          "title": "Operation",
+          "type": "string"
+        },
+        "field_names": {
+          "default": false,
+          "title": "Field Names",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "record_id"
+      ],
+      "title": "GetRecord",
+      "type": "object"
+    },
+    "GetTable": {
+      "additionalProperties": false,
+      "description": "Get Single Table. Retrieve details of a specific table by its ID.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "table_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_table",
+          "default": "get_table",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id"
+      ],
+      "title": "GetTable",
+      "type": "object"
+    },
+    "GetTableField": {
+      "additionalProperties": false,
+      "description": "Get Table Field. Retrieve details of a specific field.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "table_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "field_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Field ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_table_field",
+          "default": "get_table_field",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "field_id"
+      ],
+      "title": "GetTableField",
+      "type": "object"
+    },
+    "ListDatabases": {
+      "additionalProperties": false,
+      "description": "Get Databases. Retrieve a list of all databases accessible to the authenticated user.",
+      "properties": {
+        "operation": {
+          "const": "list_databases",
+          "default": "list_databases",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListDatabases",
+      "type": "object"
+    },
+    "ListRecords": {
+      "additionalProperties": false,
+      "description": "Get Records. Retrieve a list of all records in the specified table.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "table_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_records",
+          "default": "list_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "field_names": {
+          "default": false,
+          "title": "Field Names",
+          "type": "boolean"
+        },
+        "view_id": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "View Id"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id"
+      ],
+      "title": "ListRecords",
+      "type": "object"
+    },
+    "ListTableViews": {
+      "additionalProperties": false,
+      "description": "Get Table Views. Retrieve a list of views for a specific table.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "table_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_table_views",
+          "default": "list_table_views",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id"
+      ],
+      "title": "ListTableViews",
+      "type": "object"
+    },
+    "ListTables": {
+      "additionalProperties": false,
+      "description": "Get Tables. Retrieve a list of all tables in the specified database.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_tables",
+          "default": "list_tables",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "database_id"
+      ],
+      "title": "ListTables",
+      "type": "object"
+    },
+    "SearchRecords": {
+      "additionalProperties": false,
+      "description": "Search Records. Search for records in the specified table based on filter, sort, and pagination criteria.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "table_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "search_records",
+          "default": "search_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "condition_json": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "type": "object"
+          },
+          "default": null,
+          "description": "Softr filter condition object: operator, leftSide, rightSide or nested conditions.",
+          "title": "Condition Json",
+          "ui:options": {
+            "language": "json"
+          },
+          "ui:widget": "code_editor"
+        },
+        "sorting_json": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "properties": {
+                "sortingField": {
+                  "type": "string"
+                },
+                "sortType": {
+                  "enum": [
+                    "ASC",
+                    "DESC"
+                  ],
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "default": null,
+          "description": "JSON array of sortingField and sortType (ASC or DESC) objects.",
+          "title": "Sorting Json",
+          "ui:options": {
+            "language": "json"
+          },
+          "ui:widget": "code_editor"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "field_names": {
+          "default": false,
+          "title": "Field Names",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id"
+      ],
+      "title": "SearchRecords",
+      "type": "object"
+    },
+    "SoftrAPIKey": {
+      "properties": {
+        "credential_type": {
+          "const": "softr_api_key",
+          "default": "softr_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key or personal access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Softr API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Softr API key or personal access token with access to the databases you want to automate. Enable write access for create, update and delete actions. NoClick sends it in the Softr-Api-Key header to tables-api.softr.io. List databases checks the databases visible to this key.",
+      "x-credential-url": "https://docs.softr.io/softr-api"
+    },
+    "UpdateDatabase": {
+      "additionalProperties": false,
+      "description": "Update Database. Update the details of an existing database.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_database",
+          "default": "update_database",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "database_id",
+        "name"
+      ],
+      "title": "UpdateDatabase",
+      "type": "object"
+    },
+    "UpdateRecord": {
+      "additionalProperties": false,
+      "description": "Update Record. Partially update a specific record by its ID. Only the fields provided in the request body will be changed.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "table_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "record_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_record",
+          "default": "update_record",
+          "title": "Operation",
+          "type": "string"
+        },
+        "fields_json": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "type": "object"
+          },
+          "description": "Only supplied field IDs are updated; use JSON null to clear a value.",
+          "maxLength": 100000,
+          "title": "Fields Json",
+          "type": "string",
+          "ui:options": {
+            "language": "json"
+          },
+          "ui:widget": "code_editor"
+        },
+        "field_names": {
+          "default": false,
+          "title": "Field Names",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "record_id",
+        "fields_json"
+      ],
+      "title": "UpdateRecord",
+      "type": "object"
+    },
+    "UpdateTable": {
+      "additionalProperties": false,
+      "description": "Update Table. Update a table's name and/or description. To modify fields, use the field-specific endpoints.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "table_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_table",
+          "default": "update_table",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "name"
+      ],
+      "title": "UpdateTable",
+      "type": "object"
+    },
+    "UpdateTableField": {
+      "additionalProperties": false,
+      "description": "Update Table Field. Update the properties of a specific field.",
+      "properties": {
+        "database_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "table_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "field_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Field ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_table_field",
+          "default": "update_table_field",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "field_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Type"
+        },
+        "options_json": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "type": "object"
+          },
+          "default": null,
+          "description": "Field options as a JSON object.",
+          "title": "Options Json",
+          "ui:options": {
+            "language": "json"
+          },
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "database_id",
+        "table_id",
+        "field_id",
+        "name"
+      ],
+      "title": "UpdateTableField",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_table_field": "#/$defs/AddTableField",
+          "create_database": "#/$defs/CreateDatabase",
+          "create_record": "#/$defs/CreateRecord",
+          "create_table": "#/$defs/CreateTable",
+          "delete_database": "#/$defs/DeleteDatabase",
+          "delete_record": "#/$defs/DeleteRecord",
+          "delete_table": "#/$defs/DeleteTable",
+          "delete_table_field": "#/$defs/DeleteTableField",
+          "get_database": "#/$defs/GetDatabase",
+          "get_record": "#/$defs/GetRecord",
+          "get_table": "#/$defs/GetTable",
+          "get_table_field": "#/$defs/GetTableField",
+          "list_databases": "#/$defs/ListDatabases",
+          "list_records": "#/$defs/ListRecords",
+          "list_table_views": "#/$defs/ListTableViews",
+          "list_tables": "#/$defs/ListTables",
+          "search_records": "#/$defs/SearchRecords",
+          "update_database": "#/$defs/UpdateDatabase",
+          "update_record": "#/$defs/UpdateRecord",
+          "update_table": "#/$defs/UpdateTable",
+          "update_table_field": "#/$defs/UpdateTableField"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListDatabases"
+        },
+        {
+          "$ref": "#/$defs/GetDatabase"
+        },
+        {
+          "$ref": "#/$defs/CreateDatabase"
+        },
+        {
+          "$ref": "#/$defs/UpdateDatabase"
+        },
+        {
+          "$ref": "#/$defs/DeleteDatabase"
+        },
+        {
+          "$ref": "#/$defs/ListTables"
+        },
+        {
+          "$ref": "#/$defs/GetTable"
+        },
+        {
+          "$ref": "#/$defs/CreateTable"
+        },
+        {
+          "$ref": "#/$defs/UpdateTable"
+        },
+        {
+          "$ref": "#/$defs/DeleteTable"
+        },
+        {
+          "$ref": "#/$defs/ListTableViews"
+        },
+        {
+          "$ref": "#/$defs/AddTableField"
+        },
+        {
+          "$ref": "#/$defs/GetTableField"
+        },
+        {
+          "$ref": "#/$defs/UpdateTableField"
+        },
+        {
+          "$ref": "#/$defs/DeleteTableField"
+        },
+        {
+          "$ref": "#/$defs/ListRecords"
+        },
+        {
+          "$ref": "#/$defs/GetRecord"
+        },
+        {
+          "$ref": "#/$defs/CreateRecord"
+        },
+        {
+          "$ref": "#/$defs/UpdateRecord"
+        },
+        {
+          "$ref": "#/$defs/DeleteRecord"
+        },
+        {
+          "$ref": "#/$defs/SearchRecords"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SoftrAPIKey"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Softr Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
