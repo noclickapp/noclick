@@ -1,0 +1,27 @@
+{
+  "source": "https://developer.ironcladapp.com/openapi/ironclad-public-api.json",
+  "body": {
+    "id": "IC-124",
+    "ironcladId": "IC-124",
+    "name": "Amendment #1 - Updated Terms",
+    "lastUpdated": "2024-01-01T00:00:00Z",
+    "type": "nda",
+    "attachments": {},
+    "links": [],
+    "parentId": "IC-123",
+    "parentLinkType": "amendment",
+    "properties": {
+      "counterpartyName": {
+        "type": "string",
+        "value": "Acme Corporation Ltd"
+      },
+      "contractValue": {
+        "type": "monetary_amount",
+        "value": {
+          "amount": 150000,
+          "currency": "USD"
+        }
+      }
+    }
+  }
+}
