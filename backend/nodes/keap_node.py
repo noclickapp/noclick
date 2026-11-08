@@ -232,6 +232,7 @@ class KeapNode(WorkflowNode):
             credential=data,
             refresh=refresh_access_token,
             provider="keap",
+            caller_path="execute",
         )
         credential.access_token = data["access_token"]
         credential.refresh_token = data.get("refresh_token") or credential.refresh_token
