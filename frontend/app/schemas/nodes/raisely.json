@@ -1,0 +1,1314 @@
+{
+  "$defs": {
+    "AddTagRecord": {
+      "additionalProperties": false,
+      "description": "Add tag record.",
+      "properties": {
+        "operation": {
+          "const": "add_tag_record",
+          "default": "add_tag_record",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag_id": {
+          "title": "Tag Id",
+          "type": "string"
+        },
+        "record_id": {
+          "title": "Record Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id",
+        "record_id"
+      ],
+      "title": "AddTagRecord",
+      "type": "object"
+    },
+    "CheckConnection": {
+      "additionalProperties": false,
+      "description": "Check connection.",
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "CreateUser": {
+      "additionalProperties": false,
+      "description": "Create user.",
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "full_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Full Name"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "preferred_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preferred Name"
+        },
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CreateUser",
+      "type": "object"
+    },
+    "GetCampaign": {
+      "additionalProperties": false,
+      "description": "Get campaign.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign": {
+          "title": "Campaign",
+          "type": "string"
+        },
+        "private": {
+          "default": true,
+          "title": "Private",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "campaign"
+      ],
+      "title": "GetCampaign",
+      "type": "object"
+    },
+    "GetDonation": {
+      "additionalProperties": false,
+      "description": "Get donation.",
+      "properties": {
+        "operation": {
+          "const": "get_donation",
+          "default": "get_donation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "donation_id": {
+          "title": "Donation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "donation_id"
+      ],
+      "title": "GetDonation",
+      "type": "object"
+    },
+    "GetProfile": {
+      "additionalProperties": false,
+      "description": "Get profile.",
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "profile_path": {
+          "title": "Profile Path",
+          "type": "string"
+        },
+        "campaign": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Campaign"
+        },
+        "private": {
+          "default": true,
+          "title": "Private",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "profile_path"
+      ],
+      "title": "GetProfile",
+      "type": "object"
+    },
+    "GetSubscription": {
+      "additionalProperties": false,
+      "description": "Get subscription.",
+      "properties": {
+        "operation": {
+          "const": "get_subscription",
+          "default": "get_subscription",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subscription_id": {
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "private": {
+          "default": true,
+          "title": "Private",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "GetSubscription",
+      "type": "object"
+    },
+    "GetTag": {
+      "additionalProperties": false,
+      "description": "Get tag.",
+      "properties": {
+        "operation": {
+          "const": "get_tag",
+          "default": "get_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag_id": {
+          "title": "Tag Id",
+          "type": "string"
+        },
+        "private": {
+          "default": true,
+          "title": "Private",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "GetTag",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "description": "Get user.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        },
+        "private": {
+          "default": true,
+          "title": "Private",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetUser",
+      "type": "object"
+    },
+    "ListCampaignDonations": {
+      "additionalProperties": false,
+      "description": "List campaign donations.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Records in this page; use next_offset for the following page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "private": {
+          "default": true,
+          "description": "Request full authenticated records; requires the corresponding key permissions.",
+          "title": "Private",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_campaign_donations",
+          "default": "list_campaign_donations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign": {
+          "title": "Campaign",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign"
+      ],
+      "title": "ListCampaignDonations",
+      "type": "object"
+    },
+    "ListCampaignProfiles": {
+      "additionalProperties": false,
+      "description": "List campaign profiles.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Records in this page; use next_offset for the following page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "private": {
+          "default": true,
+          "description": "Request full authenticated records; requires the corresponding key permissions.",
+          "title": "Private",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_campaign_profiles",
+          "default": "list_campaign_profiles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign": {
+          "title": "Campaign",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign"
+      ],
+      "title": "ListCampaignProfiles",
+      "type": "object"
+    },
+    "ListCampaigns": {
+      "additionalProperties": false,
+      "description": "List campaigns.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Records in this page; use next_offset for the following page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "private": {
+          "default": true,
+          "description": "Request full authenticated records; requires the corresponding key permissions.",
+          "title": "Private",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCampaigns",
+      "type": "object"
+    },
+    "ListDonations": {
+      "additionalProperties": false,
+      "description": "List donations.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Records in this page; use next_offset for the following page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "private": {
+          "default": true,
+          "description": "Request full authenticated records; requires the corresponding key permissions.",
+          "title": "Private",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_donations",
+          "default": "list_donations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Campaign"
+        },
+        "user": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "title": "ListDonations",
+      "type": "object"
+    },
+    "ListProfiles": {
+      "additionalProperties": false,
+      "description": "List profiles.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Records in this page; use next_offset for the following page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "private": {
+          "default": true,
+          "description": "Request full authenticated records; requires the corresponding key permissions.",
+          "title": "Private",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_profiles",
+          "default": "list_profiles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign": {
+          "title": "Campaign",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign"
+      ],
+      "title": "ListProfiles",
+      "type": "object"
+    },
+    "ListSubscriptions": {
+      "additionalProperties": false,
+      "description": "List subscriptions.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Records in this page; use next_offset for the following page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "private": {
+          "default": true,
+          "description": "Request full authenticated records; requires the corresponding key permissions.",
+          "title": "Private",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_subscriptions",
+          "default": "list_subscriptions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Campaign"
+        },
+        "user": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "title": "ListSubscriptions",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "description": "List tags.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Records in this page; use next_offset for the following page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "private": {
+          "default": true,
+          "description": "Request full authenticated records; requires the corresponding key permissions.",
+          "title": "Private",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "record_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Record type accepted by Raisely, for example user.",
+          "title": "Record Type"
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "description": "List users.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Records in this page; use next_offset for the following page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "private": {
+          "default": true,
+          "description": "Request full authenticated records; requires the corresponding key permissions.",
+          "title": "Private",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "RaiselyAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "raisely_api_key",
+          "default": "raisely_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Raisely API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing Raisely API key with access to the campaigns and records you want to automate. NoClick sends it as a Bearer token to api.raisely.com and verifies it with the read-only authenticate endpoint.",
+      "x-credential-url": "https://developers.raisely.com/reference/getauthenticate"
+    },
+    "RemoveTagRecord": {
+      "additionalProperties": false,
+      "description": "Remove tag record.",
+      "properties": {
+        "operation": {
+          "const": "remove_tag_record",
+          "default": "remove_tag_record",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag_id": {
+          "title": "Tag Id",
+          "type": "string"
+        },
+        "record_id": {
+          "title": "Record Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id",
+        "record_id"
+      ],
+      "title": "RemoveTagRecord",
+      "type": "object"
+    },
+    "UpdateDonation": {
+      "additionalProperties": false,
+      "description": "Update donation.",
+      "properties": {
+        "operation": {
+          "const": "update_donation",
+          "default": "update_donation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "donation_id": {
+          "title": "Donation Id",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "anonymous": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Anonymous"
+        },
+        "preferred_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preferred Name"
+        }
+      },
+      "required": [
+        "donation_id"
+      ],
+      "title": "UpdateDonation",
+      "type": "object"
+    },
+    "UpdateProfile": {
+      "additionalProperties": false,
+      "description": "Update profile.",
+      "properties": {
+        "operation": {
+          "const": "update_profile",
+          "default": "update_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "profile_path": {
+          "title": "Profile Path",
+          "type": "string"
+        },
+        "campaign": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Campaign"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "goal": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fundraising goal in cents.",
+          "title": "Goal"
+        }
+      },
+      "required": [
+        "profile_path"
+      ],
+      "title": "UpdateProfile",
+      "type": "object"
+    },
+    "UpdateUser": {
+      "additionalProperties": false,
+      "description": "Update user.",
+      "properties": {
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "full_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Full Name"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "preferred_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preferred Name"
+        },
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "UpdateUser",
+      "type": "object"
+    },
+    "UpsertUser": {
+      "additionalProperties": false,
+      "description": "Upsert user.",
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "full_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Full Name"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "preferred_name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preferred Name"
+        },
+        "operation": {
+          "const": "upsert_user",
+          "default": "upsert_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign": {
+          "title": "Campaign",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "campaign"
+      ],
+      "title": "UpsertUser",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_tag_record": "#/$defs/AddTagRecord",
+          "check_connection": "#/$defs/CheckConnection",
+          "create_user": "#/$defs/CreateUser",
+          "get_campaign": "#/$defs/GetCampaign",
+          "get_donation": "#/$defs/GetDonation",
+          "get_profile": "#/$defs/GetProfile",
+          "get_subscription": "#/$defs/GetSubscription",
+          "get_tag": "#/$defs/GetTag",
+          "get_user": "#/$defs/GetUser",
+          "list_campaign_donations": "#/$defs/ListCampaignDonations",
+          "list_campaign_profiles": "#/$defs/ListCampaignProfiles",
+          "list_campaigns": "#/$defs/ListCampaigns",
+          "list_donations": "#/$defs/ListDonations",
+          "list_profiles": "#/$defs/ListProfiles",
+          "list_subscriptions": "#/$defs/ListSubscriptions",
+          "list_tags": "#/$defs/ListTags",
+          "list_users": "#/$defs/ListUsers",
+          "remove_tag_record": "#/$defs/RemoveTagRecord",
+          "update_donation": "#/$defs/UpdateDonation",
+          "update_profile": "#/$defs/UpdateProfile",
+          "update_user": "#/$defs/UpdateUser",
+          "upsert_user": "#/$defs/UpsertUser"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/ListCampaigns"
+        },
+        {
+          "$ref": "#/$defs/GetCampaign"
+        },
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/CreateUser"
+        },
+        {
+          "$ref": "#/$defs/UpdateUser"
+        },
+        {
+          "$ref": "#/$defs/UpsertUser"
+        },
+        {
+          "$ref": "#/$defs/ListDonations"
+        },
+        {
+          "$ref": "#/$defs/GetDonation"
+        },
+        {
+          "$ref": "#/$defs/UpdateDonation"
+        },
+        {
+          "$ref": "#/$defs/ListProfiles"
+        },
+        {
+          "$ref": "#/$defs/GetProfile"
+        },
+        {
+          "$ref": "#/$defs/UpdateProfile"
+        },
+        {
+          "$ref": "#/$defs/ListSubscriptions"
+        },
+        {
+          "$ref": "#/$defs/GetSubscription"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/GetTag"
+        },
+        {
+          "$ref": "#/$defs/AddTagRecord"
+        },
+        {
+          "$ref": "#/$defs/RemoveTagRecord"
+        },
+        {
+          "$ref": "#/$defs/ListCampaignProfiles"
+        },
+        {
+          "$ref": "#/$defs/ListCampaignDonations"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RaiselyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Raisely Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
