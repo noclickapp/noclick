@@ -1,0 +1,457 @@
+{
+  "source": "https://craftmypdf.s3.ap-southeast-1.amazonaws.com/craftmypdf_api/craftmypdf_api.yaml",
+  "version": "1.0.0",
+  "note": "Request and response fields copied from provider property examples. Optional response properties with type-inconsistent examples are omitted.",
+  "cases": [
+    {
+      "operation": "create_pdf",
+      "config": {
+        "data": "{\"invoice_number\": \"INV38379\", \"date\": \"2021-09-30\", \"currency\": \"USD\", \"total_amount\": 82542.56}",
+        "template_id": "05f77b2b18ad809a"
+      },
+      "method": "POST",
+      "path": "/create",
+      "response": {
+        "status": "success",
+        "file": "https://craftmypdf.com/output.pdf",
+        "transaction_ref": "a0430897-2c94-40e1-a09b-57403d811ceb",
+        "anchors": [
+          {
+            "page": 1,
+            "text": "",
+            "level": "0",
+            "description": "Welcome to CraftMyPDF!"
+          },
+          {
+            "page": 2,
+            "text": "page 2",
+            "level": "0",
+            "description": ""
+          }
+        ],
+        "einvoice_validation_status": "valid",
+        "einvoice_validation_details": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><validation filename=\"output-einvoice.pdf\">...<summary status=\"valid\"/></validation>"
+      }
+    },
+    {
+      "operation": "create_pdf_async",
+      "config": {
+        "data": "{\"invoice_number\": \"INV38379\", \"date\": \"2021-09-30\", \"currency\": \"USD\", \"total_amount\": 82542.56}",
+        "template_id": "05f77b2b18ad809a",
+        "webhook_url": "https://myserver.com/pdfhandler"
+      },
+      "method": "POST",
+      "path": "/create-async",
+      "response": {
+        "status": "success",
+        "transaction_ref": "a0430897-2c94-40e1-a09b-57403d811ceb",
+        "is_async": true
+      }
+    },
+    {
+      "operation": "create_image",
+      "config": {
+        "data": "{\"invoice_number\": \"INV38379\", \"date\": \"2021-09-30\", \"currency\": \"USD\", \"total_amount\": 82542.56}",
+        "template_id": "05f77b2b18ad809a"
+      },
+      "method": "POST",
+      "path": "/create-image",
+      "response": {
+        "status": "success",
+        "file": "https://craftmypdf.com/output.jpg",
+        "transaction_ref": "a0430897-2c94-40e1-a09b-57403d811ceb"
+      }
+    },
+    {
+      "operation": "list_templates",
+      "config": {},
+      "method": "GET",
+      "path": "/list-templates",
+      "response": {
+        "status": "success",
+        "templates": [
+          {
+            "template_id": "5ef77b2b187c968c",
+            "name": "Invoice Template",
+            "status": "ACTIVE",
+            "created_at": "2021-07-31T16:00:00.000Z",
+            "updated_at": "2021-08-27T13:07:45.968Z",
+            "group_name": ""
+          },
+          {
+            "template_id": "19d77b2b187554e0",
+            "name": "PDF Template",
+            "status": "ACTIVE",
+            "created_at": "2020-06-31T16:00:00.000Z",
+            "updated_at": "2021-08-27T13:07:45.968Z",
+            "group_name": ""
+          }
+        ]
+      }
+    },
+    {
+      "operation": "list_template_versions",
+      "config": {
+        "template_id": "5ef77b2b187c968c"
+      },
+      "method": "GET",
+      "path": "/list-template-versions",
+      "response": {
+        "status": "success",
+        "template_id": "5ef77b2b187c968c",
+        "versions": [
+          {
+            "version": 0,
+            "description": "Latest",
+            "updated_at": ""
+          },
+          {
+            "version": 42,
+            "keep": false,
+            "description": "",
+            "updated_at": "2022-12-22T13:04:48.355Z"
+          },
+          {
+            "version": 41,
+            "keep": false,
+            "description": "",
+            "updated_at": "2022-12-22T05:56:33.779Z"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "retain_template_versions",
+      "config": {
+        "template_id": "c2d77b234151b7c4",
+        "versions": [
+          1,
+          4
+        ],
+        "keep": true
+      },
+      "method": "POST",
+      "path": "/retain-template-versions",
+      "response": {
+        "status": "success",
+        "template_id": "c2d77b234151b7c4",
+        "versions": [
+          {
+            "version": 1,
+            "keep": true,
+            "description": "",
+            "updated_at": "2024-10-26T06:06:44.399Z"
+          },
+          {
+            "version": 4,
+            "keep": true,
+            "description": "",
+            "updated_at": "2024-10-26T19:31:50.500Z"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "duplicate_template",
+      "config": {
+        "template_id": "5ef88b2b237c968c"
+      },
+      "method": "POST",
+      "path": "/new-template-from",
+      "response": {
+        "status": "success",
+        "template_id": "05f77b2b18ad809a",
+        "from_template_id": "23f4218dc352"
+      }
+    },
+    {
+      "operation": "update_template",
+      "config": {
+        "template_id": "05f77b2b18ad809a",
+        "name": "My Template"
+      },
+      "method": "POST",
+      "path": "/update-template",
+      "response": {
+        "status": "success"
+      }
+    },
+    {
+      "operation": "get_template",
+      "config": {
+        "template_id": "ad577b2b22d4e612",
+        "version": "0"
+      },
+      "method": "GET",
+      "path": "/get-template",
+      "response": {
+        "status": "success",
+        "name": "Test Template",
+        "body": "{...}",
+        "json": "{...}"
+      }
+    },
+    {
+      "operation": "delete_template",
+      "config": {
+        "template_id": "5ef88b2b237c968c"
+      },
+      "method": "GET",
+      "path": "/delete-template",
+      "response": {
+        "status": "success"
+      }
+    },
+    {
+      "operation": "query_template_usage",
+      "config": {
+        "template_ids": "bba77b234e84443e,02077b2b1aa8b938",
+        "start_date": "2025-01-30T00:00:00Z",
+        "end_date": "2025-01-30T11:59:59Z"
+      },
+      "method": "GET",
+      "path": "/query-template-usage",
+      "response": {
+        "status": "success",
+        "template_ids": [
+          "bba77b234e84443e",
+          "02077b2b1aa8b938"
+        ],
+        "start_date": "2025-01-30T00:00:00Z",
+        "end_date": "2025-01-30T11:59:59Z",
+        "results": [
+          {
+            "template_id": "02077b2b1aa8b938",
+            "total_credit": "8.0000",
+            "total_count": "8"
+          },
+          {
+            "template_id": "bba77b234e84443e",
+            "total_credit": "2.0000",
+            "total_count": "2"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "create_editor_session",
+      "config": {
+        "template_id": "5ef88b2b237c968c",
+        "expiration": 1440
+      },
+      "method": "POST",
+      "path": "/create-editor-session",
+      "response": {
+        "status": "success",
+        "url": "https://craftmypdf.com/designer/?template_id=a2777b23223444&session_token=RlX2lkIjogIxzOEFROCJ9&sig=c6c7f8b90cd7901",
+        "expire_after_unix_timestamp": 1674097492,
+        "token_uuid": "66b0e71d-5a72-4fee-b4a5-7f1713fd2fb5"
+      }
+    },
+    {
+      "operation": "deactivate_editor_session",
+      "config": {
+        "token_uuid": "a1263472b-e5e3-4568-8654-ec49f48392"
+      },
+      "method": "POST",
+      "path": "/deactivate-editor-session",
+      "response": {
+        "status": "success"
+      }
+    },
+    {
+      "operation": "list_transactions",
+      "config": {},
+      "method": "GET",
+      "path": "/list-transactions",
+      "response": {
+        "status": "success",
+        "transactions": [
+          {
+            "transaction_ref": "f1d3a8dc-c7ce-4ea4-b3f4-db9e71ea620b",
+            "transaction_type": "PDFGEN",
+            "exec_tm": 2997,
+            "credit": "1.0000",
+            "created_at": "2021-08-28T03:10:36.855Z",
+            "resp_file_size": 48213,
+            "resp_status": "success"
+          },
+          {
+            "transaction_ref": "031d7d44-091b-4ffe-bbbe-728772a6493e",
+            "transaction_type": "PDFGEN",
+            "exec_tm": 5182,
+            "credit": "1.0000",
+            "created_at": "2021-08-28T03:07:36.856Z",
+            "resp_file_size": 51877,
+            "resp_status": "webhook_success"
+          },
+          {
+            "transaction_ref": "33c442e2-07cf-4168-9f29-7df926336869",
+            "transaction_type": "PDFPREVIEW",
+            "exec_tm": 5689,
+            "credit": "0.5000",
+            "created_at": "2021-08-27T14:00:13.426Z",
+            "resp_file_size": 39204,
+            "resp_status": "webhook_failed"
+          },
+          {
+            "transaction_ref": "8183b4c6-da14-4317-aa93-553cbc1fa2a5",
+            "transaction_type": "PDFPREVIEW",
+            "exec_tm": 5849,
+            "credit": "0.5000",
+            "created_at": "2021-08-27T13:18:34.051Z",
+            "resp_file_size": 41022,
+            "resp_status": "success"
+          },
+          {
+            "transaction_ref": "15cefe88-35c5-46a9-ab77-ac05dc6a29c3",
+            "transaction_type": "PDFPREVIEW",
+            "exec_tm": 5601,
+            "credit": "0.5000",
+            "created_at": "2021-08-27T11:35:37.498Z",
+            "resp_file_size": 40567,
+            "resp_status": "success"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "get_account_info",
+      "config": {},
+      "method": "GET",
+      "path": "/get-account-info",
+      "response": {
+        "status": "success",
+        "username": "hello@craftmypdf.com",
+        "quota_counter": 35,
+        "quota_max": 100,
+        "template_max": 3,
+        "created_at": "2024-08-06T12:14:39.137Z"
+      }
+    },
+    {
+      "operation": "merge_pdfs",
+      "config": {
+        "urls": [
+          "https://fileserver.com/a1.pdf",
+          "https://fileserver.com/b2.pdf"
+        ]
+      },
+      "method": "POST",
+      "path": "/merge-pdfs",
+      "response": {
+        "status": "success",
+        "file": "https://craftmypdf.com/output.pdf",
+        "transaction_ref": "a0430897-2c94-40e1-a09b-57403d811ceb",
+        "anchors": [
+          {
+            "page": 1,
+            "text": "",
+            "level": "0",
+            "description": "Welcome to CraftMyPDF!"
+          },
+          {
+            "page": 2,
+            "text": "page 2",
+            "level": "0",
+            "description": ""
+          }
+        ],
+        "einvoice_validation_status": "valid",
+        "einvoice_validation_details": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><validation filename=\"output-einvoice.pdf\">...<summary status=\"valid\"/></validation>"
+      }
+    },
+    {
+      "operation": "add_text_to_pdf",
+      "config": {
+        "url": "https://example.com/sample.pdf",
+        "textSettings": [
+          {
+            "page_selector": "1,2-*,5-8",
+            "text": "Page {{pageNumber}} of {{totalPages}}",
+            "position": "top-left"
+          }
+        ]
+      },
+      "method": "POST",
+      "path": "/add-text-to-pdf",
+      "response": {
+        "file": "https://craftmypdf.s3.ap-southeast-1.amazonaws.com/test/output2025-01-24T170834.623_annotated.pdf",
+        "transaction_ref": "123e4567-e89b-12d3-a456-426614174000",
+        "status": "success"
+      }
+    },
+    {
+      "operation": "update_pdf_fields",
+      "config": {
+        "url": "https://craftmypdf.s3.ap-southeast-1.amazonaws.com/test/output+-+2025-01-24T170834.623.pdf",
+        "fields": [
+          {
+            "id": "last_name",
+            "value": "Smith",
+            "readOnly": false,
+            "fontSize": 15
+          }
+        ]
+      },
+      "method": "POST",
+      "path": "/update-pdf-fields",
+      "response": {
+        "message": "PDF fields updated successfully",
+        "file": "https://craftmypdf.s3.ap-southeast-1.amazonaws.com/test/output2025-01-24T170834.623_updated.pdf",
+        "status": "success"
+      }
+    },
+    {
+      "operation": "get_pdf_info",
+      "config": {
+        "url": "https://example.com/sample.pdf"
+      },
+      "method": "GET",
+      "path": "/get-pdf-info",
+      "response": {
+        "status": "success",
+        "totalPages": 19,
+        "url": "https://example.com/sample.pdf",
+        "title": "",
+        "author": "CraftMyPDF",
+        "subject": "",
+        "creator": "Microsoft Excel 365",
+        "keywords": "",
+        "producer": "pdf-lib",
+        "creationDate": "2024-03-30T16:13:55.000Z",
+        "modificationDate": "2024-04-09T09:00:56.000Z"
+      }
+    },
+    {
+      "operation": "add_watermark",
+      "config": {
+        "url": "https://fileserver.com/sample.pdf",
+        "text": "Confidential"
+      },
+      "method": "POST",
+      "path": "/add-watermark",
+      "response": {
+        "status": "success",
+        "file": "https://craftmypdf.com/output.pdf",
+        "transaction_ref": "a0430897-2c94-40e1-a09b-57403d811ceb",
+        "anchors": [
+          {
+            "page": 1,
+            "text": "",
+            "level": "0",
+            "description": "Welcome to CraftMyPDF!"
+          },
+          {
+            "page": 2,
+            "text": "page 2",
+            "level": "0",
+            "description": ""
+          }
+        ],
+        "einvoice_validation_status": "valid",
+        "einvoice_validation_details": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><validation filename=\"output-einvoice.pdf\">...<summary status=\"valid\"/></validation>"
+      }
+    }
+  ]
+}
