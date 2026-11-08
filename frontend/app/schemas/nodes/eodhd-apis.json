@@ -1,0 +1,1382 @@
+{
+  "$defs": {
+    "EodhdApisAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "eodhd_apis_api_token",
+          "default": "eodhd_apis_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "EODHD API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste your EODHD API token from your account settings. Your subscription determines which datasets you can read. NoClick verifies it with the User API.",
+      "x-credential-url": "https://eodhd.com/cp/settings"
+    },
+    "EodhdGetDividendsCalendarConfig": {
+      "description": "Retrieve upcoming dividends calendar.",
+      "properties": {
+        "operation": {
+          "const": "get_dividends_calendar",
+          "default": "get_dividends_calendar",
+          "title": "Get Dividends Calendar",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "date_eq": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact date in 'YYYY-MM-DD' format. Required if `filter[symbol]` is not present.\n",
+          "title": "Date Eq"
+        },
+        "date_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date in 'YYYY-MM-DD' format.",
+          "title": "Date From"
+        },
+        "date_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date in 'YYYY-MM-DD' format.",
+          "title": "Date To"
+        },
+        "symbol": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ticker symbol (e.g., 'AAPL.US'). When provided, `filter[date_eq]` may be omitted.\n",
+          "title": "Symbol"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of records per page (1-10000).",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination offset (0-1000000).",
+          "title": "Offset"
+        }
+      },
+      "title": "EodhdGetDividendsCalendarConfig",
+      "type": "object"
+    },
+    "EodhdGetDividendsConfig": {
+      "description": "Retrieve historical dividend data.",
+      "properties": {
+        "operation": {
+          "const": "get_dividends",
+          "default": "get_dividends",
+          "title": "Get Dividends",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ticker": {
+          "description": "Ticker symbol of the stock in the format {SYMBOL_NAME}.{EXCHANGE_ID} (e.g., 'AAPL.US' for NASDAQ or 'AAPL.MX' for the Mexican Stock Exchange).",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Ticker",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date for data retrieval in 'YYYY-MM-DD' format. Defaults to earliest available data if not provided.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date for data retrieval in 'YYYY-MM-DD' format. Defaults to latest available data if not provided.",
+          "title": "To Date"
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "EodhdGetDividendsConfig",
+      "type": "object"
+    },
+    "EodhdGetEarningsCalendarConfig": {
+      "description": "Retrieve upcoming earnings data.",
+      "properties": {
+        "operation": {
+          "const": "get_earnings_calendar",
+          "default": "get_earnings_calendar",
+          "title": "Get Earnings Calendar",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date for earnings data, in 'YYYY-MM-DD' format. Defaults to today if not provided.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date for earnings data, in 'YYYY-MM-DD' format. Defaults to 7 days from today if not provided.",
+          "title": "To Date"
+        },
+        "symbols": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specific symbols to retrieve earnings data for, separated by commas (e.g., 'AAPL.US,MSFT.US'). Overrides the 'from' and 'to' parameters if used.",
+          "title": "Symbols"
+        }
+      },
+      "title": "EodhdGetEarningsCalendarConfig",
+      "type": "object"
+    },
+    "EodhdGetEodPricesConfig": {
+      "description": "Retrieve end-of-day historical price data.",
+      "properties": {
+        "operation": {
+          "const": "get_eod_prices",
+          "default": "get_eod_prices",
+          "title": "Get EOD Prices",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ticker": {
+          "description": "Ticker symbol of the company",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Ticker",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date for historical data (YYYY-MM-DD)",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date for historical data (YYYY-MM-DD)",
+          "title": "To Date"
+        },
+        "period": {
+          "anyOf": [
+            {
+              "enum": [
+                "d",
+                "w",
+                "m"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Data period (e.g., 'd' for daily, 'w' for weekly, 'm' for monthly)",
+          "title": "Period",
+          "enum": [
+            "d",
+            "w",
+            "m"
+          ],
+          "x-enum-searchable": true
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "last_date",
+                "last_open",
+                "last_high",
+                "last_low",
+                "last_close",
+                "last_volume"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter for specific last known data points",
+          "title": "Filter",
+          "enum": [
+            "last_date",
+            "last_open",
+            "last_high",
+            "last_low",
+            "last_close",
+            "last_volume"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "EodhdGetEodPricesConfig",
+      "type": "object"
+    },
+    "EodhdGetExchangeDetailsConfig": {
+      "description": "Retrieve details for a specific exchange.",
+      "properties": {
+        "operation": {
+          "const": "get_exchange_details",
+          "default": "get_exchange_details",
+          "title": "Get Exchange Details",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "exchange": {
+          "description": "Exchange code for which details are to be retrieved (e.g., 'US' for the USA exchange).",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Exchange",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date for holiday data (YYYY-MM-DD). Defaults to 6 months before the current date.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date for holiday data (YYYY-MM-DD). Defaults to 6 months after the current date.",
+          "title": "To Date"
+        },
+        "format_version": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Response format version.",
+          "title": "Format Version"
+        }
+      },
+      "required": [
+        "exchange"
+      ],
+      "title": "EodhdGetExchangeDetailsConfig",
+      "type": "object"
+    },
+    "EodhdGetFundamentalsConfig": {
+      "description": "Retrieve filtered fundamental data for a specific symbol.",
+      "properties": {
+        "operation": {
+          "const": "get_fundamentals",
+          "default": "get_fundamentals",
+          "title": "Get Fundamentals",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ticker": {
+          "description": "The ticker symbol in the format SYMBOL.EXCHANGE, e.g., 'AAPL.US' for Apple Inc. on NASDAQ.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Ticker",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter parameter to specify data section and optional sub-sections, e.g., `Financials::Balance_Sheet::quarterly::2024-06-30`. Supported sections include General, Highlights, Valuation, SharesStats, Technicals, SplitsDividends, AnalystRatings, Holders, InsiderTransactions, ESGScores, outstandingShares, Earnings, and Financials. When omitted, returns all sections.",
+          "title": "Filter"
+        },
+        "historical": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to 1 to return historical data for certain sections (e.g., outstandingShares).",
+          "title": "Historical"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date for historical data in 'YYYY-MM-DD' format.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date for historical data in 'YYYY-MM-DD' format.",
+          "title": "To Date"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "API version for response format.",
+          "title": "Version"
+        },
+        "no_cache": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to 1 to bypass cache and get fresh data.",
+          "title": "No Cache"
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "EodhdGetFundamentalsConfig",
+      "type": "object"
+    },
+    "EodhdGetIntradayPricesConfig": {
+      "description": "Retrieve intraday historical price data.",
+      "properties": {
+        "operation": {
+          "const": "get_intraday_prices",
+          "default": "get_intraday_prices",
+          "title": "Get Intraday Prices",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ticker": {
+          "description": "Ticker symbol with exchange code (e.g., 'AAPL.US').",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Ticker",
+          "type": "string"
+        },
+        "interval": {
+          "description": "Interval for data points. Options are '1m' (1 minute), '5m' (5 minutes), '15m' (15 minutes), '30m' (30 minutes), and '1h' (1 hour).",
+          "enum": [
+            "1m",
+            "5m",
+            "15m",
+            "30m",
+            "1h"
+          ],
+          "title": "Interval",
+          "type": "string"
+        },
+        "from_timestamp": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start datetime in Unix timestamp (UTC). For example, 1627896900 for '2021-08-02 09:35:00'.",
+          "title": "From Timestamp"
+        },
+        "to_timestamp": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End datetime in Unix timestamp (UTC). For example, 1630575300 for '2021-09-02 09:35:00'.",
+          "title": "To Timestamp"
+        }
+      },
+      "required": [
+        "ticker",
+        "interval"
+      ],
+      "title": "EodhdGetIntradayPricesConfig",
+      "type": "object"
+    },
+    "EodhdGetIpoCalendarConfig": {
+      "description": "Retrieve upcoming IPO data.",
+      "properties": {
+        "operation": {
+          "const": "get_ipo_calendar",
+          "default": "get_ipo_calendar",
+          "title": "Get IPO Calendar",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date for IPO data in 'YYYY-MM-DD' format. Defaults to today if not provided.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date for IPO data in 'YYYY-MM-DD' format. Defaults to 7 days from today if not provided.",
+          "title": "To Date"
+        }
+      },
+      "title": "EodhdGetIpoCalendarConfig",
+      "type": "object"
+    },
+    "EodhdGetLivePricesConfig": {
+      "description": "Retrieve delayed real-time stock prices.",
+      "properties": {
+        "operation": {
+          "const": "get_live_prices",
+          "default": "get_live_prices",
+          "title": "Get Live Prices",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ticker": {
+          "description": "Ticker symbol with exchange code (e.g., 'AAPL.US').",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Ticker",
+          "type": "string"
+        },
+        "symbols": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of additional ticker symbols for multiple requests in a single call (e.g., 'VTI,EUR.FOREX').",
+          "title": "Symbols"
+        },
+        "ex": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exchange code filter (e.g., 'US').",
+          "title": "Ex"
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "EodhdGetLivePricesConfig",
+      "type": "object"
+    },
+    "EodhdGetNewsConfig": {
+      "description": "Retrieve financial news articles.",
+      "properties": {
+        "operation": {
+          "const": "get_news",
+          "default": "get_news",
+          "title": "Get News",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "symbols": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ticker code to get news for (e.g., 'AAPL.US'). Required if 't' is not provided.",
+          "title": "Symbols"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tag to get news on a given topic. Required if 's' is not provided.",
+          "title": "Tag"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date for news data (YYYY-MM-DD)",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date for news data (YYYY-MM-DD)",
+          "title": "To Date"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of results to return",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "maximum": 9000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The offset of the data. Maximum 9000; to reach older articles, narrow the period with from and to",
+          "title": "Offset"
+        }
+      },
+      "title": "EodhdGetNewsConfig",
+      "type": "object"
+    },
+    "EodhdGetSentimentConfig": {
+      "description": "Retrieve market news sentiment data.",
+      "properties": {
+        "operation": {
+          "const": "get_sentiment",
+          "default": "get_sentiment",
+          "title": "Get Sentiment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "symbols": {
+          "description": "Comma-separated list of ticker codes to retrieve sentiment data for (e.g., 'btc-usd.cc,aapl.us').",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Symbols",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date for sentiment data (YYYY-MM-DD).",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date for sentiment data (YYYY-MM-DD).",
+          "title": "To Date"
+        }
+      },
+      "required": [
+        "symbols"
+      ],
+      "title": "EodhdGetSentimentConfig",
+      "type": "object"
+    },
+    "EodhdGetSplitsCalendarConfig": {
+      "description": "Retrieve upcoming and historical stock splits.",
+      "properties": {
+        "operation": {
+          "const": "get_splits_calendar",
+          "default": "get_splits_calendar",
+          "title": "Get Splits Calendar",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date for split data in 'YYYY-MM-DD' format. Defaults to today if not provided.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date for split data in 'YYYY-MM-DD' format. Defaults to 7 days from today if not provided.",
+          "title": "To Date"
+        }
+      },
+      "title": "EodhdGetSplitsCalendarConfig",
+      "type": "object"
+    },
+    "EodhdGetSplitsConfig": {
+      "description": "Retrieve historical split data.",
+      "properties": {
+        "operation": {
+          "const": "get_splits",
+          "default": "get_splits",
+          "title": "Get Splits",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ticker": {
+          "description": "Ticker symbol of the stock in the format {SYMBOL_NAME}.{EXCHANGE_ID} (e.g., 'AAPL.US' for NASDAQ or 'AAPL.MX' for the Mexican Stock Exchange).",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Ticker",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date for data retrieval in 'YYYY-MM-DD' format. Defaults to earliest available data if not provided.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date for data retrieval in 'YYYY-MM-DD' format. Defaults to latest available data if not provided.",
+          "title": "To Date"
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "EodhdGetSplitsConfig",
+      "type": "object"
+    },
+    "EodhdGetTechnicalIndicatorConfig": {
+      "description": "Retrieve technical indicator data for a specified symbol..",
+      "properties": {
+        "operation": {
+          "const": "get_technical_indicator",
+          "default": "get_technical_indicator",
+          "title": "Get Technical Indicator",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ticker": {
+          "description": "Symbol in the format {SYMBOL_NAME}.{EXCHANGE_ID}, e.g., AAPL.US for Apple Inc.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Ticker",
+          "type": "string"
+        },
+        "function_name": {
+          "description": "The function to calculate the technical indicator (e.g., 'sma' for Simple Moving Average).",
+          "enum": [
+            "sma",
+            "ema",
+            "wma",
+            "volatility",
+            "stochastic",
+            "rsi",
+            "stddev",
+            "stochrsi",
+            "slope",
+            "dmi",
+            "adx",
+            "macd",
+            "atr",
+            "cci",
+            "sar",
+            "beta",
+            "bbands",
+            "splitadjusted",
+            "avgvol",
+            "avgvolccy"
+          ],
+          "title": "Function Name",
+          "type": "string"
+        },
+        "period": {
+          "anyOf": [
+            {
+              "maximum": 100000,
+              "minimum": 2,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of data points used to calculate the indicator. Default is 50.",
+          "title": "Period"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date for data retrieval in 'YYYY-MM-DD' format.",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date for data retrieval in 'YYYY-MM-DD' format.",
+          "title": "To Date"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "a",
+                "d"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort order of dates: 'a' for ascending, 'd' for descending. Default is ascending.",
+          "title": "Order",
+          "enum": [
+            "a",
+            "d"
+          ],
+          "x-enum-searchable": true
+        },
+        "splitadjusted_only": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For select functions, adjust data only for splits by setting to '1'. Default is '0'.",
+          "title": "Splitadjusted Only"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieve only the last value by specifying 'last_ema' or 'last_volume' as the filter.",
+          "title": "Filter"
+        }
+      },
+      "required": [
+        "ticker",
+        "function_name"
+      ],
+      "title": "EodhdGetTechnicalIndicatorConfig",
+      "type": "object"
+    },
+    "EodhdGetUserConfig": {
+      "description": "Get current user details.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Get User",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "EodhdGetUserConfig",
+      "type": "object"
+    },
+    "EodhdListExchangeSymbolsConfig": {
+      "description": "Retrieve the list of tickers for a specific exchange..",
+      "properties": {
+        "operation": {
+          "const": "list_exchange_symbols",
+          "default": "list_exchange_symbols",
+          "title": "List Exchange Symbols",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "exchange": {
+          "description": "Exchange code, e.g., 'PSE' for the Philippines Stock Exchange or 'US' for combined US exchanges.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Exchange",
+          "type": "string"
+        },
+        "delisted": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include delisted (inactive) tickers. Set to '1' to include.",
+          "title": "Delisted"
+        },
+        "security_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "common_stock",
+                "preferred_stock",
+                "stock",
+                "etf",
+                "fund"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by ticker type. Options: 'common_stock', 'preferred_stock', 'stock', 'etf', 'fund'.",
+          "title": "Security Type",
+          "enum": [
+            "common_stock",
+            "preferred_stock",
+            "stock",
+            "etf",
+            "fund"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "exchange"
+      ],
+      "title": "EodhdListExchangeSymbolsConfig",
+      "type": "object"
+    },
+    "EodhdListExchangesConfig": {
+      "description": "List supported exchanges.",
+      "properties": {
+        "operation": {
+          "const": "list_exchanges",
+          "default": "list_exchanges",
+          "title": "List Exchanges",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "EodhdListExchangesConfig",
+      "type": "object"
+    },
+    "EodhdSearchSymbolsConfig": {
+      "description": "Search stocks, companies, and ISINs.",
+      "properties": {
+        "operation": {
+          "const": "search_symbols",
+          "default": "search_symbols",
+          "title": "Search Symbols",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "description": "The search query (e.g., 'AAPL', 'Amazon', or ISIN 'US3453708600')",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit the number of results returned",
+          "title": "Limit"
+        },
+        "security_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "all",
+                "stock",
+                "etf",
+                "fund",
+                "bond",
+                "index",
+                "crypto"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by security type.",
+          "title": "Security Type",
+          "enum": [
+            "all",
+            "stock",
+            "etf",
+            "fund",
+            "bond",
+            "index",
+            "crypto"
+          ],
+          "x-enum-searchable": true
+        },
+        "exchange": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exchange code (e.g., 'US', 'LSE').",
+          "title": "Exchange"
+        },
+        "bonds_only": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to 1 to return bonds only.",
+          "title": "Bonds Only"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "EodhdSearchSymbolsConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_dividends": "#/$defs/EodhdGetDividendsConfig",
+          "get_dividends_calendar": "#/$defs/EodhdGetDividendsCalendarConfig",
+          "get_earnings_calendar": "#/$defs/EodhdGetEarningsCalendarConfig",
+          "get_eod_prices": "#/$defs/EodhdGetEodPricesConfig",
+          "get_exchange_details": "#/$defs/EodhdGetExchangeDetailsConfig",
+          "get_fundamentals": "#/$defs/EodhdGetFundamentalsConfig",
+          "get_intraday_prices": "#/$defs/EodhdGetIntradayPricesConfig",
+          "get_ipo_calendar": "#/$defs/EodhdGetIpoCalendarConfig",
+          "get_live_prices": "#/$defs/EodhdGetLivePricesConfig",
+          "get_news": "#/$defs/EodhdGetNewsConfig",
+          "get_sentiment": "#/$defs/EodhdGetSentimentConfig",
+          "get_splits": "#/$defs/EodhdGetSplitsConfig",
+          "get_splits_calendar": "#/$defs/EodhdGetSplitsCalendarConfig",
+          "get_technical_indicator": "#/$defs/EodhdGetTechnicalIndicatorConfig",
+          "get_user": "#/$defs/EodhdGetUserConfig",
+          "list_exchange_symbols": "#/$defs/EodhdListExchangeSymbolsConfig",
+          "list_exchanges": "#/$defs/EodhdListExchangesConfig",
+          "search_symbols": "#/$defs/EodhdSearchSymbolsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/EodhdGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdGetEodPricesConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdGetLivePricesConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdGetIntradayPricesConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdGetFundamentalsConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdSearchSymbolsConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdListExchangesConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdListExchangeSymbolsConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdGetExchangeDetailsConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdGetNewsConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdGetSentimentConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdGetDividendsConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdGetSplitsConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdGetEarningsCalendarConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdGetIpoCalendarConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdGetSplitsCalendarConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdGetDividendsCalendarConfig"
+        },
+        {
+          "$ref": "#/$defs/EodhdGetTechnicalIndicatorConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EodhdApisAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Eodhd-apis Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

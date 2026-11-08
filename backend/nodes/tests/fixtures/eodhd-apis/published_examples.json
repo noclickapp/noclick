@@ -1,0 +1,286 @@
+{
+  "/intraday/{ticker}": [
+    {
+      "timestamp": 1628876100,
+      "gmtoffset": 0,
+      "datetime": "2021-08-13 17:35:00",
+      "open": 148.929992,
+      "high": 149.059997,
+      "low": 148.929992,
+      "close": 149.035003,
+      "volume": 416405
+    },
+    {
+      "timestamp": 1628876400,
+      "gmtoffset": 0,
+      "datetime": "2021-08-13 17:40:00",
+      "open": 149.0372,
+      "high": 149.095001,
+      "low": 148.940002,
+      "close": 148.976898,
+      "volume": 421612
+    }
+  ],
+  "/search/{query}": [
+    {
+      "Code": "AAPL",
+      "Exchange": "US",
+      "Name": "Apple Inc",
+      "Type": "Common Stock",
+      "Country": "USA",
+      "Currency": "USD",
+      "ISIN": "US0378331005",
+      "previousClose": 230.76,
+      "previousCloseDate": "2024-10-23"
+    },
+    {
+      "Code": "AMZN",
+      "Exchange": "US",
+      "Name": "Amazon.com Inc",
+      "Type": "Common Stock",
+      "Country": "USA",
+      "Currency": "USD",
+      "ISIN": "US0231351067",
+      "previousClose": 184.71,
+      "previousCloseDate": "2024-10-23"
+    }
+  ],
+  "/exchanges-list": [
+    {
+      "Name": "USA Stocks",
+      "Code": "US",
+      "OperatingMIC": "XNAS, XNYS, OTCM",
+      "Country": "USA",
+      "Currency": "USD",
+      "CountryISO2": "US",
+      "CountryISO3": "USA"
+    },
+    {
+      "Name": "Toronto Exchange",
+      "Code": "TO",
+      "OperatingMIC": "XTSE",
+      "Country": "Canada",
+      "Currency": "CAD",
+      "CountryISO2": "CA",
+      "CountryISO3": "CAN"
+    },
+    {
+      "Name": "Berlin Exchange",
+      "Code": "BE",
+      "OperatingMIC": "XBER",
+      "Country": "Germany",
+      "Currency": "EUR",
+      "CountryISO2": "DE",
+      "CountryISO3": "DEU"
+    }
+  ],
+  "/exchange-symbol-list/{exchangeCode}": [
+    {
+      "Code": "AB",
+      "Name": "Atok Big Wedge Co Inc",
+      "Country": "Philippines",
+      "Exchange": "PSE",
+      "Currency": "PHP",
+      "Type": "Common Stock",
+      "Isin": "PHY044931210"
+    },
+    {
+      "Code": "AC",
+      "Name": "Ayala Corp",
+      "Country": "Philippines",
+      "Exchange": "PSE",
+      "Currency": "PHP",
+      "Type": "Common Stock",
+      "Isin": "PHY0486V1154"
+    }
+  ],
+  "/exchange-details/{EXCHANGE_CODE}": {
+    "Name": "USA Stocks",
+    "Code": "US",
+    "OperatingMIC": "XNAS, XNYS, OTCM",
+    "Country": "USA",
+    "Currency": "USD",
+    "Timezone": "America/New_York",
+    "ExchangeHolidays": [
+      {
+        "Holiday": "Memorial Day",
+        "Date": "2024-05-27",
+        "Type": "official"
+      },
+      {
+        "Holiday": "Juneteenth Holiday",
+        "Date": "2024-06-19",
+        "Type": "official"
+      },
+      {
+        "Holiday": "Independence Day",
+        "Date": "2024-07-04",
+        "Type": "official"
+      },
+      {
+        "Holiday": "Labour Day",
+        "Date": "2024-09-02",
+        "Type": "official"
+      },
+      {
+        "Holiday": "Thanksgiving Day",
+        "Date": "2024-11-28",
+        "Type": "official"
+      },
+      {
+        "Holiday": "Christmas Day",
+        "Date": "2024-12-25",
+        "Type": "official"
+      },
+      {
+        "Holiday": "New Years Day",
+        "Date": "2025-01-01",
+        "Type": "official"
+      }
+    ],
+    "ExchangeEarlyCloseDays": [],
+    "isOpen": false,
+    "TradingHours": {
+      "Open": "09:30:00",
+      "Close": "16:00:00",
+      "OpenUTC": "13:30:00",
+      "CloseUTC": "20:00:00",
+      "WorkingDays": "Mon,Tue,Wed,Thu,Fri"
+    },
+    "ActiveTickers": 49242,
+    "PreviousDayUpdatedTickers": 47442,
+    "UpdatedTickers": 0
+  },
+  "/news": [
+    {
+      "date": "2024-06-05T20:35:00+00:00",
+      "title": "Usher and Apple CEO Tim Cook had a meeting...",
+      "content": "Usher has some suggestions for Apple CEO Tim Cook...",
+      "link": "https://finance.yahoo.com/news/usher-apple-ceo-tim-cook-203500033.html",
+      "symbols": [
+        "AAPL.US"
+      ],
+      "tags": [],
+      "sentiment": {
+        "polarity": 0.997,
+        "neg": 0.024,
+        "neu": 0.871,
+        "pos": 0.105
+      }
+    },
+    {
+      "date": "2024-06-05T20:33:57+00:00",
+      "title": "The 2030's Millionaire Club: 3 Hyper-Growth Stocks to Buy Now",
+      "content": "Hyper-growth stocks offer excitement...",
+      "link": "https://finance.yahoo.com/news/2030-millionaire-club-3-hyper-203357155.html",
+      "symbols": [
+        "AAPL.US",
+        "NVDA.US",
+        "PLTR.US"
+      ],
+      "tags": [],
+      "sentiment": {
+        "polarity": 1,
+        "neg": 0.018,
+        "neu": 0.781,
+        "pos": 0.202
+      }
+    }
+  ],
+  "/sentiments": {
+    "ticker": {
+      "BTC-USD.CC": [
+        {
+          "date": "2022-02-22",
+          "count": 8,
+          "normalized": -0.1811
+        },
+        {
+          "date": "2022-02-21",
+          "count": 5,
+          "normalized": 0.2824
+        }
+      ],
+      "AAPL.US": [
+        {
+          "date": "2022-02-22",
+          "count": 23,
+          "normalized": 0.6152
+        },
+        {
+          "date": "2022-02-21",
+          "count": 23,
+          "normalized": 0.3668
+        }
+      ]
+    }
+  },
+  "/div/{ticker}": [
+    {
+      "date": "2012-08-09",
+      "declarationDate": "2012-07-24",
+      "recordDate": "2012-08-13",
+      "paymentDate": "2012-08-16",
+      "period": "Quarterly",
+      "value": 0.0946,
+      "unadjustedValue": 2.6488,
+      "currency": "USD"
+    },
+    {
+      "date": "2012-11-07",
+      "declarationDate": "2012-10-25",
+      "recordDate": "2012-11-12",
+      "paymentDate": "2012-11-15",
+      "period": "Quarterly",
+      "value": 0.0946,
+      "unadjustedValue": 2.6488,
+      "currency": "USD"
+    }
+  ],
+  "/splits/{ticker}": [
+    {
+      "date": "2000-06-21",
+      "split": "2.000000/1.000000"
+    },
+    {
+      "date": "2005-02-28",
+      "split": "2.000000/1.000000"
+    },
+    {
+      "date": "2014-06-09",
+      "split": "7.000000/1.000000"
+    },
+    {
+      "date": "2020-08-31",
+      "split": "4.000000/1.000000"
+    }
+  ],
+  "/calendar/dividends": {
+    "meta": {
+      "total": 91
+    },
+    "data": [
+      {
+        "date": "2026-05-11",
+        "symbol": "AAPL.US"
+      },
+      {
+        "date": "2026-05-12",
+        "symbol": "MSFT.US"
+      }
+    ],
+    "links": {
+      "self": "https://eodhd.com/api/calendar/dividends?filter[symbol]=AAPL.US"
+    }
+  },
+  "/technical/{ticker}": [
+    {
+      "date": "2020-12-31",
+      "sma": 118.4358
+    },
+    {
+      "date": "2020-12-30",
+      "sma": 118.1347
+    }
+  ]
+}
