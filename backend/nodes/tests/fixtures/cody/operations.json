@@ -1,0 +1,243 @@
+[
+  {
+    "operation": "list_bots",
+    "arguments": {},
+    "method": "GET",
+    "path": "/bots",
+    "query": {},
+    "body": {}
+  },
+  {
+    "operation": "list_conversations",
+    "arguments": {},
+    "method": "GET",
+    "path": "/conversations",
+    "query": {},
+    "body": {}
+  },
+  {
+    "operation": "create_conversation",
+    "arguments": {
+      "name": "example-id",
+      "bot_id": "example-id"
+    },
+    "method": "POST",
+    "path": "/conversations",
+    "query": {},
+    "body": {
+      "name": "example-id",
+      "bot_id": "example-id"
+    }
+  },
+  {
+    "operation": "get_conversation",
+    "arguments": {
+      "conversation_id": "example-id"
+    },
+    "method": "GET",
+    "path": "/conversations/example-id",
+    "query": {},
+    "body": {}
+  },
+  {
+    "operation": "update_conversation",
+    "arguments": {
+      "conversation_id": "example-id",
+      "name": "example-id",
+      "bot_id": "example-id"
+    },
+    "method": "POST",
+    "path": "/conversations/example-id",
+    "query": {},
+    "body": {
+      "name": "example-id",
+      "bot_id": "example-id"
+    }
+  },
+  {
+    "operation": "delete_conversation",
+    "arguments": {
+      "conversation_id": "example-id"
+    },
+    "method": "DELETE",
+    "path": "/conversations/example-id",
+    "query": {},
+    "body": {}
+  },
+  {
+    "operation": "list_documents",
+    "arguments": {},
+    "method": "GET",
+    "path": "/documents",
+    "query": {},
+    "body": {}
+  },
+  {
+    "operation": "create_document",
+    "arguments": {
+      "name": "example-id",
+      "folder_id": "example-id",
+      "content": "hello"
+    },
+    "method": "POST",
+    "path": "/documents",
+    "query": {},
+    "body": {
+      "name": "example-id",
+      "folder_id": "example-id",
+      "content": "hello"
+    }
+  },
+  {
+    "operation": "create_document_from_file",
+    "arguments": {
+      "folder_id": "example-id",
+      "key": "example-id"
+    },
+    "method": "POST",
+    "path": "/documents/file",
+    "query": {},
+    "body": {
+      "folder_id": "example-id",
+      "key": "example-id"
+    }
+  },
+  {
+    "operation": "create_document_from_webpage",
+    "arguments": {
+      "folder_id": "example-id",
+      "url": "https://example.com"
+    },
+    "method": "POST",
+    "path": "/documents/webpage",
+    "query": {},
+    "body": {
+      "folder_id": "example-id",
+      "url": "https://example.com"
+    }
+  },
+  {
+    "operation": "get_document",
+    "arguments": {
+      "document_id": "example-id"
+    },
+    "method": "GET",
+    "path": "/documents/example-id",
+    "query": {},
+    "body": {}
+  },
+  {
+    "operation": "delete_document",
+    "arguments": {
+      "document_id": "example-id"
+    },
+    "method": "DELETE",
+    "path": "/documents/example-id",
+    "query": {},
+    "body": {}
+  },
+  {
+    "operation": "list_folders",
+    "arguments": {},
+    "method": "GET",
+    "path": "/folders",
+    "query": {},
+    "body": {}
+  },
+  {
+    "operation": "create_folder",
+    "arguments": {
+      "name": "example-id"
+    },
+    "method": "POST",
+    "path": "/folders",
+    "query": {},
+    "body": {
+      "name": "example-id"
+    }
+  },
+  {
+    "operation": "get_folder",
+    "arguments": {
+      "folder_id": "example-id"
+    },
+    "method": "GET",
+    "path": "/folders/example-id",
+    "query": {},
+    "body": {}
+  },
+  {
+    "operation": "update_folder",
+    "arguments": {
+      "folder_id": "example-id",
+      "name": "example-id"
+    },
+    "method": "POST",
+    "path": "/folders/example-id",
+    "query": {},
+    "body": {
+      "name": "example-id"
+    }
+  },
+  {
+    "operation": "list_messages",
+    "arguments": {},
+    "method": "GET",
+    "path": "/messages",
+    "query": {},
+    "body": {}
+  },
+  {
+    "operation": "send_message",
+    "arguments": {
+      "content": "hello",
+      "conversation_id": "example-id"
+    },
+    "method": "POST",
+    "path": "/messages",
+    "query": {},
+    "body": {
+      "content": "hello",
+      "conversation_id": "example-id"
+    }
+  },
+  {
+    "operation": "get_message",
+    "arguments": {
+      "message_id": "example-id"
+    },
+    "method": "GET",
+    "path": "/messages/example-id",
+    "query": {},
+    "body": {}
+  },
+  {
+    "operation": "send_message_for_stream",
+    "arguments": {
+      "content": "hello",
+      "conversation_id": "example-id"
+    },
+    "method": "POST",
+    "path": "/messages/stream",
+    "query": {},
+    "body": {
+      "content": "hello",
+      "conversation_id": "example-id",
+      "redirect": false
+    }
+  },
+  {
+    "operation": "get_uploads_signed_url",
+    "arguments": {
+      "file_name": "knowledge.txt",
+      "content_type": "text/plain"
+    },
+    "method": "POST",
+    "path": "/uploads/signed-url",
+    "query": {},
+    "body": {
+      "file_name": "knowledge.txt",
+      "content_type": "text/plain"
+    }
+  }
+]

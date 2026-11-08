@@ -1,0 +1,924 @@
+{
+  "$defs": {
+    "CodyApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "cody_api_key",
+          "default": "cody_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Cody API Key",
+      "type": "object",
+      "x-credential-instructions": "Open Cody Settings \u2192 API Keys and copy an API key. Paste only the key, without the Bearer prefix. NoClick checks it by reading your bots.",
+      "x-credential-url": "https://getcody.ai/settings/api"
+    },
+    "CodyCreateConversationConfig": {
+      "additionalProperties": false,
+      "description": "Create Conversation. Uses one Cody API request.",
+      "properties": {
+        "operation": {
+          "const": "create_conversation",
+          "default": "create_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "bot_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Bot Id",
+          "type": "string"
+        },
+        "document_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only documents that exist in the folders the bot has access to are allowed. You can give bot access to all folders if you wish to limit documents from your whole knowledge base.",
+          "title": "Document Ids"
+        }
+      },
+      "required": [
+        "name",
+        "bot_id"
+      ],
+      "title": "CodyCreateConversationConfig",
+      "type": "object"
+    },
+    "CodyCreateDocumentConfig": {
+      "additionalProperties": false,
+      "description": "Create Document. Uses one Cody API request.",
+      "properties": {
+        "operation": {
+          "const": "create_document",
+          "default": "create_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "folder_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Folder Id",
+          "type": "string"
+        },
+        "content": {
+          "description": "Up to 768 KB of text or html only.",
+          "maxLength": 786432,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "folder_id",
+        "content"
+      ],
+      "title": "CodyCreateDocumentConfig",
+      "type": "object"
+    },
+    "CodyCreateDocumentFromFileConfig": {
+      "additionalProperties": false,
+      "description": "Create Document from File. Uses one Cody API request.",
+      "properties": {
+        "operation": {
+          "const": "create_document_from_file",
+          "default": "create_document_from_file",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folder_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Folder Id",
+          "type": "string"
+        },
+        "key": {
+          "description": "The key you receive after uploading a file. See [/uploads/signed-url](/operation/operation-get-uploads-signed-url)",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "key"
+      ],
+      "title": "CodyCreateDocumentFromFileConfig",
+      "type": "object"
+    },
+    "CodyCreateDocumentFromWebpageConfig": {
+      "additionalProperties": false,
+      "description": "Create Document from Webpage. Uses one Cody API request.",
+      "properties": {
+        "operation": {
+          "const": "create_document_from_webpage",
+          "default": "create_document_from_webpage",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folder_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Folder Id",
+          "type": "string"
+        },
+        "url": {
+          "description": "Valid and publicly accessible webpage URL.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "url"
+      ],
+      "title": "CodyCreateDocumentFromWebpageConfig",
+      "type": "object"
+    },
+    "CodyCreateFolderConfig": {
+      "additionalProperties": false,
+      "description": "Create Folder. Uses one Cody API request.",
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CodyCreateFolderConfig",
+      "type": "object"
+    },
+    "CodyDeleteConversationConfig": {
+      "additionalProperties": false,
+      "description": "Delete Conversation. Uses one Cody API request.",
+      "properties": {
+        "operation": {
+          "const": "delete_conversation",
+          "default": "delete_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Conversation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "CodyDeleteConversationConfig",
+      "type": "object"
+    },
+    "CodyDeleteDocumentConfig": {
+      "additionalProperties": false,
+      "description": "Delete Document. Uses one Cody API request.",
+      "properties": {
+        "operation": {
+          "const": "delete_document",
+          "default": "delete_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "document_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Document Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "CodyDeleteDocumentConfig",
+      "type": "object"
+    },
+    "CodyGetConversationConfig": {
+      "additionalProperties": false,
+      "description": "Get Conversation. Uses one Cody API request.",
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "includes": {
+          "anyOf": [
+            {
+              "const": "document_ids",
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includes"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "CodyGetConversationConfig",
+      "type": "object"
+    },
+    "CodyGetDocumentConfig": {
+      "additionalProperties": false,
+      "description": "Get Document. Uses one Cody API request.",
+      "properties": {
+        "operation": {
+          "const": "get_document",
+          "default": "get_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "document_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Document Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "CodyGetDocumentConfig",
+      "type": "object"
+    },
+    "CodyGetFolderConfig": {
+      "additionalProperties": false,
+      "description": "Get Folder. Uses one Cody API request.",
+      "properties": {
+        "operation": {
+          "const": "get_folder",
+          "default": "get_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folder_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Folder Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "CodyGetFolderConfig",
+      "type": "object"
+    },
+    "CodyGetMessageConfig": {
+      "additionalProperties": false,
+      "description": "Get Message. Uses one Cody API request.",
+      "properties": {
+        "operation": {
+          "const": "get_message",
+          "default": "get_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "message_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Message Id",
+          "type": "string"
+        },
+        "includes": {
+          "anyOf": [
+            {
+              "enum": [
+                "sources",
+                "usage"
+              ],
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includes",
+          "enum": [
+            "sources",
+            "usage"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "CodyGetMessageConfig",
+      "type": "object"
+    },
+    "CodyGetUploadsSignedUrlConfig": {
+      "additionalProperties": false,
+      "description": "Get Upload URL. Uses one Cody API request.",
+      "properties": {
+        "operation": {
+          "const": "get_uploads_signed_url",
+          "default": "get_uploads_signed_url",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "file_name": {
+          "description": "Original file name you want to upload, must contain the file extension.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "File Name",
+          "type": "string"
+        },
+        "content_type": {
+          "description": "MIME content type of the file.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Content Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_name",
+        "content_type"
+      ],
+      "title": "CodyGetUploadsSignedUrlConfig",
+      "type": "object"
+    },
+    "CodyListBotsConfig": {
+      "additionalProperties": false,
+      "description": "List Bots. Returns one provider page with pagination metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_bots",
+          "default": "list_bots",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword"
+        }
+      },
+      "title": "CodyListBotsConfig",
+      "type": "object"
+    },
+    "CodyListConversationsConfig": {
+      "additionalProperties": false,
+      "description": "List Conversations. Returns one provider page with pagination metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "bot_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bot Id"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword"
+        },
+        "includes": {
+          "anyOf": [
+            {
+              "const": "document_ids",
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includes"
+        }
+      },
+      "title": "CodyListConversationsConfig",
+      "type": "object"
+    },
+    "CodyListDocumentsConfig": {
+      "additionalProperties": false,
+      "description": "List Documents. Returns one provider page with pagination metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Id"
+        },
+        "conversation_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conversation Id"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword"
+        }
+      },
+      "title": "CodyListDocumentsConfig",
+      "type": "object"
+    },
+    "CodyListFoldersConfig": {
+      "additionalProperties": false,
+      "description": "List Folders. Returns one provider page with pagination metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword"
+        }
+      },
+      "title": "CodyListFoldersConfig",
+      "type": "object"
+    },
+    "CodyListMessagesConfig": {
+      "additionalProperties": false,
+      "description": "List Messages. Returns one provider page with pagination metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conversation Id"
+        },
+        "includes": {
+          "anyOf": [
+            {
+              "enum": [
+                "sources",
+                "usage"
+              ],
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includes",
+          "enum": [
+            "sources",
+            "usage"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "CodyListMessagesConfig",
+      "type": "object"
+    },
+    "CodySendMessageConfig": {
+      "additionalProperties": false,
+      "description": "Send Message. Uses one Cody API request.",
+      "properties": {
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "content": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "conversation_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Conversation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "content",
+        "conversation_id"
+      ],
+      "title": "CodySendMessageConfig",
+      "type": "object"
+    },
+    "CodySendMessageForStreamConfig": {
+      "additionalProperties": false,
+      "description": "Send Message for Stream. Uses one Cody API request.",
+      "properties": {
+        "operation": {
+          "const": "send_message_for_stream",
+          "default": "send_message_for_stream",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "content": {
+          "description": "Content can be upto 2000 characters.",
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "conversation_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "redirect": {
+          "const": false,
+          "default": false,
+          "description": "Return a stream URL as JSON; no redirect or stream is followed.",
+          "title": "Redirect",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "content",
+        "conversation_id"
+      ],
+      "title": "CodySendMessageForStreamConfig",
+      "type": "object"
+    },
+    "CodyUpdateConversationConfig": {
+      "additionalProperties": false,
+      "description": "Update Conversation. Uses one Cody API request.",
+      "properties": {
+        "operation": {
+          "const": "update_conversation",
+          "default": "update_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "bot_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Bot Id",
+          "type": "string"
+        },
+        "document_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only documents that exist in the folders the bot has access to are allowed. You can give bot access to all folders if you wish to limit documents from your whole knowledge base.",
+          "title": "Document Ids"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "name",
+        "bot_id"
+      ],
+      "title": "CodyUpdateConversationConfig",
+      "type": "object"
+    },
+    "CodyUpdateFolderConfig": {
+      "additionalProperties": false,
+      "description": "Update Folder. Uses one Cody API request.",
+      "properties": {
+        "operation": {
+          "const": "update_folder",
+          "default": "update_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folder_id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Folder Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "name"
+      ],
+      "title": "CodyUpdateFolderConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_conversation": "#/$defs/CodyCreateConversationConfig",
+          "create_document": "#/$defs/CodyCreateDocumentConfig",
+          "create_document_from_file": "#/$defs/CodyCreateDocumentFromFileConfig",
+          "create_document_from_webpage": "#/$defs/CodyCreateDocumentFromWebpageConfig",
+          "create_folder": "#/$defs/CodyCreateFolderConfig",
+          "delete_conversation": "#/$defs/CodyDeleteConversationConfig",
+          "delete_document": "#/$defs/CodyDeleteDocumentConfig",
+          "get_conversation": "#/$defs/CodyGetConversationConfig",
+          "get_document": "#/$defs/CodyGetDocumentConfig",
+          "get_folder": "#/$defs/CodyGetFolderConfig",
+          "get_message": "#/$defs/CodyGetMessageConfig",
+          "get_uploads_signed_url": "#/$defs/CodyGetUploadsSignedUrlConfig",
+          "list_bots": "#/$defs/CodyListBotsConfig",
+          "list_conversations": "#/$defs/CodyListConversationsConfig",
+          "list_documents": "#/$defs/CodyListDocumentsConfig",
+          "list_folders": "#/$defs/CodyListFoldersConfig",
+          "list_messages": "#/$defs/CodyListMessagesConfig",
+          "send_message": "#/$defs/CodySendMessageConfig",
+          "send_message_for_stream": "#/$defs/CodySendMessageForStreamConfig",
+          "update_conversation": "#/$defs/CodyUpdateConversationConfig",
+          "update_folder": "#/$defs/CodyUpdateFolderConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CodyListBotsConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyListConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyCreateConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyGetConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyUpdateConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyDeleteConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyListDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyCreateDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyCreateDocumentFromFileConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyCreateDocumentFromWebpageConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyGetDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyDeleteDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyListFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyCreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyGetFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyUpdateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyListMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/CodySendMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyGetMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/CodySendMessageForStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/CodyGetUploadsSignedUrlConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CodyApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Cody Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
