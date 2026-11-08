@@ -15,6 +15,7 @@ BlooioIcon.displayName = 'BlooioIcon';
 export const BlooioNode: NodeDefinition = {
     type: 'automation-blooio',
     label: 'Blooio',
+    category: 'communication',
     description: 'Send messages and manage contacts, chats, channels, and events',
     Icon: BlooioIcon,
     keywords: ['iMessage', 'SMS', 'RCS', 'WhatsApp', 'messaging'],
