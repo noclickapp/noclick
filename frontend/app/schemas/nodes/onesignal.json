@@ -1,0 +1,2618 @@
+{
+  "$defs": {
+    "OneSignalCancelMessageConfig": {
+      "properties": {
+        "operation": {
+          "const": "cancel_message",
+          "default": "cancel_message",
+          "description": "Stop a scheduled or currently outgoing message.",
+          "title": "Cancel message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Cancel message",
+          "x-is-trigger": false
+        },
+        "path_message_id": {
+          "title": "Message Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_message_id"
+      ],
+      "title": "OneSignalCancelMessageConfig",
+      "type": "object"
+    },
+    "OneSignalCopyTemplateToAnotherAppConfig": {
+      "properties": {
+        "operation": {
+          "const": "copy_template_to_another_app",
+          "default": "copy_template_to_another_app",
+          "description": "Create a duplicate of a OneSignal message template in another app within the same organization. The new template will retain the same content but have a unique template ID.",
+          "title": "Copy template to another app",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Copy template to another app",
+          "x-is-trigger": false
+        },
+        "path_template_id": {
+          "title": "Template Id",
+          "type": "string"
+        },
+        "query_app_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App to receive the copied template. Defaults to the App ID in the credential.",
+          "title": "Destination App ID"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_template_id",
+        "body_input"
+      ],
+      "title": "OneSignalCopyTemplateToAnotherAppConfig",
+      "type": "object"
+    },
+    "OneSignalCreateAliasBySubscriptionConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_alias_by_subscription",
+          "default": "create_alias_by_subscription",
+          "description": "Create or update an alias for a user using a known subscription ID.",
+          "title": "Create alias (by subscription)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Create alias (by subscription)",
+          "x-is-trigger": false
+        },
+        "path_subscription_id": {
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_subscription_id",
+        "body_input"
+      ],
+      "title": "OneSignalCreateAliasBySubscriptionConfig",
+      "type": "object"
+    },
+    "OneSignalCreateAliasConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_alias",
+          "default": "create_alias",
+          "description": "Create or update one or more user aliases when you already know an existing alias. This API upserts the user's identity object: it adds new aliases or updates existing ones.",
+          "title": "Create or update alias",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Create or update alias",
+          "x-is-trigger": false
+        },
+        "path_alias_label": {
+          "title": "Alias Label",
+          "type": "string"
+        },
+        "path_alias_id": {
+          "title": "Alias Id",
+          "type": "string"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_alias_label",
+        "path_alias_id",
+        "body_input"
+      ],
+      "title": "OneSignalCreateAliasConfig",
+      "type": "object"
+    },
+    "OneSignalCreateAnAppConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_an_app",
+          "default": "create_an_app",
+          "description": "Programmatically create a new OneSignal app via the REST API. This guide explains required fields, supported platform configurations (Web, Android, iOS), and how to properly authenticate using your Organization API key.",
+          "title": "Create an app",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Create an app",
+          "x-is-trigger": false
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_input"
+      ],
+      "title": "OneSignalCreateAnAppConfig",
+      "type": "object"
+    },
+    "OneSignalCreateApiKeyConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_api_key",
+          "default": "create_api_key",
+          "description": "Use the OneSignal API to create a new Rich Authentication Token (App API Key) for a specific app. This guide explains how to authenticate with the Organization API key and configure optional IP allowlists using CIDR notation.",
+          "title": "Create API key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Create API key",
+          "x-is-trigger": false
+        },
+        "path_app_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the App ID in the credential.",
+          "title": "Target App ID"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_input"
+      ],
+      "title": "OneSignalCreateApiKeyConfig",
+      "type": "object"
+    },
+    "OneSignalCreateCustomEventsConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_custom_events",
+          "default": "create_custom_events",
+          "description": "The Custom Events API allows you to record user events. Custom events can represent any action users take in your application, such as completing a purchase, viewing content, or achieving milestones.",
+          "title": "Create Custom Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Events",
+          "x-display-name": "Create Custom Events",
+          "x-is-trigger": false
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_input"
+      ],
+      "title": "OneSignalCreateCustomEventsConfig",
+      "type": "object"
+    },
+    "OneSignalCreateJourneyConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_journey",
+          "default": "create_journey",
+          "description": "Create a new journey. Journeys are always created in the `draft` state; sending a server-controlled field such as `state` or `id` returns a `400` validation error. Send an empty `nodes` array to create a journey with only its required defaults.",
+          "title": "Create journey",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Journeys",
+          "x-display-name": "Create journey",
+          "x-is-trigger": false
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_input"
+      ],
+      "title": "OneSignalCreateJourneyConfig",
+      "type": "object"
+    },
+    "OneSignalCreateSegmentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_segments",
+          "default": "create_segments",
+          "description": "Programmatically create segments in your OneSignal app using flexible filters and targeting rules.",
+          "title": "Create segment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "Create segment",
+          "x-is-trigger": false
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_input"
+      ],
+      "title": "OneSignalCreateSegmentsConfig",
+      "type": "object"
+    },
+    "OneSignalCreateSubscriptionConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_subscription",
+          "default": "create_subscription",
+          "description": "Attach a new subscription (email, SMS, or push) to an existing OneSignal user identified by an alias.",
+          "title": "Create Subscription by alias",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Create Subscription by alias",
+          "x-is-trigger": false
+        },
+        "path_alias_label": {
+          "title": "Alias Label",
+          "type": "string"
+        },
+        "path_alias_id": {
+          "title": "Alias Id",
+          "type": "string"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_alias_label",
+        "path_alias_id",
+        "body_input"
+      ],
+      "title": "OneSignalCreateSubscriptionConfig",
+      "type": "object"
+    },
+    "OneSignalCreateTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_template",
+          "default": "create_template",
+          "description": "Create reusable message templates for push, email, and SMS channels. Templates can be accessed through both the dashboard and API using a `template_id`.",
+          "title": "Create template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Create template",
+          "x-is-trigger": false
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_input"
+      ],
+      "title": "OneSignalCreateTemplateConfig",
+      "type": "object"
+    },
+    "OneSignalCreateUserConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "description": "Create a new user or modify the subscriptions associated with an existing User.",
+          "title": "Create user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Create user",
+          "x-is-trigger": false
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_input"
+      ],
+      "title": "OneSignalCreateUserConfig",
+      "type": "object"
+    },
+    "OneSignalCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "onesignal_api_key",
+          "default": "onesignal_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "app_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "OneSignal App ID"
+        },
+        "app_api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "App API Key",
+          "ui:widget": "password"
+        },
+        "organization_api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization API Key",
+          "ui:widget": "password"
+        }
+      },
+      "title": "OneSignal API Key",
+      "type": "object",
+      "x-credential-instructions": "Find your App ID and App API Key under Settings \u2192 Keys & IDs. Organization actions additionally require the Organization API Key from Organizations \u2192 Keys & IDs. OneSignal's REST API uses API keys rather than an end-user OAuth authorization flow.",
+      "x-credential-url": "https://dashboard.onesignal.com/"
+    },
+    "OneSignalDeleteAliasConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_alias",
+          "default": "delete_alias",
+          "description": "Remove a specific alias from a user.",
+          "title": "Delete alias",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Delete alias",
+          "x-is-trigger": false
+        },
+        "path_alias_label": {
+          "title": "Alias Label",
+          "type": "string"
+        },
+        "path_alias_id": {
+          "title": "Alias Id",
+          "type": "string"
+        },
+        "path_alias_label_to_delete": {
+          "title": "Alias Label To Delete",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_alias_label",
+        "path_alias_id",
+        "path_alias_label_to_delete"
+      ],
+      "title": "OneSignalDeleteAliasConfig",
+      "type": "object"
+    },
+    "OneSignalDeleteApiKeyConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_api_key",
+          "default": "delete_api_key",
+          "description": "Delete a specific Rich Authentication Token (App API Key) for a OneSignal app. Requires your Organization API Key and the token's unique ID, not the token value itself.",
+          "title": "Delete API key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Delete API key",
+          "x-is-trigger": false
+        },
+        "path_app_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the App ID in the credential.",
+          "title": "Target App ID"
+        },
+        "path_token_id": {
+          "title": "Token Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_token_id"
+      ],
+      "title": "OneSignalDeleteApiKeyConfig",
+      "type": "object"
+    },
+    "OneSignalDeleteJourneyConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_journey",
+          "default": "delete_journey",
+          "description": "Permanently delete a journey by its UUID. Returns `{ \"success\": true }` on success. The authenticated App API key must have permission to delete journeys. Deleting a journey stops any in-flight users and cannot be undone.",
+          "title": "Delete journey",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Journeys",
+          "x-display-name": "Delete journey",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_id"
+      ],
+      "title": "OneSignalDeleteJourneyConfig",
+      "type": "object"
+    },
+    "OneSignalDeleteSegmentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_segments",
+          "default": "delete_segments",
+          "description": "Delete segments from OneSignal. Does not delete users or subscriptions.",
+          "title": "Delete segment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "Delete segment",
+          "x-is-trigger": false
+        },
+        "path_segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_segment_id"
+      ],
+      "title": "OneSignalDeleteSegmentsConfig",
+      "type": "object"
+    },
+    "OneSignalDeleteSubscriptionConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_subscription",
+          "default": "delete_subscription",
+          "description": "Delete a specific subscription by its subscription_id. This stops messages from being sent to that subscription but does not prevent future subscriptions with the same token.",
+          "title": "Delete subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Delete subscription",
+          "x-is-trigger": false
+        },
+        "path_subscription_id": {
+          "title": "Subscription Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_subscription_id"
+      ],
+      "title": "OneSignalDeleteSubscriptionConfig",
+      "type": "object"
+    },
+    "OneSignalDeleteTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "description": "Permanently delete a specific message template from your OneSignal app using its template ID. Templates used in Journeys must be removed from those Journeys before deletion.",
+          "title": "Delete template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Delete template",
+          "x-is-trigger": false
+        },
+        "path_template_id": {
+          "title": "Template Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_template_id"
+      ],
+      "title": "OneSignalDeleteTemplateConfig",
+      "type": "object"
+    },
+    "OneSignalDeleteUserConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_user",
+          "default": "delete_user",
+          "description": "Delete a user including all associated properties, subscriptions, and identity.",
+          "title": "Delete user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Delete user",
+          "x-is-trigger": false
+        },
+        "path_alias_label": {
+          "title": "Alias Label",
+          "type": "string"
+        },
+        "path_alias_id": {
+          "title": "Alias Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_alias_label",
+        "path_alias_id"
+      ],
+      "title": "OneSignalDeleteUserConfig",
+      "type": "object"
+    },
+    "OneSignalDeliveryMetricsConfig": {
+      "properties": {
+        "operation": {
+          "const": "delivery_metrics",
+          "default": "delivery_metrics",
+          "description": "Get email bounce and spam complaint rates received for the app over the last 24 hours, 7 days, and 30 days.",
+          "title": "Get email reputation statistics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Get email reputation statistics",
+          "x-is-trigger": false
+        }
+      },
+      "title": "OneSignalDeliveryMetricsConfig",
+      "type": "object"
+    },
+    "OneSignalDuplicateJourneyConfig": {
+      "properties": {
+        "operation": {
+          "const": "duplicate_journey",
+          "default": "duplicate_journey",
+          "description": "Copy an existing journey. The copy is always in the `draft` state, whatever state the source is in, and the source does not change. To shape the copy in the same request, send `overrides`. It is a journey document that is applied over the copy as a JSON Merge Patch ([RFC 7396](https://datatracker.ietf.org/doc/html/rfc7396)). Use it to create the co",
+          "title": "Duplicate journey",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Journeys",
+          "x-display-name": "Duplicate journey",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_id",
+        "body_input"
+      ],
+      "title": "OneSignalDuplicateJourneyConfig",
+      "type": "object"
+    },
+    "OneSignalEstimateNotificationRecipientsConfig": {
+      "properties": {
+        "operation": {
+          "const": "estimate_notification_recipients",
+          "default": "estimate_notification_recipients",
+          "description": "Returns the estimated number of recipients for a notification's targeting, without creating or sending anything.",
+          "title": "Estimate notification recipients",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Estimate notification recipients",
+          "x-is-trigger": false
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_input"
+      ],
+      "title": "OneSignalEstimateNotificationRecipientsConfig",
+      "type": "object"
+    },
+    "OneSignalExportAudienceActivityCsvConfig": {
+      "properties": {
+        "operation": {
+          "const": "export_audience_activity_csv",
+          "default": "export_audience_activity_csv",
+          "description": "Export a compressed CSV report of audience-level delivery and engagement data for a specific message. This includes sent, delivered, clicked, failed, and unsubscribed events across Push, Email, and SMS channels.",
+          "title": "Export audience activity CSV",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Export audience activity CSV",
+          "x-is-trigger": false
+        },
+        "path_message_id": {
+          "title": "Message Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_message_id"
+      ],
+      "title": "OneSignalExportAudienceActivityCsvConfig",
+      "type": "object"
+    },
+    "OneSignalExportSubscriptionsCsvConfig": {
+      "properties": {
+        "operation": {
+          "const": "export_subscriptions_csv",
+          "default": "export_subscriptions_csv",
+          "description": "Generate a GZip-compressed CSV export of your current subscription data using this API endpoint.",
+          "title": "Export subscriptions CSV",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Export subscriptions CSV",
+          "x-is-trigger": false
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_input"
+      ],
+      "title": "OneSignalExportSubscriptionsCsvConfig",
+      "type": "object"
+    },
+    "OneSignalFetchAliasesConfig": {
+      "properties": {
+        "operation": {
+          "const": "fetch_aliases",
+          "default": "fetch_aliases",
+          "description": "Retrieve all aliases associated with a user using a known alias, such as an `external_id`, `onesignal_id`, or a custom alias. This API helps you map back to a user's full identity from any one piece of identifying information.",
+          "title": "View user identity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "View user identity",
+          "x-is-trigger": false
+        },
+        "path_alias_label": {
+          "title": "Alias Label",
+          "type": "string"
+        },
+        "path_alias_id": {
+          "title": "Alias Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_alias_label",
+        "path_alias_id"
+      ],
+      "title": "OneSignalFetchAliasesConfig",
+      "type": "object"
+    },
+    "OneSignalFetchIdentityBySubscriptionConfig": {
+      "properties": {
+        "operation": {
+          "const": "fetch_identity_by_subscription",
+          "default": "fetch_identity_by_subscription",
+          "description": "Retrieve all aliases linked to a user using a known `subscription_id`. This is useful when the user's identity is unknown but you have access to one of their push, email, or SMS subscriptions.",
+          "title": "View user identity (by subscription)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "View user identity (by subscription)",
+          "x-is-trigger": false
+        },
+        "path_subscription_id": {
+          "title": "Subscription Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_subscription_id"
+      ],
+      "title": "OneSignalFetchIdentityBySubscriptionConfig",
+      "type": "object"
+    },
+    "OneSignalListAuditLogsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_audit_logs",
+          "default": "list_audit_logs",
+          "description": "Retrieve a paginated, time-scoped list of audit log events for an organization. Requires an Enterprise plan with the audit logs entitlement enabled.",
+          "title": "List audit logs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List audit logs",
+          "x-is-trigger": false
+        },
+        "path_organization_id": {
+          "title": "Organization Id",
+          "type": "string"
+        },
+        "query_start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start of the time range in ISO 8601 format (e.g. `2026-02-01T00:00:00Z`). Required unless `cursor` is provided. Must be within the last 90 days and no earlier than `2026-02-18T00:00:00Z`.",
+          "title": "Start Time"
+        },
+        "query_end_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End of the time range in ISO 8601 format. Defaults to the current time. Must be after `start_time`.",
+          "title": "End Time"
+        },
+        "query_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor returned in a previous response as `next_cursor`. When provided, `start_time` and `end_time` are ignored.",
+          "title": "Cursor"
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of events to return per page. Minimum `1`, maximum `100`. Values outside this range are clamped automatically.",
+          "title": "Limit"
+        },
+        "query_app_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter events by app UUID. Accepts up to 10 values. Org-level events are always included. Repeat the parameter for multiple values: `app_ids=uuid1&app_ids=uuid2`.",
+          "title": "App Ids"
+        },
+        "query_actions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by action type (e.g. `notification.sent`, `segment.created`). Accepts up to 20 values. Repeat the parameter for multiple values: `actions=notification.sent&actions=segment.created`.",
+          "title": "Actions"
+        },
+        "query_actor_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by actor UUID (the user or service that performed the action). Accepts up to 10 values. Repeat the parameter for multiple values: `actor_ids=uuid1&actor_ids=uuid2`.",
+          "title": "Actor Ids"
+        },
+        "query_actor_emails": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by actor email address. Accepts up to 10 values. Repeat the parameter for multiple values: `actor_emails=a@example.com&actor_emails=b@example.com`.",
+          "title": "Actor Emails"
+        },
+        "query_target_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the type of resource the action was performed on (e.g. `notification`, `segment`, `journey`). Accepts up to 10 values. Repeat the parameter for multiple values: `target_types=notification&target_types=segment`.",
+          "title": "Target Types"
+        },
+        "query_target_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the UUID of the resource the action was performed on. Accepts up to 10 values. Repeat the parameter for multiple values: `target_ids=uuid1&target_ids=uuid2`.",
+          "title": "Target Ids"
+        },
+        "query_ip_addresses": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the IP address the action originated from. Accepts up to 10 values. Repeat the parameter for multiple values: `ip_addresses=203.0.113.1&ip_addresses=203.0.113.2`.",
+          "title": "Ip Addresses"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional additional query parameters as a JSON object.",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_organization_id"
+      ],
+      "title": "OneSignalListAuditLogsConfig",
+      "type": "object"
+    },
+    "OneSignalMessageHistoryConfig": {
+      "properties": {
+        "operation": {
+          "const": "message_history",
+          "default": "message_history",
+          "description": "View which subscriptions received a particular message",
+          "title": "Message history",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Message history",
+          "x-is-trigger": false
+        },
+        "path_message_id": {
+          "title": "Message Id",
+          "type": "string"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_message_id",
+        "body_input"
+      ],
+      "title": "OneSignalMessageHistoryConfig",
+      "type": "object"
+    },
+    "OneSignalRotateApiKeyConfig": {
+      "properties": {
+        "operation": {
+          "const": "rotate_api_key",
+          "default": "rotate_api_key",
+          "description": "Rotate an existing App API Key (Rich Authentication Token) for a OneSignal app. Useful when a token is compromised or needs replacement without creating a new key from scratch.",
+          "title": "Rotate API key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Rotate API key",
+          "x-is-trigger": false
+        },
+        "path_app_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the App ID in the credential.",
+          "title": "Target App ID"
+        },
+        "path_token_id": {
+          "title": "Token Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_token_id"
+      ],
+      "title": "OneSignalRotateApiKeyConfig",
+      "type": "object"
+    },
+    "OneSignalSendEmailConfig": {
+      "properties": {
+        "operation": {
+          "const": "send_email",
+          "default": "send_email",
+          "description": "Send a message using the email channel.",
+          "title": "Send Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Send Email",
+          "x-is-trigger": false
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_input"
+      ],
+      "title": "OneSignalSendEmailConfig",
+      "type": "object"
+    },
+    "OneSignalSendPushNotificationConfig": {
+      "properties": {
+        "operation": {
+          "const": "send_push_notification",
+          "default": "send_push_notification",
+          "description": "Send a message using the push notification channel.",
+          "title": "Send Push Notification",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Send Push Notification",
+          "x-is-trigger": false
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_input"
+      ],
+      "title": "OneSignalSendPushNotificationConfig",
+      "type": "object"
+    },
+    "OneSignalSendSmsConfig": {
+      "properties": {
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "description": "Send a message using the SMS channel.",
+          "title": "Send SMS",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Send SMS",
+          "x-is-trigger": false
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_input"
+      ],
+      "title": "OneSignalSendSmsConfig",
+      "type": "object"
+    },
+    "OneSignalStartLiveActivityConfig": {
+      "properties": {
+        "operation": {
+          "const": "start_live_activity",
+          "default": "start_live_activity",
+          "description": "Remotely start a Live Activity on iOS devices via OneSignal's REST API. Define the activity type, target users, and send dynamic, updatable content directly to a Live Activity interface.",
+          "title": "Start Live Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Activities",
+          "x-display-name": "Start Live Activity",
+          "x-is-trigger": false
+        },
+        "path_activity_type": {
+          "title": "Activity Type",
+          "type": "string"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_activity_type",
+        "body_input"
+      ],
+      "title": "OneSignalStartLiveActivityConfig",
+      "type": "object"
+    },
+    "OneSignalTestConnectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "test_connection",
+          "default": "test_connection",
+          "description": "Verify the configured app or organization API key.",
+          "title": "Test Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Test Connection",
+          "x-is-trigger": false
+        }
+      },
+      "title": "OneSignalTestConnectionConfig",
+      "type": "object"
+    },
+    "OneSignalTransferSubscriptionConfig": {
+      "properties": {
+        "operation": {
+          "const": "transfer_subscription",
+          "default": "transfer_subscription",
+          "description": "Transfer a Subscription to a different user within the same OneSignal app. Useful for associating existing Subscriptions like push, email, or SMS with a new or updated user identity.",
+          "title": "Transfer subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Transfer subscription",
+          "x-is-trigger": false
+        },
+        "path_subscription_id": {
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_subscription_id",
+        "body_input"
+      ],
+      "title": "OneSignalTransferSubscriptionConfig",
+      "type": "object"
+    },
+    "OneSignalUnsubscribeWithTokenConfig": {
+      "properties": {
+        "operation": {
+          "const": "unsubscribe_with_token",
+          "default": "unsubscribe_with_token",
+          "description": "Unsubscribe an email address from future messages by calling this API from your custom unsubscribe page. Automatically disables the associated email subscription using a token-based approach.",
+          "title": "Unsubscribe email (with token)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Unsubscribe email (with token)",
+          "x-is-trigger": false
+        },
+        "path_notification_id": {
+          "title": "Notification Id",
+          "type": "string"
+        },
+        "query_token": {
+          "description": "The unsubscribe token that is generated via liquid syntax `{{subscription.unsubscribe_token}}` when personalizing an email. See [Create a Custom Unsubscribe Page](/docs/en/create-custom-unsubscribe-page) for setup details.",
+          "title": "Token",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional additional query parameters as a JSON object.",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_notification_id",
+        "query_token"
+      ],
+      "title": "OneSignalUnsubscribeWithTokenConfig",
+      "type": "object"
+    },
+    "OneSignalUpdateAnAppConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_an_app",
+          "default": "update_an_app",
+          "description": "Use to update the name or push platform configuration of an existing app. This guide explains required parameters and platform-specific update rules",
+          "title": "Update an app",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Update an app",
+          "x-is-trigger": false
+        },
+        "path_app_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the App ID in the credential.",
+          "title": "Target App ID"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "body_input"
+      ],
+      "title": "OneSignalUpdateAnAppConfig",
+      "type": "object"
+    },
+    "OneSignalUpdateApiKeyConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_api_key",
+          "default": "update_api_key",
+          "description": "Update a Rich Authentication Token (App API Key) for a OneSignal app. Modify the token's name or IP allowlist settings using your Organization API Key.",
+          "title": "Update API key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Update API key",
+          "x-is-trigger": false
+        },
+        "path_app_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the App ID in the credential.",
+          "title": "Target App ID"
+        },
+        "path_token_id": {
+          "title": "Token Id",
+          "type": "string"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_token_id",
+        "body_input"
+      ],
+      "title": "OneSignalUpdateApiKeyConfig",
+      "type": "object"
+    },
+    "OneSignalUpdateJourneyConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_journey",
+          "default": "update_journey",
+          "description": "Apply a partial update to a journey using JSON Merge Patch ([RFC 7396](https://datatracker.ietf.org/doc/html/rfc7396)). Send only the fields you want to change; omitted fields are left unchanged. A `null` value clears a nullable field, and arrays such as `nodes` are replaced wholesale rather than merged element-wise. Set `state` to `active` to acti",
+          "title": "Update journey",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Journeys",
+          "x-display-name": "Update journey",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_id",
+        "body_input"
+      ],
+      "title": "OneSignalUpdateJourneyConfig",
+      "type": "object"
+    },
+    "OneSignalUpdateJourneyNodeConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_journey_node",
+          "default": "update_journey_node",
+          "description": "Apply a partial update to a single node, located by its server-assigned `id`, using JSON Merge Patch ([RFC 7396](https://datatracker.ietf.org/doc/html/rfc7396)). Send only the node fields you want to change; the rest of the node and the rest of the journey graph are left untouched, so in-flight users are preserved. Prefer this over re-sending the w",
+          "title": "Update journey node",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Journeys",
+          "x-display-name": "Update journey node",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "path_node_id": {
+          "title": "Node Id",
+          "type": "string"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_id",
+        "path_node_id",
+        "body_input"
+      ],
+      "title": "OneSignalUpdateJourneyNodeConfig",
+      "type": "object"
+    },
+    "OneSignalUpdateLiveActivityApiConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_live_activity_api",
+          "default": "update_live_activity_api",
+          "description": "Update or terminate running iOS Live Activities using OneSignal's Live Activities API. This endpoint enables real-time content updates and activity termination, ensuring dynamic, context-aware user experiences.",
+          "title": "Update Live Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Activities",
+          "x-display-name": "Update Live Activity",
+          "x-is-trigger": false
+        },
+        "path_activity_id": {
+          "title": "Activity Id",
+          "type": "string"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_activity_id",
+        "body_input"
+      ],
+      "title": "OneSignalUpdateLiveActivityApiConfig",
+      "type": "object"
+    },
+    "OneSignalUpdateSegmentConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_segment",
+          "default": "update_segment",
+          "description": "Update an existing segment's name and/or filters. The name parameter is always required. When filters are provided, all existing filters are replaced with the new ones.",
+          "title": "Update segment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "Update segment",
+          "x-is-trigger": false
+        },
+        "path_segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_segment_id",
+        "body_input"
+      ],
+      "title": "OneSignalUpdateSegmentConfig",
+      "type": "object"
+    },
+    "OneSignalUpdateSubscriptionByTokenConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_subscription_by_token",
+          "default": "update_subscription_by_token",
+          "description": "Update properties on an existing Subscription using its token. Commonly used to enable or disable subscription status when managing outside of the OneSignal SDK.",
+          "title": "Update subscription By Token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Update subscription By Token",
+          "x-is-trigger": false
+        },
+        "path_token_type": {
+          "title": "Token Type",
+          "type": "string"
+        },
+        "path_token": {
+          "title": "Token",
+          "type": "string"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_token_type",
+        "path_token",
+        "body_input"
+      ],
+      "title": "OneSignalUpdateSubscriptionByTokenConfig",
+      "type": "object"
+    },
+    "OneSignalUpdateSubscriptionConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_subscription",
+          "default": "update_subscription",
+          "description": "Update properties on an existing OneSignal subscription using its subscription_id. Commonly used to enable or disable a subscription when managing outside of the OneSignal SDK.",
+          "title": "Update subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Update subscription",
+          "x-is-trigger": false
+        },
+        "path_subscription_id": {
+          "title": "Subscription Id",
+          "type": "string"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_subscription_id",
+        "body_input"
+      ],
+      "title": "OneSignalUpdateSubscriptionConfig",
+      "type": "object"
+    },
+    "OneSignalUpdateTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_template",
+          "default": "update_template",
+          "description": "Update existing OneSignal message templates for push, email, or SMS. Changes apply immediately across dashboard and API usage via the `template_id` reference.",
+          "title": "Update template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Update template",
+          "x-is-trigger": false
+        },
+        "path_template_id": {
+          "title": "Template Id",
+          "type": "string"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_template_id",
+        "body_input"
+      ],
+      "title": "OneSignalUpdateTemplateConfig",
+      "type": "object"
+    },
+    "OneSignalUpdateUserConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "description": "Modify a user's properties.",
+          "title": "Update user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Update user",
+          "x-is-trigger": false
+        },
+        "path_alias_label": {
+          "title": "Alias Label",
+          "type": "string"
+        },
+        "path_alias_id": {
+          "title": "Alias Id",
+          "type": "string"
+        },
+        "header_onesignal_subscription_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "onesignal-subscription-id"
+        },
+        "body_input": {
+          "description": "OneSignal request body as a JSON object. The configured App ID is inserted when the API expects app_id.",
+          "title": "Request Body JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_alias_label",
+        "path_alias_id",
+        "body_input"
+      ],
+      "title": "OneSignalUpdateUserConfig",
+      "type": "object"
+    },
+    "OneSignalViewAnAppConfig": {
+      "properties": {
+        "operation": {
+          "const": "view_an_app",
+          "default": "view_an_app",
+          "description": "View the details of a single OneSignal app",
+          "title": "View an app",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "View an app",
+          "x-is-trigger": false
+        },
+        "query_view": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to `config` to return configuration-only data. This omits `players` and `messageable_players`, skipping the subscription-count lookup for a faster response.",
+          "title": "View"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional additional query parameters as a JSON object.",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "OneSignalViewAnAppConfig",
+      "type": "object"
+    },
+    "OneSignalViewApiKeysConfig": {
+      "properties": {
+        "operation": {
+          "const": "view_api_keys",
+          "default": "view_api_keys",
+          "description": "View the details of all of your current app API keys (Rich Authentication Token) for a single OneSignal app.",
+          "title": "View API keys",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "View API keys",
+          "x-is-trigger": false
+        },
+        "path_app_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the App ID in the credential.",
+          "title": "Target App ID"
+        }
+      },
+      "title": "OneSignalViewApiKeysConfig",
+      "type": "object"
+    },
+    "OneSignalViewAppsConfig": {
+      "properties": {
+        "operation": {
+          "const": "view_apps",
+          "default": "view_apps",
+          "description": "Retrieve a list of all OneSignal apps associated with your account, including key app details like name, App ID, subscription counts, and timestamps. Useful for managing multiple apps through the OneSignal API.",
+          "title": "View apps",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "View apps",
+          "x-is-trigger": false
+        }
+      },
+      "title": "OneSignalViewAppsConfig",
+      "type": "object"
+    },
+    "OneSignalViewJourneyConfig": {
+      "properties": {
+        "operation": {
+          "const": "view_journey",
+          "default": "view_journey",
+          "description": "Retrieve the full configuration of a single journey by its UUID, including its audience and node graph.",
+          "title": "View journey",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Journeys",
+          "x-display-name": "View journey",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_id"
+      ],
+      "title": "OneSignalViewJourneyConfig",
+      "type": "object"
+    },
+    "OneSignalViewJourneyStatsConfig": {
+      "properties": {
+        "operation": {
+          "const": "view_journey_stats",
+          "default": "view_journey_stats",
+          "description": "Retrieve performance stats for a single journey: journey-level entry and exit counts, per-node counts keyed by node `id`, per-branch counts keyed by branch `id`, and channel delivery stats for message-sending nodes. The response carries no definition detail, so join it by `id` against the journey from [View journey](/reference/view-journey).",
+          "title": "View journey stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Journeys",
+          "x-display-name": "View journey stats",
+          "x-is-trigger": false
+        },
+        "path_id": {
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_id"
+      ],
+      "title": "OneSignalViewJourneyStatsConfig",
+      "type": "object"
+    },
+    "OneSignalViewJourneysConfig": {
+      "properties": {
+        "operation": {
+          "const": "view_journeys",
+          "default": "view_journeys",
+          "description": "Retrieve a paginated list of journeys for an app. Returns a summary representation of each journey; use [View journey](/reference/view-journey) for the full configuration. Uses forward-only cursor-based pagination.",
+          "title": "View journeys",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Journeys",
+          "x-display-name": "View journeys",
+          "x-is-trigger": false
+        },
+        "query_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque pagination token from a previous response's `next_cursor`. Omit for the first page.",
+          "title": "Cursor"
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum journeys to return per page. Minimum `1`, maximum `50`.",
+          "title": "Limit"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional additional query parameters as a JSON object.",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "OneSignalViewJourneysConfig",
+      "type": "object"
+    },
+    "OneSignalViewMessageConfig": {
+      "properties": {
+        "operation": {
+          "const": "view_message",
+          "default": "view_message",
+          "description": "View the details of a single message and the Outcomes associated with it.",
+          "title": "View message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "View message",
+          "x-is-trigger": false
+        },
+        "path_message_id": {
+          "title": "Message Id",
+          "type": "string"
+        },
+        "query_outcome_names": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name and aggregation type of the outcome(s) you want to fetch. Example: `my_outcome.count` or `my_outcome.sum`. For clicks, use `os__click.count`. For confirmed deliveries, use `os__confirmed_delivery.count`. For session duration, use `os__sessio",
+          "title": "Outcome Names"
+        },
+        "query_outcome_time_range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time range for the returned data. Available values: `1h` (1 hour), `1d` (1 day), `1mo` (1 month)",
+          "title": "Outcome Time Range"
+        },
+        "query_outcome_platforms": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The platforms in which you want to pull the data represented as the `device_type` integer.",
+          "title": "Outcome Platforms"
+        },
+        "query_outcome_attribution": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attribution type for the outcomes.",
+          "title": "Outcome Attribution"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional additional query parameters as a JSON object.",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_message_id"
+      ],
+      "title": "OneSignalViewMessageConfig",
+      "type": "object"
+    },
+    "OneSignalViewMessagesConfig": {
+      "properties": {
+        "operation": {
+          "const": "view_messages",
+          "default": "view_messages",
+          "description": "View the details for a collection of messages.",
+          "title": "View messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "View messages",
+          "x-is-trigger": false
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies the maximum number of messages to return in a single query. The maximum and default is **50** messages per request.",
+          "title": "Limit"
+        },
+        "query_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Controls the starting point for the notifications being returned. Default is **0**. Results are returned and sorted in descending order by `queued_at`.",
+          "title": "Offset"
+        },
+        "query_kind": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies which push notifications to return based on how it was created. Use this to segment push by their creation method, allowing for targeted analysis or management of notification types. All push types are returned by default. `0` - Notificatio",
+          "title": "Kind"
+        },
+        "query_template_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The template ID in UUID v4 format set for the message if applicable. See [Templates](/docs/en/templates).",
+          "title": "Template Id"
+        },
+        "query_time_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An ISO 8601 formatted timestamp or Base64 integer token (provided in the API response). See [`time_offset` Accepted Values](#time_offset-accepted-values).",
+          "title": "Time Offset"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional additional query parameters as a JSON object.",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "OneSignalViewMessagesConfig",
+      "type": "object"
+    },
+    "OneSignalViewOutcomesConfig": {
+      "properties": {
+        "operation": {
+          "const": "view_outcomes",
+          "default": "view_outcomes",
+          "description": "View and export push notification outcome metrics such as clicks, conversions, and custom events.",
+          "title": "View outcomes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "View outcomes",
+          "x-is-trigger": false
+        },
+        "query_outcome_names": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name and aggregation type of the outcome(s) you want to fetch. Example: `my_outcome.count` or `my_outcome.sum`. For clicks, use `os__click.count`. For confirmed deliveries, use `os__confirmed_delivery.count`. For session duration, use `os__sessio",
+          "title": "Outcome Names"
+        },
+        "query_outcome_time_range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time range for the returned data. Available values: `1h` (1 hour), `1d` (1 day), `1mo` (1 month)",
+          "title": "Outcome Time Range"
+        },
+        "query_outcome_platforms": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The platforms in which you want to pull the data represented as the `device_type` integer.",
+          "title": "Outcome Platforms"
+        },
+        "query_outcome_attribution": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attribution type for the outcomes.",
+          "title": "Outcome Attribution"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional additional query parameters as a JSON object.",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "OneSignalViewOutcomesConfig",
+      "type": "object"
+    },
+    "OneSignalViewSegmentConfig": {
+      "properties": {
+        "operation": {
+          "const": "view_segment",
+          "default": "view_segment",
+          "description": "Retrieve details for a single segment by its ID, including subscriber count and optionally segment metadata and filters.",
+          "title": "View segment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "View segment",
+          "x-is-trigger": false
+        },
+        "path_segment_id": {
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "query_include_segment_detail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to `true` to include segment metadata and filters in the response.",
+          "title": "Include-Segment-Detail"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional additional query parameters as a JSON object.",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path_segment_id"
+      ],
+      "title": "OneSignalViewSegmentConfig",
+      "type": "object"
+    },
+    "OneSignalViewSegmentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "view_segments",
+          "default": "view_segments",
+          "description": "Retrieve a list of segments associated with a specific OneSignal app. Useful for programmatically accessing segment metadata such as name, creation date, and status.",
+          "title": "View segments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "View segments",
+          "x-is-trigger": false
+        },
+        "query_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The index to start returning segments from. Defaults to `0`. Segments are sorted by their creation date (`created_at`) in ascending order.",
+          "title": "Offset"
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The maximum number of segments to return. Default/Max: `300`. Ideal for controlling data volume in large-scale applications.",
+          "title": "Limit"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional additional query parameters as a JSON object.",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "OneSignalViewSegmentsConfig",
+      "type": "object"
+    },
+    "OneSignalViewTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "view_template",
+          "default": "view_template",
+          "description": "Retrieve the details of a specific message template in your OneSignal app using its template ID. This API returns the template content, target channel, and timestamps for creation and last update.",
+          "title": "View template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "View template",
+          "x-is-trigger": false
+        },
+        "path_template_id": {
+          "title": "Template Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_template_id"
+      ],
+      "title": "OneSignalViewTemplateConfig",
+      "type": "object"
+    },
+    "OneSignalViewTemplatesConfig": {
+      "properties": {
+        "operation": {
+          "const": "view_templates",
+          "default": "view_templates",
+          "description": "Retrieve a paginated list of message templates from your OneSignal app. This endpoint returns summary information for each template, including ID, name, creation, and update timestamps.",
+          "title": "View templates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "View templates",
+          "x-is-trigger": false
+        },
+        "query_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The maximum number of templates returned per request. The default (if omitted) and maximum is 50 templates per request.",
+          "title": "Limit"
+        },
+        "query_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The pagination or \"starting point\" of the templates to be returned. Setting it to 0 with a limit of 50 will retrieve the first 50 templates. Increasing the offset by 50 will return the next set of templates, and so on.",
+          "title": "Offset"
+        },
+        "query_channel": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the fetched templates by the delivery channel. Available options are: `push`, `email`, and `SMS`.",
+          "title": "Channel"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional additional query parameters as a JSON object.",
+          "title": "Other Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "OneSignalViewTemplatesConfig",
+      "type": "object"
+    },
+    "OneSignalViewUserConfig": {
+      "properties": {
+        "operation": {
+          "const": "view_user",
+          "default": "view_user",
+          "description": "Retrieve a user including aliases, properties, and subscriptions.",
+          "title": "View user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "View user",
+          "x-is-trigger": false
+        },
+        "path_alias_label": {
+          "title": "Alias Label",
+          "type": "string"
+        },
+        "path_alias_id": {
+          "title": "Alias Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_alias_label",
+        "path_alias_id"
+      ],
+      "title": "OneSignalViewUserConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_message": "#/$defs/OneSignalCancelMessageConfig",
+          "copy_template_to_another_app": "#/$defs/OneSignalCopyTemplateToAnotherAppConfig",
+          "create_alias": "#/$defs/OneSignalCreateAliasConfig",
+          "create_alias_by_subscription": "#/$defs/OneSignalCreateAliasBySubscriptionConfig",
+          "create_an_app": "#/$defs/OneSignalCreateAnAppConfig",
+          "create_api_key": "#/$defs/OneSignalCreateApiKeyConfig",
+          "create_custom_events": "#/$defs/OneSignalCreateCustomEventsConfig",
+          "create_journey": "#/$defs/OneSignalCreateJourneyConfig",
+          "create_segments": "#/$defs/OneSignalCreateSegmentsConfig",
+          "create_subscription": "#/$defs/OneSignalCreateSubscriptionConfig",
+          "create_template": "#/$defs/OneSignalCreateTemplateConfig",
+          "create_user": "#/$defs/OneSignalCreateUserConfig",
+          "delete_alias": "#/$defs/OneSignalDeleteAliasConfig",
+          "delete_api_key": "#/$defs/OneSignalDeleteApiKeyConfig",
+          "delete_journey": "#/$defs/OneSignalDeleteJourneyConfig",
+          "delete_segments": "#/$defs/OneSignalDeleteSegmentsConfig",
+          "delete_subscription": "#/$defs/OneSignalDeleteSubscriptionConfig",
+          "delete_template": "#/$defs/OneSignalDeleteTemplateConfig",
+          "delete_user": "#/$defs/OneSignalDeleteUserConfig",
+          "delivery_metrics": "#/$defs/OneSignalDeliveryMetricsConfig",
+          "duplicate_journey": "#/$defs/OneSignalDuplicateJourneyConfig",
+          "estimate_notification_recipients": "#/$defs/OneSignalEstimateNotificationRecipientsConfig",
+          "export_audience_activity_csv": "#/$defs/OneSignalExportAudienceActivityCsvConfig",
+          "export_subscriptions_csv": "#/$defs/OneSignalExportSubscriptionsCsvConfig",
+          "fetch_aliases": "#/$defs/OneSignalFetchAliasesConfig",
+          "fetch_identity_by_subscription": "#/$defs/OneSignalFetchIdentityBySubscriptionConfig",
+          "list_audit_logs": "#/$defs/OneSignalListAuditLogsConfig",
+          "message_history": "#/$defs/OneSignalMessageHistoryConfig",
+          "rotate_api_key": "#/$defs/OneSignalRotateApiKeyConfig",
+          "send_email": "#/$defs/OneSignalSendEmailConfig",
+          "send_push_notification": "#/$defs/OneSignalSendPushNotificationConfig",
+          "send_sms": "#/$defs/OneSignalSendSmsConfig",
+          "start_live_activity": "#/$defs/OneSignalStartLiveActivityConfig",
+          "test_connection": "#/$defs/OneSignalTestConnectionConfig",
+          "transfer_subscription": "#/$defs/OneSignalTransferSubscriptionConfig",
+          "unsubscribe_with_token": "#/$defs/OneSignalUnsubscribeWithTokenConfig",
+          "update_an_app": "#/$defs/OneSignalUpdateAnAppConfig",
+          "update_api_key": "#/$defs/OneSignalUpdateApiKeyConfig",
+          "update_journey": "#/$defs/OneSignalUpdateJourneyConfig",
+          "update_journey_node": "#/$defs/OneSignalUpdateJourneyNodeConfig",
+          "update_live_activity_api": "#/$defs/OneSignalUpdateLiveActivityApiConfig",
+          "update_segment": "#/$defs/OneSignalUpdateSegmentConfig",
+          "update_subscription": "#/$defs/OneSignalUpdateSubscriptionConfig",
+          "update_subscription_by_token": "#/$defs/OneSignalUpdateSubscriptionByTokenConfig",
+          "update_template": "#/$defs/OneSignalUpdateTemplateConfig",
+          "update_user": "#/$defs/OneSignalUpdateUserConfig",
+          "view_an_app": "#/$defs/OneSignalViewAnAppConfig",
+          "view_api_keys": "#/$defs/OneSignalViewApiKeysConfig",
+          "view_apps": "#/$defs/OneSignalViewAppsConfig",
+          "view_journey": "#/$defs/OneSignalViewJourneyConfig",
+          "view_journey_stats": "#/$defs/OneSignalViewJourneyStatsConfig",
+          "view_journeys": "#/$defs/OneSignalViewJourneysConfig",
+          "view_message": "#/$defs/OneSignalViewMessageConfig",
+          "view_messages": "#/$defs/OneSignalViewMessagesConfig",
+          "view_outcomes": "#/$defs/OneSignalViewOutcomesConfig",
+          "view_segment": "#/$defs/OneSignalViewSegmentConfig",
+          "view_segments": "#/$defs/OneSignalViewSegmentsConfig",
+          "view_template": "#/$defs/OneSignalViewTemplateConfig",
+          "view_templates": "#/$defs/OneSignalViewTemplatesConfig",
+          "view_user": "#/$defs/OneSignalViewUserConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/OneSignalCancelMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalCopyTemplateToAnotherAppConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalCreateAliasConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalCreateAliasBySubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalCreateAnAppConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalCreateApiKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalCreateCustomEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalCreateJourneyConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalCreateSegmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalCreateSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalCreateTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalCreateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalDeleteAliasConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalDeleteApiKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalDeleteJourneyConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalDeleteSegmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalDeleteSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalDeleteTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalDeleteUserConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalDeliveryMetricsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalDuplicateJourneyConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalEstimateNotificationRecipientsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalExportAudienceActivityCsvConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalExportSubscriptionsCsvConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalFetchAliasesConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalFetchIdentityBySubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalListAuditLogsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalMessageHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalRotateApiKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalSendEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalSendPushNotificationConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalSendSmsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalStartLiveActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalTestConnectionConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalTransferSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalUnsubscribeWithTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalUpdateAnAppConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalUpdateApiKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalUpdateJourneyConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalUpdateJourneyNodeConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalUpdateLiveActivityApiConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalUpdateSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalUpdateSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalUpdateSubscriptionByTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalUpdateTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalUpdateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalViewAnAppConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalViewApiKeysConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalViewAppsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalViewJourneyConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalViewJourneyStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalViewJourneysConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalViewMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalViewMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalViewOutcomesConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalViewSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalViewSegmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalViewTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalViewTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/OneSignalViewUserConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OneSignalCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Onesignal Node Configuration",
+  "type": "object",
+  "x-agent-tool-provider": true,
+  "x-edit-examples": [
+    "Send a push notification through OneSignal",
+    "Create a OneSignal user with an external ID",
+    "List OneSignal message templates",
+    "Start a customer journey in OneSignal"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
