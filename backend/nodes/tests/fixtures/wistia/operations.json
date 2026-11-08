@@ -1,0 +1,298 @@
+[
+  {
+    "config": {
+      "operation": "get_account"
+    },
+    "method": "GET",
+    "path": "/account",
+    "body": null,
+    "response": {
+      "id": 123,
+      "name": "Acme",
+      "url": "https://acme.wistia.com",
+      "media_count": 1,
+      "video_limit": 100,
+      "folder_count": 1,
+      "channel_count": 0
+    }
+  },
+  {
+    "config": {
+      "operation": "get_token"
+    },
+    "method": "GET",
+    "path": "/token",
+    "body": null,
+    "response": {
+      "type": "permanent",
+      "scopes": [
+        "all:read"
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "list_media",
+      "name": "Launch + caf\u00e9",
+      "archived": false
+    },
+    "method": "GET",
+    "path": "/medias",
+    "body": null,
+    "response": [
+      {
+        "hashed_id": "abc123",
+        "name": "Launch + caf\u00e9"
+      }
+    ]
+  },
+  {
+    "config": {
+      "operation": "get_media",
+      "media_id": "abc123"
+    },
+    "method": "GET",
+    "path": "/medias/abc123",
+    "body": null,
+    "response": {
+      "hashed_id": "abc123",
+      "name": "Launch"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_media",
+      "media_id": "abc123",
+      "tags": []
+    },
+    "method": "PUT",
+    "path": "/medias/abc123",
+    "body": {
+      "tags": []
+    },
+    "response": {
+      "hashed_id": "abc123",
+      "tags": []
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_media",
+      "media_id": "abc123"
+    },
+    "method": "DELETE",
+    "path": "/medias/abc123",
+    "body": null,
+    "response": {
+      "hashed_id": "abc123"
+    }
+  },
+  {
+    "config": {
+      "operation": "copy_media",
+      "media_id": "abc123",
+      "folder_id": 22570
+    },
+    "method": "POST",
+    "path": "/medias/abc123/copy",
+    "body": {
+      "folder_id": 22570
+    },
+    "response": {
+      "hashed_id": "copied123"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_media_stats",
+      "media_id": "abc123"
+    },
+    "method": "GET",
+    "path": "/medias/abc123/stats",
+    "body": null,
+    "response": {
+      "hashed_id": "abc123",
+      "stats": {
+        "plays": 25
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "import_media",
+      "url": "https://example.com/video.mp4",
+      "folder_id": "4d23503f70"
+    },
+    "method": "POST",
+    "path": "/medias/import_url",
+    "body": {
+      "url": "https://example.com/video.mp4",
+      "folder_id": "4d23503f70"
+    },
+    "response": {
+      "message": "Queued",
+      "background_job_status": {
+        "id": 1,
+        "hashed_id": "job123",
+        "status": "queued"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "get_job",
+      "job_id": "job123"
+    },
+    "method": "GET",
+    "path": "/background_job_status/job123",
+    "body": null,
+    "response": {
+      "id": 1,
+      "hashed_id": "job123",
+      "status": "finished"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_folders",
+      "page": 2,
+      "per_page": 1
+    },
+    "method": "GET",
+    "path": "/folders",
+    "body": null,
+    "response": [
+      {
+        "hashed_id": "4d23503f70",
+        "name": "My Folder"
+      }
+    ]
+  },
+  {
+    "config": {
+      "operation": "get_folder",
+      "folder_id": "4d23503f70"
+    },
+    "method": "GET",
+    "path": "/folders/4d23503f70",
+    "body": null,
+    "response": {
+      "hashed_id": "4d23503f70",
+      "name": "My Folder"
+    }
+  },
+  {
+    "config": {
+      "operation": "create_folder",
+      "name": "My New Folder"
+    },
+    "method": "POST",
+    "path": "/folders",
+    "body": {
+      "name": "My New Folder",
+      "public": false,
+      "anonymousCanUpload": false,
+      "anonymousCanDownload": false
+    },
+    "response": {
+      "hashed_id": "4d23503f70",
+      "name": "My New Folder"
+    }
+  },
+  {
+    "config": {
+      "operation": "update_folder",
+      "folder_id": "4d23503f70",
+      "name": "New Name"
+    },
+    "method": "PUT",
+    "path": "/folders/4d23503f70",
+    "body": {
+      "name": "New Name"
+    },
+    "response": {
+      "hashed_id": "4d23503f70",
+      "name": "New Name"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_folder",
+      "folder_id": "4d23503f70"
+    },
+    "method": "DELETE",
+    "path": "/folders/4d23503f70",
+    "body": null,
+    "response": {
+      "hashed_id": "4d23503f70"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_tags"
+    },
+    "method": "GET",
+    "path": "/tags",
+    "body": null,
+    "response": [
+      {
+        "name": "launch",
+        "taggings_count": 2
+      }
+    ]
+  },
+  {
+    "config": {
+      "operation": "create_tag",
+      "name": "Launch"
+    },
+    "method": "POST",
+    "path": "/tags",
+    "body": {
+      "name": "Launch"
+    },
+    "response": {
+      "name": "launch"
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_tag",
+      "name": "launch + caf\u00e9"
+    },
+    "method": "DELETE",
+    "path": "/tags/launch%20%2B%20caf%C3%A9",
+    "body": null,
+    "response": null
+  },
+  {
+    "config": {
+      "operation": "list_captions",
+      "media_id": "abc123"
+    },
+    "method": "GET",
+    "path": "/medias/abc123/captions",
+    "body": null,
+    "response": [
+      {
+        "language": "eng",
+        "text": "1\n00:00:00,000 --> 00:00:02,000\nHello"
+      }
+    ]
+  },
+  {
+    "config": {
+      "operation": "create_captions",
+      "media_id": "abc123",
+      "caption_file": "1\n00:00:00,000 --> 00:00:02,000\nHello",
+      "language": "eng"
+    },
+    "method": "POST",
+    "path": "/medias/abc123/captions",
+    "body": {
+      "caption_file": "1\n00:00:00,000 --> 00:00:02,000\nHello",
+      "language": "eng"
+    },
+    "response": null
+  }
+]
