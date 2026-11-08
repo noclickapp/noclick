@@ -1,0 +1,748 @@
+{
+  "$defs": {
+    "CreateAccessCode": {
+      "additionalProperties": false,
+      "description": "Create an ongoing or scheduled access code for a device.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "maxLength": 12,
+              "minLength": 4,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric access code; omit on creation to let Seam generate it.",
+          "title": "Code"
+        },
+        "starts_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp including timezone.",
+          "title": "Starts At"
+        },
+        "ends_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp including timezone, after starts_at.",
+          "title": "Ends At"
+        },
+        "device_id": {
+          "description": "Seam device ID, from List Devices.",
+          "format": "uuid",
+          "title": "Device Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_access_code",
+          "default": "create_access_code",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "device_id"
+      ],
+      "title": "CreateAccessCode",
+      "type": "object"
+    },
+    "DeleteAccessCode": {
+      "additionalProperties": false,
+      "description": "Request removal of an access code and return its action attempt.",
+      "properties": {
+        "access_code_id": {
+          "description": "Seam access code ID, from List Access Codes.",
+          "format": "uuid",
+          "title": "Access Code Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_access_code",
+          "default": "delete_access_code",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "access_code_id"
+      ],
+      "title": "DeleteAccessCode",
+      "type": "object"
+    },
+    "GetAccessCode": {
+      "additionalProperties": false,
+      "description": "Read an access code by its Seam access code ID.",
+      "properties": {
+        "access_code_id": {
+          "description": "Seam access code ID, from List Access Codes.",
+          "format": "uuid",
+          "title": "Access Code Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_access_code",
+          "default": "get_access_code",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "access_code_id"
+      ],
+      "title": "GetAccessCode",
+      "type": "object"
+    },
+    "GetActionAttempt": {
+      "additionalProperties": false,
+      "description": "Read an action attempt to check whether a device action completed or failed.",
+      "properties": {
+        "operation": {
+          "const": "get_action_attempt",
+          "default": "get_action_attempt",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "action_attempt_id": {
+          "format": "uuid",
+          "title": "Action Attempt Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "action_attempt_id"
+      ],
+      "title": "GetActionAttempt",
+      "type": "object"
+    },
+    "GetConnectedAccount": {
+      "additionalProperties": false,
+      "description": "Read a connected device-provider account.",
+      "properties": {
+        "connected_account_id": {
+          "description": "Seam connected account ID.",
+          "format": "uuid",
+          "title": "Connected Account Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_connected_account",
+          "default": "get_connected_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "connected_account_id"
+      ],
+      "title": "GetConnectedAccount",
+      "type": "object"
+    },
+    "GetDevice": {
+      "additionalProperties": false,
+      "description": "Read a device by its Seam device ID.",
+      "properties": {
+        "device_id": {
+          "description": "Seam device ID, from List Devices.",
+          "format": "uuid",
+          "title": "Device Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_device",
+          "default": "get_device",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "device_id"
+      ],
+      "title": "GetDevice",
+      "type": "object"
+    },
+    "GetLock": {
+      "additionalProperties": false,
+      "description": "Read the current properties of one lock.",
+      "properties": {
+        "device_id": {
+          "description": "Seam device ID, from List Devices.",
+          "format": "uuid",
+          "title": "Device Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_lock",
+          "default": "get_lock",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "device_id"
+      ],
+      "title": "GetLock",
+      "type": "object"
+    },
+    "GetWorkspace": {
+      "additionalProperties": false,
+      "description": "Read the workspace associated with your API key.",
+      "properties": {
+        "operation": {
+          "const": "get_workspace",
+          "default": "get_workspace",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetWorkspace",
+      "type": "object"
+    },
+    "ListAccessCodes": {
+      "additionalProperties": false,
+      "description": "Return one page of access codes, optionally restricted to a device.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum records on this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use pagination.next_page_cursor from the previous response; only one page is returned.",
+          "title": "Page Cursor"
+        },
+        "operation": {
+          "const": "list_access_codes",
+          "default": "list_access_codes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "device_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device Id"
+        }
+      },
+      "title": "ListAccessCodes",
+      "type": "object"
+    },
+    "ListConnectedAccounts": {
+      "additionalProperties": false,
+      "description": "Return one page of connected device-provider accounts.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum records on this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use pagination.next_page_cursor from the previous response; only one page is returned.",
+          "title": "Page Cursor"
+        },
+        "operation": {
+          "const": "list_connected_accounts",
+          "default": "list_connected_accounts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ListConnectedAccounts",
+      "type": "object"
+    },
+    "ListDevices": {
+      "additionalProperties": false,
+      "description": "Return one page of devices, with optional account and text filters.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum records on this page.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use pagination.next_page_cursor from the previous response; only one page is returned.",
+          "title": "Page Cursor"
+        },
+        "operation": {
+          "const": "list_devices",
+          "default": "list_devices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "connected_account_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Connected Account Id"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ListDevices",
+      "type": "object"
+    },
+    "ListLocks": {
+      "additionalProperties": false,
+      "description": "List locks, optionally restricted to a connected account.",
+      "properties": {
+        "operation": {
+          "const": "list_locks",
+          "default": "list_locks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "connected_account_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Connected Account Id"
+        }
+      },
+      "title": "ListLocks",
+      "type": "object"
+    },
+    "LockDoor": {
+      "additionalProperties": false,
+      "description": "Request that a lock close; inspect the returned action attempt for completion.",
+      "properties": {
+        "device_id": {
+          "description": "Seam device ID, from List Devices.",
+          "format": "uuid",
+          "title": "Device Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "lock_door",
+          "default": "lock_door",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "device_id"
+      ],
+      "title": "LockDoor",
+      "type": "object"
+    },
+    "SeamAPIKeyCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "seam_api_key",
+          "default": "seam_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Seam API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in your Seam workspace in Seam Console and paste it here. Use a sandbox workspace key for testing. NoClick sends it only to connect.getseam.com and reads the workspace to verify the connection.",
+      "x-credential-url": "https://console.seam.co/"
+    },
+    "SyncConnectedAccount": {
+      "additionalProperties": false,
+      "description": "Request synchronization of a connected device-provider account.",
+      "properties": {
+        "connected_account_id": {
+          "description": "Seam connected account ID.",
+          "format": "uuid",
+          "title": "Connected Account Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "sync_connected_account",
+          "default": "sync_connected_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "connected_account_id"
+      ],
+      "title": "SyncConnectedAccount",
+      "type": "object"
+    },
+    "UnlockDoor": {
+      "additionalProperties": false,
+      "description": "Request that a lock open; inspect the returned action attempt for completion.",
+      "properties": {
+        "device_id": {
+          "description": "Seam device ID, from List Devices.",
+          "format": "uuid",
+          "title": "Device Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "unlock_door",
+          "default": "unlock_door",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "device_id"
+      ],
+      "title": "UnlockDoor",
+      "type": "object"
+    },
+    "UpdateAccessCode": {
+      "additionalProperties": false,
+      "description": "Change an access code name, code, or schedule.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "maxLength": 12,
+              "minLength": 4,
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric access code; omit on creation to let Seam generate it.",
+          "title": "Code"
+        },
+        "starts_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp including timezone.",
+          "title": "Starts At"
+        },
+        "ends_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp including timezone, after starts_at.",
+          "title": "Ends At"
+        },
+        "access_code_id": {
+          "description": "Seam access code ID, from List Access Codes.",
+          "format": "uuid",
+          "title": "Access Code Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_access_code",
+          "default": "update_access_code",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "access_code_id"
+      ],
+      "title": "UpdateAccessCode",
+      "type": "object"
+    },
+    "UpdateDevice": {
+      "additionalProperties": false,
+      "description": "Change the name of a device.",
+      "properties": {
+        "device_id": {
+          "description": "Seam device ID, from List Devices.",
+          "format": "uuid",
+          "title": "Device Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_device",
+          "default": "update_device",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "New device name.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "device_id",
+        "name"
+      ],
+      "title": "UpdateDevice",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_access_code": "#/$defs/CreateAccessCode",
+          "delete_access_code": "#/$defs/DeleteAccessCode",
+          "get_access_code": "#/$defs/GetAccessCode",
+          "get_action_attempt": "#/$defs/GetActionAttempt",
+          "get_connected_account": "#/$defs/GetConnectedAccount",
+          "get_device": "#/$defs/GetDevice",
+          "get_lock": "#/$defs/GetLock",
+          "get_workspace": "#/$defs/GetWorkspace",
+          "list_access_codes": "#/$defs/ListAccessCodes",
+          "list_connected_accounts": "#/$defs/ListConnectedAccounts",
+          "list_devices": "#/$defs/ListDevices",
+          "list_locks": "#/$defs/ListLocks",
+          "lock_door": "#/$defs/LockDoor",
+          "sync_connected_account": "#/$defs/SyncConnectedAccount",
+          "unlock_door": "#/$defs/UnlockDoor",
+          "update_access_code": "#/$defs/UpdateAccessCode",
+          "update_device": "#/$defs/UpdateDevice"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetWorkspace"
+        },
+        {
+          "$ref": "#/$defs/ListDevices"
+        },
+        {
+          "$ref": "#/$defs/GetDevice"
+        },
+        {
+          "$ref": "#/$defs/UpdateDevice"
+        },
+        {
+          "$ref": "#/$defs/ListLocks"
+        },
+        {
+          "$ref": "#/$defs/GetLock"
+        },
+        {
+          "$ref": "#/$defs/LockDoor"
+        },
+        {
+          "$ref": "#/$defs/UnlockDoor"
+        },
+        {
+          "$ref": "#/$defs/ListAccessCodes"
+        },
+        {
+          "$ref": "#/$defs/GetAccessCode"
+        },
+        {
+          "$ref": "#/$defs/CreateAccessCode"
+        },
+        {
+          "$ref": "#/$defs/UpdateAccessCode"
+        },
+        {
+          "$ref": "#/$defs/DeleteAccessCode"
+        },
+        {
+          "$ref": "#/$defs/ListConnectedAccounts"
+        },
+        {
+          "$ref": "#/$defs/GetConnectedAccount"
+        },
+        {
+          "$ref": "#/$defs/SyncConnectedAccount"
+        },
+        {
+          "$ref": "#/$defs/GetActionAttempt"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SeamAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Seam Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
