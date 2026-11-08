@@ -1,0 +1,444 @@
+{
+  "source": "https://docs.devcycle.com/management-api/",
+  "cases": [
+    {
+      "config": {
+        "operation": "list_projects",
+        "page": 2,
+        "perPage": 10,
+        "sortBy": "name",
+        "sortOrder": "asc",
+        "search": "Dashboard"
+      },
+      "method": "GET",
+      "path": "/v1/projects",
+      "body": null,
+      "query": {
+        "page": "2",
+        "perPage": "10",
+        "sortBy": "name",
+        "sortOrder": "asc",
+        "search": "Dashboard"
+      }
+    },
+    {
+      "config": {
+        "operation": "list_environments",
+        "page": 2,
+        "perPage": 10,
+        "sortBy": "name",
+        "sortOrder": "asc",
+        "search": "Dashboard",
+        "project": "delivery-app"
+      },
+      "method": "GET",
+      "path": "/v1/projects/delivery-app/environments",
+      "body": null,
+      "query": {
+        "page": "2",
+        "perPage": "10",
+        "sortBy": "name",
+        "sortOrder": "asc",
+        "search": "Dashboard"
+      }
+    },
+    {
+      "config": {
+        "operation": "list_features",
+        "page": 2,
+        "perPage": 10,
+        "sortBy": "name",
+        "sortOrder": "asc",
+        "search": "Dashboard",
+        "project": "delivery-app"
+      },
+      "method": "GET",
+      "path": "/v2/projects/delivery-app/features",
+      "body": null,
+      "query": {
+        "page": "2",
+        "perPage": "10",
+        "sortBy": "name",
+        "sortOrder": "asc",
+        "search": "Dashboard"
+      }
+    },
+    {
+      "config": {
+        "operation": "list_variables",
+        "page": 2,
+        "perPage": 10,
+        "sortBy": "name",
+        "sortOrder": "asc",
+        "search": "Dashboard",
+        "project": "delivery-app"
+      },
+      "method": "GET",
+      "path": "/v1/projects/delivery-app/variables",
+      "body": null,
+      "query": {
+        "page": "2",
+        "perPage": "10",
+        "sortBy": "name",
+        "sortOrder": "asc",
+        "search": "Dashboard"
+      }
+    },
+    {
+      "config": {
+        "operation": "list_audiences",
+        "page": 2,
+        "perPage": 10,
+        "sortBy": "name",
+        "sortOrder": "asc",
+        "search": "Dashboard",
+        "project": "delivery-app"
+      },
+      "method": "GET",
+      "path": "/v1/projects/delivery-app/audiences",
+      "body": null,
+      "query": {
+        "page": "2",
+        "perPage": "10",
+        "sortBy": "name",
+        "sortOrder": "asc",
+        "search": "Dashboard"
+      }
+    },
+    {
+      "config": {
+        "operation": "get_project",
+        "project": "delivery-app"
+      },
+      "method": "GET",
+      "path": "/v1/projects/delivery-app",
+      "body": null,
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "get_environment",
+        "project": "delivery-app",
+        "environment": "staging-upcoming"
+      },
+      "method": "GET",
+      "path": "/v1/projects/delivery-app/environments/staging-upcoming",
+      "body": null,
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "get_feature",
+        "project": "delivery-app",
+        "feature": "new-dash"
+      },
+      "method": "GET",
+      "path": "/v2/projects/delivery-app/features/new-dash",
+      "body": null,
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "get_static_configuration",
+        "project": "delivery-app",
+        "feature": "new-dash"
+      },
+      "method": "GET",
+      "path": "/v2/projects/delivery-app/features/new-dash/static-configuration",
+      "body": null,
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "get_variable",
+        "project": "delivery-app",
+        "variable": "show-new-dashboard"
+      },
+      "method": "GET",
+      "path": "/v1/projects/delivery-app/variables/show-new-dashboard",
+      "body": null,
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "get_audience",
+        "project": "delivery-app",
+        "audience": "beta-users"
+      },
+      "method": "GET",
+      "path": "/v1/projects/delivery-app/audiences/beta-users",
+      "body": null,
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "delete_project",
+        "project": "delivery-app"
+      },
+      "method": "DELETE",
+      "path": "/v1/projects/delivery-app",
+      "body": null,
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "delete_environment",
+        "project": "delivery-app",
+        "environment": "staging-upcoming"
+      },
+      "method": "DELETE",
+      "path": "/v1/projects/delivery-app/environments/staging-upcoming",
+      "body": null,
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "delete_variable",
+        "project": "delivery-app",
+        "variable": "show-new-dashboard"
+      },
+      "method": "DELETE",
+      "path": "/v1/projects/delivery-app/variables/show-new-dashboard",
+      "body": null,
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "create_project",
+        "name": "Delivery App",
+        "key": "delivery-app",
+        "description": "A web app to manage outbound deliveries",
+        "color": "#4073FF"
+      },
+      "method": "POST",
+      "path": "/v1/projects",
+      "body": {
+        "name": "Delivery App",
+        "key": "delivery-app",
+        "description": "A web app to manage outbound deliveries",
+        "color": "#4073FF"
+      },
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "update_project",
+        "project": "delivery-app",
+        "name": "Delivery App",
+        "description": "A web app to manage outbound deliveries"
+      },
+      "method": "PATCH",
+      "path": "/v1/projects/delivery-app",
+      "body": {
+        "name": "Delivery App",
+        "description": "A web app to manage outbound deliveries"
+      },
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "create_environment",
+        "project": "delivery-app",
+        "name": "Staging Upcoming",
+        "key": "staging-upcoming",
+        "type": "staging",
+        "color": "#4073FF"
+      },
+      "method": "POST",
+      "path": "/v1/projects/delivery-app/environments",
+      "body": {
+        "name": "Staging Upcoming",
+        "key": "staging-upcoming",
+        "type": "staging",
+        "color": "#4073FF"
+      },
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "update_environment",
+        "project": "delivery-app",
+        "environment": "staging-upcoming",
+        "description": "Pre-production changes"
+      },
+      "method": "PATCH",
+      "path": "/v1/projects/delivery-app/environments/staging-upcoming",
+      "body": {
+        "description": "Pre-production changes"
+      },
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "create_feature",
+        "project": "delivery-app",
+        "key": "new-dash",
+        "name": "New Dashboard",
+        "configurations": {
+          "development": {
+            "status": "active",
+            "targets": []
+          },
+          "production": {
+            "status": "inactive",
+            "targets": []
+          }
+        },
+        "variables": [
+          {
+            "key": "show-new-dashboard",
+            "type": "Boolean"
+          }
+        ],
+        "variations": [
+          {
+            "key": "variation-1",
+            "name": "User's with dashboard access",
+            "variables": {
+              "show-new-dashboard": true
+            }
+          }
+        ]
+      },
+      "method": "POST",
+      "path": "/v2/projects/delivery-app/features",
+      "body": {
+        "key": "new-dash",
+        "name": "New Dashboard",
+        "configurations": {
+          "development": {
+            "status": "active",
+            "targets": []
+          },
+          "production": {
+            "status": "inactive",
+            "targets": []
+          }
+        },
+        "variables": [
+          {
+            "key": "show-new-dashboard",
+            "type": "Boolean"
+          }
+        ],
+        "variations": [
+          {
+            "key": "variation-1",
+            "name": "User's with dashboard access",
+            "variables": {
+              "show-new-dashboard": true
+            }
+          }
+        ]
+      },
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "update_feature",
+        "project": "delivery-app",
+        "feature": "new-dash",
+        "name": "New Dashboard",
+        "tags": [
+          "new",
+          "dashboard"
+        ]
+      },
+      "method": "PATCH",
+      "path": "/v2/projects/delivery-app/features/new-dash",
+      "body": {
+        "name": "New Dashboard",
+        "tags": [
+          "new",
+          "dashboard"
+        ]
+      },
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "update_feature_status",
+        "project": "delivery-app",
+        "feature": "new-dash",
+        "status": "complete",
+        "staticVariation": "variation-1"
+      },
+      "method": "PATCH",
+      "path": "/v2/projects/delivery-app/features/new-dash/status",
+      "body": {
+        "status": "complete",
+        "staticVariation": "variation-1"
+      },
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "update_static_configuration",
+        "project": "delivery-app",
+        "feature": "new-dash",
+        "variables": {
+          "show-new-dashboard": true
+        },
+        "environments": {}
+      },
+      "method": "PATCH",
+      "path": "/v2/projects/delivery-app/features/new-dash/static-configuration",
+      "body": {
+        "variables": {
+          "show-new-dashboard": true
+        },
+        "environments": {}
+      },
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "create_variable",
+        "project": "delivery-app",
+        "key": "show-new-dashboard",
+        "type": "Boolean",
+        "feature_id": "61450f3daec96f5cf4a49947"
+      },
+      "method": "POST",
+      "path": "/v1/projects/delivery-app/variables",
+      "body": {
+        "key": "show-new-dashboard",
+        "type": "Boolean",
+        "_feature": "61450f3daec96f5cf4a49947"
+      },
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "update_variable",
+        "project": "delivery-app",
+        "variable": "show-new-dashboard",
+        "name": "Show New Dashboard",
+        "persistent": false,
+        "tags": []
+      },
+      "method": "PATCH",
+      "path": "/v1/projects/delivery-app/variables/show-new-dashboard",
+      "body": {
+        "name": "Show New Dashboard",
+        "persistent": false,
+        "tags": []
+      },
+      "query": {}
+    },
+    {
+      "config": {
+        "operation": "update_variable_status",
+        "project": "delivery-app",
+        "variable": "show-new-dashboard",
+        "status": "archived"
+      },
+      "method": "PATCH",
+      "path": "/v1/projects/delivery-app/variables/show-new-dashboard/status",
+      "body": {
+        "status": "archived"
+      },
+      "query": {}
+    }
+  ]
+}

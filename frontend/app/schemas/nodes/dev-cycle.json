@@ -1,0 +1,1968 @@
+{
+  "$defs": {
+    "CreateEnvironment": {
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_environment",
+          "default": "create_environment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "key": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-z0-9-_.]+$",
+          "title": "Key",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "development",
+            "staging",
+            "production",
+            "disaster_recovery"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 9,
+              "pattern": "^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        }
+      },
+      "required": [
+        "project",
+        "name",
+        "key",
+        "type"
+      ],
+      "title": "CreateEnvironment",
+      "type": "object"
+    },
+    "CreateFeature": {
+      "additionalProperties": false,
+      "description": "Create a feature with explicit environment states and no targeting rules.",
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_feature",
+          "default": "create_feature",
+          "title": "Operation",
+          "type": "string"
+        },
+        "key": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-z0-9-_.]+$",
+          "title": "Key",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "configurations": {
+          "additionalProperties": {
+            "$ref": "#/$defs/FeatureConfiguration"
+          },
+          "description": "Map environment keys to status and empty targets, e.g. {\"development\":{\"status\":\"inactive\",\"targets\":[]}}.",
+          "minProperties": 1,
+          "title": "Configurations",
+          "type": "object"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "release",
+                "experiment",
+                "permission",
+                "ops"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "release",
+            "experiment",
+            "permission",
+            "ops"
+          ],
+          "x-enum-searchable": true
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/VariableDefinition"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variables"
+        },
+        "variations": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/VariationDefinition"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variations"
+        },
+        "controlVariation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Controlvariation"
+        }
+      },
+      "required": [
+        "project",
+        "key",
+        "name",
+        "configurations"
+      ],
+      "title": "CreateFeature",
+      "type": "object"
+    },
+    "CreateProject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "key": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-z0-9-_.]+$",
+          "title": "Key",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 9,
+              "pattern": "^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        }
+      },
+      "required": [
+        "name",
+        "key"
+      ],
+      "title": "CreateProject",
+      "type": "object"
+    },
+    "CreateVariable": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-z0-9-_.]+$",
+          "title": "Key",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "String",
+            "Boolean",
+            "Number",
+            "JSON"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_variable",
+          "default": "create_variable",
+          "title": "Operation",
+          "type": "string"
+        },
+        "feature_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional feature ID sent as _feature.",
+          "title": "Feature Id"
+        }
+      },
+      "required": [
+        "key",
+        "type",
+        "project"
+      ],
+      "title": "CreateVariable",
+      "type": "object"
+    },
+    "DeleteEnvironment": {
+      "additionalProperties": false,
+      "description": "Permanently delete this environment.",
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "environment": {
+          "title": "Environment Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_environment",
+          "default": "delete_environment",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project",
+        "environment"
+      ],
+      "title": "DeleteEnvironment",
+      "type": "object"
+    },
+    "DeleteProject": {
+      "additionalProperties": false,
+      "description": "Permanently delete the project and its resources.",
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "title": "DeleteProject",
+      "type": "object"
+    },
+    "DeleteVariable": {
+      "additionalProperties": false,
+      "description": "Permanently delete this variable.",
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "variable": {
+          "title": "Variable Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_variable",
+          "default": "delete_variable",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project",
+        "variable"
+      ],
+      "title": "DeleteVariable",
+      "type": "object"
+    },
+    "DevCycleAccessToken": {
+      "properties": {
+        "credential_type": {
+          "const": "dev_cycle_access_token",
+          "default": "dev_cycle_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "DevCycle Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste a DevCycle Management API access token without the Bearer prefix. Obtain it using the client credentials in Organization Settings and the documented token endpoint. SDK keys are not management tokens. NoClick does not refresh this token; replace it when it expires. Project access proves this token works, not every write permission.",
+      "x-credential-url": "https://docs.devcycle.com/management-api/"
+    },
+    "FeatureConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "active",
+            "inactive"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "targets": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "maxItems": 0,
+          "title": "Targets",
+          "type": "array"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "FeatureConfiguration",
+      "type": "object"
+    },
+    "GetAudience": {
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "audience": {
+          "title": "Audience Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_audience",
+          "default": "get_audience",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project",
+        "audience"
+      ],
+      "title": "GetAudience",
+      "type": "object"
+    },
+    "GetEnvironment": {
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "environment": {
+          "title": "Environment Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_environment",
+          "default": "get_environment",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project",
+        "environment"
+      ],
+      "title": "GetEnvironment",
+      "type": "object"
+    },
+    "GetFeature": {
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "feature": {
+          "title": "Feature Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_feature",
+          "default": "get_feature",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project",
+        "feature"
+      ],
+      "title": "GetFeature",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "title": "GetProject",
+      "type": "object"
+    },
+    "GetStaticConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "feature": {
+          "title": "Feature Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_static_configuration",
+          "default": "get_static_configuration",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project",
+        "feature"
+      ],
+      "title": "GetStaticConfiguration",
+      "type": "object"
+    },
+    "GetVariable": {
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "variable": {
+          "title": "Variable Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_variable",
+          "default": "get_variable",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project",
+        "variable"
+      ],
+      "title": "GetVariable",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ListAudiences": {
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "Read one page; increment to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "perPage": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "sortBy": {
+          "default": "createdAt",
+          "enum": [
+            "createdAt",
+            "updatedAt",
+            "name",
+            "key",
+            "propertyKey"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sortOrder": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_audiences",
+          "default": "list_audiences",
+          "title": "Operation",
+          "type": "string"
+        },
+        "createdBy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Createdby"
+        },
+        "includeUsage": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includeusage"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "title": "ListAudiences",
+      "type": "object"
+    },
+    "ListEnvironments": {
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "Read one page; increment to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "perPage": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "sortBy": {
+          "default": "createdAt",
+          "enum": [
+            "createdAt",
+            "updatedAt",
+            "name",
+            "key",
+            "propertyKey"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sortOrder": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_environments",
+          "default": "list_environments",
+          "title": "Operation",
+          "type": "string"
+        },
+        "createdBy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Createdby"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "title": "ListEnvironments",
+      "type": "object"
+    },
+    "ListFeatures": {
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "Read one page; increment to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "perPage": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "sortBy": {
+          "default": "createdAt",
+          "enum": [
+            "createdAt",
+            "updatedAt",
+            "name",
+            "key",
+            "propertyKey"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sortOrder": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_features",
+          "default": "list_features",
+          "title": "Operation",
+          "type": "string"
+        },
+        "createdBy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Createdby"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "release",
+                "experiment",
+                "permission",
+                "ops"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "release",
+            "experiment",
+            "permission",
+            "ops"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "complete",
+                "archived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "complete",
+            "archived"
+          ],
+          "x-enum-searchable": true
+        },
+        "staleness": {
+          "anyOf": [
+            {
+              "enum": [
+                "all",
+                "unused",
+                "released",
+                "unmodified",
+                "notStale"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Staleness",
+          "enum": [
+            "all",
+            "unused",
+            "released",
+            "unmodified",
+            "notStale"
+          ],
+          "x-enum-searchable": true
+        },
+        "includeLatestUpdate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Includelatestupdate"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "title": "ListFeatures",
+      "type": "object"
+    },
+    "ListProjects": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Read one page; increment to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "perPage": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "sortBy": {
+          "default": "createdAt",
+          "enum": [
+            "createdAt",
+            "updatedAt",
+            "name",
+            "key",
+            "propertyKey"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sortOrder": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string"
+        },
+        "createdBy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Createdby"
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "ListVariables": {
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "Read one page; increment to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "perPage": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "sortBy": {
+          "default": "createdAt",
+          "enum": [
+            "createdAt",
+            "updatedAt",
+            "name",
+            "key",
+            "propertyKey"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sortOrder": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_variables",
+          "default": "list_variables",
+          "title": "Operation",
+          "type": "string"
+        },
+        "feature": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Feature"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "String",
+                "Boolean",
+                "Number",
+                "JSON"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "String",
+            "Boolean",
+            "Number",
+            "JSON"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "archived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "archived"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "title": "ListVariables",
+      "type": "object"
+    },
+    "UpdateEnvironment": {
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "environment": {
+          "title": "Environment Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_environment",
+          "default": "update_environment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "key": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[a-z0-9-_.]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Key"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "development",
+                "staging",
+                "production",
+                "disaster_recovery"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "development",
+            "staging",
+            "production",
+            "disaster_recovery"
+          ],
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 9,
+              "pattern": "^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        }
+      },
+      "required": [
+        "project",
+        "environment"
+      ],
+      "title": "UpdateEnvironment",
+      "type": "object"
+    },
+    "UpdateFeature": {
+      "additionalProperties": false,
+      "description": "Update feature metadata without changing targeting rules.",
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "feature": {
+          "title": "Feature Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_feature",
+          "default": "update_feature",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "key": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[a-z0-9-_.]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Key"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "release",
+                "experiment",
+                "permission",
+                "ops"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "release",
+            "experiment",
+            "permission",
+            "ops"
+          ],
+          "x-enum-searchable": true
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "project",
+        "feature"
+      ],
+      "title": "UpdateFeature",
+      "type": "object"
+    },
+    "UpdateFeatureStatus": {
+      "additionalProperties": false,
+      "description": "Change lifecycle status; complete serves the specified static variation.",
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "feature": {
+          "title": "Feature Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_feature_status",
+          "default": "update_feature_status",
+          "title": "Operation",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "complete",
+            "archived"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "staticVariation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Staticvariation"
+        }
+      },
+      "required": [
+        "project",
+        "feature",
+        "status"
+      ],
+      "title": "UpdateFeatureStatus",
+      "type": "object"
+    },
+    "UpdateProject": {
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "key": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[a-z0-9-_.]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Key"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "maxLength": 9,
+              "pattern": "^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "title": "UpdateProject",
+      "type": "object"
+    },
+    "UpdateStaticConfiguration": {
+      "additionalProperties": false,
+      "description": "Update static variable values and environment states.",
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "feature": {
+          "title": "Feature Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_static_configuration",
+          "default": "update_static_configuration",
+          "title": "Operation",
+          "type": "string"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Map variable keys to their static JSON values.",
+          "title": "Variables"
+        },
+        "environments": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Environment configuration object as documented by DevCycle.",
+          "title": "Environments"
+        }
+      },
+      "required": [
+        "project",
+        "feature"
+      ],
+      "title": "UpdateStaticConfiguration",
+      "type": "object"
+    },
+    "UpdateVariable": {
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "variable": {
+          "title": "Variable Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_variable",
+          "default": "update_variable",
+          "title": "Operation",
+          "type": "string"
+        },
+        "key": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "pattern": "^[a-z0-9-_.]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Key"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "String",
+                "Boolean",
+                "Number",
+                "JSON"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "String",
+            "Boolean",
+            "Number",
+            "JSON"
+          ],
+          "x-enum-searchable": true
+        },
+        "persistent": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Persistent"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "project",
+        "variable"
+      ],
+      "title": "UpdateVariable",
+      "type": "object"
+    },
+    "UpdateVariableStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "project": {
+          "title": "Project Key or ID",
+          "type": "string"
+        },
+        "variable": {
+          "title": "Variable Key or ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_variable_status",
+          "default": "update_variable_status",
+          "title": "Operation",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "archived"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project",
+        "variable",
+        "status"
+      ],
+      "title": "UpdateVariableStatus",
+      "type": "object"
+    },
+    "VariableDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-z0-9-_.]+$",
+          "title": "Key",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "String",
+            "Boolean",
+            "Number",
+            "JSON"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "key",
+        "type"
+      ],
+      "title": "VariableDefinition",
+      "type": "object"
+    },
+    "VariationDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "maxLength": 100,
+          "minLength": 1,
+          "pattern": "^[a-z0-9-_.]+$",
+          "title": "Key",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variables"
+        }
+      },
+      "required": [
+        "key",
+        "name"
+      ],
+      "title": "VariationDefinition",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_environment": "#/$defs/CreateEnvironment",
+          "create_feature": "#/$defs/CreateFeature",
+          "create_project": "#/$defs/CreateProject",
+          "create_variable": "#/$defs/CreateVariable",
+          "delete_environment": "#/$defs/DeleteEnvironment",
+          "delete_project": "#/$defs/DeleteProject",
+          "delete_variable": "#/$defs/DeleteVariable",
+          "get_audience": "#/$defs/GetAudience",
+          "get_environment": "#/$defs/GetEnvironment",
+          "get_feature": "#/$defs/GetFeature",
+          "get_project": "#/$defs/GetProject",
+          "get_static_configuration": "#/$defs/GetStaticConfiguration",
+          "get_variable": "#/$defs/GetVariable",
+          "list_audiences": "#/$defs/ListAudiences",
+          "list_environments": "#/$defs/ListEnvironments",
+          "list_features": "#/$defs/ListFeatures",
+          "list_projects": "#/$defs/ListProjects",
+          "list_variables": "#/$defs/ListVariables",
+          "update_environment": "#/$defs/UpdateEnvironment",
+          "update_feature": "#/$defs/UpdateFeature",
+          "update_feature_status": "#/$defs/UpdateFeatureStatus",
+          "update_project": "#/$defs/UpdateProject",
+          "update_static_configuration": "#/$defs/UpdateStaticConfiguration",
+          "update_variable": "#/$defs/UpdateVariable",
+          "update_variable_status": "#/$defs/UpdateVariableStatus"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/CreateProject"
+        },
+        {
+          "$ref": "#/$defs/UpdateProject"
+        },
+        {
+          "$ref": "#/$defs/DeleteProject"
+        },
+        {
+          "$ref": "#/$defs/ListEnvironments"
+        },
+        {
+          "$ref": "#/$defs/GetEnvironment"
+        },
+        {
+          "$ref": "#/$defs/CreateEnvironment"
+        },
+        {
+          "$ref": "#/$defs/UpdateEnvironment"
+        },
+        {
+          "$ref": "#/$defs/DeleteEnvironment"
+        },
+        {
+          "$ref": "#/$defs/ListFeatures"
+        },
+        {
+          "$ref": "#/$defs/GetFeature"
+        },
+        {
+          "$ref": "#/$defs/CreateFeature"
+        },
+        {
+          "$ref": "#/$defs/UpdateFeature"
+        },
+        {
+          "$ref": "#/$defs/UpdateFeatureStatus"
+        },
+        {
+          "$ref": "#/$defs/GetStaticConfiguration"
+        },
+        {
+          "$ref": "#/$defs/UpdateStaticConfiguration"
+        },
+        {
+          "$ref": "#/$defs/ListVariables"
+        },
+        {
+          "$ref": "#/$defs/GetVariable"
+        },
+        {
+          "$ref": "#/$defs/CreateVariable"
+        },
+        {
+          "$ref": "#/$defs/UpdateVariable"
+        },
+        {
+          "$ref": "#/$defs/DeleteVariable"
+        },
+        {
+          "$ref": "#/$defs/UpdateVariableStatus"
+        },
+        {
+          "$ref": "#/$defs/ListAudiences"
+        },
+        {
+          "$ref": "#/$defs/GetAudience"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DevCycleAccessToken"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Dev-cycle Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
