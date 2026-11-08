@@ -228,11 +228,52 @@ an undeclared collection cannot masquerade as OpenAPI.
 
 Postman contracts match method, exact literal path segments, variable path
 segments (`:name` and `{{name}}`), and the collection's host. Base-URL variables
-bind only to values published in the collection, never catalog credentials or
-the intercepted request. Enabled query keys, required collection headers,
+bind to values published in the collection, or the explicit provider-docs
+binding below, never catalog credentials or the intercepted request.
+Enabled query keys, required collection headers,
 authentication placement/scheme and media declarations are checked. JSON field
 paths (including nested array objects) and form fields must occur in the item
 or its saved examples' original request bodies. Scripts are never executed.
+
+Dhruv approved: "Allow it, only from the provider's own docs page". A collection
+pin may declare `host_bindings` for a host variable the collection never defines,
+or defines only with disabled, null or empty values:
+
+```json
+{
+  "format": "postman",
+  "host_bindings": {
+    "base_url": {
+      "value": "https://api.provider.com/v1",
+      "source": "https://docs.provider.com/api/reference"
+    }
+  }
+}
+```
+
+Bindings belong to each pin (including each entry in `specs`), never to all
+collections implicitly. A non-empty enabled definition at any collection or
+item scope refuses a binding; a defined host is never overridden. Only host
+variables are eligible, including variables embedded in a host such as
+`api-{{IdBusiness}}.provider.com`. For an embedded variable, `value` names the
+complete base URL and must preserve the host's literal characters. A whole base
+variable can carry the documented base path; every request's remaining path
+stays exactly as published. An embedded host cannot introduce a path.
+
+Both URLs must be absolute HTTPS URLs. Their registrable domains (eTLD+1) must
+match, using the pinned library's bundled public suffix list, including private
+suffixes, offline. Third-party domains, lookalikes, and shared docs/mirror hosts
+(including APIs.guru, Postman/getpostman, readme.io, github.io, gitbook.io,
+stoplight.io and SwaggerHub) are refused. The unchanged collection remains
+hash-pinned; no bound collection is written back to it.
+
+The run lists its catalog bindings with their pin indexes; every request
+matched through one records its variable, value and source. The verdict names
+these weaker host attestations in `host_bindings`, and with source audit on
+fetches each source through the existing `page()` cache and blocks unless it
+shows the bound URL. `--no-audit` skips this fetch, just as for other documented
+evidence. Bindings retain the Postman bar: at most `postman-checked`, never
+`ready`, and never a replacement for saved example responses.
 
 Every saved response is replayed with its published status, headers and exact
 body text, without schema inference, response generation, placeholder changes,

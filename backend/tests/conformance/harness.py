@@ -1960,8 +1960,13 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
     }
     credentials = operation_credentials(entry, by_operation, default_credential)
     contracts, contract_errors = [], []
-    for doc in load_specs(provider):
+    pins = entry.get("specs", [entry])
+    for index, doc in enumerate(load_specs(provider)):
         try:
+            binding_options = (
+                {"host_bindings": pins[index].get("host_bindings")}
+                if is_postman(doc) and index < len(pins) else {}
+            )
             contracts.append(
                 (PostmanContract if is_postman(doc) else Contract)(
                     doc,
@@ -1969,6 +1974,7 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
                     server_url=entry.get("server_url"),
                     # Whole-URL server variables bind only to the catalog's default credential.
                     server_variables=default_credential or {},
+                    **binding_options,
                 )
             )
         except FixtureError as exc:
@@ -2114,6 +2120,8 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
                 record["contract_format"] = "postman"
                 record["postman_item"] = operation["item_id"]
                 record["published_responses"] = len(operation["item"].get("response", []))
+                if operation.get("host_bindings"):
+                    record["host_bindings"] = operation["host_bindings"]
                 ordinal = len(result.requests) - 1
                 replay_base = (op, case_name, ordinal, spec_index, operation["item_id"])
                 replayed.add((*replay_base, response_plan.get(ordinal, 0)))

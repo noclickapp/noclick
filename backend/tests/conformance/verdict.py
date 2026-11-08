@@ -118,6 +118,15 @@ def matched(want, text):
     return found
 
 
+def bound_url_shown(value, text):
+    # A base can prefix a published endpoint, but not a different host/version.
+    return any(
+        re.search(re.escape(spelling) + r"(?![\w.~%+@:-])", form)
+        for form in page_forms(text)
+        for spelling in (value, json.dumps(value)[1:-1])
+    )
+
+
 def openapi_verdict(report, catalog, audit=True):
     report = report[0] if isinstance(report, list) else report
     catalog = Path(catalog)
@@ -219,13 +228,45 @@ def verdict(report, catalog, audit=True):
     entry = manifest.get(report["provider"], {})
     pins = entry.get("specs", [entry])
     if not any(p.get("format") == "postman" for p in pins):
-        return openapi_verdict(report, catalog, audit)
+        result = openapi_verdict(report, catalog, audit)
+        if report.get("host_bindings"):
+            result["blocking"].append("Host bindings require a Postman collection pin")
+            result.update(ready=False, state="not-ready")
+        return result
     converted = copy.deepcopy(report)
     for op in converted["operations"]:
         for req in op.get("requests", []):
             if req.get("contract_format") == "postman" and req.get("response_source") == "postman_example":
                 req["response_source"] = "spec_example"
     result = openapi_verdict(converted, catalog, audit)
+    bindings = [
+        {"spec_index": index, "variable": variable, **binding}
+        for index, pin in enumerate(pins) if pin.get("format") == "postman"
+        for variable, binding in pin.get("host_bindings", {}).items()
+    ]
+    if bindings or report.get("host_bindings"):
+        from tests.conformance.postman import validate_host_bindings
+
+        result["host_bindings"] = bindings
+        if report.get("host_bindings") != bindings:
+            result["blocking"].append("Postman host bindings differ between report and catalog")
+        for binding in bindings:
+            label = f"Postman host binding {binding['variable']} = {binding['value']} ({binding['source']})"
+            try:
+                validate_host_bindings({binding["variable"]: {
+                    key: binding[key] for key in ("value", "source")
+                }})
+            except ValueError as exc:
+                result["blocking"].append(f"{label}: {exc}")
+                continue
+            if audit:
+                try:
+                    text = page(binding["source"])
+                except Exception as exc:
+                    result["blocking"].append(f"{label}: source unreadable ({type(exc).__name__})")
+                    continue
+                if not bound_url_shown(binding["value"], text):
+                    result["blocking"].append(f"{label}: source page does not show bound URL")
     # Preserve the original OpenAPI-only judgment for each operation. Converting
     # Postman sources must not turn a mixed operation's generated parser failure
     # into a weaker, advisory Postman result.
@@ -234,7 +275,7 @@ def verdict(report, catalog, audit=True):
         if op.get("skipped"):
             continue
         groups.setdefault(op["operation"], []).append(op)
-    used_postman = False
+    used_postman = bool(bindings)
     for name, operations in groups.items():
         requests = [r for op in operations for r in op.get("requests", [])]
         postman = [r for r in requests if r.get("contract_format") == "postman"]
@@ -259,6 +300,9 @@ def verdict(report, catalog, audit=True):
                 if req.get("contract_format") != "postman":
                     continue
                 index = req.get("spec_index", 0)
+                for binding in req.get("host_bindings", []):
+                    if {"spec_index": index, **binding} not in bindings:
+                        errors.append("request host binding is not declared by its Postman pin")
                 if index >= len(pins) or pins[index].get("format") != "postman":
                     errors.append("Postman evidence does not identify a Postman pin")
                 key = (index, req.get("postman_item"))

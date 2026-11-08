@@ -9,12 +9,77 @@ from email.policy import default
 from urllib.parse import parse_qsl, quote, urlsplit
 
 import httpx
+import tldextract
 
 SCHEMAS = {
     f"https://schema.getpostman.com/json/collection/v{version}/collection.json"
     for version in ("2.0.0", "2.1.0")
 }
 VARIABLE = re.compile(r"\{\{([^{}]+)\}\}")
+# Use the packaged PSL, including private suffixes, without fetching updates.
+DOMAIN = tldextract.TLDExtract(
+    suffix_list_urls=(), cache_dir=None, include_psl_private_domains=True
+)
+DOCS_HOSTS = {
+    "apis.guru",
+    "postman.com",
+    "getpostman.com",
+    "readme.io",
+    "github.io",
+    "gitbook.io",
+    "gitbook.com",
+    "stoplight.io",
+    "swaggerhub.com",
+    "swaggerhub.io",
+}
+
+
+def validate_host_bindings(bindings):
+    if not isinstance(bindings, dict):
+        raise ValueError("Postman host_bindings must be an object")
+    for variable, binding in bindings.items():
+        if not isinstance(variable, str) or not variable or VARIABLE.search(variable):
+            raise ValueError("Postman host binding requires a variable name")
+        if not isinstance(binding, dict) or set(binding) != {"value", "source"}:
+            raise ValueError("Postman host binding requires value and source")
+        domains = []
+        for key in ("value", "source"):
+            raw = binding[key]
+            if not isinstance(raw, str):
+                raise ValueError("Postman host binding requires absolute https URLs")
+            url = urlsplit(raw)
+            if (
+                url.scheme != "https"
+                or not url.hostname
+                or url.username is not None
+                or url.password is not None
+                or url.fragment
+                or VARIABLE.search(raw)
+                or any(c.isspace() for c in raw)
+                or "\\" in raw
+                or (key == "value" and url.query)
+            ):
+                raise ValueError("Postman host binding requires absolute https URLs")
+            url.port  # Reject malformed ports before matching a request.
+            host = url.hostname.rstrip(".").encode("idna").decode("ascii").lower()
+            domain = DOMAIN(host)
+            if (
+                not domain.suffix
+                or not domain.domain
+                or any(
+                    host == blocked or host.endswith("." + blocked)
+                    for blocked in DOCS_HOSTS
+                )
+            ):
+                raise ValueError(
+                    "Postman host binding source must be on the provider's own domain"
+                )
+            domains.append(domain.top_domain_under_public_suffix)
+        if domains[0] != domains[1]:
+            raise ValueError(
+                "Postman host binding source must be on the provider's own domain"
+            )
+    return bindings
 
 
 def is_postman(doc):
@@ -99,12 +164,42 @@ def published_body(body):
 
 class PostmanContract:
     def __init__(
-        self, doc, *, auth_override=None, server_url=None, server_variables=None
+        self,
+        doc,
+        *,
+        auth_override=None,
+        server_url=None,
+        server_variables=None,
+        host_bindings=None,
     ):
         validate_collection(doc)
         self.doc = doc
         self.auth_override = auth_override
         self.paths = []
+        self.host_bindings = validate_host_bindings(
+            {} if host_bindings is None else host_bindings
+        )
+
+        def refuse_defined(value):
+            if isinstance(value, dict):
+                for row in enabled(value.get("variable")):
+                    if (
+                        row["key"] in self.host_bindings
+                        and row.get("value") is not None
+                        and str(row["value"]).strip()
+                    ):
+                        raise ValueError(
+                            f"Postman host binding refuses defined variable: {row['key']}"
+                        )
+                for child in value.values():
+                    refuse_defined(child)
+            elif isinstance(value, list):
+                for child in value:
+                    refuse_defined(child)
+
+        if self.host_bindings:
+            refuse_defined(doc)
+        used_bindings = set()
 
         # Catalog credentials/server_url cannot invent an undocumented host.
         def walk(items, variables, auth, trail=()):
@@ -122,7 +217,8 @@ class PostmanContract:
                     req = item["request"]
                     if not isinstance(req, dict):
                         raise ValueError("Postman request must be an object")
-                    path, origin, query = self.url(req, local)
+                    used = []
+                    path, origin, query = self.url(req, local, self.host_bindings, used)
                     regex = re.compile(
                         "^"
                         + "/".join(
@@ -142,6 +238,9 @@ class PostmanContract:
                         "auth": req.get("auth", inherited),
                         "security": bool(req.get("auth", inherited)),
                     }
+                    if used:
+                        op["host_bindings"] = used
+                        used_bindings.update(b["variable"] for b in used)
                     canonical = re.sub(
                         r"\{\{([^{}]+)\}\}|:([^/]+)",
                         lambda m: "{" + (m[1] or m[2]) + "}",
@@ -154,9 +253,13 @@ class PostmanContract:
             v["key"]: str(v.get("value", "")) for v in enabled(doc.get("variable"))
         }
         walk(doc["item"], variables, doc.get("auth"))
+        if set(self.host_bindings) - used_bindings:
+            raise ValueError(
+                "Postman host binding variable is not an undefined request host"
+            )
 
     @staticmethod
-    def url(req, variables):
+    def url(req, variables, host_bindings=None, used=None):
         url = req.get("urlObject", req.get("url"))
         if isinstance(url, dict) and "host" in url:
             host = url["host"]
@@ -181,10 +284,41 @@ class PostmanContract:
             head, slash, tail = rest.partition("/")
             head = scheme + "://" + head
         for _ in range(20):
-            expanded = VARIABLE.sub(lambda m: variables.get(m[1], m[0]), head)
+            expanded = VARIABLE.sub(
+                lambda m: m[0]
+                if host_bindings and m[1] in host_bindings
+                else variables.get(m[1], m[0]),
+                head,
+            )
             if expanded == head:
                 break
             head = expanded
+        names = list(dict.fromkeys(VARIABLE.findall(head)))
+        bindings = host_bindings or {}
+        if names and any(name in bindings for name in names):
+            if not all(name in bindings for name in names):
+                raise ValueError("Postman bound host still has undefined variables")
+            values = {bindings[name]["value"] for name in names}
+            if len(values) != 1:
+                raise ValueError(
+                    "Postman bindings for one host must agree on its base URL"
+                )
+            value = values.pop()
+            # Whole base variables can include a base path; an embedded host
+            # variable must preserve every literal host character and scheme.
+            if not re.fullmatch(r"(?:https://)?\{\{[^{}]+\}\}", head):
+                target = value if "://" in head else value.removeprefix("https://")
+                pattern = "".join(
+                    "[^/:]+" if VARIABLE.fullmatch(part) else re.escape(part)
+                    for part in re.split(r"(\{\{[^{}]+\}\})", head)
+                )
+                if not re.fullmatch(pattern, target):
+                    raise ValueError(
+                        "Postman binding changes literal host or introduces a path beyond the base"
+                    )
+            head = value.rstrip("/")
+            if used is not None:
+                used.extend({"variable": name, **bindings[name]} for name in names)
         raw = head + ("/" + tail if slash else "")
         if "://" not in raw and not raw.startswith(("/", "{{")):
             raw = "https://" + raw

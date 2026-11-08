@@ -99,3 +99,55 @@ def test_skipping_every_operation_cannot_claim_openapi_ready(evidence):
         op["skipped"] = "trigger passthrough"
     result = v.verdict(report, catalog, False)
     assert result["state"] == "not-ready" and result["ready"] is False
+
+
+@pytest.mark.parametrize('page_text', ['Unrelated docs', 'https://api.example.com.evil.com/v1', 'https://api.example.com/v10'])
+def test_host_binding_requires_its_url_on_its_own_page(evidence, monkeypatch, page_text):
+    report, catalog = evidence
+    binding = {'value': 'https://api.example.com/v1', 'source': 'https://docs.example.com/reference'}
+    (catalog / 'manifest.json').write_text(json.dumps({'test': {'format': 'postman', 'host_bindings': {'base': binding}}}))
+    report['host_bindings'] = [{'spec_index': 0, 'variable': 'base', **binding}]
+    for op in report['operations']:
+        op['requests'][0]['host_bindings'] = [{'variable': 'base', **binding}]
+    monkeypatch.setattr(v, 'page', lambda _: page_text)
+    result = v.verdict(report, catalog)
+    assert result['state'] == 'not-ready'
+    assert any('source page does not show bound URL' in b for b in result['blocking'])
+
+
+def test_host_binding_report_cannot_change_its_pin(evidence):
+    report, catalog = evidence
+    binding = {'value': 'https://api.example.com/v1', 'source': 'https://docs.example.com/reference'}
+    (catalog / 'manifest.json').write_text(json.dumps({'test': {'format': 'postman', 'host_bindings': {'base': binding}}}))
+    report['host_bindings'] = [{'spec_index': 0, 'variable': 'base', **binding}]
+    report['operations'][0]['requests'][0]['host_bindings'] = [
+        {'variable': 'base', **binding, 'value': 'https://different.example.com/v1'}]
+    result = v.verdict(report, catalog, False)
+    assert result['state'] == 'not-ready'
+    assert any('not declared by its Postman pin' in b for b in result['blocking'])
+    report.pop('host_bindings')
+    assert any('differ between report and catalog' in b for b in v.verdict(report, catalog, False)['blocking'])
+
+
+def test_non_bound_postman_output_is_byte_identical(evidence):
+    report, catalog = evidence
+    expected = {'provider': 'test', 'ready': False, 'blocking': [], 'advisory': [],
+        'stats': {'operations': 2, 'skipped': 0, 'request_ok': 2, 'authored_parser_ok': 2,
+                  'generated_only': 0, 'local_ok': 0},
+        'state': 'postman-checked', 'operation_states': {'create': 'postman-checked'}}
+    assert json.dumps(v.verdict(report, catalog, False), indent=1) == json.dumps(expected, indent=1)
+
+
+def test_catalog_bindings_never_grant_openapi_ready(evidence):
+    report, catalog = evidence
+    binding = {'value': 'https://api.example.com/v1', 'source': 'https://docs.example.com/reference'}
+    manifest = {'test': {'specs': [{'format': 'postman', 'host_bindings': {'base': binding}}, {'format': 'openapi'}]}}
+    (catalog / 'manifest.json').write_text(json.dumps(manifest))
+    report['host_bindings'] = [{'spec_index': 0, 'variable': 'base', **binding}]
+    for op in report['operations']:
+        op['requests'][0].update(contract_format='openapi', spec_index=1, response_source='spec_example')
+    result = v.verdict(report, catalog, False)
+    assert result['ready'] is False and result['state'] == 'postman-checked'
+    (catalog / 'manifest.json').write_text(json.dumps({'test': {'format': 'openapi'}}))
+    result = v.verdict(report, catalog, False)
+    assert result['ready'] is False and result['state'] == 'not-ready'

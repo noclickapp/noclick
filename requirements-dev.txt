@@ -28,3 +28,5 @@ rfc3339-validator==0.1.4
 uri-template==1.3.0
 # The harness builds request parameters as werkzeug MultiDicts.
 werkzeug==3.1.9
+# Offline public-suffix checks for provider-owned Postman host evidence.
+tldextract==5.3.0
