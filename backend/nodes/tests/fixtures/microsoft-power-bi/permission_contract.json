@@ -1,0 +1,134 @@
+{
+  "source": "https://raw.githubusercontent.com/microsoft/PowerBI-CSharp/master/sdk/swaggers/swagger.json",
+  "sha256": "e1431f9030c41cc6d39435507184b0a7cef17ac1cce93435f0f9d9d0a821be6c",
+  "operations": {
+    "Datasets_GetDatasetsInGroup": {
+      "required_scope_section": "Dataset.ReadWrite.All or Dataset.Read.All",
+      "alternatives": [
+        "Dataset.ReadWrite.All",
+        "Dataset.Read.All"
+      ]
+    },
+    "Datasets_PostDatasetInGroup": {
+      "required_scope_section": "Dataset.ReadWrite.All",
+      "alternatives": [
+        "Dataset.ReadWrite.All"
+      ]
+    },
+    "Datasets_GetDatasetInGroup": {
+      "required_scope_section": "Dataset.ReadWrite.All or Dataset.Read.All",
+      "alternatives": [
+        "Dataset.ReadWrite.All",
+        "Dataset.Read.All"
+      ]
+    },
+    "Datasets_DeleteDatasetInGroup": {
+      "required_scope_section": "Dataset.ReadWrite.All\n<br><br>",
+      "alternatives": [
+        "Dataset.ReadWrite.All"
+      ]
+    },
+    "Datasets_GetTablesInGroup": {
+      "required_scope_section": "",
+      "alternatives": []
+    },
+    "Datasets_PostRowsInGroup": {
+      "required_scope_section": "Dataset.ReadWrite.All",
+      "alternatives": [
+        "Dataset.ReadWrite.All"
+      ]
+    },
+    "Datasets_DeleteRowsInGroup": {
+      "required_scope_section": "Dataset.ReadWrite.All",
+      "alternatives": [
+        "Dataset.ReadWrite.All"
+      ]
+    },
+    "Datasets_GetRefreshHistoryInGroup": {
+      "required_scope_section": "Dataset.ReadWrite.All or Dataset.Read.All",
+      "alternatives": [
+        "Dataset.ReadWrite.All",
+        "Dataset.Read.All"
+      ]
+    },
+    "Datasets_RefreshDatasetInGroup": {
+      "required_scope_section": "Dataset.ReadWrite.All",
+      "alternatives": [
+        "Dataset.ReadWrite.All"
+      ]
+    },
+    "Datasets_ExecuteQueriesInGroup": {
+      "required_scope_section": "Dataset.ReadWrite.All or Dataset.Read.All",
+      "alternatives": [
+        "Dataset.ReadWrite.All",
+        "Dataset.Read.All"
+      ]
+    },
+    "Reports_GetReportsInGroup": {
+      "required_scope_section": "Report.ReadWrite.All or Report.Read.All\n<br><br>",
+      "alternatives": [
+        "Report.ReadWrite.All",
+        "Report.Read.All"
+      ]
+    },
+    "Reports_GetReportInGroup": {
+      "required_scope_section": "Report.ReadWrite.All or Report.Read.All\n<br><br>",
+      "alternatives": [
+        "Report.ReadWrite.All",
+        "Report.Read.All"
+      ]
+    },
+    "Reports_DeleteReportInGroup": {
+      "required_scope_section": "Report.ReadWrite.All\n<br><br>",
+      "alternatives": [
+        "Report.ReadWrite.All"
+      ]
+    },
+    "Reports_CloneReportInGroup": {
+      "required_scope_section": "Content.Create\n<br><br>",
+      "alternatives": [
+        "Content.Create"
+      ]
+    },
+    "Reports_RebindReportInGroup": {
+      "required_scope_section": "Report.ReadWrite.All",
+      "alternatives": [
+        "Report.ReadWrite.All"
+      ]
+    },
+    "Reports_GetPagesInGroup": {
+      "required_scope_section": "Report.ReadWrite.All or Report.Read.All\n<br><br>",
+      "alternatives": [
+        "Report.ReadWrite.All",
+        "Report.Read.All"
+      ]
+    },
+    "Dashboards_GetDashboardsInGroup": {
+      "required_scope_section": "Dashboard.ReadWrite.All or Dashboard.Read.All\n<br><br>",
+      "alternatives": [
+        "Dashboard.ReadWrite.All",
+        "Dashboard.Read.All"
+      ]
+    },
+    "Dashboards_AddDashboardInGroup": {
+      "required_scope_section": "Content.Create\n<br><br>",
+      "alternatives": [
+        "Content.Create"
+      ]
+    },
+    "Dashboards_GetTilesInGroup": {
+      "required_scope_section": "Dashboard.ReadWrite.All or Dashboard.Read.All",
+      "alternatives": [
+        "Dashboard.ReadWrite.All",
+        "Dashboard.Read.All"
+      ]
+    },
+    "Groups_GetGroups": {
+      "required_scope_section": "Workspace.Read.All or Workspace.ReadWrite.All",
+      "alternatives": [
+        "Workspace.Read.All",
+        "Workspace.ReadWrite.All"
+      ]
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/microsoft-power-bi.svg",
+  "source": "https://raw.githubusercontent.com/microsoft/PowerBI-Icons/73f8857af8dfe56acab966db952928d621f84ecc/SVG/Power-BI.svg",
+  "license": "Microsoft Power BI trademark; unmodified publisher icon used to identify the integration. Usage: https://github.com/microsoft/PowerBI-Icons/blob/main/README.md",
+  "sha256": "55daee85ccbe0d410909cd3b2b2d974d9a450ca3c6208992eec99fa9fa7b0b8d"
+}
