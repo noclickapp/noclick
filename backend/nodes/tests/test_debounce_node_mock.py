@@ -139,3 +139,13 @@ def test_debounce_secret_shape():
     assert db.DebounceAPIKeyCredential(api_key="  fixture-debounce-secret  ").api_key == AUTH["api_key"]
     with pytest.raises(ValidationError):
         db.DebounceAPIKeyCredential(api_key="https://example.com")
+
+
+def test_debounce_operation_enumerators_agree():
+    from coder.workflow.operation_catalog import get_operations_for_node_type
+    from nodes.agent.node_op_tools import _iter_operation_defs
+
+    schema_operations = {op["operation"] for op in _iter_operation_defs(db.DebounceNode)}
+    builder_operations = {op.name for op in get_operations_for_node_type("automation-debounce")}
+    assert schema_operations == builder_operations == set(db.ROUTES)
+    assert len(builder_operations) == 10

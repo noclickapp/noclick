@@ -6,7 +6,7 @@ Validation presets enable the provider's documented optional query flags.
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Union
 from urllib.parse import urlsplit
 
 import httpx
@@ -103,7 +103,7 @@ class CheckDisposable(_Config):
     email: str = Field(..., title="Email Address or Domain", min_length=1, max_length=320)
 
 
-DebounceOperation = Annotated[ValidateEmail | ValidateWithPhoto | ValidateWithEnrichment | ValidateGSuite | ReverseEmail | UploadBulkList | CheckBulkStatus | GetBalance | GetUsage | CheckDisposable, Field(discriminator="operation")]
+DebounceOperation = Annotated[Union[ValidateEmail, ValidateWithPhoto, ValidateWithEnrichment, ValidateGSuite, ReverseEmail, UploadBulkList, CheckBulkStatus, GetBalance, GetUsage, CheckDisposable], Field(discriminator="operation")]
 
 
 class DebounceFullConfig(NodeConfig):
