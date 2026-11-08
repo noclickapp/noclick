@@ -1,0 +1,407 @@
+{
+  "$defs": {
+    "ESputnikAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "esputnik_api_key",
+          "default": "esputnik_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "username": {
+          "default": "noclick",
+          "description": "The provider accepts any value. This value is sent as the Basic username; the API key is its password.",
+          "title": "Basic Username",
+          "type": "string"
+        },
+        "expected_organisation_name": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional exact name to match against account/info during connection and account reads. No organization ID is required.",
+          "title": "Expected Organization Name"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Yespo API Key",
+      "type": "object",
+      "x-credential-help-url": "https://docs.esputnik.com/reference/getting-started-with-your-api",
+      "x-credential-instructions": "Use an existing eSputnik/Yespo API key as the HTTP Basic password. Any username is accepted by the provider; the default is noclick. This is not your account password or an event Bearer token. Connection reads account/info and shows the returned organization name and user email; it does not prove contact/broadcast permissions, entitlement or subscription status.",
+      "x-credential-type": "esputnik_api_key"
+    },
+    "GetAccountInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account_info",
+          "default": "get_account_info",
+          "description": "Read the protected userEmail and organisationName witness. An orgId is included only if returned; this does not prove access to other operations.",
+          "title": "Get Account Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Reporting",
+          "x-display-name": "Get Account Info",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "Yespo",
+            "eSputnik",
+            "contacts",
+            "broadcasts",
+            "reporting"
+          ]
+        }
+      },
+      "title": "GetAccountInfo",
+      "type": "object"
+    },
+    "GetAdditionalFields": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_additional_fields",
+          "default": "get_additional_fields",
+          "description": "Read the documented additionalFieldsLists structure, including field keys, types, allowed values and validation metadata. No contact values are fetched.",
+          "title": "Get Contact Field Schema",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Reporting",
+          "x-display-name": "Get Contact Field Schema",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "Yespo",
+            "eSputnik",
+            "contacts",
+            "broadcasts",
+            "reporting"
+          ]
+        }
+      },
+      "title": "GetAdditionalFields",
+      "type": "object"
+    },
+    "GetBroadcast": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_broadcast",
+          "default": "get_broadcast",
+          "description": "Read one exact broadcast metadata record. This does not fetch its message, recipients, content or delivery report.",
+          "title": "Get Broadcast",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Reporting",
+          "x-display-name": "Get Broadcast",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "Yespo",
+            "eSputnik",
+            "contacts",
+            "broadcasts",
+            "reporting"
+          ]
+        },
+        "broadcast_id": {
+          "description": "Exact string ID from List Broadcasts. Custom entry only; no unsupported picker or ancestry endpoint is invoked.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Broadcast ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "broadcast_id"
+      ],
+      "title": "GetBroadcast",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "include_personal_data": {
+          "default": false,
+          "description": "Include names and email/SMS/Viber channel values. These are personal data; push tokens, device data, addresses and URLs are never returned.",
+          "title": "Include Contact Details",
+          "type": "boolean"
+        },
+        "include_additional_values": {
+          "default": false,
+          "description": "Include documented field ID/string-value pairs. Custom field values can contain sensitive information.",
+          "title": "Include Additional Field Values",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "description": "Read an exact contact ID under the current API key. The card does not return global blacklist or full email subscription status.",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Reporting",
+          "x-display-name": "Get Contact",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "Yespo",
+            "eSputnik",
+            "contacts",
+            "broadcasts",
+            "reporting"
+          ]
+        },
+        "contact_id": {
+          "description": "Exact provider contact ID. Enter a known ID or copy it from Search Contacts; no invented segment or account ancestry is asserted.",
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Contact ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "ListBroadcasts": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_broadcasts",
+          "default": "list_broadcasts",
+          "description": "Read broadcast metadata, without fetching message content or changing delivery. Full pages indicate only that another page may exist.",
+          "title": "List Broadcasts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Reporting",
+          "x-display-name": "List Broadcasts",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "Yespo",
+            "eSputnik",
+            "contacts",
+            "broadcasts",
+            "reporting"
+          ]
+        },
+        "start_index": {
+          "default": 1,
+          "description": "Provider numbering starts at 1. Local maximum is 1,000,000; incoming or changed broadcasts can shift pages.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Start Index",
+          "type": "integer"
+        },
+        "max_rows": {
+          "default": 10,
+          "description": "One page of 1\u2013500 broadcasts. No automatic page traversal.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Maximum Rows",
+          "type": "integer"
+        }
+      },
+      "title": "ListBroadcasts",
+      "type": "object"
+    },
+    "SearchContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "include_personal_data": {
+          "default": false,
+          "description": "Include names and email/SMS/Viber channel values. These are personal data; push tokens, device data, addresses and URLs are never returned.",
+          "title": "Include Contact Details",
+          "type": "boolean"
+        },
+        "include_additional_values": {
+          "default": false,
+          "description": "Include documented field ID/string-value pairs. Custom field values can contain sensitive information.",
+          "title": "Include Additional Field Values",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "search_contacts",
+          "default": "search_contacts",
+          "description": "Read one page from GET /contacts. At least one documented search condition is required locally; this operation does not perform a bulk contact export or establish suppression status.",
+          "title": "Search Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience Reporting",
+          "x-display-name": "Search Contacts",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "Yespo",
+            "eSputnik",
+            "contacts",
+            "broadcasts",
+            "reporting"
+          ]
+        },
+        "external_customer_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Customer ID"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "sms": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "start_index": {
+          "default": 1,
+          "description": "Provider numbering starts at 1. Local maximum is 1,000,000; pages are not a consistent snapshot.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Start Index",
+          "type": "integer"
+        },
+        "max_rows": {
+          "default": 100,
+          "description": "One page of 1\u2013500 contact cards. No automatic page traversal.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Maximum Rows",
+          "type": "integer"
+        }
+      },
+      "title": "SearchContacts",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_account_info": "#/$defs/GetAccountInfo",
+          "get_additional_fields": "#/$defs/GetAdditionalFields",
+          "get_broadcast": "#/$defs/GetBroadcast",
+          "get_contact": "#/$defs/GetContact",
+          "list_broadcasts": "#/$defs/ListBroadcasts",
+          "search_contacts": "#/$defs/SearchContacts"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/GetAdditionalFields"
+        },
+        {
+          "$ref": "#/$defs/SearchContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/ListBroadcasts"
+        },
+        {
+          "$ref": "#/$defs/GetBroadcast"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ESputnikAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    },
+    "node_type": {
+      "const": "automation-esputnik",
+      "default": "automation-esputnik",
+      "title": "Node Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Esputnik Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
