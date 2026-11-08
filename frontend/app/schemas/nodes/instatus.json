@@ -1,0 +1,1944 @@
+{
+  "$defs": {
+    "AddSubscriberConfig": {
+      "additionalProperties": false,
+      "description": "Add a subscriber.",
+      "properties": {
+        "operation": {
+          "const": "add_subscriber",
+          "default": "add_subscriber",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email of the subscriber.",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The phone number of the subscriber.",
+          "title": "Phone"
+        },
+        "webhook": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The webhook URL of the subscriber.",
+          "title": "Webhook"
+        },
+        "webhookEmail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The webhook email of the webhook subscriber. This is used to send email to the subscriber when a webhook request does not receive a positive response.",
+          "title": "Webhookemail"
+        },
+        "all": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the subscriber is subscribed to all components on the page or not.",
+          "title": "All"
+        },
+        "autoConfirm": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the subscriber is automatically confirmed or will receive an email to confirm their subscription.",
+          "title": "Autoconfirm"
+        },
+        "components": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ids of the components that the subscriber will be subscribed to, Leave as null if `all` is set to true.",
+          "title": "Components"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The language of the subscriber in language code (e.g. `en` for English, `fr` for French, `de` for German, etc.).",
+          "title": "Language"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "AddSubscriberConfig",
+      "type": "object"
+    },
+    "ComponentStatusEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "OPERATIONAL",
+                "UNDERMAINTENANCE",
+                "DEGRADEDPERFORMANCE",
+                "PARTIALOUTAGE",
+                "MAJOROUTAGE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "OPERATIONAL",
+            "UNDERMAINTENANCE",
+            "DEGRADEDPERFORMANCE",
+            "PARTIALOUTAGE",
+            "MAJOROUTAGE"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ComponentStatusEntry",
+      "type": "object"
+    },
+    "CreateComponentConfig": {
+      "additionalProperties": false,
+      "description": "Create a component.",
+      "properties": {
+        "operation": {
+          "const": "create_component",
+          "default": "create_component",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "OPERATIONAL",
+                "UNDERMAINTENANCE",
+                "DEGRADEDPERFORMANCE",
+                "PARTIALOUTAGE",
+                "MAJOROUTAGE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "OPERATIONAL",
+            "UNDERMAINTENANCE",
+            "DEGRADEDPERFORMANCE",
+            "PARTIALOUTAGE",
+            "MAJOROUTAGE"
+          ],
+          "x-enum-searchable": true
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The order of the component on the status page.",
+          "title": "Order"
+        },
+        "showUptime": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to show the percentage and uptime bar for the component.",
+          "title": "Showuptime"
+        },
+        "grouped": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the component is a parent component or not, If set to true, make sure to set the group parent id in the `group` field.",
+          "title": "Grouped"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The id of the component to group under.",
+          "title": "Group"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archived"
+        },
+        "translations": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Translations"
+        }
+      },
+      "required": [
+        "page_id",
+        "name"
+      ],
+      "title": "CreateComponentConfig",
+      "type": "object"
+    },
+    "CreateIncidentConfig": {
+      "additionalProperties": false,
+      "description": "Add an incident.",
+      "properties": {
+        "operation": {
+          "const": "create_incident",
+          "default": "create_incident",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "components": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ids of the components that are affected by the incident.",
+          "title": "Components"
+        },
+        "started": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The date and time the incident started, If left empty the time will be set to the current time.",
+          "title": "Started"
+        },
+        "status": {
+          "enum": [
+            "INVESTIGATING",
+            "IDENTIFIED",
+            "MONITORING",
+            "RESOLVED"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "notify": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to notify the subscribers of the page and the affected components.",
+          "title": "Notify"
+        },
+        "shouldPublish": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Whether to publish the incident to the page.",
+          "title": "Shouldpublish"
+        },
+        "statuses": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ComponentStatusEntry"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Statuses"
+        },
+        "translations": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Translations"
+        }
+      },
+      "required": [
+        "page_id",
+        "name",
+        "status"
+      ],
+      "title": "CreateIncidentConfig",
+      "type": "object"
+    },
+    "CreateIncidentUpdateConfig": {
+      "additionalProperties": false,
+      "description": "Add an incident update.",
+      "properties": {
+        "operation": {
+          "const": "create_incident_update",
+          "default": "create_incident_update",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "incident_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Incident Id",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "components": {
+          "description": "The ids of the components that are affected by the incident.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Components",
+          "type": "array"
+        },
+        "started": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The date and time the incident update happened, If left empty the time will be set to the current time.",
+          "title": "Started"
+        },
+        "status": {
+          "enum": [
+            "INVESTIGATING",
+            "IDENTIFIED",
+            "MONITORING",
+            "RESOLVED"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "notify": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to notify the subscribers of the page and the affected components.",
+          "title": "Notify"
+        },
+        "statuses": {
+          "items": {
+            "$ref": "#/$defs/ComponentStatusEntry"
+          },
+          "title": "Statuses",
+          "type": "array"
+        },
+        "translations": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Translations"
+        }
+      },
+      "required": [
+        "page_id",
+        "incident_id",
+        "components",
+        "status",
+        "statuses"
+      ],
+      "title": "CreateIncidentUpdateConfig",
+      "type": "object"
+    },
+    "CreateMaintenanceConfig": {
+      "additionalProperties": false,
+      "description": "Add a maintenance.",
+      "properties": {
+        "operation": {
+          "const": "create_maintenance",
+          "default": "create_maintenance",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "components": {
+          "description": "The ids of the components that are affected by the maintenance.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Components",
+          "type": "array"
+        },
+        "start": {
+          "description": "The date and time the maintenance will start in ISO-8601 format (UTC Timezone).",
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "The date and time the maintenance will end in ISO-8601 format (UTC Timezone).",
+          "format": "date-time",
+          "title": "End",
+          "type": "string"
+        },
+        "status": {
+          "description": "The status of the maintenance.",
+          "enum": [
+            "NOTSTARTEDYET",
+            "INPROGRESS",
+            "COMPLETED"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "notify": {
+          "description": "Whether to notify the subscribers of the page and the affected components.",
+          "title": "Notify",
+          "type": "boolean"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How many minutes the maintenance will last since the `start` date and time if `autoEnd` is set to `true`.",
+          "title": "Duration"
+        },
+        "notifyStart": {
+          "description": "Whether to notify the subscribers of the page and the affected components when the maintenance **starts**.",
+          "title": "Notifystart",
+          "type": "boolean"
+        },
+        "notifyEnd": {
+          "description": "Whether to notify the subscribers of the page and the affected components when the maintenance **ends**.",
+          "title": "Notifyend",
+          "type": "boolean"
+        },
+        "notifyEarly": {
+          "description": "Whether to notify the subscribers of the page and the affected components before the maintenance starts.",
+          "title": "Notifyearly",
+          "type": "boolean"
+        },
+        "notifyMinutes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of minutes before the maintenance starts that the subscribers will be notified.",
+          "title": "Notifyminutes"
+        },
+        "autoStart": {
+          "description": "Whether to automatically start the maintenance automatically when the date and time reaches the `start` date and time.",
+          "title": "Autostart",
+          "type": "boolean"
+        },
+        "autoEnd": {
+          "description": "Whether to automatically end the maintenance automatically when the date and time\u00ab reaches the `end` date and time.",
+          "title": "Autoend",
+          "type": "boolean"
+        },
+        "isCollapsed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the maintenance is collapsed or not on the page.",
+          "title": "Iscollapsed"
+        },
+        "expandAt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The date and time the maintenance will expand at in ISO-8601 format (UTC Timezone).",
+          "title": "Expandat"
+        },
+        "statuses": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ComponentStatusEntry"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Statuses"
+        },
+        "translations": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Translations"
+        }
+      },
+      "required": [
+        "page_id",
+        "name",
+        "components",
+        "start",
+        "end",
+        "status",
+        "notify",
+        "notifyStart",
+        "notifyEnd",
+        "notifyEarly",
+        "autoStart",
+        "autoEnd"
+      ],
+      "title": "CreateMaintenanceConfig",
+      "type": "object"
+    },
+    "DeleteComponentConfig": {
+      "additionalProperties": false,
+      "description": "Delete a component.",
+      "properties": {
+        "operation": {
+          "const": "delete_component",
+          "default": "delete_component",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "component_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Component Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "component_id"
+      ],
+      "title": "DeleteComponentConfig",
+      "type": "object"
+    },
+    "DeleteIncidentConfig": {
+      "additionalProperties": false,
+      "description": "Delete incident.",
+      "properties": {
+        "operation": {
+          "const": "delete_incident",
+          "default": "delete_incident",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "incident_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Incident Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "incident_id"
+      ],
+      "title": "DeleteIncidentConfig",
+      "type": "object"
+    },
+    "DeleteMaintenanceConfig": {
+      "additionalProperties": false,
+      "description": "Delete maintenance.",
+      "properties": {
+        "operation": {
+          "const": "delete_maintenance",
+          "default": "delete_maintenance",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "maintenance_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Maintenance Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "maintenance_id"
+      ],
+      "title": "DeleteMaintenanceConfig",
+      "type": "object"
+    },
+    "GetComponentConfig": {
+      "additionalProperties": false,
+      "description": "Get a component.",
+      "properties": {
+        "operation": {
+          "const": "get_component",
+          "default": "get_component",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "component_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Component Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "component_id"
+      ],
+      "title": "GetComponentConfig",
+      "type": "object"
+    },
+    "GetIncidentConfig": {
+      "additionalProperties": false,
+      "description": "Get an incident.",
+      "properties": {
+        "operation": {
+          "const": "get_incident",
+          "default": "get_incident",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "incident_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Incident Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "incident_id"
+      ],
+      "title": "GetIncidentConfig",
+      "type": "object"
+    },
+    "GetMaintenanceConfig": {
+      "additionalProperties": false,
+      "description": "Get a maintenance.",
+      "properties": {
+        "operation": {
+          "const": "get_maintenance",
+          "default": "get_maintenance",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "maintenance_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Maintenance Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "maintenance_id"
+      ],
+      "title": "GetMaintenanceConfig",
+      "type": "object"
+    },
+    "GetProfileConfig": {
+      "additionalProperties": false,
+      "description": "Get your user profile.",
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetProfileConfig",
+      "type": "object"
+    },
+    "GetTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Get a template.",
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "template_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "template_id"
+      ],
+      "title": "GetTemplateConfig",
+      "type": "object"
+    },
+    "InstatusCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "instatus_api_token",
+          "default": "instatus_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Instatus API Token",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from Instatus User settings \u2192 Developer settings. Paste the key without the Bearer prefix. The connection check reads your user profile; write access depends on your account permissions.",
+      "x-credential-url": "https://dashboard.instatus.com/developer"
+    },
+    "ListComponentsConfig": {
+      "additionalProperties": false,
+      "description": "Get all your status page components.",
+      "properties": {
+        "operation": {
+          "const": "list_components",
+          "default": "list_components",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "title": "Per Page"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "ListComponentsConfig",
+      "type": "object"
+    },
+    "ListIncidentsConfig": {
+      "additionalProperties": false,
+      "description": "Get all page incidents.",
+      "properties": {
+        "operation": {
+          "const": "list_incidents",
+          "default": "list_incidents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "title": "Per Page"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "ListIncidentsConfig",
+      "type": "object"
+    },
+    "ListMaintenancesConfig": {
+      "additionalProperties": false,
+      "description": "Get all page maintenances.",
+      "properties": {
+        "operation": {
+          "const": "list_maintenances",
+          "default": "list_maintenances",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "title": "Per Page"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "ListMaintenancesConfig",
+      "type": "object"
+    },
+    "ListPagesConfig": {
+      "additionalProperties": false,
+      "description": "Get your status pages.",
+      "properties": {
+        "operation": {
+          "const": "list_pages",
+          "default": "list_pages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "title": "Per Page"
+        }
+      },
+      "title": "ListPagesConfig",
+      "type": "object"
+    },
+    "ListSubscribersConfig": {
+      "additionalProperties": false,
+      "description": "Get subscribers.",
+      "properties": {
+        "operation": {
+          "const": "list_subscribers",
+          "default": "list_subscribers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "title": "Per Page"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "ListSubscribersConfig",
+      "type": "object"
+    },
+    "ListTemplatesConfig": {
+      "additionalProperties": false,
+      "description": "Get all page templates.",
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "title": "Per Page"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "ListTemplatesConfig",
+      "type": "object"
+    },
+    "RemoveSubscriberConfig": {
+      "additionalProperties": false,
+      "description": "Remove a subscriber.",
+      "properties": {
+        "operation": {
+          "const": "remove_subscriber",
+          "default": "remove_subscriber",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "subscriber_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Subscriber Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "subscriber_id"
+      ],
+      "title": "RemoveSubscriberConfig",
+      "type": "object"
+    },
+    "UpdateComponentConfig": {
+      "additionalProperties": false,
+      "description": "Update a component.",
+      "properties": {
+        "operation": {
+          "const": "update_component",
+          "default": "update_component",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "component_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Component Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "OPERATIONAL",
+                "UNDERMAINTENANCE",
+                "DEGRADEDPERFORMANCE",
+                "PARTIALOUTAGE",
+                "MAJOROUTAGE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "OPERATIONAL",
+            "UNDERMAINTENANCE",
+            "DEGRADEDPERFORMANCE",
+            "PARTIALOUTAGE",
+            "MAJOROUTAGE"
+          ],
+          "x-enum-searchable": true
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The order of the component on the status page.",
+          "title": "Order"
+        },
+        "showUptime": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to show the percentage and uptime bar for the component.",
+          "title": "Showuptime"
+        },
+        "grouped": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grouped"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archived"
+        },
+        "translations": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Translations"
+        }
+      },
+      "required": [
+        "page_id",
+        "component_id"
+      ],
+      "title": "UpdateComponentConfig",
+      "type": "object"
+    },
+    "UpdateIncidentConfig": {
+      "additionalProperties": false,
+      "description": "Update incident.",
+      "properties": {
+        "operation": {
+          "const": "update_incident",
+          "default": "update_incident",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "incident_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Incident Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "components": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ids of the components that are affected by the incident.",
+          "title": "Components"
+        },
+        "started": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The date and time the incident started.",
+          "title": "Started"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "INVESTIGATING",
+                "IDENTIFIED",
+                "MONITORING",
+                "RESOLVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "INVESTIGATING",
+            "IDENTIFIED",
+            "MONITORING",
+            "RESOLVED"
+          ],
+          "x-enum-searchable": true
+        },
+        "notify": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to notify the subscribers of the page and the affected components.",
+          "title": "Notify"
+        },
+        "statuses": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ComponentStatusEntry"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Statuses"
+        },
+        "translations": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Translations"
+        }
+      },
+      "required": [
+        "page_id",
+        "incident_id"
+      ],
+      "title": "UpdateIncidentConfig",
+      "type": "object"
+    },
+    "UpdateMaintenanceConfig": {
+      "additionalProperties": false,
+      "description": "Update maintenance.",
+      "properties": {
+        "operation": {
+          "const": "update_maintenance",
+          "default": "update_maintenance",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Page Id",
+          "type": "string"
+        },
+        "maintenance_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Maintenance Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "message": {
+          "description": "The message of the maintenance.",
+          "title": "Message",
+          "type": "string"
+        },
+        "components": {
+          "description": "The ids of the components that are affected by the maintenance.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Components",
+          "type": "array"
+        },
+        "start": {
+          "description": "The date and time the maintenance will start.",
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "The date and time the maintenance will end.",
+          "format": "date-time",
+          "title": "End",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "NOTSTARTEDYET",
+            "INPROGRESS",
+            "COMPLETED"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "notify": {
+          "description": "Whether to notify the subscribers of the page and the affected components.",
+          "title": "Notify",
+          "type": "boolean"
+        },
+        "autoStart": {
+          "description": "Whether to automatically start the maintenance automatically when the date and time reaches the `start` date and time.",
+          "title": "Autostart",
+          "type": "boolean"
+        },
+        "autoEnd": {
+          "description": "Whether to automatically end the maintenance automatically when the date and time\u00ab reaches the `end` date and time.",
+          "title": "Autoend",
+          "type": "boolean"
+        },
+        "duration": {
+          "description": "How many minutes the maintenance will last since the `start` date and time if `autoEnd` is set to `true`.",
+          "title": "Duration",
+          "type": "integer"
+        },
+        "statuses": {
+          "items": {
+            "$ref": "#/$defs/ComponentStatusEntry"
+          },
+          "title": "Statuses",
+          "type": "array"
+        },
+        "translations": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Translations"
+        }
+      },
+      "required": [
+        "page_id",
+        "maintenance_id",
+        "message",
+        "components",
+        "start",
+        "end",
+        "status",
+        "notify",
+        "autoStart",
+        "autoEnd",
+        "duration",
+        "statuses"
+      ],
+      "title": "UpdateMaintenanceConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_subscriber": "#/$defs/AddSubscriberConfig",
+          "create_component": "#/$defs/CreateComponentConfig",
+          "create_incident": "#/$defs/CreateIncidentConfig",
+          "create_incident_update": "#/$defs/CreateIncidentUpdateConfig",
+          "create_maintenance": "#/$defs/CreateMaintenanceConfig",
+          "delete_component": "#/$defs/DeleteComponentConfig",
+          "delete_incident": "#/$defs/DeleteIncidentConfig",
+          "delete_maintenance": "#/$defs/DeleteMaintenanceConfig",
+          "get_component": "#/$defs/GetComponentConfig",
+          "get_incident": "#/$defs/GetIncidentConfig",
+          "get_maintenance": "#/$defs/GetMaintenanceConfig",
+          "get_profile": "#/$defs/GetProfileConfig",
+          "get_template": "#/$defs/GetTemplateConfig",
+          "list_components": "#/$defs/ListComponentsConfig",
+          "list_incidents": "#/$defs/ListIncidentsConfig",
+          "list_maintenances": "#/$defs/ListMaintenancesConfig",
+          "list_pages": "#/$defs/ListPagesConfig",
+          "list_subscribers": "#/$defs/ListSubscribersConfig",
+          "list_templates": "#/$defs/ListTemplatesConfig",
+          "remove_subscriber": "#/$defs/RemoveSubscriberConfig",
+          "update_component": "#/$defs/UpdateComponentConfig",
+          "update_incident": "#/$defs/UpdateIncidentConfig",
+          "update_maintenance": "#/$defs/UpdateMaintenanceConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/ListPagesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListComponentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetComponentConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateComponentConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateComponentConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteComponentConfig"
+        },
+        {
+          "$ref": "#/$defs/ListIncidentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetIncidentConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateIncidentConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateIncidentConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteIncidentConfig"
+        },
+        {
+          "$ref": "#/$defs/ListMaintenancesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetMaintenanceConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateMaintenanceConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateMaintenanceConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteMaintenanceConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateIncidentUpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSubscribersConfig"
+        },
+        {
+          "$ref": "#/$defs/AddSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/RemoveSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTemplateConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/InstatusCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Instatus Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
