@@ -1,0 +1,1144 @@
+{
+  "$defs": {
+    "DailyAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "daily_api_key",
+          "default": "daily_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Daily API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from the Daily dashboard Developers page. Paste only the key, without Bearer. NoClick sends it to api.daily.co. The connection check reads rooms in your Daily domain; recording and analytics availability depends on your account.",
+      "x-credential-url": "https://dashboard.daily.co/developers"
+    },
+    "DailyCreateMeetingToken": {
+      "additionalProperties": false,
+      "description": "Create an expiring token restricted to one room. Treat the result as a secret.",
+      "properties": {
+        "room_name": {
+          "description": "The room name, not its URL.",
+          "title": "Room name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_meeting_token",
+          "default": "create_meeting_token",
+          "title": "Operation",
+          "type": "string"
+        },
+        "exp": {
+          "description": "Token expiry as Unix seconds. Choose a future time.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Exp",
+          "type": "integer"
+        },
+        "nbf": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nbf"
+        },
+        "is_owner": {
+          "default": false,
+          "description": "Grant meeting owner administration privileges.",
+          "title": "Is Owner",
+          "type": "boolean"
+        },
+        "user_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Name"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "maxLength": 36,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "eject_at_token_exp": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eject At Token Exp"
+        },
+        "start_video_off": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Video Off"
+        },
+        "start_audio_off": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Audio Off"
+        }
+      },
+      "required": [
+        "room_name",
+        "exp"
+      ],
+      "title": "DailyCreateMeetingToken",
+      "type": "object"
+    },
+    "DailyCreateRoom": {
+      "additionalProperties": false,
+      "description": "Create a room. Omit name to let Daily generate one.",
+      "properties": {
+        "privacy": {
+          "anyOf": [
+            {
+              "enum": [
+                "public",
+                "private"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Privacy",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "x-enum-searchable": true
+        },
+        "nbf": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Not before, Unix seconds.",
+          "title": "Nbf"
+        },
+        "exp": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Room expiry, Unix seconds.",
+          "title": "Exp"
+        },
+        "max_participants": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Participants"
+        },
+        "enable_chat": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enable Chat"
+        },
+        "enable_screenshare": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enable Screenshare"
+        },
+        "enable_knocking": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enable Knocking"
+        },
+        "start_video_off": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Video Off"
+        },
+        "start_audio_off": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Audio Off"
+        },
+        "eject_at_room_exp": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eject At Room Exp"
+        },
+        "enable_recording": {
+          "anyOf": [
+            {
+              "enum": [
+                "cloud",
+                "cloud-audio-only",
+                "local",
+                "raw-tracks"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enable recording capability. Cloud recording may incur Daily charges; this does not start a recording.",
+          "title": "Enable Recording",
+          "enum": [
+            "cloud",
+            "cloud-audio-only",
+            "local",
+            "raw-tracks"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "create_room",
+          "default": "create_room",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "DailyCreateRoom",
+      "type": "object"
+    },
+    "DailyDeleteRecording": {
+      "additionalProperties": false,
+      "description": "Delete a recording. Customer-managed storage may require separate file deletion.",
+      "properties": {
+        "recording_id": {
+          "title": "Recording ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_recording",
+          "default": "delete_recording",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recording_id"
+      ],
+      "title": "DailyDeleteRecording",
+      "type": "object"
+    },
+    "DailyDeleteRoom": {
+      "additionalProperties": false,
+      "description": "Permanently delete a room and its URL.",
+      "properties": {
+        "room_name": {
+          "description": "The room name, not its URL.",
+          "title": "Room name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_room",
+          "default": "delete_room",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "room_name"
+      ],
+      "title": "DailyDeleteRoom",
+      "type": "object"
+    },
+    "DailyGetDomain": {
+      "additionalProperties": false,
+      "description": "Read the API key's Daily domain configuration.",
+      "properties": {
+        "operation": {
+          "const": "get_domain",
+          "default": "get_domain",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "DailyGetDomain",
+      "type": "object"
+    },
+    "DailyGetMeeting": {
+      "additionalProperties": false,
+      "description": "Get one meeting session's analytics.",
+      "properties": {
+        "meeting_id": {
+          "title": "Meeting session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_meeting",
+          "default": "get_meeting",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "meeting_id"
+      ],
+      "title": "DailyGetMeeting",
+      "type": "object"
+    },
+    "DailyGetPresence": {
+      "additionalProperties": false,
+      "description": "Get a map of active participants across rooms in this domain.",
+      "properties": {
+        "operation": {
+          "const": "get_presence",
+          "default": "get_presence",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "DailyGetPresence",
+      "type": "object"
+    },
+    "DailyGetRecording": {
+      "additionalProperties": false,
+      "description": "Get recording metadata, tracks and storage details.",
+      "properties": {
+        "recording_id": {
+          "title": "Recording ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_recording",
+          "default": "get_recording",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recording_id"
+      ],
+      "title": "DailyGetRecording",
+      "type": "object"
+    },
+    "DailyGetRoom": {
+      "additionalProperties": false,
+      "description": "Get a room's configuration and URL.",
+      "properties": {
+        "room_name": {
+          "description": "The room name, not its URL.",
+          "title": "Room name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_room",
+          "default": "get_room",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "room_name"
+      ],
+      "title": "DailyGetRoom",
+      "type": "object"
+    },
+    "DailyListMeetings": {
+      "additionalProperties": false,
+      "description": "List meeting sessions and attendance with optional room and time filters.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum rows in this page. Lists never fetch subsequent pages automatically.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Daily object ID to continue after. Mutually exclusive with ending_before.",
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Daily object ID to continue before.",
+          "title": "Ending Before"
+        },
+        "operation": {
+          "const": "list_meetings",
+          "default": "list_meetings",
+          "title": "Operation",
+          "type": "string"
+        },
+        "room": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Room names; sent as repeated room query parameters.",
+          "title": "Room"
+        },
+        "timeframe_start": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timeframe Start"
+        },
+        "timeframe_end": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timeframe End"
+        },
+        "ongoing": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ongoing"
+        },
+        "no_participants": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "No Participants"
+        }
+      },
+      "title": "DailyListMeetings",
+      "type": "object"
+    },
+    "DailyListRecordings": {
+      "additionalProperties": false,
+      "description": "List recording metadata, optionally filtered by room.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum rows in this page. Lists never fetch subsequent pages automatically.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Daily object ID to continue after. Mutually exclusive with ending_before.",
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Daily object ID to continue before.",
+          "title": "Ending Before"
+        },
+        "operation": {
+          "const": "list_recordings",
+          "default": "list_recordings",
+          "title": "Operation",
+          "type": "string"
+        },
+        "room_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Room Name"
+        }
+      },
+      "title": "DailyListRecordings",
+      "type": "object"
+    },
+    "DailyListRooms": {
+      "additionalProperties": false,
+      "description": "List rooms in your Daily domain, one page at a time.",
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum rows in this page. Lists never fetch subsequent pages automatically.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Daily object ID to continue after. Mutually exclusive with ending_before.",
+          "title": "Starting After"
+        },
+        "ending_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Daily object ID to continue before.",
+          "title": "Ending Before"
+        },
+        "operation": {
+          "const": "list_rooms",
+          "default": "list_rooms",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "DailyListRooms",
+      "type": "object"
+    },
+    "DailyMeetingParticipants": {
+      "additionalProperties": false,
+      "description": "List attendance records for one meeting, using participant IDs as cursors.",
+      "properties": {
+        "meeting_id": {
+          "title": "Meeting session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_meeting_participants",
+          "default": "list_meeting_participants",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "joined_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Joined After"
+        },
+        "joined_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Joined Before"
+        }
+      },
+      "required": [
+        "meeting_id"
+      ],
+      "title": "DailyMeetingParticipants",
+      "type": "object"
+    },
+    "DailyRecordingLink": {
+      "additionalProperties": false,
+      "description": "Get a temporary recording download link. Use Daily's returned expires timestamp.",
+      "properties": {
+        "recording_id": {
+          "title": "Recording ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_recording_link",
+          "default": "get_recording_link",
+          "title": "Operation",
+          "type": "string"
+        },
+        "valid_for_secs": {
+          "default": 3600,
+          "description": "Requested lifetime. Daily may cap it for customer S3 storage; the returned expires is authoritative.",
+          "maximum": 43200,
+          "minimum": 900,
+          "title": "Valid For Secs",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "recording_id"
+      ],
+      "title": "DailyRecordingLink",
+      "type": "object"
+    },
+    "DailyRoomPresence": {
+      "additionalProperties": false,
+      "description": "Read the current participants in a room, one bounded page.",
+      "properties": {
+        "room_name": {
+          "description": "The room name, not its URL.",
+          "title": "Room name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_room_presence",
+          "default": "get_room_presence",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "userId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User ID filter"
+        },
+        "userName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User name filter"
+        }
+      },
+      "required": [
+        "room_name"
+      ],
+      "title": "DailyRoomPresence",
+      "type": "object"
+    },
+    "DailyUpdateRoom": {
+      "additionalProperties": false,
+      "description": "Update supplied room settings; omitted settings stay unchanged.",
+      "properties": {
+        "room_name": {
+          "description": "The room name, not its URL.",
+          "title": "Room name",
+          "type": "string"
+        },
+        "privacy": {
+          "anyOf": [
+            {
+              "enum": [
+                "public",
+                "private"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Privacy",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "x-enum-searchable": true
+        },
+        "nbf": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Not before, Unix seconds.",
+          "title": "Nbf"
+        },
+        "exp": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Room expiry, Unix seconds.",
+          "title": "Exp"
+        },
+        "max_participants": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Participants"
+        },
+        "enable_chat": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enable Chat"
+        },
+        "enable_screenshare": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enable Screenshare"
+        },
+        "enable_knocking": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enable Knocking"
+        },
+        "start_video_off": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Video Off"
+        },
+        "start_audio_off": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Audio Off"
+        },
+        "eject_at_room_exp": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eject At Room Exp"
+        },
+        "enable_recording": {
+          "anyOf": [
+            {
+              "enum": [
+                "cloud",
+                "cloud-audio-only",
+                "local",
+                "raw-tracks"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enable recording capability. Cloud recording may incur Daily charges; this does not start a recording.",
+          "title": "Enable Recording",
+          "enum": [
+            "cloud",
+            "cloud-audio-only",
+            "local",
+            "raw-tracks"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "update_room",
+          "default": "update_room",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "room_name"
+      ],
+      "title": "DailyUpdateRoom",
+      "type": "object"
+    },
+    "DailyValidateMeetingToken": {
+      "additionalProperties": false,
+      "description": "Validate a meeting token and read its permissions.",
+      "properties": {
+        "operation": {
+          "const": "validate_meeting_token",
+          "default": "validate_meeting_token",
+          "title": "Operation",
+          "type": "string"
+        },
+        "meeting_token": {
+          "title": "Meeting Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "ignoreNbf": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ignore not-before time"
+        }
+      },
+      "required": [
+        "meeting_token"
+      ],
+      "title": "DailyValidateMeetingToken",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_meeting_token": "#/$defs/DailyCreateMeetingToken",
+          "create_room": "#/$defs/DailyCreateRoom",
+          "delete_recording": "#/$defs/DailyDeleteRecording",
+          "delete_room": "#/$defs/DailyDeleteRoom",
+          "get_domain": "#/$defs/DailyGetDomain",
+          "get_meeting": "#/$defs/DailyGetMeeting",
+          "get_presence": "#/$defs/DailyGetPresence",
+          "get_recording": "#/$defs/DailyGetRecording",
+          "get_recording_link": "#/$defs/DailyRecordingLink",
+          "get_room": "#/$defs/DailyGetRoom",
+          "get_room_presence": "#/$defs/DailyRoomPresence",
+          "list_meeting_participants": "#/$defs/DailyMeetingParticipants",
+          "list_meetings": "#/$defs/DailyListMeetings",
+          "list_recordings": "#/$defs/DailyListRecordings",
+          "list_rooms": "#/$defs/DailyListRooms",
+          "update_room": "#/$defs/DailyUpdateRoom",
+          "validate_meeting_token": "#/$defs/DailyValidateMeetingToken"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DailyListRooms"
+        },
+        {
+          "$ref": "#/$defs/DailyGetRoom"
+        },
+        {
+          "$ref": "#/$defs/DailyCreateRoom"
+        },
+        {
+          "$ref": "#/$defs/DailyUpdateRoom"
+        },
+        {
+          "$ref": "#/$defs/DailyDeleteRoom"
+        },
+        {
+          "$ref": "#/$defs/DailyRoomPresence"
+        },
+        {
+          "$ref": "#/$defs/DailyCreateMeetingToken"
+        },
+        {
+          "$ref": "#/$defs/DailyValidateMeetingToken"
+        },
+        {
+          "$ref": "#/$defs/DailyListRecordings"
+        },
+        {
+          "$ref": "#/$defs/DailyGetRecording"
+        },
+        {
+          "$ref": "#/$defs/DailyDeleteRecording"
+        },
+        {
+          "$ref": "#/$defs/DailyRecordingLink"
+        },
+        {
+          "$ref": "#/$defs/DailyListMeetings"
+        },
+        {
+          "$ref": "#/$defs/DailyGetMeeting"
+        },
+        {
+          "$ref": "#/$defs/DailyMeetingParticipants"
+        },
+        {
+          "$ref": "#/$defs/DailyGetPresence"
+        },
+        {
+          "$ref": "#/$defs/DailyGetDomain"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DailyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Daily Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

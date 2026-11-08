@@ -1,0 +1,347 @@
+{
+  "list_rooms": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "ListRooms",
+    "body": {
+      "total_count": 2,
+      "data": [
+        {
+          "id": "5e3cf703-5547-47d6-a371-37b1f0b4427f",
+          "name": "w2pp2cf4kltgFACPKXmX",
+          "api_created": false,
+          "privacy": "public",
+          "url": "https://api-demo.daily.co/w2pp2cf4kltgFACPKXmX",
+          "created_at": "2019-01-26T09:01:22.000Z",
+          "config": {
+            "start_video_off": true
+          }
+        },
+        {
+          "id": "d61cd7b2-a273-42b4-89bd-be763fd562c1",
+          "name": "hello",
+          "api_created": false,
+          "privacy": "public",
+          "url": "https://your-domain.daily.co/hello",
+          "created_at": "2019-01-25T23:49:42.000Z",
+          "config": {}
+        }
+      ]
+    }
+  },
+  "get_room": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "GetRoomConfig",
+    "body": {
+      "id": "d61cd7b2-a273-42b4-89bd-be763fd562c1",
+      "name": "w2pp2cf4kltgFACPKXmX",
+      "api_created": false,
+      "privacy": "public",
+      "url": "https://api-demo.daily.co/w2pp2cf4kltgFACPKXmX",
+      "created_at": "2019-01-26T09:01:22.000Z",
+      "config": {
+        "start_video_off": true
+      }
+    }
+  },
+  "create_room": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "CreateRoom",
+    "body": {
+      "id": "d61cd7b2-a273-42b4-89bd-be763fd562c1",
+      "name": "w2pp2cf4kltgFACPKXmX",
+      "api_created": true,
+      "privacy": "public",
+      "url": "https://api-demo.daily.co/w2pp2cf4kltgFACPKXmX",
+      "created_at": "2019-01-26T09:01:22.000Z",
+      "config": {
+        "start_video_off": true
+      }
+    }
+  },
+  "update_room": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "SetRoomConfig",
+    "body": {
+      "id": "d61cd7b2-a273-42b4-89bd-be763fd562c1",
+      "name": "w2pp2cf4kltgFACPKXmX",
+      "api_created": false,
+      "privacy": "public",
+      "url": "https://api-demo.daily.co/w2pp2cf4kltgFACPKXmX",
+      "created_at": "2019-01-26T09:01:22.000Z",
+      "config": {
+        "start_video_off": true
+      }
+    }
+  },
+  "delete_room": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "DeleteRoom",
+    "body": {
+      "deleted": true,
+      "name": "my-room"
+    }
+  },
+  "get_room_presence": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "GetRoomPresence",
+    "body": {
+      "total_count": 1,
+      "data": [
+        {
+          "room": "w2pp2cf4kltgFACPKXmX",
+          "id": "d61cd7b2-a273-42b4-89bd-be763fd562c1",
+          "userId": "pbZ+ismP7dk=",
+          "userName": "Moishe",
+          "mtgSessionId": "16e9701a-93e0-4933-83c9-223e7c40d552",
+          "joinTime": "2023-01-01T20:53:19.000Z",
+          "duration": 2312
+        }
+      ]
+    }
+  },
+  "create_meeting_token": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "CreateMeetingToken",
+    "body": {
+      "token": "REDACTED.SAMPLE.JWT"
+    }
+  },
+  "validate_meeting_token": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "ValidateMeetingToken",
+    "body": {
+      "room_name": "EevVrrxee4JBxKzmKkjC",
+      "is_owner": true,
+      "user_name": "host",
+      "start_video_off": false,
+      "start_audio_off": true,
+      "lang": "en"
+    }
+  },
+  "list_recordings": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "ListRecordings",
+    "body": {
+      "total_count": 3,
+      "data": [
+        {
+          "id": "bfd0c52b-3a2a-4269-80ce-cae9eef55536",
+          "start_ts": 1548790974,
+          "status": "in-progress",
+          "max_participants": 2,
+          "share_token": "NcWgEiJuqD8v",
+          "s3key": "mydomain/test-recording-room/11245260397",
+          "mtgSessionId": "411c96b4-c13b-4f35-b639-4fda02863743",
+          "storage_provider": "aws"
+        },
+        {
+          "id": "0cb313e1-211f-4be0-833d-8c7305b19902",
+          "start_ts": 1548789650,
+          "status": "finished",
+          "max_participants": 2,
+          "duration": 277,
+          "share_token": "TivXjlD22QQt",
+          "s3key": "mydomain/test-recording-room/277255707741,",
+          "mtgSessionId": "1117a5d8-f6c4-4ff5-a9ec-2a324666f0da",
+          "storage_provider": "aws"
+        },
+        {
+          "id": "89a4a0a4-03cf-454f-b874-e83d91b0296f",
+          "start_ts": 1548788621,
+          "status": "finished",
+          "max_participants": 1,
+          "duration": 53,
+          "share_token": "QehWXiO2zMMf",
+          "s3key": "mydomain/test-recording-room/11245260397,",
+          "mtgSessionId": "257764e6-c74e-4c30-944a-a887a03173a3,",
+          "storage_provider": "aws"
+        }
+      ]
+    }
+  },
+  "get_recording": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "GetRecordingInfo",
+    "body": {
+      "id": "0cb313e1-211f-4be0-833d-8c7305b19902",
+      "start_ts": 1548789650,
+      "status": "finished",
+      "max_participants": 2,
+      "duration": 277,
+      "share_token": "TivXjlD22QQt",
+      "s3key": "mydomain/test-recording-room/11245260397",
+      "mtgSessionId": "257764e6-c74e-4c30-944a-a887a03173a3",
+      "storage_provider": "aws"
+    }
+  },
+  "delete_recording": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "DeleteRecording",
+    "body": {
+      "deleted": true,
+      "id": "0868d783-69c0-4556-b39e-0fbd6bf2bd45",
+      "s3_bucket": "daily-meeting-recordings",
+      "s3_region": "us-west-2",
+      "s3_key": "mydomain/raw-tracks/1234567890"
+    }
+  },
+  "get_recording_link": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "GetRecordingLink",
+    "body": {
+      "download_link": "https://b.daily.co/recordings/api-demo/hello/1548790973821?dl=api-demo%2Fhello%2F1548790973821.webm&Expires=1548809176&Signature=Gt5RhZ0kXksNriqmlm~T9hbq-asExampleSignature_&Key-Pair-Id=K1EXAMPLEKEYPAIR",
+      "expires": 1548809176,
+      "storage_provider": "aws"
+    }
+  },
+  "list_meetings": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "GetMeetingInfo",
+    "body": {
+      "total_count": 42,
+      "data": [
+        {
+          "id": "aaaaaaaa-0000-0000-0000-000000000001",
+          "room": "my-room",
+          "start_time": 1774363859,
+          "duration": 600,
+          "ongoing": false,
+          "max_participants": 1,
+          "participants": [
+            {
+              "user_id": null,
+              "participant_id": "bbbbbbbb-0000-0000-0000-000000000001",
+              "user_name": "Alice",
+              "join_time": 1774363859,
+              "duration": 600
+            }
+          ]
+        },
+        {
+          "id": "aaaaaaaa-0000-0000-0000-000000000002",
+          "room": "my-room",
+          "start_time": 1774283912,
+          "duration": 187,
+          "ongoing": false,
+          "max_participants": 2,
+          "participants": [
+            {
+              "user_id": null,
+              "participant_id": "bbbbbbbb-0000-0000-0000-000000000002",
+              "user_name": "Alice",
+              "join_time": 1774283925,
+              "duration": 174
+            },
+            {
+              "user_id": null,
+              "participant_id": "bbbbbbbb-0000-0000-0000-000000000003",
+              "user_name": "Bob",
+              "join_time": 1774283912,
+              "duration": 179
+            }
+          ]
+        },
+        {
+          "id": "aaaaaaaa-0000-0000-0000-000000000003",
+          "room": "my-room",
+          "start_time": 1773860661,
+          "duration": 304,
+          "ongoing": false,
+          "max_participants": 2,
+          "participants": [
+            {
+              "user_id": "cccccccc-0000-0000-0000-000000000001",
+              "participant_id": "cccccccc-0000-0000-0000-000000000001",
+              "user_name": "Pipecat Bot",
+              "join_time": 1773860661,
+              "duration": 296
+            },
+            {
+              "user_id": null,
+              "participant_id": "bbbbbbbb-0000-0000-0000-000000000004",
+              "user_name": null,
+              "join_time": 1773860662,
+              "duration": 303
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "get_meeting": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "GetIndividualMeetingInfo",
+    "body": {
+      "id": "d61cd7b2-a273-42b4-89bd-be763fd562c1",
+      "room": "room-name",
+      "start_time": 1672606399,
+      "duration": 2055,
+      "ongoing": false,
+      "max_participants": 5
+    }
+  },
+  "list_meeting_participants": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "GetMeetingParticipants",
+    "body": {
+      "data": [
+        {
+          "user_id": "4q47OTmqa/w=",
+          "participant_id": "d61cd7b2-a273-42b4-89bd-be763fd562c1",
+          "user_name": "Lindsey",
+          "join_time": 1672786813,
+          "duration": 150
+        },
+        {
+          "user_id": "pbZ+ismP7dk=",
+          "participant_id": "b3d56359-14d7-46af-ac8b-18f8c991f5f6",
+          "user_name": "Moishe",
+          "join_time": 1672786797,
+          "duration": 165
+        }
+      ]
+    }
+  },
+  "get_presence": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "GetPresence",
+    "body": {
+      "my-room": [
+        {
+          "room": "my-room",
+          "id": "aaaaaaaa-0000-0000-0000-000000000001",
+          "userId": null,
+          "userName": "Alice",
+          "mtgSessionId": "16e9701a-93e0-4933-83c9-223e7c40d552",
+          "joinTime": "2026-03-27T16:37:22.000Z",
+          "duration": 22
+        },
+        {
+          "room": "my-room",
+          "id": "aaaaaaaa-0000-0000-0000-000000000002",
+          "userId": null,
+          "userName": "Bob",
+          "mtgSessionId": "16e9701a-93e0-4933-83c9-223e7c40d552",
+          "joinTime": "2026-03-27T16:37:25.000Z",
+          "duration": 19
+        }
+      ]
+    }
+  },
+  "get_domain": {
+    "source": "https://docs.daily.co/openapi.json",
+    "operation_id": "GetDomainConfig",
+    "body": {
+      "domain_name": "api-test-1",
+      "domain_id": "30f866c3-9123-452a-8723-ff58322d09c5",
+      "config": {
+        "redirect_on_meeting_exit": "",
+        "hide_daily_branding": false,
+        "hipaa": false,
+        "intercom_auto_record": false,
+        "lang": "en",
+        "meeting_join_hook": ""
+      }
+    }
+  }
+}
