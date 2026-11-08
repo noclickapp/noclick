@@ -30,6 +30,7 @@ const TonedenIcon = ({
 
 export const TonedenNode: NodeDefinition = {
     type: 'automation-toneden',
+    category: 'marketing',
     label: 'ToneDen',
     description: 'Manage links, campaigns, contests and social unlocks',
     Icon: TonedenIcon,
