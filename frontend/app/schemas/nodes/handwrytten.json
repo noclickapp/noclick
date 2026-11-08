@@ -1,0 +1,1471 @@
+{
+  "$defs": {
+    "HandwryttenCreateCustomCardConfig": {
+      "additionalProperties": false,
+      "description": "Create a new custom card.",
+      "properties": {
+        "operation": {
+          "const": "create_custom_card",
+          "default": "create_custom_card",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "card_id": {
+          "description": "the card id of the card template you're starting with. You can find this by logging into Handwrytten, clicking \"customize\" next to any customizable card, and pulling the card ID from the end of the URL",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Card Id",
+          "type": "integer"
+        },
+        "name": {
+          "description": "the name of the new card",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "description": "Defines the top of the back of the card. Set to either \"logo\" or \"text\".",
+          "enum": [
+            "logo",
+            "text"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "logo_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional. If setting \"type\" to \"logo\", set the id of the logo here.",
+          "title": "Logo Id"
+        },
+        "header_align": {
+          "anyOf": [
+            {
+              "enum": [
+                "left",
+                "center",
+                "right"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "set to \"left\", \"center\", or \"right\" to align the header appropriately",
+          "title": "Header Align",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "x-enum-searchable": true
+        },
+        "header_text": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "text in the header, if type is set to \"text\"",
+          "title": "Header Text"
+        },
+        "header_font_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "font ID of the text in the header, found by using ListFontForCustomizer",
+          "title": "Header Font Id"
+        },
+        "header_font_size": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "font size of the text in the header of the card",
+          "title": "Header Font Size"
+        },
+        "header_auto_size": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "if set to true, the header will be maximized to fill the header area",
+          "title": "Header Auto Size"
+        },
+        "footer_text": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "optional text for the footer of the customizable card",
+          "title": "Footer Text"
+        },
+        "footer_align": {
+          "anyOf": [
+            {
+              "enum": [
+                "left",
+                "center",
+                "right"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "set to \"left\", \"center\", or \"right\" to align the footer appropriately",
+          "title": "Footer Align",
+          "enum": [
+            "left",
+            "center",
+            "right"
+          ],
+          "x-enum-searchable": true
+        },
+        "footer_font_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "font ID of the text in the footer, found by using ListFontForCustomizer",
+          "title": "Footer Font Id"
+        },
+        "footer_font_size": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Font size of the text in the footer",
+          "title": "Footer Font Size"
+        },
+        "logo_size_percent": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "set to the desired scaling of the logo on the header",
+          "title": "Logo Size Percent"
+        },
+        "cover_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the id of the image you want to use for the \"cover\". The cover is the large image on the front of the flat card.",
+          "title": "Cover Id"
+        },
+        "cover_size_percent": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the size of the image to use as the cover.",
+          "title": "Cover Size Percent"
+        }
+      },
+      "required": [
+        "card_id",
+        "name",
+        "type"
+      ],
+      "title": "HandwryttenCreateCustomCardConfig",
+      "type": "object"
+    },
+    "HandwryttenCreateRecipientConfig": {
+      "additionalProperties": false,
+      "description": "add a new recipient address.",
+      "properties": {
+        "operation": {
+          "const": "create_recipient",
+          "default": "create_recipient",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "the name on the address",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "business_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the optional business name on the address",
+          "title": "Business Name"
+        },
+        "address1": {
+          "description": "the first line of the address",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Address1",
+          "type": "string"
+        },
+        "address2": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the second (optional) line of the address",
+          "title": "Address2"
+        },
+        "city": {
+          "description": "the city of the address",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "City",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the abbreviated state or province of the address",
+          "title": "State"
+        },
+        "zip": {
+          "description": "the zip or postal code of the address",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Zip",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the name of the country of the address, or use country_id",
+          "title": "Country"
+        },
+        "country_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the country id code of the recipient",
+          "title": "Country Id"
+        }
+      },
+      "required": [
+        "name",
+        "address1",
+        "city",
+        "zip"
+      ],
+      "title": "HandwryttenCreateRecipientConfig",
+      "type": "object"
+    },
+    "HandwryttenCreateTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Creates a New Template in the User\u2019s Account.",
+      "properties": {
+        "operation": {
+          "const": "create_template",
+          "default": "create_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "the new name of the template",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "message": {
+          "description": "message",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "message"
+      ],
+      "title": "HandwryttenCreateTemplateConfig",
+      "type": "object"
+    },
+    "HandwryttenDeleteRecipientConfig": {
+      "additionalProperties": false,
+      "description": "deletes an existing recipient address.",
+      "properties": {
+        "operation": {
+          "const": "delete_recipient",
+          "default": "delete_recipient",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address_id": {
+          "description": "the id of the address to delete",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Address Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "address_id"
+      ],
+      "title": "HandwryttenDeleteRecipientConfig",
+      "type": "object"
+    },
+    "HandwryttenDeleteTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Deletes a users template.",
+      "properties": {
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "description": "the ID of the template to delete",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Template Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "HandwryttenDeleteTemplateConfig",
+      "type": "object"
+    },
+    "HandwryttenGetCardConfig": {
+      "additionalProperties": false,
+      "description": "Provides full information on a specific card.",
+      "properties": {
+        "operation": {
+          "const": "get_card",
+          "default": "get_card",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "card_id": {
+          "description": "the card id to view",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Card Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "card_id"
+      ],
+      "title": "HandwryttenGetCardConfig",
+      "type": "object"
+    },
+    "HandwryttenGetReturnAddressConfig": {
+      "additionalProperties": false,
+      "description": "gets the user's return address information.",
+      "properties": {
+        "operation": {
+          "const": "get_return_address",
+          "default": "get_return_address",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "HandwryttenGetReturnAddressConfig",
+      "type": "object"
+    },
+    "HandwryttenGetTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Get all info on a template.",
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "description": "the ID of the template to view",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Template Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "HandwryttenGetTemplateConfig",
+      "type": "object"
+    },
+    "HandwryttenListCardsConfig": {
+      "additionalProperties": false,
+      "description": "Lists information on cards.",
+      "properties": {
+        "operation": {
+          "const": "list_cards",
+          "default": "list_cards",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "optional category id filter",
+          "title": "Category Id"
+        }
+      },
+      "title": "HandwryttenListCardsConfig",
+      "type": "object"
+    },
+    "HandwryttenListCountriesConfig": {
+      "additionalProperties": false,
+      "description": "list_countries.",
+      "properties": {
+        "operation": {
+          "const": "list_countries",
+          "default": "list_countries",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "HandwryttenListCountriesConfig",
+      "type": "object"
+    },
+    "HandwryttenListCustomizerFontsConfig": {
+      "additionalProperties": false,
+      "description": "Lists fonts available for use with the card customizer.",
+      "properties": {
+        "operation": {
+          "const": "list_customizer_fonts",
+          "default": "list_customizer_fonts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "HandwryttenListCustomizerFontsConfig",
+      "type": "object"
+    },
+    "HandwryttenListFontsConfig": {
+      "additionalProperties": false,
+      "description": "Lists Handwryting styles available for use.",
+      "properties": {
+        "operation": {
+          "const": "list_fonts",
+          "default": "list_fonts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "HandwryttenListFontsConfig",
+      "type": "object"
+    },
+    "HandwryttenListGiftCardsConfig": {
+      "additionalProperties": false,
+      "description": "Lists information on gift cards.",
+      "properties": {
+        "operation": {
+          "const": "list_gift_cards",
+          "default": "list_gift_cards",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "HandwryttenListGiftCardsConfig",
+      "type": "object"
+    },
+    "HandwryttenListRecipientsConfig": {
+      "additionalProperties": false,
+      "description": "list the addresses in the user's account.",
+      "properties": {
+        "operation": {
+          "const": "list_recipients",
+          "default": "list_recipients",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "HandwryttenListRecipientsConfig",
+      "type": "object"
+    },
+    "HandwryttenListTemplateCategoriesConfig": {
+      "additionalProperties": false,
+      "description": "List template categories.",
+      "properties": {
+        "operation": {
+          "const": "list_template_categories",
+          "default": "list_template_categories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "HandwryttenListTemplateCategoriesConfig",
+      "type": "object"
+    },
+    "HandwryttenListTemplatesConfig": {
+      "additionalProperties": false,
+      "description": "List template categories.",
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "optional category to filter the templates",
+          "title": "Category Id"
+        }
+      },
+      "title": "HandwryttenListTemplatesConfig",
+      "type": "object"
+    },
+    "HandwryttenSendCardConfig": {
+      "additionalProperties": false,
+      "description": "Send and pay for a physical handwritten card using a saved payment method. No automatic retries.",
+      "properties": {
+        "operation": {
+          "const": "send_card",
+          "default": "send_card",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "card_id": {
+          "description": "the id of the card you want to send",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Card Id",
+          "type": "integer"
+        },
+        "denomination_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional. Use if sending a gift card",
+          "title": "Denomination Id"
+        },
+        "message": {
+          "description": "the full message body. Use '\\n' for new lines",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "font_label": {
+          "description": "the colloquial name of the font, such as 'Fancy Jenna' or 'Casual David'",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Font Label",
+          "type": "string"
+        },
+        "sender_name": {
+          "description": "the name on the return address",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Sender Name",
+          "type": "string"
+        },
+        "sender_business_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the second line of the return address. Optional.",
+          "title": "Sender Business Name"
+        },
+        "sender_address1": {
+          "description": "the first address line of the return address",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Sender Address1",
+          "type": "string"
+        },
+        "sender_address2": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the second line of the address, such as suite, apartment, building, etc. Optional",
+          "title": "Sender Address2"
+        },
+        "sender_city": {
+          "description": "the city of the sender, to appear in the return address",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Sender City",
+          "type": "string"
+        },
+        "sender_state": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the ABBREVIATED state or province of the sender. This is required for US and Canada addresses and optional for all other countries",
+          "title": "Sender State"
+        },
+        "sender_zip": {
+          "description": "The postal code or zip code of the sender.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Sender Zip",
+          "type": "string"
+        },
+        "sender_country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the country of the recipient. Optional and defaults to usa",
+          "title": "Sender Country"
+        },
+        "sender_country_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "alternate way to specify country. Optional and defaults to 1",
+          "title": "Sender Country Id"
+        },
+        "recipient_name": {
+          "description": "the name on the recipient address",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Recipient Name",
+          "type": "string"
+        },
+        "recipient_business_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the second line of the recipient address. Optional.",
+          "title": "Recipient Business Name"
+        },
+        "recipient_address1": {
+          "description": "the first address line of the return address",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Recipient Address1",
+          "type": "string"
+        },
+        "recipient_address2": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the second line of the address, such as suite, apartment, building, etc. Optional",
+          "title": "Recipient Address2"
+        },
+        "recipient_city": {
+          "description": "the city of the recipient, to appear in the address",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Recipient City",
+          "type": "string"
+        },
+        "recipient_state": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the ABBREVIATED state or province of the recipient. This is required for US and Canada addresses and optional for all other countries",
+          "title": "Recipient State"
+        },
+        "recipient_zip": {
+          "description": "the zip code or postal code of the recipient",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Recipient Zip",
+          "type": "string"
+        },
+        "recipient_country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the country of the recipient. Optional and defaults to usa",
+          "title": "Recipient Country"
+        },
+        "recipient_country_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "alternate way to specify country. Optional and defaults to 1",
+          "title": "Recipient Country Id"
+        },
+        "credit_card_id": {
+          "description": "the credit card id to charge for the order. Currently this is required, even for invoiced accounts, it just won't be charged.",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Credit Card Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "card_id",
+        "message",
+        "font_label",
+        "sender_name",
+        "sender_address1",
+        "sender_city",
+        "sender_zip",
+        "recipient_name",
+        "recipient_address1",
+        "recipient_city",
+        "recipient_zip",
+        "credit_card_id"
+      ],
+      "title": "HandwryttenSendCardConfig",
+      "type": "object"
+    },
+    "HandwryttenSessionToken": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "handwrytten_session_token",
+          "default": "handwrytten_session_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Session UID token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "session_token"
+      ],
+      "title": "Handwrytten Session Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an existing session UID token returned by Handwrytten /auth/authorization. This integration targets the published v1 API, which sends this token as uid in authenticated JSON requests. Do not paste your password or a v2 API key. Handwrytten recommends API keys for its newer v2 API; password sign-in is deprecated but remains supported. NoClick does not sign in, refresh, reset passwords or create accounts. Replace this token if the session expires.",
+      "x-credential-url": "https://www.handwrytten.com/api/sign-in-with-password/"
+    },
+    "HandwryttenUpdateRecipientConfig": {
+      "additionalProperties": false,
+      "description": "updates an existing new recipient address.",
+      "properties": {
+        "operation": {
+          "const": "update_recipient",
+          "default": "update_recipient",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "the id of the address to update",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the updated name on the address",
+          "title": "Name"
+        },
+        "business_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the updated optional business name on the address",
+          "title": "Business Name"
+        },
+        "address1": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the updated first line of the address",
+          "title": "Address1"
+        },
+        "address2": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the updated second (optional) line of the address",
+          "title": "Address2"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the updated city of the address",
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the updated abbreviated state or province of the address",
+          "title": "State"
+        },
+        "zip": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the updated zip or postal code of the address",
+          "title": "Zip"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the updated name of the country of the address, or use country_id",
+          "title": "Country"
+        },
+        "country_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the country id of the address",
+          "title": "Country Id"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "HandwryttenUpdateRecipientConfig",
+      "type": "object"
+    },
+    "HandwryttenUpdateReturnAddressConfig": {
+      "additionalProperties": false,
+      "description": "update the user's return address information.",
+      "properties": {
+        "operation": {
+          "const": "update_return_address",
+          "default": "update_return_address",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address_id": {
+          "description": "the address you are updating",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Address Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the name on the address",
+          "title": "Name"
+        },
+        "business_name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the optional business name on the address",
+          "title": "Business Name"
+        },
+        "address1": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the first line of the address",
+          "title": "Address1"
+        },
+        "address2": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the second (optional) line of the address",
+          "title": "Address2"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the city of the address",
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the abbreviated state or province of the address",
+          "title": "State"
+        },
+        "zip": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the zip or postal code of the address",
+          "title": "Zip"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the name of the country of the address",
+          "title": "Country"
+        },
+        "country_id": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the id of the country of the address. do not use with \"country\" parameter",
+          "title": "Country Id"
+        }
+      },
+      "required": [
+        "address_id"
+      ],
+      "title": "HandwryttenUpdateReturnAddressConfig",
+      "type": "object"
+    },
+    "HandwryttenUpdateTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Updates an Existing Template in the User\u2019s Account.",
+      "properties": {
+        "operation": {
+          "const": "update_template",
+          "default": "update_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "description": "the ID of the template to update",
+          "maximum": 2147483647,
+          "minimum": 1,
+          "title": "Template Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the new name of the template",
+          "title": "Name"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "message",
+          "title": "Message"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "HandwryttenUpdateTemplateConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_custom_card": "#/$defs/HandwryttenCreateCustomCardConfig",
+          "create_recipient": "#/$defs/HandwryttenCreateRecipientConfig",
+          "create_template": "#/$defs/HandwryttenCreateTemplateConfig",
+          "delete_recipient": "#/$defs/HandwryttenDeleteRecipientConfig",
+          "delete_template": "#/$defs/HandwryttenDeleteTemplateConfig",
+          "get_card": "#/$defs/HandwryttenGetCardConfig",
+          "get_return_address": "#/$defs/HandwryttenGetReturnAddressConfig",
+          "get_template": "#/$defs/HandwryttenGetTemplateConfig",
+          "list_cards": "#/$defs/HandwryttenListCardsConfig",
+          "list_countries": "#/$defs/HandwryttenListCountriesConfig",
+          "list_customizer_fonts": "#/$defs/HandwryttenListCustomizerFontsConfig",
+          "list_fonts": "#/$defs/HandwryttenListFontsConfig",
+          "list_gift_cards": "#/$defs/HandwryttenListGiftCardsConfig",
+          "list_recipients": "#/$defs/HandwryttenListRecipientsConfig",
+          "list_template_categories": "#/$defs/HandwryttenListTemplateCategoriesConfig",
+          "list_templates": "#/$defs/HandwryttenListTemplatesConfig",
+          "send_card": "#/$defs/HandwryttenSendCardConfig",
+          "update_recipient": "#/$defs/HandwryttenUpdateRecipientConfig",
+          "update_return_address": "#/$defs/HandwryttenUpdateReturnAddressConfig",
+          "update_template": "#/$defs/HandwryttenUpdateTemplateConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HandwryttenGetReturnAddressConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenUpdateReturnAddressConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenListRecipientsConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenCreateRecipientConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenUpdateRecipientConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenDeleteRecipientConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenListFontsConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenListCustomizerFontsConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenListCardsConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenGetCardConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenListGiftCardsConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenListTemplateCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenGetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenCreateTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenUpdateTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenDeleteTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenListCountriesConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenSendCardConfig"
+        },
+        {
+          "$ref": "#/$defs/HandwryttenCreateCustomCardConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HandwryttenSessionToken"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Handwrytten Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
