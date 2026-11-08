@@ -1,0 +1,215 @@
+{
+  "GET /api/me": {
+    "body": {
+      "user": {
+        "id": "...",
+        "name": "Phil",
+        "email": "[email protected]"
+      },
+      "subscription": {
+        "plan": "free",
+        "status": "active"
+      }
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "POST /api/messages/send": {
+    "body": {
+      "status": 200,
+      "message": "Message queued for sending on Pixel 7",
+      "message_id": "uuid",
+      "device_id": "uuid",
+      "device_name": "Pixel 7"
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "GET /api/messages/scheduled": {
+    "body": {
+      "scheduled_messages": [
+        {
+          "id": "uuid",
+          "phone": "+14155551234",
+          "body": "Reminder: appointment tomorrow!",
+          "scheduled_at": "2026-03-12T09:00:00Z",
+          "scheduler_status": "pending",
+          "device_id": "uuid"
+        }
+      ]
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "DELETE /api/messages/scheduled/:id": {
+    "body": {
+      "message": "Scheduled message cancelled"
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "GET /api/messages/sent": {
+    "body": {
+      "messages": []
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "GET /api/messages/received": {
+    "body": {
+      "messages": []
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "GET /api/v1/messages/history/:phone": {
+    "body": {
+      "messages": [
+        {
+          "id": "...",
+          "phone": "+1...",
+          "body": "Hello",
+          "direction": "inbound",
+          "created_at": "..."
+        }
+      ],
+      "phone": "+1...",
+      "page": 1,
+      "limit": 50
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "GET /api/v1/messages/status/:id": {
+    "body": {
+      "id": "uuid",
+      "status": "sent",
+      "sent_at": "..."
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "GET /api/messages/conversations": {
+    "body": {
+      "conversations": [
+        {
+          "thread_ref": "uuid",
+          "phone": "+1...",
+          "last_message": "Hey!",
+          "last_direction": "inbound",
+          "last_at": "...",
+          "message_count": 12,
+          "has_inbound": true,
+          "archived": false
+        }
+      ]
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "POST /api/messages/conversations/archive": {
+    "body": {
+      "success": true,
+      "thread_ref": "uuid",
+      "archived": true
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "GET /api/devices": {
+    "body": {
+      "devices": [
+        {
+          "id": "uuid",
+          "name": "Pixel 7",
+          "phone_number": "+14155551234",
+          "online": true,
+          "last_seen": "2026-03-11T20:00:00Z"
+        }
+      ]
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "DELETE /api/messages/thread": {
+    "body": {
+      "success": true,
+      "thread_ref": "uuid",
+      "phone": "+14155551234",
+      "messages_deleted": 42,
+      "devices_notified": 1,
+      "devices_pending_update": 0
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "GET /api/devices/:id": {
+    "body": {
+      "device": {
+        "id": "...",
+        "name": "...",
+        "online": true
+      }
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "GET /api/webhooks": {
+    "body": {
+      "webhooks": [
+        {
+          "id": "...",
+          "url": "https://...",
+          "events": [
+            "message.received"
+          ],
+          "active": true
+        }
+      ]
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "POST /api/v1/webhooks": {
+    "body": {
+      "webhook": {
+        "id": "uuid",
+        "url": "https://...",
+        "active": true
+      },
+      "secret": "whsec_..."
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "DELETE /api/webhooks/:id": {
+    "body": {
+      "message": "Webhook deleted"
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "GET /api/quick-replies": {
+    "body": {
+      "quick_replies": [
+        {
+          "id": "...",
+          "shortcut": "thanks",
+          "body": "Thank you!",
+          "usage_count": 5
+        }
+      ]
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "POST /api/quick-replies": {
+    "body": {
+      "quick_reply": {
+        "id": "uuid",
+        "shortcut": "thanks",
+        "body": "..."
+      }
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "PUT /api/quick-replies/:id": {
+    "body": {
+      "quick_reply": {
+        "id": "...",
+        "shortcut": "thanks",
+        "body": "Updated message body"
+      }
+    },
+    "source": "https://androidtexter.com/docs"
+  },
+  "DELETE /api/quick-replies/:id": {
+    "body": {
+      "message": "Quick reply deleted"
+    },
+    "source": "https://androidtexter.com/docs"
+  }
+}
