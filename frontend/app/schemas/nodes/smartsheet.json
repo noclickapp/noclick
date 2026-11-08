@@ -1,0 +1,1029 @@
+{
+  "$defs": {
+    "AddColumn": {
+      "description": "Add a column to a sheet.",
+      "properties": {
+        "operation": {
+          "const": "add_column",
+          "default": "add_column",
+          "title": "Add Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Columns",
+          "x-creates-resource": true,
+          "x-display-name": "Add Column",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.result.0.id",
+          "x-resource-type": "smartsheet_column"
+        },
+        "sheet_id": {
+          "title": "Sheet ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste sheet ID",
+            "field_name": "sheet_id",
+            "placeholder": "Select a sheet\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Column Title",
+          "type": "string"
+        },
+        "column_type": {
+          "default": "TEXT_NUMBER",
+          "enum": [
+            "TEXT_NUMBER",
+            "DATE",
+            "CHECKBOX",
+            "PICKLIST",
+            "MULTI_PICKLIST",
+            "CONTACT_LIST"
+          ],
+          "title": "Column Type",
+          "type": "string"
+        },
+        "index": {
+          "minimum": 0,
+          "title": "Column Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sheet_id",
+        "title",
+        "index"
+      ],
+      "title": "AddColumn",
+      "type": "object"
+    },
+    "AddRows": {
+      "description": "Add one or more rows with cell values.",
+      "properties": {
+        "operation": {
+          "const": "add_rows",
+          "default": "add_rows",
+          "title": "Add Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rows",
+          "x-creates-resource": true,
+          "x-display-name": "Add Rows",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.result.0.id",
+          "x-resource-type": "smartsheet_row"
+        },
+        "sheet_id": {
+          "title": "Sheet ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste sheet ID",
+            "field_name": "sheet_id",
+            "placeholder": "Select a sheet\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "rows_json": {
+          "description": "JSON array of rows, each with cells and a location such as {\"toBottom\":true}",
+          "title": "Rows JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "sheet_id",
+        "rows_json"
+      ],
+      "title": "AddRows",
+      "type": "object"
+    },
+    "CreateComment": {
+      "description": "Reply to a sheet discussion.",
+      "properties": {
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Reply to Discussion",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Discussions",
+          "x-display-name": "Reply to Discussion",
+          "x-is-trigger": false
+        },
+        "sheet_id": {
+          "title": "Sheet ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste sheet ID",
+            "field_name": "sheet_id",
+            "placeholder": "Select a sheet\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "discussion_id": {
+          "title": "Discussion ID",
+          "type": "string"
+        },
+        "comment": {
+          "minLength": 1,
+          "title": "Comment",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "sheet_id",
+        "discussion_id",
+        "comment"
+      ],
+      "title": "CreateComment",
+      "type": "object"
+    },
+    "CreateDiscussion": {
+      "description": "Start a discussion on a sheet.",
+      "properties": {
+        "operation": {
+          "const": "create_discussion",
+          "default": "create_discussion",
+          "title": "Create Discussion",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Discussions",
+          "x-creates-resource": true,
+          "x-display-name": "Create Discussion",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.result.id",
+          "x-resource-type": "smartsheet_discussion"
+        },
+        "sheet_id": {
+          "title": "Sheet ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste sheet ID",
+            "field_name": "sheet_id",
+            "placeholder": "Select a sheet\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "comment": {
+          "minLength": 1,
+          "title": "Comment",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "sheet_id",
+        "comment"
+      ],
+      "title": "CreateDiscussion",
+      "type": "object"
+    },
+    "CreateSheet": {
+      "description": "Create a sheet in a workspace with its initial columns.",
+      "properties": {
+        "operation": {
+          "const": "create_sheet",
+          "default": "create_sheet",
+          "title": "Create Sheet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sheets",
+          "x-creates-resource": true,
+          "x-display-name": "Create Sheet",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.result.id",
+          "x-resource-type": "smartsheet_sheet"
+        },
+        "workspace_id": {
+          "title": "Workspace ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace ID",
+            "field_name": "workspace_id",
+            "placeholder": "Select a workspace\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Sheet Name",
+          "type": "string"
+        },
+        "columns_json": {
+          "description": "JSON array, for example [{\"title\":\"Task\",\"type\":\"TEXT_NUMBER\",\"primary\":true}]",
+          "title": "Columns JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "name",
+        "columns_json"
+      ],
+      "title": "CreateSheet",
+      "type": "object"
+    },
+    "DeleteColumn": {
+      "description": "Delete a column.",
+      "properties": {
+        "operation": {
+          "const": "delete_column",
+          "default": "delete_column",
+          "title": "Delete Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Columns",
+          "x-display-name": "Delete Column",
+          "x-is-trigger": false
+        },
+        "sheet_id": {
+          "title": "Sheet ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste sheet ID",
+            "field_name": "sheet_id",
+            "placeholder": "Select a sheet\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "column_id": {
+          "title": "Column ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sheet_id",
+        "column_id"
+      ],
+      "title": "DeleteColumn",
+      "type": "object"
+    },
+    "DeleteRows": {
+      "description": "Delete rows by their IDs.",
+      "properties": {
+        "operation": {
+          "const": "delete_rows",
+          "default": "delete_rows",
+          "title": "Delete Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rows",
+          "x-display-name": "Delete Rows",
+          "x-is-trigger": false
+        },
+        "sheet_id": {
+          "title": "Sheet ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste sheet ID",
+            "field_name": "sheet_id",
+            "placeholder": "Select a sheet\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "row_ids": {
+          "description": "Comma-separated row IDs",
+          "title": "Row IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sheet_id",
+        "row_ids"
+      ],
+      "title": "DeleteRows",
+      "type": "object"
+    },
+    "DeleteSheet": {
+      "description": "Delete a sheet.",
+      "properties": {
+        "operation": {
+          "const": "delete_sheet",
+          "default": "delete_sheet",
+          "title": "Delete Sheet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sheets",
+          "x-display-name": "Delete Sheet",
+          "x-is-trigger": false
+        },
+        "sheet_id": {
+          "title": "Sheet ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste sheet ID",
+            "field_name": "sheet_id",
+            "placeholder": "Select a sheet\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "sheet_id"
+      ],
+      "title": "DeleteSheet",
+      "type": "object"
+    },
+    "GetColumn": {
+      "description": "Read a column definition.",
+      "properties": {
+        "operation": {
+          "const": "get_column",
+          "default": "get_column",
+          "title": "Get Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Columns",
+          "x-display-name": "Get Column",
+          "x-is-trigger": false
+        },
+        "sheet_id": {
+          "title": "Sheet ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste sheet ID",
+            "field_name": "sheet_id",
+            "placeholder": "Select a sheet\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "column_id": {
+          "title": "Column ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sheet_id",
+        "column_id"
+      ],
+      "title": "GetColumn",
+      "type": "object"
+    },
+    "GetCurrentUser": {
+      "description": "Identify the connected user.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Current User",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetCurrentUser",
+      "type": "object"
+    },
+    "GetDiscussion": {
+      "description": "Read a discussion.",
+      "properties": {
+        "operation": {
+          "const": "get_discussion",
+          "default": "get_discussion",
+          "title": "Get Discussion",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Discussions",
+          "x-display-name": "Get Discussion",
+          "x-is-trigger": false
+        },
+        "sheet_id": {
+          "title": "Sheet ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste sheet ID",
+            "field_name": "sheet_id",
+            "placeholder": "Select a sheet\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "discussion_id": {
+          "title": "Discussion ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sheet_id",
+        "discussion_id"
+      ],
+      "title": "GetDiscussion",
+      "type": "object"
+    },
+    "GetRow": {
+      "description": "Read one row with its cells.",
+      "properties": {
+        "operation": {
+          "const": "get_row",
+          "default": "get_row",
+          "title": "Get Row",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rows",
+          "x-display-name": "Get Row",
+          "x-is-trigger": false
+        },
+        "sheet_id": {
+          "title": "Sheet ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste sheet ID",
+            "field_name": "sheet_id",
+            "placeholder": "Select a sheet\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "row_id": {
+          "title": "Row ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sheet_id",
+        "row_id"
+      ],
+      "title": "GetRow",
+      "type": "object"
+    },
+    "GetSheet": {
+      "description": "Read a sheet, its columns and rows.",
+      "properties": {
+        "operation": {
+          "const": "get_sheet",
+          "default": "get_sheet",
+          "title": "Get Sheet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sheets",
+          "x-display-name": "Get Sheet",
+          "x-is-trigger": false
+        },
+        "sheet_id": {
+          "title": "Sheet ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste sheet ID",
+            "field_name": "sheet_id",
+            "placeholder": "Select a sheet\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Row Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rows Per Page"
+        }
+      },
+      "required": [
+        "sheet_id"
+      ],
+      "title": "GetSheet",
+      "type": "object"
+    },
+    "GetWorkspace": {
+      "description": "Read workspace metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_workspace",
+          "default": "get_workspace",
+          "title": "Get Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "Get Workspace",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "title": "Workspace ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace ID",
+            "field_name": "workspace_id",
+            "placeholder": "Select a workspace\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "GetWorkspace",
+      "type": "object"
+    },
+    "ListColumns": {
+      "description": "List a sheet's columns.",
+      "properties": {
+        "operation": {
+          "const": "list_columns",
+          "default": "list_columns",
+          "title": "List Columns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Columns",
+          "x-display-name": "List Columns",
+          "x-is-trigger": false
+        },
+        "sheet_id": {
+          "title": "Sheet ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste sheet ID",
+            "field_name": "sheet_id",
+            "placeholder": "Select a sheet\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "sheet_id"
+      ],
+      "title": "ListColumns",
+      "type": "object"
+    },
+    "ListDiscussions": {
+      "description": "List sheet discussions.",
+      "properties": {
+        "operation": {
+          "const": "list_discussions",
+          "default": "list_discussions",
+          "title": "List Discussions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Discussions",
+          "x-display-name": "List Discussions",
+          "x-is-trigger": false
+        },
+        "sheet_id": {
+          "title": "Sheet ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste sheet ID",
+            "field_name": "sheet_id",
+            "placeholder": "Select a sheet\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "sheet_id"
+      ],
+      "title": "ListDiscussions",
+      "type": "object"
+    },
+    "ListSheets": {
+      "description": "List sheets available to the connected user.",
+      "properties": {
+        "operation": {
+          "const": "list_sheets",
+          "default": "list_sheets",
+          "title": "List Sheets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sheets",
+          "x-display-name": "List Sheets",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "ListSheets",
+      "type": "object"
+    },
+    "ListWorkspaces": {
+      "description": "List workspaces available to the user.",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "List Workspaces",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "List Workspaces",
+          "x-is-trigger": false
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "ListWorkspaces",
+      "type": "object"
+    },
+    "SmartsheetOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "smartsheet_oauth",
+          "default": "smartsheet_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Email"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at"
+      ],
+      "title": "Smartsheet Account",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://developers.smartsheet.com/api/smartsheet/guides/advanced-topics/oauth",
+      "x-oauth-provider": "smartsheet",
+      "x-oauth-scopes": [
+        "ADMIN_SHEETS",
+        "CREATE_SHEETS",
+        "DELETE_SHEETS",
+        "READ_SHEETS",
+        "WRITE_SHEETS"
+      ]
+    },
+    "SmartsheetPATCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "smartsheet_pat",
+          "default": "smartsheet_pat",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "API Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Smartsheet API Token",
+      "type": "object",
+      "x-credential-url": "https://app.smartsheet.com/b/account"
+    },
+    "UpdateColumn": {
+      "description": "Update a column title or type.",
+      "properties": {
+        "operation": {
+          "const": "update_column",
+          "default": "update_column",
+          "title": "Update Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Columns",
+          "x-display-name": "Update Column",
+          "x-is-trigger": false
+        },
+        "sheet_id": {
+          "title": "Sheet ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste sheet ID",
+            "field_name": "sheet_id",
+            "placeholder": "Select a sheet\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "column_id": {
+          "title": "Column ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Title"
+        },
+        "index": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Index"
+        }
+      },
+      "required": [
+        "sheet_id",
+        "column_id"
+      ],
+      "title": "UpdateColumn",
+      "type": "object"
+    },
+    "UpdateRows": {
+      "description": "Update rows by ID.",
+      "properties": {
+        "operation": {
+          "const": "update_rows",
+          "default": "update_rows",
+          "title": "Update Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rows",
+          "x-display-name": "Update Rows",
+          "x-is-trigger": false
+        },
+        "sheet_id": {
+          "title": "Sheet ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste sheet ID",
+            "field_name": "sheet_id",
+            "placeholder": "Select a sheet\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "rows_json": {
+          "description": "JSON array of row objects with id and cells",
+          "title": "Rows JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "sheet_id",
+        "rows_json"
+      ],
+      "title": "UpdateRows",
+      "type": "object"
+    },
+    "UpdateSheet": {
+      "description": "Rename a sheet.",
+      "properties": {
+        "operation": {
+          "const": "update_sheet",
+          "default": "update_sheet",
+          "title": "Rename Sheet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sheets",
+          "x-display-name": "Rename Sheet",
+          "x-is-trigger": false
+        },
+        "sheet_id": {
+          "title": "Sheet ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste sheet ID",
+            "field_name": "sheet_id",
+            "placeholder": "Select a sheet\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "minLength": 1,
+          "title": "New Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sheet_id",
+        "name"
+      ],
+      "title": "UpdateSheet",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_column": "#/$defs/AddColumn",
+          "add_rows": "#/$defs/AddRows",
+          "create_comment": "#/$defs/CreateComment",
+          "create_discussion": "#/$defs/CreateDiscussion",
+          "create_sheet": "#/$defs/CreateSheet",
+          "delete_column": "#/$defs/DeleteColumn",
+          "delete_rows": "#/$defs/DeleteRows",
+          "delete_sheet": "#/$defs/DeleteSheet",
+          "get_column": "#/$defs/GetColumn",
+          "get_current_user": "#/$defs/GetCurrentUser",
+          "get_discussion": "#/$defs/GetDiscussion",
+          "get_row": "#/$defs/GetRow",
+          "get_sheet": "#/$defs/GetSheet",
+          "get_workspace": "#/$defs/GetWorkspace",
+          "list_columns": "#/$defs/ListColumns",
+          "list_discussions": "#/$defs/ListDiscussions",
+          "list_sheets": "#/$defs/ListSheets",
+          "list_workspaces": "#/$defs/ListWorkspaces",
+          "update_column": "#/$defs/UpdateColumn",
+          "update_rows": "#/$defs/UpdateRows",
+          "update_sheet": "#/$defs/UpdateSheet"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCurrentUser"
+        },
+        {
+          "$ref": "#/$defs/ListSheets"
+        },
+        {
+          "$ref": "#/$defs/GetSheet"
+        },
+        {
+          "$ref": "#/$defs/CreateSheet"
+        },
+        {
+          "$ref": "#/$defs/UpdateSheet"
+        },
+        {
+          "$ref": "#/$defs/DeleteSheet"
+        },
+        {
+          "$ref": "#/$defs/ListWorkspaces"
+        },
+        {
+          "$ref": "#/$defs/GetWorkspace"
+        },
+        {
+          "$ref": "#/$defs/GetRow"
+        },
+        {
+          "$ref": "#/$defs/AddRows"
+        },
+        {
+          "$ref": "#/$defs/UpdateRows"
+        },
+        {
+          "$ref": "#/$defs/DeleteRows"
+        },
+        {
+          "$ref": "#/$defs/ListColumns"
+        },
+        {
+          "$ref": "#/$defs/GetColumn"
+        },
+        {
+          "$ref": "#/$defs/AddColumn"
+        },
+        {
+          "$ref": "#/$defs/UpdateColumn"
+        },
+        {
+          "$ref": "#/$defs/DeleteColumn"
+        },
+        {
+          "$ref": "#/$defs/ListDiscussions"
+        },
+        {
+          "$ref": "#/$defs/GetDiscussion"
+        },
+        {
+          "$ref": "#/$defs/CreateDiscussion"
+        },
+        {
+          "$ref": "#/$defs/CreateComment"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SmartsheetOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/SmartsheetPATCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Smartsheet Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List my Smartsheet sheets",
+    "Add a row to a sheet",
+    "Update a row in Smartsheet"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
