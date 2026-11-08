@@ -1,0 +1,975 @@
+{
+  "$defs": {
+    "BookeoAPIKeyCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "bookeo_api_key",
+          "default": "bookeo_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "secret_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Application Secret Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Account API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expected_account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional stable business account ID, verified against Bookeo before every operation.",
+          "title": "Expected Account ID"
+        }
+      },
+      "required": [
+        "secret_key",
+        "api_key"
+      ],
+      "title": "Bookeo API Key",
+      "type": "object",
+      "x-credential-url": "https://www.bookeo.com/api/setup/"
+    },
+    "BookeoBearerTokenCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "bookeo_bearer_token",
+          "default": "bookeo_bearer_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Already issued Bookeo Bearer token. No automatic OAuth registration or refresh.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Supplied OAuth Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "description": "Actual finite expiry supplied by your application. Reconnect when expired.",
+          "format": "date-time",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "expected_account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Account ID"
+        }
+      },
+      "required": [
+        "access_token",
+        "expires_at"
+      ],
+      "title": "Bookeo Access Token",
+      "type": "object",
+      "x-credential-url": "https://www.bookeo.com/api/setup/"
+    },
+    "BookeoOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "bookeo_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expires At"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope"
+        },
+        "token_type": {
+          "default": "Bearer",
+          "title": "Token Type",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "expected_account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Account Id"
+        }
+      },
+      "required": [
+        "credential_type",
+        "access_token"
+      ],
+      "title": "Bookeo OAuth",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://www.bookeo.com/api/setup/",
+      "x-oauth-provider": "bookeo",
+      "x-oauth-scopes": [
+        "availability_r",
+        "bookings_rwd_all",
+        "customers_rwd_all"
+      ]
+    },
+    "CancelBooking": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "cancel_booking",
+          "default": "cancel_booking",
+          "title": "Cancel Booking (Frees Seats)",
+          "type": "string",
+          "x-operation-group": "Bookings"
+        },
+        "booking_number": {
+          "description": "Bookeo booking numbers are always strings.",
+          "title": "Booking Number",
+          "type": "string",
+          "x-resource-type": "bookeo_booking"
+        }
+      },
+      "required": [
+        "booking_number"
+      ],
+      "title": "CancelBooking",
+      "type": "object"
+    },
+    "CreateBooking": {
+      "additionalProperties": false,
+      "properties": {
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation Token",
+          "ui:hidden": true
+        },
+        "items_per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Items Per Page",
+          "type": "integer"
+        },
+        "start_time": {
+          "description": "Timezone-qualified reporting window, at most 31 days.",
+          "format": "date-time",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_time": {
+          "format": "date-time",
+          "title": "End Time",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_booking",
+          "default": "create_booking",
+          "title": "Create Booking (Reserves Seats)",
+          "type": "string",
+          "x-operation-group": "Bookings"
+        },
+        "product_id": {
+          "title": "Product",
+          "type": "string",
+          "ui:options": {
+            "dependsOn": [],
+            "loadOptions": true
+          },
+          "ui:widget": "select",
+          "x-resource-type": "bookeo_product_id"
+        },
+        "customer_id": {
+          "title": "Customer",
+          "type": "string",
+          "ui:options": {
+            "dependsOn": [],
+            "loadOptions": true
+          },
+          "ui:widget": "select",
+          "x-resource-type": "bookeo_customer_id"
+        },
+        "event_id": {
+          "description": "An available fixed or fixed-course event in the selected window.",
+          "title": "Available Event ID",
+          "type": "string",
+          "x-resource-type": "bookeo_event"
+        },
+        "people_numbers": {
+          "items": {
+            "$ref": "#/$defs/PeopleNumber"
+          },
+          "maxItems": 30,
+          "minItems": 1,
+          "title": "Participant Numbers",
+          "type": "array"
+        },
+        "external_ref": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Reference"
+        }
+      },
+      "required": [
+        "start_time",
+        "end_time",
+        "product_id",
+        "customer_id",
+        "event_id",
+        "people_numbers"
+      ],
+      "title": "CreateBooking",
+      "type": "object"
+    },
+    "CreateCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Address"
+        },
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Create Customer",
+          "type": "string",
+          "x-operation-group": "Customers"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name"
+      ],
+      "title": "CreateCustomer",
+      "type": "object"
+    },
+    "DeleteCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_customer",
+          "default": "delete_customer",
+          "title": "Delete Customer",
+          "type": "string",
+          "x-operation-group": "Customers"
+        },
+        "customer_id": {
+          "title": "Customer",
+          "type": "string",
+          "ui:options": {
+            "dependsOn": [],
+            "loadOptions": true
+          },
+          "ui:widget": "select",
+          "x-resource-type": "bookeo_customer_id"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "DeleteCustomer",
+      "type": "object"
+    },
+    "GetBooking": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_booking",
+          "default": "get_booking",
+          "title": "Get Booking Metadata",
+          "type": "string",
+          "x-operation-group": "Bookings"
+        },
+        "booking_number": {
+          "description": "Bookeo booking numbers are always strings.",
+          "title": "Booking Number",
+          "type": "string",
+          "x-resource-type": "bookeo_booking"
+        }
+      },
+      "required": [
+        "booking_number"
+      ],
+      "title": "GetBooking",
+      "type": "object"
+    },
+    "GetBusiness": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_business",
+          "default": "get_business",
+          "title": "Get Business Account",
+          "type": "string",
+          "x-operation-group": "Account"
+        }
+      },
+      "title": "GetBusiness",
+      "type": "object"
+    },
+    "GetCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Get Customer Metadata",
+          "type": "string",
+          "x-operation-group": "Customers"
+        },
+        "customer_id": {
+          "title": "Customer",
+          "type": "string",
+          "ui:options": {
+            "dependsOn": [],
+            "loadOptions": true
+          },
+          "ui:widget": "select",
+          "x-resource-type": "bookeo_customer_id"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "GetCustomer",
+      "type": "object"
+    },
+    "GetKeyPermissions": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_key_permissions",
+          "default": "get_key_permissions",
+          "title": "Get API Key Permissions",
+          "type": "string",
+          "x-operation-group": "Account"
+        }
+      },
+      "title": "GetKeyPermissions",
+      "type": "object"
+    },
+    "ListAvailability": {
+      "additionalProperties": false,
+      "properties": {
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation Token",
+          "ui:hidden": true
+        },
+        "items_per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Items Per Page",
+          "type": "integer"
+        },
+        "start_time": {
+          "description": "Timezone-qualified reporting window, at most 31 days.",
+          "format": "date-time",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_time": {
+          "format": "date-time",
+          "title": "End Time",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_availability",
+          "default": "list_availability",
+          "title": "List Fixed Product Availability",
+          "type": "string",
+          "x-operation-group": "Availability"
+        },
+        "product_id": {
+          "title": "Product",
+          "type": "string",
+          "ui:options": {
+            "dependsOn": [],
+            "loadOptions": true
+          },
+          "ui:widget": "select",
+          "x-resource-type": "bookeo_product_id"
+        }
+      },
+      "required": [
+        "start_time",
+        "end_time",
+        "product_id"
+      ],
+      "title": "ListAvailability",
+      "type": "object"
+    },
+    "ListBookings": {
+      "additionalProperties": false,
+      "properties": {
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation Token",
+          "ui:hidden": true
+        },
+        "items_per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Items Per Page",
+          "type": "integer"
+        },
+        "start_time": {
+          "description": "Timezone-qualified reporting window, at most 31 days.",
+          "format": "date-time",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_time": {
+          "format": "date-time",
+          "title": "End Time",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_bookings",
+          "default": "list_bookings",
+          "title": "List Booking Report",
+          "type": "string",
+          "x-operation-group": "Bookings"
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product",
+          "ui:options": {
+            "dependsOn": [],
+            "loadOptions": true
+          },
+          "ui:widget": "select",
+          "x-resource-type": "bookeo_product_id"
+        },
+        "include_canceled": {
+          "default": false,
+          "title": "Include Canceled Bookings",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "start_time",
+        "end_time"
+      ],
+      "title": "ListBookings",
+      "type": "object"
+    },
+    "ListCustomers": {
+      "additionalProperties": false,
+      "properties": {
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation Token",
+          "ui:hidden": true
+        },
+        "items_per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Items Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "List Customer Metadata",
+          "type": "string",
+          "x-operation-group": "Customers"
+        },
+        "created_since": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created Since"
+        },
+        "search_field": {
+          "default": "name",
+          "enum": [
+            "name",
+            "firstName",
+            "lastName",
+            "emailAddress"
+          ],
+          "title": "Search Field",
+          "type": "string"
+        },
+        "search_text": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Text"
+        }
+      },
+      "title": "ListCustomers",
+      "type": "object"
+    },
+    "ListLanguages": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_languages",
+          "default": "list_languages",
+          "title": "List Account Languages",
+          "type": "string",
+          "x-operation-group": "Settings"
+        }
+      },
+      "title": "ListLanguages",
+      "type": "object"
+    },
+    "ListPeopleCategories": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_people_categories",
+          "default": "list_people_categories",
+          "title": "List People Categories",
+          "type": "string",
+          "x-operation-group": "Settings"
+        }
+      },
+      "title": "ListPeopleCategories",
+      "type": "object"
+    },
+    "ListProducts": {
+      "additionalProperties": false,
+      "properties": {
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation Token",
+          "ui:hidden": true
+        },
+        "items_per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Items Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "List Product Metadata",
+          "type": "string",
+          "x-operation-group": "Settings"
+        },
+        "product_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "fixed",
+                "fixedCourse",
+                "flexibleTime"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Type",
+          "enum": [
+            "fixed",
+            "fixedCourse",
+            "flexibleTime"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListProducts",
+      "type": "object"
+    },
+    "ListResources": {
+      "additionalProperties": false,
+      "properties": {
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuation Token",
+          "ui:hidden": true
+        },
+        "items_per_page": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Items Per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_resources",
+          "default": "list_resources",
+          "title": "List Resource Types and Resources",
+          "type": "string",
+          "x-operation-group": "Settings"
+        }
+      },
+      "title": "ListResources",
+      "type": "object"
+    },
+    "PeopleNumber": {
+      "additionalProperties": false,
+      "properties": {
+        "people_category_id": {
+          "title": "People Category ID",
+          "type": "string",
+          "x-resource-type": "bookeo_people_category"
+        },
+        "number": {
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Number of Participants",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "people_category_id",
+        "number"
+      ],
+      "title": "PeopleNumber",
+      "type": "object"
+    },
+    "UpdateCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Address"
+        },
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Update Customer Name and Email",
+          "type": "string",
+          "x-operation-group": "Customers"
+        },
+        "customer_id": {
+          "title": "Customer",
+          "type": "string",
+          "ui:options": {
+            "dependsOn": [],
+            "loadOptions": true
+          },
+          "ui:widget": "select",
+          "x-resource-type": "bookeo_customer_id"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "customer_id"
+      ],
+      "title": "UpdateCustomer",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_booking": "#/$defs/CancelBooking",
+          "create_booking": "#/$defs/CreateBooking",
+          "create_customer": "#/$defs/CreateCustomer",
+          "delete_customer": "#/$defs/DeleteCustomer",
+          "get_booking": "#/$defs/GetBooking",
+          "get_business": "#/$defs/GetBusiness",
+          "get_customer": "#/$defs/GetCustomer",
+          "get_key_permissions": "#/$defs/GetKeyPermissions",
+          "list_availability": "#/$defs/ListAvailability",
+          "list_bookings": "#/$defs/ListBookings",
+          "list_customers": "#/$defs/ListCustomers",
+          "list_languages": "#/$defs/ListLanguages",
+          "list_people_categories": "#/$defs/ListPeopleCategories",
+          "list_products": "#/$defs/ListProducts",
+          "list_resources": "#/$defs/ListResources",
+          "update_customer": "#/$defs/UpdateCustomer"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetBusiness"
+        },
+        {
+          "$ref": "#/$defs/GetKeyPermissions"
+        },
+        {
+          "$ref": "#/$defs/ListProducts"
+        },
+        {
+          "$ref": "#/$defs/ListResources"
+        },
+        {
+          "$ref": "#/$defs/ListPeopleCategories"
+        },
+        {
+          "$ref": "#/$defs/ListLanguages"
+        },
+        {
+          "$ref": "#/$defs/ListAvailability"
+        },
+        {
+          "$ref": "#/$defs/ListCustomers"
+        },
+        {
+          "$ref": "#/$defs/GetCustomer"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomer"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomer"
+        },
+        {
+          "$ref": "#/$defs/DeleteCustomer"
+        },
+        {
+          "$ref": "#/$defs/ListBookings"
+        },
+        {
+          "$ref": "#/$defs/GetBooking"
+        },
+        {
+          "$ref": "#/$defs/CreateBooking"
+        },
+        {
+          "$ref": "#/$defs/CancelBooking"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BookeoOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/BookeoAPIKeyCredential"
+        },
+        {
+          "$ref": "#/$defs/BookeoBearerTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bookeo Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
