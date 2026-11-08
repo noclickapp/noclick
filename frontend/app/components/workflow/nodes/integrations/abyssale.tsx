@@ -11,6 +11,7 @@ const AbyssaleIcon = ({ className, style }: { className?: string; style?: CSSPro
 
 export const AbyssaleNode: NodeDefinition = {
     type: 'automation-abyssale', label: 'Abyssale',
+    category: 'media',
     description: 'Generate creative assets and manage Abyssale designs, projects and templates',
     Icon: AbyssaleIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
