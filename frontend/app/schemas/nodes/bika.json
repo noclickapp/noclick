@@ -1,0 +1,606 @@
+{
+  "$defs": {
+    "BikaAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "bika_api_token",
+          "default": "bika_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Bika API Token",
+      "type": "object",
+      "x-credential-instructions": "Copy your API token from Bika user settings and paste it here. The token is sent as a Bearer token to bika.ai. Access depends on your account's workspace and database permissions.",
+      "x-credential-url": "https://bika.ai/help/guide/developer/openapi"
+    },
+    "CreateRecordFields": {
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "additionalProperties": true,
+          "description": "Cell values keyed by field name or ID. Use Bika's documented cell-value formats.",
+          "title": "Fields",
+          "type": "object"
+        }
+      },
+      "required": [
+        "fields"
+      ],
+      "title": "CreateRecordFields",
+      "type": "object"
+    },
+    "CreateRecords": {
+      "additionalProperties": false,
+      "description": "Create up to ten records in one request.",
+      "properties": {
+        "space_id": {
+          "description": "Copy the spc\u2026 ID from the workspace URL.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Space ID",
+          "type": "string"
+        },
+        "database_id": {
+          "description": "The dat\u2026 node ID in the database URL.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_records",
+          "default": "create_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "field_key": {
+          "default": "name",
+          "enum": [
+            "name",
+            "id"
+          ],
+          "title": "Field key",
+          "type": "string"
+        },
+        "records": {
+          "items": {
+            "$ref": "#/$defs/CreateRecordFields"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Records",
+          "type": "array"
+        }
+      },
+      "required": [
+        "space_id",
+        "database_id",
+        "records"
+      ],
+      "title": "CreateRecords",
+      "type": "object"
+    },
+    "DeleteRecord": {
+      "additionalProperties": false,
+      "description": "Delete one explicitly named record.",
+      "properties": {
+        "space_id": {
+          "description": "Copy the spc\u2026 ID from the workspace URL.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Space ID",
+          "type": "string"
+        },
+        "database_id": {
+          "description": "The dat\u2026 node ID in the database URL.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "record_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_record",
+          "default": "delete_record",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "space_id",
+        "database_id",
+        "record_id"
+      ],
+      "title": "DeleteRecord",
+      "type": "object"
+    },
+    "DeleteRecords": {
+      "additionalProperties": false,
+      "description": "Delete up to ten explicitly named records.",
+      "properties": {
+        "space_id": {
+          "description": "Copy the spc\u2026 ID from the workspace URL.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Space ID",
+          "type": "string"
+        },
+        "database_id": {
+          "description": "The dat\u2026 node ID in the database URL.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_records",
+          "default": "delete_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "record_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Record IDs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "space_id",
+        "database_id",
+        "record_ids"
+      ],
+      "title": "DeleteRecords",
+      "type": "object"
+    },
+    "GetProfile": {
+      "additionalProperties": false,
+      "description": "Read the authenticated user's profile.",
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetProfile",
+      "type": "object"
+    },
+    "GetRecord": {
+      "additionalProperties": false,
+      "description": "Get one record with structured JSON cell values.",
+      "properties": {
+        "space_id": {
+          "description": "Copy the spc\u2026 ID from the workspace URL.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Space ID",
+          "type": "string"
+        },
+        "database_id": {
+          "description": "The dat\u2026 node ID in the database URL.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "record_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_record",
+          "default": "get_record",
+          "title": "Operation",
+          "type": "string"
+        },
+        "field_key": {
+          "default": "name",
+          "enum": [
+            "name",
+            "id"
+          ],
+          "title": "Field key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "space_id",
+        "database_id",
+        "record_id"
+      ],
+      "title": "GetRecord",
+      "type": "object"
+    },
+    "GetSpace": {
+      "additionalProperties": false,
+      "description": "Get details of one workspace.",
+      "properties": {
+        "operation": {
+          "const": "get_space",
+          "default": "get_space",
+          "title": "Operation",
+          "type": "string"
+        },
+        "space_id": {
+          "description": "Copy the spc\u2026 ID from the workspace URL.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Space ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "space_id"
+      ],
+      "title": "GetSpace",
+      "type": "object"
+    },
+    "ListRecords": {
+      "additionalProperties": false,
+      "description": "Read one page; pass next_offset into offset to continue.",
+      "properties": {
+        "space_id": {
+          "description": "Copy the spc\u2026 ID from the workspace URL.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Space ID",
+          "type": "string"
+        },
+        "database_id": {
+          "description": "The dat\u2026 node ID in the database URL.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_records",
+          "default": "list_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque offset returned by the previous page; omit for the first page.",
+          "title": "Offset"
+        },
+        "max_records": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional provider limit on records returned.",
+          "title": "Max Records"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only return these field names or IDs.",
+          "title": "Fields"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bika filter expression, for example field1==\"value1\";field2>10. Sent with URL encoding.",
+          "title": "Filter"
+        },
+        "field_key": {
+          "default": "name",
+          "enum": [
+            "name",
+            "id"
+          ],
+          "title": "Field key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "space_id",
+        "database_id"
+      ],
+      "title": "ListRecords",
+      "type": "object"
+    },
+    "ListSpaces": {
+      "additionalProperties": false,
+      "description": "List the workspaces accessible to this account.",
+      "properties": {
+        "operation": {
+          "const": "list_spaces",
+          "default": "list_spaces",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSpaces",
+      "type": "object"
+    },
+    "UpdateRecord": {
+      "additionalProperties": false,
+      "description": "Update selected fields of one record.",
+      "properties": {
+        "space_id": {
+          "description": "Copy the spc\u2026 ID from the workspace URL.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Space ID",
+          "type": "string"
+        },
+        "database_id": {
+          "description": "The dat\u2026 node ID in the database URL.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "record_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_record",
+          "default": "update_record",
+          "title": "Operation",
+          "type": "string"
+        },
+        "field_key": {
+          "default": "name",
+          "enum": [
+            "name",
+            "id"
+          ],
+          "title": "Field key",
+          "type": "string"
+        },
+        "fields": {
+          "additionalProperties": true,
+          "description": "Fields to update; null clears a cell where supported by Bika.",
+          "title": "Fields",
+          "type": "object"
+        }
+      },
+      "required": [
+        "space_id",
+        "database_id",
+        "record_id",
+        "fields"
+      ],
+      "title": "UpdateRecord",
+      "type": "object"
+    },
+    "UpdateRecordFields": {
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "additionalProperties": true,
+          "description": "Cell values keyed by field name or ID. Use Bika's documented cell-value formats.",
+          "title": "Fields",
+          "type": "object"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Record ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fields",
+        "id"
+      ],
+      "title": "UpdateRecordFields",
+      "type": "object"
+    },
+    "UpdateRecords": {
+      "additionalProperties": false,
+      "description": "Update up to ten records in one request.",
+      "properties": {
+        "space_id": {
+          "description": "Copy the spc\u2026 ID from the workspace URL.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Space ID",
+          "type": "string"
+        },
+        "database_id": {
+          "description": "The dat\u2026 node ID in the database URL.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_*.-]*$",
+          "title": "Database ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_records",
+          "default": "update_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "field_key": {
+          "default": "name",
+          "enum": [
+            "name",
+            "id"
+          ],
+          "title": "Field key",
+          "type": "string"
+        },
+        "records": {
+          "items": {
+            "$ref": "#/$defs/UpdateRecordFields"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Records",
+          "type": "array"
+        }
+      },
+      "required": [
+        "space_id",
+        "database_id",
+        "records"
+      ],
+      "title": "UpdateRecords",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_records": "#/$defs/CreateRecords",
+          "delete_record": "#/$defs/DeleteRecord",
+          "delete_records": "#/$defs/DeleteRecords",
+          "get_profile": "#/$defs/GetProfile",
+          "get_record": "#/$defs/GetRecord",
+          "get_space": "#/$defs/GetSpace",
+          "list_records": "#/$defs/ListRecords",
+          "list_spaces": "#/$defs/ListSpaces",
+          "update_record": "#/$defs/UpdateRecord",
+          "update_records": "#/$defs/UpdateRecords"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListSpaces"
+        },
+        {
+          "$ref": "#/$defs/GetSpace"
+        },
+        {
+          "$ref": "#/$defs/GetProfile"
+        },
+        {
+          "$ref": "#/$defs/ListRecords"
+        },
+        {
+          "$ref": "#/$defs/GetRecord"
+        },
+        {
+          "$ref": "#/$defs/CreateRecords"
+        },
+        {
+          "$ref": "#/$defs/UpdateRecords"
+        },
+        {
+          "$ref": "#/$defs/UpdateRecord"
+        },
+        {
+          "$ref": "#/$defs/DeleteRecords"
+        },
+        {
+          "$ref": "#/$defs/DeleteRecord"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BikaAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bika Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
