@@ -11,6 +11,7 @@ const NiftyImagesIcon = ({ className, style }: { className?: string; style?: CSS
 
 export const NiftyImagesNode: NodeDefinition = {
     type: 'automation-niftyimages', label: 'NiftyImages',
+    category: 'marketing',
     description: 'Automate images, map locations, stores and records',
     Icon: NiftyImagesIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
