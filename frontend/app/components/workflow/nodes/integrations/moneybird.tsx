@@ -11,6 +11,7 @@ const MoneybirdIcon = ({ className, style }: { className?: string; style?: CSSPr
 
 export const MoneybirdNode: NodeDefinition = {
     type: 'automation-moneybird', label: 'Moneybird',
+    category: 'finance-accounting',
     description: 'Manage contacts, invoices, estimates, products and accounting settings',
     Icon: MoneybirdIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
