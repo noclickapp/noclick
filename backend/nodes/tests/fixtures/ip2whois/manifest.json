@@ -1,0 +1,14 @@
+{
+  "ip2whois": {
+    "file": "spec.json",
+    "sha256": "b5c8ad503cd19a4515f938bea0aa099168b22e0c32c81efe7d036c315691836d",
+    "version": "1.0",
+    "source_url": "https://api.swaggerhub.com/apis/ip2whois/ip2whois-domain-lookup/1.0",
+    "node_type": "automation-ip2whois",
+    "credential": {
+      "credential_type": "ip2whois_api_key",
+      "api_key": "<token>"
+    },
+    "pinned_by": "pin_apisguru.py (provider)"
+  }
+}

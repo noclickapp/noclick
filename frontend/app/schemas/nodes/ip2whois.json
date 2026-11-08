@@ -1,0 +1,78 @@
+{
+  "$defs": {
+    "Ip2WhoisAPIKey": {
+      "properties": {
+        "credential_type": {
+          "const": "ip2whois_api_key",
+          "default": "ip2whois_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "IP2WHOIS API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your WHOIS lookup API license key from your IP2Location.io account. Connecting makes one WHOIS lookup for locaproxy.com and uses your lookup quota. This verifies API access, not account identity.",
+      "x-credential-url": "https://www.ip2whois.com/developers-api"
+    },
+    "Ip2WhoisLookupConfig": {
+      "properties": {
+        "operation": {
+          "const": "lookup_domain",
+          "default": "lookup_domain",
+          "enumNames": [
+            "Lookup Domain"
+          ],
+          "title": "Operation",
+          "type": "string",
+          "x-operation-kind": "read"
+        },
+        "domain": {
+          "description": "Domain name, for example locaproxy.com; use punycode for international domain names.",
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "Ip2WhoisLookupConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/Ip2WhoisLookupConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Ip2WhoisAPIKey"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Ip2whois Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

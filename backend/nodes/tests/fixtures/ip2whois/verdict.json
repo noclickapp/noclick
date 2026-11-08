@@ -1,0 +1,14 @@
+{
+ "provider": "ip2whois",
+ "ready": true,
+ "blocking": [],
+ "advisory": [],
+ "stats": {
+  "operations": 1,
+  "skipped": 0,
+  "request_ok": 1,
+  "authored_parser_ok": 1,
+  "generated_only": 0,
+  "local_ok": 0
+ }
+}
