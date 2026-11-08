@@ -1,0 +1,1361 @@
+{
+  "$defs": {
+    "ApipieAICredential": {
+      "properties": {
+        "credential_type": {
+          "const": "apipie_ai_api_key",
+          "default": "apipie_ai_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Apipie AI API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your APIpie API key from your profile. NoClick verifies it by reading the app's current state settings.",
+      "x-credential-type": "api_key",
+      "x-credential-url": "https://apipie.ai/profile"
+    },
+    "CreateChatCompletionConfig": {
+      "additionalProperties": false,
+      "description": "Chat Completions.",
+      "properties": {
+        "operation": {
+          "const": "create_chat_completion",
+          "default": "create_chat_completion",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "messages": {
+          "items": {
+            "$ref": "#/$defs/Message"
+          },
+          "title": "Messages",
+          "type": "array"
+        },
+        "user": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique identifier for the user, enabling tenant observability for usage and billing, and providing tenant services for memory and inline_cli.",
+          "title": "User"
+        },
+        "model": {
+          "description": "Language Model to use, comma separated, up to 5 models. Check our /models route for list of language models. Cannot use provider option with multi-model.",
+          "title": "Model",
+          "type": "string"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "AI Service Provider to use, omit provider and we will automatically use the most responsive provider. Optionally you can include provider with the model instead such as model: provider/model",
+          "title": "Provider"
+        },
+        "temperature": {
+          "anyOf": [
+            {
+              "maximum": 2,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Influences the randomness in the selection process of the next token. Lower values make the model more deterministic, while higher values increase diversity but might reduce coherence.",
+          "title": "Temperature"
+        },
+        "max_tokens": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max tokens used to generate a response",
+          "title": "Max Tokens"
+        }
+      },
+      "required": [
+        "messages",
+        "model"
+      ],
+      "title": "CreateChatCompletionConfig",
+      "type": "object"
+    },
+    "CreateEmbeddingConfig": {
+      "additionalProperties": false,
+      "description": "Embeddings LLM.",
+      "properties": {
+        "operation": {
+          "const": "create_embedding",
+          "default": "create_embedding",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "description": "Model to use for generating embeddings.",
+          "title": "Model",
+          "type": "string"
+        },
+        "input": {
+          "description": "Input text to generate embeddings for.",
+          "title": "Input",
+          "type": "string"
+        },
+        "encoding_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "float",
+                "np"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Format of the output encoding. Only supported by OpenAI",
+          "title": "Encoding Format",
+          "enum": [
+            "float",
+            "np"
+          ],
+          "x-enum-searchable": true
+        },
+        "dimensions": {
+          "anyOf": [
+            {
+              "maximum": 1536,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of dimensions for the embedding vector. Maximum value is 384-1536 check the models route for max_tokens per model. Only supported by OpenAI",
+          "title": "Dimensions"
+        }
+      },
+      "required": [
+        "model",
+        "input"
+      ],
+      "title": "CreateEmbeddingConfig",
+      "type": "object"
+    },
+    "CreateVectorCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Create a new vector collection.",
+      "properties": {
+        "operation": {
+          "const": "create_vector_collection",
+          "default": "create_vector_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection_name": {
+          "title": "Collection Name",
+          "type": "string"
+        },
+        "dimension": {
+          "title": "Dimension",
+          "type": "integer"
+        },
+        "vector_provider": {
+          "anyOf": [
+            {
+              "enum": [
+                "pinecone",
+                "qdrant"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Vector provider to use to store the collection",
+          "title": "Vector Provider",
+          "enum": [
+            "pinecone",
+            "qdrant"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "collection_name",
+        "dimension"
+      ],
+      "title": "CreateVectorCollectionConfig",
+      "type": "object"
+    },
+    "DeleteStateConfig": {
+      "additionalProperties": false,
+      "description": "Delete entire state records.",
+      "properties": {
+        "operation": {
+          "const": "delete_state",
+          "default": "delete_state",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User"
+        },
+        "app_name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9 _+-]{1,256}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "App Name"
+        }
+      },
+      "title": "DeleteStateConfig",
+      "type": "object"
+    },
+    "DeleteVectorCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Delete a vector collection or specific vectors.",
+      "properties": {
+        "operation": {
+          "const": "delete_vector_collection",
+          "default": "delete_vector_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection_name": {
+          "title": "Collection Name",
+          "type": "string"
+        },
+        "delete_all": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delete All"
+        },
+        "ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ids"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        }
+      },
+      "required": [
+        "collection_name"
+      ],
+      "title": "DeleteVectorCollectionConfig",
+      "type": "object"
+    },
+    "GenerateImageConfig": {
+      "additionalProperties": false,
+      "description": "Image Generation.",
+      "properties": {
+        "operation": {
+          "const": "generate_image",
+          "default": "generate_image",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "description": "Text description of the desired image(s)",
+          "title": "Prompt",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The model to use for image generation",
+          "title": "Model"
+        },
+        "n": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The number of images to generate, we currently only support one at a time",
+          "title": "N"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The size of the generated images",
+          "title": "Size"
+        },
+        "quality": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The quality of the image that will be generated",
+          "title": "Quality"
+        },
+        "style": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The style of the generated images the options are vivid and natural and does not apply to all providers",
+          "title": "Style"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A randomness initializer for image reproducibility. Check specific models for compatibility.",
+          "title": "Seed"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "GenerateImageConfig",
+      "type": "object"
+    },
+    "GetStateConfig": {
+      "additionalProperties": false,
+      "description": "Get current state settings.",
+      "properties": {
+        "operation": {
+          "const": "get_state",
+          "default": "get_state",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User"
+        },
+        "app_name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9 _+-]{1,256}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "App Name"
+        }
+      },
+      "title": "GetStateConfig",
+      "type": "object"
+    },
+    "GetVectorRecordConfig": {
+      "additionalProperties": false,
+      "description": "Get a specific record in a vector collection.",
+      "properties": {
+        "operation": {
+          "const": "get_vector_record",
+          "default": "get_vector_record",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection_name": {
+          "title": "Collection Name",
+          "type": "string"
+        },
+        "ids": {
+          "title": "Ids",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_name",
+        "ids"
+      ],
+      "title": "GetVectorRecordConfig",
+      "type": "object"
+    },
+    "ListDetailedModelsConfig": {
+      "additionalProperties": false,
+      "description": "Fetch Detailed Models.",
+      "properties": {
+        "operation": {
+          "const": "list_detailed_models",
+          "default": "list_detailed_models",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        }
+      },
+      "title": "ListDetailedModelsConfig",
+      "type": "object"
+    },
+    "ListModelsConfig": {
+      "additionalProperties": false,
+      "description": "Fetch Models.",
+      "properties": {
+        "operation": {
+          "const": "list_models",
+          "default": "list_models",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "llm",
+                "vision",
+                "embedding",
+                "image",
+                "voice",
+                "moderation",
+                "coding",
+                "free"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "llm",
+            "vision",
+            "embedding",
+            "image",
+            "voice",
+            "moderation",
+            "coding",
+            "free"
+          ],
+          "x-enum-searchable": true
+        },
+        "subtype": {
+          "anyOf": [
+            {
+              "enum": [
+                "chat",
+                "fill-mask",
+                "question-answering",
+                "tts",
+                "stt",
+                "multimodal"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subtype",
+          "enum": [
+            "chat",
+            "fill-mask",
+            "question-answering",
+            "tts",
+            "stt",
+            "multimodal"
+          ],
+          "x-enum-searchable": true
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "enum": [
+                1,
+                0
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enabled"
+        }
+      },
+      "title": "ListModelsConfig",
+      "type": "object"
+    },
+    "ListQueriesConfig": {
+      "additionalProperties": false,
+      "description": "Queries History.",
+      "properties": {
+        "operation": {
+          "const": "list_queries",
+          "default": "list_queries",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offset"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "enum": [
+                "all",
+                "hourly",
+                "daily",
+                "weekly"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Show",
+          "enum": [
+            "all",
+            "hourly",
+            "daily",
+            "weekly"
+          ],
+          "x-enum-searchable": true
+        },
+        "days": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Days"
+        },
+        "user": {
+          "anyOf": [
+            {
+              "maxLength": 14,
+              "pattern": "^[a-zA-Z0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User"
+        },
+        "app": {
+          "anyOf": [
+            {
+              "maxLength": 14,
+              "pattern": "^[a-zA-Z0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "App"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "maxLength": 14,
+              "pattern": "^[a-zA-Z0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        },
+        "route": {
+          "anyOf": [
+            {
+              "maxLength": 14,
+              "pattern": "^[a-zA-Z0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Route"
+        }
+      },
+      "title": "ListQueriesConfig",
+      "type": "object"
+    },
+    "ListRagCollectionsConfig": {
+      "additionalProperties": false,
+      "description": "List collections for RAG tuning.",
+      "properties": {
+        "operation": {
+          "const": "list_rag_collections",
+          "default": "list_rag_collections",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "vector_provider": {
+          "anyOf": [
+            {
+              "enum": [
+                "pinecone",
+                "qdrant"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Vector provider to fetch collections for",
+          "title": "Vector Provider",
+          "enum": [
+            "pinecone",
+            "qdrant"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListRagCollectionsConfig",
+      "type": "object"
+    },
+    "ListVectorCollectionsConfig": {
+      "additionalProperties": false,
+      "description": "List vector collections.",
+      "properties": {
+        "operation": {
+          "const": "list_vector_collections",
+          "default": "list_vector_collections",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListVectorCollectionsConfig",
+      "type": "object"
+    },
+    "ListVectorIdsConfig": {
+      "additionalProperties": false,
+      "description": "List vector IDs in a collection.",
+      "properties": {
+        "operation": {
+          "const": "list_vector_ids",
+          "default": "list_vector_ids",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection_name": {
+          "title": "Collection Name",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prefix"
+        },
+        "pagination_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pagination Token"
+        }
+      },
+      "required": [
+        "collection_name"
+      ],
+      "title": "ListVectorIdsConfig",
+      "type": "object"
+    },
+    "Message": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "assistant",
+            "system",
+            "user"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "content": {
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "content"
+      ],
+      "title": "Message",
+      "type": "object"
+    },
+    "ProcessDocumentConfig": {
+      "additionalProperties": false,
+      "description": "Process a document for RAG tuning.",
+      "properties": {
+        "operation": {
+          "const": "process_document",
+          "default": "process_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection_name": {
+          "title": "Collection Name",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL of the document to process. Supported file types: PDF, DOC, DOCX, TXT, CSV, XLS, XLSX",
+          "title": "Url",
+          "type": "string"
+        },
+        "metatag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional metadata tag to associate with the document",
+          "title": "Metatag"
+        },
+        "vector_provider": {
+          "anyOf": [
+            {
+              "enum": [
+                "pinecone",
+                "qdrant"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Vector provider to use to store the collection",
+          "title": "Vector Provider",
+          "enum": [
+            "pinecone",
+            "qdrant"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "collection_name",
+        "url"
+      ],
+      "title": "ProcessDocumentConfig",
+      "type": "object"
+    },
+    "QueryVectorsConfig": {
+      "additionalProperties": false,
+      "description": "Query vectors in a collection.",
+      "properties": {
+        "operation": {
+          "const": "query_vectors",
+          "default": "query_vectors",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection_name": {
+          "title": "Collection Name",
+          "type": "string"
+        },
+        "vector": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Vector",
+          "type": "array"
+        },
+        "top_k": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Top K"
+        },
+        "include_values": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Values"
+        },
+        "include_metadata": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Metadata"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        },
+        "metatag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metatag"
+        }
+      },
+      "required": [
+        "collection_name",
+        "vector"
+      ],
+      "title": "QueryVectorsConfig",
+      "type": "object"
+    },
+    "UpdateStateConfig": {
+      "additionalProperties": false,
+      "description": "Create/Update state settings(merge)..",
+      "properties": {
+        "operation": {
+          "const": "update_state",
+          "default": "update_state",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "enable_user_states": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, scope is per-user (user_id + user). If false, scope is per-app (user_id + app label).",
+          "title": "Enable User States"
+        },
+        "user": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when enable_user_states=true. Identifies the end-user.",
+          "title": "User"
+        },
+        "enable_inline_cli": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enable a command line CLI for state management at the prompt, use ':help' in the prompt to any LLM for more details",
+          "title": "Enable Inline Cli"
+        },
+        "gui_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When true, state configuration can only be performed through the APIpie GUI and cannot be edited via API or inline cli for this API key.",
+          "title": "Gui Only"
+        },
+        "settings": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Settings"
+        },
+        "delete": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Keys to remove from the existing settings (partial delete). Use POST to perform partial key deletes.",
+          "title": "Delete"
+        },
+        "app_name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9 _+-]{1,256}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "App Name"
+        }
+      },
+      "title": "UpdateStateConfig",
+      "type": "object"
+    },
+    "UpsertVectorConfig": {
+      "additionalProperties": false,
+      "description": "Update or insert a vector into a collection.",
+      "properties": {
+        "operation": {
+          "const": "upsert_vector",
+          "default": "upsert_vector",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection_name": {
+          "title": "Collection Name",
+          "type": "string"
+        },
+        "vector_id": {
+          "title": "Vector Id",
+          "type": "string"
+        },
+        "metatag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metatag"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data"
+        },
+        "embedding": {
+          "items": {
+            "type": "number"
+          },
+          "title": "Embedding",
+          "type": "array"
+        }
+      },
+      "required": [
+        "collection_name",
+        "vector_id",
+        "embedding"
+      ],
+      "title": "UpsertVectorConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_chat_completion": "#/$defs/CreateChatCompletionConfig",
+          "create_embedding": "#/$defs/CreateEmbeddingConfig",
+          "create_vector_collection": "#/$defs/CreateVectorCollectionConfig",
+          "delete_state": "#/$defs/DeleteStateConfig",
+          "delete_vector_collection": "#/$defs/DeleteVectorCollectionConfig",
+          "generate_image": "#/$defs/GenerateImageConfig",
+          "get_state": "#/$defs/GetStateConfig",
+          "get_vector_record": "#/$defs/GetVectorRecordConfig",
+          "list_detailed_models": "#/$defs/ListDetailedModelsConfig",
+          "list_models": "#/$defs/ListModelsConfig",
+          "list_queries": "#/$defs/ListQueriesConfig",
+          "list_rag_collections": "#/$defs/ListRagCollectionsConfig",
+          "list_vector_collections": "#/$defs/ListVectorCollectionsConfig",
+          "list_vector_ids": "#/$defs/ListVectorIdsConfig",
+          "process_document": "#/$defs/ProcessDocumentConfig",
+          "query_vectors": "#/$defs/QueryVectorsConfig",
+          "update_state": "#/$defs/UpdateStateConfig",
+          "upsert_vector": "#/$defs/UpsertVectorConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CreateChatCompletionConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateEmbeddingConfig"
+        },
+        {
+          "$ref": "#/$defs/GenerateImageConfig"
+        },
+        {
+          "$ref": "#/$defs/GetStateConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateStateConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteStateConfig"
+        },
+        {
+          "$ref": "#/$defs/ListQueriesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListModelsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListDetailedModelsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateVectorCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/ListVectorCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteVectorCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/UpsertVectorConfig"
+        },
+        {
+          "$ref": "#/$defs/ListVectorIdsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetVectorRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/QueryVectorsConfig"
+        },
+        {
+          "$ref": "#/$defs/ProcessDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/ListRagCollectionsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ApipieAICredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Apipie-ai Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
