@@ -1,0 +1,1220 @@
+{
+  "$defs": {
+    "CheckConnection": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Check Authenticated Person",
+          "x-is-trigger": false
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "ChurchToolsCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "churchtools",
+          "default": "churchtools",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "instance_url": {
+          "description": "Exact public HTTPS origin, for example https://your-church.church.tools. Custom public tenant domains are accepted; no path, private host or TLS override.",
+          "title": "ChurchTools Installation",
+          "type": "string"
+        },
+        "login_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Login Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expected_person_id": {
+          "description": "Matched against whoami with only_allow_authenticated=true. This proves this user on this installation, not operation permissions.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Your Person ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "instance_url",
+        "login_token",
+        "expected_person_id"
+      ],
+      "title": "ChurchTools Login Token",
+      "type": "object",
+      "x-credential-instructions": "Supply your already-issued profile Login token and exact person ID for this public HTTPS ChurchTools installation. The node uses Authorization: Login, never password login, token retrieval, impersonation or OAuth minting.",
+      "x-credential-url": "https://churchtools.academy/en/help/system-settings/api-en/api-authentication/"
+    },
+    "CreateCalendar": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_calendar",
+          "default": "create_calendar",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendars",
+          "x-display-name": "Create Personal Calendar",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 2,
+          "title": "Name",
+          "type": "string"
+        },
+        "sort_key": {
+          "default": 10,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Sort Key",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateCalendar",
+      "type": "object"
+    },
+    "CreateGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Create Hidden Pending Group",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "group_type_id": {
+          "description": "Exact groupTypes ID from this installation's reference catalogs. Creates pending status 2 and hidden visibility; never sets an implicit membership role.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Group Type Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "group_type_id"
+      ],
+      "title": "CreateGroup",
+      "type": "object"
+    },
+    "CreatePerson": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "nickname": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nickname"
+        },
+        "operation": {
+          "const": "create_person",
+          "default": "create_person",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "People",
+          "x-display-name": "Create Person Metadata",
+          "x-is-trigger": false
+        },
+        "department_id": {
+          "description": "Exact department ID from this installation's reference catalogs. A person must have at least one department.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Department Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "department_id"
+      ],
+      "title": "CreatePerson",
+      "type": "object"
+    },
+    "CreateWikiCategory": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_wiki_category",
+          "default": "create_wiki_category",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Wiki",
+          "x-display-name": "Create Wiki Category",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "sort_key": {
+          "default": 10,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Sort Key",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateWikiCategory",
+      "type": "object"
+    },
+    "CreateWikiPage": {
+      "additionalProperties": false,
+      "properties": {
+        "wiki_category_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Wiki Category Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "wiki_category_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_wiki_page",
+          "default": "create_wiki_page",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Wiki",
+          "x-display-name": "Create Wiki Page",
+          "x-is-trigger": false
+        },
+        "title": {
+          "maxLength": 190,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 32000,
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "wiki_category_id",
+        "title",
+        "text"
+      ],
+      "title": "CreateWikiPage",
+      "type": "object"
+    },
+    "DeleteCalendar": {
+      "additionalProperties": false,
+      "properties": {
+        "calendar_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Calendar Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "calendar_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_calendar",
+          "default": "delete_calendar",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendars",
+          "x-display-name": "Delete Calendar",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "calendar_id"
+      ],
+      "title": "DeleteCalendar",
+      "type": "object"
+    },
+    "DeleteGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "group_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Group Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "group_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Delete Group",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "DeleteGroup",
+      "type": "object"
+    },
+    "DeletePerson": {
+      "additionalProperties": false,
+      "properties": {
+        "person_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Person Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "person_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_person",
+          "default": "delete_person",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "People",
+          "x-display-name": "Delete Person",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "person_id"
+      ],
+      "title": "DeletePerson",
+      "type": "object"
+    },
+    "DeleteWikiPage": {
+      "additionalProperties": false,
+      "properties": {
+        "wiki_category_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Wiki Category Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "wiki_category_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "page_guid": {
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Page Guid",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "depends_on": "wiki_category_id",
+            "field_name": "page_guid",
+            "searchable": false
+          }
+        },
+        "operation": {
+          "const": "delete_wiki_page",
+          "default": "delete_wiki_page",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Wiki",
+          "x-display-name": "Delete Wiki Page and Versions",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "wiki_category_id",
+        "page_guid"
+      ],
+      "title": "DeleteWikiPage",
+      "type": "object"
+    },
+    "GetAppointment": {
+      "additionalProperties": false,
+      "properties": {
+        "calendar_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Calendar Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "calendar_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_appointment",
+          "default": "get_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendars",
+          "x-display-name": "Get Calendar Appointment Metadata",
+          "x-is-trigger": false
+        },
+        "appointment_id": {
+          "description": "Exact appointment ID from the selected calendar, obtained with a bounded List Appointments date range. No date range is guessed by a picker.",
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Appointment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "calendar_id",
+        "appointment_id"
+      ],
+      "title": "GetAppointment",
+      "type": "object"
+    },
+    "GetCalendar": {
+      "additionalProperties": false,
+      "properties": {
+        "calendar_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Calendar Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "calendar_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_calendar",
+          "default": "get_calendar",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendars",
+          "x-display-name": "Get Calendar Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "calendar_id"
+      ],
+      "title": "GetCalendar",
+      "type": "object"
+    },
+    "GetGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "group_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Group Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "group_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Get Group Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "GetGroup",
+      "type": "object"
+    },
+    "GetMasterdata": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_masterdata",
+          "default": "get_masterdata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reference",
+          "x-display-name": "Get People and Group Reference Catalogs",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetMasterdata",
+      "type": "object"
+    },
+    "GetPerson": {
+      "additionalProperties": false,
+      "properties": {
+        "person_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Person Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "person_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_person",
+          "default": "get_person",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "People",
+          "x-display-name": "Get Person Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "person_id"
+      ],
+      "title": "GetPerson",
+      "type": "object"
+    },
+    "GetWikiPage": {
+      "additionalProperties": false,
+      "properties": {
+        "wiki_category_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Wiki Category Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "wiki_category_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "page_guid": {
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Page Guid",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "depends_on": "wiki_category_id",
+            "field_name": "page_guid",
+            "searchable": false
+          }
+        },
+        "operation": {
+          "const": "get_wiki_page",
+          "default": "get_wiki_page",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Wiki",
+          "x-display-name": "Get Wiki Page Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "wiki_category_id",
+        "page_guid"
+      ],
+      "title": "GetWikiPage",
+      "type": "object"
+    },
+    "ListAppointments": {
+      "additionalProperties": false,
+      "properties": {
+        "calendar_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Calendar Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "calendar_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_appointments",
+          "default": "list_appointments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendars",
+          "x-display-name": "List Calendar Appointment Metadata",
+          "x-is-trigger": false
+        },
+        "from_date": {
+          "description": "Inclusive YYYY-MM-DD",
+          "title": "From Date",
+          "type": "string"
+        },
+        "to_date": {
+          "description": "Inclusive YYYY-MM-DD, at most 30 days after From (31 calendar dates)",
+          "title": "To Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "calendar_id",
+        "from_date",
+        "to_date"
+      ],
+      "title": "ListAppointments",
+      "type": "object"
+    },
+    "ListCalendars": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_calendars",
+          "default": "list_calendars",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendars",
+          "x-display-name": "List Calendar Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListCalendars",
+      "type": "object"
+    },
+    "ListGroups": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "description": "One page only; native safety bound is narrower than the person API's 500 maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "List Group Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListGroups",
+      "type": "object"
+    },
+    "ListPersons": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 25,
+          "description": "One page only; native safety bound is narrower than the person API's 500 maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "operation": {
+          "const": "list_persons",
+          "default": "list_persons",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "People",
+          "x-display-name": "List People Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListPersons",
+      "type": "object"
+    },
+    "ListWikiCategories": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_wiki_categories",
+          "default": "list_wiki_categories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Wiki",
+          "x-display-name": "List Wiki Categories",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListWikiCategories",
+      "type": "object"
+    },
+    "ListWikiPages": {
+      "additionalProperties": false,
+      "properties": {
+        "wiki_category_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Wiki Category Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "wiki_category_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_wiki_pages",
+          "default": "list_wiki_pages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Wiki",
+          "x-display-name": "List Wiki Page Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "wiki_category_id"
+      ],
+      "title": "ListWikiPages",
+      "type": "object"
+    },
+    "UpdateCalendar": {
+      "additionalProperties": false,
+      "properties": {
+        "calendar_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Calendar Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "calendar_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_calendar",
+          "default": "update_calendar",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendars",
+          "x-display-name": "Rename Local Calendar",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 2,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "calendar_id",
+        "name"
+      ],
+      "title": "UpdateCalendar",
+      "type": "object"
+    },
+    "UpdateGroupType": {
+      "additionalProperties": false,
+      "properties": {
+        "group_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Group Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "group_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_group_type",
+          "default": "update_group_type",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Update Group Type",
+          "x-is-trigger": false
+        },
+        "group_type_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Group Type Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id",
+        "group_type_id"
+      ],
+      "title": "UpdateGroupType",
+      "type": "object"
+    },
+    "UpdatePerson": {
+      "additionalProperties": false,
+      "properties": {
+        "first_name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "nickname": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nickname"
+        },
+        "person_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Person Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "person_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_person",
+          "default": "update_person",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "People",
+          "x-display-name": "Update Person Names",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "person_id"
+      ],
+      "title": "UpdatePerson",
+      "type": "object"
+    },
+    "UpdateWikiCategory": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_wiki_category",
+          "default": "update_wiki_category",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Wiki",
+          "x-display-name": "Rename Wiki Category",
+          "x-is-trigger": false
+        },
+        "name": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "sort_key": {
+          "default": 10,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Sort Key",
+          "type": "integer"
+        },
+        "wiki_category_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Wiki Category Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "wiki_category_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "name",
+        "wiki_category_id"
+      ],
+      "title": "UpdateWikiCategory",
+      "type": "object"
+    },
+    "UpdateWikiPage": {
+      "additionalProperties": false,
+      "properties": {
+        "wiki_category_id": {
+          "maxLength": 10,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,9}$",
+          "title": "Wiki Category Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "field_name": "wiki_category_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "page_guid": {
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Page Guid",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact installation ID",
+            "depends_on": "wiki_category_id",
+            "field_name": "page_guid",
+            "searchable": false
+          }
+        },
+        "operation": {
+          "const": "update_wiki_page",
+          "default": "update_wiki_page",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Wiki",
+          "x-display-name": "Update Wiki Page Text",
+          "x-is-trigger": false
+        },
+        "text": {
+          "description": "Creates a new page version; unrelated page flags remain unchanged.",
+          "maxLength": 32000,
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "wiki_category_id",
+        "page_guid",
+        "text"
+      ],
+      "title": "UpdateWikiPage",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "discriminator": {
+        "mapping": {
+          "check_connection": "#/$defs/CheckConnection",
+          "create_calendar": "#/$defs/CreateCalendar",
+          "create_group": "#/$defs/CreateGroup",
+          "create_person": "#/$defs/CreatePerson",
+          "create_wiki_category": "#/$defs/CreateWikiCategory",
+          "create_wiki_page": "#/$defs/CreateWikiPage",
+          "delete_calendar": "#/$defs/DeleteCalendar",
+          "delete_group": "#/$defs/DeleteGroup",
+          "delete_person": "#/$defs/DeletePerson",
+          "delete_wiki_page": "#/$defs/DeleteWikiPage",
+          "get_appointment": "#/$defs/GetAppointment",
+          "get_calendar": "#/$defs/GetCalendar",
+          "get_group": "#/$defs/GetGroup",
+          "get_masterdata": "#/$defs/GetMasterdata",
+          "get_person": "#/$defs/GetPerson",
+          "get_wiki_page": "#/$defs/GetWikiPage",
+          "list_appointments": "#/$defs/ListAppointments",
+          "list_calendars": "#/$defs/ListCalendars",
+          "list_groups": "#/$defs/ListGroups",
+          "list_persons": "#/$defs/ListPersons",
+          "list_wiki_categories": "#/$defs/ListWikiCategories",
+          "list_wiki_pages": "#/$defs/ListWikiPages",
+          "update_calendar": "#/$defs/UpdateCalendar",
+          "update_group_type": "#/$defs/UpdateGroupType",
+          "update_person": "#/$defs/UpdatePerson",
+          "update_wiki_category": "#/$defs/UpdateWikiCategory",
+          "update_wiki_page": "#/$defs/UpdateWikiPage"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/GetMasterdata"
+        },
+        {
+          "$ref": "#/$defs/ListPersons"
+        },
+        {
+          "$ref": "#/$defs/GetPerson"
+        },
+        {
+          "$ref": "#/$defs/CreatePerson"
+        },
+        {
+          "$ref": "#/$defs/UpdatePerson"
+        },
+        {
+          "$ref": "#/$defs/DeletePerson"
+        },
+        {
+          "$ref": "#/$defs/ListGroups"
+        },
+        {
+          "$ref": "#/$defs/GetGroup"
+        },
+        {
+          "$ref": "#/$defs/CreateGroup"
+        },
+        {
+          "$ref": "#/$defs/UpdateGroupType"
+        },
+        {
+          "$ref": "#/$defs/DeleteGroup"
+        },
+        {
+          "$ref": "#/$defs/ListCalendars"
+        },
+        {
+          "$ref": "#/$defs/GetCalendar"
+        },
+        {
+          "$ref": "#/$defs/CreateCalendar"
+        },
+        {
+          "$ref": "#/$defs/UpdateCalendar"
+        },
+        {
+          "$ref": "#/$defs/DeleteCalendar"
+        },
+        {
+          "$ref": "#/$defs/ListAppointments"
+        },
+        {
+          "$ref": "#/$defs/GetAppointment"
+        },
+        {
+          "$ref": "#/$defs/ListWikiCategories"
+        },
+        {
+          "$ref": "#/$defs/CreateWikiCategory"
+        },
+        {
+          "$ref": "#/$defs/UpdateWikiCategory"
+        },
+        {
+          "$ref": "#/$defs/ListWikiPages"
+        },
+        {
+          "$ref": "#/$defs/GetWikiPage"
+        },
+        {
+          "$ref": "#/$defs/CreateWikiPage"
+        },
+        {
+          "$ref": "#/$defs/UpdateWikiPage"
+        },
+        {
+          "$ref": "#/$defs/DeleteWikiPage"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ChurchToolsCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Churchtools Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
