@@ -1,0 +1,173 @@
+[
+  {
+    "operation": "list_automations",
+    "config": {},
+    "method": "GET",
+    "path": "/v1/automations"
+  },
+  {
+    "operation": "delete_automation",
+    "config": {
+      "automation_id": "6aac6f73-bd89-4a76-ab32-5a6c422e8b0b"
+    },
+    "method": "DELETE",
+    "path": "/v1/automations/{automationId}"
+  },
+  {
+    "operation": "get_automation",
+    "config": {
+      "automation_id": "6aac6f73-bd89-4a76-ab32-5a6c422e8b0b"
+    },
+    "method": "GET",
+    "path": "/v1/automations/{automationId}"
+  },
+  {
+    "operation": "get_request_status",
+    "config": {
+      "request_id": "123e4567-e89b-12d3-a456-426614174000"
+    },
+    "method": "GET",
+    "path": "/v1/requests/{requestId}/status"
+  },
+  {
+    "operation": "list_sessions",
+    "config": {},
+    "method": "GET",
+    "path": "/v1/sessions"
+  },
+  {
+    "operation": "create_session",
+    "config": {},
+    "method": "POST",
+    "path": "/v1/sessions"
+  },
+  {
+    "operation": "terminate_session",
+    "config": {
+      "session_id": "6aac6f73-bd89-4a76-ab32-5a6c422e8b0b"
+    },
+    "method": "DELETE",
+    "path": "/v1/sessions/{id}"
+  },
+  {
+    "operation": "get_session",
+    "config": {
+      "session_id": "6aac6f73-bd89-4a76-ab32-5a6c422e8b0b"
+    },
+    "method": "GET",
+    "path": "/v1/sessions/{id}"
+  },
+  {
+    "operation": "list_windows",
+    "config": {
+      "session_id": "6aac6f73-bd89-4a76-ab32-5a6c422e8b0b"
+    },
+    "method": "GET",
+    "path": "/v1/sessions/{sessionId}/windows"
+  },
+  {
+    "operation": "create_window",
+    "config": {
+      "session_id": "6aac6f73-bd89-4a76-ab32-5a6c422e8b0b"
+    },
+    "method": "POST",
+    "path": "/v1/sessions/{sessionId}/windows"
+  },
+  {
+    "operation": "close_window",
+    "config": {
+      "session_id": "6aac6f73-bd89-4a76-ab32-5a6c422e8b0b",
+      "window_id": "7334da2a-91b0-42c5-6156-76a5eba87430"
+    },
+    "method": "DELETE",
+    "path": "/v1/sessions/{sessionId}/windows/{windowId}"
+  },
+  {
+    "operation": "get_window",
+    "config": {
+      "session_id": "6aac6f73-bd89-4a76-ab32-5a6c422e8b0b",
+      "window_id": "7334da2a-91b0-42c5-6156-76a5eba87430"
+    },
+    "method": "GET",
+    "path": "/v1/sessions/{sessionId}/windows/{windowId}"
+  },
+  {
+    "operation": "load_url",
+    "config": {
+      "session_id": "6aac6f73-bd89-4a76-ab32-5a6c422e8b0b",
+      "window_id": "7334da2a-91b0-42c5-6156-76a5eba87430",
+      "url": "https://www.airtop.ai"
+    },
+    "method": "POST",
+    "path": "/v1/sessions/{sessionId}/windows/{windowId}"
+  },
+  {
+    "operation": "click",
+    "config": {
+      "session_id": "6aac6f73-bd89-4a76-ab32-5a6c422e8b0b",
+      "window_id": "0334da2a-91b0-42c5-6156-76a5eba87430",
+      "element_description": "The login button"
+    },
+    "method": "POST",
+    "path": "/v1/sessions/{sessionId}/windows/{windowId}/click"
+  },
+  {
+    "operation": "hover",
+    "config": {
+      "session_id": "6aac6f73-bd89-4a76-ab32-5a6c422e8b0b",
+      "window_id": "0334da2a-91b0-42c5-6156-76a5eba87430",
+      "element_description": "The search box input in the top right corner"
+    },
+    "method": "POST",
+    "path": "/v1/sessions/{sessionId}/windows/{windowId}/hover"
+  },
+  {
+    "operation": "query_page",
+    "config": {
+      "session_id": "6aac6f73-bd89-4a76-ab32-5a6c422e8b0b",
+      "window_id": "0334da2a-91b0-42c5-6156-76a5eba87430",
+      "prompt": "What is the main idea of this page?"
+    },
+    "method": "POST",
+    "path": "/v1/sessions/{sessionId}/windows/{windowId}/page-query"
+  },
+  {
+    "operation": "extract_paginated",
+    "config": {
+      "session_id": "6aac6f73-bd89-4a76-ab32-5a6c422e8b0b",
+      "window_id": "0334da2a-91b0-42c5-6156-76a5eba87430",
+      "prompt": "This site contains a list of results about <provide details about the list>. Navigate through 3 pages of results and return the title and <provide details about the data you want to extract> about each result in this list."
+    },
+    "method": "POST",
+    "path": "/v1/sessions/{sessionId}/windows/{windowId}/paginated-extraction"
+  },
+  {
+    "operation": "scrape_page",
+    "config": {
+      "session_id": "6aac6f73-bd89-4a76-ab32-5a6c422e8b0b",
+      "window_id": "0334da2a-91b0-42c5-6156-76a5eba87430"
+    },
+    "method": "POST",
+    "path": "/v1/sessions/{sessionId}/windows/{windowId}/scrape-content"
+  },
+  {
+    "operation": "scroll",
+    "config": {
+      "session_id": "6aac6f73-bd89-4a76-ab32-5a6c422e8b0b",
+      "window_id": "0334da2a-91b0-42c5-6156-76a5eba87430",
+      "scroll_to_element": "The search box input in the top right corner"
+    },
+    "method": "POST",
+    "path": "/v1/sessions/{sessionId}/windows/{windowId}/scroll"
+  },
+  {
+    "operation": "type_text",
+    "config": {
+      "session_id": "6aac6f73-bd89-4a76-ab32-5a6c422e8b0b",
+      "window_id": "0334da2a-91b0-42c5-6156-76a5eba87430",
+      "text": "Example text"
+    },
+    "method": "POST",
+    "path": "/v1/sessions/{sessionId}/windows/{windowId}/type"
+  }
+]

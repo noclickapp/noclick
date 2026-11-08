@@ -1,0 +1,1053 @@
+{
+  "$defs": {
+    "AirtopApiKey": {
+      "properties": {
+        "credential_type": {
+          "const": "airtop_api_key",
+          "default": "airtop_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Paste your Airtop API key without the Bearer prefix.",
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Airtop API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in the Airtop portal and paste it here.",
+      "x-credential-url": "https://portal.airtop.ai/api-keys"
+    },
+    "Click": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "click",
+          "default": "click",
+          "title": "Click",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "description": "The session id for the window.",
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "window_id": {
+          "description": "The Airtop window id of the browser window.",
+          "minLength": 1,
+          "title": "Window Id",
+          "type": "string"
+        },
+        "element_description": {
+          "description": "A natural language description of the element to click.",
+          "minLength": 1,
+          "title": "Element Description",
+          "type": "string"
+        },
+        "wait_for_navigation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, Airtop AI will wait for the navigation to complete after clicking the element.",
+          "title": "Wait For Navigation"
+        }
+      },
+      "required": [
+        "session_id",
+        "window_id",
+        "element_description"
+      ],
+      "title": "Click",
+      "type": "object"
+    },
+    "CloseWindow": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "close_window",
+          "default": "close_window",
+          "title": "Close Window",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "description": "ID of the session that owns the window.",
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "window_id": {
+          "description": "Airtop window ID of the browser window.",
+          "minLength": 1,
+          "title": "Window Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "window_id"
+      ],
+      "title": "CloseWindow",
+      "type": "object"
+    },
+    "CreateSession": {
+      "additionalProperties": false,
+      "properties": {
+        "configuration": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SessionConfiguration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Configuration"
+        },
+        "operation": {
+          "const": "create_session",
+          "default": "create_session",
+          "title": "Create Session",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CreateSession",
+      "type": "object"
+    },
+    "CreateWindow": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_window",
+          "default": "create_window",
+          "title": "Create Window",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "description": "ID of the session that owns the window.",
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Initial url to navigate to",
+          "title": "Url"
+        },
+        "wait_until": {
+          "anyOf": [
+            {
+              "enum": [
+                "load",
+                "domContentLoaded",
+                "complete",
+                "noWait"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wait until the specified loading event occurs. Defaults to 'load', which waits until the page dom and it's assets have loaded. 'domContentLoaded' will wait until the dom has loaded, 'complete' will wait until the page and all it's iframes have loaded it's dom and assets. 'noWait' will not wait for any loading event and will return immediately.",
+          "title": "Wait Until",
+          "enum": [
+            "load",
+            "domContentLoaded",
+            "complete",
+            "noWait"
+          ],
+          "x-enum-searchable": true
+        },
+        "wait_until_timeout_seconds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum time in seconds to wait for the specified loading event to occur. If the timeout is reached, the operation will still succeed but return a warning indicating the page may still be loading resources.",
+          "title": "Wait Until Timeout Seconds"
+        },
+        "screen_resolution": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Affects the live view configuration. By default, a live view will fill the parent frame (or local window if loaded directly) when initially loaded, causing the browser window to be resized to match. This parameter can be used to instead configure the returned liveViewUrl so that the live view is loaded with fixed dimensions (e.g. 1280x720), resizing the browser window to match, and then disallows any further resizing from the live view.",
+          "title": "Screen Resolution"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "CreateWindow",
+      "type": "object"
+    },
+    "DeleteAutomation": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_automation",
+          "default": "delete_automation",
+          "title": "Delete Automation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "automation_id": {
+          "description": "ID of the automation to delete",
+          "minLength": 1,
+          "title": "Automation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "automation_id"
+      ],
+      "title": "DeleteAutomation",
+      "type": "object"
+    },
+    "ExtractPaginated": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "extract_paginated",
+          "default": "extract_paginated",
+          "title": "Extract Paginated",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "description": "The session id for the window.",
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "window_id": {
+          "description": "The Airtop window id of the browser window.",
+          "minLength": 1,
+          "title": "Window Id",
+          "type": "string"
+        },
+        "prompt": {
+          "description": "A prompt providing the Airtop AI model with additional direction or constraints about the page and the details you want to extract from the page.",
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "window_id",
+        "prompt"
+      ],
+      "title": "ExtractPaginated",
+      "type": "object"
+    },
+    "GetAutomation": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_automation",
+          "default": "get_automation",
+          "title": "Get Automation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "automation_id": {
+          "description": "ID of the automation to retrieve",
+          "minLength": 1,
+          "title": "Automation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "automation_id"
+      ],
+      "title": "GetAutomation",
+      "type": "object"
+    },
+    "GetRequestStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_request_status",
+          "default": "get_request_status",
+          "title": "Get Request Status",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "description": "The ID of the request to check.",
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "GetRequestStatus",
+      "type": "object"
+    },
+    "GetSession": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_session",
+          "default": "get_session",
+          "title": "Get Session",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "description": "Id of the session to get",
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "GetSession",
+      "type": "object"
+    },
+    "GetWindow": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_window",
+          "default": "get_window",
+          "title": "Get Window",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "description": "ID of the session that owns the window.",
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "window_id": {
+          "description": "ID of the browser window, which can either be a normal AirTop windowId or a [CDP TargetId](https://chromedevtools.github.io/devtools-protocol/tot/Target/#type-TargetID) from a browser automation library like Puppeteer (typically associated with the page or main frame). Our SDKs will handle retrieving a TargetId for you from various popular browser automation libraries, but we also have details in our guides on how to do it manually.",
+          "minLength": 1,
+          "title": "Window Id",
+          "type": "string"
+        },
+        "include_navigation_bar": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Affects the live view configuration. A navigation bar is not shown in the live view of a browser by default. Set this to true to configure the returned liveViewUrl so that a navigation bar is rendered, allowing users to easily navigate the browser to other pages from the live view.",
+          "title": "Include Navigation Bar"
+        },
+        "disable_resize": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Affects the live view configuration. Set to true to configure the returned liveViewUrl so that the ability to resize the browser window from the live view is disabled (resizing is allowed by default). Note that, at initial load, the live view will automatically fill the parent frame (or local window if loaded directly) and cause the browser window to be resized to match. This parameter does not affect that initial load behavior. See screenResolution for a way to set a fixed size for the live view.",
+          "title": "Disable Resize"
+        },
+        "screen_resolution": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Affects the live view configuration. By default, a live view will fill the parent frame (or local window if loaded directly) when initially loaded, causing the browser window to be resized to match. This parameter can be used to instead configure the returned liveViewUrl so that the live view is loaded with fixed dimensions (e.g. 1280x720), resizing the browser window to match, and then disallows any further resizing from the live view.",
+          "title": "Screen Resolution"
+        }
+      },
+      "required": [
+        "session_id",
+        "window_id"
+      ],
+      "title": "GetWindow",
+      "type": "object"
+    },
+    "Hover": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "hover",
+          "default": "hover",
+          "title": "Hover",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "description": "The session id for the window.",
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "window_id": {
+          "description": "The Airtop window id of the browser window.",
+          "minLength": 1,
+          "title": "Window Id",
+          "type": "string"
+        },
+        "element_description": {
+          "description": "A natural language description of where to hover (e.g. 'the search box', 'username field'). The interaction will be aborted if the target element cannot be found.",
+          "minLength": 1,
+          "title": "Element Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "window_id",
+        "element_description"
+      ],
+      "title": "Hover",
+      "type": "object"
+    },
+    "ListAutomations": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_automations",
+          "default": "list_automations",
+          "title": "List Automations",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListAutomations",
+      "type": "object"
+    },
+    "ListSessions": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_sessions",
+          "default": "list_sessions",
+          "title": "List Sessions",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "awaitingCapacity",
+                "initializing",
+                "running",
+                "ended",
+                "completed",
+                "cancelled",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Status of the session to get.",
+          "title": "Status",
+          "enum": [
+            "awaitingCapacity",
+            "initializing",
+            "running",
+            "ended",
+            "completed",
+            "cancelled",
+            "all"
+          ],
+          "x-enum-searchable": true
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Offset for pagination.",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit for pagination.",
+          "title": "Limit"
+        }
+      },
+      "title": "ListSessions",
+      "type": "object"
+    },
+    "ListWindows": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_windows",
+          "default": "list_windows",
+          "title": "List Windows",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "description": "ID of the session to list windows for.",
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "ListWindows",
+      "type": "object"
+    },
+    "LoadUrl": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "load_url",
+          "default": "load_url",
+          "title": "Load Url",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "description": "ID of the session that owns the window.",
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "window_id": {
+          "description": "Airtop window ID of the browser window.",
+          "minLength": 1,
+          "title": "Window Id",
+          "type": "string"
+        },
+        "url": {
+          "description": "Url to navigate to",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "wait_until": {
+          "anyOf": [
+            {
+              "enum": [
+                "load",
+                "domContentLoaded",
+                "complete",
+                "noWait"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wait until the specified loading event occurs. Defaults to 'load', which waits until the page dom and it's assets have loaded. 'domContentLoaded' will wait until the dom has loaded, 'complete' will wait until the page and all it's iframes have loaded it's dom and assets. 'noWait' will not wait for any loading event and will return immediately.",
+          "title": "Wait Until",
+          "enum": [
+            "load",
+            "domContentLoaded",
+            "complete",
+            "noWait"
+          ],
+          "x-enum-searchable": true
+        },
+        "wait_until_timeout_seconds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum time in seconds to wait for the specified loading event to occur. If the timeout is reached, the operation will still succeed but return a warning indicating the page may still be loading resources.",
+          "title": "Wait Until Timeout Seconds"
+        }
+      },
+      "required": [
+        "session_id",
+        "window_id",
+        "url"
+      ],
+      "title": "LoadUrl",
+      "type": "object"
+    },
+    "QueryPage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "query_page",
+          "default": "query_page",
+          "title": "Query Page",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "description": "The session id for the window.",
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "window_id": {
+          "description": "The Airtop window id of the browser window.",
+          "minLength": 1,
+          "title": "Window Id",
+          "type": "string"
+        },
+        "prompt": {
+          "description": "The prompt to submit about the content in the browser window.",
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "follow_pagination_links": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Make a best effort attempt to load more content items than are originally displayed on the page, e.g. by following pagination links, clicking controls to load more content, utilizing infinite scrolling, etc. This can be quite a bit more costly, but may be necessary for sites that require additional interaction to show the needed results. You can provide constraints in your prompt (e.g. on the total number of pages or results to consider).",
+          "title": "Follow Pagination Links"
+        }
+      },
+      "required": [
+        "session_id",
+        "window_id",
+        "prompt"
+      ],
+      "title": "QueryPage",
+      "type": "object"
+    },
+    "ScrapePage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "scrape_page",
+          "default": "scrape_page",
+          "title": "Scrape Page",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "description": "The session id for the window.",
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "window_id": {
+          "description": "The Airtop window id of the browser window to scrape.",
+          "minLength": 1,
+          "title": "Window Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "window_id"
+      ],
+      "title": "ScrapePage",
+      "type": "object"
+    },
+    "Scroll": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "scroll",
+          "default": "scroll",
+          "title": "Scroll",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "description": "The session id for the window.",
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "window_id": {
+          "description": "The Airtop window id of the browser window.",
+          "minLength": 1,
+          "title": "Window Id",
+          "type": "string"
+        },
+        "scroll_to_element": {
+          "description": "A natural language description of where to scroll (e.g. 'the search box', 'username field'). The interaction will be aborted if the target element cannot be found. If provided, scrollToEdge/scrollBy values will be ignored.",
+          "title": "Scroll To Element",
+          "type": "string"
+        },
+        "scroll_within": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A natural language description of the scrollable area on the web page. This identifies the container or region that should be scrolled. If missing, the entire page will be scrolled. You can also describe a visible reference point inside the container. Note: This is different from scrollToElement, which specifies the target element to scroll to. The target may be located inside the scrollable area defined by scrollWithin.",
+          "title": "Scroll Within"
+        }
+      },
+      "required": [
+        "session_id",
+        "window_id",
+        "scroll_to_element"
+      ],
+      "title": "Scroll",
+      "type": "object"
+    },
+    "SessionConfiguration": {
+      "additionalProperties": false,
+      "properties": {
+        "profileName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile Name"
+        },
+        "timeoutMinutes": {
+          "anyOf": [
+            {
+              "maximum": 10080,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idle Timeout (Minutes)"
+        },
+        "record": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Record Session"
+        },
+        "solveCaptcha": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Solve Captcha"
+        }
+      },
+      "title": "SessionConfiguration",
+      "type": "object"
+    },
+    "TerminateSession": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "terminate_session",
+          "default": "terminate_session",
+          "title": "Terminate Session",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "description": "ID of the session to delete.",
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "TerminateSession",
+      "type": "object"
+    },
+    "TypeText": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "type_text",
+          "default": "type_text",
+          "title": "Type Text",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "description": "The session id for the window.",
+          "minLength": 1,
+          "title": "Session Id",
+          "type": "string"
+        },
+        "window_id": {
+          "description": "The Airtop window id of the browser window.",
+          "minLength": 1,
+          "title": "Window Id",
+          "type": "string"
+        },
+        "text": {
+          "description": "The text to type into the browser window.",
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "element_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A natural language description of where to type (e.g. 'the search box', 'username field'). The interaction will be aborted if the target element cannot be found.",
+          "title": "Element Description"
+        },
+        "clear_input_field": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, and an HTML input field is active, clears the input field before typing the text.",
+          "title": "Clear Input Field"
+        },
+        "press_enter_key": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, simulates pressing the Enter key after typing the text.",
+          "title": "Press Enter Key"
+        },
+        "press_tab_key": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, simulates pressing the Tab key after typing the text. Note that the tab key will be pressed after the Enter key if both options are configured.",
+          "title": "Press Tab Key"
+        }
+      },
+      "required": [
+        "session_id",
+        "window_id",
+        "text"
+      ],
+      "title": "TypeText",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "click": "#/$defs/Click",
+          "close_window": "#/$defs/CloseWindow",
+          "create_session": "#/$defs/CreateSession",
+          "create_window": "#/$defs/CreateWindow",
+          "delete_automation": "#/$defs/DeleteAutomation",
+          "extract_paginated": "#/$defs/ExtractPaginated",
+          "get_automation": "#/$defs/GetAutomation",
+          "get_request_status": "#/$defs/GetRequestStatus",
+          "get_session": "#/$defs/GetSession",
+          "get_window": "#/$defs/GetWindow",
+          "hover": "#/$defs/Hover",
+          "list_automations": "#/$defs/ListAutomations",
+          "list_sessions": "#/$defs/ListSessions",
+          "list_windows": "#/$defs/ListWindows",
+          "load_url": "#/$defs/LoadUrl",
+          "query_page": "#/$defs/QueryPage",
+          "scrape_page": "#/$defs/ScrapePage",
+          "scroll": "#/$defs/Scroll",
+          "terminate_session": "#/$defs/TerminateSession",
+          "type_text": "#/$defs/TypeText"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListAutomations"
+        },
+        {
+          "$ref": "#/$defs/DeleteAutomation"
+        },
+        {
+          "$ref": "#/$defs/GetAutomation"
+        },
+        {
+          "$ref": "#/$defs/GetRequestStatus"
+        },
+        {
+          "$ref": "#/$defs/ListSessions"
+        },
+        {
+          "$ref": "#/$defs/CreateSession"
+        },
+        {
+          "$ref": "#/$defs/TerminateSession"
+        },
+        {
+          "$ref": "#/$defs/GetSession"
+        },
+        {
+          "$ref": "#/$defs/ListWindows"
+        },
+        {
+          "$ref": "#/$defs/CreateWindow"
+        },
+        {
+          "$ref": "#/$defs/CloseWindow"
+        },
+        {
+          "$ref": "#/$defs/GetWindow"
+        },
+        {
+          "$ref": "#/$defs/LoadUrl"
+        },
+        {
+          "$ref": "#/$defs/Click"
+        },
+        {
+          "$ref": "#/$defs/Hover"
+        },
+        {
+          "$ref": "#/$defs/QueryPage"
+        },
+        {
+          "$ref": "#/$defs/ExtractPaginated"
+        },
+        {
+          "$ref": "#/$defs/ScrapePage"
+        },
+        {
+          "$ref": "#/$defs/Scroll"
+        },
+        {
+          "$ref": "#/$defs/TypeText"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AirtopApiKey"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Airtop Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
