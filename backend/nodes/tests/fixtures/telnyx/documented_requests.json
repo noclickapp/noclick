@@ -1,0 +1,50 @@
+{
+  "source": "https://raw.githubusercontent.com/team-telnyx/openapi/master/openapi/spec3.yml",
+  "examples": {
+    "CreateMessageRequest": {
+      "from": "+18445550001",
+      "messaging_profile_id": "abc85f64-5717-4562-b3fc-2c9600000000",
+      "to": "+18445550001",
+      "text": "Hello, World!",
+      "subject": "From Telnyx!",
+      "media_urls": [
+        "http://example.com"
+      ],
+      "webhook_url": "http://example.com/webhooks",
+      "webhook_failover_url": "https://backup.example.com/hooks",
+      "use_profile_webhooks": true,
+      "type": "MMS"
+    },
+    "messaging_CreateMessagingProfileRequest": {
+      "name": "My name",
+      "enabled": true,
+      "webhook_url": "https://www.example.com/hooks",
+      "webhook_failover_url": "https://backup.example.com/hooks",
+      "webhook_api_version": "2",
+      "number_pool_settings": {
+        "toll_free_weight": 10,
+        "long_code_weight": 1,
+        "skip_unhealthy": true,
+        "sticky_sender": false,
+        "geomatch": false
+      },
+      "url_shortener_settings": {
+        "domain": "example.ex",
+        "prefix": "",
+        "replace_blacklist_only": true,
+        "send_webhooks": false
+      },
+      "mm7_metadata": {
+        "mm7_webhook_url": "https://www.example.com/hooks",
+        "mm7_failover_webhook_url": "https://backup.example.com/hooks"
+      },
+      "whitelisted_destinations": [
+        "US"
+      ]
+    },
+    "UpdatePhoneNumberMessagingSettingsRequest": {
+      "messaging_profile_id": "dd50eba1-a0c0-4563-9925-b25e842a7cb6",
+      "messaging_product": "P2P"
+    }
+  }
+}
