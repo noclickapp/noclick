@@ -1,0 +1,644 @@
+{
+  "get_account": {
+    "method": "GET",
+    "path": "/client/plan",
+    "response": {
+      "data": {
+        "email": "user@example.com",
+        "name": "MailerCloud User",
+        "plan": "Enterprise plan",
+        "remaining_contacts": 943,
+        "total_contacts": 1000,
+        "used_contacts": 57
+      }
+    },
+    "request_example": {},
+    "operation_id": "client-details"
+  },
+  "create_contact": {
+    "method": "POST",
+    "path": "/contacts",
+    "response": {
+      "id": "xc"
+    },
+    "request_example": {
+      "city": "string",
+      "country": "string",
+      "custom_fields": {
+        "enc_id1": "string",
+        "enc_id2": 0
+      },
+      "department": "string",
+      "email": "string",
+      "industry": "string",
+      "job_title": "string",
+      "last_name": "string",
+      "lead_source": "string",
+      "list_id": "string",
+      "middle_name": "string",
+      "first_name": "string",
+      "company_name": "string",
+      "phone": "string",
+      "salary": 0,
+      "state": "string",
+      "postal_code": "string",
+      "contact_type": "active",
+      "tags": [
+        "string"
+      ]
+    },
+    "operation_id": "create-contact"
+  },
+  "upsert_contact": {
+    "method": "POST",
+    "path": "/contacts/upsert",
+    "response": {
+      "contact_id": "fZuKHSuwK",
+      "status": "updated"
+    },
+    "request_example": {
+      "city": "San Francisco",
+      "country": "USA",
+      "custom_fields": {
+        "enc_id1": "ABC123",
+        "personalisation_tag_4": 456
+      },
+      "department": "Engineering",
+      "email": "john.doe@example.com",
+      "industry": "Software Development",
+      "job_title": "Software Engineer",
+      "last_name": "Doe",
+      "lead_source": "Website",
+      "list_id": "KYHH",
+      "middle_name": "A.",
+      "first_name": "John A. Doe",
+      "company_name": "Tech Innovations Inc.",
+      "phone": "+1-234-567-8901",
+      "salary": 95000,
+      "state": "California",
+      "postal_code": "94105",
+      "contact_type": "active",
+      "tags": [
+        "prospect",
+        "customer",
+        "lead"
+      ]
+    },
+    "operation_id": "create-or-update-contact"
+  },
+  "update_contact": {
+    "method": "PUT",
+    "path": "/contacts/{id}",
+    "response": {
+      "message": "Contact updated"
+    },
+    "request_example": {
+      "city": "string",
+      "country": "string",
+      "custom_fields": {
+        "xyz": "string",
+        "ncx": 0
+      },
+      "department": "string",
+      "industry": "string",
+      "job_title": "string",
+      "last_name": "string",
+      "lead_source": "string",
+      "middle_name": "string",
+      "first_name": "string",
+      "company_name": "string",
+      "phone": "string",
+      "salary": 0,
+      "state": "string",
+      "postal_code": "string",
+      "tags": [
+        "string"
+      ]
+    },
+    "operation_id": "update-contact"
+  },
+  "get_contact": {
+    "method": "GET",
+    "path": "/contacts/{id}",
+    "response": {},
+    "request_example": {},
+    "operation_id": "get-contact-details"
+  },
+  "delete_contact": {
+    "method": "DELETE",
+    "path": "/contacts/{id}",
+    "response": {
+      "message": "Contact deleted successfully"
+    },
+    "request_example": {},
+    "operation_id": "delete-contact"
+  },
+  "list_contacts": {
+    "method": "POST",
+    "path": "/contact/search/{id}",
+    "response": {
+      "count": 0,
+      "data": {
+        "city": "string",
+        "country": "string",
+        "custom_fields": {},
+        "department": "string",
+        "dob": "string",
+        "email": "string",
+        "firstname": "string",
+        "id": "string",
+        "industry": "string",
+        "job_title": "string",
+        "last_name": "string",
+        "lead_source": "string",
+        "middle_name": "string",
+        "first_name": "string",
+        "company_name": "string",
+        "phone": "string",
+        "salary": "string",
+        "state": "string",
+        "user_ip": "string",
+        "postal_code": "string"
+      }
+    },
+    "request_example": {
+      "limit": 10,
+      "page": 1,
+      "search": "string"
+    },
+    "operation_id": "get-contacts-in-a-list"
+  },
+  "create_list": {
+    "method": "POST",
+    "path": "/list",
+    "response": {
+      "id": "xyz"
+    },
+    "request_example": {
+      "list_type": 1,
+      "name": "Email subscription-list"
+    },
+    "operation_id": "create-a-new-list"
+  },
+  "update_list": {
+    "method": "PATCH",
+    "path": "/list/{id}",
+    "response": {
+      "listdetails": {
+        "id": "HHda",
+        "list_type": "Normal",
+        "name": "List Registration"
+      }
+    },
+    "request_example": {
+      "name": "Subscibers List"
+    },
+    "operation_id": "update-a-list"
+  },
+  "get_list": {
+    "method": "GET",
+    "path": "/list/{id}",
+    "response": {
+      "count": 10,
+      "data": {
+        "contact_count": 1000,
+        "id": "xze",
+        "list_status": "Waiting for approval",
+        "list_type": "Normal List",
+        "name": "Email subscription-list",
+        "open_percentage": 50
+      }
+    },
+    "request_example": {},
+    "operation_id": "get-single-list-details"
+  },
+  "delete_list": {
+    "method": "DELETE",
+    "path": "/list/{id}",
+    "response": {
+      "message": "List deleted successfully"
+    },
+    "request_example": {},
+    "operation_id": "delete-a-list"
+  },
+  "list_lists": {
+    "method": "POST",
+    "path": "/lists/search",
+    "response": {
+      "count": 100,
+      "data": {
+        "contact_count": 100,
+        "id": "ws",
+        "list_status": "Updating",
+        "list_type": "Normal List",
+        "name": "Subscription list",
+        "open_percentage": 50
+      }
+    },
+    "request_example": {
+      "limit": 10,
+      "list_type": 1,
+      "page": 1,
+      "search_name": "subscription",
+      "sort_field": "name",
+      "sort_order": "asc"
+    },
+    "operation_id": "get-all-list-and-search-list"
+  },
+  "create_tag": {
+    "method": "POST",
+    "path": "/tags",
+    "response": {
+      "id": "xyz"
+    },
+    "request_example": {
+      "name": "string"
+    },
+    "operation_id": "create-tag"
+  },
+  "update_tag": {
+    "method": "PUT",
+    "path": "/tags/{id}",
+    "response": {
+      "id": "YCJ"
+    },
+    "request_example": {
+      "name": "string"
+    },
+    "operation_id": "update-tag"
+  },
+  "delete_tag": {
+    "method": "DELETE",
+    "path": "/tags/{id}",
+    "response": {
+      "message": "Tag deleted successfully"
+    },
+    "request_example": {},
+    "operation_id": "delete-tag"
+  },
+  "list_tags": {
+    "method": "POST",
+    "path": "/tags/search",
+    "response": {
+      "count": 0,
+      "data": {
+        "id": "string",
+        "tag_name": "string"
+      }
+    },
+    "request_example": {
+      "limit": 10,
+      "page": 1,
+      "search": "string"
+    },
+    "operation_id": "list-tags"
+  },
+  "list_campaigns": {
+    "method": "POST",
+    "path": "/campaign/list",
+    "response": {
+      "count": [
+        {
+          "count": 2
+        }
+      ],
+      "data": {
+        "0": {
+          "blacklisted_domains": {},
+          "broken_links": {},
+          "conversion_tracking": {},
+          "created_date": "2021-04-27 11:31:04",
+          "email_preheader": "Save more on your Home & Kitchen shopping",
+          "finish_date": "2021-04-27 15:07:02",
+          "html": "",
+          "id": "BBBghIFI",
+          "modified_date": "2021-04-27 11:44:15",
+          "name": "Offer Of The Day",
+          "pause_rules": {},
+          "permission_reminder": "",
+          "plain_text": "",
+          "recepiant": {
+            "lists": "Subscriber list",
+            "lists_contact_count": 100000,
+            "segments": "",
+            "segments_contact_count": 0,
+            "total_lists": 1
+          },
+          "reply_email": "sender@yourdomain.com",
+          "report_abuse": true,
+          "report_summary": {
+            "abuse": 0,
+            "abuse_percentage": "0.00",
+            "clicks": 0,
+            "clicks_percentage": "0.00",
+            "conversions": 0,
+            "conversions_percentage": "0.00",
+            "delivered": 100000,
+            "delivered_percentage": "100.00",
+            "hard_bounce": 0,
+            "hard_bounce_percentage": "0.00",
+            "open_percentage": "15.55",
+            "opens": 15548,
+            "queue": 0,
+            "queue_percentage": "0.00",
+            "queued_total": 100000,
+            "sent": 100000,
+            "sent_percentage": "100.00",
+            "soft_bounce": 0,
+            "soft_bounce_percentage": "0.00",
+            "spam_complaints_count": 0,
+            "spam_complaints_percentage": "0.00",
+            "unsubscribe": 307,
+            "unsubscribe_percentage": "1.97"
+          },
+          "rule": {
+            "contacts_order": "first",
+            "limit": ""
+          },
+          "scheduled_date": {
+            "date": "2021-04-27 17:14:15",
+            "timezone": "Asia/Kolkata"
+          },
+          "sender": {
+            "sender_email": "sender@yourdomain.com",
+            "sender_name": "Sender Name Shan"
+          },
+          "start_date": "2021-04-27 11:47:04",
+          "status": "Finished",
+          "status_change_date": "2021-04-27 15:07:02",
+          "status_change_message": "",
+          "subject": "Amazon offers",
+          "tag": "Amazon offers",
+          "time_rule": {},
+          "type": "Normal campaign"
+        },
+        "1": {
+          "blacklisted_domains": {},
+          "broken_links": {},
+          "conversion_tracking": {},
+          "created_date": "2021-04-27 11:31:04",
+          "email_preheader": "How To Make Veg Pizza",
+          "finish_date": "2021-04-27 15:07:02",
+          "html": "",
+          "id": "BBBghIFI",
+          "modified_date": "2021-04-27 11:44:15",
+          "name": "Offer Of The Day",
+          "pause_rules": {},
+          "permission_reminder": "",
+          "plain_text": "",
+          "recepiant": {
+            "lists": "newsletter subscriber list",
+            "lists_contact_count": 100000,
+            "segments": "",
+            "segments_contact_count": 0,
+            "total_lists": 1
+          },
+          "reply_email": "sender@yourdomain.com",
+          "report_abuse": true,
+          "report_summary": {
+            "abuse": 0,
+            "abuse_percentage": "0.00",
+            "clicks": 0,
+            "clicks_percentage": "0.00",
+            "conversions": 0,
+            "conversions_percentage": "0.00",
+            "delivered": 100000,
+            "delivered_percentage": "100.00",
+            "hard_bounce": 0,
+            "hard_bounce_percentage": "0.00",
+            "open_percentage": "15.55",
+            "opens": 15548,
+            "queue": 0,
+            "queue_percentage": "0.00",
+            "queued_total": 100000,
+            "sent": 100000,
+            "sent_percentage": "100.00",
+            "soft_bounce": 0,
+            "soft_bounce_percentage": "0.00",
+            "spam_complaints_count": 0,
+            "spam_complaints_percentage": "0.00",
+            "unsubscribe": 307,
+            "unsubscribe_percentage": "1.97"
+          },
+          "rule": {
+            "contacts_order": "first",
+            "limit": ""
+          },
+          "scheduled_date": {
+            "date": "2021-04-27 17:14:15",
+            "timezone": "Asia/Kolkata"
+          },
+          "sender": {
+            "sender_email": "sender@yourdomain.com",
+            "sender_name": "Sender Name Shan"
+          },
+          "start_date": "2021-04-27 11:47:04",
+          "status": "Finished",
+          "status_change_date": "2021-04-27 15:07:02",
+          "status_change_message": "",
+          "subject": "Pizza",
+          "tag": "Pizz noodles",
+          "time_rule": {},
+          "type": "Normal campaign"
+        }
+      }
+    },
+    "request_example": {
+      "date_from": "2021-03-01",
+      "date_to": "2021-04-30",
+      "limit": 10,
+      "page": 1,
+      "search": "",
+      "sender_email": "",
+      "sort_field": "name",
+      "sort_order": "asc",
+      "status": ""
+    },
+    "operation_id": "campaign-list"
+  },
+  "get_campaign": {
+    "method": "GET",
+    "path": "/campaign/{id}",
+    "response": {
+      "data": {
+        "0": {
+          "blacklisted_domains": {},
+          "broken_links": {},
+          "conversion_tracking": {},
+          "created_date": "2021-04-27 11:31:04",
+          "email_preheader": "Save more on your Home & Kitchen shopping",
+          "finish_date": "2021-04-27 15:07:02",
+          "html": "",
+          "id": "BBBghIFI",
+          "modified_date": "2021-04-27 11:44:15",
+          "name": "Offer Of The Day",
+          "pause_rules": {},
+          "permission_reminder": "",
+          "plain_text": "",
+          "recepiant": {
+            "lists": "Subscriber list",
+            "lists_contact_count": 100000,
+            "segments": "",
+            "segments_contact_count": 0,
+            "total_lists": 1
+          },
+          "reply_email": "sender@yourdomain.com",
+          "report_abuse": true,
+          "report_summary": {
+            "abuse": 0,
+            "abuse_percentage": "0.00",
+            "clicks": 0,
+            "clicks_percentage": "0.00",
+            "conversions": 0,
+            "conversions_percentage": "0.00",
+            "delivered": 100000,
+            "delivered_percentage": "100.00",
+            "hard_bounce": 0,
+            "hard_bounce_percentage": "0.00",
+            "open_percentage": "15.55",
+            "04\"": null,
+            "status": "Finished",
+            "opens": 15548,
+            "queue": 0,
+            "queue_percentage": "0.00",
+            "queued_total": 100000,
+            "sent": 100000,
+            "sent_percentage": "100.00",
+            "soft_bounce": 0,
+            "soft_bounce_percentage": "0.00",
+            "spam_complaints_count": 0,
+            "spam_complaints_percentage": "0.00",
+            "unsubscribe": 307,
+            "unsubscribe_percentage": "1.97"
+          },
+          "rule": {
+            "contacts_order": "first",
+            "limit": ""
+          },
+          "scheduled_date": {
+            "date": "2021-04-27 17:14:15",
+            "timezone": "Asia/Kolkata"
+          },
+          "sender": {
+            "sender_email": "sender@yourdomain.com",
+            "sender_name": "Sender Name Shan"
+          },
+          "start_date": "2021-04-27 11:47:04",
+          "status": "Finished",
+          "status_change_date": "2021-04-27 15:07:02",
+          "status_change_message": "",
+          "subject": "Amazon offers",
+          "tag": "Amazon offers",
+          "time_rule": {},
+          "type": "Normal campaign"
+        }
+      }
+    },
+    "request_example": {},
+    "operation_id": "get-single-campaign-details"
+  },
+  "list_campaign_opens": {
+    "method": "POST",
+    "path": "/campaign/{id}/opens",
+    "response": {
+      "campaign": {
+        "name": "May newsletter",
+        "subject_line": "Big update inside",
+        "created_date": "2026-05-10 11:30:00"
+      },
+      "data": [
+        {
+          "contact_id": "SuwESEuwZZ",
+          "email": "alice@example.com",
+          "first_name": "Alice",
+          "last_name": "Anderson",
+          "tags": [
+            "VIP",
+            "Newsletter"
+          ],
+          "lists": "SuSwZS,KkfHZw",
+          "list_name": "Newsletter Subscribers, Beta Testers",
+          "created_date": "2026-05-15 08:42:11"
+        },
+        {
+          "contact_id": "SuwESEuwZf",
+          "email": "bob@example.com",
+          "first_name": "Bob",
+          "last_name": "",
+          "tags": [],
+          "lists": "no lists",
+          "list_name": "no lists",
+          "created_date": "2026-05-15 09:14:02"
+        }
+      ],
+      "total": 1234
+    },
+    "request_example": {
+      "page": 1,
+      "limit": 25
+    },
+    "operation_id": "list-campaign-opens"
+  },
+  "list_campaign_clicks": {
+    "method": "POST",
+    "path": "/campaign/{id}/clicks",
+    "response": {
+      "campaign": {
+        "name": "May newsletter",
+        "subject_line": "Big update inside",
+        "created_date": "2026-05-10 11:30:00"
+      },
+      "data": [
+        {
+          "contact_id": "SuwESEuwZy",
+          "email": "alice@example.com",
+          "first_name": "Alice",
+          "last_name": "Anderson",
+          "tags": [
+            "VIP"
+          ],
+          "lists": "SuSwZS",
+          "list_name": "Newsletter Subscribers",
+          "created_date": "2026-05-15 08:50:33"
+        }
+      ],
+      "total": 217
+    },
+    "request_example": {
+      "page": 1,
+      "limit": 25
+    },
+    "operation_id": "list-campaign-clicks"
+  },
+  "list_senders": {
+    "method": "POST",
+    "path": "/senders/search",
+    "response": {
+      "count": 2,
+      "data": [
+        {
+          "id": "hXUA",
+          "sender_email": "sender1@example.com",
+          "sender_name": "Marketing Team",
+          "createdDate": "2025-01-01 10:00:00",
+          "status": "Verified"
+        },
+        {
+          "id": "YxGF",
+          "sender_email": "support@example.com",
+          "sender_name": "Support",
+          "createdDate": "2025-01-02 10:00:00",
+          "status": "Verified"
+        }
+      ]
+    },
+    "request_example": {
+      "limit": 10,
+      "page": 1,
+      "search": "marketing",
+      "sort_field": "sender_email",
+      "sort_order": "asc"
+    },
+    "operation_id": "get-all-senders-and-search-senders"
+  }
+}
