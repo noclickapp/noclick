@@ -439,6 +439,40 @@ async def test_device_binding_expiry_and_no_redis(device, transport, monkeypatch
         await start_device(device[0], binding="owner", scopes=["read"], context={})
 
 
+async def test_context_free_declarations_preserve_specialized_transport_signatures(spec, transport):
+    """Productboard specializes all three original methods without context kwargs."""
+    from dataclasses import fields
+    from nodes.core.oauth_provider import OAuthProviderSpec
+
+    calls = []
+
+    class LegacySpec(OAuthProviderSpec):
+        def token_request(self, grant):
+            calls.append("request")
+            return super().token_request(grant)
+
+        async def _tokens(self, grant):
+            calls.append("tokens")
+            return await super()._tokens(grant)
+
+        async def account_name(self, access_token):
+            calls.append("identity")
+            return await super().account_name(access_token)
+
+    legacy = LegacySpec(**{field.name: getattr(spec, field.name) for field in fields(spec)})
+    _, responses = transport
+    responses.extend([
+        httpx.Response(200, json={"access_token": "access", "refresh_token": "refresh"}),
+        httpx.Response(200, json={"account": {"name": "Existing account"}}),
+        httpx.Response(200, json={"access_token": "renewed", "refresh_token": "rotated"}),
+    ])
+    _, name = await legacy.exchange("code", CALLBACK)
+    renewed = await legacy.refresh("refresh")
+    assert name == "Existing account"
+    assert renewed.refresh_token == "rotated"
+    assert calls == ["tokens", "request", "identity", "tokens", "request"]
+
+
 def test_existing_declarations_metadata_matches_prechange_snapshot():
     from pathlib import Path
     from nodes.core.oauth_registry import get_oauth_provider

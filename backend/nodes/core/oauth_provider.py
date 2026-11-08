@@ -447,7 +447,11 @@ class OAuthProviderSpec:
             else self.token_url
         )
         async with self._client(template) as client:
-            response = await client.post(**self.token_request(grant, context=context))
+            response = await client.post(
+                **self.token_request(
+                    grant, **({"context": context} if self.context_fields else {})
+                )
+            )
         return self.parse_tokens(response, context=context)
 
     def parse_tokens(self, response: httpx.Response, *, context=None):
@@ -546,10 +550,18 @@ class OAuthProviderSpec:
             ):
                 raise ValueError("OAuth PKCE verifier is required")
             grant["code_verifier"] = code_verifier
-        tokens, _ = await self._tokens(grant, context=context)
+        # Existing declarations may specialize the original transport/identity
+        # signatures. Only context-aware declarations opt into the new argument.
+        tokens, _ = await self._tokens(
+            grant, **({"context": context} if self.context_fields else {})
+        )
         name = await self.account_name(
             tokens.access_token,
-            context={k: getattr(tokens, k) for k in self.context_fields},
+            **(
+                {"context": {k: getattr(tokens, k) for k in self.context_fields}}
+                if self.context_fields
+                else {}
+            ),
         )
         return tokens, name
 
@@ -569,6 +581,6 @@ class OAuthProviderSpec:
     async def refresh(self, refresh_token: str, *, context=None) -> OAuthTokens:
         tokens, _ = await self._tokens(
             {"grant_type": "refresh_token", "refresh_token": refresh_token},
-            context=context,
+            **({"context": context} if self.context_fields else {}),
         )
         return tokens
