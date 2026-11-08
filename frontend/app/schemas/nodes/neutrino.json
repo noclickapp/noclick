@@ -1,0 +1,1205 @@
+{
+  "$defs": {
+    "NeutrinoAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "neutrino_api_key",
+          "default": "neutrino_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "Your Neutrino API account user ID.",
+          "minLength": 1,
+          "title": "User ID",
+          "type": "string"
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "user_id",
+        "api_key"
+      ],
+      "title": "Neutrino API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your user ID and API key from the Neutrino API account dashboard. The key must allow the operations you use. Connection testing consumes an IP Info request and proves API reachability.",
+      "x-credential-url": "https://www.neutrinoapi.com/api/api-basics/"
+    },
+    "NeutrinoCleanHtmlConfig": {
+      "additionalProperties": false,
+      "description": "Clean and sanitize untrusted HTML",
+      "properties": {
+        "operation": {
+          "const": "clean_html",
+          "default": "clean_html",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "content": {
+          "description": "The HTML content. This can be either a URL to load from, a file upload (multipart/form-data) or an HTML content string",
+          "title": "Content",
+          "type": "string"
+        },
+        "output-type": {
+          "description": "The level of sanitization, possible values are: <br> <b>plain-text</b>: reduce the content to plain text only (no HTML tags at all) <br> <b>plain-text-markdown</b>: reduce the content to plain text only but also convert HTML links and lists into makrdown style text <br> <b>simple-text</b>: allow only very basic text formatting tags like b, em, i, strong, u <br> <b>basic-html</b>: allow advanced text formatting and hyper links <br> <b>basic-html-with-images</b>: same as basic html but also allows image tags <br> <b>advanced-html</b>: same as basic html with images but also allows many more common HTML tags like table, ul, dl, pre <br>",
+          "title": "Output-Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "content",
+        "output-type"
+      ],
+      "title": "NeutrinoCleanHtmlConfig",
+      "type": "object"
+    },
+    "NeutrinoConvertConfig": {
+      "additionalProperties": false,
+      "description": "Convert currency and other numerical units between each other",
+      "properties": {
+        "operation": {
+          "const": "convert",
+          "default": "convert",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from-value": {
+          "description": "The value to convert from (e.g. 10.95)",
+          "title": "From-Value",
+          "type": "string"
+        },
+        "from-type": {
+          "description": "The type of the value to convert from (e.g. USD)",
+          "title": "From-Type",
+          "type": "string"
+        },
+        "to-type": {
+          "description": "The type to convert to (e.g. EUR)",
+          "title": "To-Type",
+          "type": "string"
+        },
+        "historical-date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Convert using the rate on a historical date, accepted date formats are: YYYY-MM-DD, YYYY-MM, YYYY. Historical rates are stored with daily granularity so the date format YYYY-MM-DD is preferred for the highest precision. The earliest date currently possible is: 2000-01-01. If an invalid date or a date too far into the past is supplied then the API will respond with 'valid' as false and an empty 'historical-date'",
+          "title": "Historical-Date"
+        }
+      },
+      "required": [
+        "from-value",
+        "from-type",
+        "to-type"
+      ],
+      "title": "NeutrinoConvertConfig",
+      "type": "object"
+    },
+    "NeutrinoFilterBadWordsConfig": {
+      "additionalProperties": false,
+      "description": "Detect bad words, swear words and profanity in a given text",
+      "properties": {
+        "operation": {
+          "const": "filter_bad_words",
+          "default": "filter_bad_words",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "content": {
+          "description": "The content to scan. This can be either a URL to load from, a file upload (multipart/form-data) or an HTML content string",
+          "title": "Content",
+          "type": "string"
+        },
+        "censor-character": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The character to use to censor out the bad words found",
+          "title": "Censor-Character"
+        },
+        "catalog": {
+          "default": "strict",
+          "description": "Which catalog of bad words to use, we currently maintain two bad word catalogs: <br> <ul> <li>strict - the largest database of bad words which includes profanity, obscenity, sexual, rude, cuss, dirty, swear and objectionable words and phrases. This catalog is suitable for environments of all ages including educational or children's content</li> <li>obscene - like the strict catalog but does not include any mild profanities, idiomatic phrases or words which are considered formal terminology. This catalog is suitable for adult environments where certain types of bad words are considered OK</li> </ul>",
+          "title": "Catalog",
+          "type": "string"
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "NeutrinoFilterBadWordsConfig",
+      "type": "object"
+    },
+    "NeutrinoGetBinLookupConfig": {
+      "additionalProperties": false,
+      "description": "Perform a BIN (Bank Identification Number) or IIN (Issuer Identification Number) lookup",
+      "properties": {
+        "operation": {
+          "const": "get_bin_lookup",
+          "default": "get_bin_lookup",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "bin-number": {
+          "description": "The BIN or IIN number. This is the first 6, 8 or 10 digits of a card number, use 8 (or more) digits for the highest level of accuracy",
+          "title": "Bin-Number",
+          "type": "string"
+        },
+        "customer-ip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pass in the customers IP address and we will return some extra information about them",
+          "title": "Customer-Ip"
+        }
+      },
+      "required": [
+        "bin-number"
+      ],
+      "title": "NeutrinoGetBinLookupConfig",
+      "type": "object"
+    },
+    "NeutrinoGetDomainLookupConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve domain name details and detect potentially malicious or dangerous domains",
+      "properties": {
+        "operation": {
+          "const": "get_domain_lookup",
+          "default": "get_domain_lookup",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "host": {
+          "description": "A domain name, hostname, FQDN, URL, HTML link or email address to lookup. For internationalized domain names (IDNs) this field will accept either punycode or the raw unicode domain name, the API will always automatically return IDNs encoded into punycode",
+          "title": "Host",
+          "type": "string"
+        },
+        "live": {
+          "default": true,
+          "description": "For domains that we have never seen before then perform various live checks and realtime reconnaissance. <br> NOTE: this option may add additional non-deterministic delay to the request, if you require consistently fast API response times or just want to check our domain blocklists then you can disable this option",
+          "title": "Live",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "host"
+      ],
+      "title": "NeutrinoGetDomainLookupConfig",
+      "type": "object"
+    },
+    "NeutrinoGetEmailValidationConfig": {
+      "additionalProperties": false,
+      "description": "Parse, validate and clean an email address",
+      "properties": {
+        "operation": {
+          "const": "get_email_validation",
+          "default": "get_email_validation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "An email address",
+          "title": "Email",
+          "type": "string"
+        },
+        "fix-typos": {
+          "default": false,
+          "description": "Automatically attempt to fix typos in the address",
+          "title": "Fix-Typos",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "NeutrinoGetEmailValidationConfig",
+      "type": "object"
+    },
+    "NeutrinoGetEmailVerificationConfig": {
+      "additionalProperties": false,
+      "description": "Perform in-depth SMTP based email address verification",
+      "properties": {
+        "operation": {
+          "const": "get_email_verification",
+          "default": "get_email_verification",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "An email address",
+          "title": "Email",
+          "type": "string"
+        },
+        "fix-typos": {
+          "default": false,
+          "description": "Automatically attempt to fix typos in the address",
+          "title": "Fix-Typos",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "NeutrinoGetEmailVerificationConfig",
+      "type": "object"
+    },
+    "NeutrinoGetGeocodeAddressConfig": {
+      "additionalProperties": false,
+      "description": "Geocode an address, partial address or the name of a place",
+      "properties": {
+        "operation": {
+          "const": "get_geocode_address",
+          "default": "get_geocode_address",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The full address, partial address or name of a place to try and locate. Comma separated address components are preferred.",
+          "title": "Address"
+        },
+        "house-number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The house/building number to locate (for structured address searches)",
+          "title": "House-Number"
+        },
+        "street": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The street/road name to locate (for structured address searches)",
+          "title": "Street"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The city/town name to locate (for structured address searches)",
+          "title": "City"
+        },
+        "county": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The county/region name to locate (for structured address searches)",
+          "title": "County"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The state name to locate (for structured address searches)",
+          "title": "State"
+        },
+        "postal-code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The postal code to locate (for structured address searches)",
+          "title": "Postal-Code"
+        },
+        "country-code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prefer results from this country code (the default is no country bias)",
+          "title": "Country-Code"
+        },
+        "country-codes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prefer results from this list of country codes (space or comma separated values). Preference is in the order supplied, you can use the 'country-code' parameter to also set a dynamic or user supplied country code which takes precedence",
+          "title": "Country-Codes"
+        },
+        "language-code": {
+          "default": "en",
+          "description": "The language to display results in, available languages are: <ul> <li>ar, de, en, es, fr, it, ja, nl, pt, ru, zh</li> </ul>",
+          "title": "Language-Code",
+          "type": "string"
+        },
+        "auto-complete": {
+          "default": false,
+          "description": "Enable auto-complete for search-as-you-type and search suggestions. This option can find addresses based on partial search terms, combine with 'country-code' for country specific searches. Auto-complete works best with 'fuzzy-search' disabled for the fastest response times but can be combined if required",
+          "title": "Auto-Complete",
+          "type": "boolean"
+        },
+        "fuzzy-search": {
+          "default": false,
+          "description": "If no matches are found for the given address, start performing a recursive fuzzy search until a geolocation is found. This option is useful for processing user supplied input that may be incomplete or have typos and where you do not mind some potential loss in precision",
+          "title": "Fuzzy-Search",
+          "type": "boolean"
+        },
+        "limit": {
+          "default": 8,
+          "description": "Limit search results to this many locations (between 1 and a maximum of 32)",
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "NeutrinoGetGeocodeAddressConfig",
+      "type": "object"
+    },
+    "NeutrinoGetGeocodeReverseConfig": {
+      "additionalProperties": false,
+      "description": "Convert a geographic coordinate (latitude and longitude) into a real world address",
+      "properties": {
+        "operation": {
+          "const": "get_geocode_reverse",
+          "default": "get_geocode_reverse",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The location latitude in decimal degrees format",
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The location longitude in decimal degrees format",
+          "title": "Longitude"
+        },
+        "language-code": {
+          "default": "en",
+          "description": "The language to display results in, available languages are: <ul> <li>ar, de, en, es, fr, it, ja, nl, pt, ru, zh</li> </ul>",
+          "title": "Language-Code",
+          "type": "string"
+        },
+        "zoom": {
+          "default": "address",
+          "description": "The zoom level to respond with: <br> <ul> <li>address - the most precise address available</li> <li>street - the street level</li> <li>city - the city level</li> <li>state - the state level</li> <li>country - the country level</li> </ul>",
+          "title": "Zoom",
+          "type": "string"
+        },
+        "geohash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reverse lookup by a geohash instead of using latitude and longitude",
+          "title": "Geohash"
+        }
+      },
+      "title": "NeutrinoGetGeocodeReverseConfig",
+      "type": "object"
+    },
+    "NeutrinoGetHlrLookupConfig": {
+      "additionalProperties": false,
+      "description": "Connect to the global mobile cellular network and retrieve the status of a mobile phone number",
+      "properties": {
+        "operation": {
+          "const": "get_hlr_lookup",
+          "default": "get_hlr_lookup",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "number": {
+          "description": "A phone number. This can be in international format (E.164) or local format. If passing local format you must also set either the 'country-code' option as well",
+          "title": "Number",
+          "type": "string"
+        },
+        "country-code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 2-letter country code, assume numbers are based in this country. <br> If not set numbers are assumed to be in international format (with or without the leading + sign)",
+          "title": "Country-Code"
+        }
+      },
+      "required": [
+        "number"
+      ],
+      "title": "NeutrinoGetHlrLookupConfig",
+      "type": "object"
+    },
+    "NeutrinoGetHostReputationConfig": {
+      "additionalProperties": false,
+      "description": "Check the reputation of an IP address, domain name or URL against a comprehensive list of blocklists",
+      "properties": {
+        "operation": {
+          "const": "get_host_reputation",
+          "default": "get_host_reputation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "host": {
+          "description": "An IP address, domain name, FQDN or URL. <br> If you supply a domain/URL it will be checked against the URI DNSBL lists",
+          "title": "Host",
+          "type": "string"
+        },
+        "list-rating": {
+          "default": 3,
+          "description": "Only check lists with this rating or better",
+          "title": "List-Rating",
+          "type": "integer"
+        },
+        "zones": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only check these DNSBL zones/hosts. Multiple zones can be supplied as comma-separated values",
+          "title": "Zones"
+        }
+      },
+      "required": [
+        "host"
+      ],
+      "title": "NeutrinoGetHostReputationConfig",
+      "type": "object"
+    },
+    "NeutrinoGetIpBlocklistConfig": {
+      "additionalProperties": false,
+      "description": "Detect potentially malicious or dangerous IP addresses",
+      "properties": {
+        "operation": {
+          "const": "get_ip_blocklist",
+          "default": "get_ip_blocklist",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ip": {
+          "description": "An IPv4 or IPv6 address. Accepts standard IP notation (with or without port number), CIDR notation and IPv6 compressed notation. If multiple IPs are passed using comma-separated values the first non-bogon address on the list will be checked",
+          "title": "Ip",
+          "type": "string"
+        },
+        "vpn-lookup": {
+          "default": false,
+          "description": "Include public VPN provider IP addresses. <br> <b>NOTE</b>: For more advanced VPN detection including the ability to identify private and stealth VPNs use the <a href=\"https://www.neutrinoapi.com/api/ip-probe/\">IP Probe API</a>",
+          "title": "Vpn-Lookup",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "ip"
+      ],
+      "title": "NeutrinoGetIpBlocklistConfig",
+      "type": "object"
+    },
+    "NeutrinoGetIpInfoConfig": {
+      "additionalProperties": false,
+      "description": "Get location information about an IP address and do reverse DNS (PTR) lookups",
+      "properties": {
+        "operation": {
+          "const": "get_ip_info",
+          "default": "get_ip_info",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ip": {
+          "default": "8.8.8.8",
+          "description": "An IPv4 or IPv6 address. Accepts standard IP notation and also CIDR notation",
+          "title": "Ip",
+          "type": "string"
+        },
+        "reverse-lookup": {
+          "default": false,
+          "description": "Do a reverse DNS (PTR) lookup. This option can add extra delay to the request so only use it if you need it",
+          "title": "Reverse-Lookup",
+          "type": "boolean"
+        }
+      },
+      "title": "NeutrinoGetIpInfoConfig",
+      "type": "object"
+    },
+    "NeutrinoGetIpProbeConfig": {
+      "additionalProperties": false,
+      "description": "Execute a realtime network probe against an IP address",
+      "properties": {
+        "operation": {
+          "const": "get_ip_probe",
+          "default": "get_ip_probe",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ip": {
+          "description": "An IPv4 or IPv6 address. Accepts standard IP notation and also CIDR notation",
+          "title": "Ip",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ip"
+      ],
+      "title": "NeutrinoGetIpProbeConfig",
+      "type": "object"
+    },
+    "NeutrinoGetPhoneValidationConfig": {
+      "additionalProperties": false,
+      "description": "Parse, validate and get location information about a phone number",
+      "properties": {
+        "operation": {
+          "const": "get_phone_validation",
+          "default": "get_phone_validation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "number": {
+          "description": "A phone number. This can be in international format (E.164) or local format. If passing local format you must also set either the 'country-code' OR 'ip' options as well",
+          "title": "Number",
+          "type": "string"
+        },
+        "country-code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 2-letter country code, assume numbers are based in this country. If not set numbers are assumed to be in international format (with or without the leading + sign)",
+          "title": "Country-Code"
+        },
+        "ip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pass in a users IP address and we will assume numbers are based in the country of the IP address",
+          "title": "Ip"
+        }
+      },
+      "required": [
+        "number"
+      ],
+      "title": "NeutrinoGetPhoneValidationConfig",
+      "type": "object"
+    },
+    "NeutrinoGetUaLookupConfig": {
+      "additionalProperties": false,
+      "description": "Parse, validate and get detailed user-agent information from a user agent string or from client hints",
+      "properties": {
+        "operation": {
+          "const": "get_ua_lookup",
+          "default": "get_ua_lookup",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ua": {
+          "description": "The user-agent string to lookup. For client hints this corresponds to the 'sec-ch-ua' header or you can also pass the JSON data directly from the 'navigator.userAgentData.getHighEntropyValues()' JavaScript API",
+          "title": "Ua",
+          "type": "string"
+        },
+        "ua-version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For client hints this corresponds to the 'sec-ch-ua-full-version' header",
+          "title": "Ua-Version"
+        },
+        "ua-platform": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For client hints this corresponds to the 'sec-ch-ua-platform' header",
+          "title": "Ua-Platform"
+        },
+        "ua-platform-version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For client hints this corresponds to the 'sec-ch-ua-platform-version' header",
+          "title": "Ua-Platform-Version"
+        },
+        "ua-mobile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For client hints this corresponds to the 'sec-ch-ua-mobile' header",
+          "title": "Ua-Mobile"
+        },
+        "device-model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For client hints this corresponds to the 'sec-ch-ua-model' header. <br> You can also use this parameter to lookup a device directly by its model name, model code or hardware code, on android you can get the model name from: https://developer.android.com/reference/android/os/Build.html#MODEL",
+          "title": "Device-Model"
+        },
+        "device-brand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "This parameter is only used in combination with 'device-model' for direct device lookups without any user-agent data. Set this to the brand or manufacturer name, this is required for accurate device detection with ambiguous model names. On android you can get the device brand from: https://developer.android.com/reference/android/os/Build#MANUFACTURER",
+          "title": "Device-Brand"
+        },
+        "ua-arch": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For client hints this corresponds to the 'sec-ch-ua-arch' header",
+          "title": "Ua-Arch"
+        },
+        "ua-bitness": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For client hints this corresponds to the 'sec-ch-ua-bitness' header",
+          "title": "Ua-Bitness"
+        },
+        "ua-form-factors": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For client hints this corresponds to the 'sec-ch-ua-form-factors' header",
+          "title": "Ua-Form-Factors"
+        }
+      },
+      "required": [
+        "ua"
+      ],
+      "title": "NeutrinoGetUaLookupConfig",
+      "type": "object"
+    },
+    "NeutrinoGetUrlInfoConfig": {
+      "additionalProperties": false,
+      "description": "Parse, analyze and retrieve content from the supplied URL",
+      "properties": {
+        "operation": {
+          "const": "get_url_info",
+          "default": "get_url_info",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "description": "The URL to probe",
+          "title": "Url",
+          "type": "string"
+        },
+        "fetch-content": {
+          "default": false,
+          "description": "If this URL responds with html, text, json or xml then return the response. This option is useful if you want to perform further processing on the URL content (e.g. with the HTML Extract or HTML Clean APIs)",
+          "title": "Fetch-Content",
+          "type": "boolean"
+        },
+        "ignore-certificate-errors": {
+          "default": false,
+          "description": "Ignore any TLS/SSL certificate errors and load the URL anyway",
+          "title": "Ignore-Certificate-Errors",
+          "type": "boolean"
+        },
+        "timeout": {
+          "default": 60,
+          "description": "Timeout in seconds. Give up if still trying to load the URL after this number of seconds",
+          "title": "Timeout",
+          "type": "integer"
+        },
+        "retry": {
+          "default": 0,
+          "description": "If the request fails for any reason try again this many times",
+          "title": "Retry",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "NeutrinoGetUrlInfoConfig",
+      "type": "object"
+    },
+    "NeutrinoSendPhoneVerificationConfig": {
+      "additionalProperties": false,
+      "description": "Make an automated call to any valid phone number and playback a unique security code",
+      "properties": {
+        "operation": {
+          "const": "send_phone_verification",
+          "default": "send_phone_verification",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "number": {
+          "description": "The phone number to send the verification code to",
+          "title": "Number",
+          "type": "string"
+        },
+        "code-length": {
+          "default": 6,
+          "description": "The number of digits to use in the security code (between 4 and 12)",
+          "title": "Code-Length",
+          "type": "integer"
+        },
+        "security-code": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pass in your own security code. This is useful if you have implemented TOTP or similar 2FA methods. If not set then we will generate a secure random code",
+          "title": "Security-Code"
+        },
+        "playback-delay": {
+          "default": 800,
+          "description": "The delay in milliseconds between the playback of each security code",
+          "title": "Playback-Delay",
+          "type": "integer"
+        },
+        "country-code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 2-letter country code, assume numbers are based in this country. <br> If not set numbers are assumed to be in international format (with or without the leading + sign)",
+          "title": "Country-Code"
+        },
+        "language-code": {
+          "default": "en",
+          "description": "The language to playback the verification code in, available languages are: <ul> <li>de - German</li> <li>en - English</li> <li>es - Spanish</li> <li>fr - French</li> <li>it - Italian</li> <li>pt - Portuguese</li> <li>ru - Russian</li> </ul>",
+          "title": "Language-Code",
+          "type": "string"
+        },
+        "limit": {
+          "default": 3,
+          "description": "Limit the total number of calls allowed to the supplied phone number, if the limit is reached within the TTL then error code 14 will be returned",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "limit-ttl": {
+          "default": 1,
+          "description": "Set the TTL in number of days that the 'limit' option will remember a phone number (the default is 1 day and the maximum is 365 days)",
+          "title": "Limit-Ttl",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "number"
+      ],
+      "title": "NeutrinoSendPhoneVerificationConfig",
+      "type": "object"
+    },
+    "NeutrinoSendSmsVerificationConfig": {
+      "additionalProperties": false,
+      "description": "Send a unique security code to any mobile device via SMS",
+      "properties": {
+        "operation": {
+          "const": "send_sms_verification",
+          "default": "send_sms_verification",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "number": {
+          "description": "The phone number to send a verification code to",
+          "title": "Number",
+          "type": "string"
+        },
+        "code-length": {
+          "default": 5,
+          "description": "The number of digits to use in the security code (must be between 4 and 12)",
+          "title": "Code-Length",
+          "type": "integer"
+        },
+        "security-code": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pass in your own security code. This is useful if you have implemented TOTP or similar 2FA methods. If not set then we will generate a secure random code",
+          "title": "Security-Code"
+        },
+        "country-code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 2-letter country code, assume numbers are based in this country. <br> If not set numbers are assumed to be in international format (with or without the leading + sign)",
+          "title": "Country-Code"
+        },
+        "language-code": {
+          "default": "en",
+          "description": "The language to send the verification code in, available languages are: <ul> <li>de - German</li> <li>en - English</li> <li>es - Spanish</li> <li>fr - French</li> <li>it - Italian</li> <li>pt - Portuguese</li> <li>ru - Russian</li> </ul>",
+          "title": "Language-Code",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Limit the total number of SMS allowed to the supplied phone number, if the limit is reached within the TTL then error code 14 will be returned",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "limit-ttl": {
+          "default": 1,
+          "description": "Set the TTL in number of days that the 'limit' option will remember a phone number (the default is 1 day and the maximum is 365 days)",
+          "title": "Limit-Ttl",
+          "type": "integer"
+        },
+        "brand-name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set a custom brand or product name in the verification message",
+          "title": "Brand-Name"
+        }
+      },
+      "required": [
+        "number"
+      ],
+      "title": "NeutrinoSendSmsVerificationConfig",
+      "type": "object"
+    },
+    "NeutrinoVerifySecurityCodeConfig": {
+      "additionalProperties": false,
+      "description": "Check if a security code sent via SMS Verify or Phone Verify is valid",
+      "properties": {
+        "operation": {
+          "const": "verify_security_code",
+          "default": "verify_security_code",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "security-code": {
+          "description": "The security code to verify",
+          "title": "Security-Code",
+          "type": "string"
+        },
+        "limit-by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set then enable additional brute-force protection by limiting the number of attempts by the supplied value. This can be set to any unique identifier you would like to limit by, for example a hash of the users email, phone number or IP address. Requests to this API will be ignored after approximately 10 failed verification attempts",
+          "title": "Limit-By"
+        }
+      },
+      "required": [
+        "security-code"
+      ],
+      "title": "NeutrinoVerifySecurityCodeConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "clean_html": "#/$defs/NeutrinoCleanHtmlConfig",
+          "convert": "#/$defs/NeutrinoConvertConfig",
+          "filter_bad_words": "#/$defs/NeutrinoFilterBadWordsConfig",
+          "get_bin_lookup": "#/$defs/NeutrinoGetBinLookupConfig",
+          "get_domain_lookup": "#/$defs/NeutrinoGetDomainLookupConfig",
+          "get_email_validation": "#/$defs/NeutrinoGetEmailValidationConfig",
+          "get_email_verification": "#/$defs/NeutrinoGetEmailVerificationConfig",
+          "get_geocode_address": "#/$defs/NeutrinoGetGeocodeAddressConfig",
+          "get_geocode_reverse": "#/$defs/NeutrinoGetGeocodeReverseConfig",
+          "get_hlr_lookup": "#/$defs/NeutrinoGetHlrLookupConfig",
+          "get_host_reputation": "#/$defs/NeutrinoGetHostReputationConfig",
+          "get_ip_blocklist": "#/$defs/NeutrinoGetIpBlocklistConfig",
+          "get_ip_info": "#/$defs/NeutrinoGetIpInfoConfig",
+          "get_ip_probe": "#/$defs/NeutrinoGetIpProbeConfig",
+          "get_phone_validation": "#/$defs/NeutrinoGetPhoneValidationConfig",
+          "get_ua_lookup": "#/$defs/NeutrinoGetUaLookupConfig",
+          "get_url_info": "#/$defs/NeutrinoGetUrlInfoConfig",
+          "send_phone_verification": "#/$defs/NeutrinoSendPhoneVerificationConfig",
+          "send_sms_verification": "#/$defs/NeutrinoSendSmsVerificationConfig",
+          "verify_security_code": "#/$defs/NeutrinoVerifySecurityCodeConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/NeutrinoGetEmailValidationConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoGetEmailVerificationConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoGetPhoneValidationConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoGetHlrLookupConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoGetIpInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoGetIpProbeConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoGetIpBlocklistConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoGetHostReputationConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoGetDomainLookupConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoGetBinLookupConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoGetUrlInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoGetUaLookupConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoGetGeocodeAddressConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoGetGeocodeReverseConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoConvertConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoFilterBadWordsConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoCleanHtmlConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoSendSmsVerificationConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoSendPhoneVerificationConfig"
+        },
+        {
+          "$ref": "#/$defs/NeutrinoVerifySecurityCodeConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NeutrinoAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Neutrino Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
