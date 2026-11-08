@@ -27,6 +27,7 @@ const TeamworkNodeComponent = (props: NodeProps) => (
 export const TeamworkNode: NodeDefinition = {
     type: 'automation-teamwork',
     label: 'Teamwork',
+    category: 'productivity',
     description: 'Teamwork project and task automation',
     Icon: TeamworkIcon,
     iconColor: '',
