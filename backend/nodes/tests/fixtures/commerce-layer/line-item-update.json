@@ -1,0 +1,203 @@
+{
+  "body": {
+    "data": {
+      "id": "XAyRWNUzyN",
+      "type": "line_items",
+      "links": {
+        "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN"
+      },
+      "attributes": {
+        "sku_code": "TSHIRTMM000000FFFFFFXLXX",
+        "bundle_code": "BUNDLEMM000000FFFFFFXLXX",
+        "quantity": 4,
+        "_external_price": true,
+        "currency_code": "EUR",
+        "unit_amount_cents": 10000,
+        "unit_amount_float": 100.0,
+        "formatted_unit_amount": "\u20ac100,00",
+        "compare_at_amount_cents": 13000,
+        "compare_at_amount_float": 130.0,
+        "formatted_compare_at_amount": "\u20ac130,00",
+        "options_amount_cents": 1000,
+        "options_amount_float": 10.0,
+        "formatted_options_amount": "\u20ac10,00",
+        "discount_cents": -1000,
+        "discount_float": 10.0,
+        "formatted_discount": "\u20ac10,00",
+        "total_amount_cents": 18800,
+        "total_amount_float": 188.0,
+        "formatted_total_amount": "\u20ac188,00",
+        "tax_amount_cents": 1880,
+        "tax_amount_float": 18.8,
+        "formatted_tax_amount": "\u20ac18,80",
+        "name": "Men's Black T-shirt with White Logo (XL)",
+        "image_url": "https://img.yourdomain.com/skus/xYZkjABcde.png",
+        "discount_breakdown": {
+          "41": {
+            "name": "10% ALL",
+            "cents": -900,
+            "weight": 0.416,
+            "coupon_code": "XXXXXXXX"
+          }
+        },
+        "tax_rate": 0.22,
+        "tax_breakdown": {
+          "id": "1234",
+          "city_amount": "0.0",
+          "state_amount": 6.6,
+          "city_tax_rate": 0.0,
+          "county_amount": 2.78,
+          "taxable_amount": 139.0,
+          "county_tax_rate": 0.02,
+          "tax_collectable": 10.08,
+          "special_tax_rate": 0.005,
+          "combined_tax_rate": 0.0725,
+          "city_taxable_amount": 0.0,
+          "state_sales_tax_rate": 0.0475,
+          "state_taxable_amount": 139.0,
+          "county_taxable_amount": 139.0,
+          "special_district_amount": 0.7,
+          "special_district_taxable_amount": 139.0
+        },
+        "item_type": "skus",
+        "frequency": "monthly",
+        "coupon_code": "SUMMERDISCOUNT",
+        "rule_outcomes": [],
+        "created_at": "2018-01-01T12:00:00.000Z",
+        "updated_at": "2018-01-01T12:00:00.000Z",
+        "reference": "ANY-EXTERNAL-REFEFERNCE",
+        "reference_origin": "ANY-EXTERNAL-REFEFERNCE-ORIGIN",
+        "metadata": {
+          "foo": "bar"
+        }
+      },
+      "relationships": {
+        "order": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/order",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/order"
+          }
+        },
+        "item": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/item",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/item"
+          }
+        },
+        "sku": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/sku",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/sku"
+          }
+        },
+        "bundle": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/bundle",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/bundle"
+          }
+        },
+        "adjustment": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/adjustment",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/adjustment"
+          }
+        },
+        "gift_card": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/gift_card",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/gift_card"
+          }
+        },
+        "shipment": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/shipment",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/shipment"
+          }
+        },
+        "payment_method": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/payment_method",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/payment_method"
+          }
+        },
+        "line_item_options": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/line_item_options",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/line_item_options"
+          }
+        },
+        "return_line_items": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/return_line_items",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/return_line_items"
+          }
+        },
+        "shipment_line_items": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/shipment_line_items",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/shipment_line_items"
+          }
+        },
+        "stock_reservations": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/stock_reservations",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/stock_reservations"
+          }
+        },
+        "stock_line_items": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/stock_line_items",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/stock_line_items"
+          }
+        },
+        "stock_transfers": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/stock_transfers",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/stock_transfers"
+          }
+        },
+        "attachments": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/attachments",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/attachments"
+          }
+        },
+        "notifications": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/notifications",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/notifications"
+          }
+        },
+        "events": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/events",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/events"
+          }
+        },
+        "tags": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/tags",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/tags"
+          }
+        },
+        "event_stores": {
+          "links": {
+            "self": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/relationships/event_stores",
+            "related": "https://yourdomain.commercelayer.io/api/line_items/XAyRWNUzyN/event_stores"
+          }
+        }
+      },
+      "meta": {
+        "mode": "test",
+        "organization_id": "xRRkjDFafe",
+        "trace_id": "69abaa3545913c78132e5578bd26208d44aa9043647d78698fd0021f3958cd74"
+      }
+    },
+    "meta": {
+      "mode": "test",
+      "organization_id": "xRRkjDFafe",
+      "trace_id": "69abaa3545913c78132e5578bd26208d44aa9043647d78698fd0021f3958cd74"
+    }
+  },
+  "source": "https://docs.commercelayer.io/core-api-reference/line_items/update"
+}
