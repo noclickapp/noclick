@@ -1,0 +1,2980 @@
+{
+  "$defs": {
+    "CreateAiMockupConfig": {
+      "additionalProperties": false,
+      "description": "Create MockAnything AI Mockup.",
+      "properties": {
+        "operation": {
+          "const": "create_ai_mockup",
+          "default": "create_ai_mockup",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text prompt used to AI-generate the mockup image. Required unless `image_url` or `image_file` is provided.",
+          "title": "Prompt"
+        },
+        "image_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL of an existing image to use as the mockup image. Required unless `prompt` or `image_file` is provided.",
+          "title": "Image Url"
+        },
+        "enhance_prompt": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to run prompt enhancement before generation. Only applies to the `prompt` flow.",
+          "title": "Enhance Prompt"
+        },
+        "product": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateAiMockupConfigProduct"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional product context used to ground the AI generation."
+        },
+        "model": {
+          "anyOf": [
+            {
+              "enum": [
+                "nano_banana_2",
+                "nano_banana_lite",
+                "seedream_4_0",
+                "seedream_4_5",
+                "gpt_image_2"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "AI model used for generation. Only applies to the `prompt` flow. Required when `style` is provided. When omitted, generations default to `nano_banana_2`, which runs on Nano Banana 2.1 (Google's `gemini-nano-banana-2.1`) since October 2026. `nano_banana_lite` and `gpt_image_2` apply to product-backed generations (a `product.uuid` present).",
+          "title": "Model",
+          "enum": [
+            "nano_banana_2",
+            "nano_banana_lite",
+            "seedream_4_0",
+            "seedream_4_5",
+            "gpt_image_2"
+          ],
+          "x-enum-searchable": true
+        },
+        "style": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Visual style applied to the AI generation (e.g. `polaroid-etsy`, `ugc`, `fashion`). Use `GET /mock-anything/styles?model={model}` to list the styles available for a given model; not every model supports every style. When `style` is provided, `model` is required.",
+          "title": "Style"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional mockup name shown in the dashboard and returned in the `mockup.name` field.",
+          "title": "Name"
+        },
+        "collections": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CreateAiMockupConfigCollectionsItem"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional collections to attach the mockup to. Each item is either an existing collection (by `uuid`) or a new collection to create (by `name`). Exactly one of `uuid` or `name` must be provided per item.",
+          "title": "Collections"
+        },
+        "catalog_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional UUID of the catalog the mockup belongs to. Defaults to the workspace's default catalog.",
+          "title": "Catalog Uuid"
+        }
+      },
+      "title": "CreateAiMockupConfig",
+      "type": "object"
+    },
+    "CreateAiMockupConfigCollectionsItem": {
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UUID of an existing collection.",
+          "title": "Uuid"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name of a new collection to create and attach.",
+          "title": "Name"
+        }
+      },
+      "title": "CreateAiMockupConfigCollectionsItem",
+      "type": "object"
+    },
+    "CreateAiMockupConfigProduct": {
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UUID of a POD product (obtained via `GET /mock-anything/products`) to anchor the AI generation around a specific product type.",
+          "title": "Uuid"
+        },
+        "selected_size": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional product size. Must exactly match one of the product's `sizes[].label` values (from `GET /mock-anything/products/{uuid}`). A matched size is taken into account by the generation where the product's category and size data support it (real-world scale and/or output aspect). A value that matches none of the product's sizes is rejected with a 400 error naming the product's valid size labels; when the product cannot be resolved, the value is accepted without effect. Only meaningful together with `product.uuid`.",
+          "title": "Selected Size"
+        },
+        "color_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional exact product color name from `GET /mock-anything/products/{uuid}`. The value is case-sensitive and must match one of `colors[].name`. Product detail must be available to validate this selector.",
+          "title": "Color Name"
+        },
+        "decorations": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CreateAiMockupConfigProductDecorationsItem"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional list of decoration areas to place on the product. Each item can target a canonical `location` or an exact `position_id`, and can select an exact enabled `source`, all from `GET /mock-anything/products/{uuid}`. When omitted, the product's default decoration area and source are used.\n",
+          "title": "Decorations"
+        }
+      },
+      "title": "CreateAiMockupConfigProduct",
+      "type": "object"
+    },
+    "CreateAiMockupConfigProductDecorationsItem": {
+      "additionalProperties": false,
+      "properties": {
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Decoration area to target, from `GET /mock-anything/products/{uuid}`. When omitted, the product's default decoration area is used.",
+          "title": "Location"
+        },
+        "position_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact stored decoration position identifier from `decorations[].position_id` in the product detail response. Use this to distinguish provider-specific positions that share a canonical location.",
+          "title": "Position Id"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enabled provider source from the selected product-detail decoration's `sources` list. Matching trims surrounding whitespace and is case-insensitive; the canonical stored source is forwarded. When omitted, the position's default source is used.",
+          "title": "Source"
+        },
+        "decoration_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Decoration method to apply (e.g. `dtg`, `screen_print`, `embroidery`, `dtf`, `heat_transfer`). The value is forwarded as sent. When the selected position lists methods and none of them matches (case-insensitive; each run of spaces and/or hyphens reads as one `_`; common synonyms such as `screen_printing` = `screen_print` accepted), the request still proceeds and the response carries a `decoration_method_not_supported` warning for that `location`; the source and sizing are not changed. No warning is given for a disabled position or one whose data lists no methods. See product details for valid positions.",
+          "title": "Decoration Method"
+        },
+        "imprint_size": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateAiMockupConfigProductDecorationsItemImprintSize"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Desired physical imprint size."
+        }
+      },
+      "title": "CreateAiMockupConfigProductDecorationsItem",
+      "type": "object"
+    },
+    "CreateAiMockupConfigProductDecorationsItemImprintSize": {
+      "additionalProperties": false,
+      "properties": {
+        "width": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unit"
+        }
+      },
+      "title": "CreateAiMockupConfigProductDecorationsItemImprintSize",
+      "type": "object"
+    },
+    "CreateBatchRenderConfig": {
+      "additionalProperties": false,
+      "description": "Render Multiple Mockups.",
+      "properties": {
+        "operation": {
+          "const": "create_batch_render",
+          "default": "create_batch_render",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "export_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateBatchRenderConfigExportOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Export options applied to all renders in the batch."
+        },
+        "renders": {
+          "description": "Array of render requests to process in the batch.",
+          "items": {
+            "$ref": "#/$defs/CreateBatchRenderConfigRendersItem"
+          },
+          "title": "Renders",
+          "type": "array"
+        }
+      },
+      "required": [
+        "renders"
+      ],
+      "title": "CreateBatchRenderConfig",
+      "type": "object"
+    },
+    "CreateBatchRenderConfigExportOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "image_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "webp",
+                "jpg",
+                "png"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The format of the exported image.",
+          "title": "Image Format",
+          "enum": [
+            "webp",
+            "jpg",
+            "png"
+          ],
+          "x-enum-searchable": true
+        },
+        "image_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The size in pixels of the exported image.",
+          "title": "Image Size"
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "view",
+                "download"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Determines whether the exported image should be viewed in the browser or downloaded.",
+          "title": "Mode",
+          "enum": [
+            "view",
+            "download"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "CreateBatchRenderConfigExportOptions",
+      "type": "object"
+    },
+    "CreateBatchRenderConfigRendersItem": {
+      "additionalProperties": false,
+      "properties": {
+        "export_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A label for the exported image.",
+          "title": "Export Label"
+        },
+        "mockup_uuid": {
+          "description": "The UUID of the mockup template.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mockup Uuid",
+          "type": "string"
+        },
+        "smart_objects": {
+          "description": "List of smart objects inside the chosen mockup.",
+          "items": {
+            "$ref": "#/$defs/CreateBatchRenderConfigRendersItemSmartObjectsItem"
+          },
+          "title": "Smart Objects",
+          "type": "array"
+        },
+        "text_layers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CreateRenderConfigTextLayersItem"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of text layers for the chosen mockup.",
+          "title": "Text Layers"
+        }
+      },
+      "required": [
+        "mockup_uuid",
+        "smart_objects"
+      ],
+      "title": "CreateBatchRenderConfigRendersItem",
+      "type": "object"
+    },
+    "CreateBatchRenderConfigRendersItemSmartObjectsItem": {
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The UUID of the smart object.",
+          "title": "Uuid"
+        },
+        "asset": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateBatchRenderConfigRendersItemSmartObjectsItemAsset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pattern": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateRenderConfigSmartObjectsItemPattern"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Configuration for using the asset as a repeating pattern."
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Color overlay for the smart object in hex code.",
+          "title": "Color"
+        },
+        "blending_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "NORMAL",
+                "DISSOLVE",
+                "DARKEN",
+                "MULTIPLY",
+                "COLOR_BURN",
+                "LINEAR_BURN",
+                "DARKER_COLOR",
+                "LIGHTEN",
+                "SCREEN",
+                "COLOR_DODGE",
+                "LINEAR_DODGE",
+                "LIGHTER_COLOR",
+                "OVERLAY",
+                "SOFT_LIGHT",
+                "HARD_LIGHT",
+                "VIVID_LIGHT",
+                "LINEAR_LIGHT",
+                "PIN_LIGHT",
+                "HARD_MIX",
+                "DIFFERENCE",
+                "EXCLUSION",
+                "SUBTRACT",
+                "DIVIDE",
+                "HUE",
+                "SATURATION",
+                "COLOR",
+                "LUMINOSITY"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Blending mode applied to the smart object.",
+          "title": "Blending Mode",
+          "enum": [
+            "NORMAL",
+            "DISSOLVE",
+            "DARKEN",
+            "MULTIPLY",
+            "COLOR_BURN",
+            "LINEAR_BURN",
+            "DARKER_COLOR",
+            "LIGHTEN",
+            "SCREEN",
+            "COLOR_DODGE",
+            "LINEAR_DODGE",
+            "LIGHTER_COLOR",
+            "OVERLAY",
+            "SOFT_LIGHT",
+            "HARD_LIGHT",
+            "VIVID_LIGHT",
+            "LINEAR_LIGHT",
+            "PIN_LIGHT",
+            "HARD_MIX",
+            "DIFFERENCE",
+            "EXCLUSION",
+            "SUBTRACT",
+            "DIVIDE",
+            "HUE",
+            "SATURATION",
+            "COLOR",
+            "LUMINOSITY"
+          ],
+          "x-enum-searchable": true
+        },
+        "adjustment_layers": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateRenderConfigSmartObjectsItemAdjustmentLayers"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional adjustment layers applied to the smart object."
+        },
+        "print_area_preset_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UUID of the print area preset to automatically position provided design asset.",
+          "title": "Print Area Preset Uuid"
+        },
+        "decoration_method": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateRenderConfigSmartObjectsItemDecorationMethod"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Render-time decoration method (print finish) applied to this smart object's artwork. Only affects MockAnything templates; classic PSD mockups ignore it. Every method except universal simulates a physical print or engraving process and intentionally alters the artwork's colors (ink absorption, desaturation, fabric show-through), most visibly on dark garments. To reproduce your artwork's original colors, set method to universal or omit this field (omitting keeps the template's default finish, which is universal unless the template was saved with a different one); scene lighting and shading still apply."
+        }
+      },
+      "title": "CreateBatchRenderConfigRendersItemSmartObjectsItem",
+      "type": "object"
+    },
+    "CreateBatchRenderConfigRendersItemSmartObjectsItemAsset": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL to the asset image.",
+          "title": "Url"
+        },
+        "fit": {
+          "anyOf": [
+            {
+              "enum": [
+                "stretch",
+                "contain",
+                "cover"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How the asset fits within the designated area.",
+          "title": "Fit",
+          "enum": [
+            "stretch",
+            "contain",
+            "cover"
+          ],
+          "x-enum-searchable": true
+        },
+        "size": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateBatchRenderConfigRendersItemSmartObjectsItemAssetSize"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "position": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateRenderConfigSmartObjectsItemAssetPosition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "rotate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The rotation angle of the provided asset.",
+          "title": "Rotate"
+        }
+      },
+      "title": "CreateBatchRenderConfigRendersItemSmartObjectsItemAsset",
+      "type": "object"
+    },
+    "CreateBatchRenderConfigRendersItemSmartObjectsItemAssetSize": {
+      "additionalProperties": false,
+      "properties": {
+        "width": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The width of the asset in pixels.",
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The height of the asset in pixels.",
+          "title": "Height"
+        }
+      },
+      "title": "CreateBatchRenderConfigRendersItemSmartObjectsItemAssetSize",
+      "type": "object"
+    },
+    "CreateBulkRenderConfig": {
+      "additionalProperties": false,
+      "description": "Create Bulk Renders Based on Mockup Collection.",
+      "properties": {
+        "operation": {
+          "const": "create_bulk_render",
+          "default": "create_bulk_render",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "collection_uuid": {
+          "description": "The unique identifier of collection created in My Templates section: https://app.dynamicmockups.com/my-templates\n",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Collection Uuid",
+          "type": "string"
+        },
+        "artworks": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artworks"
+        },
+        "colors": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Key-value map of color inputs using hex codes",
+          "title": "Colors"
+        },
+        "export_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Export Label"
+        },
+        "export_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateBulkRenderConfigExportOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional settings used to control the format, size, and behavior of the exported images."
+        }
+      },
+      "required": [
+        "collection_uuid"
+      ],
+      "title": "CreateBulkRenderConfig",
+      "type": "object"
+    },
+    "CreateBulkRenderConfigExportOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "image_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "webp",
+                "jpg",
+                "png"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Format",
+          "enum": [
+            "webp",
+            "jpg",
+            "png"
+          ],
+          "x-enum-searchable": true
+        },
+        "image_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Size"
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "view",
+                "download"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mode",
+          "enum": [
+            "view",
+            "download"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "CreateBulkRenderConfigExportOptions",
+      "type": "object"
+    },
+    "CreateCatalogConfig": {
+      "additionalProperties": false,
+      "description": "Create Catalog.",
+      "properties": {
+        "operation": {
+          "const": "create_catalog",
+          "default": "create_catalog",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "The name of the custom catalog to create.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateCatalogConfig",
+      "type": "object"
+    },
+    "CreateCollectionConfig": {
+      "additionalProperties": false,
+      "description": "Create Collection.",
+      "properties": {
+        "operation": {
+          "const": "create_collection",
+          "default": "create_collection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "The name of the collection to create.",
+          "title": "Name",
+          "type": "string"
+        },
+        "catalog_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional UUID of the catalog to place this collection in. If not provided, uses the default catalog.",
+          "title": "Catalog Uuid"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateCollectionConfig",
+      "type": "object"
+    },
+    "CreateMotionMockupConfig": {
+      "additionalProperties": false,
+      "description": "Submit a MotionMockups AI Request.",
+      "properties": {
+        "operation": {
+          "const": "create_motion_mockup",
+          "default": "create_motion_mockup",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_image_url": {
+          "description": "Publicly accessible URL of the source image to animate.",
+          "maxLength": 2000,
+          "title": "Start Image Url",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "enum": [
+                "kling_v2.6",
+                "kling_v3_pro"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The MotionMockups AI model to use. Defaults to the standard model when omitted.",
+          "title": "Model",
+          "enum": [
+            "kling_v2.6",
+            "kling_v3_pro"
+          ],
+          "x-enum-searchable": true
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "maxLength": 2500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional text prompt describing the desired video. When omitted, a prompt is generated from the image.",
+          "title": "Prompt"
+        },
+        "negative_prompt": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional description of what to avoid in the generated video.",
+          "title": "Negative Prompt"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Video length in seconds. Allowed values depend on the selected model (see `GET /motion-mockups/models`). Defaults to the model's default duration.",
+          "title": "Duration"
+        },
+        "aspect_ratio": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Output aspect ratio. Only supported by some models, with a model-specific set of allowed values (see `GET /motion-mockups/models`).",
+          "title": "Aspect Ratio"
+        },
+        "generate_audio": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to also generate audio. Increases the credit cost by a model-specific multiplier.",
+          "title": "Generate Audio"
+        },
+        "skip_discovery": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When `true` and no `prompt` is provided, skip image auto-prompting and use a neutral default prompt.",
+          "title": "Skip Discovery"
+        }
+      },
+      "required": [
+        "start_image_url"
+      ],
+      "title": "CreateMotionMockupConfig",
+      "type": "object"
+    },
+    "CreateRenderConfig": {
+      "additionalProperties": false,
+      "description": "Create a Mockup Render.",
+      "properties": {
+        "operation": {
+          "const": "create_render",
+          "default": "create_render",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mockup_uuid": {
+          "description": "The UUID of the mockup template.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mockup Uuid",
+          "type": "string"
+        },
+        "export_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A label for the exported image.",
+          "title": "Export Label"
+        },
+        "export_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateRenderConfigExportOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "smart_objects": {
+          "description": "List of smart objects inside a chosen mockup.",
+          "items": {
+            "$ref": "#/$defs/CreateRenderConfigSmartObjectsItem"
+          },
+          "title": "Smart Objects",
+          "type": "array"
+        },
+        "text_layers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CreateRenderConfigTextLayersItem"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of text layers for the chosen mockup.",
+          "title": "Text Layers"
+        }
+      },
+      "required": [
+        "mockup_uuid",
+        "smart_objects"
+      ],
+      "title": "CreateRenderConfig",
+      "type": "object"
+    },
+    "CreateRenderConfigExportOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "image_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "webp",
+                "jpg",
+                "png"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The format of the exported image.",
+          "title": "Image Format",
+          "enum": [
+            "webp",
+            "jpg",
+            "png"
+          ],
+          "x-enum-searchable": true
+        },
+        "image_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The size in pixels of the exported image.",
+          "title": "Image Size"
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "view",
+                "download"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Determines whether the exported image should be viewed in the browser or downloaded.",
+          "title": "Mode",
+          "enum": [
+            "view",
+            "download"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "CreateRenderConfigExportOptions",
+      "type": "object"
+    },
+    "CreateRenderConfigSmartObjectsItem": {
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The UUID of the smart object.",
+          "title": "Uuid"
+        },
+        "asset": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateRenderConfigSmartObjectsItemAsset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pattern": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateRenderConfigSmartObjectsItemPattern"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Configuration for using the asset as a repeating pattern."
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Color overlay for the smart object in hex code.",
+          "title": "Color"
+        },
+        "blending_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "NORMAL",
+                "DISSOLVE",
+                "DARKEN",
+                "MULTIPLY",
+                "COLOR_BURN",
+                "LINEAR_BURN",
+                "DARKER_COLOR",
+                "LIGHTEN",
+                "SCREEN",
+                "COLOR_DODGE",
+                "LINEAR_DODGE",
+                "LIGHTER_COLOR",
+                "OVERLAY",
+                "SOFT_LIGHT",
+                "HARD_LIGHT",
+                "VIVID_LIGHT",
+                "LINEAR_LIGHT",
+                "PIN_LIGHT",
+                "HARD_MIX",
+                "DIFFERENCE",
+                "EXCLUSION",
+                "SUBTRACT",
+                "DIVIDE",
+                "HUE",
+                "SATURATION",
+                "COLOR",
+                "LUMINOSITY"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Blending mode applied to the smart object.",
+          "title": "Blending Mode",
+          "enum": [
+            "NORMAL",
+            "DISSOLVE",
+            "DARKEN",
+            "MULTIPLY",
+            "COLOR_BURN",
+            "LINEAR_BURN",
+            "DARKER_COLOR",
+            "LIGHTEN",
+            "SCREEN",
+            "COLOR_DODGE",
+            "LINEAR_DODGE",
+            "LIGHTER_COLOR",
+            "OVERLAY",
+            "SOFT_LIGHT",
+            "HARD_LIGHT",
+            "VIVID_LIGHT",
+            "LINEAR_LIGHT",
+            "PIN_LIGHT",
+            "HARD_MIX",
+            "DIFFERENCE",
+            "EXCLUSION",
+            "SUBTRACT",
+            "DIVIDE",
+            "HUE",
+            "SATURATION",
+            "COLOR",
+            "LUMINOSITY"
+          ],
+          "x-enum-searchable": true
+        },
+        "adjustment_layers": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateRenderConfigSmartObjectsItemAdjustmentLayers"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional adjustment layers applied to the smart object."
+        },
+        "print_area_preset_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UUID of the print area preset to automatically position provided design asset.",
+          "title": "Print Area Preset Uuid"
+        },
+        "decoration_method": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateRenderConfigSmartObjectsItemDecorationMethod"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Render-time decoration method (print finish) applied to this smart object's artwork. Only affects MockAnything templates; classic PSD mockups ignore it. Every method except universal simulates a physical print or engraving process and intentionally alters the artwork's colors (ink absorption, desaturation, fabric show-through), most visibly on dark garments. To reproduce your artwork's original colors, set method to universal or omit this field (omitting keeps the template's default finish, which is universal unless the template was saved with a different one); scene lighting and shading still apply."
+        }
+      },
+      "title": "CreateRenderConfigSmartObjectsItem",
+      "type": "object"
+    },
+    "CreateRenderConfigSmartObjectsItemAdjustmentLayers": {
+      "additionalProperties": false,
+      "properties": {
+        "brightness": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Brightness adjustment (from -150 to 150).",
+          "title": "Brightness"
+        },
+        "contrast": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contrast adjustment (from -100 to 100).",
+          "title": "Contrast"
+        },
+        "opacity": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opacity adjustment (from 0 to 100).",
+          "title": "Opacity"
+        },
+        "saturation": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Saturation adjustment (from -100 to 100).",
+          "title": "Saturation"
+        },
+        "vibrance": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Vibrance adjustment (from -100 to 100).",
+          "title": "Vibrance"
+        },
+        "blur": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Blur adjustment (from 0 to 100).",
+          "title": "Blur"
+        }
+      },
+      "title": "CreateRenderConfigSmartObjectsItemAdjustmentLayers",
+      "type": "object"
+    },
+    "CreateRenderConfigSmartObjectsItemAsset": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL to the asset image.",
+          "title": "Url"
+        },
+        "fit": {
+          "anyOf": [
+            {
+              "enum": [
+                "stretch",
+                "contain",
+                "cover"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How the asset fits within the designated area.",
+          "title": "Fit",
+          "enum": [
+            "stretch",
+            "contain",
+            "cover"
+          ],
+          "x-enum-searchable": true
+        },
+        "size": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateRenderConfigSmartObjectsItemAssetSize"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "position": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateRenderConfigSmartObjectsItemAssetPosition"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "rotate": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The rotation angle of the provided asset.",
+          "title": "Rotate"
+        }
+      },
+      "title": "CreateRenderConfigSmartObjectsItemAsset",
+      "type": "object"
+    },
+    "CreateRenderConfigSmartObjectsItemAssetPosition": {
+      "additionalProperties": false,
+      "properties": {
+        "top": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The top position of the asset.",
+          "title": "Top"
+        },
+        "left": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The left position of the asset.",
+          "title": "Left"
+        }
+      },
+      "title": "CreateRenderConfigSmartObjectsItemAssetPosition",
+      "type": "object"
+    },
+    "CreateRenderConfigSmartObjectsItemAssetSize": {
+      "additionalProperties": false,
+      "properties": {
+        "width": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The width of the asset in pixels.",
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The height of the asset pixels.",
+          "title": "Height"
+        }
+      },
+      "title": "CreateRenderConfigSmartObjectsItemAssetSize",
+      "type": "object"
+    },
+    "CreateRenderConfigSmartObjectsItemDecorationMethod": {
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "description": "The decoration method to apply. universal = flat print that leaves artwork colors unchanged (your chosen blending_mode still applies); screen_print, dtg and uv_print are print finishes that simulate how ink sits on the material and shift artwork colors accordingly (dtg simulates ink soaked into fabric: expect desaturation and strong darkening on dark garments); laser_engrave_surface and laser_engrave_deep are engravings (the artwork acts as a stencil and its colors are replaced by the engraved material); deboss is a pressed-in impression.",
+          "enum": [
+            "universal",
+            "screen_print",
+            "dtg",
+            "uv_print",
+            "laser_engrave_surface",
+            "laser_engrave_deep",
+            "deboss"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateRenderConfigSmartObjectsItemDecorationMethodOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional fine-tuning for the selected method. Only laser_engrave_surface, laser_engrave_deep and deboss read options; any value you omit uses a sensible default."
+        }
+      },
+      "required": [
+        "method"
+      ],
+      "title": "CreateRenderConfigSmartObjectsItemDecorationMethod",
+      "type": "object"
+    },
+    "CreateRenderConfigSmartObjectsItemDecorationMethodOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "material": {
+          "anyOf": [
+            {
+              "enum": [
+                "metal",
+                "leather",
+                "wood"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Simulated material finish for engrave and deboss methods.",
+          "title": "Material",
+          "enum": [
+            "metal",
+            "leather",
+            "wood"
+          ],
+          "x-enum-searchable": true
+        },
+        "desaturation": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "laser_engrave_surface: how much of the artwork color is removed (0 to 1).",
+          "title": "Desaturation"
+        },
+        "burn_darkness": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "laser_engrave_surface: darkness of the burned engraving (0 to 1).",
+          "title": "Burn Darkness"
+        },
+        "wall_width": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "laser_engrave_deep: width of the engraved channel walls, in pixels.",
+          "title": "Wall Width"
+        },
+        "groove_darkness": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "laser_engrave_deep: shadow darkness inside the engraved grooves (0 to 1).",
+          "title": "Groove Darkness"
+        },
+        "depth": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "deboss: depth of the pressed-in impression (0 to 1).",
+          "title": "Depth"
+        },
+        "shadow_falloff": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "deboss: softness of the impression's shadow edge, in pixels.",
+          "title": "Shadow Falloff"
+        },
+        "shadow_darkness": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "deboss: darkness of the impression's shadow (0 to 1).",
+          "title": "Shadow Darkness"
+        },
+        "highlight_brightness": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "deboss: brightness of the raised highlight.",
+          "title": "Highlight Brightness"
+        },
+        "center_darkening": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "deboss: darkening toward the center of the impression (0 to 1).",
+          "title": "Center Darkening"
+        }
+      },
+      "title": "CreateRenderConfigSmartObjectsItemDecorationMethodOptions",
+      "type": "object"
+    },
+    "CreateRenderConfigSmartObjectsItemPattern": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the asset is used as a repeating pattern.",
+          "title": "Enabled"
+        },
+        "scale_percent": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scale of the pattern relative to the original asset size.",
+          "title": "Scale Percent"
+        }
+      },
+      "title": "CreateRenderConfigSmartObjectsItemPattern",
+      "type": "object"
+    },
+    "CreateRenderConfigTextLayersItem": {
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The UUID of the text layer.",
+          "title": "Uuid"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The text content for the text layer.",
+          "title": "Text"
+        },
+        "font_family": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The font family of the text.",
+          "title": "Font Family"
+        },
+        "font_size": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The font size for the text in pixels.",
+          "title": "Font Size"
+        },
+        "font_color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The color of the text in hex code.",
+          "title": "Font Color"
+        }
+      },
+      "title": "CreateRenderConfigTextLayersItem",
+      "type": "object"
+    },
+    "DeletePsdConfig": {
+      "additionalProperties": false,
+      "description": "Delete a PSD file.",
+      "properties": {
+        "operation": {
+          "const": "delete_psd",
+          "default": "delete_psd",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "psd_uuid": {
+          "description": "The UUID of the PSD file to delete.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Psd Uuid",
+          "type": "string"
+        },
+        "delete_related_mockups": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to delete all mockups related to this PSD file.",
+          "title": "Delete Related Mockups"
+        }
+      },
+      "required": [
+        "psd_uuid"
+      ],
+      "title": "DeletePsdConfig",
+      "type": "object"
+    },
+    "DynamicMockupsAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "dynamic_mockups_api_key",
+          "default": "dynamic_mockups_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Dynamic Mockups API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Dynamic Mockups API key from the app's API settings. NoClick sends it in the x-api-key header. Rendering, PSD uploads and AI submissions can use your account credits.",
+      "x-credential-url": "https://app.dynamicmockups.com/"
+    },
+    "ExportPrintFilesConfig": {
+      "additionalProperties": false,
+      "description": "Export Print Files.",
+      "properties": {
+        "operation": {
+          "const": "export_print_files",
+          "default": "export_print_files",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mockup_uuid": {
+          "description": "The UUID of the mockup template.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Mockup Uuid",
+          "type": "string"
+        },
+        "export_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A label for the exported image.",
+          "title": "Export Label"
+        },
+        "export_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExportPrintFilesConfigExportOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "smart_objects": {
+          "description": "List of smart objects inside a chosen mockup.",
+          "items": {
+            "$ref": "#/$defs/ExportPrintFilesConfigSmartObjectsItem"
+          },
+          "title": "Smart Objects",
+          "type": "array"
+        },
+        "text_layers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CreateRenderConfigTextLayersItem"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of text layers for the chosen mockup.",
+          "title": "Text Layers"
+        }
+      },
+      "required": [
+        "mockup_uuid",
+        "smart_objects"
+      ],
+      "title": "ExportPrintFilesConfig",
+      "type": "object"
+    },
+    "ExportPrintFilesConfigExportOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "image_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "webp",
+                "jpg",
+                "png"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The format of the exported image.",
+          "title": "Image Format",
+          "enum": [
+            "webp",
+            "jpg",
+            "png"
+          ],
+          "x-enum-searchable": true
+        },
+        "image_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The size in pixels of the exported image.",
+          "title": "Image Size"
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "view",
+                "download"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Determines whether the exported image should be viewed in the browser or downloaded.",
+          "title": "Mode",
+          "enum": [
+            "view",
+            "download"
+          ],
+          "x-enum-searchable": true
+        },
+        "image_dpi": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dots per inch for the exported print file.",
+          "title": "Image Dpi"
+        }
+      },
+      "title": "ExportPrintFilesConfigExportOptions",
+      "type": "object"
+    },
+    "ExportPrintFilesConfigSmartObjectsItem": {
+      "additionalProperties": false,
+      "properties": {
+        "uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The UUID of the smart object.",
+          "title": "Uuid"
+        },
+        "asset": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateRenderConfigSmartObjectsItemAsset"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "pattern": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateRenderConfigSmartObjectsItemPattern"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Configuration for using the asset as a repeating pattern."
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Color overlay for the smart object in hex code.",
+          "title": "Color"
+        },
+        "blending_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "NORMAL",
+                "DISSOLVE",
+                "DARKEN",
+                "MULTIPLY",
+                "COLOR_BURN",
+                "LINEAR_BURN",
+                "DARKER_COLOR",
+                "LIGHTEN",
+                "SCREEN",
+                "COLOR_DODGE",
+                "LINEAR_DODGE",
+                "LIGHTER_COLOR",
+                "OVERLAY",
+                "SOFT_LIGHT",
+                "HARD_LIGHT",
+                "VIVID_LIGHT",
+                "LINEAR_LIGHT",
+                "PIN_LIGHT",
+                "HARD_MIX",
+                "DIFFERENCE",
+                "EXCLUSION",
+                "SUBTRACT",
+                "DIVIDE",
+                "HUE",
+                "SATURATION",
+                "COLOR",
+                "LUMINOSITY"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Blending mode applied to the smart object.",
+          "title": "Blending Mode",
+          "enum": [
+            "NORMAL",
+            "DISSOLVE",
+            "DARKEN",
+            "MULTIPLY",
+            "COLOR_BURN",
+            "LINEAR_BURN",
+            "DARKER_COLOR",
+            "LIGHTEN",
+            "SCREEN",
+            "COLOR_DODGE",
+            "LINEAR_DODGE",
+            "LIGHTER_COLOR",
+            "OVERLAY",
+            "SOFT_LIGHT",
+            "HARD_LIGHT",
+            "VIVID_LIGHT",
+            "LINEAR_LIGHT",
+            "PIN_LIGHT",
+            "HARD_MIX",
+            "DIFFERENCE",
+            "EXCLUSION",
+            "SUBTRACT",
+            "DIVIDE",
+            "HUE",
+            "SATURATION",
+            "COLOR",
+            "LUMINOSITY"
+          ],
+          "x-enum-searchable": true
+        },
+        "adjustment_layers": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreateRenderConfigSmartObjectsItemAdjustmentLayers"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional adjustment layers applied to the smart object."
+        },
+        "print_area_preset_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UUID of the print area preset to automatically position provided design asset.",
+          "title": "Print Area Preset Uuid"
+        }
+      },
+      "title": "ExportPrintFilesConfigSmartObjectsItem",
+      "type": "object"
+    },
+    "GetAiMockupStatusConfig": {
+      "additionalProperties": false,
+      "description": "Get MockAnything AI Mockup Status.",
+      "properties": {
+        "operation": {
+          "const": "get_ai_mockup_status",
+          "default": "get_ai_mockup_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "taskId": {
+          "description": "The `task_id` returned from `POST /mock-anything/create`.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Taskid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "taskId"
+      ],
+      "title": "GetAiMockupStatusConfig",
+      "type": "object"
+    },
+    "GetAiProductConfig": {
+      "additionalProperties": false,
+      "description": "Get POD Product Details.",
+      "properties": {
+        "operation": {
+          "const": "get_ai_product",
+          "default": "get_ai_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uuid": {
+          "description": "UUID of the POD product (from `GET /mock-anything/products`).",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "GetAiProductConfig",
+      "type": "object"
+    },
+    "GetMockupConfig": {
+      "additionalProperties": false,
+      "description": "Get Specific Mockup.",
+      "properties": {
+        "operation": {
+          "const": "get_mockup",
+          "default": "get_mockup",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uuid": {
+          "description": "The UUID of the mockup to retrieve.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uuid"
+      ],
+      "title": "GetMockupConfig",
+      "type": "object"
+    },
+    "GetMotionStatusConfig": {
+      "additionalProperties": false,
+      "description": "Get MotionMockups AI Request Status.",
+      "properties": {
+        "operation": {
+          "const": "get_motion_status",
+          "default": "get_motion_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "requestId": {
+          "description": "The `request_id` returned by the submit endpoint.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Requestid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "requestId"
+      ],
+      "title": "GetMotionStatusConfig",
+      "type": "object"
+    },
+    "ListAiStylesConfig": {
+      "additionalProperties": false,
+      "description": "List Available Styles.",
+      "properties": {
+        "operation": {
+          "const": "list_ai_styles",
+          "default": "list_ai_styles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "anyOf": [
+            {
+              "enum": [
+                "nano_banana_2",
+                "nano_banana_lite",
+                "seedream_4_0",
+                "seedream_4_5",
+                "gpt_image_2"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional model filter. When provided, only styles available for that model are returned.",
+          "title": "Model",
+          "enum": [
+            "nano_banana_2",
+            "nano_banana_lite",
+            "seedream_4_0",
+            "seedream_4_5",
+            "gpt_image_2"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListAiStylesConfig",
+      "type": "object"
+    },
+    "ListBlankProductsConfig": {
+      "additionalProperties": false,
+      "description": "List Entitled Blank Products.",
+      "properties": {
+        "operation": {
+          "const": "list_blank_products",
+          "default": "list_blank_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Per Page"
+        }
+      },
+      "title": "ListBlankProductsConfig",
+      "type": "object"
+    },
+    "ListCatalogsConfig": {
+      "additionalProperties": false,
+      "description": "Get Catalogs.",
+      "properties": {
+        "operation": {
+          "const": "list_catalogs",
+          "default": "list_catalogs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCatalogsConfig",
+      "type": "object"
+    },
+    "ListCollectionsConfig": {
+      "additionalProperties": false,
+      "description": "Get Collections.",
+      "properties": {
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "catalog_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional UUID of the catalog to filter collections by.",
+          "title": "Catalog Uuid"
+        },
+        "include_all_catalogs": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter to include collections from all catalogs. If false or omitted, only collections from the default catalog are returned. Set to true to fetch from all catalogs.",
+          "title": "Include All Catalogs"
+        }
+      },
+      "title": "ListCollectionsConfig",
+      "type": "object"
+    },
+    "ListMockupsConfig": {
+      "additionalProperties": false,
+      "description": "Get Mockups.",
+      "properties": {
+        "operation": {
+          "const": "list_mockups",
+          "default": "list_mockups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "catalog_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter to filter mockups by catalog UUID.",
+          "title": "Catalog Uuid"
+        },
+        "collection_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter to filter mockups by collection UUID.",
+          "title": "Collection Uuid"
+        },
+        "include_all_catalogs": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter to include mockups from all catalogs. If false or omitted, only mockups from the default catalog are returned. Set to true to fetch from all catalogs.",
+          "title": "Include All Catalogs"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parameter to filter mockups by name.",
+          "title": "Name"
+        }
+      },
+      "title": "ListMockupsConfig",
+      "type": "object"
+    },
+    "ListMotionModelsConfig": {
+      "additionalProperties": false,
+      "description": "List MotionMockups AI Models.",
+      "properties": {
+        "operation": {
+          "const": "list_motion_models",
+          "default": "list_motion_models",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListMotionModelsConfig",
+      "type": "object"
+    },
+    "ListProductsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a list of products.",
+      "properties": {
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "is_published": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by publication status (true for published only).",
+          "title": "Is Published"
+        }
+      },
+      "title": "ListProductsConfig",
+      "type": "object"
+    },
+    "SearchAiProductsConfig": {
+      "additionalProperties": false,
+      "description": "Search POD Products.",
+      "properties": {
+        "operation": {
+          "const": "search_ai_products",
+          "default": "search_ai_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "description": "Search term matched against POD product names.",
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchAiProductsConfig",
+      "type": "object"
+    },
+    "UploadPsdConfig": {
+      "additionalProperties": false,
+      "description": "Upload a PSD file.",
+      "properties": {
+        "operation": {
+          "const": "upload_psd",
+          "default": "upload_psd",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "psd_file_url": {
+          "description": "The URL to the PSD file.",
+          "title": "Psd File Url",
+          "type": "string"
+        },
+        "psd_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An optional name for the PSD file.",
+          "title": "Psd Name"
+        },
+        "psd_category_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An optional category ID for the PSD file.",
+          "title": "Psd Category Id"
+        },
+        "mockup_template": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UploadPsdConfigMockupTemplate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional settings for creating a mockup template after the PSD upload."
+        }
+      },
+      "required": [
+        "psd_file_url"
+      ],
+      "title": "UploadPsdConfig",
+      "type": "object"
+    },
+    "UploadPsdConfigMockupTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "create_after_upload": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to create a mockup template after the PSD upload.",
+          "title": "Create After Upload"
+        },
+        "collections": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional list of collection UUIDs to associate with the mockup template.",
+          "title": "Collections"
+        },
+        "catalog_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional catalog UUID to add the created mockup to. If not provided, the mockup will be added to the default catalog.",
+          "title": "Catalog Uuid"
+        }
+      },
+      "title": "UploadPsdConfigMockupTemplate",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_ai_mockup": "#/$defs/CreateAiMockupConfig",
+          "create_batch_render": "#/$defs/CreateBatchRenderConfig",
+          "create_bulk_render": "#/$defs/CreateBulkRenderConfig",
+          "create_catalog": "#/$defs/CreateCatalogConfig",
+          "create_collection": "#/$defs/CreateCollectionConfig",
+          "create_motion_mockup": "#/$defs/CreateMotionMockupConfig",
+          "create_render": "#/$defs/CreateRenderConfig",
+          "delete_psd": "#/$defs/DeletePsdConfig",
+          "export_print_files": "#/$defs/ExportPrintFilesConfig",
+          "get_ai_mockup_status": "#/$defs/GetAiMockupStatusConfig",
+          "get_ai_product": "#/$defs/GetAiProductConfig",
+          "get_mockup": "#/$defs/GetMockupConfig",
+          "get_motion_status": "#/$defs/GetMotionStatusConfig",
+          "list_ai_styles": "#/$defs/ListAiStylesConfig",
+          "list_blank_products": "#/$defs/ListBlankProductsConfig",
+          "list_catalogs": "#/$defs/ListCatalogsConfig",
+          "list_collections": "#/$defs/ListCollectionsConfig",
+          "list_mockups": "#/$defs/ListMockupsConfig",
+          "list_motion_models": "#/$defs/ListMotionModelsConfig",
+          "list_products": "#/$defs/ListProductsConfig",
+          "search_ai_products": "#/$defs/SearchAiProductsConfig",
+          "upload_psd": "#/$defs/UploadPsdConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListCatalogsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateCatalogConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/ListMockupsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetMockupConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateAiMockupConfig"
+        },
+        {
+          "$ref": "#/$defs/GetAiMockupStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/ListBlankProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchAiProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetAiProductConfig"
+        },
+        {
+          "$ref": "#/$defs/ListAiStylesConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateMotionMockupConfig"
+        },
+        {
+          "$ref": "#/$defs/GetMotionStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/ListMotionModelsConfig"
+        },
+        {
+          "$ref": "#/$defs/UploadPsdConfig"
+        },
+        {
+          "$ref": "#/$defs/DeletePsdConfig"
+        },
+        {
+          "$ref": "#/$defs/ListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateBulkRenderConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateRenderConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateBatchRenderConfig"
+        },
+        {
+          "$ref": "#/$defs/ExportPrintFilesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DynamicMockupsAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Dynamic-mockups Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
