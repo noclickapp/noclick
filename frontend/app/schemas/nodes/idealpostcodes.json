@@ -1,0 +1,635 @@
+{
+  "$defs": {
+    "AutocompleteAddresses": {
+      "properties": {
+        "operation": {
+          "const": "autocomplete_addresses",
+          "default": "autocomplete_addresses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "AutocompleteAddresses",
+      "type": "object"
+    },
+    "CleanseAddress": {
+      "properties": {
+        "operation": {
+          "const": "cleanse_address",
+          "default": "cleanse_address",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "CleanseAddress",
+      "type": "object"
+    },
+    "CreateConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_config",
+          "default": "create_config",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "payload": {
+          "description": "Serialised configuration payload. Replaces the complete payload.",
+          "maxLength": 4096,
+          "title": "Payload",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "payload"
+      ],
+      "title": "CreateConfig",
+      "type": "object"
+    },
+    "DeleteConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_config",
+          "default": "delete_config",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "config_name": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Config Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "config_name"
+      ],
+      "title": "DeleteConfig",
+      "type": "object"
+    },
+    "GetConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_config",
+          "default": "get_config",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "config_name": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Config Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "config_name"
+      ],
+      "title": "GetConfig",
+      "type": "object"
+    },
+    "GetKeyAvailability": {
+      "properties": {
+        "operation": {
+          "const": "get_key_availability",
+          "default": "get_key_availability",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetKeyAvailability",
+      "type": "object"
+    },
+    "GetKeyDetails": {
+      "properties": {
+        "operation": {
+          "const": "get_key_details",
+          "default": "get_key_details",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetKeyDetails",
+      "type": "object"
+    },
+    "GetKeyUsage": {
+      "properties": {
+        "operation": {
+          "const": "get_key_usage",
+          "default": "get_key_usage",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp in milliseconds; maximum interval 90 days.",
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "title": "GetKeyUsage",
+      "type": "object"
+    },
+    "GetUDPRN": {
+      "properties": {
+        "operation": {
+          "const": "get_udprn",
+          "default": "get_udprn",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "udprn": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Udprn",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        }
+      },
+      "required": [
+        "udprn"
+      ],
+      "title": "GetUDPRN",
+      "type": "object"
+    },
+    "GetUMPRN": {
+      "properties": {
+        "operation": {
+          "const": "get_umprn",
+          "default": "get_umprn",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "umprn": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Umprn",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        }
+      },
+      "required": [
+        "umprn"
+      ],
+      "title": "GetUMPRN",
+      "type": "object"
+    },
+    "IdealpostcodesAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "idealpostcodes_api_key",
+          "default": "idealpostcodes_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "user_token": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Management key",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Ideal Postcodes API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your API key from the Ideal Postcodes dashboard. For private key details and configuration management, also paste your management key (formerly user token) from your account. Lookup operations can consume paid credits. Configuration updates replace the saved payload; deletion is permanent.",
+      "x-credential-url": "https://account.ideal-postcodes.co.uk/"
+    },
+    "ListConfigs": {
+      "properties": {
+        "operation": {
+          "const": "list_configs",
+          "default": "list_configs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListConfigs",
+      "type": "object"
+    },
+    "LookupPostcode": {
+      "properties": {
+        "operation": {
+          "const": "lookup_postcode",
+          "default": "lookup_postcode",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "postcode": {
+          "maxLength": 16,
+          "minLength": 1,
+          "title": "Postcode",
+          "type": "string"
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        }
+      },
+      "required": [
+        "postcode"
+      ],
+      "title": "LookupPostcode",
+      "type": "object"
+    },
+    "ResolveAddressGBR": {
+      "properties": {
+        "operation": {
+          "const": "resolve_address_gbr",
+          "default": "resolve_address_gbr",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "ResolveAddressGBR",
+      "type": "object"
+    },
+    "ResolveAddressUSA": {
+      "properties": {
+        "operation": {
+          "const": "resolve_address_usa",
+          "default": "resolve_address_usa",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "ResolveAddressUSA",
+      "type": "object"
+    },
+    "SearchAddresses": {
+      "properties": {
+        "operation": {
+          "const": "search_addresses",
+          "default": "search_addresses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchAddresses",
+      "type": "object"
+    },
+    "UpdateConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_config",
+          "default": "update_config",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "config_name": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Config Name",
+          "type": "string"
+        },
+        "payload": {
+          "description": "Serialised replacement payload.",
+          "maxLength": 4096,
+          "title": "Payload",
+          "type": "string"
+        }
+      },
+      "required": [
+        "config_name",
+        "payload"
+      ],
+      "title": "UpdateConfig",
+      "type": "object"
+    },
+    "ValidateEmail": {
+      "properties": {
+        "operation": {
+          "const": "validate_email",
+          "default": "validate_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "ValidateEmail",
+      "type": "object"
+    },
+    "ValidatePhone": {
+      "properties": {
+        "operation": {
+          "const": "validate_phone",
+          "default": "validate_phone",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "ValidatePhone",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "autocomplete_addresses": "#/$defs/AutocompleteAddresses",
+          "cleanse_address": "#/$defs/CleanseAddress",
+          "create_config": "#/$defs/CreateConfig",
+          "delete_config": "#/$defs/DeleteConfig",
+          "get_config": "#/$defs/GetConfig",
+          "get_key_availability": "#/$defs/GetKeyAvailability",
+          "get_key_details": "#/$defs/GetKeyDetails",
+          "get_key_usage": "#/$defs/GetKeyUsage",
+          "get_udprn": "#/$defs/GetUDPRN",
+          "get_umprn": "#/$defs/GetUMPRN",
+          "list_configs": "#/$defs/ListConfigs",
+          "lookup_postcode": "#/$defs/LookupPostcode",
+          "resolve_address_gbr": "#/$defs/ResolveAddressGBR",
+          "resolve_address_usa": "#/$defs/ResolveAddressUSA",
+          "search_addresses": "#/$defs/SearchAddresses",
+          "update_config": "#/$defs/UpdateConfig",
+          "validate_email": "#/$defs/ValidateEmail",
+          "validate_phone": "#/$defs/ValidatePhone"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SearchAddresses"
+        },
+        {
+          "$ref": "#/$defs/AutocompleteAddresses"
+        },
+        {
+          "$ref": "#/$defs/ResolveAddressGBR"
+        },
+        {
+          "$ref": "#/$defs/ResolveAddressUSA"
+        },
+        {
+          "$ref": "#/$defs/CleanseAddress"
+        },
+        {
+          "$ref": "#/$defs/ValidateEmail"
+        },
+        {
+          "$ref": "#/$defs/ValidatePhone"
+        },
+        {
+          "$ref": "#/$defs/LookupPostcode"
+        },
+        {
+          "$ref": "#/$defs/GetUDPRN"
+        },
+        {
+          "$ref": "#/$defs/GetUMPRN"
+        },
+        {
+          "$ref": "#/$defs/GetKeyAvailability"
+        },
+        {
+          "$ref": "#/$defs/GetKeyDetails"
+        },
+        {
+          "$ref": "#/$defs/GetKeyUsage"
+        },
+        {
+          "$ref": "#/$defs/ListConfigs"
+        },
+        {
+          "$ref": "#/$defs/GetConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/IdealpostcodesAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Idealpostcodes Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

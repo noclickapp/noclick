@@ -1,0 +1,230 @@
+{
+  "source": "https://api.apis.guru/v2/specs/ideal-postcodes.co.uk/3.7.0/openapi.json",
+  "cases": [
+    [
+      {
+        "operation": "search_addresses",
+        "query": "10 Downing Street, London, SW2A 2BN"
+      },
+      "GET",
+      "/addresses",
+      {
+        "query": "10 Downing Street, London, SW2A 2BN",
+        "limit": 10,
+        "page": 0,
+        "api_key": "idealpostcodes-synthetic-key"
+      },
+      null
+    ],
+    [
+      {
+        "operation": "autocomplete_addresses",
+        "query": "parkside"
+      },
+      "GET",
+      "/autocomplete/addresses",
+      {
+        "query": "parkside",
+        "limit": 10,
+        "api_key": "idealpostcodes-synthetic-key"
+      },
+      null
+    ],
+    [
+      {
+        "operation": "resolve_address_gbr",
+        "address": "GBR|12345678"
+      },
+      "GET",
+      "/autocomplete/addresses/GBR|12345678/gbr",
+      {
+        "api_key": "idealpostcodes-synthetic-key"
+      },
+      null
+    ],
+    [
+      {
+        "operation": "resolve_address_usa",
+        "address": "GBR|12345678"
+      },
+      "GET",
+      "/autocomplete/addresses/GBR|12345678/usa",
+      {
+        "api_key": "idealpostcodes-synthetic-key"
+      },
+      null
+    ],
+    [
+      {
+        "operation": "cleanse_address",
+        "query": "10 Downing Street, London, SW2A 2BN"
+      },
+      "POST",
+      "/cleanse/addresses",
+      {
+        "api_key": "idealpostcodes-synthetic-key"
+      },
+      {
+        "query": "10 Downing Street, London, SW2A 2BN"
+      }
+    ],
+    [
+      {
+        "operation": "validate_email",
+        "query": "hello@ideal-postcodes.co.uk"
+      },
+      "GET",
+      "/emails",
+      {
+        "query": "hello@ideal-postcodes.co.uk",
+        "api_key": "idealpostcodes-synthetic-key"
+      },
+      null
+    ],
+    [
+      {
+        "operation": "validate_phone",
+        "query": "+442071234567"
+      },
+      "GET",
+      "/phone_numbers",
+      {
+        "query": "+442071234567",
+        "api_key": "idealpostcodes-synthetic-key"
+      },
+      null
+    ],
+    [
+      {
+        "operation": "lookup_postcode",
+        "postcode": "ID1 1QD"
+      },
+      "GET",
+      "/postcodes/ID1 1QD",
+      {
+        "page": 0,
+        "api_key": "idealpostcodes-synthetic-key"
+      },
+      null
+    ],
+    [
+      {
+        "operation": "get_udprn",
+        "udprn": "0"
+      },
+      "GET",
+      "/udprn/0",
+      {
+        "api_key": "idealpostcodes-synthetic-key"
+      },
+      null
+    ],
+    [
+      {
+        "operation": "get_umprn",
+        "umprn": "0"
+      },
+      "GET",
+      "/umprn/0",
+      {
+        "api_key": "idealpostcodes-synthetic-key"
+      },
+      null
+    ],
+    [
+      {
+        "operation": "get_key_availability"
+      },
+      "GET",
+      "/keys/idealpostcodes-synthetic-key",
+      {},
+      null
+    ],
+    [
+      {
+        "operation": "get_key_details"
+      },
+      "GET",
+      "/keys/idealpostcodes-synthetic-key/details",
+      {
+        "user_token": "idealpostcodes-synthetic-management"
+      },
+      null
+    ],
+    [
+      {
+        "operation": "get_key_usage"
+      },
+      "GET",
+      "/keys/idealpostcodes-synthetic-key/usage",
+      {
+        "user_token": "idealpostcodes-synthetic-management"
+      },
+      null
+    ],
+    [
+      {
+        "operation": "list_configs"
+      },
+      "GET",
+      "/keys/idealpostcodes-synthetic-key/configs",
+      {
+        "user_token": "idealpostcodes-synthetic-management"
+      },
+      null
+    ],
+    [
+      {
+        "operation": "get_config",
+        "config_name": "woocommerce"
+      },
+      "GET",
+      "/keys/idealpostcodes-synthetic-key/configs/woocommerce",
+      {},
+      null
+    ],
+    [
+      {
+        "operation": "create_config",
+        "name": "woocommerce",
+        "payload": "{\n  \"removeOrganisation\": false\n}\n"
+      },
+      "POST",
+      "/keys/idealpostcodes-synthetic-key/configs",
+      {
+        "user_token": "idealpostcodes-synthetic-management"
+      },
+      {
+        "name": "woocommerce",
+        "payload": "{\n  \"removeOrganisation\": false\n}\n"
+      }
+    ],
+    [
+      {
+        "operation": "update_config",
+        "config_name": "woocommerce",
+        "payload": "{\n  \"removeOrganisation\": false\n}\n"
+      },
+      "POST",
+      "/keys/idealpostcodes-synthetic-key/configs/woocommerce",
+      {
+        "user_token": "idealpostcodes-synthetic-management"
+      },
+      {
+        "payload": "{\n  \"removeOrganisation\": false\n}\n"
+      }
+    ],
+    [
+      {
+        "operation": "delete_config",
+        "config_name": "woocommerce"
+      },
+      "DELETE",
+      "/keys/idealpostcodes-synthetic-key/configs/woocommerce",
+      {
+        "user_token": "idealpostcodes-synthetic-management"
+      },
+      null
+    ]
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "body": {
+    "result": {
+      "configs": [
+        {
+          "updatedAt": "2016-01-21T17:14:49.971Z",
+          "createdAt": "2016-01-21T17:14:49.971Z",
+          "name": "woocommerce",
+          "payload": "{\n  \"removeOrganisation\": false\n}\n"
+        }
+      ]
+    },
+    "message": "Success",
+    "code": 2000
+  },
+  "source": "https://docs.ideal-postcodes.co.uk/docs/api/list-configs"
+}
