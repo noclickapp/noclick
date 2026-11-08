@@ -1,0 +1,14 @@
+{
+ "provider": "ip2proxy",
+ "ready": true,
+ "blocking": [],
+ "advisory": [],
+ "stats": {
+  "operations": 11,
+  "skipped": 0,
+  "request_ok": 11,
+  "authored_parser_ok": 11,
+  "generated_only": 0,
+  "local_ok": 0
+ }
+}
