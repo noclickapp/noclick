@@ -1,0 +1,27 @@
+{
+  "items": {
+    "item": [
+      {
+        "type": "Product",
+        "property": [
+          {
+            "name": "number",
+            "value": "P014"
+          },
+          {
+            "name": "active",
+            "value": "true"
+          },
+          {
+            "name": "name",
+            "value": "Product Numero Uno"
+          },
+          {
+            "name": "version",
+            "value": "v1.0"
+          }
+        ]
+      }
+    ]
+  }
+}

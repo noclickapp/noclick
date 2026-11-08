@@ -1,0 +1,1979 @@
+{
+  "$defs": {
+    "CreateLicenseConfig": {
+      "additionalProperties": false,
+      "description": "Creates a new License.",
+      "properties": {
+        "operation": {
+          "const": "create_license",
+          "default": "create_license",
+          "title": "Create License",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "active": {
+          "description": "",
+          "title": "Active",
+          "type": "boolean"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies currency for the License price. Check data types to discover which currencies are supported. Read-only, set from License Template on creation",
+          "title": "Currency"
+        },
+        "hidden": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to 'true', this License is not shown in NetLicensing Shop as purchased License. Set from License Template on creation, if not specified explicitly",
+          "title": "Hidden"
+        },
+        "licenseTemplateNumber": {
+          "description": "",
+          "maxLength": 1000,
+          "title": "Licensetemplatenumber",
+          "type": "string"
+        },
+        "licenseeNumber": {
+          "description": "",
+          "maxLength": 1000,
+          "title": "Licenseenumber",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name for the Licensed item. Set from License Template on creation, if not specified explicitly.",
+          "title": "Name"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Number"
+        },
+        "parentfeature": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mandatory for 'TIMEVOLUME' License Type and 'RENTAL' licensing model",
+          "title": "Parentfeature"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Price for the License. If >0, it must always be accompanied by the currency specification. Read-only, set from License Template on creation",
+          "title": "Price"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mandatory for 'Pay-per-Use' License Model.",
+          "title": "Quantity"
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mandatory for 'TIMEVOLUME' License Type.",
+          "title": "Startdate"
+        },
+        "timeVolume": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mandatory for 'TIMEVOLUME' License Type.",
+          "title": "Timevolume"
+        },
+        "timeVolumePeriod": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For 'TIMEVOLUME' License Type.",
+          "title": "Timevolumeperiod"
+        },
+        "usedQuantity": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mandatory for 'Pay-per-Use' License Model.",
+          "title": "Usedquantity"
+        }
+      },
+      "required": [
+        "active",
+        "licenseTemplateNumber",
+        "licenseeNumber"
+      ],
+      "title": "CreateLicenseConfig",
+      "type": "object"
+    },
+    "CreateLicenseTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Creates a new License Template.",
+      "properties": {
+        "operation": {
+          "const": "create_license_template",
+          "default": "create_license_template",
+          "title": "Create License Template",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "active": {
+          "description": "If set to 'false', the License Template is disabled. Licensee can not obtain any new Licenses off this License Template.",
+          "title": "Active",
+          "type": "boolean"
+        },
+        "automatic": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to 'true', every new Licensee automatically gets one License out of this License Template on creation. Automatic Licenses must have their price set to 0.",
+          "title": "Automatic"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies currency for the License price. Check data types to discover which currencies are supported.",
+          "title": "Currency"
+        },
+        "hidden": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to 'true', this License Template is not shown in NetLicensing Shop as offered for purchase.",
+          "title": "Hidden"
+        },
+        "hideLicenses": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to 'true', Licenses from this License Template are not visible to the end customer, but participate in validation.",
+          "title": "Hidelicenses"
+        },
+        "licenseType": {
+          "description": "Type of Licenses created from this License Template. Supported types: FEATURE, TIMEVOLUME, FLOATING, QUANTITY",
+          "maxLength": 1000,
+          "title": "Licensetype",
+          "type": "string"
+        },
+        "maxSessions": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mandatory for 'FLOATING' License Type.",
+          "title": "Maxsessions"
+        },
+        "name": {
+          "description": "License Template name to create License Template object",
+          "maxLength": 1000,
+          "title": "Name",
+          "type": "string"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique number (across all Products of a Vendor) that identifies the License Template. Vendor can assign this number when creating a License Template or let NetLicensing generate one. Read-only after creation of the first License from this License Template.",
+          "title": "Number"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Price for the License. If >0, it must always be accompanied by the currency specification.",
+          "title": "Price"
+        },
+        "productModuleNumber": {
+          "description": "Number of Product Module to create License Template object",
+          "maxLength": 1000,
+          "title": "Productmodulenumber",
+          "type": "string"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mandatory for 'Pay-per-Use' and 'Node-Locked' License Model.",
+          "title": "Quantity"
+        },
+        "quota": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mandatory for 'Quota' License Model.",
+          "title": "Quota"
+        },
+        "timeVolume": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mandatory for 'TIMEVOLUME' License Type.",
+          "title": "Timevolume"
+        },
+        "timeVolumePeriod": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For 'TIMEVOLUME' License Type.",
+          "title": "Timevolumeperiod"
+        }
+      },
+      "required": [
+        "active",
+        "licenseType",
+        "name",
+        "productModuleNumber"
+      ],
+      "title": "CreateLicenseTemplateConfig",
+      "type": "object"
+    },
+    "CreateLicenseeConfig": {
+      "additionalProperties": false,
+      "description": "Creates a new Licensee.",
+      "properties": {
+        "operation": {
+          "const": "create_licensee",
+          "default": "create_licensee",
+          "title": "Create Licensee",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "active": {
+          "description": "If set to 'false', the Licensee is disabled. Licensee can not obtain new Licenses, and validation is disabled",
+          "title": "Active",
+          "type": "boolean"
+        },
+        "markedForTransfer": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mark Licensee for transfer.",
+          "title": "Markedfortransfer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Name"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique number (across all Products of a Vendor) that identifies the Licensee. Vendor can assign this number when creating a Licensee or let NetLicensing generate one. Read-only after creation of the first License for the Licensee",
+          "title": "Number"
+        },
+        "productNumber": {
+          "description": "'productNumber' to assign new Licensee object",
+          "maxLength": 1000,
+          "title": "Productnumber",
+          "type": "string"
+        }
+      },
+      "required": [
+        "active",
+        "productNumber"
+      ],
+      "title": "CreateLicenseeConfig",
+      "type": "object"
+    },
+    "CreateProductConfig": {
+      "additionalProperties": false,
+      "description": "Creates a new Product.",
+      "properties": {
+        "operation": {
+          "const": "create_product",
+          "default": "create_product",
+          "title": "Create Product",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "active": {
+          "description": "If set to 'false', the Product is disabled. No new Licensees can be registered for the Product, existing Licensees can not obtain new Licenses.",
+          "title": "Active",
+          "type": "boolean"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Product description.",
+          "title": "Description"
+        },
+        "licenseeAutoCreate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to 'true', non-existing Licensees will be created at first validation attempt.",
+          "title": "Licenseeautocreate"
+        },
+        "licensingInfo": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Licensing information.",
+          "title": "Licensinginfo"
+        },
+        "name": {
+          "description": "Product name. Together with the version identifies the Product for the end customer.",
+          "maxLength": 1000,
+          "title": "Name",
+          "type": "string"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique number that identifies the Product. Vendor can assign this number when creating a Product or let NetLicensing generate one.",
+          "title": "Number"
+        },
+        "vatMode": {
+          "anyOf": [
+            {
+              "enum": [
+                "GROSS",
+                "NET"
+              ],
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Vat mode for Product. Supported types: GROSS, NET",
+          "title": "Vatmode",
+          "enum": [
+            "GROSS",
+            "NET"
+          ],
+          "x-enum-searchable": true
+        },
+        "version": {
+          "description": "Product version. Convenience parameter, additional to the Product name.",
+          "maxLength": 1000,
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "active",
+        "name",
+        "version"
+      ],
+      "title": "CreateProductConfig",
+      "type": "object"
+    },
+    "CreateProductModuleConfig": {
+      "additionalProperties": false,
+      "description": "Creates a new Product Module.",
+      "properties": {
+        "operation": {
+          "const": "create_product_module",
+          "default": "create_product_module",
+          "title": "Create Product Module",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "active": {
+          "description": "If set to 'false', the Product Module is disabled. Licensees can not obtain any new Licenses for this Product Module.",
+          "title": "Active",
+          "type": "boolean"
+        },
+        "licensingModel": {
+          "description": "Licensing model applied to this Product Module. Defines what License Templates can be configured for the Product Module and how Licenses for this Product Module are processed during validation.",
+          "maxLength": 1000,
+          "title": "Licensingmodel",
+          "type": "string"
+        },
+        "maxCheckoutValidity": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum checkout validity (days). Mandatory for 'Floating' licensing model.",
+          "title": "Maxcheckoutvalidity"
+        },
+        "name": {
+          "description": "Product Module name that is visible to the end customers in NetLicensing Shop.",
+          "maxLength": 1000,
+          "title": "Name",
+          "type": "string"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique number (across all Products of a Vendor) that identifies the Product Module. Vendor can assign this number when creating a Product Module or let NetLicensing generate one. Read-only after creation of the first Licensee for the Product.",
+          "title": "Number"
+        },
+        "productNumber": {
+          "description": "Unique number (across all Products of a Vendor) that identifies the Product Module. Vendor can assign this number when creating a Product Module or let NetLicensing generate one. Read-only after creation of the first Licensee for the Product.",
+          "maxLength": 1000,
+          "title": "Productnumber",
+          "type": "string"
+        },
+        "redThreshold": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Remaining time volume for red level. Mandatory for 'Rental' licensing model.",
+          "title": "Redthreshold"
+        },
+        "yellowThreshold": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Remaining time volume for yellow level. Mandatory for 'Rental' licensing model.",
+          "title": "Yellowthreshold"
+        }
+      },
+      "required": [
+        "active",
+        "licensingModel",
+        "name",
+        "productNumber"
+      ],
+      "title": "CreateProductModuleConfig",
+      "type": "object"
+    },
+    "DeleteLicenseConfig": {
+      "additionalProperties": false,
+      "description": "Delete License by a 'licenseNumber'.",
+      "properties": {
+        "operation": {
+          "const": "delete_license",
+          "default": "delete_license",
+          "title": "Delete License",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "licenseNumber": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "License Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "licenseNumber"
+      ],
+      "title": "DeleteLicenseConfig",
+      "type": "object"
+    },
+    "DeleteLicenseeConfig": {
+      "additionalProperties": false,
+      "description": "Delete a Licensee by 'number'.",
+      "properties": {
+        "operation": {
+          "const": "delete_licensee",
+          "default": "delete_licensee",
+          "title": "Delete Licensee",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "licenseeNumber": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Licensee Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "licenseeNumber"
+      ],
+      "title": "DeleteLicenseeConfig",
+      "type": "object"
+    },
+    "GetLicenseConfig": {
+      "additionalProperties": false,
+      "description": "Get License by a 'licenseNumber'.",
+      "properties": {
+        "operation": {
+          "const": "get_license",
+          "default": "get_license",
+          "title": "Get License",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "licenseNumber": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "License Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "licenseNumber"
+      ],
+      "title": "GetLicenseConfig",
+      "type": "object"
+    },
+    "GetLicenseTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Return a License Template by 'licenseTemplateNumber'.",
+      "properties": {
+        "operation": {
+          "const": "get_license_template",
+          "default": "get_license_template",
+          "title": "Get License Template",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "licenseTemplateNumber": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "License Template Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "licenseTemplateNumber"
+      ],
+      "title": "GetLicenseTemplateConfig",
+      "type": "object"
+    },
+    "GetLicenseeConfig": {
+      "additionalProperties": false,
+      "description": "Return a Licensee by 'licenseeNumber'.",
+      "properties": {
+        "operation": {
+          "const": "get_licensee",
+          "default": "get_licensee",
+          "title": "Get Licensee",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "licenseeNumber": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Licensee Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "licenseeNumber"
+      ],
+      "title": "GetLicenseeConfig",
+      "type": "object"
+    },
+    "GetProductConfig": {
+      "additionalProperties": false,
+      "description": "Return a Product by 'productNumber'.",
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Get Product",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "productNumber": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Product Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "productNumber"
+      ],
+      "title": "GetProductConfig",
+      "type": "object"
+    },
+    "GetProductModuleConfig": {
+      "additionalProperties": false,
+      "description": "Return a Product Module by 'productModuleNumber'.",
+      "properties": {
+        "operation": {
+          "const": "get_product_module",
+          "default": "get_product_module",
+          "title": "Get Product Module",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "productModuleNumber": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Product Module Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "productModuleNumber"
+      ],
+      "title": "GetProductModuleConfig",
+      "type": "object"
+    },
+    "GetTransactionConfig": {
+      "additionalProperties": false,
+      "description": "Return a Transaction by 'transactionNumber'.",
+      "properties": {
+        "operation": {
+          "const": "get_transaction",
+          "default": "get_transaction",
+          "title": "Get Transaction ",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "transactionNumber": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Transaction Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transactionNumber"
+      ],
+      "title": "GetTransactionConfig",
+      "type": "object"
+    },
+    "ListLicenseTemplatesConfig": {
+      "additionalProperties": false,
+      "description": "Return a list of all License Templates for the current Vendor. Lists return the provider default page only.",
+      "properties": {
+        "operation": {
+          "const": "list_license_templates",
+          "default": "list_license_templates",
+          "title": "List License Templates",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListLicenseTemplatesConfig",
+      "type": "object"
+    },
+    "ListLicenseesConfig": {
+      "additionalProperties": false,
+      "description": "Return a list of all Licensees for the current Vendor. Lists return the provider default page only.",
+      "properties": {
+        "operation": {
+          "const": "list_licensees",
+          "default": "list_licensees",
+          "title": "List Licensees",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListLicenseesConfig",
+      "type": "object"
+    },
+    "ListLicensesConfig": {
+      "additionalProperties": false,
+      "description": "Return a list of all Licenses for the current Vendor. Lists return the provider default page only.",
+      "properties": {
+        "operation": {
+          "const": "list_licenses",
+          "default": "list_licenses",
+          "title": "List Licenses",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListLicensesConfig",
+      "type": "object"
+    },
+    "ListProductModulesConfig": {
+      "additionalProperties": false,
+      "description": "Return a list of all Product Modules for the current Vendor. Lists return the provider default page only.",
+      "properties": {
+        "operation": {
+          "const": "list_product_modules",
+          "default": "list_product_modules",
+          "title": "List Product Modules",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListProductModulesConfig",
+      "type": "object"
+    },
+    "ListProductsConfig": {
+      "additionalProperties": false,
+      "description": "Return a list of all configured Products for the current Vendor. Lists return the provider default page only.",
+      "properties": {
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "List Products",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListProductsConfig",
+      "type": "object"
+    },
+    "ListTransactionsConfig": {
+      "additionalProperties": false,
+      "description": "Return a list of all Transactions for the current Vendor. Lists return the provider default page only.",
+      "properties": {
+        "operation": {
+          "const": "list_transactions",
+          "default": "list_transactions",
+          "title": "List Transactions",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTransactionsConfig",
+      "type": "object"
+    },
+    "NetlicensingAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "netlicensing_api_key",
+          "default": "netlicensing_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Netlicensing API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in the NetLicensing Management Console and paste it here. Analytics permits reads; Operation permits licensee and license writes; Maintenance permits product, module and template writes. NoClick sends it as the Basic password with the fixed username apiKey.",
+      "x-credential-url": "https://netlicensing.io/wiki/security"
+    },
+    "UpdateLicenseConfig": {
+      "additionalProperties": false,
+      "description": "Update License by a 'licenseNumber'.",
+      "properties": {
+        "operation": {
+          "const": "update_license",
+          "default": "update_license",
+          "title": "Update License",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "licenseNumber": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "License Number",
+          "type": "string"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Active"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies currency for the License price. Check data types to discover which currencies are supported. Read-only, set from License Template on creation",
+          "title": "Currency"
+        },
+        "hidden": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to 'true', this License is not shown in NetLicensing Shop as purchased License. Set from License Template on creation, if not specified explicitly",
+          "title": "Hidden"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name for the Licensed item. Set from License Template on creation, if not specified explicitly.",
+          "title": "Name"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique number (across all Products/Licensees of a Vendor) that identifies the License. Vendor can assign this number when creating a License or let NetLicensing generate one. Read-only after corresponding creation Transaction status is set to closed.",
+          "title": "Number"
+        },
+        "parentfeature": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Parentfeature"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Price for the License. If > 0, it must always be accompanied by the currency specification. Read-only, set from License Template on creation",
+          "title": "Price"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mandatory for 'Pay-per-Use' License Model.",
+          "title": "Quantity"
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For 'TIMEVOLUME' License type",
+          "title": "Startdate"
+        },
+        "timeVolume": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mandatory for 'TIMEVOLUME' License Type.",
+          "title": "Timevolume"
+        },
+        "timeVolumePeriod": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For 'TIMEVOLUME' License Type.",
+          "title": "Timevolumeperiod"
+        },
+        "usedQuantity": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mandatory for 'Pay-per-Use' License Model.",
+          "title": "Usedquantity"
+        }
+      },
+      "required": [
+        "licenseNumber"
+      ],
+      "title": "UpdateLicenseConfig",
+      "type": "object"
+    },
+    "UpdateLicenseTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Sets the provided properties to a License Template. Return an updated License Template.",
+      "properties": {
+        "operation": {
+          "const": "update_license_template",
+          "default": "update_license_template",
+          "title": "Update License Template",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "licenseTemplateNumber": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "License Template Number",
+          "type": "string"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to 'false', the License Template is disabled. Licensee can not obtain any new Licenses off this License Template.",
+          "title": "Active"
+        },
+        "automatic": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to 'true', every new Licensee automatically gets one License out of this License Template on creation. Automatic Licenses must have their price set to 0.",
+          "title": "Automatic"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specifies currency for the License price. Check data types to discover which currencies are supported.",
+          "title": "Currency"
+        },
+        "hidden": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to 'true', this License Template is not shown in NetLicensing Shop as offered for purchase.",
+          "title": "Hidden"
+        },
+        "hideLicenses": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to 'true', Licenses from this License Template are not visible to the end customer, but participate in validation.",
+          "title": "Hidelicenses"
+        },
+        "licenseType": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Type of Licenses created from this License Template. Supported types: FEATURE, TIMEVOLUME, FLOATING, QUANTITY",
+          "title": "Licensetype"
+        },
+        "maxSessions": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mandatory for 'FLOATING' License Type.",
+          "title": "Maxsessions"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name for the Licensed item",
+          "title": "Name"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New License Template number (update).",
+          "title": "Number"
+        },
+        "price": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Price for the License. If >0, it must always be accompanied by the currency specification.",
+          "title": "Price"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mandatory for 'Pay-per-Use' and 'Node-Locked' License Model.",
+          "title": "Quantity"
+        },
+        "quota": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mandatory for 'Quota' License Model.",
+          "title": "Quota"
+        },
+        "timeVolume": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mandatory for 'TIMEVOLUME' License Type.",
+          "title": "Timevolume"
+        },
+        "timeVolumePeriod": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For 'TIMEVOLUME' License Type.",
+          "title": "Timevolumeperiod"
+        }
+      },
+      "required": [
+        "licenseTemplateNumber"
+      ],
+      "title": "UpdateLicenseTemplateConfig",
+      "type": "object"
+    },
+    "UpdateLicenseeConfig": {
+      "additionalProperties": false,
+      "description": "Sets the provided properties to a Licensee. Return an updated Licensee.",
+      "properties": {
+        "operation": {
+          "const": "update_licensee",
+          "default": "update_licensee",
+          "title": "Update Licensee",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "licenseeNumber": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Licensee Number",
+          "type": "string"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to 'false', the Licensee is disabled. Licensee can not obtain new Licenses, and validation is disabled",
+          "title": "Active"
+        },
+        "markedForTransfer": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mark Licensee for transfer.",
+          "title": "Markedfortransfer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Name"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New Licensee number (update).",
+          "title": "Number"
+        }
+      },
+      "required": [
+        "licenseeNumber"
+      ],
+      "title": "UpdateLicenseeConfig",
+      "type": "object"
+    },
+    "UpdateProductConfig": {
+      "additionalProperties": false,
+      "description": "Sets the provided properties to a Product. Return an updated Product.",
+      "properties": {
+        "operation": {
+          "const": "update_product",
+          "default": "update_product",
+          "title": "Update Product",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "productNumber": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Product Number",
+          "type": "string"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to 'false', the Product is disabled. No new Licensees can be registered for the Product, existing Licensees can not obtain new Licenses.",
+          "title": "Active"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Product description.",
+          "title": "Description"
+        },
+        "licenseeAutoCreate": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to 'true', non-existing Licensees will be created at first validation attempt.",
+          "title": "Licenseeautocreate"
+        },
+        "licensingInfo": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Licensing information.",
+          "title": "Licensinginfo"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Product name. Together with the version identifies the Product for the end customer.",
+          "title": "Name"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New Product number (update)",
+          "title": "Number"
+        },
+        "vatMode": {
+          "anyOf": [
+            {
+              "enum": [
+                "GROSS",
+                "NET"
+              ],
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Vat mode for Product. Supported types: GROSS, NET",
+          "title": "Vatmode",
+          "enum": [
+            "GROSS",
+            "NET"
+          ],
+          "x-enum-searchable": true
+        },
+        "version": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Product version. Convenience parameter, additional to the Product name.",
+          "title": "Version"
+        }
+      },
+      "required": [
+        "productNumber"
+      ],
+      "title": "UpdateProductConfig",
+      "type": "object"
+    },
+    "UpdateProductModuleConfig": {
+      "additionalProperties": false,
+      "description": "Sets the provided properties to a Product Module. Return an updated Product Module.",
+      "properties": {
+        "operation": {
+          "const": "update_product_module",
+          "default": "update_product_module",
+          "title": "Update Product Module",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "productModuleNumber": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Product Module Number",
+          "type": "string"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set to 'false', the Product Module is disabled. Licensees can not obtain any new Licenses for this Product Module.",
+          "title": "Active"
+        },
+        "licensingModel": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Licensing model applied to this Product Module. Defines what License Templates can be configured for the Product Module and how Licenses for this Product Module are processed during validation.",
+          "title": "Licensingmodel"
+        },
+        "maxCheckoutValidity": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum checkout validity (days). Mandatory for 'Floating' licensing model.",
+          "title": "Maxcheckoutvalidity"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Product Module name that is visible to the end customers in NetLicensing Shop.",
+          "title": "Name"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New Product Module number (update).",
+          "title": "Number"
+        },
+        "redThreshold": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Remaining time volume for red level. Mandatory for 'Rental' licensing model.",
+          "title": "Redthreshold"
+        },
+        "yellowThreshold": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Remaining time volume for yellow level. Mandatory for 'Rental' licensing model.",
+          "title": "Yellowthreshold"
+        }
+      },
+      "required": [
+        "productModuleNumber"
+      ],
+      "title": "UpdateProductModuleConfig",
+      "type": "object"
+    },
+    "ValidateLicenseeConfig": {
+      "additionalProperties": false,
+      "description": "Validates active Licenses of the Licensee.",
+      "properties": {
+        "operation": {
+          "const": "validate_licensee",
+          "default": "validate_licensee",
+          "title": "Validate Licensee",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "licenseeNumber": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Licensee Number",
+          "type": "string"
+        },
+        "action": {
+          "anyOf": [
+            {
+              "enum": [
+                "checkOut",
+                "checkIn"
+              ],
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "'Floating' licensing model: check-out or check-in session action, to allocate or return it from/to the pool of available sessions",
+          "title": "Action",
+          "enum": [
+            "checkOut",
+            "checkIn"
+          ],
+          "x-enum-searchable": true
+        },
+        "licenseeName": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Human-readable name for the auto-created Licensee (will be set as custom Licensee property)",
+          "title": "Licenseename"
+        },
+        "nodeSecret": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "'Node-Locked' licensing model: specifies unique secret",
+          "title": "Nodesecret"
+        },
+        "productModuleNumber": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "'Node-Locked' licensing model: product module number",
+          "title": "Productmodulenumber"
+        },
+        "productNumber": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Product number, must be provided when 'Licensee auto-create' is enabled (see also Product JavaDoc). Identifies the Product to which new Licensee should be added",
+          "title": "Productnumber"
+        },
+        "sessionId": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "'Floating' licensing model: specifies unique session identifier",
+          "title": "Sessionid"
+        }
+      },
+      "required": [
+        "licenseeNumber"
+      ],
+      "title": "ValidateLicenseeConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_license": "#/$defs/CreateLicenseConfig",
+          "create_license_template": "#/$defs/CreateLicenseTemplateConfig",
+          "create_licensee": "#/$defs/CreateLicenseeConfig",
+          "create_product": "#/$defs/CreateProductConfig",
+          "create_product_module": "#/$defs/CreateProductModuleConfig",
+          "delete_license": "#/$defs/DeleteLicenseConfig",
+          "delete_licensee": "#/$defs/DeleteLicenseeConfig",
+          "get_license": "#/$defs/GetLicenseConfig",
+          "get_license_template": "#/$defs/GetLicenseTemplateConfig",
+          "get_licensee": "#/$defs/GetLicenseeConfig",
+          "get_product": "#/$defs/GetProductConfig",
+          "get_product_module": "#/$defs/GetProductModuleConfig",
+          "get_transaction": "#/$defs/GetTransactionConfig",
+          "list_license_templates": "#/$defs/ListLicenseTemplatesConfig",
+          "list_licensees": "#/$defs/ListLicenseesConfig",
+          "list_licenses": "#/$defs/ListLicensesConfig",
+          "list_product_modules": "#/$defs/ListProductModulesConfig",
+          "list_products": "#/$defs/ListProductsConfig",
+          "list_transactions": "#/$defs/ListTransactionsConfig",
+          "update_license": "#/$defs/UpdateLicenseConfig",
+          "update_license_template": "#/$defs/UpdateLicenseTemplateConfig",
+          "update_licensee": "#/$defs/UpdateLicenseeConfig",
+          "update_product": "#/$defs/UpdateProductConfig",
+          "update_product_module": "#/$defs/UpdateProductModuleConfig",
+          "validate_licensee": "#/$defs/ValidateLicenseeConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateProductConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateProductConfig"
+        },
+        {
+          "$ref": "#/$defs/ListProductModulesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetProductModuleConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateProductModuleConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateProductModuleConfig"
+        },
+        {
+          "$ref": "#/$defs/ListLicenseTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetLicenseTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateLicenseTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateLicenseTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/ListLicenseesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetLicenseeConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateLicenseeConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateLicenseeConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteLicenseeConfig"
+        },
+        {
+          "$ref": "#/$defs/ListLicensesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetLicenseConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateLicenseConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateLicenseConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteLicenseConfig"
+        },
+        {
+          "$ref": "#/$defs/ValidateLicenseeConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTransactionsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTransactionConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NetlicensingAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Netlicensing Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
