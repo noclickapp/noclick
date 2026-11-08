@@ -16,6 +16,7 @@ TrestleIcon.displayName = 'TrestleIcon';
 export const TrestleNode: NodeDefinition = {
     type: 'automation-trestle',
     label: 'Trestle',
+    category: 'crm-sales',
     description: 'Validate contacts, look up phone and address data, and submit call feedback',
     Icon: TrestleIcon,
     iconColor: '',
