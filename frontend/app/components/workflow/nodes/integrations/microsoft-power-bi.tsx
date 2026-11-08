@@ -15,6 +15,7 @@ PowerBIIcon.displayName = 'PowerBIIcon';
 export const MicrosoftPowerBINode: NodeDefinition = {
     type: 'automation-microsoft-power-bi',
     label: 'Microsoft Power BI',
+    category: 'analytics-bi',
     description: 'Manage datasets, push rows, refresh data, query DAX, and manage reports and dashboards',
     Icon: PowerBIIcon,
     iconColor: '',
