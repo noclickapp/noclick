@@ -1,0 +1,386 @@
+{
+  "$defs": {
+    "CheckConnection": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "Condition": {
+      "additionalProperties": false,
+      "properties": {
+        "field_id": {
+          "maximum": 9007199254740991,
+          "minimum": 1,
+          "title": "Field Id",
+          "type": "integer"
+        },
+        "operator": {
+          "enum": [
+            "eq",
+            "gte",
+            "lte",
+            "gt",
+            "lt",
+            "like",
+            "eqeq"
+          ],
+          "title": "Operator",
+          "type": "string"
+        },
+        "value": {
+          "description": "Empty value is supported. Native encoding preserves literal commas/percent sequences. Date filters use yyyy/MM/dd or yyyy/MM/dd HH:mm:ss.",
+          "maxLength": 256,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field_id",
+        "operator",
+        "value"
+      ],
+      "title": "Condition",
+      "type": "object"
+    },
+    "GetRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "field_ids": {
+          "description": "Only these numeric fields are requested and projected. Exclude signatures, files, credentials and sensitive fields.",
+          "items": {
+            "maximum": 9007199254740991,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "maxItems": 50,
+          "minItems": 1,
+          "title": "Field Ids",
+          "type": "array"
+        },
+        "confirm_safe_fields": {
+          "const": true,
+          "description": "Confirm the selected numeric field IDs contain nonsensitive scalar workflow data; no signatures/files/secrets/contact data.",
+          "title": "Confirm Safe Fields",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "get_record",
+          "default": "get_record",
+          "title": "Operation",
+          "type": "string"
+        },
+        "record_id": {
+          "title": "Record Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "field_ids",
+            "field_name": "record_id",
+            "searchable": true
+          },
+          "x-resource-type": "ragic_record"
+        }
+      },
+      "required": [
+        "field_ids",
+        "confirm_safe_fields",
+        "record_id"
+      ],
+      "title": "GetRecord",
+      "type": "object"
+    },
+    "ListRecords": {
+      "additionalProperties": false,
+      "properties": {
+        "field_ids": {
+          "description": "Only these numeric fields are requested and projected. Exclude signatures, files, credentials and sensitive fields.",
+          "items": {
+            "maximum": 9007199254740991,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "maxItems": 50,
+          "minItems": 1,
+          "title": "Field Ids",
+          "type": "array"
+        },
+        "confirm_safe_fields": {
+          "const": true,
+          "description": "Confirm the selected numeric field IDs contain nonsensitive scalar workflow data; no signatures/files/secrets/contact data.",
+          "title": "Confirm Safe Fields",
+          "type": "boolean"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "max_pages": {
+          "default": 10,
+          "description": "Local continuation cap; one page per invocation, no automatic reads.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Pages",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Native HMAC-bound offset continuation; never a raw offset or URL.",
+          "title": "Page Token"
+        },
+        "operation": {
+          "const": "list_records",
+          "default": "list_records",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field_ids",
+        "confirm_safe_fields"
+      ],
+      "title": "ListRecords",
+      "type": "object"
+    },
+    "RagicAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "ragic_api_key",
+          "default": "ragic_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "Raw API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "server": {
+          "enum": [
+            "www.ragic.com",
+            "na3.ragic.com",
+            "ap5.ragic.com",
+            "eu2.ragic.com",
+            "ap8.ragic.com"
+          ],
+          "title": "Ragic Server",
+          "type": "string"
+        },
+        "account": {
+          "title": "Account Component",
+          "type": "string"
+        },
+        "folder": {
+          "description": "One folder component from the existing sheet URL, without slash.",
+          "title": "Folder Component",
+          "type": "string"
+        },
+        "sheet_index": {
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Sheet Index",
+          "type": "integer"
+        },
+        "witness_record_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Existing Witness Record ID"
+        },
+        "witness_field_id": {
+          "anyOf": [
+            {
+              "maximum": 9007199254740991,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paired with the record ID; fetch only this numeric field and discard its value.",
+          "title": "Nonsensitive Witness Field ID"
+        }
+      },
+      "required": [
+        "api_key",
+        "server",
+        "account",
+        "folder",
+        "sheet_index"
+      ],
+      "title": "Ragic API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste the issued RAW API key, without Basic or base64 conversion. Select the exact documented regional server and supplied account/folder/sheet. Optional paired record and nonsensitive field IDs permit a protected scoped read. It proves resource reachability only, not principal/key validity/private-sheet access; without them no probe occurs. No login, query key, token mint or writes.",
+      "x-credential-url": "https://www.ragic.com/intl/en/doc-http-api"
+    },
+    "SearchRecords": {
+      "additionalProperties": false,
+      "properties": {
+        "field_ids": {
+          "description": "Only these numeric fields are requested and projected. Exclude signatures, files, credentials and sensitive fields.",
+          "items": {
+            "maximum": 9007199254740991,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "maxItems": 50,
+          "minItems": 1,
+          "title": "Field Ids",
+          "type": "array"
+        },
+        "confirm_safe_fields": {
+          "const": true,
+          "description": "Confirm the selected numeric field IDs contain nonsensitive scalar workflow data; no signatures/files/secrets/contact data.",
+          "title": "Confirm Safe Fields",
+          "type": "boolean"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "max_pages": {
+          "default": 10,
+          "description": "Local continuation cap; one page per invocation, no automatic reads.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Pages",
+          "type": "integer"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "maxLength": 8000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Native HMAC-bound offset continuation; never a raw offset or URL.",
+          "title": "Page Token"
+        },
+        "operation": {
+          "const": "search_records",
+          "default": "search_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "full_text": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented fts search; no SQL or arbitrary query parameters.",
+          "title": "Full Text"
+        },
+        "conditions": {
+          "description": "Repeated where filters; same-field eq/like act as OR, range comparisons as AND. Regex is omitted.",
+          "items": {
+            "$ref": "#/$defs/Condition"
+          },
+          "maxItems": 10,
+          "title": "Conditions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "field_ids",
+        "confirm_safe_fields"
+      ],
+      "title": "SearchRecords",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_connection": "#/$defs/CheckConnection",
+          "get_record": "#/$defs/GetRecord",
+          "list_records": "#/$defs/ListRecords",
+          "search_records": "#/$defs/SearchRecords"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/ListRecords"
+        },
+        {
+          "$ref": "#/$defs/GetRecord"
+        },
+        {
+          "$ref": "#/$defs/SearchRecords"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RagicAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Ragic Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Read selected sheet fields",
+    "Search records by numeric field conditions",
+    "Read an existing record by its native ID"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
