@@ -1,0 +1,18 @@
+{
+ "provider": "easy-email-verification",
+ "ready": true,
+ "blocking": [],
+ "advisory": [
+  "verify_batch: parser on generated response: execution: ValueError: Expected one verification result per address",
+  "get_bulk_job: parser on generated response: execution: ValueError: Unexpected Easy Email Verification job status",
+  "delete_bulk_job: parser on generated response: execution: ValueError: Easy Email Verification did not confirm job deletion"
+ ],
+ "stats": {
+  "operations": 8,
+  "skipped": 0,
+  "request_ok": 8,
+  "authored_parser_ok": 2,
+  "generated_only": 6,
+  "local_ok": 0
+ }
+}

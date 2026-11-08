@@ -1,0 +1,276 @@
+{
+  "$defs": {
+    "DeleteBulkJob": {
+      "additionalProperties": false,
+      "description": "Permanently delete a bulk job and its results.",
+      "properties": {
+        "job_id": {
+          "description": "The list_id returned when the file was uploaded.",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_bulk_job",
+          "default": "delete_bulk_job",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "DeleteBulkJob",
+      "type": "object"
+    },
+    "DownloadBulkResults": {
+      "additionalProperties": false,
+      "description": "Download a completed job's CSV results as a file. Results expire after 30 days.",
+      "properties": {
+        "job_id": {
+          "description": "The list_id returned when the file was uploaded.",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "download_bulk_results",
+          "default": "download_bulk_results",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "DownloadBulkResults",
+      "type": "object"
+    },
+    "EasyEmailVerificationAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "easy_email_verification_api_key",
+          "default": "easy_email_verification_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Easy Email Verification API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in API Settings and paste it here. Use a server API key, not a domain-restricted widget key. NoClick sends it in X-API-Key. The connection check reads your remaining credits without consuming any.",
+      "x-credential-url": "https://dashboard.easyemailverification.com/apisettings"
+    },
+    "GetBulkJob": {
+      "additionalProperties": false,
+      "description": "Read a bulk job's status, progress and available counters.",
+      "properties": {
+        "job_id": {
+          "description": "The list_id returned when the file was uploaded.",
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_bulk_job",
+          "default": "get_bulk_job",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetBulkJob",
+      "type": "object"
+    },
+    "GetCredits": {
+      "additionalProperties": false,
+      "description": "Read account credits without consuming any credits.",
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetCredits",
+      "type": "object"
+    },
+    "ListBulkJobs": {
+      "additionalProperties": false,
+      "description": "List verification jobs belonging to the API key's account.",
+      "properties": {
+        "operation": {
+          "const": "list_bulk_jobs",
+          "default": "list_bulk_jobs",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListBulkJobs",
+      "type": "object"
+    },
+    "UploadBulkFile": {
+      "additionalProperties": false,
+      "description": "Start bulk verification by uploading a TXT or CSV list; consumes credits.",
+      "properties": {
+        "operation": {
+          "const": "upload_bulk_file",
+          "default": "upload_bulk_file",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filename": {
+          "default": "emails.txt",
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9_-][A-Za-z0-9_.-]*\\.(txt|csv)$",
+          "title": "File Name",
+          "type": "string"
+        },
+        "file_content": {
+          "description": "TXT or CSV content with one email address per line. Maximum UTF-8 size is 16 MB.",
+          "minLength": 1,
+          "title": "File Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "file_content"
+      ],
+      "title": "UploadBulkFile",
+      "type": "object"
+    },
+    "VerifyBatch": {
+      "additionalProperties": false,
+      "description": "Verify up to 50 addresses; each conclusive result consumes a credit.",
+      "properties": {
+        "operation": {
+          "const": "verify_batch",
+          "default": "verify_batch",
+          "title": "Operation",
+          "type": "string"
+        },
+        "emails": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 50,
+          "minItems": 1,
+          "title": "Email Addresses",
+          "type": "array"
+        }
+      },
+      "required": [
+        "emails"
+      ],
+      "title": "VerifyBatch",
+      "type": "object"
+    },
+    "VerifyEmail": {
+      "additionalProperties": false,
+      "description": "Verify one address; unknown is inconclusive, not deliverable. May consume a credit.",
+      "properties": {
+        "operation": {
+          "const": "verify_email",
+          "default": "verify_email",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "description": "Address to verify, including any plus tag.",
+          "minLength": 1,
+          "title": "Email Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "VerifyEmail",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "delete_bulk_job": "#/$defs/DeleteBulkJob",
+          "download_bulk_results": "#/$defs/DownloadBulkResults",
+          "get_bulk_job": "#/$defs/GetBulkJob",
+          "get_credits": "#/$defs/GetCredits",
+          "list_bulk_jobs": "#/$defs/ListBulkJobs",
+          "upload_bulk_file": "#/$defs/UploadBulkFile",
+          "verify_batch": "#/$defs/VerifyBatch",
+          "verify_email": "#/$defs/VerifyEmail"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/VerifyEmail"
+        },
+        {
+          "$ref": "#/$defs/VerifyBatch"
+        },
+        {
+          "$ref": "#/$defs/UploadBulkFile"
+        },
+        {
+          "$ref": "#/$defs/ListBulkJobs"
+        },
+        {
+          "$ref": "#/$defs/GetBulkJob"
+        },
+        {
+          "$ref": "#/$defs/DownloadBulkResults"
+        },
+        {
+          "$ref": "#/$defs/DeleteBulkJob"
+        },
+        {
+          "$ref": "#/$defs/GetCredits"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EasyEmailVerificationAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Easy-email-verification Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

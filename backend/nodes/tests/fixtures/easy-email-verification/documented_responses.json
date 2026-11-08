@@ -1,0 +1,29 @@
+{
+  "source": "https://www.easyemailverification.com/openapi.json",
+  "version": "1.2.0",
+  "verify": {
+    "email": "john@gmail.com",
+    "result": "invalid",
+    "reason": "rejected_email",
+    "disposable": false,
+    "accept_all": false,
+    "role": false,
+    "free": true,
+    "user": "john",
+    "domain": "gmail.com",
+    "mx_record": "gmail-smtp-in.l.google.com",
+    "mx_domain": "google.com",
+    "safe_to_send": false,
+    "did_you_mean": "",
+    "success": true,
+    "message": "Processing time: 812 ms",
+    "http_code": "200"
+  },
+  "credits": {
+    "success": true,
+    "credits_remaining": 1250,
+    "subscription_remaining": 250,
+    "persistent_remaining": 1000,
+    "subscription_credits": 500
+  }
+}
