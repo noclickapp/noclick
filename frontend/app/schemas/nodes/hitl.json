@@ -1,0 +1,639 @@
+{
+  "$defs": {
+    "AddFeedback": {
+      "additionalProperties": false,
+      "description": "Add feedback to a completed request.",
+      "properties": {
+        "operation": {
+          "const": "add_feedback",
+          "default": "add_feedback",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "description": "24-character Hitl resource ID",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "feedback": {
+          "additionalProperties": true,
+          "description": "Feedback JSON, e.g. rating and comment",
+          "title": "Feedback",
+          "type": "object"
+        }
+      },
+      "required": [
+        "request_id",
+        "feedback"
+      ],
+      "title": "AddFeedback",
+      "type": "object"
+    },
+    "CancelRequest": {
+      "additionalProperties": false,
+      "description": "Cancel a request that has not completed.",
+      "properties": {
+        "operation": {
+          "const": "cancel_request",
+          "default": "cancel_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "description": "24-character Hitl resource ID",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "CancelRequest",
+      "type": "object"
+    },
+    "CreateLoop": {
+      "additionalProperties": false,
+      "description": "Create a loop with an invite code and join URL.",
+      "properties": {
+        "operation": {
+          "const": "create_loop",
+          "default": "create_loop",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "icon": {
+          "description": "Hitl icon identifier, e.g. shield-check",
+          "minLength": 1,
+          "title": "Icon",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name",
+        "icon"
+      ],
+      "title": "CreateLoop",
+      "type": "object"
+    },
+    "CreateRequest": {
+      "additionalProperties": false,
+      "description": "Create a review request and notify active loop members.",
+      "properties": {
+        "operation": {
+          "const": "create_request",
+          "default": "create_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "loop_id": {
+          "description": "24-character Hitl resource ID",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Loop Id",
+          "type": "string"
+        },
+        "processing_type": {
+          "default": "time-sensitive",
+          "enum": [
+            "time-sensitive",
+            "deferred"
+          ],
+          "title": "Processing Type",
+          "type": "string"
+        },
+        "type": {
+          "default": "markdown",
+          "enum": [
+            "markdown",
+            "image"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "priority": {
+          "default": "medium",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ],
+          "title": "Priority",
+          "type": "string"
+        },
+        "request_text": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Request Text",
+          "type": "string"
+        },
+        "response_type": {
+          "enum": [
+            "text",
+            "single_select",
+            "multi_select",
+            "rating",
+            "number",
+            "boolean"
+          ],
+          "title": "Response Type",
+          "type": "string"
+        },
+        "response_config": {
+          "additionalProperties": true,
+          "description": "Response-type configuration JSON from Hitl's response types guide",
+          "title": "Response Config",
+          "type": "object"
+        },
+        "default_response": {
+          "description": "JSON fallback value on timeout, such as a string, number, boolean, list or object",
+          "title": "Default Response"
+        },
+        "timeout_seconds": {
+          "anyOf": [
+            {
+              "maximum": 86400,
+              "minimum": 60,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timeout Seconds"
+        },
+        "image_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Image Url"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context"
+        },
+        "platform": {
+          "default": "api",
+          "enum": [
+            "n8n",
+            "zapier",
+            "web_portal",
+            "api",
+            "mobile",
+            "webhook"
+          ],
+          "title": "Platform",
+          "type": "string"
+        },
+        "platform_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Platform Version"
+        },
+        "callback_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Callback Url"
+        }
+      },
+      "required": [
+        "loop_id",
+        "request_text",
+        "response_type",
+        "response_config",
+        "default_response"
+      ],
+      "title": "CreateRequest",
+      "type": "object"
+    },
+    "DeleteLoop": {
+      "additionalProperties": false,
+      "description": "Permanently delete a loop and its associated data.",
+      "properties": {
+        "operation": {
+          "const": "delete_loop",
+          "default": "delete_loop",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "loop_id": {
+          "description": "24-character Hitl resource ID",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Loop Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "loop_id"
+      ],
+      "title": "DeleteLoop",
+      "type": "object"
+    },
+    "GetLoop": {
+      "additionalProperties": false,
+      "description": "Get one loop and its current details.",
+      "properties": {
+        "operation": {
+          "const": "get_loop",
+          "default": "get_loop",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "loop_id": {
+          "description": "24-character Hitl resource ID",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Loop Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "loop_id"
+      ],
+      "title": "GetLoop",
+      "type": "object"
+    },
+    "GetRequest": {
+      "additionalProperties": false,
+      "description": "Read a request's status and reviewer response without waiting or polling.",
+      "properties": {
+        "operation": {
+          "const": "get_request",
+          "default": "get_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "request_id": {
+          "description": "24-character Hitl resource ID",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "GetRequest",
+      "type": "object"
+    },
+    "HitlAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "hitl_api_key",
+          "default": "hitl_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Hitl API Key",
+      "type": "object",
+      "x-credential-instructions": "In your Hitl dashboard, open Settings \u2192 API Keys, create a key, and paste it here without the Bearer prefix. NoClick sends it only to api.hitl.sh.",
+      "x-credential-url": "https://my.hitl.sh"
+    },
+    "ListLoopMembers": {
+      "additionalProperties": false,
+      "description": "List members and their membership status.",
+      "properties": {
+        "operation": {
+          "const": "list_loop_members",
+          "default": "list_loop_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "loop_id": {
+          "description": "24-character Hitl resource ID",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Loop Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "loop_id"
+      ],
+      "title": "ListLoopMembers",
+      "type": "object"
+    },
+    "ListLoopRequests": {
+      "additionalProperties": false,
+      "description": "List requests within one loop.",
+      "properties": {
+        "operation": {
+          "const": "list_loop_requests",
+          "default": "list_loop_requests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "loop_id": {
+          "description": "24-character Hitl resource ID",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Loop Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "loop_id"
+      ],
+      "title": "ListLoopRequests",
+      "type": "object"
+    },
+    "ListLoops": {
+      "additionalProperties": false,
+      "description": "List loops belonging to the authenticated user.",
+      "properties": {
+        "operation": {
+          "const": "list_loops",
+          "default": "list_loops",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListLoops",
+      "type": "object"
+    },
+    "ListRequests": {
+      "additionalProperties": false,
+      "description": "List requests created by your API key.",
+      "properties": {
+        "operation": {
+          "const": "list_requests",
+          "default": "list_requests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListRequests",
+      "type": "object"
+    },
+    "RemoveLoopMember": {
+      "additionalProperties": false,
+      "description": "Remove a member from a loop you created.",
+      "properties": {
+        "operation": {
+          "const": "remove_loop_member",
+          "default": "remove_loop_member",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "loop_id": {
+          "description": "24-character Hitl resource ID",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Loop Id",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "24-character Hitl resource ID",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "loop_id",
+        "user_id"
+      ],
+      "title": "RemoveLoopMember",
+      "type": "object"
+    },
+    "TestAPIKey": {
+      "additionalProperties": false,
+      "description": "Read the key's account identity, permissions and rate limits.",
+      "properties": {
+        "operation": {
+          "const": "test_api_key",
+          "default": "test_api_key",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TestAPIKey",
+      "type": "object"
+    },
+    "UpdateLoop": {
+      "additionalProperties": false,
+      "description": "Update a loop you created.",
+      "properties": {
+        "operation": {
+          "const": "update_loop",
+          "default": "update_loop",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "loop_id": {
+          "description": "24-character Hitl resource ID",
+          "pattern": "^[0-9a-fA-F]{24}$",
+          "title": "Loop Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "icon": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Icon"
+        }
+      },
+      "required": [
+        "loop_id"
+      ],
+      "title": "UpdateLoop",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_feedback": "#/$defs/AddFeedback",
+          "cancel_request": "#/$defs/CancelRequest",
+          "create_loop": "#/$defs/CreateLoop",
+          "create_request": "#/$defs/CreateRequest",
+          "delete_loop": "#/$defs/DeleteLoop",
+          "get_loop": "#/$defs/GetLoop",
+          "get_request": "#/$defs/GetRequest",
+          "list_loop_members": "#/$defs/ListLoopMembers",
+          "list_loop_requests": "#/$defs/ListLoopRequests",
+          "list_loops": "#/$defs/ListLoops",
+          "list_requests": "#/$defs/ListRequests",
+          "remove_loop_member": "#/$defs/RemoveLoopMember",
+          "test_api_key": "#/$defs/TestAPIKey",
+          "update_loop": "#/$defs/UpdateLoop"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListLoops"
+        },
+        {
+          "$ref": "#/$defs/GetLoop"
+        },
+        {
+          "$ref": "#/$defs/CreateLoop"
+        },
+        {
+          "$ref": "#/$defs/UpdateLoop"
+        },
+        {
+          "$ref": "#/$defs/DeleteLoop"
+        },
+        {
+          "$ref": "#/$defs/ListLoopMembers"
+        },
+        {
+          "$ref": "#/$defs/RemoveLoopMember"
+        },
+        {
+          "$ref": "#/$defs/TestAPIKey"
+        },
+        {
+          "$ref": "#/$defs/ListRequests"
+        },
+        {
+          "$ref": "#/$defs/GetRequest"
+        },
+        {
+          "$ref": "#/$defs/CancelRequest"
+        },
+        {
+          "$ref": "#/$defs/AddFeedback"
+        },
+        {
+          "$ref": "#/$defs/ListLoopRequests"
+        },
+        {
+          "$ref": "#/$defs/CreateRequest"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HitlAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Hitl Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
