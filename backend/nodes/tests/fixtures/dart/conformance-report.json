@@ -1,0 +1,741 @@
+[
+  {
+    "provider": "dart",
+    "node_type": "automation-dart",
+    "checked": 18,
+    "passed": 14,
+    "failed": 4,
+    "fixture_errors": 0,
+    "response_checked": 18,
+    "auth_checked": 18,
+    "scope_checked": 0,
+    "skipped": 0,
+    "coverage": {
+      "implemented": 18,
+      "total": 40
+    },
+    "operations": [
+      {
+        "operation": "get_me",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dartai.com/api/v0/public/me",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /me",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "6a7a8c57e2f54357b12bda58c40b3156c692b4307d687421749a5388736e304a"
+          }
+        ],
+        "failures": [
+          "execution: ValueError: Dart did not confirm an authenticated user"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_me"
+        },
+        "passed": false
+      },
+      {
+        "operation": "get_config",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dartai.com/api/v0/public/config",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /config",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "9f97778867a167c3471722b3ed0c75fac2de04daf554288b7cb7c3975a627865"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_config"
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_tasks",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dartai.com/api/v0/public/tasks/list?limit=50&offset=0&title=1&dartboard=1&dartboard_id=aaaaaaaaaaaa&assignee=1&status=1&tag=1&parent_id=aaaaaaaaaaaa&is_completed=false&in_trash=false&no_defaults=false",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /tasks/list",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "ae2238c7832b35191d1f07453f9e108538b74cb78652a81d5a2c128060273f72"
+          }
+        ],
+        "failures": [
+          "execution: ValueError: Dart returned a next page outside the selected list"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "limit": 50,
+          "offset": 0,
+          "operation": "list_tasks",
+          "title": "1",
+          "dartboard": "1",
+          "dartboard_id": "aaaaaaaaaaaa",
+          "assignee": "1",
+          "status": "1",
+          "tag": "1",
+          "parent_id": "aaaaaaaaaaaa",
+          "is_completed": false,
+          "in_trash": false,
+          "no_defaults": false
+        },
+        "passed": false
+      },
+      {
+        "operation": "get_task",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dartai.com/api/v0/public/tasks/aaaaaaaaaaaa",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /tasks/{id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "929f56c4c50f695b6fd6315552261e524005d999a6b9bba9fca5bc12942be6fd"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_task",
+          "task_id": "aaaaaaaaaaaa"
+        },
+        "passed": true
+      },
+      {
+        "operation": "create_task",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.dartai.com/api/v0/public/tasks",
+            "content_type": "application/json",
+            "body": "{\"item\":{\"dartboard\":\"1\",\"type\":\"1\",\"status\":\"1\",\"description\":\"1\",\"parentId\":\"aaaaaaaaaaaa\",\"assignee\":\"1\",\"assignees\":[\"1\"],\"reviewer\":\"1\",\"reviewers\":[\"1\"],\"tags\":[\"1\"],\"priority\":\"Critical\",\"startAt\":\"1\",\"dueAt\":\"1\",\"size\":\"1\",\"title\":\"1\"}}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "244",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /tasks",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "929f56c4c50f695b6fd6315552261e524005d999a6b9bba9fca5bc12942be6fd"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "dartboard": "1",
+          "type": "1",
+          "status": "1",
+          "description": "1",
+          "parentId": "aaaaaaaaaaaa",
+          "assignee": "1",
+          "assignees": [
+            "1"
+          ],
+          "reviewer": "1",
+          "reviewers": [
+            "1"
+          ],
+          "tags": [
+            "1"
+          ],
+          "priority": "Critical",
+          "startAt": "1",
+          "dueAt": "1",
+          "size": "1",
+          "operation": "create_task",
+          "title": "1"
+        },
+        "passed": true
+      },
+      {
+        "operation": "update_task",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PUT",
+            "url": "https://app.dartai.com/api/v0/public/tasks/aaaaaaaaaaaa",
+            "content_type": "application/json",
+            "body": "{\"item\":{\"dartboard\":\"1\",\"type\":\"1\",\"status\":\"1\",\"description\":\"1\",\"parentId\":\"aaaaaaaaaaaa\",\"assignee\":\"1\",\"assignees\":[\"1\"],\"reviewer\":\"1\",\"reviewers\":[\"1\"],\"tags\":[\"1\"],\"priority\":\"Critical\",\"startAt\":\"1\",\"dueAt\":\"1\",\"size\":\"1\",\"title\":\"1\",\"id\":\"aaaaaaaaaaaa\"}}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "264",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PUT /tasks/{id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "929f56c4c50f695b6fd6315552261e524005d999a6b9bba9fca5bc12942be6fd"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "dartboard": "1",
+          "type": "1",
+          "status": "1",
+          "description": "1",
+          "parentId": "aaaaaaaaaaaa",
+          "assignee": "1",
+          "assignees": [
+            "1"
+          ],
+          "reviewer": "1",
+          "reviewers": [
+            "1"
+          ],
+          "tags": [
+            "1"
+          ],
+          "priority": "Critical",
+          "startAt": "1",
+          "dueAt": "1",
+          "size": "1",
+          "operation": "update_task",
+          "task_id": "aaaaaaaaaaaa",
+          "title": "1"
+        },
+        "passed": true
+      },
+      {
+        "operation": "delete_task",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://app.dartai.com/api/v0/public/tasks/aaaaaaaaaaaa",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /tasks/{id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "929f56c4c50f695b6fd6315552261e524005d999a6b9bba9fca5bc12942be6fd"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_task",
+          "task_id": "aaaaaaaaaaaa"
+        },
+        "passed": true
+      },
+      {
+        "operation": "move_task",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.dartai.com/api/v0/public/tasks/aaaaaaaaaaaa/move",
+            "content_type": "application/json",
+            "body": "{\"beforeTaskId\":\"aaaaaaaaaaaa\"}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "31",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /tasks/{id}/move",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "929f56c4c50f695b6fd6315552261e524005d999a6b9bba9fca5bc12942be6fd"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "move_task",
+          "task_id": "aaaaaaaaaaaa",
+          "position": "before",
+          "relative_task_id": "aaaaaaaaaaaa"
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_docs",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dartai.com/api/v0/public/docs/list?limit=50&offset=0&title=1&folder=1&folder_id=aaaaaaaaaaaa&text=1&in_trash=false&no_defaults=false",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /docs/list",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "d07eeef150bc7aea59dcebfa9ea456aef6b94b1e5ca4815937a5e91f5a5a1e9f"
+          }
+        ],
+        "failures": [
+          "execution: ValueError: Dart returned a next page outside the selected list"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "limit": 50,
+          "offset": 0,
+          "operation": "list_docs",
+          "title": "1",
+          "folder": "1",
+          "folder_id": "aaaaaaaaaaaa",
+          "text": "1",
+          "in_trash": false,
+          "no_defaults": false
+        },
+        "passed": false
+      },
+      {
+        "operation": "get_doc",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dartai.com/api/v0/public/docs/aaaaaaaaaaaa",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /docs/{id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f99718eb84d1b7eb1260cb60b722a1cda28ef7b4094ffcf20c09dc0ab9744a40"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_doc",
+          "doc_id": "aaaaaaaaaaaa"
+        },
+        "passed": true
+      },
+      {
+        "operation": "create_doc",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.dartai.com/api/v0/public/docs",
+            "content_type": "application/json",
+            "body": "{\"item\":{\"title\":\"1\",\"folder\":\"1\",\"text\":\"1\"}}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "46",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /docs",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f99718eb84d1b7eb1260cb60b722a1cda28ef7b4094ffcf20c09dc0ab9744a40"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_doc",
+          "title": "1",
+          "folder": "1",
+          "text": "1"
+        },
+        "passed": true
+      },
+      {
+        "operation": "update_doc",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "PUT",
+            "url": "https://app.dartai.com/api/v0/public/docs/aaaaaaaaaaaa",
+            "content_type": "application/json",
+            "body": "{\"item\":{\"title\":\"1\",\"folder\":\"1\",\"text\":\"1\",\"id\":\"aaaaaaaaaaaa\"}}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "66",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PUT /docs/{id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f99718eb84d1b7eb1260cb60b722a1cda28ef7b4094ffcf20c09dc0ab9744a40"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "update_doc",
+          "doc_id": "aaaaaaaaaaaa",
+          "title": "1",
+          "folder": "1",
+          "text": "1"
+        },
+        "passed": true
+      },
+      {
+        "operation": "delete_doc",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://app.dartai.com/api/v0/public/docs/aaaaaaaaaaaa",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /docs/{id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "f99718eb84d1b7eb1260cb60b722a1cda28ef7b4094ffcf20c09dc0ab9744a40"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "delete_doc",
+          "doc_id": "aaaaaaaaaaaa"
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_comments",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dartai.com/api/v0/public/comments/list?limit=50&offset=0&task_id=aaaaaaaaaaaa&author=1&text=1&parent_id=aaaaaaaaaaaa",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /comments/list",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "c6a37570f02408f03404fd65e7805a3a8cf56c5a433807ac859aac710af3db66"
+          }
+        ],
+        "failures": [
+          "execution: ValueError: Dart returned a next page outside the selected list"
+        ],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "limit": 50,
+          "offset": 0,
+          "operation": "list_comments",
+          "task_id": "aaaaaaaaaaaa",
+          "author": "1",
+          "text": "1",
+          "parent_id": "aaaaaaaaaaaa"
+        },
+        "passed": false
+      },
+      {
+        "operation": "add_comment",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.dartai.com/api/v0/public/comments",
+            "content_type": "application/json",
+            "body": "{\"item\":{\"taskId\":\"aaaaaaaaaaaa\",\"text\":\"1\",\"parentId\":\"aaaaaaaaaaaa\"}}",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "71",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /comments",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "53495c93b559a559c64c6b754efc1a7d3412349d9c88c7d91a3d20f0311e8e2f"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "add_comment",
+          "task_id": "aaaaaaaaaaaa",
+          "text": "1",
+          "parent_id": "aaaaaaaaaaaa"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_dartboard",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dartai.com/api/v0/public/dartboards/aaaaaaaaaaaa",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /dartboards/{id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "e78229b216d662d892d460a85e08f344845e7a56fdf3d42abed38006ec3f4f7f"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_dartboard",
+          "dartboard_id": "aaaaaaaaaaaa"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_folder",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dartai.com/api/v0/public/folders/aaaaaaaaaaaa",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /folders/{id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "e78229b216d662d892d460a85e08f344845e7a56fdf3d42abed38006ec3f4f7f"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_folder",
+          "folder_id": "aaaaaaaaaaaa"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_view",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dartai.com/api/v0/public/views/aaaaaaaaaaaa",
+            "content_type": null,
+            "body": "",
+            "auth_placement": "header",
+            "headers": {
+              "host": "app.dartai.com",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "authorization": "Bearer conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /views/{id}",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "e78229b216d662d892d460a85e08f344845e7a56fdf3d42abed38006ec3f4f7f"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "get_view",
+          "view_id": "aaaaaaaaaaaa"
+        },
+        "passed": true
+      }
+    ]
+  }
+]

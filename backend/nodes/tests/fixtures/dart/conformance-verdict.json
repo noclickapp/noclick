@@ -1,0 +1,19 @@
+{
+ "provider": "dart",
+ "ready": true,
+ "blocking": [],
+ "advisory": [
+  "get_me: parser on generated response: execution: ValueError: Dart did not confirm an authenticated user",
+  "list_tasks: parser on generated response: execution: ValueError: Dart returned a next page outside the selected list",
+  "list_docs: parser on generated response: execution: ValueError: Dart returned a next page outside the selected list",
+  "list_comments: parser on generated response: execution: ValueError: Dart returned a next page outside the selected list"
+ ],
+ "stats": {
+  "operations": 18,
+  "skipped": 0,
+  "request_ok": 18,
+  "authored_parser_ok": 0,
+  "generated_only": 18,
+  "local_ok": 0
+ }
+}

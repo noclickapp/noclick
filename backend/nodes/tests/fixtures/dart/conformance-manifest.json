@@ -1,0 +1,13 @@
+{
+  "dart": {
+    "file": "openapi.yaml",
+    "sha256": "1f9acd5f5a47ddd2bc58c8c6e969ffb99c076c1de26c9837ef98da71e84224d2",
+    "version": "1.0.0",
+    "source_url": "https://app.dartai.com/api/v0/public/schema/",
+    "node_type": "automation-dart",
+    "credential": {
+      "credential_type": "dart_api_token",
+      "api_token": "<token>"
+    }
+  }
+}

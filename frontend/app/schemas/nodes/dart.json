@@ -1,0 +1,1380 @@
+{
+  "$defs": {
+    "AddComment": {
+      "description": "Add a markdown comment or reply to a task.",
+      "properties": {
+        "operation": {
+          "const": "add_comment",
+          "default": "add_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "description": "12-character alphanumeric Dart ID, not a title or URL.",
+          "pattern": "^[a-zA-Z0-9]{12}$",
+          "title": "Task Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "task_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "description": "12-character alphanumeric Dart ID, not a title or URL.",
+              "pattern": "^[a-zA-Z0-9]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Id"
+        }
+      },
+      "required": [
+        "task_id",
+        "text"
+      ],
+      "title": "AddComment",
+      "type": "object"
+    },
+    "CreateDoc": {
+      "description": "Create a document with a title and optional markdown content.",
+      "properties": {
+        "operation": {
+          "const": "create_doc",
+          "default": "create_doc",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "folder": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full folder title, from get_config.",
+          "title": "Folder"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateDoc",
+      "type": "object"
+    },
+    "CreateTask": {
+      "description": "Create a task; omitted fields use Dart's defaults.",
+      "properties": {
+        "dartboard": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full dartboard title, from get_config.",
+          "title": "Dartboard"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task type title, from get_config.",
+          "title": "Type"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task status title, from get_config.",
+          "title": "Status"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Markdown description. Omit to keep the existing description.",
+          "title": "Description"
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "description": "12-character alphanumeric Dart ID, not a title or URL.",
+              "pattern": "^[a-zA-Z0-9]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parentid"
+        },
+        "assignee": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Single-assignee workspace: name or email.",
+          "title": "Assignee"
+        },
+        "assignees": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Multiple-assignee workspace: replaces assignees; [] clears them.",
+          "title": "Assignees"
+        },
+        "reviewer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reviewer"
+        },
+        "reviewers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reviewers"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces all tags; [] clears them. Unknown titles create tags.",
+          "title": "Tags"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "Critical",
+                "High",
+                "Medium",
+                "Low"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "Critical",
+            "High",
+            "Medium",
+            "Low"
+          ],
+          "x-enum-searchable": true
+        },
+        "startAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO start date, YYYY-MM-DD.",
+          "title": "Startat"
+        },
+        "dueAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO due date, YYYY-MM-DD.",
+          "title": "Dueat"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "CreateTask",
+      "type": "object"
+    },
+    "DartAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "dart_api_token",
+          "default": "dart_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Dart API Token",
+      "type": "object",
+      "x-credential-instructions": "In Dart, open Settings > Account > API and copy your API token. Paste the token alone, without Bearer. API access requires a Premium or Business plan. NoClick sends it only to app.dartai.com.",
+      "x-credential-url": "https://app.dartai.com/",
+      "x-help-url": "https://www.dartai.com/features/api-libraries-and-cli"
+    },
+    "DeleteDoc": {
+      "description": "Move a document to recoverable trash.",
+      "properties": {
+        "operation": {
+          "const": "delete_doc",
+          "default": "delete_doc",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "doc_id": {
+          "description": "12-character alphanumeric Dart ID, not a title or URL.",
+          "pattern": "^[a-zA-Z0-9]{12}$",
+          "title": "Doc Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "doc_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "doc_id"
+      ],
+      "title": "DeleteDoc",
+      "type": "object"
+    },
+    "DeleteTask": {
+      "description": "Move a task to recoverable trash.",
+      "properties": {
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "description": "12-character alphanumeric Dart ID, not a title or URL.",
+          "pattern": "^[a-zA-Z0-9]{12}$",
+          "title": "Task Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "task_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "DeleteTask",
+      "type": "object"
+    },
+    "GetConfig": {
+      "description": "Get workspace property names and available values.",
+      "properties": {
+        "operation": {
+          "const": "get_config",
+          "default": "get_config",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetConfig",
+      "type": "object"
+    },
+    "GetDartboard": {
+      "description": "Get a dartboard and its tasks by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_dartboard",
+          "default": "get_dartboard",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dartboard_id": {
+          "description": "12-character alphanumeric Dart ID, not a title or URL.",
+          "pattern": "^[a-zA-Z0-9]{12}$",
+          "title": "Dartboard Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dartboard_id"
+      ],
+      "title": "GetDartboard",
+      "type": "object"
+    },
+    "GetDoc": {
+      "description": "Get a document by its Dart ID.",
+      "properties": {
+        "operation": {
+          "const": "get_doc",
+          "default": "get_doc",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "doc_id": {
+          "description": "12-character alphanumeric Dart ID, not a title or URL.",
+          "pattern": "^[a-zA-Z0-9]{12}$",
+          "title": "Doc Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "doc_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "doc_id"
+      ],
+      "title": "GetDoc",
+      "type": "object"
+    },
+    "GetFolder": {
+      "description": "Get a folder and its documents by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_folder",
+          "default": "get_folder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "folder_id": {
+          "description": "12-character alphanumeric Dart ID, not a title or URL.",
+          "pattern": "^[a-zA-Z0-9]{12}$",
+          "title": "Folder Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "GetFolder",
+      "type": "object"
+    },
+    "GetMe": {
+      "description": "Check the token and return the authenticated user.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetMe",
+      "type": "object"
+    },
+    "GetTask": {
+      "description": "Get a task by its Dart ID.",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "description": "12-character alphanumeric Dart ID, not a title or URL.",
+          "pattern": "^[a-zA-Z0-9]{12}$",
+          "title": "Task Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "task_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "GetTask",
+      "type": "object"
+    },
+    "GetView": {
+      "description": "Get a saved view by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_view",
+          "default": "get_view",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "view_id": {
+          "description": "12-character alphanumeric Dart ID, not a title or URL.",
+          "pattern": "^[a-zA-Z0-9]{12}$",
+          "title": "View Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "view_id"
+      ],
+      "title": "GetView",
+      "type": "object"
+    },
+    "ListComments": {
+      "description": "List one page of comments for a required task ID.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Results per page. This operation returns one page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Initial result index; use next_offset for another page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "description": "12-character alphanumeric Dart ID, not a title or URL.",
+          "pattern": "^[a-zA-Z0-9]{12}$",
+          "title": "Task Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "task_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "author": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Author"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "description": "12-character alphanumeric Dart ID, not a title or URL.",
+              "pattern": "^[a-zA-Z0-9]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Id"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "ListComments",
+      "type": "object"
+    },
+    "ListDocs": {
+      "description": "List one page of documents with optional title, folder and text filters.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Results per page. This operation returns one page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Initial result index; use next_offset for another page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_docs",
+          "default": "list_docs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "folder": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "description": "12-character alphanumeric Dart ID, not a title or URL.",
+              "pattern": "^[a-zA-Z0-9]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder Id"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "in_trash": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "In Trash"
+        },
+        "no_defaults": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "No Defaults"
+        }
+      },
+      "title": "ListDocs",
+      "type": "object"
+    },
+    "ListTasks": {
+      "description": "List one task page; implicit filters follow Dart workspace settings.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Results per page. This operation returns one page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Initial result index; use next_offset for another page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "dartboard": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dartboard title filter.",
+          "title": "Dartboard"
+        },
+        "dartboard_id": {
+          "anyOf": [
+            {
+              "description": "12-character alphanumeric Dart ID, not a title or URL.",
+              "pattern": "^[a-zA-Z0-9]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dartboard Id"
+        },
+        "assignee": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignee"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "description": "12-character alphanumeric Dart ID, not a title or URL.",
+              "pattern": "^[a-zA-Z0-9]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Id"
+        },
+        "is_completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Completed"
+        },
+        "in_trash": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "In Trash"
+        },
+        "no_defaults": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Disable Dart's implicit filters and ordering.",
+          "title": "No Defaults"
+        }
+      },
+      "title": "ListTasks",
+      "type": "object"
+    },
+    "MoveTask": {
+      "description": "Reorder a task in its dartboard.",
+      "properties": {
+        "operation": {
+          "const": "move_task",
+          "default": "move_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "description": "12-character alphanumeric Dart ID, not a title or URL.",
+          "pattern": "^[a-zA-Z0-9]{12}$",
+          "title": "Task Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "task_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "position": {
+          "default": "last",
+          "enum": [
+            "before",
+            "after",
+            "first",
+            "last"
+          ],
+          "title": "Position",
+          "type": "string"
+        },
+        "relative_task_id": {
+          "anyOf": [
+            {
+              "description": "12-character alphanumeric Dart ID, not a title or URL.",
+              "pattern": "^[a-zA-Z0-9]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for before or after positions.",
+          "title": "Relative Task Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "task_id",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "MoveTask",
+      "type": "object"
+    },
+    "UpdateDoc": {
+      "description": "Update supplied document properties. Omitted properties are unchanged.",
+      "properties": {
+        "operation": {
+          "const": "update_doc",
+          "default": "update_doc",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "doc_id": {
+          "description": "12-character alphanumeric Dart ID, not a title or URL.",
+          "pattern": "^[a-zA-Z0-9]{12}$",
+          "title": "Doc Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "doc_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "folder": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full markdown content. Omit to keep the existing content.",
+          "title": "Text"
+        }
+      },
+      "required": [
+        "doc_id"
+      ],
+      "title": "UpdateDoc",
+      "type": "object"
+    },
+    "UpdateTask": {
+      "description": "Update supplied task properties. Omitted properties are unchanged.",
+      "properties": {
+        "dartboard": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full dartboard title, from get_config.",
+          "title": "Dartboard"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task type title, from get_config.",
+          "title": "Type"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task status title, from get_config.",
+          "title": "Status"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Markdown description. Omit to keep the existing description.",
+          "title": "Description"
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "description": "12-character alphanumeric Dart ID, not a title or URL.",
+              "pattern": "^[a-zA-Z0-9]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parentid"
+        },
+        "assignee": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Single-assignee workspace: name or email.",
+          "title": "Assignee"
+        },
+        "assignees": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Multiple-assignee workspace: replaces assignees; [] clears them.",
+          "title": "Assignees"
+        },
+        "reviewer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reviewer"
+        },
+        "reviewers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reviewers"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces all tags; [] clears them. Unknown titles create tags.",
+          "title": "Tags"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "Critical",
+                "High",
+                "Medium",
+                "Low"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority",
+          "enum": [
+            "Critical",
+            "High",
+            "Medium",
+            "Low"
+          ],
+          "x-enum-searchable": true
+        },
+        "startAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO start date, YYYY-MM-DD.",
+          "title": "Startat"
+        },
+        "dueAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO due date, YYYY-MM-DD.",
+          "title": "Dueat"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "task_id": {
+          "description": "12-character alphanumeric Dart ID, not a title or URL.",
+          "pattern": "^[a-zA-Z0-9]{12}$",
+          "title": "Task Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "task_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "UpdateTask",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_comment": "#/$defs/AddComment",
+          "create_doc": "#/$defs/CreateDoc",
+          "create_task": "#/$defs/CreateTask",
+          "delete_doc": "#/$defs/DeleteDoc",
+          "delete_task": "#/$defs/DeleteTask",
+          "get_config": "#/$defs/GetConfig",
+          "get_dartboard": "#/$defs/GetDartboard",
+          "get_doc": "#/$defs/GetDoc",
+          "get_folder": "#/$defs/GetFolder",
+          "get_me": "#/$defs/GetMe",
+          "get_task": "#/$defs/GetTask",
+          "get_view": "#/$defs/GetView",
+          "list_comments": "#/$defs/ListComments",
+          "list_docs": "#/$defs/ListDocs",
+          "list_tasks": "#/$defs/ListTasks",
+          "move_task": "#/$defs/MoveTask",
+          "update_doc": "#/$defs/UpdateDoc",
+          "update_task": "#/$defs/UpdateTask"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetMe"
+        },
+        {
+          "$ref": "#/$defs/GetConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTasks"
+        },
+        {
+          "$ref": "#/$defs/GetTask"
+        },
+        {
+          "$ref": "#/$defs/CreateTask"
+        },
+        {
+          "$ref": "#/$defs/UpdateTask"
+        },
+        {
+          "$ref": "#/$defs/DeleteTask"
+        },
+        {
+          "$ref": "#/$defs/MoveTask"
+        },
+        {
+          "$ref": "#/$defs/ListDocs"
+        },
+        {
+          "$ref": "#/$defs/GetDoc"
+        },
+        {
+          "$ref": "#/$defs/CreateDoc"
+        },
+        {
+          "$ref": "#/$defs/UpdateDoc"
+        },
+        {
+          "$ref": "#/$defs/DeleteDoc"
+        },
+        {
+          "$ref": "#/$defs/ListComments"
+        },
+        {
+          "$ref": "#/$defs/AddComment"
+        },
+        {
+          "$ref": "#/$defs/GetDartboard"
+        },
+        {
+          "$ref": "#/$defs/GetFolder"
+        },
+        {
+          "$ref": "#/$defs/GetView"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DartAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Dart Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
