@@ -1,0 +1,246 @@
+{
+  "source": "https://www.zoho.com/workdrive/developer/docs/api/v1/search-records.html",
+  "body": {
+    "data": [
+      {
+        "relationships": {
+          "folders": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/folders",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/folders"
+            }
+          },
+          "comments": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/comments",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/comments"
+            }
+          },
+          "previewinfo": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/previewinfo",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/previewinfo"
+            }
+          },
+          "unzip": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/unzip",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/unzip"
+            }
+          },
+          "publiclink": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/publiclink",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/publiclink"
+            }
+          },
+          "resourceproperty": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/resourceproperty",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/resourceproperty"
+            }
+          },
+          "parentfolders": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/parentfolders",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/parentfolders"
+            }
+          },
+          "shortcut": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/shortcut",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/shortcut"
+            }
+          },
+          "importfile": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/importfile",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/importfile"
+            }
+          },
+          "versions": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/versions",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/versions"
+            }
+          },
+          "supportshare": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/supportshare",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/supportshare"
+            }
+          },
+          "permissions": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/permissions",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/permissions"
+            }
+          },
+          "timeline": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/timeline",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/timeline"
+            }
+          },
+          "files": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/files",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/files"
+            }
+          },
+          "saveastemplate": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/saveastemplate",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/saveastemplate"
+            }
+          },
+          "links": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/links",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/links"
+            }
+          },
+          "copy": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/copy",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/copy"
+            }
+          },
+          "previewzip": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/previewzip",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/previewzip"
+            }
+          },
+          "tasks": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/tasks",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/tasks"
+            }
+          },
+          "breadcrumbs": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/breadcrumbs",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/breadcrumbs"
+            }
+          },
+          "entity": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/entity",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/entity"
+            }
+          },
+          "custommetadata": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/custommetadata",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/custommetadata"
+            }
+          },
+          "statistics": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/statistics",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/statistics"
+            }
+          },
+          "appdata": {
+            "links": {
+              "related": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/appdata",
+              "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236/relationships/appdata"
+            }
+          }
+        },
+        "attributes": {
+          "modified_by_zuid": "747938014",
+          "is_locked": false,
+          "conv_engine_type": 0,
+          "is_fillable_resource": false,
+          "is_published": false,
+          "destination_id": "ly9zme5724e019a8e4cb48632945b1296be0a",
+          "storage_info": {
+            "files_count": 0,
+            "size_in_bytes": 0,
+            "folders_count": 0,
+            "storage_used_in_bytes": 0
+          },
+          "team_id": "ly9zmae16b43c258f458a9a57ac02c4f8d763",
+          "type": "folder",
+          "created_time_i18": "Apr 13, 12:25 PM",
+          "modified_time_in_millisecond": 1618296919142,
+          "opened_time": "Apr 13, 12:25 PM",
+          "status_change_time": "Apr 13, 12:25 PM",
+          "download_url": "https://www.zohoapis.com/workdrive/download/cjrrr81bad43595d94a5bbbb4ea1589ef9236",
+          "comment_badge_count": 0,
+          "is_app_associated": false,
+          "created_time": "Apr 13, 12:25 PM",
+          "lock_status": 2,
+          "is_folder": true,
+          "resource_type": 1001,
+          "is_email_in_upload": false,
+          "display_attr_name": "Notes",
+          "created_by": "Zylker Creation",
+          "display_html_name": "Notes",
+          "labels": [],
+          "parent_id": "ly9zme5724e019a8e4cb48632945b1296be0a",
+          "name": "Notes",
+          "status_change_time_in_millisecond": 1618296919142,
+          "permalink": "https://www.zohoapis.com/workdrive/folder/cjrrr81bad43595d94a5bbbb4ea1589ef9236",
+          "favorite": false,
+          "new_badge_count": 0,
+          "status": 1,
+          "modified_time_i18": "Apr 13, 12:25 PM",
+          "opened_time_i18": "Apr 13, 12:25 PM",
+          "extn": "",
+          "view_pref": {
+            "layout": "list",
+            "sort_by": "last_modified",
+            "sort_order": "desc",
+            "filtered_by": "all"
+          },
+          "shortcut_link": "",
+          "status_change_time_i18": "Apr 13, 12:25 PM",
+          "description": "",
+          "uploaded_time_in_millisecond": 1618296919146,
+          "thumbnail_url": "",
+          "title": "",
+          "files_view_pref": {
+            "layout": "list",
+            "sort_by": "last_modified",
+            "sort_order": "desc",
+            "filtered_by": "all"
+          },
+          "modified_time": "Apr 13, 12:25 PM",
+          "library_id": "ly9zme5724e019a8e4cb48632945b1296be0a",
+          "icon_class": "folder",
+          "created_time_in_millisecond": 1618296919142,
+          "owner": "747937818",
+          "creator": "747938014",
+          "uploaded_time_i18": "Apr 13, 12:25 PM",
+          "is_external_upload": false,
+          "watch_preference": {
+            "notifyemail": false,
+            "watch": false,
+            "notifybell": false
+          },
+          "opened_time_in_millisecond": 1618296919142,
+          "edit_badge_count": 0,
+          "share_data": [],
+          "uploaded_time": "Apr 13, 12:25 PM",
+          "has_folders": false,
+          "service_type": "upload",
+          "display_url_name": "Notes",
+          "is_unread": false,
+          "modified_by": "Zylker Creation",
+          "embed_props": {}
+        },
+        "links": {
+          "self": "https://www.zohoapis.com/workdrive/files/cjrrr81bad43595d94a5bbbb4ea1589ef9236"
+        },
+        "id": "cjrrr81bad43595d94a5bbbb4ea1589ef9236",
+        "type": "files"
+      }
+    ],
+    "meta": {
+      "search_result_count": 1
+    }
+  }
+}

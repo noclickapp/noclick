@@ -1,0 +1,36 @@
+{
+  "source": "https://www.zoho.com/workdrive/developer/docs/api/v1/create-comment.html",
+  "body": {
+    "data": {
+      "id": "ly9zm850678101cec4b0698777ab4534a3002-2774428000000002064",
+      "type": "comments",
+      "attributes": {
+        "commented_by": "Zylker Creation",
+        "created_time": "Apr 13, 1:24 PM",
+        "capabilities": {
+          "can_delete_comment": true,
+          "can_edit_comment": true,
+          "can_replyto_comment": true,
+          "can_resolve_comment": true
+        },
+        "commented_email_id": "zylker@zylker.com",
+        "modified_email_id": "zylker@zylker.com",
+        "comment_html": "Fine",
+        "version": "1.0",
+        "modified_time": "Apr 13, 1:24 PM",
+        "commented_by_zuid": 747938014,
+        "modified_by_zuid": 747938014,
+        "modified_by": "Zylker Creation",
+        "contacts_url": "https://contacts.zoho.com/file?t=user&ID=747938014&fs=thumb",
+        "resource_id": "ly9zm850678101cec4b0698777ab4534a3002",
+        "created_time_in_millis": 1618300488998,
+        "modified_time_in_millis": 1618300488998,
+        "top_version": true,
+        "resolved": false
+      },
+      "links": {
+        "self": "https://www.zohoapis.com/workdrive/comments/ly9zm850678101cec4b0698777ab4534a3002-2774428000000002064"
+      }
+    }
+  }
+}

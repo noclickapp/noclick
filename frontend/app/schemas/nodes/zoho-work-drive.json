@@ -1,0 +1,876 @@
+{
+  "$defs": {
+    "ZohoWorkDriveCopyFileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "copy_file",
+          "default": "copy_file",
+          "title": "Copy File or Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Files",
+          "x-operation-kind": "write"
+        },
+        "destination_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Destination folder ID",
+          "type": "string"
+        },
+        "source_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Source file or folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "destination_id",
+        "source_id"
+      ],
+      "title": "ZohoWorkDriveCopyFileConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveCreateCommentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Create Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Comments",
+          "x-operation-kind": "write"
+        },
+        "resource_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File or folder ID",
+          "type": "string"
+        },
+        "comment_html": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Comment HTML",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id",
+        "comment_html"
+      ],
+      "title": "ZohoWorkDriveCreateCommentConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveCreateFolderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Create Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Files",
+          "x-operation-kind": "write"
+        },
+        "parent_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Parent folder ID",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "parent_id",
+        "name"
+      ],
+      "title": "ZohoWorkDriveCreateFolderConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveDeleteCommentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_comment",
+          "default": "delete_comment",
+          "title": "Delete Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Comments",
+          "x-operation-kind": "write"
+        },
+        "comment_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Comment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "ZohoWorkDriveDeleteCommentConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveEditCommentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "edit_comment",
+          "default": "edit_comment",
+          "title": "Edit Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Comments",
+          "x-operation-kind": "write"
+        },
+        "comment_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "comment_html": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Comment HTML",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id",
+        "comment_html"
+      ],
+      "title": "ZohoWorkDriveEditCommentConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveGetCommentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_comment",
+          "default": "get_comment",
+          "title": "Get Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Comments",
+          "x-operation-kind": "read"
+        },
+        "comment_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Comment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "ZohoWorkDriveGetCommentConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveGetFileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Get File or Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Files",
+          "x-operation-kind": "read"
+        },
+        "resource_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File or folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "ZohoWorkDriveGetFileConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveGetLinkConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_link",
+          "default": "get_link",
+          "title": "Get External Share Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Sharing",
+          "x-operation-kind": "read"
+        },
+        "link_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Share link ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "link_id"
+      ],
+      "title": "ZohoWorkDriveGetLinkConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveGetTeamConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_team",
+          "default": "get_team",
+          "title": "Get Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Teams",
+          "x-operation-kind": "read"
+        },
+        "team_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Team ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "ZohoWorkDriveGetTeamConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveGetTeamFolderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_team_folder",
+          "default": "get_team_folder",
+          "title": "Get Team Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Teams",
+          "x-operation-kind": "read"
+        },
+        "teamfolder_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Team folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "teamfolder_id"
+      ],
+      "title": "ZohoWorkDriveGetTeamFolderConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveGetUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Account",
+          "x-operation-kind": "read"
+        }
+      },
+      "title": "ZohoWorkDriveGetUserConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveListCommentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "List File Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Comments",
+          "x-operation-kind": "read"
+        },
+        "resource_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File or folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "ZohoWorkDriveListCommentsConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveListFilesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "List Folder Contents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Files",
+          "x-operation-kind": "read"
+        },
+        "folder_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start index for this page. Advance by the page size to read the next page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "ZohoWorkDriveListFilesConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveListLinksConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_links",
+          "default": "list_links",
+          "title": "List External Share Links",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Sharing",
+          "x-operation-kind": "read"
+        },
+        "resource_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File or folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "ZohoWorkDriveListLinksConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveListTeamFoldersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_team_folders",
+          "default": "list_team_folders",
+          "title": "List Team Folders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Teams",
+          "x-operation-kind": "read"
+        },
+        "team_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Team ID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start index for this page. Advance by the page size to read the next page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "ZohoWorkDriveListTeamFoldersConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveListTeamsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "List User Teams",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Account",
+          "x-operation-kind": "read"
+        },
+        "zuid": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Zoho user ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "zuid"
+      ],
+      "title": "ZohoWorkDriveListTeamsConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveListVersionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_versions",
+          "default": "list_versions",
+          "title": "List File Versions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Files",
+          "x-operation-kind": "read"
+        },
+        "resource_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File or folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "ZohoWorkDriveListVersionsConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveMoveFileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "move_file",
+          "default": "move_file",
+          "title": "Move File or Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Files",
+          "x-operation-kind": "write"
+        },
+        "resource_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File or folder ID",
+          "type": "string"
+        },
+        "parent_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Destination folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id",
+        "parent_id"
+      ],
+      "title": "ZohoWorkDriveMoveFileConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "zoho_work_drive_oauth",
+          "default": "zoho_work_drive_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "minLength": 1,
+          "title": "Refresh Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "title": "Expires At",
+          "type": "string"
+        },
+        "accounts_server": {
+          "title": "Accounts Server",
+          "type": "string"
+        },
+        "api_domain": {
+          "title": "Api Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "accounts_server",
+        "api_domain"
+      ],
+      "title": "Zoho WorkDrive OAuth",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://api-console.zoho.com/",
+      "x-oauth-provider": "zoho_work_drive",
+      "x-oauth-scopes": [
+        "WorkDrive.comments.CREATE",
+        "WorkDrive.comments.DELETE",
+        "WorkDrive.comments.READ",
+        "WorkDrive.comments.UPDATE",
+        "WorkDrive.files.CREATE",
+        "WorkDrive.files.READ",
+        "WorkDrive.files.UPDATE",
+        "WorkDrive.links.DELETE",
+        "WorkDrive.links.READ",
+        "WorkDrive.team.READ",
+        "WorkDrive.teamfolders.READ",
+        "WorkDrive.users.READ",
+        "ZohoSearch.securesearch.READ"
+      ]
+    },
+    "ZohoWorkDriveRenameFileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "rename_file",
+          "default": "rename_file",
+          "title": "Rename File or Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Files",
+          "x-operation-kind": "write"
+        },
+        "resource_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File or folder ID",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id",
+        "name"
+      ],
+      "title": "ZohoWorkDriveRenameFileConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveRestoreFileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "restore_file",
+          "default": "restore_file",
+          "title": "Restore File or Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Files",
+          "x-operation-kind": "write"
+        },
+        "resource_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File or folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "ZohoWorkDriveRestoreFileConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveRevokeLinkConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "revoke_link",
+          "default": "revoke_link",
+          "title": "Revoke External Share Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Sharing",
+          "x-operation-kind": "write"
+        },
+        "link_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Share link ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "link_id"
+      ],
+      "title": "ZohoWorkDriveRevokeLinkConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveSearchFilesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_files",
+          "default": "search_files",
+          "title": "Search Files and Folders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Files",
+          "x-operation-kind": "read"
+        },
+        "team_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Team ID",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Search query",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start index for this page. Advance by the page size to read the next page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "team_id",
+        "query"
+      ],
+      "title": "ZohoWorkDriveSearchFilesConfig",
+      "type": "object"
+    },
+    "ZohoWorkDriveTrashFileConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "trash_file",
+          "default": "trash_file",
+          "title": "Move File or Folder to Trash",
+          "type": "string",
+          "ui:hidden": true,
+          "x-operation-category": "Files",
+          "x-operation-kind": "write"
+        },
+        "resource_id": {
+          "description": "Copy the resource ID from WorkDrive or a preceding read operation.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File or folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "ZohoWorkDriveTrashFileConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "copy_file": "#/$defs/ZohoWorkDriveCopyFileConfig",
+          "create_comment": "#/$defs/ZohoWorkDriveCreateCommentConfig",
+          "create_folder": "#/$defs/ZohoWorkDriveCreateFolderConfig",
+          "delete_comment": "#/$defs/ZohoWorkDriveDeleteCommentConfig",
+          "edit_comment": "#/$defs/ZohoWorkDriveEditCommentConfig",
+          "get_comment": "#/$defs/ZohoWorkDriveGetCommentConfig",
+          "get_file": "#/$defs/ZohoWorkDriveGetFileConfig",
+          "get_link": "#/$defs/ZohoWorkDriveGetLinkConfig",
+          "get_team": "#/$defs/ZohoWorkDriveGetTeamConfig",
+          "get_team_folder": "#/$defs/ZohoWorkDriveGetTeamFolderConfig",
+          "get_user": "#/$defs/ZohoWorkDriveGetUserConfig",
+          "list_comments": "#/$defs/ZohoWorkDriveListCommentsConfig",
+          "list_files": "#/$defs/ZohoWorkDriveListFilesConfig",
+          "list_links": "#/$defs/ZohoWorkDriveListLinksConfig",
+          "list_team_folders": "#/$defs/ZohoWorkDriveListTeamFoldersConfig",
+          "list_teams": "#/$defs/ZohoWorkDriveListTeamsConfig",
+          "list_versions": "#/$defs/ZohoWorkDriveListVersionsConfig",
+          "move_file": "#/$defs/ZohoWorkDriveMoveFileConfig",
+          "rename_file": "#/$defs/ZohoWorkDriveRenameFileConfig",
+          "restore_file": "#/$defs/ZohoWorkDriveRestoreFileConfig",
+          "revoke_link": "#/$defs/ZohoWorkDriveRevokeLinkConfig",
+          "search_files": "#/$defs/ZohoWorkDriveSearchFilesConfig",
+          "trash_file": "#/$defs/ZohoWorkDriveTrashFileConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ZohoWorkDriveGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveListTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveGetTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveListTeamFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveGetTeamFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveListFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveGetFileConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveCreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveRenameFileConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveMoveFileConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveTrashFileConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveRestoreFileConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveCopyFileConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveListVersionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveGetCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveEditCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveDeleteCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveListLinksConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveGetLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveRevokeLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/ZohoWorkDriveSearchFilesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ZohoWorkDriveOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Zoho-work-drive Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a folder in Zoho WorkDrive",
+    "Search Zoho WorkDrive files",
+    "Add a comment to a WorkDrive file"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
