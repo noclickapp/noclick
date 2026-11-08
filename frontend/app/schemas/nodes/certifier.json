@@ -1,0 +1,1169 @@
+{
+  "$defs": {
+    "CertifierTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "certifier_api_token",
+          "default": "certifier_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Certifier API Token",
+      "type": "object",
+      "x-credential-instructions": "Create an access token in Certifier Dashboard settings and paste it here. NoClick sends it as a bearer token to api.certifier.io. Template reads verify access; issuing and sending credentials require the corresponding account permissions.",
+      "x-credential-url": "https://app.certifier.io/settings/access-tokens"
+    },
+    "CreateCredentialConfig": {
+      "additionalProperties": false,
+      "description": "Create a credential",
+      "properties": {
+        "operation": {
+          "const": "create_credential",
+          "default": "create_credential",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "groupId": {
+          "description": "The group's (credential template's) ID you want to issue the credential to. Check the Group (Credential Template) object.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Groupid",
+          "type": "string"
+        },
+        "recipient": {
+          "$ref": "#/$defs/CreateCredentialConfigRecipient",
+          "description": "The recipient of the credential"
+        },
+        "issueDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The issuer-claimed issue date. Omit it or set it to null to resolve it to the UTC date at issuance (YYYY-MM-DD).",
+          "title": "Issuedate"
+        },
+        "expiryDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The issuer-claimed expiration date. Omit it or set it to null to derive the credential template's expiration period at issuance; it stays null when no period is configured (YYYY-MM-DD).",
+          "title": "Expirydate"
+        },
+        "customAttributes": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The key-value object of your custom attributes, where key is your attribute's tag and value is the text value you want to store",
+          "title": "Customattributes"
+        }
+      },
+      "required": [
+        "groupId",
+        "recipient"
+      ],
+      "title": "CreateCredentialConfig",
+      "type": "object"
+    },
+    "CreateCredentialConfigRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "The name of the credential's recipient",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email of the credential's recipient",
+          "title": "Email"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateCredentialConfigRecipient",
+      "type": "object"
+    },
+    "CreateCredentialInteractionConfig": {
+      "additionalProperties": false,
+      "description": "Create a credential interaction",
+      "properties": {
+        "operation": {
+          "const": "create_credential_interaction",
+          "default": "create_credential_interaction",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "credentialId": {
+          "description": "The unique credential's identifier, to which this credential interaction belongs",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Credentialid",
+          "type": "string"
+        },
+        "eventType": {
+          "description": "Specifies the type of user interaction event related to the credential",
+          "enum": [
+            "credential_viewed",
+            "credential_shared_to_linkedin",
+            "credential_added_to_linkedin_profile",
+            "credential_shared_to_facebook",
+            "credential_shared_to_twitter",
+            "credential_shared_to_messenger",
+            "credential_shared_to_whatsapp",
+            "credential_shared_to_pinterest",
+            "credential_shared_to_telegram",
+            "credential_shared_to_weibo",
+            "credential_downloaded",
+            "credential_link_copied",
+            "credential_verified"
+          ],
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Eventtype",
+          "type": "string"
+        },
+        "triggeredBy": {
+          "description": "The actor that triggered this credential interaction. Currently one of two values: recipient or guest",
+          "enum": [
+            "recipient",
+            "guest"
+          ],
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Triggeredby",
+          "type": "string"
+        },
+        "triggeredAt": {
+          "description": "The date and time when this credential interaction happened. Formatted as an ISO 8601 date and time string",
+          "format": "date-time",
+          "title": "Triggeredat",
+          "type": "string"
+        }
+      },
+      "required": [
+        "credentialId",
+        "eventType",
+        "triggeredBy",
+        "triggeredAt"
+      ],
+      "title": "CreateCredentialInteractionConfig",
+      "type": "object"
+    },
+    "CreateGroupConfig": {
+      "additionalProperties": false,
+      "description": "Create a credential template",
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "The name of the credential template (group) that is used as [group.name] attribute later on",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "designIds": {
+          "description": "The ordered list of design template IDs associated with the credential template..",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Designids",
+          "type": "array"
+        },
+        "learningEventUrl": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The learning event's URL that is shown in the digital wallet",
+          "title": "Learningeventurl"
+        }
+      },
+      "required": [
+        "name",
+        "designIds"
+      ],
+      "title": "CreateGroupConfig",
+      "type": "object"
+    },
+    "CreateIssueSendCredentialConfig": {
+      "additionalProperties": false,
+      "description": "Create, issue, and send a credential",
+      "properties": {
+        "operation": {
+          "const": "create_issue_send_credential",
+          "default": "create_issue_send_credential",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "groupId": {
+          "description": "The group's (credential template's) ID you want to issue the credential to. Read more about groups (credential templates).",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Groupid",
+          "type": "string"
+        },
+        "recipient": {
+          "$ref": "#/$defs/CreateIssueSendCredentialConfigRecipient",
+          "description": "The recipient of the credential"
+        },
+        "issueDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The issuer-claimed issue date. Omit it or set it to null to resolve it to the UTC date at issuance (YYYY-MM-DD).",
+          "title": "Issuedate"
+        },
+        "expiryDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The issuer-claimed expiration date. Omit it or set it to null to derive the credential template's expiration period at issuance; it stays null when no period is configured (YYYY-MM-DD).",
+          "title": "Expirydate"
+        },
+        "customAttributes": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The key-value object of your custom attributes where key is your attribute's tag and value is just your value",
+          "title": "Customattributes"
+        }
+      },
+      "required": [
+        "groupId",
+        "recipient"
+      ],
+      "title": "CreateIssueSendCredentialConfig",
+      "type": "object"
+    },
+    "CreateIssueSendCredentialConfigRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "The name of the credential's recipient",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email of the credential's recipient",
+          "title": "Email"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateIssueSendCredentialConfigRecipient",
+      "type": "object"
+    },
+    "DeleteCredentialConfig": {
+      "additionalProperties": false,
+      "description": "Delete a credential",
+      "properties": {
+        "operation": {
+          "const": "delete_credential",
+          "default": "delete_credential",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The unique ID of the credential",
+          "maxLength": 8192,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteCredentialConfig",
+      "type": "object"
+    },
+    "DeleteGroupConfig": {
+      "additionalProperties": false,
+      "description": "Delete a credential template",
+      "properties": {
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The unique ID of the credential template (group).",
+          "maxLength": 8192,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteGroupConfig",
+      "type": "object"
+    },
+    "GetCredentialConfig": {
+      "additionalProperties": false,
+      "description": "Get a credential",
+      "properties": {
+        "operation": {
+          "const": "get_credential",
+          "default": "get_credential",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The unique ID of the credential",
+          "maxLength": 8192,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCredentialConfig",
+      "type": "object"
+    },
+    "GetCredentialDesignsConfig": {
+      "additionalProperties": false,
+      "description": "Get credential design templates",
+      "properties": {
+        "operation": {
+          "const": "get_credential_designs",
+          "default": "get_credential_designs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The unique ID of the credential",
+          "maxLength": 8192,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCredentialDesignsConfig",
+      "type": "object"
+    },
+    "GetDesignConfig": {
+      "additionalProperties": false,
+      "description": "Get a design template",
+      "properties": {
+        "operation": {
+          "const": "get_design",
+          "default": "get_design",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The unique ID of the design template",
+          "maxLength": 8192,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetDesignConfig",
+      "type": "object"
+    },
+    "GetGroupConfig": {
+      "additionalProperties": false,
+      "description": "Get a credential template",
+      "properties": {
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The unique ID of the credential template (group).",
+          "maxLength": 8192,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetGroupConfig",
+      "type": "object"
+    },
+    "IssueCredentialConfig": {
+      "additionalProperties": false,
+      "description": "Issue a credential",
+      "properties": {
+        "operation": {
+          "const": "issue_credential",
+          "default": "issue_credential",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The unique ID of the credential",
+          "maxLength": 8192,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "IssueCredentialConfig",
+      "type": "object"
+    },
+    "ListCredentialInteractionsConfig": {
+      "additionalProperties": false,
+      "description": "List credential interactions",
+      "properties": {
+        "operation": {
+          "const": "list_credential_interactions",
+          "default": "list_credential_interactions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "credentialId": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The unique credential's identifier",
+          "title": "Credentialid"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for pagination",
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of items to return (default: 20)",
+          "title": "Limit"
+        }
+      },
+      "title": "ListCredentialInteractionsConfig",
+      "type": "object"
+    },
+    "ListCredentialsConfig": {
+      "additionalProperties": false,
+      "description": "List credentials",
+      "properties": {
+        "operation": {
+          "const": "list_credentials",
+          "default": "list_credentials",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for pagination",
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of items to return (default: 20)",
+          "title": "Limit"
+        }
+      },
+      "title": "ListCredentialsConfig",
+      "type": "object"
+    },
+    "ListDesignsConfig": {
+      "additionalProperties": false,
+      "description": "List design templates",
+      "properties": {
+        "operation": {
+          "const": "list_designs",
+          "default": "list_designs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for pagination",
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of items to return (default: 20)",
+          "title": "Limit"
+        }
+      },
+      "title": "ListDesignsConfig",
+      "type": "object"
+    },
+    "ListGroupsConfig": {
+      "additionalProperties": false,
+      "description": "List credential templates",
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for pagination",
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of items to return (default: 20)",
+          "title": "Limit"
+        }
+      },
+      "title": "ListGroupsConfig",
+      "type": "object"
+    },
+    "SearchCredentialsConfig": {
+      "additionalProperties": false,
+      "description": "Search credentials",
+      "properties": {
+        "operation": {
+          "const": "search_credentials",
+          "default": "search_credentials",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter object with AND, OR, NOT operators and field conditions. Supports filtering by id, publicId, groupId, status, recipientId, recipient.name, recipient.email, issueDate, expiryDate, createdAt, updatedAt",
+          "title": "Filter"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SearchCredentialsConfigSort"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sorting options"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor for pagination",
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of items to return (default: 20)",
+          "title": "Limit"
+        }
+      },
+      "title": "SearchCredentialsConfig",
+      "type": "object"
+    },
+    "SearchCredentialsConfigSort": {
+      "additionalProperties": false,
+      "properties": {
+        "property": {
+          "description": "Property to sort by. Available: id, createdAt, updatedAt, issueDate, expiryDate",
+          "enum": [
+            "id",
+            "createdAt",
+            "updatedAt",
+            "issueDate",
+            "expiryDate"
+          ],
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Property",
+          "type": "string"
+        },
+        "order": {
+          "description": "Sort order (asc or desc, default: desc)",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Order",
+          "type": "string"
+        }
+      },
+      "required": [
+        "property",
+        "order"
+      ],
+      "title": "SearchCredentialsConfigSort",
+      "type": "object"
+    },
+    "SendCredentialConfig": {
+      "additionalProperties": false,
+      "description": "Send a credential",
+      "properties": {
+        "operation": {
+          "const": "send_credential",
+          "default": "send_credential",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The unique ID of the credential",
+          "maxLength": 8192,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "deliveryMethod": {
+          "const": "email",
+          "description": "The way you want to deliver the credential. The only available deliveryMethod for now is email",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Deliverymethod",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "deliveryMethod"
+      ],
+      "title": "SendCredentialConfig",
+      "type": "object"
+    },
+    "UpdateCredentialConfig": {
+      "additionalProperties": false,
+      "description": "Update a credential",
+      "properties": {
+        "operation": {
+          "const": "update_credential",
+          "default": "update_credential",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The unique ID of the credential",
+          "maxLength": 8192,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "recipient": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UpdateCredentialConfigRecipient"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The recipient of the credential"
+        },
+        "issueDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The issuer-claimed issue date (YYYY-MM-DD). Set null only on a draft to clear it; issued credentials cannot clear their issue date.",
+          "title": "Issuedate"
+        },
+        "expiryDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The issuer-claimed expiration date (YYYY-MM-DD). Set null to clear it; on a draft whose credential template has an expiration period, the date is re-derived at issuance, otherwise the credential never expires. When both dates are set, expiryDate must be after issueDate.",
+          "title": "Expirydate"
+        },
+        "customAttributes": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The key-value object of your custom attributes, where key is your attribute's tag and value is the text value you want to store",
+          "title": "Customattributes"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateCredentialConfig",
+      "type": "object"
+    },
+    "UpdateCredentialConfigRecipient": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "The credential recipient's unique identifier",
+          "maxLength": 8192,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the credential's recipient",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email of the credential's recipient",
+          "title": "Email"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "UpdateCredentialConfigRecipient",
+      "type": "object"
+    },
+    "UpdateGroupConfig": {
+      "additionalProperties": false,
+      "description": "Update a credential template",
+      "properties": {
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The unique ID of the credential template (group).",
+          "maxLength": 8192,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The name of the credential template (group) that is used as [group.name] attribute later on",
+          "title": "Name"
+        },
+        "designIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the ordered list of design template IDs associated with the credential template.",
+          "title": "Designids"
+        },
+        "learningEventUrl": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The learning event's URL that is shown in the digital wallet",
+          "title": "Learningeventurl"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateGroupConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_credential": "#/$defs/CreateCredentialConfig",
+          "create_credential_interaction": "#/$defs/CreateCredentialInteractionConfig",
+          "create_group": "#/$defs/CreateGroupConfig",
+          "create_issue_send_credential": "#/$defs/CreateIssueSendCredentialConfig",
+          "delete_credential": "#/$defs/DeleteCredentialConfig",
+          "delete_group": "#/$defs/DeleteGroupConfig",
+          "get_credential": "#/$defs/GetCredentialConfig",
+          "get_credential_designs": "#/$defs/GetCredentialDesignsConfig",
+          "get_design": "#/$defs/GetDesignConfig",
+          "get_group": "#/$defs/GetGroupConfig",
+          "issue_credential": "#/$defs/IssueCredentialConfig",
+          "list_credential_interactions": "#/$defs/ListCredentialInteractionsConfig",
+          "list_credentials": "#/$defs/ListCredentialsConfig",
+          "list_designs": "#/$defs/ListDesignsConfig",
+          "list_groups": "#/$defs/ListGroupsConfig",
+          "search_credentials": "#/$defs/SearchCredentialsConfig",
+          "send_credential": "#/$defs/SendCredentialConfig",
+          "update_credential": "#/$defs/UpdateCredentialConfig",
+          "update_group": "#/$defs/UpdateGroupConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CreateCredentialConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCredentialsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateIssueSendCredentialConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteCredentialConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCredentialConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateCredentialConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCredentialDesignsConfig"
+        },
+        {
+          "$ref": "#/$defs/IssueCredentialConfig"
+        },
+        {
+          "$ref": "#/$defs/SearchCredentialsConfig"
+        },
+        {
+          "$ref": "#/$defs/SendCredentialConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateCredentialInteractionConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCredentialInteractionsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetDesignConfig"
+        },
+        {
+          "$ref": "#/$defs/ListDesignsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/ListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/GetGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateGroupConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CertifierTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Certifier Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

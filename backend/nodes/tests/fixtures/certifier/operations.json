@@ -1,0 +1,488 @@
+{
+  "create_credential": {
+    "config": {
+      "operation": "create_credential",
+      "groupId": "01g90279gp5sbmfek7wymcsvec",
+      "recipient": {
+        "name": "John Doe",
+        "email": "john.doe@example.com"
+      }
+    },
+    "method": "POST",
+    "path": "/v1/credentials",
+    "status": 201,
+    "response": {
+      "id": "01hz2f0c9ryvzajg20jqh9taab",
+      "publicId": "124a8110-1af5-4747-9308-e9d06bd1852a",
+      "groupId": "01g90279gp5sbmfek7wymcsvec",
+      "status": "draft",
+      "recipient": {
+        "id": "01jmerb62apgachxwx6db76c7s",
+        "name": "John Doe",
+        "email": "john.doe@example.com"
+      },
+      "issueDate": "2022-01-01",
+      "expiryDate": "2023-01-01",
+      "attributes": {
+        "recipient.name": "John Doe"
+      },
+      "customAttributes": {
+        "custom.mentor": "Jane Doe"
+      },
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  },
+  "list_credentials": {
+    "config": {
+      "operation": "list_credentials"
+    },
+    "method": "GET",
+    "path": "/v1/credentials",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": "01hz2f0c9ryvzajg20jqh9taab",
+          "publicId": "124a8110-1af5-4747-9308-e9d06bd1852a",
+          "groupId": "01g90279gp5sbmfek7wymcsvec",
+          "status": "draft",
+          "recipient": {
+            "id": "01jmerb62apgachxwx6db76c7s",
+            "name": "John Doe",
+            "email": "john.doe@example.com"
+          },
+          "issueDate": "2022-01-01",
+          "expiryDate": "2023-01-01",
+          "attributes": {
+            "recipient.name": "John Doe"
+          },
+          "customAttributes": {
+            "custom.mentor": "Jane Doe"
+          },
+          "createdAt": "2022-01-01T00:00:00.000Z",
+          "updatedAt": "2022-01-01T00:00:00.000Z"
+        }
+      ],
+      "pagination": {
+        "prev": null,
+        "next": null
+      }
+    }
+  },
+  "create_issue_send_credential": {
+    "config": {
+      "operation": "create_issue_send_credential",
+      "groupId": "01g90279gp5sbmfek7wymcsvec",
+      "recipient": {
+        "name": "John Doe",
+        "email": "john.doe@example.com"
+      }
+    },
+    "method": "POST",
+    "path": "/v1/credentials/create-issue-send",
+    "status": 200,
+    "response": {
+      "id": "01hz2f0c9ryvzajg20jqh9taab",
+      "publicId": "124a8110-1af5-4747-9308-e9d06bd1852a",
+      "groupId": "01g90279gp5sbmfek7wymcsvec",
+      "status": "draft",
+      "recipient": {
+        "id": "01jmerb62apgachxwx6db76c7s",
+        "name": "John Doe",
+        "email": "john.doe@example.com"
+      },
+      "issueDate": "2022-01-01",
+      "expiryDate": "2023-01-01",
+      "attributes": {
+        "recipient.name": "John Doe"
+      },
+      "customAttributes": {
+        "custom.mentor": "Jane Doe"
+      },
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  },
+  "delete_credential": {
+    "config": {
+      "operation": "delete_credential",
+      "id": "01hz2f0c9ryvzajg20jqh9taab"
+    },
+    "method": "DELETE",
+    "path": "/v1/credentials/01hz2f0c9ryvzajg20jqh9taab",
+    "status": 204,
+    "response": null
+  },
+  "get_credential": {
+    "config": {
+      "operation": "get_credential",
+      "id": "01hz2f0c9ryvzajg20jqh9taab"
+    },
+    "method": "GET",
+    "path": "/v1/credentials/01hz2f0c9ryvzajg20jqh9taab",
+    "status": 200,
+    "response": {
+      "id": "01hz2f0c9ryvzajg20jqh9taab",
+      "publicId": "124a8110-1af5-4747-9308-e9d06bd1852a",
+      "groupId": "01g90279gp5sbmfek7wymcsvec",
+      "status": "draft",
+      "recipient": {
+        "id": "01jmerb62apgachxwx6db76c7s",
+        "name": "John Doe",
+        "email": "john.doe@example.com"
+      },
+      "issueDate": "2022-01-01",
+      "expiryDate": "2023-01-01",
+      "attributes": {
+        "recipient.name": "John Doe"
+      },
+      "customAttributes": {
+        "custom.mentor": "Jane Doe"
+      },
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  },
+  "update_credential": {
+    "config": {
+      "operation": "update_credential",
+      "id": "01hz2f0c9ryvzajg20jqh9taab"
+    },
+    "method": "PATCH",
+    "path": "/v1/credentials/01hz2f0c9ryvzajg20jqh9taab",
+    "status": 200,
+    "response": {
+      "id": "01hz2f0c9ryvzajg20jqh9taab",
+      "publicId": "124a8110-1af5-4747-9308-e9d06bd1852a",
+      "groupId": "01g90279gp5sbmfek7wymcsvec",
+      "status": "draft",
+      "recipient": {
+        "id": "01jmerb62apgachxwx6db76c7s",
+        "name": "John Doe",
+        "email": "john.doe@example.com"
+      },
+      "issueDate": "2022-01-01",
+      "expiryDate": "2023-01-01",
+      "attributes": {
+        "recipient.name": "John Doe"
+      },
+      "customAttributes": {
+        "custom.mentor": "Jane Doe"
+      },
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  },
+  "get_credential_designs": {
+    "config": {
+      "operation": "get_credential_designs",
+      "id": "01hz2f0c9ryvzajg20jqh9taab"
+    },
+    "method": "GET",
+    "path": "/v1/credentials/01hz2f0c9ryvzajg20jqh9taab/designs",
+    "status": 200,
+    "response": [
+      {
+        "id": "01jpqe836f59e62yh4c06h5sd8",
+        "name": "Classic Certificate",
+        "previews": [
+          {
+            "format": "png",
+            "url": "https://cdn.certifier.io/c2903a31-67f2-4439-8214-5aeab5808536/credentials/01jjcded4kr5t0zz33286qqtxv/designs/01jpqe836f59e62yh4c06h5sd8/YhOo_ijQbQ.png"
+          }
+        ]
+      }
+    ]
+  },
+  "issue_credential": {
+    "config": {
+      "operation": "issue_credential",
+      "id": "01hz2f0c9ryvzajg20jqh9taab"
+    },
+    "method": "POST",
+    "path": "/v1/credentials/01hz2f0c9ryvzajg20jqh9taab/issue",
+    "status": 200,
+    "response": {
+      "id": "01hz2f0c9ryvzajg20jqh9taab",
+      "publicId": "124a8110-1af5-4747-9308-e9d06bd1852a",
+      "groupId": "01g90279gp5sbmfek7wymcsvec",
+      "status": "draft",
+      "recipient": {
+        "id": "01jmerb62apgachxwx6db76c7s",
+        "name": "John Doe",
+        "email": "john.doe@example.com"
+      },
+      "issueDate": "2022-01-01",
+      "expiryDate": "2023-01-01",
+      "attributes": {
+        "recipient.name": "John Doe"
+      },
+      "customAttributes": {
+        "custom.mentor": "Jane Doe"
+      },
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  },
+  "search_credentials": {
+    "config": {
+      "operation": "search_credentials"
+    },
+    "method": "POST",
+    "path": "/v1/credentials/search",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": "01hz2f0c9ryvzajg20jqh9taab",
+          "publicId": "124a8110-1af5-4747-9308-e9d06bd1852a",
+          "groupId": "01g90279gp5sbmfek7wymcsvec",
+          "status": "draft",
+          "recipient": {
+            "id": "01jmerb62apgachxwx6db76c7s",
+            "name": "John Doe",
+            "email": "john.doe@example.com"
+          },
+          "issueDate": "2022-01-01",
+          "expiryDate": "2023-01-01",
+          "attributes": {
+            "recipient.name": "John Doe"
+          },
+          "customAttributes": {
+            "custom.mentor": "Jane Doe"
+          },
+          "createdAt": "2022-01-01T00:00:00.000Z",
+          "updatedAt": "2022-01-01T00:00:00.000Z"
+        }
+      ],
+      "pagination": {
+        "prev": null,
+        "next": null
+      }
+    }
+  },
+  "send_credential": {
+    "config": {
+      "operation": "send_credential",
+      "id": "01hz2f0c9ryvzajg20jqh9taab",
+      "deliveryMethod": "email"
+    },
+    "method": "POST",
+    "path": "/v1/credentials/01hz2f0c9ryvzajg20jqh9taab/send",
+    "status": 200,
+    "response": {
+      "id": "01hz2f0c9ryvzajg20jqh9taab",
+      "publicId": "124a8110-1af5-4747-9308-e9d06bd1852a",
+      "groupId": "01g90279gp5sbmfek7wymcsvec",
+      "status": "draft",
+      "recipient": {
+        "id": "01jmerb62apgachxwx6db76c7s",
+        "name": "John Doe",
+        "email": "john.doe@example.com"
+      },
+      "issueDate": "2022-01-01",
+      "expiryDate": "2023-01-01",
+      "attributes": {
+        "recipient.name": "John Doe"
+      },
+      "customAttributes": {
+        "custom.mentor": "Jane Doe"
+      },
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  },
+  "create_credential_interaction": {
+    "config": {
+      "operation": "create_credential_interaction",
+      "credentialId": "01hrsvjp560yksep2a3bek3z97",
+      "eventType": "credential_viewed",
+      "triggeredBy": "recipient",
+      "triggeredAt": "2024-03-12T17:33:05.784Z"
+    },
+    "method": "POST",
+    "path": "/v1/credential-interactions",
+    "status": 200,
+    "response": {
+      "id": "01hrsvk8xnj8vkt8p1e2tc1jt7",
+      "credentialId": "01hrsvjp560yksep2a3bek3z97",
+      "eventType": "credential_viewed",
+      "triggeredBy": "recipient",
+      "triggeredAt": "2024-03-12T17:33:05.784Z"
+    }
+  },
+  "list_credential_interactions": {
+    "config": {
+      "operation": "list_credential_interactions"
+    },
+    "method": "GET",
+    "path": "/v1/credential-interactions",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": "01hrsvk8xnj8vkt8p1e2tc1jt7",
+          "credentialId": "01hrsvjp560yksep2a3bek3z97",
+          "eventType": "credential_viewed",
+          "triggeredBy": "recipient",
+          "triggeredAt": "2024-03-12T17:33:05.784Z"
+        }
+      ],
+      "pagination": {
+        "prev": null,
+        "next": null
+      }
+    }
+  },
+  "get_design": {
+    "config": {
+      "operation": "get_design",
+      "id": "01g8znjvd9h0qbhxqwc6av0txn"
+    },
+    "method": "GET",
+    "path": "/v1/designs/01g8znjvd9h0qbhxqwc6av0txn",
+    "status": 200,
+    "response": {
+      "id": "01g8znjvd9h0qbhxqwc6av0txn",
+      "name": "My first design template",
+      "type": "certificate",
+      "previewUrl": "https://cdn.certifier.io/911264ad-df05-4aeb-966f-96034b711c10%2Fcertificate-designs%2Fpreviews%2F01k6dfeejfbwn273x2v2jqj4an-1759241517660.png",
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  },
+  "list_designs": {
+    "config": {
+      "operation": "list_designs"
+    },
+    "method": "GET",
+    "path": "/v1/designs",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": "01g8znjvd9h0qbhxqwc6av0txn",
+          "name": "My first design template",
+          "type": "certificate",
+          "previewUrl": "https://cdn.certifier.io/911264ad-df05-4aeb-966f-96034b711c10%2Fcertificate-designs%2Fpreviews%2F01k6dfeejfbwn273x2v2jqj4an-1759241517660.png",
+          "createdAt": "2022-01-01T00:00:00.000Z",
+          "updatedAt": "2022-01-01T00:00:00.000Z"
+        }
+      ],
+      "pagination": {
+        "prev": null,
+        "next": null
+      }
+    }
+  },
+  "create_group": {
+    "config": {
+      "operation": "create_group",
+      "name": "Financial Markets",
+      "designIds": [
+        "01fpwtztwf7sacca5r0c483mnm",
+        "01hz2ej4yzdcfkq9fa78nhyj0x"
+      ]
+    },
+    "method": "POST",
+    "path": "/v1/groups",
+    "status": 201,
+    "response": {
+      "id": "01g90279gp5sbmfek7wymcsvec",
+      "name": "Financial Markets",
+      "learningEventUrl": "https://www.coursera.org/learn/financial-markets-global",
+      "designIds": [
+        "01fpwtztwf7sacca5r0c483mnm",
+        "01hz2ej4yzdcfkq9fa78nhyj0x"
+      ],
+      "certificateDesignId": "01fpwtztwf7sacca5r0c483mnm",
+      "badgeDesignId": "01hz2ej4yzdcfkq9fa78nhyj0x",
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  },
+  "list_groups": {
+    "config": {
+      "operation": "list_groups"
+    },
+    "method": "GET",
+    "path": "/v1/groups",
+    "status": 200,
+    "response": {
+      "data": [
+        {
+          "id": "01g90279gp5sbmfek7wymcsvec",
+          "name": "Financial Markets",
+          "learningEventUrl": "https://www.coursera.org/learn/financial-markets-global",
+          "designIds": [
+            "01fpwtztwf7sacca5r0c483mnm",
+            "01hz2ej4yzdcfkq9fa78nhyj0x"
+          ],
+          "certificateDesignId": "01fpwtztwf7sacca5r0c483mnm",
+          "badgeDesignId": "01hz2ej4yzdcfkq9fa78nhyj0x",
+          "createdAt": "2022-01-01T00:00:00.000Z",
+          "updatedAt": "2022-01-01T00:00:00.000Z"
+        }
+      ],
+      "pagination": {
+        "prev": null,
+        "next": null
+      }
+    }
+  },
+  "delete_group": {
+    "config": {
+      "operation": "delete_group",
+      "id": "01g90279gp5sbmfek7wymcsvec"
+    },
+    "method": "DELETE",
+    "path": "/v1/groups/01g90279gp5sbmfek7wymcsvec",
+    "status": 204,
+    "response": null
+  },
+  "get_group": {
+    "config": {
+      "operation": "get_group",
+      "id": "01g90279gp5sbmfek7wymcsvec"
+    },
+    "method": "GET",
+    "path": "/v1/groups/01g90279gp5sbmfek7wymcsvec",
+    "status": 200,
+    "response": {
+      "id": "01g90279gp5sbmfek7wymcsvec",
+      "name": "Financial Markets",
+      "learningEventUrl": "https://www.coursera.org/learn/financial-markets-global",
+      "designIds": [
+        "01fpwtztwf7sacca5r0c483mnm",
+        "01hz2ej4yzdcfkq9fa78nhyj0x"
+      ],
+      "certificateDesignId": "01fpwtztwf7sacca5r0c483mnm",
+      "badgeDesignId": "01hz2ej4yzdcfkq9fa78nhyj0x",
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  },
+  "update_group": {
+    "config": {
+      "operation": "update_group",
+      "id": "01g90279gp5sbmfek7wymcsvec"
+    },
+    "method": "PATCH",
+    "path": "/v1/groups/01g90279gp5sbmfek7wymcsvec",
+    "status": 200,
+    "response": {
+      "id": "01g90279gp5sbmfek7wymcsvec",
+      "name": "Financial Markets",
+      "learningEventUrl": "https://www.coursera.org/learn/financial-markets-global",
+      "designIds": [
+        "01fpwtztwf7sacca5r0c483mnm",
+        "01hz2ej4yzdcfkq9fa78nhyj0x"
+      ],
+      "certificateDesignId": "01fpwtztwf7sacca5r0c483mnm",
+      "badgeDesignId": "01hz2ej4yzdcfkq9fa78nhyj0x",
+      "createdAt": "2022-01-01T00:00:00.000Z",
+      "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+  }
+}
