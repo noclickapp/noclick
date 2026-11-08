@@ -1,0 +1,629 @@
+[
+  {
+    "operation": "get_user",
+    "config": {
+      "operation": "get_user"
+    },
+    "method": "GET",
+    "path_template": "/prod/user/",
+    "provider_operation": "get-user",
+    "source": "https://developers.aimtell.com/api-reference/openapi.json",
+    "response": {
+      "uid": "exampleUid",
+      "timezone": "America/Los_Angeles",
+      "registration_date": "2024-01-01 00:00:00",
+      "last_login": "2024-01-01 00:00:00",
+      "username": "user@example.com",
+      "auth_token": "exampleAuthToken",
+      "first_name": "Example",
+      "last_name": "User",
+      "trial": 0,
+      "trial_end": "2024-01-01 00:00:00",
+      "teamId": null,
+      "wp": 0,
+      "shopify": 0,
+      "type": "intro"
+    }
+  },
+  {
+    "operation": "list_sites",
+    "config": {
+      "operation": "list_sites",
+      "limit": 2,
+      "skip": 4,
+      "load": "subscriber_count"
+    },
+    "method": "GET",
+    "path_template": "/prod/sites/",
+    "provider_operation": "get-all-websites",
+    "source": "https://developers.aimtell.com/api-reference/sites-openapi.json",
+    "response": [
+      {
+        "id": 123,
+        "uid": "exampleUid",
+        "url": "https://example.com",
+        "name": "Example Site",
+        "icon": "https://cdn.aimtell.io/example/icon.jpg",
+        "promptId": 0,
+        "webPushID": null,
+        "auto_prompt": 1,
+        "createdAt": "2024-01-01 00:00:00",
+        "active": 1
+      },
+      {
+        "id": 456,
+        "uid": "exampleUid",
+        "url": "https://example.com",
+        "name": "Example Site",
+        "icon": "https://cdn.aimtell.io/example/icon.jpg",
+        "promptId": 200,
+        "webPushID": "web.example.aimtell.com",
+        "auto_prompt": 1,
+        "createdAt": "2024-01-01 00:00:00",
+        "active": 1
+      },
+      {
+        "id": 789,
+        "uid": "exampleUid",
+        "url": "https://example.com",
+        "name": "Example Site",
+        "icon": "https://cdn.aimtell.io/example/icon.jpg",
+        "promptId": null,
+        "webPushID": "web.example.aimtell.com",
+        "auto_prompt": 1,
+        "createdAt": "2024-01-01 00:00:00",
+        "active": 1
+      }
+    ]
+  },
+  {
+    "operation": "get_site",
+    "config": {
+      "operation": "get_site",
+      "site_id": "456"
+    },
+    "method": "GET",
+    "path_template": "/prod/site/{id}",
+    "provider_operation": "api-get-website",
+    "source": "https://developers.aimtell.com/api-reference/sites-openapi.json",
+    "response": {
+      "id": 123,
+      "uid": "exampleUid",
+      "url": "https://example.com",
+      "name": "Example Site",
+      "icon": "https://cdn.aimtell.io/example/icon.jpg",
+      "promptId": 456,
+      "webPushID": "web.example.aimtell.com",
+      "auto_prompt": 1,
+      "createdAt": "2024-01-01 00:00:00",
+      "active": 1
+    }
+  },
+  {
+    "operation": "list_variables",
+    "config": {
+      "operation": "list_variables",
+      "site_id": "456"
+    },
+    "method": "GET",
+    "path_template": "/prod/site/variables/{id}",
+    "provider_operation": "api-get-website-custom-variables",
+    "source": "https://developers.aimtell.com/api-reference/sites-openapi.json",
+    "response": [
+      {
+        "id": 123,
+        "id_site": 456,
+        "name": "site_identifier",
+        "value": "example_value",
+        "created_at": "2024-01-01 00:00:00",
+        "updated_at": "2024-01-01 00:00:00",
+        "snippet": "{custom_variable:site_identifier}"
+      },
+      {
+        "id": 124,
+        "id_site": 456,
+        "name": "domain",
+        "value": "example.com",
+        "created_at": "2024-01-01 00:00:00",
+        "updated_at": "2024-01-01 00:00:00",
+        "snippet": "{custom_variable:domain}"
+      },
+      {
+        "id": 125,
+        "id_site": 456,
+        "name": "source",
+        "value": "example_source",
+        "created_at": "2024-01-01 00:00:00",
+        "updated_at": "2024-01-01 00:00:00",
+        "snippet": "{custom_variable:source}"
+      }
+    ]
+  },
+  {
+    "operation": "upsert_variable",
+    "config": {
+      "operation": "upsert_variable",
+      "site_id": "456",
+      "name": "domain",
+      "value": "example.com"
+    },
+    "method": "POST",
+    "path_template": "/prod/site/variables/{id}",
+    "provider_operation": "api-creat-website-custom-variable",
+    "source": "https://developers.aimtell.com/api-reference/sites-openapi.json",
+    "response": true
+  },
+  {
+    "operation": "delete_variable",
+    "config": {
+      "operation": "delete_variable",
+      "site_id": "456",
+      "name": "domain"
+    },
+    "method": "DELETE",
+    "path_template": "/prod/site/variables/{id}",
+    "provider_operation": "api-delete-website-custom-variable",
+    "source": "https://developers.aimtell.com/api-reference/sites-openapi.json",
+    "response": true
+  },
+  {
+    "operation": "send_push",
+    "config": {
+      "operation": "send_push",
+      "site_id": 456,
+      "title": "Example Title",
+      "body": "Example body text",
+      "link": "https://example.com/landing-page",
+      "alias": "email==jack@example.com"
+    },
+    "method": "POST",
+    "path_template": "/prod/push/",
+    "provider_operation": "api-send-push-notification",
+    "source": "https://developers.aimtell.com/api-reference/push-openapi.json",
+    "response": {
+      "result": "success",
+      "message": "Request received. Push sending shortly.",
+      "objectId": "exampleObjectId"
+    }
+  },
+  {
+    "operation": "create_campaign",
+    "config": {
+      "operation": "create_campaign",
+      "site_id": "179",
+      "name": "Campaign 1",
+      "title": "Title",
+      "body": "Body",
+      "link": "https://weblink.com"
+    },
+    "method": "POST",
+    "path_template": "/prod/campaigns/",
+    "provider_operation": "create-campaign",
+    "source": "https://developers.aimtell.com/api-reference/push-openapi.json",
+    "response": {
+      "result": "success",
+      "campaignId": 72129
+    }
+  },
+  {
+    "operation": "get_campaign",
+    "config": {
+      "operation": "get_campaign",
+      "campaign_id": "259",
+      "load": "segments"
+    },
+    "method": "GET",
+    "path_template": "/prod/campaign/{id}",
+    "provider_operation": "get-campaign",
+    "source": "https://developers.aimtell.com/api-reference/push-openapi.json",
+    "response": {
+      "id": 259,
+      "uid": "76cedd11b19e",
+      "idSite": 179,
+      "name": "Sample Campaign #1",
+      "title": "Welcome to Aimtell!",
+      "body": "Got questions? Check out our knowledge base.",
+      "link": "https://kb.aimtell.com",
+      "customIcon": null,
+      "customImage": null,
+      "segments": "245",
+      "conversion_trigger": null,
+      "push_ttl": 0,
+      "auto_hide": null,
+      "collapse_key": null,
+      "schedule_date": "2024-12-11 12:12:00",
+      "ab_version": null,
+      "ab_linked_campaign": null,
+      "push_src": null,
+      "push_src_values": null,
+      "tz_delivery": 0,
+      "sent_date": null,
+      "createdAt": "2015-12-28 17:54:42",
+      "updatedAt": "2015-12-28 17:54:42",
+      "automation": null,
+      "automation_end": null,
+      "actions": null,
+      "status": 4,
+      "shared_id": null,
+      "clicked_a01": null,
+      "clicked_a02": null,
+      "schedule_pretty_time": "06:55 AM",
+      "schedule_pretty_date": "12/28/2015",
+      "campaign_results": {
+        "sent": 27,
+        "delivered": 27,
+        "bounced": 0,
+        "clicked": 2,
+        "clicked_a01": 0,
+        "clicked_a02": 0,
+        "conversions": 0
+      }
+    }
+  },
+  {
+    "operation": "update_campaign",
+    "config": {
+      "operation": "update_campaign",
+      "campaign_id": "259",
+      "title": "Welcome to Aimtell!"
+    },
+    "method": "PUT",
+    "path_template": "/prod/campaign/{id}",
+    "provider_operation": "update-campaign",
+    "source": "https://developers.aimtell.com/api-reference/push-openapi.json",
+    "response": {
+      "result": "success",
+      "campaignId": "133321"
+    }
+  },
+  {
+    "operation": "delete_campaign",
+    "config": {
+      "operation": "delete_campaign",
+      "campaign_id": "80"
+    },
+    "method": "DELETE",
+    "path_template": "/prod/campaign/{id}",
+    "provider_operation": "delete-campaign",
+    "source": "https://developers.aimtell.com/api-reference/push-openapi.json",
+    "response": {
+      "result": "success",
+      "message": "campaign deleted",
+      "campaignId": "80"
+    }
+  },
+  {
+    "operation": "list_campaigns",
+    "config": {
+      "operation": "list_campaigns",
+      "site_id": "179",
+      "limit": 2,
+      "skip": 4
+    },
+    "method": "GET",
+    "path_template": "/prod/campaigns/{id}",
+    "provider_operation": "get-all-campaigns",
+    "source": "https://developers.aimtell.com/api-reference/push-openapi.json",
+    "response": [
+      {
+        "idSite": 179,
+        "uid": "76cedd11b19e",
+        "name": "Campaign 1",
+        "title": "Title",
+        "body": "Body",
+        "link": "https://weblink.com",
+        "id": 1,
+        "segments": "",
+        "ab_linked_campaign": null,
+        "push_src": null,
+        "push_src_values": null,
+        "sent_date": null,
+        "schedule_date": "2024-09-03 12:30",
+        "status": 1,
+        "customIcon": "https://cdn.aimtell.io/user/uploads/siteicons.aimtell.com/icon_40_1443032714..jpg",
+        "customImage": "",
+        "actions": {
+          "a01": {
+            "title": "",
+            "link": ""
+          },
+          "a02": {
+            "title": "",
+            "link": ""
+          }
+        },
+        "collapse_key": null,
+        "createdAt": "2024-09-02 19:18:55",
+        "updatedAt": "2024-09-02 19:18:55"
+      }
+    ]
+  },
+  {
+    "operation": "get_campaign_clicks",
+    "config": {
+      "operation": "get_campaign_clicks",
+      "campaign_id": "259"
+    },
+    "method": "GET",
+    "path_template": "/prod/campaign/{id}/clicks",
+    "provider_operation": "get-campaign-clicks",
+    "source": "https://developers.aimtell.com/api-reference/push-openapi.json",
+    "response": [
+      {
+        "subscriber_uid": "63779e18-6c2c-4dd0-da76-ace61926fc53",
+        "created_at": "2017-02-16 18:13:54"
+      },
+      {
+        "subscriber_uid": "514870c5-665e-effb-34d9-b8bbd9dd3467",
+        "created_at": "2017-02-16 13:11:21"
+      },
+      {
+        "subscriber_uid": "59bc3f07-915c-e1c3-8a81-6ad82ad783a0",
+        "created_at": "2017-02-15 21:01:58"
+      },
+      {
+        "subscriber_uid": "da554ad4-1f77-dde0-b598-d0a386883ab4",
+        "created_at": "2017-02-14 23:33:16"
+      },
+      {
+        "subscriber_uid": "958645fc-9e85-b3a8-2a15-35d278417be8",
+        "created_at": "2017-02-14 22:12:21"
+      }
+    ]
+  },
+  {
+    "operation": "get_campaign_results",
+    "config": {
+      "operation": "get_campaign_results",
+      "campaign_id": "259",
+      "start_date": "03/05/2017",
+      "end_date": "03/09/2017",
+      "include_shared": 1
+    },
+    "method": "GET",
+    "path_template": "/prod/campaign/{id}/results",
+    "provider_operation": "get-manual-campaign-results-by-day",
+    "source": "https://developers.aimtell.com/api-reference/push-openapi.json",
+    "response": {
+      "sent": {
+        "03/05/2017": 9,
+        "03/06/2017": 8,
+        "03/07/2017": 3,
+        "03/08/2017": 4,
+        "03/09/2017": 10
+      },
+      "delivered": {
+        "03/05/2017": 9,
+        "03/06/2017": 8,
+        "03/07/2017": 3,
+        "03/08/2017": 4,
+        "03/09/2017": 10
+      },
+      "bounced": {
+        "03/05/2017": 0,
+        "03/06/2017": 0,
+        "03/07/2017": 0,
+        "03/08/2017": 0,
+        "03/09/2017": 0
+      },
+      "clicked": {
+        "03/05/2017": 6,
+        "03/06/2017": 8,
+        "03/07/2017": 2,
+        "03/08/2017": 4,
+        "03/09/2017": 5
+      },
+      "conversions": {
+        "03/05/2017": 2,
+        "03/06/2017": 8,
+        "03/07/2017": 2,
+        "03/08/2017": 3,
+        "03/09/2017": 5
+      }
+    }
+  },
+  {
+    "operation": "list_segments",
+    "config": {
+      "operation": "list_segments",
+      "site_id": "456"
+    },
+    "method": "GET",
+    "path_template": "/prod/segments/{idSite}",
+    "provider_operation": "get-available-segments",
+    "source": "https://developers.aimtell.com/api-reference/segments-openapi.json",
+    "response": [
+      {
+        "idsegment": 123,
+        "owner": "exampleUid",
+        "name": "Example Segment",
+        "definition": "region==California",
+        "idSite": 456,
+        "createdAt": "2024-01-01 00:00:00",
+        "updatedAt": "2024-01-01 00:00:00",
+        "deleted": 0
+      },
+      {
+        "idsegment": 456,
+        "owner": "exampleUid",
+        "name": "Example Segment",
+        "definition": "eventCategory==video,eventAction==tutorial",
+        "idSite": 456,
+        "createdAt": "2024-01-01 00:00:00",
+        "updatedAt": "2024-01-01 00:00:00",
+        "deleted": 0
+      },
+      {
+        "idsegment": 789,
+        "owner": "exampleUid",
+        "name": "Example Segment",
+        "definition": "pageUrl==https://example.com/",
+        "idSite": 456,
+        "createdAt": "2024-01-01 00:00:00",
+        "updatedAt": "2024-01-01 00:00:00",
+        "deleted": 0
+      }
+    ]
+  },
+  {
+    "operation": "get_segment",
+    "config": {
+      "operation": "get_segment",
+      "segment_id": "123"
+    },
+    "method": "GET",
+    "path_template": "/prod/segment/{id}",
+    "provider_operation": "get-segment",
+    "source": "https://developers.aimtell.com/api-reference/segments-openapi.json",
+    "response": {
+      "idsegment": 123,
+      "owner": "exampleUid",
+      "name": "Example Segment",
+      "definition": "region==California",
+      "idSite": 456,
+      "createdAt": "2024-01-01 00:00:00",
+      "updatedAt": "2024-01-01 00:00:00",
+      "deleted": 0
+    }
+  },
+  {
+    "operation": "create_segment",
+    "config": {
+      "operation": "create_segment",
+      "site_id": "456",
+      "name": "Example Segment",
+      "definition": "region==California"
+    },
+    "method": "POST",
+    "path_template": "/prod/segments/",
+    "provider_operation": "create-segment",
+    "source": "https://developers.aimtell.com/api-reference/segments-openapi.json",
+    "response": {
+      "result": "success",
+      "message": "Successfully created",
+      "id": 123
+    }
+  },
+  {
+    "operation": "update_segment",
+    "config": {
+      "operation": "update_segment",
+      "segment_id": "123",
+      "definition": "region==California"
+    },
+    "method": "PUT",
+    "path_template": "/prod/segment/{id}",
+    "provider_operation": "update-segment",
+    "source": "https://developers.aimtell.com/api-reference/segments-openapi.json",
+    "response": {
+      "result": "success",
+      "idSegment": "24",
+      "message": "Successfully updated segment"
+    }
+  },
+  {
+    "operation": "delete_segment",
+    "config": {
+      "operation": "delete_segment",
+      "segment_id": "5"
+    },
+    "method": "DELETE",
+    "path_template": "/prod/segment/{id}",
+    "provider_operation": "delete-segment",
+    "source": "https://developers.aimtell.com/api-reference/segments-openapi.json",
+    "response": {
+      "result": "success",
+      "idSegment": "5",
+      "message": "Successfully removed segment"
+    }
+  },
+  {
+    "operation": "list_subscribers",
+    "config": {
+      "operation": "list_subscribers",
+      "site_id": 456,
+      "limit": 2,
+      "skip": 0,
+      "include": "attributes,notifications",
+      "segment_id": 123,
+      "subscriber_id": "exampleSubscriberId"
+    },
+    "method": "GET",
+    "path_template": "/prod/subscribers/{id}",
+    "provider_operation": "get-subscribers",
+    "source": "https://developers.aimtell.com/api-reference/segments-openapi.json",
+    "response": {
+      "count": 1000,
+      "skip": 0,
+      "limit": 2,
+      "segmentId": null,
+      "filter": null,
+      "subscribers": [
+        {
+          "subscriberId": "exampleSubscriberId",
+          "deviceType": "desktop",
+          "browserName": "Chrome",
+          "operatingSystemCode": "Windows",
+          "browserLang": "en-US",
+          "region": "California",
+          "city": "Los Angeles",
+          "ip": "0.0.0.0",
+          "country": "United States",
+          "postal": "",
+          "idSite": "456",
+          "alias": {
+            "user": "example_user",
+            "email_hash": "abc123example"
+          },
+          "attributes": {
+            "username": "example_user",
+            "subscription_url": "https://example.com/landing-page"
+          },
+          "createdAt": "2024-01-01 00:00:00",
+          "notifications": [
+            {
+              "title": "Example Title",
+              "body": "Example body text",
+              "icon": "https://cdn.aimtell.io/example/icon.jpg",
+              "link": "https://example.com/landing-page",
+              "read": "1",
+              "timestamp": 1704067200
+            }
+          ]
+        },
+        {
+          "subscriberId": "exampleSubscriberId2",
+          "deviceType": "desktop",
+          "browserName": "Chrome",
+          "operatingSystemCode": "Mac OS X",
+          "browserLang": "en-US",
+          "region": "California",
+          "city": "Los Angeles",
+          "ip": "0.0.0.0",
+          "country": "United States",
+          "postal": "",
+          "idSite": "456",
+          "alias": {
+            "user": "example_user_2",
+            "email_hash": "abc123example"
+          },
+          "attributes": {
+            "username": "example_user_2",
+            "subscription_url": "https://example.com/landing-page"
+          },
+          "createdAt": "2024-01-01 00:00:00",
+          "notifications": [
+            {
+              "title": "Example Title",
+              "body": "Example body text",
+              "icon": "https://cdn.aimtell.io/example/icon.jpg",
+              "link": "https://example.com/landing-page",
+              "read": "0",
+              "timestamp": 1704067200
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

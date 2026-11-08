@@ -1,0 +1,1012 @@
+{
+  "$defs": {
+    "AimtellAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "aimtell_api_key",
+          "default": "aimtell_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Aimtell API Key",
+      "type": "object",
+      "x-credential-instructions": "In the Aimtell dashboard, open Settings > API Key. Paste your API key. NoClick sends it in the X-Authorization-Api-Key header to api.aimtell.com and reads your websites to check the connection.",
+      "x-credential-url": "https://developers.aimtell.com/api-reference/introduction"
+    },
+    "CreateCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "site_id": {
+          "description": "Aimtell website ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Site Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_campaign",
+          "default": "create_campaign",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body"
+        },
+        "link": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Link"
+        },
+        "segments": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segments"
+        },
+        "status": {
+          "const": "1",
+          "default": "1",
+          "description": "Creates a draft campaign. Schedule it in Aimtell.",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id",
+        "name"
+      ],
+      "title": "CreateCampaign",
+      "type": "object"
+    },
+    "CreateSegment": {
+      "additionalProperties": false,
+      "properties": {
+        "site_id": {
+          "description": "Aimtell website ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Site Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_segment",
+          "default": "create_segment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "definition": {
+          "description": "Aimtell segment definition, for example region==California.",
+          "minLength": 1,
+          "title": "Definition",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id",
+        "name",
+        "definition"
+      ],
+      "title": "CreateSegment",
+      "type": "object"
+    },
+    "DeleteCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_campaign",
+          "default": "delete_campaign",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "DeleteCampaign",
+      "type": "object"
+    },
+    "DeleteSegment": {
+      "additionalProperties": false,
+      "properties": {
+        "segment_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_segment",
+          "default": "delete_segment",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "segment_id"
+      ],
+      "title": "DeleteSegment",
+      "type": "object"
+    },
+    "DeleteVariable": {
+      "additionalProperties": false,
+      "properties": {
+        "site_id": {
+          "description": "Aimtell website ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Site Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_variable",
+          "default": "delete_variable",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id",
+        "name"
+      ],
+      "title": "DeleteVariable",
+      "type": "object"
+    },
+    "GetCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Operation",
+          "type": "string"
+        },
+        "load": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Load"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetCampaign",
+      "type": "object"
+    },
+    "GetCampaignClicks": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_campaign_clicks",
+          "default": "get_campaign_clicks",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetCampaignClicks",
+      "type": "object"
+    },
+    "GetCampaignResults": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_campaign_results",
+          "default": "get_campaign_results",
+          "title": "Operation",
+          "type": "string"
+        },
+        "start_date": {
+          "description": "Start date in the format accepted by Aimtell.",
+          "minLength": 1,
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End date in the format accepted by Aimtell.",
+          "minLength": 1,
+          "title": "End Date",
+          "type": "string"
+        },
+        "include_shared": {
+          "default": 0,
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Include Shared",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "start_date",
+        "end_date"
+      ],
+      "title": "GetCampaignResults",
+      "type": "object"
+    },
+    "GetSegment": {
+      "additionalProperties": false,
+      "properties": {
+        "segment_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_segment",
+          "default": "get_segment",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "segment_id"
+      ],
+      "title": "GetSegment",
+      "type": "object"
+    },
+    "GetSite": {
+      "additionalProperties": false,
+      "properties": {
+        "site_id": {
+          "description": "Aimtell website ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Site Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_site",
+          "default": "get_site",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "GetSite",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetUser",
+      "type": "object"
+    },
+    "ListCampaigns": {
+      "additionalProperties": false,
+      "properties": {
+        "site_id": {
+          "description": "Aimtell website ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Site Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "ListCampaigns",
+      "type": "object"
+    },
+    "ListSegments": {
+      "additionalProperties": false,
+      "properties": {
+        "site_id": {
+          "description": "Aimtell website ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Site Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_segments",
+          "default": "list_segments",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "ListSegments",
+      "type": "object"
+    },
+    "ListSites": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_sites",
+          "default": "list_sites",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "load": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional information, such as subscriber_count.",
+          "title": "Load"
+        }
+      },
+      "title": "ListSites",
+      "type": "object"
+    },
+    "ListSubscribers": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_subscribers",
+          "default": "list_subscribers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "site_id": {
+          "minimum": 1,
+          "title": "Site Id",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "enum": [
+                "attributes",
+                "notifications",
+                "attributes,notifications"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include",
+          "enum": [
+            "attributes",
+            "notifications",
+            "attributes,notifications"
+          ],
+          "x-enum-searchable": true
+        },
+        "segment_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segment Id"
+        },
+        "subscriber_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subscriber Id"
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "ListSubscribers",
+      "type": "object"
+    },
+    "ListVariables": {
+      "additionalProperties": false,
+      "properties": {
+        "site_id": {
+          "description": "Aimtell website ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Site Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_variables",
+          "default": "list_variables",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "ListVariables",
+      "type": "object"
+    },
+    "SendPush": {
+      "additionalProperties": false,
+      "description": "Queue one push for an explicit audience; delivery is not verified.",
+      "properties": {
+        "operation": {
+          "const": "send_push",
+          "default": "send_push",
+          "title": "Operation",
+          "type": "string"
+        },
+        "site_id": {
+          "minimum": 1,
+          "title": "Site Id",
+          "type": "integer"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "body": {
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "link": {
+          "minLength": 1,
+          "title": "Link",
+          "type": "string"
+        },
+        "subscriber_uids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subscriber Uids"
+        },
+        "segment_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segment Id"
+        },
+        "alias": {
+          "anyOf": [
+            {
+              "pattern": "^(user|email)==.+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alias"
+        },
+        "push_ttl": {
+          "default": 604800,
+          "minimum": 0,
+          "title": "Push Ttl",
+          "type": "integer"
+        },
+        "auto_hide": {
+          "anyOf": [
+            {
+              "maximum": 255,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Auto Hide"
+        },
+        "collapse_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Collapse Key"
+        },
+        "custom_icon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Icon"
+        },
+        "custom_image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Image"
+        }
+      },
+      "required": [
+        "site_id",
+        "title",
+        "body",
+        "link"
+      ],
+      "title": "SendPush",
+      "type": "object"
+    },
+    "UpdateCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_campaign",
+          "default": "update_campaign",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body"
+        },
+        "link": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Link"
+        },
+        "segments": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segments"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "UpdateCampaign",
+      "type": "object"
+    },
+    "UpdateSegment": {
+      "additionalProperties": false,
+      "properties": {
+        "segment_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_segment",
+          "default": "update_segment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "definition": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Definition"
+        }
+      },
+      "required": [
+        "segment_id"
+      ],
+      "title": "UpdateSegment",
+      "type": "object"
+    },
+    "UpsertVariable": {
+      "additionalProperties": false,
+      "properties": {
+        "site_id": {
+          "description": "Aimtell website ID.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[0-9]+$",
+          "title": "Site Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "upsert_variable",
+          "default": "upsert_variable",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id",
+        "name",
+        "value"
+      ],
+      "title": "UpsertVariable",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_campaign": "#/$defs/CreateCampaign",
+          "create_segment": "#/$defs/CreateSegment",
+          "delete_campaign": "#/$defs/DeleteCampaign",
+          "delete_segment": "#/$defs/DeleteSegment",
+          "delete_variable": "#/$defs/DeleteVariable",
+          "get_campaign": "#/$defs/GetCampaign",
+          "get_campaign_clicks": "#/$defs/GetCampaignClicks",
+          "get_campaign_results": "#/$defs/GetCampaignResults",
+          "get_segment": "#/$defs/GetSegment",
+          "get_site": "#/$defs/GetSite",
+          "get_user": "#/$defs/GetUser",
+          "list_campaigns": "#/$defs/ListCampaigns",
+          "list_segments": "#/$defs/ListSegments",
+          "list_sites": "#/$defs/ListSites",
+          "list_subscribers": "#/$defs/ListSubscribers",
+          "list_variables": "#/$defs/ListVariables",
+          "send_push": "#/$defs/SendPush",
+          "update_campaign": "#/$defs/UpdateCampaign",
+          "update_segment": "#/$defs/UpdateSegment",
+          "upsert_variable": "#/$defs/UpsertVariable"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/ListSites"
+        },
+        {
+          "$ref": "#/$defs/GetSite"
+        },
+        {
+          "$ref": "#/$defs/ListVariables"
+        },
+        {
+          "$ref": "#/$defs/UpsertVariable"
+        },
+        {
+          "$ref": "#/$defs/DeleteVariable"
+        },
+        {
+          "$ref": "#/$defs/SendPush"
+        },
+        {
+          "$ref": "#/$defs/CreateCampaign"
+        },
+        {
+          "$ref": "#/$defs/GetCampaign"
+        },
+        {
+          "$ref": "#/$defs/UpdateCampaign"
+        },
+        {
+          "$ref": "#/$defs/DeleteCampaign"
+        },
+        {
+          "$ref": "#/$defs/ListCampaigns"
+        },
+        {
+          "$ref": "#/$defs/GetCampaignClicks"
+        },
+        {
+          "$ref": "#/$defs/GetCampaignResults"
+        },
+        {
+          "$ref": "#/$defs/ListSegments"
+        },
+        {
+          "$ref": "#/$defs/GetSegment"
+        },
+        {
+          "$ref": "#/$defs/CreateSegment"
+        },
+        {
+          "$ref": "#/$defs/UpdateSegment"
+        },
+        {
+          "$ref": "#/$defs/DeleteSegment"
+        },
+        {
+          "$ref": "#/$defs/ListSubscribers"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AimtellAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Aimtell Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
