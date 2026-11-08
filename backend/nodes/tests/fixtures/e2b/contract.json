@@ -1,0 +1,164 @@
+{
+  "source": {
+    "version": "0.1.0",
+    "title": "E2B API"
+  },
+  "source_url": "https://raw.githubusercontent.com/e2b-dev/E2B/main/spec/openapi.yml",
+  "operations": {
+    "list_sandboxes": {
+      "method": "GET",
+      "path": "/v2/sandboxes",
+      "responses": {
+        "200": "array"
+      }
+    },
+    "create_sandbox": {
+      "method": "POST",
+      "path": "/sandboxes",
+      "responses": {
+        "201": "object"
+      }
+    },
+    "get_sandbox": {
+      "method": "GET",
+      "path": "/sandboxes/{sandboxID}",
+      "responses": {
+        "200": "object"
+      }
+    },
+    "kill_sandbox": {
+      "method": "DELETE",
+      "path": "/sandboxes/{sandboxID}",
+      "responses": {
+        "204": null
+      }
+    },
+    "pause_sandbox": {
+      "method": "POST",
+      "path": "/sandboxes/{sandboxID}/pause",
+      "responses": {
+        "204": null
+      }
+    },
+    "connect_sandbox": {
+      "method": "POST",
+      "path": "/sandboxes/{sandboxID}/connect",
+      "responses": {
+        "200": "object",
+        "201": "object"
+      }
+    },
+    "set_sandbox_timeout": {
+      "method": "POST",
+      "path": "/sandboxes/{sandboxID}/timeout",
+      "responses": {
+        "204": null
+      }
+    },
+    "get_sandbox_metrics": {
+      "method": "GET",
+      "path": "/sandboxes/{sandboxID}/metrics",
+      "responses": {
+        "200": "array"
+      }
+    },
+    "create_snapshot": {
+      "method": "POST",
+      "path": "/sandboxes/{sandboxID}/snapshots",
+      "responses": {
+        "201": "object"
+      }
+    },
+    "list_snapshots": {
+      "method": "GET",
+      "path": "/snapshots",
+      "responses": {
+        "200": "array"
+      }
+    },
+    "list_templates": {
+      "method": "GET",
+      "path": "/v2/templates",
+      "responses": {
+        "200": "array"
+      }
+    },
+    "list_template_builds": {
+      "method": "GET",
+      "path": "/templates/{templateID}",
+      "responses": {
+        "200": "object"
+      }
+    },
+    "delete_template": {
+      "method": "DELETE",
+      "path": "/templates/{templateID}",
+      "responses": {
+        "204": null
+      }
+    },
+    "update_template": {
+      "method": "PATCH",
+      "path": "/v2/templates/{templateID}",
+      "responses": {
+        "200": "object"
+      }
+    },
+    "get_build_status": {
+      "method": "GET",
+      "path": "/templates/{templateID}/builds/{buildID}/status",
+      "responses": {
+        "200": "object"
+      }
+    },
+    "list_team_events": {
+      "method": "GET",
+      "path": "/events/sandboxes",
+      "responses": {
+        "200": "array"
+      }
+    },
+    "list_sandbox_events": {
+      "method": "GET",
+      "path": "/events/sandboxes/{sandboxID}",
+      "responses": {
+        "200": "array"
+      }
+    },
+    "list_webhooks": {
+      "method": "GET",
+      "path": "/events/webhooks",
+      "responses": {
+        "200": "array"
+      }
+    },
+    "get_webhook": {
+      "method": "GET",
+      "path": "/events/webhooks/{webhookID}",
+      "responses": {
+        "200": "object"
+      }
+    },
+    "create_webhook": {
+      "method": "POST",
+      "path": "/events/webhooks",
+      "responses": {
+        "201": "object"
+      }
+    },
+    "update_webhook": {
+      "method": "PATCH",
+      "path": "/events/webhooks/{webhookID}",
+      "responses": {
+        "200": "object"
+      }
+    },
+    "delete_webhook": {
+      "method": "DELETE",
+      "path": "/events/webhooks/{webhookID}",
+      "responses": {
+        "200": null
+      }
+    }
+  }
+}

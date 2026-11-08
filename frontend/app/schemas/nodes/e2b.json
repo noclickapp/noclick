@@ -1,0 +1,1109 @@
+{
+  "$defs": {
+    "ConnectSandbox": {
+      "additionalProperties": false,
+      "properties": {
+        "sandbox_id": {
+          "description": "E2B sandbox ID",
+          "minLength": 1,
+          "title": "Sandbox Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "connect_sandbox",
+          "default": "connect_sandbox",
+          "title": "Connect Sandbox",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "timeout": {
+          "default": 300,
+          "description": "Lifetime in seconds; resumes a paused sandbox",
+          "minimum": 0,
+          "title": "Timeout",
+          "type": "integer"
+        },
+        "memory": {
+          "default": true,
+          "title": "Memory",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "sandbox_id"
+      ],
+      "title": "ConnectSandbox",
+      "type": "object"
+    },
+    "CreateSandbox": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_sandbox",
+          "default": "create_sandbox",
+          "title": "Create Sandbox",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "description": "Template ID or alias, for example base",
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "timeout": {
+          "default": 300,
+          "description": "Lifetime in seconds",
+          "minimum": 0,
+          "title": "Timeout",
+          "type": "integer"
+        },
+        "auto_pause": {
+          "default": false,
+          "title": "Auto Pause",
+          "type": "boolean"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "env_vars": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Env Vars"
+        },
+        "allow_internet_access": {
+          "default": true,
+          "title": "Allow Internet Access",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "CreateSandbox",
+      "type": "object"
+    },
+    "CreateSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "sandbox_id": {
+          "description": "E2B sandbox ID",
+          "minLength": 1,
+          "title": "Sandbox Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_snapshot",
+          "default": "create_snapshot",
+          "title": "Create Snapshot",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "memory": {
+          "default": true,
+          "description": "Capture memory; false persists only the filesystem",
+          "title": "Memory",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "sandbox_id"
+      ],
+      "title": "CreateSnapshot",
+      "type": "object"
+    },
+    "CreateWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "title": "Url",
+          "type": "string"
+        },
+        "events": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Events",
+          "type": "array"
+        },
+        "signature_secret": {
+          "minLength": 1,
+          "title": "Signature Secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "enabled": {
+          "default": true,
+          "title": "Enabled",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "url",
+        "events",
+        "signature_secret"
+      ],
+      "title": "CreateWebhook",
+      "type": "object"
+    },
+    "DeleteTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "template_id": {
+          "description": "E2B template ID",
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "title": "Delete Template",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "DeleteTemplate",
+      "type": "object"
+    },
+    "DeleteWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "webhook_id": {
+          "description": "Webhook UUID",
+          "format": "uuid",
+          "title": "Webhook Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "DeleteWebhook",
+      "type": "object"
+    },
+    "E2BAPIKeyCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "e2b_api_key",
+          "default": "e2b_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Paste your E2B API key. It is sent in the X-API-Key header.",
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "E2B API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy an API key from your E2B dashboard and paste it here.",
+      "x-credential-url": "https://console.e2b.dev/keys"
+    },
+    "GetBuildStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "template_id": {
+          "description": "E2B template ID",
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_build_status",
+          "default": "get_build_status",
+          "title": "Get Build Status",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "build_id": {
+          "minLength": 1,
+          "title": "Build Id",
+          "type": "string"
+        },
+        "logs_offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Logs Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "level": {
+          "anyOf": [
+            {
+              "enum": [
+                "debug",
+                "info",
+                "warn",
+                "error"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Level",
+          "enum": [
+            "debug",
+            "info",
+            "warn",
+            "error"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "template_id",
+        "build_id"
+      ],
+      "title": "GetBuildStatus",
+      "type": "object"
+    },
+    "GetSandbox": {
+      "additionalProperties": false,
+      "properties": {
+        "sandbox_id": {
+          "description": "E2B sandbox ID",
+          "minLength": 1,
+          "title": "Sandbox Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_sandbox",
+          "default": "get_sandbox",
+          "title": "Get Sandbox",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "sandbox_id"
+      ],
+      "title": "GetSandbox",
+      "type": "object"
+    },
+    "GetSandboxMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "sandbox_id": {
+          "description": "E2B sandbox ID",
+          "minLength": 1,
+          "title": "Sandbox Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_sandbox_metrics",
+          "default": "get_sandbox_metrics",
+          "title": "Get Sandbox Metrics",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix seconds",
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix seconds",
+          "title": "End"
+        }
+      },
+      "required": [
+        "sandbox_id"
+      ],
+      "title": "GetSandboxMetrics",
+      "type": "object"
+    },
+    "GetWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "webhook_id": {
+          "description": "Webhook UUID",
+          "format": "uuid",
+          "title": "Webhook Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_webhook",
+          "default": "get_webhook",
+          "title": "Get Webhook",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "GetWebhook",
+      "type": "object"
+    },
+    "KillSandbox": {
+      "additionalProperties": false,
+      "properties": {
+        "sandbox_id": {
+          "description": "E2B sandbox ID",
+          "minLength": 1,
+          "title": "Sandbox Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "kill_sandbox",
+          "default": "kill_sandbox",
+          "title": "Kill Sandbox",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "sandbox_id"
+      ],
+      "title": "KillSandbox",
+      "type": "object"
+    },
+    "ListSandboxEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "order_asc": {
+          "default": false,
+          "title": "Order Asc",
+          "type": "boolean"
+        },
+        "types": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeatable event-type filter",
+          "title": "Types"
+        },
+        "sandbox_id": {
+          "description": "E2B sandbox ID",
+          "minLength": 1,
+          "title": "Sandbox Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_sandbox_events",
+          "default": "list_sandbox_events",
+          "title": "List Sandbox Events",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "sandbox_id"
+      ],
+      "title": "ListSandboxEvents",
+      "type": "object"
+    },
+    "ListSandboxes": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum records in this page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "X-Next-Token returned by the preceding page",
+          "title": "Next Token"
+        },
+        "operation": {
+          "const": "list_sandboxes",
+          "default": "list_sandboxes",
+          "title": "List Sandboxes",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL-encoded metadata filter, e.g. user=abc&app=prod",
+          "title": "Metadata"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "running",
+                  "paused"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "template": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Template"
+        }
+      },
+      "title": "ListSandboxes",
+      "type": "object"
+    },
+    "ListSnapshots": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum records in this page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "X-Next-Token returned by the preceding page",
+          "title": "Next Token"
+        },
+        "operation": {
+          "const": "list_snapshots",
+          "default": "list_snapshots",
+          "title": "List Snapshots",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sandbox_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sandbox Id"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "ListSnapshots",
+      "type": "object"
+    },
+    "ListTeamEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "order_asc": {
+          "default": false,
+          "title": "Order Asc",
+          "type": "boolean"
+        },
+        "types": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeatable event-type filter",
+          "title": "Types"
+        },
+        "operation": {
+          "const": "list_team_events",
+          "default": "list_team_events",
+          "title": "List Team Events",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTeamEvents",
+      "type": "object"
+    },
+    "ListTemplateBuilds": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum records in this page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "X-Next-Token returned by the preceding page",
+          "title": "Next Token"
+        },
+        "template_id": {
+          "description": "E2B template ID",
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_template_builds",
+          "default": "list_template_builds",
+          "title": "List Template Builds",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "ListTemplateBuilds",
+      "type": "object"
+    },
+    "ListTemplates": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Maximum records in this page",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "next_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "X-Next-Token returned by the preceding page",
+          "title": "Next Token"
+        },
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "List Templates",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTemplates",
+      "type": "object"
+    },
+    "ListWebhooks": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListWebhooks",
+      "type": "object"
+    },
+    "PauseSandbox": {
+      "additionalProperties": false,
+      "properties": {
+        "sandbox_id": {
+          "description": "E2B sandbox ID",
+          "minLength": 1,
+          "title": "Sandbox Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "pause_sandbox",
+          "default": "pause_sandbox",
+          "title": "Pause Sandbox",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "memory": {
+          "default": true,
+          "description": "Persist memory as well as disk; false loses running processes on resume",
+          "title": "Memory",
+          "type": "boolean"
+        },
+        "require_healthy_guest": {
+          "default": false,
+          "title": "Require Healthy Guest",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "sandbox_id"
+      ],
+      "title": "PauseSandbox",
+      "type": "object"
+    },
+    "SetSandboxTimeout": {
+      "additionalProperties": false,
+      "properties": {
+        "sandbox_id": {
+          "description": "E2B sandbox ID",
+          "minLength": 1,
+          "title": "Sandbox Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_sandbox_timeout",
+          "default": "set_sandbox_timeout",
+          "title": "Set Sandbox Timeout",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "timeout": {
+          "description": "Seconds from this request until expiry",
+          "minimum": 0,
+          "title": "Timeout",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sandbox_id",
+        "timeout"
+      ],
+      "title": "SetSandboxTimeout",
+      "type": "object"
+    },
+    "UpdateTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "template_id": {
+          "description": "E2B template ID",
+          "minLength": 1,
+          "title": "Template Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_template",
+          "default": "update_template",
+          "title": "Update Template",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "public": {
+          "description": "Whether other teams may access the template",
+          "title": "Public",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "template_id",
+        "public"
+      ],
+      "title": "UpdateTemplate",
+      "type": "object"
+    },
+    "UpdateWebhook": {
+      "additionalProperties": false,
+      "properties": {
+        "webhook_id": {
+          "description": "Webhook UUID",
+          "format": "uuid",
+          "title": "Webhook Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_webhook",
+          "default": "update_webhook",
+          "title": "Update Webhook",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enabled"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Url"
+        },
+        "events": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Events"
+        },
+        "signature_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signature Secret",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "UpdateWebhook",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "connect_sandbox": "#/$defs/ConnectSandbox",
+          "create_sandbox": "#/$defs/CreateSandbox",
+          "create_snapshot": "#/$defs/CreateSnapshot",
+          "create_webhook": "#/$defs/CreateWebhook",
+          "delete_template": "#/$defs/DeleteTemplate",
+          "delete_webhook": "#/$defs/DeleteWebhook",
+          "get_build_status": "#/$defs/GetBuildStatus",
+          "get_sandbox": "#/$defs/GetSandbox",
+          "get_sandbox_metrics": "#/$defs/GetSandboxMetrics",
+          "get_webhook": "#/$defs/GetWebhook",
+          "kill_sandbox": "#/$defs/KillSandbox",
+          "list_sandbox_events": "#/$defs/ListSandboxEvents",
+          "list_sandboxes": "#/$defs/ListSandboxes",
+          "list_snapshots": "#/$defs/ListSnapshots",
+          "list_team_events": "#/$defs/ListTeamEvents",
+          "list_template_builds": "#/$defs/ListTemplateBuilds",
+          "list_templates": "#/$defs/ListTemplates",
+          "list_webhooks": "#/$defs/ListWebhooks",
+          "pause_sandbox": "#/$defs/PauseSandbox",
+          "set_sandbox_timeout": "#/$defs/SetSandboxTimeout",
+          "update_template": "#/$defs/UpdateTemplate",
+          "update_webhook": "#/$defs/UpdateWebhook"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListSandboxes"
+        },
+        {
+          "$ref": "#/$defs/CreateSandbox"
+        },
+        {
+          "$ref": "#/$defs/GetSandbox"
+        },
+        {
+          "$ref": "#/$defs/KillSandbox"
+        },
+        {
+          "$ref": "#/$defs/PauseSandbox"
+        },
+        {
+          "$ref": "#/$defs/ConnectSandbox"
+        },
+        {
+          "$ref": "#/$defs/SetSandboxTimeout"
+        },
+        {
+          "$ref": "#/$defs/GetSandboxMetrics"
+        },
+        {
+          "$ref": "#/$defs/CreateSnapshot"
+        },
+        {
+          "$ref": "#/$defs/ListSnapshots"
+        },
+        {
+          "$ref": "#/$defs/ListTemplates"
+        },
+        {
+          "$ref": "#/$defs/ListTemplateBuilds"
+        },
+        {
+          "$ref": "#/$defs/DeleteTemplate"
+        },
+        {
+          "$ref": "#/$defs/UpdateTemplate"
+        },
+        {
+          "$ref": "#/$defs/GetBuildStatus"
+        },
+        {
+          "$ref": "#/$defs/ListTeamEvents"
+        },
+        {
+          "$ref": "#/$defs/ListSandboxEvents"
+        },
+        {
+          "$ref": "#/$defs/ListWebhooks"
+        },
+        {
+          "$ref": "#/$defs/GetWebhook"
+        },
+        {
+          "$ref": "#/$defs/CreateWebhook"
+        },
+        {
+          "$ref": "#/$defs/UpdateWebhook"
+        },
+        {
+          "$ref": "#/$defs/DeleteWebhook"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/E2BAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "E2b Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a sandbox from the base template",
+    "Pause this sandbox",
+    "List my sandbox events"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
