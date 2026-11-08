@@ -1,0 +1,783 @@
+{
+  "$defs": {
+    "CancelOrder": {
+      "additionalProperties": false,
+      "description": "Cancel one open order; fills may race with cancellation.",
+      "properties": {
+        "operation": {
+          "const": "cancel_order",
+          "default": "cancel_order",
+          "title": "Operation",
+          "type": "string"
+        },
+        "order_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Order Id",
+          "type": "string"
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Id"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "CancelOrder",
+      "type": "object"
+    },
+    "CoinbaseExchangeCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "coinbase_exchange_api_key",
+          "default": "coinbase_exchange_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_secret": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API secret",
+          "type": "string",
+          "ui:help": "Paste the base64 secret exactly as Coinbase Exchange issued it.",
+          "ui:widget": "password"
+        },
+        "passphrase": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Passphrase",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key",
+        "api_secret",
+        "passphrase"
+      ],
+      "title": "Coinbase Exchange API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Coinbase Exchange API key, base64 secret and passphrase. These are Exchange credentials, not a CDP private key or Advanced Trade key. Enable View for account reads and connection verification, and Trade for order creation/cancellation. No transfer permission is needed. Requests go only to api.exchange.coinbase.com. Account reads prove access to the key's profile, not write permissions or access to every portfolio.",
+      "x-credential-url": "https://exchange.coinbase.com/profile/api"
+    },
+    "CreateOrder": {
+      "additionalProperties": false,
+      "description": "Place a limit order. An accepted order does not mean it has filled.",
+      "properties": {
+        "operation": {
+          "const": "create_order",
+          "default": "create_order",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Product Id",
+          "type": "string"
+        },
+        "side": {
+          "enum": [
+            "buy",
+            "sell"
+          ],
+          "title": "Side",
+          "type": "string"
+        },
+        "price": {
+          "maxLength": 40,
+          "minLength": 1,
+          "pattern": "^[0-9]+(?:\\.[0-9]+)?$",
+          "title": "Price",
+          "type": "string"
+        },
+        "size": {
+          "maxLength": 40,
+          "minLength": 1,
+          "pattern": "^[0-9]+(?:\\.[0-9]+)?$",
+          "title": "Size",
+          "type": "string"
+        },
+        "client_oid": {
+          "description": "Your unique UUID for reconciling an uncertain order outcome before retrying.",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Client Oid",
+          "type": "string"
+        },
+        "post_only": {
+          "default": false,
+          "title": "Post Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "product_id",
+        "side",
+        "price",
+        "size",
+        "client_oid"
+      ],
+      "title": "CreateOrder",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string"
+        },
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Account Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetCurrency": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_currency",
+          "default": "get_currency",
+          "title": "Operation",
+          "type": "string"
+        },
+        "currency_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Currency Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "currency_id"
+      ],
+      "title": "GetCurrency",
+      "type": "object"
+    },
+    "GetFees": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_fees",
+          "default": "get_fees",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetFees",
+      "type": "object"
+    },
+    "GetOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Operation",
+          "type": "string"
+        },
+        "order_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Order Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "GetOrder",
+      "type": "object"
+    },
+    "GetOrderBook": {
+      "additionalProperties": false,
+      "properties": {
+        "product_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Product Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_order_book",
+          "default": "get_order_book",
+          "title": "Operation",
+          "type": "string"
+        },
+        "level": {
+          "default": 1,
+          "description": "Level 1 best bid/ask; level 2 aggregated book.",
+          "enum": [
+            1,
+            2
+          ],
+          "title": "Level",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "GetOrderBook",
+      "type": "object"
+    },
+    "GetProduct": {
+      "additionalProperties": false,
+      "properties": {
+        "product_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Product Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "GetProduct",
+      "type": "object"
+    },
+    "GetProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string"
+        },
+        "profile_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Profile Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "GetProfile",
+      "type": "object"
+    },
+    "GetStats": {
+      "additionalProperties": false,
+      "properties": {
+        "product_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Product Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_stats",
+          "default": "get_stats",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "GetStats",
+      "type": "object"
+    },
+    "GetTicker": {
+      "additionalProperties": false,
+      "properties": {
+        "product_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Product Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_ticker",
+          "default": "get_ticker",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "GetTicker",
+      "type": "object"
+    },
+    "ListAccounts": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListAccounts",
+      "type": "object"
+    },
+    "ListCurrencies": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_currencies",
+          "default": "list_currencies",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCurrencies",
+      "type": "object"
+    },
+    "ListFills": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "One page only; pass next_after to after to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_fills",
+          "default": "list_fills",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "description": "Product to reconcile, for example BTC-USD.",
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Product Id",
+          "type": "string"
+        },
+        "order_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order Id"
+        }
+      },
+      "required": [
+        "product_id"
+      ],
+      "title": "ListFills",
+      "type": "object"
+    },
+    "ListHolds": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "One page only; pass next_after to after to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_holds",
+          "default": "list_holds",
+          "title": "Operation",
+          "type": "string"
+        },
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Account Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "ListHolds",
+      "type": "object"
+    },
+    "ListLedger": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "One page only; pass next_after to after to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_ledger",
+          "default": "list_ledger",
+          "title": "Operation",
+          "type": "string"
+        },
+        "account_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+          "title": "Account Id",
+          "type": "string"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive date or RFC3339 timestamp.",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive date or RFC3339 timestamp.",
+          "title": "End Date"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "ListLedger",
+      "type": "object"
+    },
+    "ListOrders": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "One page only; pass next_after to after to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Id"
+        },
+        "status": {
+          "default": "open",
+          "enum": [
+            "open",
+            "pending",
+            "rejected",
+            "done",
+            "active",
+            "received",
+            "all"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "title": "ListOrders",
+      "type": "object"
+    },
+    "ListPaymentMethods": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_payment_methods",
+          "default": "list_payment_methods",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListPaymentMethods",
+      "type": "object"
+    },
+    "ListProducts": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListProducts",
+      "type": "object"
+    },
+    "ListProfiles": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_profiles",
+          "default": "list_profiles",
+          "title": "Operation",
+          "type": "string"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        }
+      },
+      "title": "ListProfiles",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_order": "#/$defs/CancelOrder",
+          "create_order": "#/$defs/CreateOrder",
+          "get_account": "#/$defs/GetAccount",
+          "get_currency": "#/$defs/GetCurrency",
+          "get_fees": "#/$defs/GetFees",
+          "get_order": "#/$defs/GetOrder",
+          "get_order_book": "#/$defs/GetOrderBook",
+          "get_product": "#/$defs/GetProduct",
+          "get_profile": "#/$defs/GetProfile",
+          "get_stats": "#/$defs/GetStats",
+          "get_ticker": "#/$defs/GetTicker",
+          "list_accounts": "#/$defs/ListAccounts",
+          "list_currencies": "#/$defs/ListCurrencies",
+          "list_fills": "#/$defs/ListFills",
+          "list_holds": "#/$defs/ListHolds",
+          "list_ledger": "#/$defs/ListLedger",
+          "list_orders": "#/$defs/ListOrders",
+          "list_payment_methods": "#/$defs/ListPaymentMethods",
+          "list_products": "#/$defs/ListProducts",
+          "list_profiles": "#/$defs/ListProfiles"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListAccounts"
+        },
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/ListHolds"
+        },
+        {
+          "$ref": "#/$defs/ListLedger"
+        },
+        {
+          "$ref": "#/$defs/ListOrders"
+        },
+        {
+          "$ref": "#/$defs/GetOrder"
+        },
+        {
+          "$ref": "#/$defs/CreateOrder"
+        },
+        {
+          "$ref": "#/$defs/CancelOrder"
+        },
+        {
+          "$ref": "#/$defs/ListFills"
+        },
+        {
+          "$ref": "#/$defs/GetFees"
+        },
+        {
+          "$ref": "#/$defs/ListProducts"
+        },
+        {
+          "$ref": "#/$defs/GetProduct"
+        },
+        {
+          "$ref": "#/$defs/GetTicker"
+        },
+        {
+          "$ref": "#/$defs/GetStats"
+        },
+        {
+          "$ref": "#/$defs/GetOrderBook"
+        },
+        {
+          "$ref": "#/$defs/ListCurrencies"
+        },
+        {
+          "$ref": "#/$defs/GetCurrency"
+        },
+        {
+          "$ref": "#/$defs/ListProfiles"
+        },
+        {
+          "$ref": "#/$defs/GetProfile"
+        },
+        {
+          "$ref": "#/$defs/ListPaymentMethods"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CoinbaseExchangeCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Coinbase Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

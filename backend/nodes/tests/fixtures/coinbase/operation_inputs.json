@@ -1,0 +1,53 @@
+{
+  "list_accounts": {},
+  "get_account": {
+    "account_id": "7fd0abc0-e5ad-4cbb-8d54-f2b3f43364da"
+  },
+  "list_holds": {
+    "account_id": "7fd0abc0-e5ad-4cbb-8d54-f2b3f43364da"
+  },
+  "list_ledger": {
+    "account_id": "7fd0abc0-e5ad-4cbb-8d54-f2b3f43364da"
+  },
+  "list_orders": {},
+  "get_order": {
+    "order_id": "a9625b04-fc66-4999-a876-543c3684d702"
+  },
+  "create_order": {
+    "price": "1",
+    "size": "10",
+    "side": "buy",
+    "product_id": "BTC-USD",
+    "client_oid": "496ffbba-7dae-4864-f7e8-a5bf52c6d0e2",
+    "post_only": true
+  },
+  "cancel_order": {
+    "order_id": "a9625b04-fc66-4999-a876-543c3684d702"
+  },
+  "list_fills": {
+    "product_id": "BTC-USD"
+  },
+  "get_fees": {},
+  "list_products": {},
+  "get_product": {
+    "product_id": "BTC-USD"
+  },
+  "get_ticker": {
+    "product_id": "BTC-USD"
+  },
+  "get_stats": {
+    "product_id": "BTC-USD"
+  },
+  "get_order_book": {
+    "product_id": "BTC-USD"
+  },
+  "list_currencies": {},
+  "get_currency": {
+    "currency_id": "USD"
+  },
+  "list_profiles": {},
+  "get_profile": {
+    "profile_id": "8058d771-2d88-4f0f-ab6e-299c153d4308"
+  },
+  "list_payment_methods": {}
+}
