@@ -13,6 +13,7 @@ const RootlyIcon = ({ className, style }: { className?: string; style?: CSSPrope
 
 export const RootlyNode: NodeDefinition = {
     type: 'automation-rootly', label: 'Rootly',
+    category: 'developer-tools',
     description: 'Manage incidents, timeline events and action items; look up teams, services and users',
     Icon: RootlyIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
