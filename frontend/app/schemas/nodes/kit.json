@@ -1,0 +1,2328 @@
+{
+  "$defs": {
+    "KitAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kit_api_key",
+          "default": "kit_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "V4 API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Kit API Key",
+      "type": "object",
+      "x-credential-url": "https://app.kit.com/account_settings/developer_settings"
+    },
+    "KitAddEmailToFormConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_email_to_form",
+          "default": "add_email_to_form",
+          "title": "Add Email to Form",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "Add Email to Form",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "title": "Form ID",
+          "type": "integer"
+        },
+        "email_address": {
+          "description": "",
+          "title": "Email Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id",
+        "email_address"
+      ],
+      "title": "KitAddEmailToFormConfig",
+      "type": "object"
+    },
+    "KitAddEmailToSequenceConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_email_to_sequence",
+          "default": "add_email_to_sequence",
+          "title": "Add Email to Sequence",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequences",
+          "x-display-name": "Add Email to Sequence",
+          "x-is-trigger": false
+        },
+        "sequence_id": {
+          "title": "Sequence ID",
+          "type": "integer"
+        },
+        "email_address": {
+          "description": "",
+          "title": "Email Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sequence_id",
+        "email_address"
+      ],
+      "title": "KitAddEmailToSequenceConfig",
+      "type": "object"
+    },
+    "KitAddSubscriberToFormConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_subscriber_to_form",
+          "default": "add_subscriber_to_form",
+          "title": "Add Subscriber to Form",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "Add Subscriber to Form",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "title": "Form ID",
+          "type": "integer"
+        },
+        "subscriber_id": {
+          "title": "Subscriber ID",
+          "type": "integer"
+        },
+        "referrer": {
+          "description": "",
+          "title": "Referrer URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id",
+        "subscriber_id",
+        "referrer"
+      ],
+      "title": "KitAddSubscriberToFormConfig",
+      "type": "object"
+    },
+    "KitAddSubscriberToSequenceConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_subscriber_to_sequence",
+          "default": "add_subscriber_to_sequence",
+          "title": "Add Subscriber to Sequence",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequences",
+          "x-display-name": "Add Subscriber to Sequence",
+          "x-is-trigger": false
+        },
+        "sequence_id": {
+          "title": "Sequence ID",
+          "type": "integer"
+        },
+        "subscriber_id": {
+          "title": "Subscriber ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sequence_id",
+        "subscriber_id"
+      ],
+      "title": "KitAddSubscriberToSequenceConfig",
+      "type": "object"
+    },
+    "KitCreateBroadcastDraftConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_broadcast_draft",
+          "default": "create_broadcast_draft",
+          "title": "Create Broadcast Draft",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Broadcasts",
+          "x-creates-resource": true,
+          "x-display-name": "Create Broadcast Draft",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.broadcast.id",
+          "x-resource-type": "kit_broadcast"
+        },
+        "subject": {
+          "description": "",
+          "title": "Subject",
+          "type": "string"
+        },
+        "content": {
+          "description": "",
+          "title": "HTML Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "published_at": {
+          "description": "Display timestamp in ISO8601 format; the broadcast remains a draft",
+          "title": "Published Timestamp",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Internal Description"
+        },
+        "preview_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Preview Text"
+        },
+        "subscriber_filter_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Subscriber Filter JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "subject",
+        "content",
+        "published_at"
+      ],
+      "title": "KitCreateBroadcastDraftConfig",
+      "type": "object"
+    },
+    "KitCreateCustomFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_custom_field",
+          "default": "create_custom_field",
+          "title": "Create Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-creates-resource": true,
+          "x-display-name": "Create Custom Field",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.custom_field.id",
+          "x-resource-type": "kit_custom_field"
+        },
+        "label": {
+          "description": "",
+          "title": "Field Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "title": "KitCreateCustomFieldConfig",
+      "type": "object"
+    },
+    "KitCreateSequenceConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_sequence",
+          "default": "create_sequence",
+          "title": "Create Sequence",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequences",
+          "x-creates-resource": true,
+          "x-display-name": "Create Sequence",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.sequence.id",
+          "x-resource-type": "kit_sequence"
+        },
+        "name": {
+          "description": "",
+          "title": "Sequence Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "KitCreateSequenceConfig",
+      "type": "object"
+    },
+    "KitCreateSequenceEmailConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_sequence_email",
+          "default": "create_sequence_email",
+          "title": "Create Sequence Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequences",
+          "x-creates-resource": true,
+          "x-display-name": "Create Sequence Email",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.sequence_email.id",
+          "x-resource-type": "kit_sequence_email"
+        },
+        "sequence_id": {
+          "title": "Sequence ID",
+          "type": "integer"
+        },
+        "subject": {
+          "description": "",
+          "title": "Subject",
+          "type": "string"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "HTML Content",
+          "ui:widget": "textarea"
+        },
+        "delay_value": {
+          "title": "Delay",
+          "type": "integer"
+        },
+        "delay_unit": {
+          "description": "",
+          "title": "Delay Unit",
+          "type": "string"
+        },
+        "published": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Published"
+        }
+      },
+      "required": [
+        "sequence_id",
+        "subject",
+        "delay_value",
+        "delay_unit"
+      ],
+      "title": "KitCreateSequenceEmailConfig",
+      "type": "object"
+    },
+    "KitCreateSubscriberConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_subscriber",
+          "default": "create_subscriber",
+          "title": "Create Subscriber",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscribers",
+          "x-creates-resource": true,
+          "x-display-name": "Create Subscriber",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.subscriber.id",
+          "x-resource-type": "kit_subscriber"
+        },
+        "email_address": {
+          "description": "",
+          "title": "Email Address",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "First Name"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "State"
+        },
+        "fields_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Custom Fields JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "email_address"
+      ],
+      "title": "KitCreateSubscriberConfig",
+      "type": "object"
+    },
+    "KitCreateTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Create Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-creates-resource": true,
+          "x-display-name": "Create Tag",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.tag.id",
+          "x-resource-type": "kit_tag"
+        },
+        "name": {
+          "description": "",
+          "title": "Tag Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "KitCreateTagConfig",
+      "type": "object"
+    },
+    "KitCreateWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook Endpoint",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-creates-resource": true,
+          "x-display-name": "Create Webhook Endpoint",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.webhook_endpoint.id",
+          "x-resource-type": "kit_webhook_endpoint"
+        },
+        "url": {
+          "description": "",
+          "title": "Delivery URL",
+          "type": "string"
+        },
+        "events": {
+          "description": "Comma-separated Kit event names",
+          "title": "Events",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "url",
+        "events"
+      ],
+      "title": "KitCreateWebhookConfig",
+      "type": "object"
+    },
+    "KitDeleteBroadcastConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_broadcast",
+          "default": "delete_broadcast",
+          "title": "Delete Broadcast",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Broadcasts",
+          "x-display-name": "Delete Broadcast",
+          "x-is-trigger": false
+        },
+        "broadcast_id": {
+          "title": "Broadcast ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "broadcast_id"
+      ],
+      "title": "KitDeleteBroadcastConfig",
+      "type": "object"
+    },
+    "KitDeleteCustomFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_custom_field",
+          "default": "delete_custom_field",
+          "title": "Delete Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-display-name": "Delete Custom Field",
+          "x-is-trigger": false
+        },
+        "field_id": {
+          "title": "Custom Field ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "field_id"
+      ],
+      "title": "KitDeleteCustomFieldConfig",
+      "type": "object"
+    },
+    "KitDeleteSequenceConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_sequence",
+          "default": "delete_sequence",
+          "title": "Delete Sequence",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequences",
+          "x-display-name": "Delete Sequence",
+          "x-is-trigger": false
+        },
+        "sequence_id": {
+          "title": "Sequence ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sequence_id"
+      ],
+      "title": "KitDeleteSequenceConfig",
+      "type": "object"
+    },
+    "KitDeleteWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook Endpoint",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Delete Webhook Endpoint",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "title": "Webhook Endpoint ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "KitDeleteWebhookConfig",
+      "type": "object"
+    },
+    "KitGetAccountConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Current Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Current Account",
+          "x-is-trigger": false
+        }
+      },
+      "title": "KitGetAccountConfig",
+      "type": "object"
+    },
+    "KitGetBroadcastClicksConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_broadcast_clicks",
+          "default": "get_broadcast_clicks",
+          "title": "Get Broadcast Link Clicks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Broadcasts",
+          "x-display-name": "Get Broadcast Link Clicks",
+          "x-is-trigger": false
+        },
+        "broadcast_id": {
+          "title": "Broadcast ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "broadcast_id"
+      ],
+      "title": "KitGetBroadcastClicksConfig",
+      "type": "object"
+    },
+    "KitGetBroadcastConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_broadcast",
+          "default": "get_broadcast",
+          "title": "Get Broadcast",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Broadcasts",
+          "x-display-name": "Get Broadcast",
+          "x-is-trigger": false
+        },
+        "broadcast_id": {
+          "title": "Broadcast ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "broadcast_id"
+      ],
+      "title": "KitGetBroadcastConfig",
+      "type": "object"
+    },
+    "KitGetBroadcastStatsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_broadcast_stats",
+          "default": "get_broadcast_stats",
+          "title": "Get Broadcast Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Broadcasts",
+          "x-display-name": "Get Broadcast Stats",
+          "x-is-trigger": false
+        },
+        "broadcast_id": {
+          "title": "Broadcast ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "broadcast_id"
+      ],
+      "title": "KitGetBroadcastStatsConfig",
+      "type": "object"
+    },
+    "KitGetCreatorProfileConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_creator_profile",
+          "default": "get_creator_profile",
+          "title": "Get Creator Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Creator Profile",
+          "x-is-trigger": false
+        }
+      },
+      "title": "KitGetCreatorProfileConfig",
+      "type": "object"
+    },
+    "KitGetEmailStatsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_email_stats",
+          "default": "get_email_stats",
+          "title": "Get Email Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Email Stats",
+          "x-is-trigger": false
+        }
+      },
+      "title": "KitGetEmailStatsConfig",
+      "type": "object"
+    },
+    "KitGetGrowthStatsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_growth_stats",
+          "default": "get_growth_stats",
+          "title": "Get Growth Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Growth Stats",
+          "x-is-trigger": false
+        },
+        "starting": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Start Date"
+        },
+        "ending": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "End Date"
+        }
+      },
+      "title": "KitGetGrowthStatsConfig",
+      "type": "object"
+    },
+    "KitGetSequenceConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_sequence",
+          "default": "get_sequence",
+          "title": "Get Sequence",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequences",
+          "x-display-name": "Get Sequence",
+          "x-is-trigger": false
+        },
+        "sequence_id": {
+          "title": "Sequence ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sequence_id"
+      ],
+      "title": "KitGetSequenceConfig",
+      "type": "object"
+    },
+    "KitGetSequenceEmailConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_sequence_email",
+          "default": "get_sequence_email",
+          "title": "Get Sequence Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequences",
+          "x-display-name": "Get Sequence Email",
+          "x-is-trigger": false
+        },
+        "sequence_id": {
+          "title": "Sequence ID",
+          "type": "integer"
+        },
+        "email_id": {
+          "title": "Sequence Email ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sequence_id",
+        "email_id"
+      ],
+      "title": "KitGetSequenceEmailConfig",
+      "type": "object"
+    },
+    "KitGetSubscriberConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_subscriber",
+          "default": "get_subscriber",
+          "title": "Get Subscriber",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscribers",
+          "x-display-name": "Get Subscriber",
+          "x-is-trigger": false
+        },
+        "subscriber_id": {
+          "title": "Subscriber ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "subscriber_id"
+      ],
+      "title": "KitGetSubscriberConfig",
+      "type": "object"
+    },
+    "KitGetSubscriberStatsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_subscriber_stats",
+          "default": "get_subscriber_stats",
+          "title": "Get Subscriber Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscribers",
+          "x-display-name": "Get Subscriber Stats",
+          "x-is-trigger": false
+        },
+        "subscriber_id": {
+          "title": "Subscriber ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "subscriber_id"
+      ],
+      "title": "KitGetSubscriberStatsConfig",
+      "type": "object"
+    },
+    "KitGetWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_webhook",
+          "default": "get_webhook",
+          "title": "Get Webhook Endpoint",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Get Webhook Endpoint",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "title": "Webhook Endpoint ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "KitGetWebhookConfig",
+      "type": "object"
+    },
+    "KitListBroadcastsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_broadcasts",
+          "default": "list_broadcasts",
+          "title": "List Broadcasts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Broadcasts",
+          "x-display-name": "List Broadcasts",
+          "x-is-trigger": false
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "After Cursor"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Status"
+        }
+      },
+      "title": "KitListBroadcastsConfig",
+      "type": "object"
+    },
+    "KitListCustomFieldsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_custom_fields",
+          "default": "list_custom_fields",
+          "title": "List Custom Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-display-name": "List Custom Fields",
+          "x-is-trigger": false
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "After Cursor"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        }
+      },
+      "title": "KitListCustomFieldsConfig",
+      "type": "object"
+    },
+    "KitListFormSubscribersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_form_subscribers",
+          "default": "list_form_subscribers",
+          "title": "List Form Subscribers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "List Form Subscribers",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "title": "Form ID",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "After Cursor"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Status"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "KitListFormSubscribersConfig",
+      "type": "object"
+    },
+    "KitListFormsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_forms",
+          "default": "list_forms",
+          "title": "List Forms",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "List Forms",
+          "x-is-trigger": false
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "After Cursor"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Status"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "embed or hosted",
+          "title": "Type"
+        }
+      },
+      "title": "KitListFormsConfig",
+      "type": "object"
+    },
+    "KitListSequenceEmailsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_sequence_emails",
+          "default": "list_sequence_emails",
+          "title": "List Sequence Emails",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequences",
+          "x-display-name": "List Sequence Emails",
+          "x-is-trigger": false
+        },
+        "sequence_id": {
+          "title": "Sequence ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sequence_id"
+      ],
+      "title": "KitListSequenceEmailsConfig",
+      "type": "object"
+    },
+    "KitListSequenceSubscribersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_sequence_subscribers",
+          "default": "list_sequence_subscribers",
+          "title": "List Sequence Subscribers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequences",
+          "x-display-name": "List Sequence Subscribers",
+          "x-is-trigger": false
+        },
+        "sequence_id": {
+          "title": "Sequence ID",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "After Cursor"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Status"
+        }
+      },
+      "required": [
+        "sequence_id"
+      ],
+      "title": "KitListSequenceSubscribersConfig",
+      "type": "object"
+    },
+    "KitListSequencesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_sequences",
+          "default": "list_sequences",
+          "title": "List Sequences",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequences",
+          "x-display-name": "List Sequences",
+          "x-is-trigger": false
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "After Cursor"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        }
+      },
+      "title": "KitListSequencesConfig",
+      "type": "object"
+    },
+    "KitListSubscriberTagsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_subscriber_tags",
+          "default": "list_subscriber_tags",
+          "title": "List Subscriber Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscribers",
+          "x-display-name": "List Subscriber Tags",
+          "x-is-trigger": false
+        },
+        "subscriber_id": {
+          "title": "Subscriber ID",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "After Cursor"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        }
+      },
+      "required": [
+        "subscriber_id"
+      ],
+      "title": "KitListSubscriberTagsConfig",
+      "type": "object"
+    },
+    "KitListSubscribersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_subscribers",
+          "default": "list_subscribers",
+          "title": "List Subscribers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscribers",
+          "x-display-name": "List Subscribers",
+          "x-is-trigger": false
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "After Cursor"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Exact Email Address"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "active, inactive, bounced, complained, cancelled, or all",
+          "title": "Status"
+        }
+      },
+      "title": "KitListSubscribersConfig",
+      "type": "object"
+    },
+    "KitListTagSubscribersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_tag_subscribers",
+          "default": "list_tag_subscribers",
+          "title": "List Tag Subscribers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "List Tag Subscribers",
+          "x-is-trigger": false
+        },
+        "tag_id": {
+          "title": "Tag ID",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "After Cursor"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Status"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "KitListTagSubscribersConfig",
+      "type": "object"
+    },
+    "KitListTagsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "List Tags",
+          "x-is-trigger": false
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "After Cursor"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        }
+      },
+      "title": "KitListTagsConfig",
+      "type": "object"
+    },
+    "KitListWebhooksConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhook Endpoints",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhook Endpoints",
+          "x-is-trigger": false
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "After Cursor"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Status"
+        }
+      },
+      "title": "KitListWebhooksConfig",
+      "type": "object"
+    },
+    "KitOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kit_oauth",
+          "default": "kit_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account ID"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token"
+      ],
+      "title": "Kit Account",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://app.kit.com/apps",
+      "x-oauth-provider": "kit",
+      "x-oauth-scopes": [
+        "public"
+      ]
+    },
+    "KitOnEventConfig": {
+      "description": "Receive a signed Kit V4 webhook event.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On Kit Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Kit Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "subscriber.created",
+          "description": "The Kit event that starts this workflow",
+          "enum": [
+            "subscriber.created",
+            "subscriber.activated",
+            "subscriber.unsubscribed",
+            "subscriber.bounced",
+            "subscriber.complained",
+            "subscriber.subscribed_to_form",
+            "subscriber.added_to_sequence",
+            "subscriber.sequence_completed",
+            "subscriber.tag_added",
+            "subscriber.tag_removed",
+            "subscriber.custom_field_value_updated",
+            "tag.created",
+            "tag.deleted",
+            "custom_field.created",
+            "custom_field.deleted",
+            "sequence.created",
+            "sequence.deleted",
+            "sequence.published",
+            "sequence.disabled",
+            "broadcast.created",
+            "broadcast.sent",
+            "broadcast.deleted",
+            "post.published"
+          ],
+          "title": "Event Type",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Registered with Kit automatically",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "KitOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KitTagSubscriberByEmailConfig": {
+      "properties": {
+        "operation": {
+          "const": "tag_subscriber_by_email",
+          "default": "tag_subscriber_by_email",
+          "title": "Tag Subscriber by Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Tag Subscriber by Email",
+          "x-is-trigger": false
+        },
+        "tag_id": {
+          "title": "Tag ID",
+          "type": "integer"
+        },
+        "email_address": {
+          "description": "",
+          "title": "Email Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id",
+        "email_address"
+      ],
+      "title": "KitTagSubscriberByEmailConfig",
+      "type": "object"
+    },
+    "KitTagSubscriberConfig": {
+      "properties": {
+        "operation": {
+          "const": "tag_subscriber",
+          "default": "tag_subscriber",
+          "title": "Tag Subscriber",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Tag Subscriber",
+          "x-is-trigger": false
+        },
+        "tag_id": {
+          "title": "Tag ID",
+          "type": "integer"
+        },
+        "subscriber_id": {
+          "title": "Subscriber ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "tag_id",
+        "subscriber_id"
+      ],
+      "title": "KitTagSubscriberConfig",
+      "type": "object"
+    },
+    "KitUnsubscribeSubscriberConfig": {
+      "properties": {
+        "operation": {
+          "const": "unsubscribe_subscriber",
+          "default": "unsubscribe_subscriber",
+          "title": "Unsubscribe Subscriber",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscribers",
+          "x-display-name": "Unsubscribe Subscriber",
+          "x-is-trigger": false
+        },
+        "subscriber_id": {
+          "title": "Subscriber ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "subscriber_id"
+      ],
+      "title": "KitUnsubscribeSubscriberConfig",
+      "type": "object"
+    },
+    "KitUntagSubscriberConfig": {
+      "properties": {
+        "operation": {
+          "const": "untag_subscriber",
+          "default": "untag_subscriber",
+          "title": "Remove Subscriber Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Remove Subscriber Tag",
+          "x-is-trigger": false
+        },
+        "tag_id": {
+          "title": "Tag ID",
+          "type": "integer"
+        },
+        "subscriber_id": {
+          "title": "Subscriber ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "tag_id",
+        "subscriber_id"
+      ],
+      "title": "KitUntagSubscriberConfig",
+      "type": "object"
+    },
+    "KitUpdateCustomFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_custom_field",
+          "default": "update_custom_field",
+          "title": "Rename Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-display-name": "Rename Custom Field",
+          "x-is-trigger": false
+        },
+        "field_id": {
+          "title": "Custom Field ID",
+          "type": "integer"
+        },
+        "label": {
+          "description": "",
+          "title": "New Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field_id",
+        "label"
+      ],
+      "title": "KitUpdateCustomFieldConfig",
+      "type": "object"
+    },
+    "KitUpdateSequenceConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_sequence",
+          "default": "update_sequence",
+          "title": "Update Sequence",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequences",
+          "x-display-name": "Update Sequence",
+          "x-is-trigger": false
+        },
+        "sequence_id": {
+          "title": "Sequence ID",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Name"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        },
+        "repeat": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allow Reentry"
+        },
+        "hold": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keep Subscribers Active"
+        }
+      },
+      "required": [
+        "sequence_id"
+      ],
+      "title": "KitUpdateSequenceConfig",
+      "type": "object"
+    },
+    "KitUpdateSubscriberConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_subscriber",
+          "default": "update_subscriber",
+          "title": "Update Subscriber",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscribers",
+          "x-display-name": "Update Subscriber",
+          "x-is-trigger": false
+        },
+        "subscriber_id": {
+          "title": "Subscriber ID",
+          "type": "integer"
+        },
+        "email_address": {
+          "description": "",
+          "title": "Email Address",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "First Name"
+        },
+        "fields_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Custom Fields JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "subscriber_id",
+        "email_address"
+      ],
+      "title": "KitUpdateSubscriberConfig",
+      "type": "object"
+    },
+    "KitUpdateTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_tag",
+          "default": "update_tag",
+          "title": "Rename Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Rename Tag",
+          "x-is-trigger": false
+        },
+        "tag_id": {
+          "title": "Tag ID",
+          "type": "integer"
+        },
+        "name": {
+          "description": "",
+          "title": "New Tag Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id",
+        "name"
+      ],
+      "title": "KitUpdateTagConfig",
+      "type": "object"
+    },
+    "KitUpdateWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_webhook",
+          "default": "update_webhook",
+          "title": "Update Webhook Endpoint",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Update Webhook Endpoint",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "title": "Webhook Endpoint ID",
+          "type": "integer"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Delivery URL"
+        },
+        "events": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated Kit event names",
+          "title": "Events"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Description"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "title": "Status"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "KitUpdateWebhookConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_email_to_form": "#/$defs/KitAddEmailToFormConfig",
+          "add_email_to_sequence": "#/$defs/KitAddEmailToSequenceConfig",
+          "add_subscriber_to_form": "#/$defs/KitAddSubscriberToFormConfig",
+          "add_subscriber_to_sequence": "#/$defs/KitAddSubscriberToSequenceConfig",
+          "create_broadcast_draft": "#/$defs/KitCreateBroadcastDraftConfig",
+          "create_custom_field": "#/$defs/KitCreateCustomFieldConfig",
+          "create_sequence": "#/$defs/KitCreateSequenceConfig",
+          "create_sequence_email": "#/$defs/KitCreateSequenceEmailConfig",
+          "create_subscriber": "#/$defs/KitCreateSubscriberConfig",
+          "create_tag": "#/$defs/KitCreateTagConfig",
+          "create_webhook": "#/$defs/KitCreateWebhookConfig",
+          "delete_broadcast": "#/$defs/KitDeleteBroadcastConfig",
+          "delete_custom_field": "#/$defs/KitDeleteCustomFieldConfig",
+          "delete_sequence": "#/$defs/KitDeleteSequenceConfig",
+          "delete_webhook": "#/$defs/KitDeleteWebhookConfig",
+          "get_account": "#/$defs/KitGetAccountConfig",
+          "get_broadcast": "#/$defs/KitGetBroadcastConfig",
+          "get_broadcast_clicks": "#/$defs/KitGetBroadcastClicksConfig",
+          "get_broadcast_stats": "#/$defs/KitGetBroadcastStatsConfig",
+          "get_creator_profile": "#/$defs/KitGetCreatorProfileConfig",
+          "get_email_stats": "#/$defs/KitGetEmailStatsConfig",
+          "get_growth_stats": "#/$defs/KitGetGrowthStatsConfig",
+          "get_sequence": "#/$defs/KitGetSequenceConfig",
+          "get_sequence_email": "#/$defs/KitGetSequenceEmailConfig",
+          "get_subscriber": "#/$defs/KitGetSubscriberConfig",
+          "get_subscriber_stats": "#/$defs/KitGetSubscriberStatsConfig",
+          "get_webhook": "#/$defs/KitGetWebhookConfig",
+          "list_broadcasts": "#/$defs/KitListBroadcastsConfig",
+          "list_custom_fields": "#/$defs/KitListCustomFieldsConfig",
+          "list_form_subscribers": "#/$defs/KitListFormSubscribersConfig",
+          "list_forms": "#/$defs/KitListFormsConfig",
+          "list_sequence_emails": "#/$defs/KitListSequenceEmailsConfig",
+          "list_sequence_subscribers": "#/$defs/KitListSequenceSubscribersConfig",
+          "list_sequences": "#/$defs/KitListSequencesConfig",
+          "list_subscriber_tags": "#/$defs/KitListSubscriberTagsConfig",
+          "list_subscribers": "#/$defs/KitListSubscribersConfig",
+          "list_tag_subscribers": "#/$defs/KitListTagSubscribersConfig",
+          "list_tags": "#/$defs/KitListTagsConfig",
+          "list_webhooks": "#/$defs/KitListWebhooksConfig",
+          "on_event": "#/$defs/KitOnEventConfig",
+          "tag_subscriber": "#/$defs/KitTagSubscriberConfig",
+          "tag_subscriber_by_email": "#/$defs/KitTagSubscriberByEmailConfig",
+          "unsubscribe_subscriber": "#/$defs/KitUnsubscribeSubscriberConfig",
+          "untag_subscriber": "#/$defs/KitUntagSubscriberConfig",
+          "update_custom_field": "#/$defs/KitUpdateCustomFieldConfig",
+          "update_sequence": "#/$defs/KitUpdateSequenceConfig",
+          "update_subscriber": "#/$defs/KitUpdateSubscriberConfig",
+          "update_tag": "#/$defs/KitUpdateTagConfig",
+          "update_webhook": "#/$defs/KitUpdateWebhookConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/KitGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/KitGetCreatorProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/KitGetEmailStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/KitGetGrowthStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/KitListSubscribersConfig"
+        },
+        {
+          "$ref": "#/$defs/KitGetSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/KitCreateSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/KitUpdateSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/KitUnsubscribeSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/KitGetSubscriberStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/KitListSubscriberTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/KitListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/KitCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/KitUpdateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/KitListTagSubscribersConfig"
+        },
+        {
+          "$ref": "#/$defs/KitTagSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/KitUntagSubscriberConfig"
+        },
+        {
+          "$ref": "#/$defs/KitTagSubscriberByEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/KitListFormsConfig"
+        },
+        {
+          "$ref": "#/$defs/KitListFormSubscribersConfig"
+        },
+        {
+          "$ref": "#/$defs/KitAddSubscriberToFormConfig"
+        },
+        {
+          "$ref": "#/$defs/KitAddEmailToFormConfig"
+        },
+        {
+          "$ref": "#/$defs/KitListSequencesConfig"
+        },
+        {
+          "$ref": "#/$defs/KitCreateSequenceConfig"
+        },
+        {
+          "$ref": "#/$defs/KitGetSequenceConfig"
+        },
+        {
+          "$ref": "#/$defs/KitUpdateSequenceConfig"
+        },
+        {
+          "$ref": "#/$defs/KitDeleteSequenceConfig"
+        },
+        {
+          "$ref": "#/$defs/KitListSequenceSubscribersConfig"
+        },
+        {
+          "$ref": "#/$defs/KitAddSubscriberToSequenceConfig"
+        },
+        {
+          "$ref": "#/$defs/KitAddEmailToSequenceConfig"
+        },
+        {
+          "$ref": "#/$defs/KitListSequenceEmailsConfig"
+        },
+        {
+          "$ref": "#/$defs/KitCreateSequenceEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/KitGetSequenceEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/KitListBroadcastsConfig"
+        },
+        {
+          "$ref": "#/$defs/KitGetBroadcastConfig"
+        },
+        {
+          "$ref": "#/$defs/KitCreateBroadcastDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/KitGetBroadcastStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/KitGetBroadcastClicksConfig"
+        },
+        {
+          "$ref": "#/$defs/KitDeleteBroadcastConfig"
+        },
+        {
+          "$ref": "#/$defs/KitListCustomFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/KitCreateCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/KitUpdateCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/KitDeleteCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/KitListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/KitGetWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/KitCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/KitUpdateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/KitDeleteWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/KitOnEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KitOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/KitAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Kit Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a Kit subscriber",
+    "Add a subscriber to a Kit form",
+    "Tag a Kit subscriber",
+    "Create a broadcast draft",
+    "List Kit sequences",
+    "Register a Kit webhook"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
