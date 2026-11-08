@@ -1,0 +1,245 @@
+[
+  {
+    "operation": "get_language_models_free",
+    "class": "ArtificialAnalysisGetLanguageModelsFreeConfig",
+    "method": "GET",
+    "path": "/api/v2/language/models/free",
+    "params": [
+      "page"
+    ],
+    "tier": "Free"
+  },
+  {
+    "operation": "get_language_models",
+    "class": "ArtificialAnalysisGetLanguageModelsConfig",
+    "method": "GET",
+    "path": "/api/v2/language/models",
+    "params": [
+      "prompt_type",
+      "page"
+    ],
+    "tier": "Pro"
+  },
+  {
+    "operation": "get_language_model_by_slug",
+    "class": "ArtificialAnalysisGetLanguageModelBySlugConfig",
+    "method": "GET",
+    "path": "/api/v2/language/models/{slug}",
+    "params": [
+      "slug",
+      "prompt_type"
+    ],
+    "tier": "Pro"
+  },
+  {
+    "operation": "get_language_model_performance_over_time",
+    "class": "ArtificialAnalysisGetLanguageModelPerformanceOverTimeConfig",
+    "method": "GET",
+    "path": "/api/v2/language/models/{slug}/performance",
+    "params": [
+      "slug",
+      "window",
+      "interval",
+      "prompt_type"
+    ],
+    "tier": "Commercial"
+  },
+  {
+    "operation": "get_language_providers",
+    "class": "ArtificialAnalysisGetLanguageProvidersConfig",
+    "method": "GET",
+    "path": "/api/v2/language/providers",
+    "params": [
+      "page"
+    ],
+    "tier": "Commercial"
+  },
+  {
+    "operation": "get_language_provider_by_slug",
+    "class": "ArtificialAnalysisGetLanguageProviderBySlugConfig",
+    "method": "GET",
+    "path": "/api/v2/language/providers/{slug}",
+    "params": [
+      "slug",
+      "prompt_type"
+    ],
+    "tier": "Commercial"
+  },
+  {
+    "operation": "get_language_provider_performance_over_time",
+    "class": "ArtificialAnalysisGetLanguageProviderPerformanceOverTimeConfig",
+    "method": "GET",
+    "path": "/api/v2/language/providers/{slug}/performance",
+    "params": [
+      "slug",
+      "window",
+      "interval",
+      "prompt_type"
+    ],
+    "tier": "Commercial"
+  },
+  {
+    "operation": "get_language_provider_measurements",
+    "class": "ArtificialAnalysisGetLanguageProviderMeasurementsConfig",
+    "method": "GET",
+    "path": "/api/v2/language/providers/{slug}/measurements",
+    "params": [
+      "slug",
+      "prompt_type",
+      "start_date"
+    ],
+    "tier": "Commercial"
+  },
+  {
+    "operation": "get_text_to_image_arena_free",
+    "class": "ArtificialAnalysisGetTextToImageArenaFreeConfig",
+    "method": "GET",
+    "path": "/api/v2/media/text-to-image/models/free",
+    "params": [],
+    "tier": "Free"
+  },
+  {
+    "operation": "get_text_to_image_arena",
+    "class": "ArtificialAnalysisGetTextToImageArenaConfig",
+    "method": "GET",
+    "path": "/api/v2/media/text-to-image/models",
+    "params": [
+      "include_categories"
+    ],
+    "tier": "Pro"
+  },
+  {
+    "operation": "get_image_editing_arena_free",
+    "class": "ArtificialAnalysisGetImageEditingArenaFreeConfig",
+    "method": "GET",
+    "path": "/api/v2/media/image-editing/models/free",
+    "params": [],
+    "tier": "Free"
+  },
+  {
+    "operation": "get_image_editing_arena",
+    "class": "ArtificialAnalysisGetImageEditingArenaConfig",
+    "method": "GET",
+    "path": "/api/v2/media/image-editing/models",
+    "params": [
+      "include_categories"
+    ],
+    "tier": "Pro"
+  },
+  {
+    "operation": "get_text_to_video_arena_free",
+    "class": "ArtificialAnalysisGetTextToVideoArenaFreeConfig",
+    "method": "GET",
+    "path": "/api/v2/media/text-to-video/models/free",
+    "params": [],
+    "tier": "Free"
+  },
+  {
+    "operation": "get_text_to_video_arena",
+    "class": "ArtificialAnalysisGetTextToVideoArenaConfig",
+    "method": "GET",
+    "path": "/api/v2/media/text-to-video/models",
+    "params": [
+      "include_categories"
+    ],
+    "tier": "Pro"
+  },
+  {
+    "operation": "get_image_to_video_arena",
+    "class": "ArtificialAnalysisGetImageToVideoArenaConfig",
+    "method": "GET",
+    "path": "/api/v2/media/image-to-video/models",
+    "params": [
+      "include_categories"
+    ],
+    "tier": "Pro"
+  },
+  {
+    "operation": "get_text_to_video_audio_arena",
+    "class": "ArtificialAnalysisGetTextToVideoAudioArenaConfig",
+    "method": "GET",
+    "path": "/api/v2/media/text-to-video-audio/models",
+    "params": [
+      "include_categories"
+    ],
+    "tier": "Pro"
+  },
+  {
+    "operation": "get_image_to_video_audio_arena",
+    "class": "ArtificialAnalysisGetImageToVideoAudioArenaConfig",
+    "method": "GET",
+    "path": "/api/v2/media/image-to-video-audio/models",
+    "params": [
+      "include_categories"
+    ],
+    "tier": "Pro"
+  },
+  {
+    "operation": "get_text_to_speech_arena_free",
+    "class": "ArtificialAnalysisGetTextToSpeechArenaFreeConfig",
+    "method": "GET",
+    "path": "/api/v2/media/text-to-speech/models/free",
+    "params": [],
+    "tier": "Free"
+  },
+  {
+    "operation": "get_text_to_speech_arena",
+    "class": "ArtificialAnalysisGetTextToSpeechArenaConfig",
+    "method": "GET",
+    "path": "/api/v2/media/text-to-speech/models",
+    "params": [],
+    "tier": "Pro"
+  },
+  {
+    "operation": "get_speech_to_speech",
+    "class": "ArtificialAnalysisGetSpeechToSpeechConfig",
+    "method": "GET",
+    "path": "/api/v2/media/speech-to-speech/models",
+    "params": [],
+    "tier": "Pro"
+  },
+  {
+    "operation": "get_speech_to_text_models_free",
+    "class": "ArtificialAnalysisGetSpeechToTextModelsFreeConfig",
+    "method": "GET",
+    "path": "/api/v2/media/speech-to-text/models/free",
+    "params": [],
+    "tier": "Free"
+  },
+  {
+    "operation": "get_speech_to_text_models",
+    "class": "ArtificialAnalysisGetSpeechToTextModelsConfig",
+    "method": "GET",
+    "path": "/api/v2/media/speech-to-text/models",
+    "params": [],
+    "tier": "Pro"
+  },
+  {
+    "operation": "get_music_instrumental_arena",
+    "class": "ArtificialAnalysisGetMusicInstrumentalArenaConfig",
+    "method": "GET",
+    "path": "/api/v2/media/music/instrumental/models",
+    "params": [
+      "include_genres"
+    ],
+    "tier": "Pro"
+  },
+  {
+    "operation": "get_music_with_vocals_arena",
+    "class": "ArtificialAnalysisGetMusicWithVocalsArenaConfig",
+    "method": "GET",
+    "path": "/api/v2/media/music/with-vocals/models",
+    "params": [
+      "include_genres"
+    ],
+    "tier": "Pro"
+  },
+  {
+    "operation": "evaluate_crit_pt",
+    "class": "ArtificialAnalysisEvaluateCritPtConfig",
+    "method": "POST",
+    "path": "/api/v2/critpt/evaluate",
+    "params": [],
+    "tier": "Approved CritPt access"
+  }
+]

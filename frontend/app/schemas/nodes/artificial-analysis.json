@@ -1,0 +1,899 @@
+{
+  "$defs": {
+    "ArtificialAnalysisAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "artificial_analysis_api_key",
+          "default": "artificial_analysis_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Artificial Analysis API Key",
+      "type": "object",
+      "x-credential-instructions": "Create or copy an API key from Artificial Analysis API key management. Paste the key without a header prefix. Free keys support Free operations; standard data requires Pro, provider data and historical performance require Commercial, and CritPt grading requires separate approval. Connection checks establish key reachability, not account identity.",
+      "x-credential-url": "https://artificialanalysis.ai/api-key-management-redirect"
+    },
+    "ArtificialAnalysisEvaluateCritPtConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "evaluate_crit_pt",
+          "default": "evaluate_crit_pt",
+          "title": "Submit code for CritPt v2 evaluation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "submissions": {
+          "items": {
+            "$ref": "#/$defs/ArtificialAnalysisSubmission"
+          },
+          "title": "Submissions",
+          "type": "array"
+        },
+        "batch_metadata": {
+          "additionalProperties": true,
+          "title": "Batch Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "submissions",
+        "batch_metadata"
+      ],
+      "title": "ArtificialAnalysisEvaluateCritPtConfig",
+      "type": "object",
+      "x-requires-tier": "approved critpt access",
+      "x-tier-label": "Approved CritPt access"
+    },
+    "ArtificialAnalysisGetImageEditingArenaConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_image_editing_arena",
+          "default": "get_image_editing_arena",
+          "title": "Get AA-Image-Editing v2.1 rankings",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_categories": {
+          "default": false,
+          "description": "Include per-category Elo breakdowns (Pro tier only).",
+          "title": "Include Categories",
+          "type": "boolean"
+        }
+      },
+      "title": "ArtificialAnalysisGetImageEditingArenaConfig",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "Pro"
+    },
+    "ArtificialAnalysisGetImageEditingArenaFreeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_image_editing_arena_free",
+          "default": "get_image_editing_arena_free",
+          "title": "Get AA-Image-Editing v2.1 rankings (Free tier)",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ArtificialAnalysisGetImageEditingArenaFreeConfig",
+      "type": "object"
+    },
+    "ArtificialAnalysisGetImageToVideoArenaConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_image_to_video_arena",
+          "default": "get_image_to_video_arena",
+          "title": "Get AA-Video-I2V-Silent v2.1 rankings",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_categories": {
+          "default": false,
+          "description": "Include per-category Elo breakdowns (Pro tier only).",
+          "title": "Include Categories",
+          "type": "boolean"
+        }
+      },
+      "title": "ArtificialAnalysisGetImageToVideoArenaConfig",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "Pro"
+    },
+    "ArtificialAnalysisGetImageToVideoAudioArenaConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_image_to_video_audio_arena",
+          "default": "get_image_to_video_audio_arena",
+          "title": "Get AA-Video-I2V v2.1 rankings",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_categories": {
+          "default": false,
+          "description": "Include per-category Elo breakdowns (Pro tier only).",
+          "title": "Include Categories",
+          "type": "boolean"
+        }
+      },
+      "title": "ArtificialAnalysisGetImageToVideoAudioArenaConfig",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "Pro"
+    },
+    "ArtificialAnalysisGetLanguageModelBySlugConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_language_model_by_slug",
+          "default": "get_language_model_by_slug",
+          "title": "Get a single language model by slug",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "slug": {
+          "description": "The model slug (e.g. \"gemini-3-pro\", \"claude-opus-4-6\", \"deepseek-v3\").",
+          "maxLength": 300,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Slug",
+          "type": "string"
+        },
+        "prompt_type": {
+          "default": "long",
+          "description": "The prompt type preset used for performance benchmarking.\nControls how many input tokens and parallel queries are used in latency/throughput measurements.\nApplies to the `performance` fields only; `performance_v3` does not depend on it.\n\n| prompt_type | input_tokens | parallel_queries |\n| --- | --- | --- |\n| `medium` | 1,000 | 1 |\n| `long` (default) | 10,000 | 1 |\n| `100k` | 100,000 | 1 |\n| `vision_single_image` | 1,000 | 1 |\n| `medium_parallel` | 1,000 | 10 |\n",
+          "enum": [
+            "medium",
+            "long",
+            "100k",
+            "vision_single_image",
+            "medium_parallel"
+          ],
+          "title": "Prompt Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slug"
+      ],
+      "title": "ArtificialAnalysisGetLanguageModelBySlugConfig",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "Pro"
+    },
+    "ArtificialAnalysisGetLanguageModelPerformanceOverTimeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_language_model_performance_over_time",
+          "default": "get_language_model_performance_over_time",
+          "title": "Get performance over time for a single model",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "slug": {
+          "description": "The unique identifier for the model (e.g. `claude-sonnet-4`). Use the `/models` endpoint to discover available slugs.",
+          "maxLength": 300,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Slug",
+          "type": "string"
+        },
+        "window": {
+          "default": "90d",
+          "description": "Lookback period from today. Maximum 90 days for single-model endpoint.",
+          "enum": [
+            "7d",
+            "30d",
+            "90d"
+          ],
+          "title": "Window",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "enum": [
+                "daily",
+                "weekly",
+                "monthly"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Aggregation granularity. Auto-derived from window if omitted\n(7d/30d \u2192 daily, 90d \u2192 weekly).\n",
+          "title": "Interval",
+          "enum": [
+            "daily",
+            "weekly",
+            "monthly"
+          ],
+          "x-enum-searchable": true
+        },
+        "prompt_type": {
+          "default": "long",
+          "description": "The prompt type preset used for performance benchmarking.\nControls how many input tokens and parallel queries are used in latency/throughput measurements.\nApplies to the `performance` fields only; `performance_v3` does not depend on it.\n\n| prompt_type | input_tokens | parallel_queries |\n| --- | --- | --- |\n| `medium` | 1,000 | 1 |\n| `long` (default) | 10,000 | 1 |\n| `100k` | 100,000 | 1 |\n| `vision_single_image` | 1,000 | 1 |\n| `medium_parallel` | 1,000 | 10 |\n",
+          "enum": [
+            "medium",
+            "long",
+            "100k",
+            "vision_single_image",
+            "medium_parallel"
+          ],
+          "title": "Prompt Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slug"
+      ],
+      "title": "ArtificialAnalysisGetLanguageModelPerformanceOverTimeConfig",
+      "type": "object",
+      "x-requires-tier": "commercial",
+      "x-tier-label": "Commercial"
+    },
+    "ArtificialAnalysisGetLanguageModelsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_language_models",
+          "default": "get_language_models",
+          "title": "Get all language models",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt_type": {
+          "default": "long",
+          "description": "The prompt type preset used for performance benchmarking.\nControls how many input tokens and parallel queries are used in latency/throughput measurements.\nApplies to the `performance` fields only; `performance_v3` does not depend on it.\n\n| prompt_type | input_tokens | parallel_queries |\n| --- | --- | --- |\n| `medium` | 1,000 | 1 |\n| `long` (default) | 10,000 | 1 |\n| `100k` | 100,000 | 1 |\n| `vision_single_image` | 1,000 | 1 |\n| `medium_parallel` | 1,000 | 10 |\n",
+          "enum": [
+            "medium",
+            "long",
+            "100k",
+            "vision_single_image",
+            "medium_parallel"
+          ],
+          "title": "Prompt Type",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number for paginated results (1-indexed). Defaults to 1.\n",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "ArtificialAnalysisGetLanguageModelsConfig",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "Pro"
+    },
+    "ArtificialAnalysisGetLanguageModelsFreeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_language_models_free",
+          "default": "get_language_models_free",
+          "title": "Get language models (Free tier)",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number for paginated results (1-indexed). Defaults to 1.\n",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "ArtificialAnalysisGetLanguageModelsFreeConfig",
+      "type": "object"
+    },
+    "ArtificialAnalysisGetLanguageProviderBySlugConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_language_provider_by_slug",
+          "default": "get_language_provider_by_slug",
+          "title": "Get a single language model provider by slug",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "slug": {
+          "description": "The provider slug (e.g. \"openai\", \"fireworks\").",
+          "maxLength": 300,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Slug",
+          "type": "string"
+        },
+        "prompt_type": {
+          "default": "long",
+          "description": "The prompt type preset used for performance benchmarking.\nControls how many input tokens and parallel queries are used in latency/throughput measurements.\nApplies to the `performance` fields only; `performance_v3` does not depend on it.\n\n| prompt_type | input_tokens | parallel_queries |\n| --- | --- | --- |\n| `medium` | 1,000 | 1 |\n| `long` (default) | 10,000 | 1 |\n| `100k` | 100,000 | 1 |\n| `vision_single_image` | 1,000 | 1 |\n| `medium_parallel` | 1,000 | 10 |\n",
+          "enum": [
+            "medium",
+            "long",
+            "100k",
+            "vision_single_image",
+            "medium_parallel"
+          ],
+          "title": "Prompt Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slug"
+      ],
+      "title": "ArtificialAnalysisGetLanguageProviderBySlugConfig",
+      "type": "object",
+      "x-requires-tier": "commercial",
+      "x-tier-label": "Commercial"
+    },
+    "ArtificialAnalysisGetLanguageProviderMeasurementsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_language_provider_measurements",
+          "default": "get_language_provider_measurements",
+          "title": "Get raw measurements for a provider",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "slug": {
+          "description": "The unique identifier for the provider (e.g. `anthropic`). Your Commercial API key must have grants for this provider.",
+          "maxLength": 300,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Slug",
+          "type": "string"
+        },
+        "prompt_type": {
+          "default": "long",
+          "description": "The prompt type preset used for performance benchmarking.\nControls how many input tokens and parallel queries are used in latency/throughput measurements.\nApplies to the `performance` fields only; `performance_v3` does not depend on it.\n\n| prompt_type | input_tokens | parallel_queries |\n| --- | --- | --- |\n| `medium` | 1,000 | 1 |\n| `long` (default) | 10,000 | 1 |\n| `100k` | 100,000 | 1 |\n| `vision_single_image` | 1,000 | 1 |\n| `medium_parallel` | 1,000 | 10 |\n",
+          "enum": [
+            "medium",
+            "long",
+            "100k",
+            "vision_single_image",
+            "medium_parallel"
+          ],
+          "title": "Prompt Type",
+          "type": "string"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only return measurements recorded on or after this date (YYYY-MM-DD).\nDefaults to one month ago if omitted; dates earlier than one month ago are clamped to one month ago.",
+          "title": "Start Date"
+        }
+      },
+      "required": [
+        "slug"
+      ],
+      "title": "ArtificialAnalysisGetLanguageProviderMeasurementsConfig",
+      "type": "object",
+      "x-requires-tier": "commercial",
+      "x-tier-label": "Commercial"
+    },
+    "ArtificialAnalysisGetLanguageProviderPerformanceOverTimeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_language_provider_performance_over_time",
+          "default": "get_language_provider_performance_over_time",
+          "title": "Get performance over time for a single provider",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "slug": {
+          "description": "The unique identifier for the provider (e.g. `anthropic`). Use the `/providers` endpoint to discover available slugs.",
+          "maxLength": 300,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$",
+          "title": "Slug",
+          "type": "string"
+        },
+        "window": {
+          "default": "90d",
+          "description": "Lookback period from today.",
+          "enum": [
+            "7d",
+            "30d",
+            "90d"
+          ],
+          "title": "Window",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "enum": [
+                "daily",
+                "weekly",
+                "monthly"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Aggregation granularity. Auto-derived from window if omitted\n(7d/30d \u2192 daily, 90d \u2192 weekly).\n",
+          "title": "Interval",
+          "enum": [
+            "daily",
+            "weekly",
+            "monthly"
+          ],
+          "x-enum-searchable": true
+        },
+        "prompt_type": {
+          "default": "long",
+          "description": "The prompt type preset used for performance benchmarking.\nControls how many input tokens and parallel queries are used in latency/throughput measurements.\nApplies to the `performance` fields only; `performance_v3` does not depend on it.\n\n| prompt_type | input_tokens | parallel_queries |\n| --- | --- | --- |\n| `medium` | 1,000 | 1 |\n| `long` (default) | 10,000 | 1 |\n| `100k` | 100,000 | 1 |\n| `vision_single_image` | 1,000 | 1 |\n| `medium_parallel` | 1,000 | 10 |\n",
+          "enum": [
+            "medium",
+            "long",
+            "100k",
+            "vision_single_image",
+            "medium_parallel"
+          ],
+          "title": "Prompt Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slug"
+      ],
+      "title": "ArtificialAnalysisGetLanguageProviderPerformanceOverTimeConfig",
+      "type": "object",
+      "x-requires-tier": "commercial",
+      "x-tier-label": "Commercial"
+    },
+    "ArtificialAnalysisGetLanguageProvidersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_language_providers",
+          "default": "get_language_providers",
+          "title": "Get all language model API providers",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number for paginated results (1-indexed). Defaults to 1.\n",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "ArtificialAnalysisGetLanguageProvidersConfig",
+      "type": "object",
+      "x-requires-tier": "commercial",
+      "x-tier-label": "Commercial"
+    },
+    "ArtificialAnalysisGetMusicInstrumentalArenaConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_music_instrumental_arena",
+          "default": "get_music_instrumental_arena",
+          "title": "Get AA-Music-Instrumental v1.1 rankings",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_genres": {
+          "default": false,
+          "description": "Include per-genre Elo breakdowns (Pro tier only).",
+          "title": "Include Genres",
+          "type": "boolean"
+        }
+      },
+      "title": "ArtificialAnalysisGetMusicInstrumentalArenaConfig",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "Pro"
+    },
+    "ArtificialAnalysisGetMusicWithVocalsArenaConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_music_with_vocals_arena",
+          "default": "get_music_with_vocals_arena",
+          "title": "Get AA-Music-Vocal v1.1 rankings",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_genres": {
+          "default": false,
+          "description": "Include per-genre Elo breakdowns (Pro tier only).",
+          "title": "Include Genres",
+          "type": "boolean"
+        }
+      },
+      "title": "ArtificialAnalysisGetMusicWithVocalsArenaConfig",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "Pro"
+    },
+    "ArtificialAnalysisGetSpeechToSpeechConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_speech_to_speech",
+          "default": "get_speech_to_speech",
+          "title": "Get speech-to-speech model data",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ArtificialAnalysisGetSpeechToSpeechConfig",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "Pro"
+    },
+    "ArtificialAnalysisGetSpeechToTextModelsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_speech_to_text_models",
+          "default": "get_speech_to_text_models",
+          "title": "Get speech-to-text models",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ArtificialAnalysisGetSpeechToTextModelsConfig",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "Pro"
+    },
+    "ArtificialAnalysisGetSpeechToTextModelsFreeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_speech_to_text_models_free",
+          "default": "get_speech_to_text_models_free",
+          "title": "Get speech-to-text models (Free tier)",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ArtificialAnalysisGetSpeechToTextModelsFreeConfig",
+      "type": "object"
+    },
+    "ArtificialAnalysisGetTextToImageArenaConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_text_to_image_arena",
+          "default": "get_text_to_image_arena",
+          "title": "Get AA-Image-T2I v2.1 rankings",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_categories": {
+          "default": false,
+          "description": "Include per-category Elo breakdowns (Pro tier only).",
+          "title": "Include Categories",
+          "type": "boolean"
+        }
+      },
+      "title": "ArtificialAnalysisGetTextToImageArenaConfig",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "Pro"
+    },
+    "ArtificialAnalysisGetTextToImageArenaFreeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_text_to_image_arena_free",
+          "default": "get_text_to_image_arena_free",
+          "title": "Get AA-Image-T2I v2.1 rankings (Free tier)",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ArtificialAnalysisGetTextToImageArenaFreeConfig",
+      "type": "object"
+    },
+    "ArtificialAnalysisGetTextToSpeechArenaConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_text_to_speech_arena",
+          "default": "get_text_to_speech_arena",
+          "title": "Get text-to-speech arena rankings",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ArtificialAnalysisGetTextToSpeechArenaConfig",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "Pro"
+    },
+    "ArtificialAnalysisGetTextToSpeechArenaFreeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_text_to_speech_arena_free",
+          "default": "get_text_to_speech_arena_free",
+          "title": "Get text-to-speech arena rankings (Free tier)",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ArtificialAnalysisGetTextToSpeechArenaFreeConfig",
+      "type": "object"
+    },
+    "ArtificialAnalysisGetTextToVideoArenaConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_text_to_video_arena",
+          "default": "get_text_to_video_arena",
+          "title": "Get AA-Video-T2V-Silent v2.1 rankings",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_categories": {
+          "default": false,
+          "description": "Include per-category Elo breakdowns (Pro tier only).",
+          "title": "Include Categories",
+          "type": "boolean"
+        }
+      },
+      "title": "ArtificialAnalysisGetTextToVideoArenaConfig",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "Pro"
+    },
+    "ArtificialAnalysisGetTextToVideoArenaFreeConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_text_to_video_arena_free",
+          "default": "get_text_to_video_arena_free",
+          "title": "Get AA-Video-T2V-Silent v2.1 rankings (Free tier)",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ArtificialAnalysisGetTextToVideoArenaFreeConfig",
+      "type": "object"
+    },
+    "ArtificialAnalysisGetTextToVideoAudioArenaConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_text_to_video_audio_arena",
+          "default": "get_text_to_video_audio_arena",
+          "title": "Get AA-Video-T2V v2.1 rankings",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_categories": {
+          "default": false,
+          "description": "Include per-category Elo breakdowns (Pro tier only).",
+          "title": "Include Categories",
+          "type": "boolean"
+        }
+      },
+      "title": "ArtificialAnalysisGetTextToVideoAudioArenaConfig",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "Pro"
+    },
+    "ArtificialAnalysisSubmission": {
+      "additionalProperties": false,
+      "properties": {
+        "problem_id": {
+          "title": "Problem Id",
+          "type": "string"
+        },
+        "generated_code": {
+          "title": "Generated Code",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "generation_config": {
+          "additionalProperties": true,
+          "title": "Generation Config",
+          "type": "object"
+        },
+        "messages": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Messages"
+        }
+      },
+      "required": [
+        "problem_id",
+        "generated_code",
+        "model",
+        "generation_config"
+      ],
+      "title": "ArtificialAnalysisSubmission",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "evaluate_crit_pt": "#/$defs/ArtificialAnalysisEvaluateCritPtConfig",
+          "get_image_editing_arena": "#/$defs/ArtificialAnalysisGetImageEditingArenaConfig",
+          "get_image_editing_arena_free": "#/$defs/ArtificialAnalysisGetImageEditingArenaFreeConfig",
+          "get_image_to_video_arena": "#/$defs/ArtificialAnalysisGetImageToVideoArenaConfig",
+          "get_image_to_video_audio_arena": "#/$defs/ArtificialAnalysisGetImageToVideoAudioArenaConfig",
+          "get_language_model_by_slug": "#/$defs/ArtificialAnalysisGetLanguageModelBySlugConfig",
+          "get_language_model_performance_over_time": "#/$defs/ArtificialAnalysisGetLanguageModelPerformanceOverTimeConfig",
+          "get_language_models": "#/$defs/ArtificialAnalysisGetLanguageModelsConfig",
+          "get_language_models_free": "#/$defs/ArtificialAnalysisGetLanguageModelsFreeConfig",
+          "get_language_provider_by_slug": "#/$defs/ArtificialAnalysisGetLanguageProviderBySlugConfig",
+          "get_language_provider_measurements": "#/$defs/ArtificialAnalysisGetLanguageProviderMeasurementsConfig",
+          "get_language_provider_performance_over_time": "#/$defs/ArtificialAnalysisGetLanguageProviderPerformanceOverTimeConfig",
+          "get_language_providers": "#/$defs/ArtificialAnalysisGetLanguageProvidersConfig",
+          "get_music_instrumental_arena": "#/$defs/ArtificialAnalysisGetMusicInstrumentalArenaConfig",
+          "get_music_with_vocals_arena": "#/$defs/ArtificialAnalysisGetMusicWithVocalsArenaConfig",
+          "get_speech_to_speech": "#/$defs/ArtificialAnalysisGetSpeechToSpeechConfig",
+          "get_speech_to_text_models": "#/$defs/ArtificialAnalysisGetSpeechToTextModelsConfig",
+          "get_speech_to_text_models_free": "#/$defs/ArtificialAnalysisGetSpeechToTextModelsFreeConfig",
+          "get_text_to_image_arena": "#/$defs/ArtificialAnalysisGetTextToImageArenaConfig",
+          "get_text_to_image_arena_free": "#/$defs/ArtificialAnalysisGetTextToImageArenaFreeConfig",
+          "get_text_to_speech_arena": "#/$defs/ArtificialAnalysisGetTextToSpeechArenaConfig",
+          "get_text_to_speech_arena_free": "#/$defs/ArtificialAnalysisGetTextToSpeechArenaFreeConfig",
+          "get_text_to_video_arena": "#/$defs/ArtificialAnalysisGetTextToVideoArenaConfig",
+          "get_text_to_video_arena_free": "#/$defs/ArtificialAnalysisGetTextToVideoArenaFreeConfig",
+          "get_text_to_video_audio_arena": "#/$defs/ArtificialAnalysisGetTextToVideoAudioArenaConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetLanguageModelsFreeConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetLanguageModelsConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetLanguageModelBySlugConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetLanguageModelPerformanceOverTimeConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetLanguageProvidersConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetLanguageProviderBySlugConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetLanguageProviderPerformanceOverTimeConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetLanguageProviderMeasurementsConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetTextToImageArenaFreeConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetTextToImageArenaConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetImageEditingArenaFreeConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetImageEditingArenaConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetTextToVideoArenaFreeConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetTextToVideoArenaConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetImageToVideoArenaConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetTextToVideoAudioArenaConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetImageToVideoAudioArenaConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetTextToSpeechArenaFreeConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetTextToSpeechArenaConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetSpeechToSpeechConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetSpeechToTextModelsFreeConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetSpeechToTextModelsConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetMusicInstrumentalArenaConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisGetMusicWithVocalsArenaConfig"
+        },
+        {
+          "$ref": "#/$defs/ArtificialAnalysisEvaluateCritPtConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ArtificialAnalysisAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Artificial-analysis Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

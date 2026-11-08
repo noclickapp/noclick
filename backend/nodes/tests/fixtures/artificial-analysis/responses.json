@@ -1,0 +1,990 @@
+{
+  "get_language_models_free": {
+    "tier": "free",
+    "intelligence_index_version": 5,
+    "pagination": {
+      "page": 1,
+      "page_size": 200,
+      "total_pages": 2,
+      "has_more": true
+    },
+    "data": [
+      {
+        "id": "cd684ea4-b475-4269-b001-d469d06d8a7a",
+        "name": "GLM-5.3 (Max)",
+        "slug": "glm-5-3",
+        "release_date": "2026-08-18",
+        "model_creator": {
+          "id": "67437eb6-7dc1-4e93-befd-22c8b8ec2065",
+          "name": "Z AI"
+        },
+        "evaluations": {
+          "artificial_analysis_intelligence_index": 31.7,
+          "artificial_analysis_coding_index": null,
+          "artificial_analysis_agentic_index": null,
+          "artificial_analysis_finance_and_accounting_index": 42.1,
+          "artificial_analysis_strategy_and_ops_index": 47.4,
+          "artificial_analysis_legal_index": 35.8,
+          "artificial_analysis_healthcare_and_medical_index": 39.3,
+          "artificial_analysis_engineering_index": 37.6,
+          "artificial_analysis_economics_index": 39.3
+        },
+        "artificial_analysis_intelligence_index_cost": {
+          "total_cost": 3495.62,
+          "cost_per_task": {
+            "total_cost": 5.0093
+          }
+        },
+        "pricing": {
+          "price_1m_input_tokens": 1.4,
+          "price_1m_output_tokens": 4.4,
+          "price_1m_cache_hit_tokens": 0.26,
+          "price_1m_cache_write_tokens": null
+        },
+        "performance": {
+          "median_output_tokens_per_second": 80.07,
+          "median_time_to_first_token_seconds": 2.22,
+          "median_time_to_first_answer_token_seconds": 27.19,
+          "median_end_to_end_response_time_seconds": 33.44
+        },
+        "performance_v3": {
+          "mean_output_tokens_per_second": 62.36,
+          "mean_time_to_first_token_seconds": 3.45,
+          "mean_time_to_first_answer_token_seconds": 79.11
+        }
+      }
+    ]
+  },
+  "get_language_models": {
+    "tier": "pro",
+    "intelligence_index_version": 5,
+    "pagination": {
+      "page": 1,
+      "page_size": 200,
+      "total_pages": 2,
+      "has_more": true
+    },
+    "data": [
+      {
+        "id": "cd684ea4-b475-4269-b001-d469d06d8a7a",
+        "name": "GLM-5.3 (Max)",
+        "slug": "glm-5-3",
+        "release_date": "2026-08-18",
+        "model_creator": {
+          "id": "67437eb6-7dc1-4e93-befd-22c8b8ec2065",
+          "name": "Z AI",
+          "country": "cn"
+        },
+        "reasoning_model": true,
+        "evaluations": {
+          "artificial_analysis_intelligence_index": 31.7,
+          "artificial_analysis_coding_index": null,
+          "artificial_analysis_agentic_index": null,
+          "artificial_analysis_finance_and_accounting_index": 42.1,
+          "artificial_analysis_strategy_and_ops_index": 47.4,
+          "artificial_analysis_legal_index": 35.8,
+          "artificial_analysis_healthcare_and_medical_index": 39.3,
+          "artificial_analysis_engineering_index": 37.6,
+          "artificial_analysis_economics_index": 39.3,
+          "tau2_telecom": null,
+          "tau_banking": 0.503,
+          "terminalbench_hard": null,
+          "terminalbench_v2_1": 0.839,
+          "terminalbench_v4_0": 0.419,
+          "terminalbench_science": 0.095,
+          "aa_briefcase_elo": 1504,
+          "automationbench_aa": 0.622,
+          "gdp_pdf": 0.112,
+          "scicode": 0.59,
+          "aa_lcr": 0.797,
+          "aa_omniscience_index": 6.03,
+          "aa_omniscience_accuracy": 0.323,
+          "aa_omniscience_non_hallucination_rate": 0.611,
+          "ifbench": null,
+          "hle": 0.423,
+          "gpqa_diamond": 0.917,
+          "critpt": 0.191,
+          "hle_diamond": 0.179,
+          "frontiercode_v1_1": 0.401,
+          "frontiercode_v2_0": 0.216,
+          "critpt_v2_hard": 0.335,
+          "gdpval_aa_elo": 1658,
+          "gdpval_aa_normalized": 0.579,
+          "mmmu_pro": null,
+          "artificial_analysis_openness_index": 33.3,
+          "artificial_analysis_multilingual_index": null,
+          "mlcr_overall": 0.172
+        },
+        "artificial_analysis_intelligence_index_cost": {
+          "total_cost": 3495.62,
+          "cost_per_task": {
+            "total_cost": 5.0093,
+            "input_cost": 4.4857,
+            "reasoning_cost": 0.373,
+            "answer_cost": 0.1505
+          },
+          "input_cost": 2901.32,
+          "reasoning_cost": 473.65,
+          "answer_cost": 120.65
+        },
+        "artificial_analysis_intelligence_index_token_counts": {
+          "input_tokens": 10296409355,
+          "answer_tokens": 27420388,
+          "output_tokens": 135067089,
+          "reasoning_tokens": 107646701
+        },
+        "pricing": {
+          "price_1m_blended_3_to_1": 2.15,
+          "price_1m_blended_7_to_2_to_1": 0.902,
+          "price_1m_input_tokens": 1.4,
+          "price_1m_output_tokens": 4.4,
+          "price_1m_cache_hit_tokens": 0.26,
+          "price_1m_cache_write_tokens": null
+        },
+        "performance": {
+          "percentile_05_output_tokens_per_second": 35.32,
+          "quartile_25_output_tokens_per_second": 62.53,
+          "median_output_tokens_per_second": 80.07,
+          "quartile_75_output_tokens_per_second": 100.58,
+          "percentile_95_output_tokens_per_second": 117.05,
+          "percentile_05_time_to_first_token_seconds": 1.34,
+          "quartile_25_time_to_first_token_seconds": 1.83,
+          "median_time_to_first_token_seconds": 2.22,
+          "quartile_75_time_to_first_token_seconds": 2.94,
+          "percentile_95_time_to_first_token_seconds": 5.18,
+          "median_time_to_first_answer_token_seconds": 27.19,
+          "median_end_to_end_response_time_seconds": 33.44
+        },
+        "performance_v3": {
+          "mean_output_tokens_per_second": 62.36,
+          "time_per_task_seconds": 1907.94,
+          "mean_time_to_first_token_seconds": 3.45,
+          "mean_time_to_first_answer_token_seconds": 79.11,
+          "workloads": {
+            "1k": {
+              "mean_time_to_first_token_seconds": 1.96
+            },
+            "10k": {
+              "mean_time_to_first_token_seconds": 2.03
+            },
+            "100k": {
+              "mean_time_to_first_token_seconds": 4.9
+            },
+            "multi_turn": {
+              "mean_time_to_first_token_seconds": 3.93
+            }
+          },
+          "bucket_date": "2026-10-30"
+        },
+        "context_window_tokens": 1000000,
+        "parameters": {
+          "total": 753,
+          "active": 40
+        },
+        "modalities": {
+          "input": {
+            "text": true,
+            "image": false,
+            "video": false,
+            "speech": false
+          },
+          "output": {
+            "text": true,
+            "image": false,
+            "video": false,
+            "speech": false
+          }
+        },
+        "licensing": {
+          "is_open_weights": true
+        },
+        "huggingface_url": "https://huggingface.co/zai-org/GLM-5.3",
+        "openrouter_api_id": "z-ai/glm-5.3"
+      }
+    ]
+  },
+  "get_language_model_by_slug": {
+    "tier": "commercial",
+    "intelligence_index_version": 5,
+    "data": {
+      "id": "cd684ea4-b475-4269-b001-d469d06d8a7a",
+      "name": "GLM-5.3 (Max)",
+      "slug": "glm-5-3",
+      "release_date": "2026-08-18",
+      "model_creator": {
+        "id": "67437eb6-7dc1-4e93-befd-22c8b8ec2065",
+        "name": "Z AI",
+        "country": "cn"
+      },
+      "reasoning_model": true,
+      "evaluations": {
+        "artificial_analysis_intelligence_index": 31.7,
+        "artificial_analysis_coding_index": null,
+        "artificial_analysis_agentic_index": null,
+        "artificial_analysis_finance_and_accounting_index": 42.1,
+        "artificial_analysis_strategy_and_ops_index": 47.4,
+        "artificial_analysis_legal_index": 35.8,
+        "artificial_analysis_healthcare_and_medical_index": 39.3,
+        "artificial_analysis_engineering_index": 37.6,
+        "artificial_analysis_economics_index": 39.3,
+        "tau2_telecom": null,
+        "tau_banking": 0.503,
+        "terminalbench_hard": null,
+        "terminalbench_v2_1": 0.839,
+        "terminalbench_v4_0": 0.419,
+        "terminalbench_science": 0.095,
+        "aa_briefcase_elo": 1504,
+        "automationbench_aa": 0.622,
+        "gdp_pdf": 0.112,
+        "scicode": 0.59,
+        "aa_lcr": 0.797,
+        "aa_omniscience_index": 6.03,
+        "aa_omniscience_accuracy": 0.323,
+        "aa_omniscience_non_hallucination_rate": 0.611,
+        "ifbench": null,
+        "hle": 0.423,
+        "gpqa_diamond": 0.917,
+        "critpt": 0.191,
+        "hle_diamond": 0.179,
+        "frontiercode_v1_1": 0.401,
+        "frontiercode_v2_0": 0.216,
+        "critpt_v2_hard": 0.335,
+        "gdpval_aa_elo": 1658,
+        "gdpval_aa_normalized": 0.579,
+        "mmmu_pro": null,
+        "artificial_analysis_openness_index": 33.3,
+        "artificial_analysis_multilingual_index": null,
+        "mlcr_overall": 0.172
+      },
+      "artificial_analysis_intelligence_index_cost": {
+        "total_cost": 3495.62,
+        "cost_per_task": {
+          "total_cost": 5.0093,
+          "input_cost": 4.4857,
+          "reasoning_cost": 0.373,
+          "answer_cost": 0.1505
+        },
+        "input_cost": 2901.32,
+        "reasoning_cost": 473.65,
+        "answer_cost": 120.65
+      },
+      "artificial_analysis_intelligence_index_token_counts": {
+        "input_tokens": 10296409355,
+        "answer_tokens": 27420388,
+        "output_tokens": 135067089,
+        "reasoning_tokens": 107646701
+      },
+      "pricing": {
+        "price_1m_blended_3_to_1": 2.15,
+        "price_1m_blended_7_to_2_to_1": 0.902,
+        "price_1m_input_tokens": 1.4,
+        "price_1m_output_tokens": 4.4,
+        "price_1m_cache_hit_tokens": 0.26,
+        "price_1m_cache_write_tokens": null
+      },
+      "performance": {
+        "percentile_05_output_tokens_per_second": 35.32,
+        "quartile_25_output_tokens_per_second": 62.53,
+        "median_output_tokens_per_second": 80.07,
+        "quartile_75_output_tokens_per_second": 100.58,
+        "percentile_95_output_tokens_per_second": 117.05,
+        "percentile_05_time_to_first_token_seconds": 1.34,
+        "quartile_25_time_to_first_token_seconds": 1.83,
+        "median_time_to_first_token_seconds": 2.22,
+        "quartile_75_time_to_first_token_seconds": 2.94,
+        "percentile_95_time_to_first_token_seconds": 5.18,
+        "median_time_to_first_answer_token_seconds": 27.19,
+        "median_end_to_end_response_time_seconds": 33.44
+      },
+      "performance_v3": {
+        "mean_output_tokens_per_second": 62.36,
+        "time_per_task_seconds": 1907.94,
+        "mean_time_to_first_token_seconds": 3.45,
+        "mean_time_to_first_answer_token_seconds": 79.11,
+        "workloads": {
+          "1k": {
+            "mean_time_to_first_token_seconds": 1.96
+          },
+          "10k": {
+            "mean_time_to_first_token_seconds": 2.03
+          },
+          "100k": {
+            "mean_time_to_first_token_seconds": 4.9
+          },
+          "multi_turn": {
+            "mean_time_to_first_token_seconds": 3.93
+          }
+        },
+        "bucket_date": "2026-10-30"
+      },
+      "context_window_tokens": 1000000,
+      "parameters": {
+        "total": 753,
+        "active": 40
+      },
+      "modalities": {
+        "input": {
+          "text": true,
+          "image": false,
+          "video": false,
+          "speech": false
+        },
+        "output": {
+          "text": true,
+          "image": false,
+          "video": false,
+          "speech": false
+        }
+      },
+      "licensing": {
+        "is_open_weights": true
+      },
+      "huggingface_url": "https://huggingface.co/zai-org/GLM-5.3",
+      "openrouter_api_id": "z-ai/glm-5.3",
+      "evaluation_token_counts": {
+        "hle": {
+          "input_tokens": 694111,
+          "answer_tokens": 739298,
+          "output_tokens": 113978285,
+          "reasoning_tokens": 113238987
+        },
+        "aa_lcr": {
+          "input_tokens": 9731811,
+          "answer_tokens": 10191,
+          "output_tokens": 280574,
+          "reasoning_tokens": 270383
+        },
+        "gpqa_diamond": {
+          "input_tokens": 51246,
+          "answer_tokens": 29939,
+          "output_tokens": 1406523,
+          "reasoning_tokens": 1376584
+        },
+        "tau_banking": {
+          "input_tokens": 97164948,
+          "answer_tokens": 246937,
+          "output_tokens": 832923,
+          "reasoning_tokens": 585986
+        },
+        "critpt": {
+          "input_tokens": 620064,
+          "answer_tokens": 117126,
+          "output_tokens": 6996495,
+          "reasoning_tokens": 6879369
+        },
+        "gdpval_aa": {
+          "input_tokens": 1388705752,
+          "answer_tokens": 10535856,
+          "output_tokens": 20772998,
+          "reasoning_tokens": 10237142
+        },
+        "scicode": {
+          "input_tokens": 1020664,
+          "answer_tokens": 201454,
+          "output_tokens": 5044211,
+          "reasoning_tokens": 4842757
+        },
+        "aa_omniscience": {
+          "input_tokens": 377753,
+          "answer_tokens": 253325,
+          "output_tokens": 13870355,
+          "reasoning_tokens": 13617030
+        },
+        "terminalbench_v2_1": {
+          "input_tokens": 136692446,
+          "answer_tokens": 853063,
+          "output_tokens": 3551188,
+          "reasoning_tokens": 2698125
+        },
+        "terminalbench_v4_0": {
+          "input_tokens": 1717065779,
+          "answer_tokens": 3081614,
+          "output_tokens": 12841347,
+          "reasoning_tokens": 9759733
+        },
+        "terminalbench_science": {
+          "input_tokens": 3508627450,
+          "answer_tokens": 4943227,
+          "output_tokens": 18744947,
+          "reasoning_tokens": 13801720
+        },
+        "aa_briefcase": {
+          "input_tokens": 1627614045,
+          "answer_tokens": 7274345,
+          "output_tokens": 12406503,
+          "reasoning_tokens": 5132158
+        },
+        "automationbench_aa": {
+          "input_tokens": 656301228,
+          "answer_tokens": 6546304,
+          "output_tokens": 18224087,
+          "reasoning_tokens": 11677783
+        },
+        "gdp_pdf": {
+          "input_tokens": 3452755,
+          "answer_tokens": 162643,
+          "output_tokens": 2841710,
+          "reasoning_tokens": 2679067
+        },
+        "hle_diamond": {
+          "input_tokens": 266504,
+          "answer_tokens": 242177,
+          "output_tokens": 35780559,
+          "reasoning_tokens": 35538382
+        },
+        "frontiercode_v1_1": {
+          "input_tokens": 1419067666,
+          "answer_tokens": 2492536,
+          "output_tokens": 8344831,
+          "reasoning_tokens": 5852295
+        },
+        "frontiercode_v2_0": {
+          "input_tokens": 2683783478,
+          "answer_tokens": 4363236,
+          "output_tokens": 13978362,
+          "reasoning_tokens": 9615126
+        },
+        "critpt_v2_hard": {
+          "input_tokens": 98920363,
+          "answer_tokens": 553517,
+          "output_tokens": 6379219,
+          "reasoning_tokens": 5825702
+        }
+      },
+      "aa_omniscience_breakdown": {
+        "total": {
+          "accuracy": 0.323,
+          "omniscience": 6.03,
+          "hallucination_rate": 0.389
+        },
+        "law": {
+          "accuracy": 0.153,
+          "omniscience": -6.89,
+          "hallucination_rate": 0.262
+        },
+        "health": {
+          "accuracy": 0.247,
+          "omniscience": -9.78,
+          "hallucination_rate": 0.457
+        },
+        "business": {
+          "accuracy": 0.236,
+          "omniscience": 5.11,
+          "hallucination_rate": 0.241
+        },
+        "humanities_and_social_sciences": {
+          "accuracy": 0.344,
+          "omniscience": 7.33,
+          "hallucination_rate": 0.414
+        },
+        "science_engineering_and_mathematics": {
+          "accuracy": 0.377,
+          "omniscience": 15,
+          "hallucination_rate": 0.364
+        },
+        "software_engineering": {
+          "accuracy": 0.505,
+          "omniscience": 18.33,
+          "hallucination_rate": 0.65
+        }
+      },
+      "artificial_analysis_openness_index_breakdown": {
+        "weights_access": 3,
+        "weights_license": 2,
+        "data_pretrain_access": 0,
+        "data_pretrain_license": 0,
+        "data_posttrain_access": 0,
+        "data_posttrain_license": 0,
+        "methodology_license": 0,
+        "methodology_disclosure": 1,
+        "artificial_analysis_openness_index": 33.3
+      },
+      "providers": [
+        {
+          "id": "b08f179e-4a69-4f35-b350-8f7144a8b7c8",
+          "name": "Novita",
+          "slug": "novita",
+          "endpoint_label": null,
+          "pricing": {
+            "price_1m_blended_3_to_1": 2.15,
+            "price_1m_blended_7_to_2_to_1": 0.902,
+            "price_1m_input_tokens": 1.4,
+            "price_1m_output_tokens": 4.4,
+            "price_1m_cache_hit_tokens": 0.26,
+            "price_1m_cache_write_tokens": null
+          },
+          "performance": {
+            "percentile_05_output_tokens_per_second": 79.92,
+            "quartile_25_output_tokens_per_second": 107.88,
+            "median_output_tokens_per_second": 118.3,
+            "quartile_75_output_tokens_per_second": 136.1,
+            "percentile_95_output_tokens_per_second": 197.2,
+            "percentile_05_time_to_first_token_seconds": 1.59,
+            "quartile_25_time_to_first_token_seconds": 1.91,
+            "median_time_to_first_token_seconds": 2.3,
+            "quartile_75_time_to_first_token_seconds": 3.49,
+            "percentile_95_time_to_first_token_seconds": 4.51,
+            "median_time_to_first_answer_token_seconds": 19.2,
+            "median_end_to_end_response_time_seconds": 23.43
+          },
+          "performance_v3": {
+            "mean_output_tokens_per_second": 98.83,
+            "mean_time_to_first_token_seconds": 2.91,
+            "mean_time_to_first_answer_token_seconds": 57.53,
+            "endpoint_error_rate": 0,
+            "workloads": {
+              "1k": {
+                "mean_output_tokens_per_second": 120.09,
+                "mean_time_to_first_token_seconds": 1.48
+              },
+              "10k": {
+                "mean_output_tokens_per_second": 128.5,
+                "mean_time_to_first_token_seconds": 2.38
+              },
+              "100k": {
+                "mean_output_tokens_per_second": 85.74,
+                "mean_time_to_first_token_seconds": 7.07
+              },
+              "multi_turn": {
+                "mean_output_tokens_per_second": 86.21,
+                "mean_time_to_first_token_seconds": 2.17
+              }
+            },
+            "bucket_date": "2026-10-30"
+          },
+          "context_window_tokens": 1000000
+        }
+      ]
+    }
+  },
+  "get_language_providers": {
+    "tier": "commercial",
+    "pagination": {
+      "page": 1,
+      "page_size": 200,
+      "total_pages": 1,
+      "has_more": false
+    },
+    "data": [
+      {
+        "id": "b08f179e-4a69-4f35-b350-8f7144a8b7c8",
+        "name": "Novita",
+        "slug": "novita",
+        "country": "sg",
+        "models": [
+          {
+            "id": "cd684ea4-b475-4269-b001-d469d06d8a7a",
+            "name": "GLM-5.3 (Max)",
+            "slug": "glm-5-3",
+            "endpoint_label": null,
+            "pricing": {
+              "price_1m_blended_3_to_1": 2.15,
+              "price_1m_blended_7_to_2_to_1": 0.902,
+              "price_1m_input_tokens": 1.4,
+              "price_1m_output_tokens": 4.4,
+              "price_1m_cache_hit_tokens": 0.26,
+              "price_1m_cache_write_tokens": null
+            },
+            "performance": {
+              "median_output_tokens_per_second": 113.67,
+              "median_time_to_first_token_seconds": 1.97,
+              "median_time_to_first_answer_token_seconds": 19.56,
+              "median_end_to_end_response_time_seconds": 23.96
+            },
+            "performance_v3": {
+              "mean_output_tokens_per_second": 98.83,
+              "mean_time_to_first_token_seconds": 2.91,
+              "mean_time_to_first_answer_token_seconds": 57.53,
+              "endpoint_error_rate": 0,
+              "bucket_date": "2026-10-30"
+            },
+            "context_window_tokens": 1000000
+          }
+        ]
+      }
+    ]
+  },
+  "get_text_to_image_arena_free": {
+    "tier": "free",
+    "data": [
+      {
+        "id": "a1ee4d6f-d136-434b-bb1d-066fe5f9bf6f",
+        "name": "GPT Image 1.5 (high)",
+        "slug": "openai-gpt_image-1-5",
+        "model_creator": {
+          "id": "e67e56e3-15cd-43db-b679-da4660a69f41",
+          "name": "OpenAI"
+        },
+        "elo": 1266,
+        "ci_95": 11
+      }
+    ]
+  },
+  "get_text_to_image_arena": {
+    "tier": "pro",
+    "data": [
+      {
+        "id": "a1ee4d6f-d136-434b-bb1d-066fe5f9bf6f",
+        "name": "GPT Image 1.5 (high)",
+        "slug": "openai-gpt_image-1-5",
+        "model_creator": {
+          "id": "e67e56e3-15cd-43db-b679-da4660a69f41",
+          "name": "OpenAI"
+        },
+        "elo": 1266,
+        "ci_95": 11,
+        "rank": 1,
+        "samples": 4650,
+        "release_date": "2025-12-16",
+        "price_per_1k_images": 133,
+        "open_weights_url": null,
+        "categories": [
+          {
+            "label": "Architecture & Real Estate",
+            "group": "use_case",
+            "elo": 1273,
+            "ci_95": 18,
+            "samples": 1719
+          }
+        ]
+      }
+    ]
+  },
+  "get_image_editing_arena_free": {
+    "tier": "free",
+    "data": [
+      {
+        "id": "ae424391-721f-4df7-bf24-a8bef3c4c46c",
+        "name": "Riverflow 2.0",
+        "slug": "sourceful_riverflow-2",
+        "model_creator": {
+          "id": "71724fa8-622e-455f-aaa2-ef3c5a067f8b",
+          "name": "Sourceful"
+        },
+        "elo": 1283,
+        "ci_95": 9
+      }
+    ]
+  },
+  "get_image_editing_arena": {
+    "tier": "pro",
+    "data": [
+      {
+        "id": "ae424391-721f-4df7-bf24-a8bef3c4c46c",
+        "name": "Riverflow 2.0",
+        "slug": "sourceful_riverflow-2",
+        "model_creator": {
+          "id": "71724fa8-622e-455f-aaa2-ef3c5a067f8b",
+          "name": "Sourceful"
+        },
+        "elo": 1283,
+        "ci_95": 9,
+        "rank": 1,
+        "samples": 4650,
+        "release_date": "2025-12-16",
+        "price_per_1k_images": 133,
+        "open_weights_url": null,
+        "categories": [
+          {
+            "label": "Identity Preserving Edit",
+            "group": "editing_action",
+            "elo": 1273,
+            "ci_95": 18,
+            "samples": 1719
+          }
+        ]
+      }
+    ]
+  },
+  "get_text_to_video_arena_free": {
+    "tier": "free",
+    "data": [
+      {
+        "id": "36db1f4d-a9f6-49d1-a74d-06bddbf2fe4f",
+        "name": "Dreamina Seedance 2.0 720p",
+        "slug": "seedance-2-0",
+        "model_creator": {
+          "id": "2354746c-4775-4a06-b64d-0ba4137785b8",
+          "name": "ByteDance Seed"
+        },
+        "elo": 1269,
+        "ci_95": 8
+      }
+    ]
+  },
+  "get_text_to_video_arena": {
+    "tier": "pro",
+    "data": [
+      {
+        "id": "36db1f4d-a9f6-49d1-a74d-06bddbf2fe4f",
+        "name": "Dreamina Seedance 2.0 720p",
+        "slug": "seedance-2-0",
+        "model_creator": {
+          "id": "2354746c-4775-4a06-b64d-0ba4137785b8",
+          "name": "ByteDance Seed"
+        },
+        "elo": 1269,
+        "ci_95": 8,
+        "rank": 1,
+        "samples": 4271,
+        "release_date": "2025-06-01",
+        "price_per_minute": 0.45,
+        "open_weights_url": null,
+        "categories": [
+          {
+            "label": "Camera Control",
+            "group": "capability",
+            "elo": 1284,
+            "ci_95": 19,
+            "samples": 812
+          }
+        ]
+      }
+    ]
+  },
+  "get_image_to_video_arena": {
+    "tier": "pro",
+    "data": [
+      {
+        "id": "61270a9b-9d2e-4875-810f-e81508bc5504",
+        "name": "Kling 2.1 Master",
+        "slug": "kling-2-1-master",
+        "model_creator": {
+          "id": "62cc833b-f55a-4489-bcae-54806d4b04ff",
+          "name": "Kuaishou KlingAI"
+        },
+        "elo": 1184,
+        "ci_95": 10,
+        "rank": 1,
+        "samples": 1890,
+        "release_date": "2025-03-27",
+        "price_per_minute": 0.5,
+        "open_weights_url": null,
+        "categories": [
+          {
+            "label": "Photorealistic",
+            "group": "style",
+            "elo": 1196,
+            "ci_95": 21,
+            "samples": 354
+          }
+        ]
+      }
+    ]
+  },
+  "get_text_to_video_audio_arena": {
+    "tier": "pro",
+    "data": [
+      {
+        "id": "5ad8e0d8-d9bf-4a55-904a-f98e7a7a4b2d",
+        "name": "Veo 3 Fast",
+        "slug": "veo-3-fast",
+        "model_creator": {
+          "id": "ad0d7c6b-6b44-458a-a95f-9d0cb3d8f8e2",
+          "name": "Google"
+        },
+        "elo": 1221,
+        "ci_95": 14,
+        "rank": 1,
+        "samples": 2334,
+        "release_date": "2025-05-20",
+        "price_per_minute": 0.75,
+        "open_weights_url": null,
+        "categories": [
+          {
+            "label": "Audio Synchronization",
+            "group": "capability",
+            "elo": 1237,
+            "ci_95": 27,
+            "samples": 401
+          }
+        ]
+      }
+    ]
+  },
+  "get_image_to_video_audio_arena": {
+    "tier": "pro",
+    "data": [
+      {
+        "id": "8b7cdcab-6f22-4d95-8d0f-f09db1d2233d",
+        "name": "PixVerse V4.5 Audio",
+        "slug": "pixverse-v4-5-audio",
+        "model_creator": {
+          "id": "1cb39f34-a0b6-4ca8-82fd-fec0e068eb7a",
+          "name": "PixVerse"
+        },
+        "elo": 1163,
+        "ci_95": 17,
+        "rank": 1,
+        "samples": 1487,
+        "release_date": "2025-02-14",
+        "price_per_minute": 0.6,
+        "open_weights_url": null,
+        "categories": [
+          {
+            "label": "Photorealistic",
+            "group": "style",
+            "elo": 1178,
+            "ci_95": 34,
+            "samples": 188
+          }
+        ]
+      }
+    ]
+  },
+  "get_text_to_speech_arena_free": {
+    "tier": "free",
+    "data": [
+      {
+        "id": "6e0eadf0-3bf9-4424-a563-90292f2a0afd",
+        "name": "Inworld TTS 1.5 Max",
+        "slug": "tts-1-5-max",
+        "model_creator": {
+          "id": "3aab6d2e-04b0-43ee-996f-d8ef76ac3232",
+          "name": "Inworld"
+        },
+        "elo": 1240,
+        "ci_95": 22
+      }
+    ]
+  },
+  "get_text_to_speech_arena": {
+    "tier": "pro",
+    "data": [
+      {
+        "id": "6e0eadf0-3bf9-4424-a563-90292f2a0afd",
+        "name": "Inworld TTS 1.5 Max",
+        "slug": "tts-1-5-max",
+        "model_creator": {
+          "id": "3aab6d2e-04b0-43ee-996f-d8ef76ac3232",
+          "name": "Inworld"
+        },
+        "elo": 1240,
+        "ci_95": 22,
+        "samples": 1330,
+        "release_date": "2026-01-21",
+        "price_per_1m_characters": 10
+      }
+    ]
+  },
+  "get_speech_to_speech": {
+    "tier": "pro",
+    "data": [
+      {
+        "id": "eead24bb-ad0b-45be-b0ab-7b16381c2daf",
+        "name": "GPT 4o audio chatcompletions",
+        "slug": "4o-audio-chatcompletions",
+        "model_creator": {
+          "id": "e67e56e3-15cd-43db-b679-da4660a69f41",
+          "name": "OpenAI"
+        },
+        "bba_score": 0.54,
+        "fdb_score": null,
+        "tau_voice_score": 0.37,
+        "providers": [
+          {
+            "id": "6047c38a-af71-4b47-9d66-d361753f71b4",
+            "name": "OpenAI",
+            "slug": "openai",
+            "price_per_hour_input": 3.6,
+            "price_per_hour_output": 14.4,
+            "time_to_first_audio_seconds": 3.38
+          }
+        ]
+      }
+    ]
+  },
+  "get_speech_to_text_models_free": {
+    "tier": "free",
+    "data": [
+      {
+        "id": "865b890e-c487-4e78-a404-d1af7d7ee910",
+        "name": "GPT-4o Mini Transcribe, OpenAI",
+        "model_creator": {
+          "id": "e67e56e3-15cd-43db-b679-da4660a69f41",
+          "name": "OpenAI"
+        },
+        "aa_wer_index": 0.045
+      }
+    ]
+  },
+  "get_speech_to_text_models": {
+    "tier": "pro",
+    "data": [
+      {
+        "id": "865b890e-c487-4e78-a404-d1af7d7ee910",
+        "name": "GPT-4o Mini Transcribe, OpenAI",
+        "model_creator": {
+          "id": "e67e56e3-15cd-43db-b679-da4660a69f41",
+          "name": "OpenAI"
+        },
+        "aa_wer_index": 0.045,
+        "aa_agenttalk": 0.037,
+        "voxpopuli_cleaned_aa": 0.024,
+        "earnings_22_cleaned_aa": 0.081,
+        "open_weights": false,
+        "providers": [
+          {
+            "id": "6047c38a-af71-4b47-9d66-d361753f71b4",
+            "name": "OpenAI",
+            "slug": "openai",
+            "price_per_1k_minutes": 3,
+            "median_speed_factor": 48.36,
+            "aa_wer_index": 0.045,
+            "aa_agenttalk": 0.037,
+            "voxpopuli_cleaned_aa": 0.024,
+            "earnings_22_cleaned_aa": 0.081
+          }
+        ]
+      }
+    ]
+  },
+  "get_music_instrumental_arena": {
+    "tier": "pro",
+    "data": [
+      {
+        "id": "b5b7f9d3-85d4-47dc-9213-fe09c1ea5da1",
+        "name": "Eleven Music",
+        "model_creator": {
+          "id": "8d057760-0a8b-460a-9625-6dd261bb325c",
+          "name": "ElevenLabs"
+        },
+        "elo": 1064,
+        "ci_95": 14,
+        "samples": 2396,
+        "genres": [
+          {
+            "label": "Latin",
+            "elo": 1063,
+            "ci_95": 48,
+            "samples": 214
+          }
+        ]
+      }
+    ]
+  },
+  "get_music_with_vocals_arena": {
+    "tier": "pro",
+    "data": [
+      {
+        "id": "1d06bf78-0a16-4fdf-8029-663a694e3470",
+        "name": "Suno V4.5",
+        "model_creator": {
+          "id": "30bf1911-2cd9-4bce-a179-009b174196fc",
+          "name": "Suno"
+        },
+        "elo": 1080,
+        "ci_95": 12,
+        "samples": 3428,
+        "genres": [
+          {
+            "label": "Alternative / Indie",
+            "elo": 1064,
+            "ci_95": 46,
+            "samples": 244
+          }
+        ]
+      }
+    ]
+  }
+}
