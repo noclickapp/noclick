@@ -423,6 +423,30 @@
           "x-is-trigger": false
         },
         "metadata_json": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "key": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "values": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "key",
+                "values"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
           "description": "JSON array of {\"key\":\"topic\",\"values\":[\"owned-fixture\"]}. Replaces document metadata; no text-replacement contract is assumed.",
           "examples": [
             "[]"

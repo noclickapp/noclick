@@ -364,7 +364,7 @@ class GetDocument(DocumentTarget):
 
 class UpdateDocumentMetadata(DocumentTarget):
     operation: Literal["update_document_metadata"] = op("update_document_metadata", "Update Document Metadata Tags", "Knowledge Base")
-    metadata_json: str = Field(..., max_length=12000, pattern=r"^\s*\[[\s\S]*\]\s*$", examples=["[]"], title="Metadata Tags", description='JSON array of {"key":"topic","values":["owned-fixture"]}. Replaces document metadata; no text-replacement contract is assumed.', json_schema_extra={"ui:widget": "code_editor", "x-code-language": "json"})
+    metadata_json: str = Field(..., max_length=12000, pattern=r"^\s*\[[\s\S]*\]\s*$", examples=["[]"], title="Metadata Tags", description='JSON array of {"key":"topic","values":["owned-fixture"]}. Replaces document metadata; no text-replacement contract is assumed.', json_schema_extra={"ui:widget": "code_editor", "x-code-language": "json", "contentMediaType": "application/json", "contentSchema": {"type": "array", "items": {"type": "object", "properties": {"key": {"type": "string", "minLength": 1}, "values": {"type": "array", "items": {"type": "string"}}}, "required": ["key", "values"], "additionalProperties": False}}})
 
     @field_validator("metadata_json")
     @classmethod
