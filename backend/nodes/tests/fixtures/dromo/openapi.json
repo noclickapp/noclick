@@ -1,0 +1,2329 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Dromo",
+    "description": "Dromo's APIs provide convenient programmatic access to your uploads and schemas. You can use them to create powerful automated workflows.",
+    "termsOfService": "https://dromo.io/legal/terms",
+    "contact": {
+      "name": "Dromo",
+      "email": "contact@dromo.io"
+    },
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://app.dromo.io/api/v1"
+    }
+  ],
+  "security": [
+    {
+      "api_key": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "uploads",
+      "description": "Viewing completed imports"
+    },
+    {
+      "name": "import-schemas",
+      "description": "Creating and viewing import schemas"
+    },
+    {
+      "name": "headless",
+      "description": "Creating and viewing headless imports"
+    },
+    {
+      "name": "sftp-credentials",
+      "description": "Managing SFTP server credentials"
+    },
+    {
+      "name": "sftp-connectors",
+      "description": "Managing SFTP automated import connectors"
+    }
+  ],
+  "paths": {
+    "/schemas/": {
+      "get": {
+        "operationId": "listImportSchemas",
+        "summary": "Get all import schemas",
+        "description": "Returns all saved import schemas available to the authenticated Dromo organization.",
+        "tags": [
+          "import-schemas"
+        ],
+        "responses": {
+          "200": {
+            "description": "List import schemas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ImportSchema"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createImportSchema",
+        "summary": "Create a new import schema",
+        "description": "Creates a saved import schema with fields, settings, and optional hooks for reuse in Dromo imports.",
+        "tags": [
+          "import-schemas"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Schema Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schemas/{id}/": {
+      "get": {
+        "operationId": "getImportSchema",
+        "summary": "Get an import schema",
+        "description": "Returns one saved import schema by ID, including its fields, settings, and hooks.",
+        "tags": [
+          "import-schemas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Headless import ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "66d6300d-1414-4655-83b4-8c80fc527315"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An import schema",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportSchema"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateImportSchema",
+        "summary": "Update an import schema",
+        "description": "Replaces the fields, settings, and hooks of an existing saved import schema identified by ID.",
+        "tags": [
+          "import-schemas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Headless import ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "66d6300d-1414-4655-83b4-8c80fc527315"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated schema",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportSchema"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteImportSchema",
+        "summary": "Delete an import schema",
+        "description": "Permanently deletes a saved import schema identified by ID.",
+        "tags": [
+          "import-schemas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Headless import ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "66d6300d-1414-4655-83b4-8c80fc527315"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Import schema deleted"
+          }
+        }
+      }
+    },
+    "/uploads/": {
+      "get": {
+        "operationId": "listUploads",
+        "summary": "Get all uploads",
+        "description": "Lists completed Dromo uploads for the authenticated organization, optionally filtered by a start and end date.",
+        "tags": [
+          "uploads"
+        ],
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "description": "start index",
+            "schema": {
+              "type": "number",
+              "default": 0
+            }
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "description": "end index, defaults to max return value, 10000",
+            "schema": {
+              "type": "number",
+              "default": 10000
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List uploads",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "start": {
+                      "type": "number"
+                    },
+                    "end": {
+                      "type": "number"
+                    },
+                    "total_num_uploads": {
+                      "type": "number"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Import"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/upload/{id}/metadata/": {
+      "get": {
+        "operationId": "getUploadMetadata",
+        "summary": "Get upload metadata",
+        "description": "Returns metadata for a completed Dromo upload, including information about its schema, user, and results.",
+        "tags": [
+          "uploads"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Upload metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/upload/{id}/delete/": {
+      "post": {
+        "operationId": "deleteUpload",
+        "summary": "Delete an upload permanently",
+        "description": "Permanently deletes a completed upload and its stored data from Dromo.",
+        "tags": [
+          "uploads"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted"
+          }
+        }
+      }
+    },
+    "/upload/{id}/url/": {
+      "get": {
+        "operationId": "getUploadUrl",
+        "summary": "Get presigned download URL for upload data",
+        "description": "Creates a temporary presigned URL for securely downloading the data from a completed upload.",
+        "tags": [
+          "uploads"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Upload ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a signed URL to access the upload's data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "presigned_url": {
+                      "type": "string",
+                      "description": "The presigned download URL to access the upload's data.",
+                      "example": "https://dromo-user-imports.s3.us-west-2.amazonaws.com/b3f0ff47-07e0-4c98-90de-5451aff066c8.json?X-Amz-Algorithm=...&X-Amz-Credential=...&X-Amz-Date=...&X-Amz-Expires=1800&X-Amz-SignedHeaders=host&X-Amz-Signature=..."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/headless/imports/{id}/": {
+      "get": {
+        "tags": [
+          "headless"
+        ],
+        "summary": "Retrieve headless import",
+        "description": "Returns the current status and available result or review information for a headless import by ID.",
+        "operationId": "retrieveHeadlessImport",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Headless import ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "66d6300d-1414-4655-83b4-8c80fc527315"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return headless import",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeadlessImportFull"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "headless"
+        ],
+        "summary": "Delete headless import",
+        "description": "Permanently deletes a headless import identified by ID.",
+        "operationId": "deleteHeadlessImport",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Headless import ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "66d6300d-1414-4655-83b4-8c80fc527315"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Headless import deleted successfully"
+          },
+          "404": {
+            "description": "Not found."
+          }
+        }
+      }
+    },
+    "/headless/imports/{id}/url/": {
+      "get": {
+        "operationId": "getHeadlessImportUrl",
+        "summary": "Get presigned download URL for headless import data",
+        "description": "Creates a temporary presigned URL for downloading the processed data from a successful headless import.",
+        "tags": [
+          "headless"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Headless import ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a signed URL to access the headless import's result data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "presigned_url": {
+                      "type": "string",
+                      "description": "The presigned download URL to access the headless import's result data.",
+                      "example": "https://dromo-user-imports.s3.us-west-2.amazonaws.com/b3f0ff47-07e0-4c98-90de-5451aff066c8.json?X-Amz-Algorithm=...&X-Amz-Credential=...&X-Amz-Date=...&X-Amz-Expires=1800&X-Amz-SignedHeaders=host&X-Amz-Signature=..."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/headless/imports/": {
+      "get": {
+        "tags": [
+          "headless"
+        ],
+        "summary": "List headless imports",
+        "description": "Returns a paginated list of headless imports for the authenticated Dromo organization.",
+        "operationId": "listHeadlessImports",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "starting index",
+            "schema": {
+              "type": "number",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "total number of imports to return, defaults 100 max 1000",
+            "schema": {
+              "type": "number",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List headless imports",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "number",
+                      "example": 75
+                    },
+                    "next": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "example": "https://app.dromo.io/api/v1/api/v1/headless/imports/?limit=10&offset=10"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "previous": {
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "example": "https://app.dromo.io/api/v1/api/v1/headless/imports/?limit=10&offset=10"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/HeadlessImport"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "headless"
+        ],
+        "summary": "Create a new headless import",
+        "description": "Starts a headless import from an uploaded file or data payload using a saved or inline schema.",
+        "operationId": "createHeadlessImport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "schema_id": {
+                    "type": "string",
+                    "description": "ID of a saved schema. Mutually exclusive with `fields` — provide `schema_id` or `fields`, not both. When provided alongside `settings` or `hooks`, those values are merged on top of the saved schema for this import only.",
+                    "example": "94187d21-9820-420f-b08c-a80cbbf52604"
+                  },
+                  "fields": {
+                    "$ref": "#/components/schemas/SchemaFields"
+                  },
+                  "settings": {
+                    "$ref": "#/components/schemas/SchemaSettings"
+                  },
+                  "hooks": {
+                    "$ref": "#/components/schemas/SchemaHooks"
+                  },
+                  "original_filename": {
+                    "oneOf": [
+                      {
+                        "type": "string",
+                        "description": "Name of the file being imported (exclude if using initial_data)",
+                        "example": "user.csv"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "initial_data": {
+                    "oneOf": [
+                      {
+                        "type": "array",
+                        "description": "Complete JSON data to be imported, max size 15MB (exclude if using a file)",
+                        "example": [
+                          {
+                            "first_name": "Zeph",
+                            "last_name": "paul.zeph@gmail.com"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "import_metadata": {
+                    "$ref": "#/components/schemas/ImportMetaData"
+                  }
+                },
+                "example": {
+                  "fields": [
+                    {
+                      "key": "first_name",
+                      "type": "string",
+                      "label": "First Name",
+                      "validators": []
+                    },
+                    {
+                      "key": "last_name",
+                      "type": "string",
+                      "label": "Last Name",
+                      "validators": []
+                    }
+                  ],
+                  "initial_data": [
+                    {
+                      "first_name": "Zeph",
+                      "last_name": "paul.zeph@gmail.com"
+                    }
+                  ],
+                  "hooks": {
+                    "rowHooks": [
+                      "(record, mode) => { return { row: { first_name: { value: \"Updated from row hook\" } } }; }"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Import successfully initialized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeadlessImportFull"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No schema found with that id"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/headless/sftp/credentials/": {
+      "get": {
+        "tags": ["sftp-credentials"],
+        "summary": "List SFTP credentials",
+        "description": "Returns the SFTP credential configurations available to the authenticated Dromo organization.",
+        "operationId": "listSftpCredentials",
+        "responses": {
+          "200": {
+            "description": "List of SFTP credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "example": 2
+                    },
+                    "next": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": null
+                    },
+                    "previous": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": null
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SftpCredential"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["sftp-credentials"],
+        "summary": "Create SFTP credentials",
+        "description": "Creates an SFTP credential configuration for connecting Dromo to an SFTP server.",
+        "operationId": "createSftpCredentials",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SftpCredentialCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "SFTP credentials created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SftpCredential"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Must supply password for password auth"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/headless/sftp/credentials/{id}/": {
+      "get": {
+        "tags": ["sftp-credentials"],
+        "summary": "Retrieve SFTP credentials",
+        "description": "Returns one SFTP credential configuration by ID without exposing secret credential values.",
+        "operationId": "retrieveSftpCredentials",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "SFTP credentials ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "ee5d0e45-b098-47bc-8217-e93790243dfa"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SFTP credentials details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SftpCredential"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["sftp-credentials"],
+        "summary": "Update SFTP credentials",
+        "description": "Updates an existing SFTP credential configuration identified by ID.",
+        "operationId": "updateSftpCredentials",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "SFTP credentials ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "ee5d0e45-b098-47bc-8217-e93790243dfa"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SftpCredentialUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "SFTP credentials updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SftpCredential"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["sftp-credentials"],
+        "summary": "Delete SFTP credentials",
+        "description": "Deletes an SFTP credential configuration identified by ID.",
+        "operationId": "deleteSftpCredentials",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "SFTP credentials ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "ee5d0e45-b098-47bc-8217-e93790243dfa"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "SFTP credentials deleted"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/headless/sftp/credentials/{id}/test_connection/": {
+      "post": {
+        "tags": ["sftp-credentials"],
+        "summary": "Test SFTP connection",
+        "description": "Tests whether Dromo can connect to the SFTP server using the selected credential configuration.",
+        "operationId": "testSftpConnection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "SFTP credentials ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "ee5d0e45-b098-47bc-8217-e93790243dfa"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Connection test result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Connection refused"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/headless/sftp/connectors/": {
+      "get": {
+        "tags": ["sftp-connectors"],
+        "summary": "List SFTP connectors",
+        "description": "Returns the automated SFTP import connectors configured for the authenticated Dromo organization.",
+        "operationId": "listSftpConnectors",
+        "responses": {
+          "200": {
+            "description": "List of SFTP connectors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "example": 2
+                    },
+                    "next": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": null
+                    },
+                    "previous": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": null
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SftpConnector"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["sftp-connectors"],
+        "summary": "Create SFTP connector",
+        "description": "Creates an automated SFTP connector that imports files using configured credentials and schema settings.",
+        "operationId": "createSftpConnector",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SftpConnectorCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "SFTP connector created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SftpConnector"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "schedule": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": ["minutes must be 5 or greater"]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/headless/sftp/connectors/{id}/": {
+      "get": {
+        "tags": ["sftp-connectors"],
+        "summary": "Retrieve SFTP connector",
+        "description": "Returns one automated SFTP connector and its import configuration by ID.",
+        "operationId": "retrieveSftpConnector",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "SFTP connector ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SFTP connector details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SftpConnector"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["sftp-connectors"],
+        "summary": "Update SFTP connector",
+        "description": "Updates an existing automated SFTP connector identified by ID.",
+        "operationId": "updateSftpConnector",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "SFTP connector ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SftpConnectorCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "SFTP connector updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SftpConnector"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["sftp-connectors"],
+        "summary": "Delete SFTP connector",
+        "description": "Deletes an automated SFTP connector identified by ID.",
+        "operationId": "deleteSftpConnector",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "SFTP connector ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "SFTP connector deleted"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HeadlessImport": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "94187d21-9820-420f-b08c-a80cbbf52604",
+            "readOnly": true
+          },
+          "schema_id": {
+            "type": "string",
+            "example": "94187d21-9820-420f-b08c-a80cbbf52604"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "AWAITING_UPLOAD",
+              "PENDING",
+              "RUNNING",
+              "SUCCESSFUL",
+              "FAILED",
+              "NEEDS_REVIEW"
+            ],
+            "example": "AWAITING_UPLOAD",
+            "readOnly": true
+          },
+          "original_filename": {
+            "type": "string",
+            "example": "user_data.csv"
+          },
+          "created_date": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "modified_date": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        }
+      },
+      "HeadlessImportFull": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/HeadlessImport"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "upload": {
+                "type": "string",
+                "example": "https://dromo-headless-imports-prod.s3.us-west-2.amazonaws.com/test-key-123?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20230227%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230227T160315Z&X-Amz-Expires=1800&X-Amz-SignedHeaders=host&X-Amz-Signature=example1234567890abcdef1234567890abcdef1234567890abcdef12345678",
+                "readOnly": true
+              },
+              "review_url": {
+                "type": "string",
+                "example": "https://app.dromo.io/headless/94187d21-9820-420f-b08c-a80cbbf52604/",
+                "readOnly": true
+              },
+              "result_metadata": {
+                "oneOf": [
+                  {
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "example": null,
+                "readOnly": true
+              },
+              "import_errors": {
+                "oneOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "example": null,
+                "readOnly": true
+              }
+            }
+          }
+        ]
+      },
+      "ImportMetaData": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "user": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "companyId": {
+                        "type": "string"
+                      },
+                      "companyName": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["id"],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "example": {
+          "user": {
+            "id": "jeff_id",
+            "name": "Jeff",
+            "email": "jeff@dromo.io",
+            "companyName": "Dromo",
+            "companyId": "dromo_id"
+          }
+        }
+      },
+      "ResultData": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "start": {
+            "type": "integer"
+          },
+          "end": {
+            "type": "integer"
+          },
+          "total_num_rows": {
+            "type": "integer"
+          }
+        },
+        "example": {
+          "data": [
+            {
+              "last": "Phillips",
+              "email": "jason@moxie.xyz"
+            }
+          ],
+          "start": 0,
+          "end": 0,
+          "total_num_rows": 1
+        }
+      },
+      "SchemaFields": {
+        "type": "array",
+        "description": "Inline schema field definitions. Required when `schema_id` is omitted; mutually exclusive with `schema_id`. Accepts the same field definitions as a saved schema.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string"
+            },
+            "type": {
+              "oneOf": [
+                {"type": "string"},
+                {"type": "array"}
+              ]
+            },
+            "label": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "alternateMatches": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "validators": {
+              "type": "array",
+              "items": {"type": "object"}
+            },
+            "invalidValueMessage": {
+              "type": "string"
+            },
+            "readOnly": {
+              "type": "boolean"
+            },
+            "hidden": {
+              "type": "boolean"
+            },
+            "requireMapping": {
+              "type": "boolean"
+            },
+            "manyToOne": {
+              "type": "boolean"
+            },
+            "selectOptions": {
+              "type": "array",
+              "description": "Allowed values for select and multi-select fields. Required for those field types.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {"type": "string"},
+                  "value": {"type": "string"},
+                  "alternateMatches": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                  }
+                },
+                "required": ["label", "value"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": ["key", "type", "label"],
+          "additionalProperties": false
+        },
+        "example": [
+          {
+            "key": "first_name",
+            "type": "string",
+            "label": "First Name",
+            "validators": []
+          },
+          {
+            "key": "last_name",
+            "type": "string",
+            "label": "Last Name",
+            "validators": []
+          }
+        ]
+      },
+      "SchemaSettings": {
+        "type": "object",
+        "description": "Import settings. When used with `schema_id`, merged on top of the saved schema (provided keys overwrite; omitted keys are unchanged). When used without `schema_id`, defines settings for the inline schema.",
+        "properties": {
+          "importIdentifier": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "allowInvalidSubmit": {
+            "type": "boolean"
+          },
+          "invalidDataBehavior": {
+            "type": "string",
+            "enum": [
+              "BLOCK_SUBMIT",
+              "INCLUDE_INVALID_ROWS",
+              "REMOVE_INVALID_ROWS",
+              "INCLUDE_INVALID_ROWS_AND_VALUES"
+            ]
+          },
+          "backendSync": {
+            "type": "boolean"
+          },
+          "backendSyncMode": {
+            "type": "string",
+            "enum": [
+              "DISABLED",
+              "FULL_DATA",
+              "MAPPINGS_ONLY"
+            ]
+          },
+          "manualInputDisabled": {
+            "type": "boolean"
+          },
+          "manualInputOnly": {
+            "type": "boolean"
+          },
+          "allowCustomFields": {
+            "type": "boolean"
+          },
+          "passThroughUnmappedColumns": {
+            "type": "boolean"
+          },
+          "maxRecords": {
+            "oneOf": [
+              {"type": "integer"},
+              {"type": "null"}
+            ]
+          },
+          "developmentMode": {
+            "type": "boolean"
+          },
+          "displayEncoding": {
+            "type": "boolean"
+          },
+          "styleOverrides": {
+            "type": "object"
+          },
+          "maxFileSize": {
+            "type": "integer"
+          },
+          "webhookUrl": {
+            "oneOf": [
+              {"type": "string"},
+              {"type": "null"}
+            ]
+          },
+          "needsReviewWebhookUrl": {
+            "oneOf": [
+              {"type": "string"},
+              {"type": "null"}
+            ]
+          },
+          "initialData": {
+            "oneOf": [
+              {"type": "array"},
+              {"type": "null"}
+            ]
+          },
+          "uploadStep": {
+            "type": "object",
+            "properties": {
+              "helpText": {"type": ["string", "null"]},
+              "sheetOverride": {"type": ["string", "null"]}
+            },
+            "additionalProperties": false
+          },
+          "matchingStep": {
+            "type": "object",
+            "properties": {
+              "helpText": {"type": ["string", "null"]},
+              "headerRowOverride": {"type": ["integer", "null"]},
+              "fuzzyMatchHeaders": {"type": "boolean"},
+              "matchToSchema": {"type": "boolean"}
+            },
+            "additionalProperties": false
+          },
+          "matchValuesStep": {
+            "type": "object",
+            "properties": {
+              "helpText": {"type": ["string", "null"]},
+              "maxMappableSelectValues": {"type": "integer", "minimum": 1, "maximum": 1000}
+            },
+            "additionalProperties": false
+          },
+          "reviewStep": {
+            "type": "object",
+            "properties": {
+              "helpText": {"type": ["string", "null"]},
+              "processingText": {"type": ["string", "null"]},
+              "enableUserTransformations": {"type": "boolean"},
+              "allowAddingRows": {"type": "boolean"},
+              "allowRemovingRows": {"type": "boolean"}
+            },
+            "additionalProperties": false
+          },
+          "autoMapHeaders": {
+            "type": "boolean"
+          },
+          "delimiter": {
+            "type": "string"
+          },
+          "backendOverride": {
+            "type": "object",
+            "properties": {
+              "url": {"type": "string"},
+              "type": {"type": "string", "enum": ["AWS", "AZURE"]}
+            },
+            "required": ["url", "type"],
+            "additionalProperties": false
+          },
+          "locale": {
+            "type": "string",
+            "description": "Supported locale shorthand, such as en, es, fr, or zh_CN."
+          },
+          "templateDownloadFilename": {
+            "type": ["string", "null"]
+          },
+          "browserExcelParsing": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "string"
+          },
+          "alternateDomain": {
+            "type": ["string", "null"]
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "importIdentifier": "contacts-import",
+          "invalidDataBehavior": "BLOCK_SUBMIT"
+        }
+      },
+      "SchemaHooks": {
+        "type": "object",
+        "description": "Import hooks. When used with `schema_id`, merged on top of the saved schema. When used without `schema_id`, defines hooks for the inline schema.",
+        "properties": {
+          "rowHooks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "bulkRowHooks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rowDeleteHooks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "beforeFinishCallback": {
+            "type": "string"
+          },
+          "columnHooks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "fieldName": {
+                  "type": "string"
+                },
+                "callback": {
+                  "type": "string"
+                }
+              },
+              "required": ["fieldName", "callback"],
+              "additionalProperties": false
+            }
+          },
+          "stepHooks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "UPLOAD_STEP",
+                    "REVIEW_STEP",
+                    "REVIEW_STEP_POST_HOOKS",
+                    "REVIEW_STEP_PRE_SUBMIT"
+                  ]
+                },
+                "callback": {
+                  "type": "string"
+                }
+              },
+              "required": ["type", "callback"],
+              "additionalProperties": false
+            }
+          },
+          "fileParsers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "extensions": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "parseFile": {"type": "string"}
+              },
+              "required": ["extensions", "parseFile"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false,
+        "example": {
+          "rowHooks": [
+            "(record, mode) => { return { row: { first_name: { value: \"Updated from row hook\" } } }; }"
+          ]
+        }
+      },
+      "ImportSchema": {
+        "type": "object",
+        "example": {
+          "id": "0631f213-ca91-41e0-9a88-7430c7d0ca28",
+          "name": "last - email",
+          "fields": [
+            {
+              "key": "lastName",
+              "type": "string",
+              "label": "last",
+              "validators": [
+                {
+                  "validate": "required"
+                }
+              ]
+            },
+            {
+              "key": "email",
+              "type": "email",
+              "label": "email",
+              "validators": [
+                {
+                  "validate": "required"
+                }
+              ]
+            }
+          ],
+          "settings": {
+            "type": "object",
+            "properties": {
+              "importIdentifier": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "allowInvalidSubmit": {
+                "type": "boolean"
+              },
+              "invalidDataBehavior": {
+                "type": "string",
+                "enum": [
+                  "BLOCK_SUBMIT",
+                  "INCLUDE_INVALID_ROWS",
+                  "REMOVE_INVALID_ROWS",
+                  "INCLUDE_INVALID_ROWS_AND_VALUES"
+                ]
+              },
+              "backendSync": {
+                "type": "boolean"
+              },
+              "backendSyncMode": {
+                "type": "string",
+                "enum": [
+                  "DISABLED",
+                  "FULL_DATA",
+                  "MAPPINGS_ONLY"
+                ]
+              },
+              "manualInputDisabled": {
+                "type": "boolean"
+              },
+              "manualInputOnly": {
+                "type": "boolean"
+              },
+              "allowCustomFields": {
+                "type": "boolean"
+              },
+              "passThroughUnmappedColumns": {
+                "type": "boolean"
+              },
+              "maxRecords": {
+                "oneOf": [
+                  {"type": "integer"},
+                  {"type": "null"}
+                ]
+              },
+              "developmentMode": {
+                "type": "boolean"
+              },
+              "displayEncoding": {
+                "type": "boolean"
+              },
+              "styleOverrides": {
+                "type": "object"
+              },
+              "maxFileSize": {
+                "type": "integer"
+              },
+              "webhookUrl": {
+                "oneOf": [
+                  {"type": "string"},
+                  {"type": "null"}
+                ]
+              },
+              "needsReviewWebhookUrl": {
+                "oneOf": [
+                  {"type": "string"},
+                  {"type": "null"}
+                ]
+              },
+              "initialData": {
+                "oneOf": [
+                  {"type": "array"},
+                  {"type": "null"}
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "hooks": {
+            "type": "object",
+            "properties": {
+              "rowHooks": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "bulkRowHooks": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "rowDeleteHooks": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "beforeFinishCallback": {
+                "type": "string"
+              },
+              "columnHooks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "fieldName": {
+                      "type": "string"
+                    },
+                    "callback": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["fieldName", "callback"],
+                  "additionalProperties": false
+                }
+              },
+              "stepHooks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": ["UPLOAD_STEP", "REVIEW_STEP", "REVIEW_STEP_POST_HOOKS"]
+                    },
+                    "callback": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["type", "callback"],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "properties": {
+          "id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "type": {
+                  "oneOf": [
+                    {"type": "string"},
+                    {"type": "array"}
+                  ]
+                },
+                "label": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "alternateMatches": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "validators": {
+                  "type": "array",
+                  "items": {"type": "object"}
+                },
+                "invalidValueMessage": {
+                  "type": "string"
+                },
+                "readOnly": {
+                  "type": "boolean"
+                },
+                "hidden": {
+                  "type": "boolean"
+                },
+                "requireMapping": {
+                  "type": "boolean"
+                },
+                "manyToOne": {
+                  "type": "boolean"
+                }
+              },
+              "required": ["key", "type", "label"],
+              "additionalProperties": false
+            }
+          },
+          "settings": {
+            "type": "object",
+            "properties": {
+              "importIdentifier": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "allowInvalidSubmit": {
+                "type": "boolean"
+              },
+              "invalidDataBehavior": {
+                "type": "string",
+                "enum": [
+                  "BLOCK_SUBMIT",
+                  "INCLUDE_INVALID_ROWS",
+                  "REMOVE_INVALID_ROWS",
+                  "INCLUDE_INVALID_ROWS_AND_VALUES"
+                ]
+              },
+              "backendSync": {
+                "type": "boolean"
+              },
+              "backendSyncMode": {
+                "type": "string",
+                "enum": [
+                  "DISABLED",
+                  "FULL_DATA",
+                  "MAPPINGS_ONLY"
+                ]
+              },
+              "manualInputDisabled": {
+                "type": "boolean"
+              },
+              "manualInputOnly": {
+                "type": "boolean"
+              },
+              "allowCustomFields": {
+                "type": "boolean"
+              },
+              "passThroughUnmappedColumns": {
+                "type": "boolean"
+              },
+              "maxRecords": {
+                "oneOf": [
+                  {"type": "integer"},
+                  {"type": "null"}
+                ]
+              },
+              "developmentMode": {
+                "type": "boolean"
+              },
+              "displayEncoding": {
+                "type": "boolean"
+              },
+              "styleOverrides": {
+                "type": "object"
+              },
+              "maxFileSize": {
+                "type": "integer"
+              },
+              "webhookUrl": {
+                "oneOf": [
+                  {"type": "string"},
+                  {"type": "null"}
+                ]
+              },
+              "needsReviewWebhookUrl": {
+                "oneOf": [
+                  {"type": "string"},
+                  {"type": "null"}
+                ]
+              },
+              "initialData": {
+                "oneOf": [
+                  {"type": "array"},
+                  {"type": "null"}
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "hooks": {
+            "type": "object",
+            "properties": {
+              "rowHooks": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "bulkRowHooks": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "rowDeleteHooks": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "beforeFinishCallback": {
+                "type": "string"
+              },
+              "columnHooks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "fieldName": {
+                      "type": "string"
+                    },
+                    "callback": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["fieldName", "callback"],
+                  "additionalProperties": false
+                }
+              },
+              "stepHooks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": ["UPLOAD_STEP", "REVIEW_STEP", "REVIEW_STEP_POST_HOOKS"]
+                    },
+                    "callback": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["type", "callback"],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "name",
+          "fields",
+          "settings"
+        ]
+      },
+      "Import": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "64b07421-f291-4449-a7d4-0f2e6ab912c4"
+          },
+          "import_identifier": {
+            "type": "string",
+            "example": "new products"
+          },
+          "raw_upload": {
+            "type": "object",
+            "properties": {
+              "filename": {
+                "type": "string",
+                "example": "my_file.csv"
+              },
+              "storage_key": {
+                "type": "string",
+                "example": "c82e33b1-cea6-4271-9d21-38140c13fe28-my_file.csv"
+              }
+            }
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "companyId": {
+                "type": "string"
+              },
+              "companyName": {
+                "type": "string"
+              }
+            },
+            "required": ["id"],
+            "additionalProperties": false
+          },
+          "created_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "upload_status": {
+            "type": "string",
+            "enum": [
+              "PENDING_UPLOAD",
+              "PROCESSING",
+              "PROCESSED",
+              "FAILED"
+            ]
+          },
+          "total_num_rows": {
+            "type": "number"
+          },
+          "invalid_row_indexes": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "storage_key": {
+            "type": "string",
+            "format": "uuid",
+            "example": "64b07421-f291-4449-a7d4-0f2e6ab912c4"
+          },
+          "field_order": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ImportDetail": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Import"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "raw_upload": {
+                "type": "object",
+                "properties": {
+                  "download_url": {
+                    "type": "string",
+                    "example": "https://dromo-imports-prod.s3.us-west-2.amazonaws.com/test-key-123?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIOSFODNN7EXAMPLE%2F20230227%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20230227T160315Z&X-Amz-Expires=1800&X-Amz-SignedHeaders=host&X-Amz-Signature=example1234567890abcdef1234567890abcdef1234567890abcdef12345678"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "SftpCredential": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "ee5d0e45-b098-47bc-8217-e93790243dfa",
+            "readOnly": true
+          },
+          "hostname": {
+            "type": "string",
+            "example": "sftp.example.com"
+          },
+          "port": {
+            "type": "integer",
+            "example": 22
+          },
+          "user": {
+            "type": "string",
+            "example": "sftpuser"
+          },
+          "auth_type": {
+            "type": "string",
+            "enum": ["PASSWORD", "KEY"],
+            "example": "PASSWORD"
+          },
+          "key_fingerprint": {
+            "type": "string",
+            "nullable": true,
+            "example": "SHA256:abc123...",
+            "readOnly": true
+          }
+        },
+        "required": ["hostname", "port", "user", "auth_type"]
+      },
+      "SftpCredentialCreate": {
+        "type": "object",
+        "properties": {
+          "hostname": {
+            "type": "string",
+            "example": "sftp.example.com"
+          },
+          "port": {
+            "type": "integer",
+            "example": 22
+          },
+          "user": {
+            "type": "string",
+            "example": "sftpuser"
+          },
+          "auth_type": {
+            "type": "string",
+            "enum": ["PASSWORD", "KEY"],
+            "example": "PASSWORD"
+          },
+          "password": {
+            "type": "string",
+            "example": "secure-password-123",
+            "description": "Required when auth_type is PASSWORD"
+          },
+          "private_key": {
+            "type": "string",
+            "example": "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABlwAAAAdzc2gtcn\n...\n-----END OPENSSH PRIVATE KEY-----",
+            "description": "Required when auth_type is KEY (OpenSSH format)"
+          }
+        },
+        "required": ["hostname", "port", "user", "auth_type"]
+      },
+      "SftpCredentialUpdate": {
+        "type": "object",
+        "properties": {
+          "hostname": {
+            "type": "string",
+            "example": "sftp.example.com"
+          },
+          "port": {
+            "type": "integer",
+            "example": 22
+          },
+          "user": {
+            "type": "string",
+            "example": "sftpuser"
+          },
+          "auth_type": {
+            "type": "string",
+            "enum": ["PASSWORD", "KEY"],
+            "example": "PASSWORD"
+          },
+          "password": {
+            "type": "string",
+            "example": "new-secure-password-123",
+            "description": "Optional - omit or use empty string to preserve existing password"
+          },
+          "private_key": {
+            "type": "string",
+            "example": "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABlwAAAAdzc2gtcn\n...\n-----END OPENSSH PRIVATE KEY-----",
+            "description": "Optional - omit or use empty string to preserve existing key"
+          }
+        },
+        "required": ["hostname", "port", "user", "auth_type"]
+      },
+      "SftpConnector": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+            "readOnly": true
+          },
+          "credentials": {
+            "type": "string",
+            "format": "uuid",
+            "example": "ee5d0e45-b098-47bc-8217-e93790243dfa",
+            "description": "ID of SFTP credentials to use"
+          },
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "f9e8d7c6-b5a4-3210-9876-543210fedcba",
+            "description": "ID of import schema to use"
+          },
+          "schedule": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["every_n_minutes"],
+                    "example": "every_n_minutes"
+                  },
+                  "minutes": {
+                    "type": "integer",
+                    "minimum": 5,
+                    "example": 15,
+                    "description": "Run every N minutes (minimum 5)"
+                  }
+                },
+                "required": ["type", "minutes"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["daily_at_time"],
+                    "example": "daily_at_time"
+                  },
+                  "time_utc": {
+                    "type": "string",
+                    "pattern": "^([0-1][0-9]|2[0-3]):[0-5][0-9]$",
+                    "example": "09:00",
+                    "description": "UTC time in HH:MM format (24-hour)"
+                  }
+                },
+                "required": ["type", "time_utc"]
+              }
+            ]
+          },
+          "directory": {
+            "type": "string",
+            "example": "/uploads",
+            "description": "SFTP directory to monitor"
+          },
+          "file_regex": {
+            "type": "string",
+            "nullable": true,
+            "example": ".*\\.csv$",
+            "description": "Optional regex pattern to filter files (null accepts all files)"
+          }
+        },
+        "required": ["credentials", "schema", "schedule", "directory"]
+      },
+      "SftpConnectorCreate": {
+        "type": "object",
+        "properties": {
+          "credentials": {
+            "type": "string",
+            "format": "uuid",
+            "example": "ee5d0e45-b098-47bc-8217-e93790243dfa",
+            "description": "ID of SFTP credentials to use"
+          },
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "f9e8d7c6-b5a4-3210-9876-543210fedcba",
+            "description": "ID of import schema to use"
+          },
+          "schedule": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["every_n_minutes"],
+                    "example": "every_n_minutes"
+                  },
+                  "minutes": {
+                    "type": "integer",
+                    "minimum": 5,
+                    "example": 15,
+                    "description": "Run every N minutes (minimum 5)"
+                  }
+                },
+                "required": ["type", "minutes"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["daily_at_time"],
+                    "example": "daily_at_time"
+                  },
+                  "time_utc": {
+                    "type": "string",
+                    "pattern": "^([0-1][0-9]|2[0-3]):[0-5][0-9]$",
+                    "example": "09:00",
+                    "description": "UTC time in HH:MM format (24-hour)"
+                  }
+                },
+                "required": ["type", "time_utc"]
+              }
+            ]
+          },
+          "directory": {
+            "type": "string",
+            "example": "/uploads",
+            "description": "SFTP directory to monitor"
+          },
+          "file_regex": {
+            "type": "string",
+            "nullable": true,
+            "example": ".*\\.csv$",
+            "description": "Optional regex pattern to filter files (null accepts all files)"
+          }
+        },
+        "required": ["credentials", "schema", "schedule", "directory"]
+      }
+    },
+    "securitySchemes": {
+      "api_key": {
+        "type": "apiKey",
+        "name": "X-Dromo-License-Key",
+        "in": "header",
+        "description": "This backend API key is different than your frontend license key. Please use the \"Backend\" license key from your [Dromo Dashboard](https://dashboard.dromo.io/)."
+      }
+    }
+  }
+}

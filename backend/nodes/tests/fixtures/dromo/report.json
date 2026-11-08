@@ -1,0 +1,522 @@
+[
+  {
+    "provider": "dromo",
+    "node_type": "automation-dromo",
+    "checked": 14,
+    "passed": 14,
+    "failed": 0,
+    "fixture_errors": 0,
+    "response_checked": 14,
+    "auth_checked": 14,
+    "scope_checked": 0,
+    "skipped": 0,
+    "coverage": {
+      "implemented": 14,
+      "total": 25
+    },
+    "operations": [
+      {
+        "operation": "list_schemas",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dromo.io/api/v1/schemas/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "app.dromo.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-dromo-license-key": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /schemas/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "35205f6ffe4f2c3031d4d95ced444f818dbe938648679bf5497730f5dec736b2"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_schemas"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_schema",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dromo.io/api/v1/schemas/00000000-0000-4000-8000-000000000001/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "app.dromo.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-dromo-license-key": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /schemas/{id}/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "0b6aac009938e0c17e86aece31d54ed8c190752869f5ee653938f2f1683dc412"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "id": "00000000-0000-4000-8000-000000000001",
+          "operation": "get_schema"
+        },
+        "passed": true
+      },
+      {
+        "operation": "create_schema",
+        "scenario": "create_schema",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.dromo.io/api/v1/schemas/",
+            "content_type": "application/json",
+            "body": "{\"name\":\"last - email\",\"fields\":[{\"key\":\"lastName\",\"type\":\"string\",\"label\":\"last\",\"validators\":[{\"validate\":\"required\"}]},{\"key\":\"email\",\"type\":\"email\",\"label\":\"email\",\"validators\":[{\"validate\":\"required\"}]}],\"settings\":{}}",
+            "auth_placement": null,
+            "headers": {
+              "host": "app.dromo.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-dromo-license-key": "conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "223",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /schemas/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 201,
+            "response_sha256": "0b6aac009938e0c17e86aece31d54ed8c190752869f5ee653938f2f1683dc412"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_schema",
+          "name": "last - email",
+          "fields_json": "[{\"key\": \"lastName\", \"type\": \"string\", \"label\": \"last\", \"validators\": [{\"validate\": \"required\"}]}, {\"key\": \"email\", \"type\": \"email\", \"label\": \"email\", \"validators\": [{\"validate\": \"required\"}]}]",
+          "settings_json": "{}"
+        },
+        "passed": true
+      },
+      {
+        "operation": "update_schema",
+        "scenario": "update_schema",
+        "requests": [
+          {
+            "method": "PUT",
+            "url": "https://app.dromo.io/api/v1/schemas/66d6300d-1414-4655-83b4-8c80fc527315/",
+            "content_type": "application/json",
+            "body": "{\"name\":\"last - email\",\"fields\":[{\"key\":\"lastName\",\"type\":\"string\",\"label\":\"last\",\"validators\":[{\"validate\":\"required\"}]},{\"key\":\"email\",\"type\":\"email\",\"label\":\"email\",\"validators\":[{\"validate\":\"required\"}]}],\"settings\":{}}",
+            "auth_placement": null,
+            "headers": {
+              "host": "app.dromo.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-dromo-license-key": "conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "223",
+              "content-type": "application/json"
+            },
+            "spec_operation": "PUT /schemas/{id}/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "0b6aac009938e0c17e86aece31d54ed8c190752869f5ee653938f2f1683dc412"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "update_schema",
+          "name": "last - email",
+          "fields_json": "[{\"key\": \"lastName\", \"type\": \"string\", \"label\": \"last\", \"validators\": [{\"validate\": \"required\"}]}, {\"key\": \"email\", \"type\": \"email\", \"label\": \"email\", \"validators\": [{\"validate\": \"required\"}]}]",
+          "settings_json": "{}",
+          "id": "66d6300d-1414-4655-83b4-8c80fc527315"
+        },
+        "passed": true
+      },
+      {
+        "operation": "delete_schema",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://app.dromo.io/api/v1/schemas/00000000-0000-4000-8000-000000000001/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "app.dromo.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-dromo-license-key": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /schemas/{id}/",
+            "security_declared": true,
+            "response_status": 204,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "id": "00000000-0000-4000-8000-000000000001",
+          "operation": "delete_schema"
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_uploads",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dromo.io/api/v1/uploads/?start=0&end=100",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "app.dromo.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-dromo-license-key": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /uploads/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "8d097ba5370076c423e28aa80e193405b4e79d7b93e741b8bdc847650bc15d11"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_uploads",
+          "start": 0,
+          "end": 100
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_upload_metadata",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dromo.io/api/v1/upload/00000000-0000-4000-8000-000000000001/metadata/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "app.dromo.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-dromo-license-key": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /upload/{id}/metadata/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "2a3db64fc3c5625f15605dbb092b7841d8063d4eb5c6cd1090868a05d837d5d4"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "id": "00000000-0000-4000-8000-000000000001",
+          "operation": "get_upload_metadata"
+        },
+        "passed": true
+      },
+      {
+        "operation": "delete_upload",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.dromo.io/api/v1/upload/00000000-0000-4000-8000-000000000001/delete/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "app.dromo.io",
+              "content-length": "0",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-dromo-license-key": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "POST /upload/{id}/delete/",
+            "security_declared": true,
+            "response_status": 200,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "id": "00000000-0000-4000-8000-000000000001",
+          "operation": "delete_upload"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_upload_url",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dromo.io/api/v1/upload/00000000-0000-4000-8000-000000000001/url/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "app.dromo.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-dromo-license-key": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /upload/{id}/url/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "d5609214130580e182fe38436a5c7fb22682917004fdc18979b57143782a6eb8"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "id": "00000000-0000-4000-8000-000000000001",
+          "operation": "get_upload_url"
+        },
+        "passed": true
+      },
+      {
+        "operation": "list_headless_imports",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dromo.io/api/v1/headless/imports/?offset=0&limit=100",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "app.dromo.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-dromo-license-key": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /headless/imports/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "48341d686536d9764ddd9391c63195806c648fbba47db192218da3a142f09979"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "list_headless_imports",
+          "offset": 0,
+          "limit": 100
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_headless_import",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dromo.io/api/v1/headless/imports/00000000-0000-4000-8000-000000000001/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "app.dromo.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-dromo-license-key": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /headless/imports/{id}/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "a04b37ee789bb61184ad5886ca4ca3d0127f3e03fb44f7f9c248e37627da2f58"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "id": "00000000-0000-4000-8000-000000000001",
+          "operation": "get_headless_import"
+        },
+        "passed": true
+      },
+      {
+        "operation": "create_headless_import",
+        "scenario": "create_headless_import",
+        "requests": [
+          {
+            "method": "POST",
+            "url": "https://app.dromo.io/api/v1/headless/imports/",
+            "content_type": "application/json",
+            "body": "{\"initial_data\":[{\"first_name\":\"Zeph\",\"last_name\":\"paul.zeph@gmail.com\"}],\"fields\":[{\"key\":\"first_name\",\"type\":\"string\",\"label\":\"First Name\",\"validators\":[]},{\"key\":\"last_name\",\"type\":\"string\",\"label\":\"Last Name\",\"validators\":[]}],\"hooks\":{\"rowHooks\":[\"(record, mode) => { return { row: { first_name: { value: \\\"Updated from row hook\\\" } } }; }\"]}}",
+            "auth_placement": null,
+            "headers": {
+              "host": "app.dromo.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-dromo-license-key": "conformance-fake-token",
+              "accept": "application/json",
+              "content-length": "348",
+              "content-type": "application/json"
+            },
+            "spec_operation": "POST /headless/imports/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 201,
+            "response_sha256": "a04b37ee789bb61184ad5886ca4ca3d0127f3e03fb44f7f9c248e37627da2f58"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "operation": "create_headless_import",
+          "fields_json": "[{\"key\": \"first_name\", \"type\": \"string\", \"label\": \"First Name\", \"validators\": []}, {\"key\": \"last_name\", \"type\": \"string\", \"label\": \"Last Name\", \"validators\": []}]",
+          "initial_data_json": "[{\"first_name\": \"Zeph\", \"last_name\": \"paul.zeph@gmail.com\"}]",
+          "hooks_json": "{\"rowHooks\": [\"(record, mode) => { return { row: { first_name: { value: \\\"Updated from row hook\\\" } } }; }\"]}"
+        },
+        "passed": true
+      },
+      {
+        "operation": "delete_headless_import",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "DELETE",
+            "url": "https://app.dromo.io/api/v1/headless/imports/00000000-0000-4000-8000-000000000001/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "app.dromo.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-dromo-license-key": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "DELETE /headless/imports/{id}/",
+            "security_declared": true,
+            "response_status": 204,
+            "response_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "id": "00000000-0000-4000-8000-000000000001",
+          "operation": "delete_headless_import"
+        },
+        "passed": true
+      },
+      {
+        "operation": "get_headless_import_url",
+        "scenario": null,
+        "requests": [
+          {
+            "method": "GET",
+            "url": "https://app.dromo.io/api/v1/headless/imports/00000000-0000-4000-8000-000000000001/url/",
+            "content_type": null,
+            "body": "",
+            "auth_placement": null,
+            "headers": {
+              "host": "app.dromo.io",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "connection": "keep-alive",
+              "user-agent": "python-httpx/0.28.1",
+              "x-dromo-license-key": "conformance-fake-token",
+              "accept": "application/json"
+            },
+            "spec_operation": "GET /headless/imports/{id}/url/",
+            "security_declared": true,
+            "response_source": "generated",
+            "response_status": 200,
+            "response_sha256": "d5609214130580e182fe38436a5c7fb22682917004fdc18979b57143782a6eb8"
+          }
+        ],
+        "failures": [],
+        "fixture_errors": [],
+        "skipped": null,
+        "scope_checks": 0,
+        "config": {
+          "id": "00000000-0000-4000-8000-000000000001",
+          "operation": "get_headless_import_url"
+        },
+        "passed": true
+      }
+    ]
+  }
+]

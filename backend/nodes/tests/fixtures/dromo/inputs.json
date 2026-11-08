@@ -1,0 +1,30 @@
+{
+  "create_schema": {
+    "config": {
+      "operation": "create_schema",
+      "name": "last - email",
+      "fields_json": "[{\"key\": \"lastName\", \"type\": \"string\", \"label\": \"last\", \"validators\": [{\"validate\": \"required\"}]}, {\"key\": \"email\", \"type\": \"email\", \"label\": \"email\", \"validators\": [{\"validate\": \"required\"}]}]",
+      "settings_json": "{}"
+    },
+    "source": "https://developer.dromo.io/api-reference/import-schemas/create-a-new-import-schema"
+  },
+  "update_schema": {
+    "config": {
+      "operation": "update_schema",
+      "name": "last - email",
+      "fields_json": "[{\"key\": \"lastName\", \"type\": \"string\", \"label\": \"last\", \"validators\": [{\"validate\": \"required\"}]}, {\"key\": \"email\", \"type\": \"email\", \"label\": \"email\", \"validators\": [{\"validate\": \"required\"}]}]",
+      "settings_json": "{}",
+      "id": "66d6300d-1414-4655-83b4-8c80fc527315"
+    },
+    "source": "https://developer.dromo.io/api-reference/import-schemas/update-an-import-schema"
+  },
+  "create_headless_import": {
+    "config": {
+      "operation": "create_headless_import",
+      "fields_json": "[{\"key\": \"first_name\", \"type\": \"string\", \"label\": \"First Name\", \"validators\": []}, {\"key\": \"last_name\", \"type\": \"string\", \"label\": \"Last Name\", \"validators\": []}]",
+      "initial_data_json": "[{\"first_name\": \"Zeph\", \"last_name\": \"paul.zeph@gmail.com\"}]",
+      "hooks_json": "{\"rowHooks\": [\"(record, mode) => { return { row: { first_name: { value: \\\"Updated from row hook\\\" } } }; }\"]}"
+    },
+    "source": "https://developer.dromo.io/getting-started/headless"
+  }
+}

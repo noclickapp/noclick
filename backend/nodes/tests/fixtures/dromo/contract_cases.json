@@ -1,0 +1,317 @@
+{
+  "source": {
+    "title": "Dromo",
+    "description": "Dromo's APIs provide convenient programmatic access to your uploads and schemas. You can use them to create powerful automated workflows.",
+    "termsOfService": "https://dromo.io/legal/terms",
+    "contact": {
+      "name": "Dromo",
+      "email": "contact@dromo.io"
+    },
+    "version": "1.0"
+  },
+  "source_url": "https://developer.dromo.io/api-reference/openapi.json",
+  "cases": {
+    "list_schemas": {
+      "config": {
+        "operation": "list_schemas"
+      },
+      "method": "GET",
+      "path": "/api/v1/schemas/",
+      "body": null,
+      "response": [
+        {
+          "id": "66d6300d-1414-4655-83b4-8c80fc527315",
+          "name": "Contacts",
+          "fields": [
+            {
+              "key": "first_name",
+              "type": "string",
+              "label": "First Name",
+              "validators": []
+            }
+          ],
+          "settings": {
+            "developmentMode": true
+          }
+        }
+      ],
+      "status": 200
+    },
+    "create_schema": {
+      "config": {
+        "operation": "create_schema",
+        "name": "Contacts",
+        "fields_json": "[{\"key\": \"first_name\", \"type\": \"string\", \"label\": \"First Name\", \"validators\": []}]",
+        "settings_json": "{\"developmentMode\": true}"
+      },
+      "method": "POST",
+      "path": "/api/v1/schemas/",
+      "body": {
+        "name": "Contacts",
+        "fields": [
+          {
+            "key": "first_name",
+            "type": "string",
+            "label": "First Name",
+            "validators": []
+          }
+        ],
+        "settings": {
+          "developmentMode": true
+        }
+      },
+      "response": {
+        "id": "66d6300d-1414-4655-83b4-8c80fc527315",
+        "name": "Contacts",
+        "fields": [
+          {
+            "key": "first_name",
+            "type": "string",
+            "label": "First Name",
+            "validators": []
+          }
+        ],
+        "settings": {
+          "developmentMode": true
+        }
+      },
+      "status": 201
+    },
+    "get_schema": {
+      "config": {
+        "operation": "get_schema",
+        "id": "66d6300d-1414-4655-83b4-8c80fc527315"
+      },
+      "method": "GET",
+      "path": "/api/v1/schemas/66d6300d-1414-4655-83b4-8c80fc527315/",
+      "body": null,
+      "response": {
+        "id": "66d6300d-1414-4655-83b4-8c80fc527315",
+        "name": "Contacts",
+        "fields": [
+          {
+            "key": "first_name",
+            "type": "string",
+            "label": "First Name",
+            "validators": []
+          }
+        ],
+        "settings": {
+          "developmentMode": true
+        }
+      },
+      "status": 200
+    },
+    "update_schema": {
+      "config": {
+        "operation": "update_schema",
+        "id": "66d6300d-1414-4655-83b4-8c80fc527315",
+        "name": "Contacts",
+        "fields_json": "[{\"key\": \"first_name\", \"type\": \"string\", \"label\": \"First Name\", \"validators\": []}]",
+        "settings_json": "{\"developmentMode\": true}"
+      },
+      "method": "PUT",
+      "path": "/api/v1/schemas/66d6300d-1414-4655-83b4-8c80fc527315/",
+      "body": {
+        "name": "Contacts",
+        "fields": [
+          {
+            "key": "first_name",
+            "type": "string",
+            "label": "First Name",
+            "validators": []
+          }
+        ],
+        "settings": {
+          "developmentMode": true
+        }
+      },
+      "response": {
+        "id": "66d6300d-1414-4655-83b4-8c80fc527315",
+        "name": "Contacts",
+        "fields": [
+          {
+            "key": "first_name",
+            "type": "string",
+            "label": "First Name",
+            "validators": []
+          }
+        ],
+        "settings": {
+          "developmentMode": true
+        }
+      },
+      "status": 200
+    },
+    "delete_schema": {
+      "config": {
+        "operation": "delete_schema",
+        "id": "66d6300d-1414-4655-83b4-8c80fc527315"
+      },
+      "method": "DELETE",
+      "path": "/api/v1/schemas/66d6300d-1414-4655-83b4-8c80fc527315/",
+      "body": null,
+      "response": null,
+      "status": 204
+    },
+    "list_uploads": {
+      "config": {
+        "operation": "list_uploads"
+      },
+      "method": "GET",
+      "path": "/api/v1/uploads/",
+      "body": null,
+      "response": {
+        "start": 0,
+        "end": 100,
+        "total_num_uploads": 1,
+        "data": [
+          {
+            "id": "66d6300d-1414-4655-83b4-8c80fc527315",
+            "import_identifier": "new products",
+            "upload_status": "PROCESSED"
+          }
+        ]
+      },
+      "status": 200
+    },
+    "get_upload_metadata": {
+      "config": {
+        "operation": "get_upload_metadata",
+        "id": "66d6300d-1414-4655-83b4-8c80fc527315"
+      },
+      "method": "GET",
+      "path": "/api/v1/upload/66d6300d-1414-4655-83b4-8c80fc527315/metadata/",
+      "body": null,
+      "response": {
+        "id": "66d6300d-1414-4655-83b4-8c80fc527315",
+        "status": "PENDING"
+      },
+      "status": 200
+    },
+    "delete_upload": {
+      "config": {
+        "operation": "delete_upload",
+        "id": "66d6300d-1414-4655-83b4-8c80fc527315"
+      },
+      "method": "POST",
+      "path": "/api/v1/upload/66d6300d-1414-4655-83b4-8c80fc527315/delete/",
+      "body": null,
+      "response": null,
+      "status": 200
+    },
+    "get_upload_url": {
+      "config": {
+        "operation": "get_upload_url",
+        "id": "66d6300d-1414-4655-83b4-8c80fc527315"
+      },
+      "method": "GET",
+      "path": "/api/v1/upload/66d6300d-1414-4655-83b4-8c80fc527315/url/",
+      "body": null,
+      "response": {
+        "presigned_url": "https://dromo-user-imports.s3.us-west-2.amazonaws.com/example.json?signature=example"
+      },
+      "status": 200
+    },
+    "get_headless_import": {
+      "config": {
+        "operation": "get_headless_import",
+        "id": "66d6300d-1414-4655-83b4-8c80fc527315"
+      },
+      "method": "GET",
+      "path": "/api/v1/headless/imports/66d6300d-1414-4655-83b4-8c80fc527315/",
+      "body": null,
+      "response": {
+        "id": "66d6300d-1414-4655-83b4-8c80fc527315",
+        "status": "PENDING"
+      },
+      "status": 200
+    },
+    "delete_headless_import": {
+      "config": {
+        "operation": "delete_headless_import",
+        "id": "66d6300d-1414-4655-83b4-8c80fc527315"
+      },
+      "method": "DELETE",
+      "path": "/api/v1/headless/imports/66d6300d-1414-4655-83b4-8c80fc527315/",
+      "body": null,
+      "response": null,
+      "status": 204
+    },
+    "get_headless_import_url": {
+      "config": {
+        "operation": "get_headless_import_url",
+        "id": "66d6300d-1414-4655-83b4-8c80fc527315"
+      },
+      "method": "GET",
+      "path": "/api/v1/headless/imports/66d6300d-1414-4655-83b4-8c80fc527315/url/",
+      "body": null,
+      "response": {
+        "presigned_url": "https://dromo-user-imports.s3.us-west-2.amazonaws.com/example.json?signature=example"
+      },
+      "status": 200
+    },
+    "list_headless_imports": {
+      "config": {
+        "operation": "list_headless_imports"
+      },
+      "method": "GET",
+      "path": "/api/v1/headless/imports/",
+      "body": null,
+      "response": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+          {
+            "id": "66d6300d-1414-4655-83b4-8c80fc527315",
+            "status": "PENDING"
+          }
+        ]
+      },
+      "status": 200
+    },
+    "create_headless_import": {
+      "config": {
+        "operation": "create_headless_import",
+        "fields_json": "[{\"key\": \"first_name\", \"type\": \"string\", \"label\": \"First Name\", \"validators\": []}, {\"key\": \"last_name\", \"type\": \"string\", \"label\": \"Last Name\", \"validators\": []}]",
+        "initial_data_json": "[{\"first_name\": \"Zeph\", \"last_name\": \"paul.zeph@gmail.com\"}]",
+        "hooks_json": "{\"rowHooks\": [\"(record, mode) => { return { row: { first_name: { value: \\\"Updated from row hook\\\" } } }; }\"]}"
+      },
+      "method": "POST",
+      "path": "/api/v1/headless/imports/",
+      "body": {
+        "fields": [
+          {
+            "key": "first_name",
+            "type": "string",
+            "label": "First Name",
+            "validators": []
+          },
+          {
+            "key": "last_name",
+            "type": "string",
+            "label": "Last Name",
+            "validators": []
+          }
+        ],
+        "initial_data": [
+          {
+            "first_name": "Zeph",
+            "last_name": "paul.zeph@gmail.com"
+          }
+        ],
+        "hooks": {
+          "rowHooks": [
+            "(record, mode) => { return { row: { first_name: { value: \"Updated from row hook\" } } }; }"
+          ]
+        }
+      },
+      "response": {
+        "id": "66d6300d-1414-4655-83b4-8c80fc527315",
+        "status": "PENDING"
+      },
+      "status": 201
+    }
+  }
+}

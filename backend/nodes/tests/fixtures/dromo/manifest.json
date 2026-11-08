@@ -1,0 +1,13 @@
+{
+  "dromo": {
+    "node_type": "automation-dromo",
+    "credential": {
+      "credential_type": "dromo_api_key",
+      "api_key": "<token>"
+    },
+    "file": "openapi.json",
+    "sha256": "e6d12f73b9a8e35e6ed8d659f04fb930c55338c58b5949f4849f9fe930846d14",
+    "version": "1.0",
+    "source_url": "https://developer.dromo.io/api-reference/openapi.json"
+  }
+}

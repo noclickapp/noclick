@@ -1,0 +1,14 @@
+{
+ "provider": "dromo",
+ "ready": true,
+ "blocking": [],
+ "advisory": [],
+ "stats": {
+  "operations": 14,
+  "skipped": 0,
+  "request_ok": 14,
+  "authored_parser_ok": 0,
+  "generated_only": 14,
+  "local_ok": 0
+ }
+}

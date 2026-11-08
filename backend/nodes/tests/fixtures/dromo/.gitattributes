@@ -1,0 +1,2 @@
+# Preserve the provider's CRLF bytes so the published contract pin stays exact.
+openapi.json -text whitespace=cr-at-eol
