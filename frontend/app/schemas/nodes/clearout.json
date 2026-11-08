@@ -1,0 +1,926 @@
+{
+  "$defs": {
+    "ClearoutCancelFinder": {
+      "additionalProperties": false,
+      "description": "Bulk Finder Cancel.",
+      "properties": {
+        "operation": {
+          "const": "cancel_finder",
+          "default": "cancel_finder",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "ClearoutCancelFinder",
+      "type": "object"
+    },
+    "ClearoutCancelVerification": {
+      "additionalProperties": false,
+      "description": "Bulk Verify Cancel.",
+      "properties": {
+        "operation": {
+          "const": "cancel_verification",
+          "default": "cancel_verification",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "ClearoutCancelVerification",
+      "type": "object"
+    },
+    "ClearoutCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "clearout_api_token",
+          "default": "clearout_api_token",
+          "title": "Credential Type",
+          "type": "string"
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "Api Token",
+          "type": "string",
+          "ui:help": "Paste your Clearout API token without the Bearer prefix.",
+          "ui:widget": "password",
+          "x-credential-instructions": "In Clearout, open API and create an API token. Paste the token here.",
+          "x-credential-url": "https://app.clearout.io/api"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Clearout API Token",
+      "type": "object"
+    },
+    "ClearoutFindCompanyDomains": {
+      "additionalProperties": false,
+      "description": "Find Domains for Company.",
+      "properties": {
+        "operation": {
+          "const": "find_company_domains",
+          "default": "find_company_domains",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "ClearoutFindCompanyDomains",
+      "type": "object"
+    },
+    "ClearoutFindEmail": {
+      "additionalProperties": false,
+      "description": "Instant Email Finder.",
+      "properties": {
+        "operation": {
+          "const": "find_email",
+          "default": "find_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "domain": {
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "maximum": 180000,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 30000,
+          "description": "Provider timeout in milliseconds. Timed out work may continue in the background.",
+          "title": "Timeout"
+        },
+        "queue": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Queue"
+        }
+      },
+      "required": [
+        "name",
+        "domain"
+      ],
+      "title": "ClearoutFindEmail",
+      "type": "object"
+    },
+    "ClearoutFindMx": {
+      "additionalProperties": false,
+      "description": "Find MX.",
+      "properties": {
+        "operation": {
+          "const": "find_mx",
+          "default": "find_mx",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain": {
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 90000,
+          "description": "Provider timeout in milliseconds. Timed out work may continue in the background.",
+          "title": "Timeout"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "ClearoutFindMx",
+      "type": "object"
+    },
+    "ClearoutFindWhois": {
+      "additionalProperties": false,
+      "description": "Find Whois.",
+      "properties": {
+        "operation": {
+          "const": "find_whois",
+          "default": "find_whois",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain": {
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 90000,
+          "description": "Provider timeout in milliseconds. Timed out work may continue in the background.",
+          "title": "Timeout"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "ClearoutFindWhois",
+      "type": "object"
+    },
+    "ClearoutGetAvailableCredits": {
+      "additionalProperties": false,
+      "description": "Get Available Credits.",
+      "properties": {
+        "operation": {
+          "const": "get_available_credits",
+          "default": "get_available_credits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ClearoutGetAvailableCredits",
+      "type": "object"
+    },
+    "ClearoutGetBulkFinderStatus": {
+      "additionalProperties": false,
+      "description": "Bulk Email Finder Progress Status.",
+      "properties": {
+        "operation": {
+          "const": "get_bulk_finder_status",
+          "default": "get_bulk_finder_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "ClearoutGetBulkFinderStatus",
+      "type": "object"
+    },
+    "ClearoutGetCredits": {
+      "additionalProperties": false,
+      "description": "Get Remaining Credits.",
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ClearoutGetCredits",
+      "type": "object"
+    },
+    "ClearoutGetFinderStatus": {
+      "additionalProperties": false,
+      "description": "Instant Email Finder Status.",
+      "properties": {
+        "operation": {
+          "const": "get_finder_status",
+          "default": "get_finder_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "qid": {
+          "minLength": 1,
+          "title": "Qid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "qid"
+      ],
+      "title": "ClearoutGetFinderStatus",
+      "type": "object"
+    },
+    "ClearoutGetLimits": {
+      "additionalProperties": false,
+      "description": "Get Service Limits.",
+      "properties": {
+        "operation": {
+          "const": "get_limits",
+          "default": "get_limits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ClearoutGetLimits",
+      "type": "object"
+    },
+    "ClearoutGetPlans": {
+      "additionalProperties": false,
+      "description": "Get Plans and Addons.",
+      "properties": {
+        "operation": {
+          "const": "get_plans",
+          "default": "get_plans",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ClearoutGetPlans",
+      "type": "object"
+    },
+    "ClearoutGetVerificationStatus": {
+      "additionalProperties": false,
+      "description": "Bulk Verify Progress Status.",
+      "properties": {
+        "operation": {
+          "const": "get_verification_status",
+          "default": "get_verification_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "ClearoutGetVerificationStatus",
+      "type": "object"
+    },
+    "ClearoutListFinderJobs": {
+      "additionalProperties": false,
+      "description": "Get Email Finder List.",
+      "properties": {
+        "operation": {
+          "const": "list_finder_jobs",
+          "default": "list_finder_jobs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "start_after": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start After"
+        }
+      },
+      "required": [
+        "limit"
+      ],
+      "title": "ClearoutListFinderJobs",
+      "type": "object"
+    },
+    "ClearoutListVerifications": {
+      "additionalProperties": false,
+      "description": "Get Email Verifier List.",
+      "properties": {
+        "operation": {
+          "const": "list_verifications",
+          "default": "list_verifications",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        },
+        "start_after": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start After"
+        }
+      },
+      "title": "ClearoutListVerifications",
+      "type": "object"
+    },
+    "ClearoutRemoveFinderList": {
+      "additionalProperties": false,
+      "description": "Bulk Email Finder Removal.",
+      "properties": {
+        "operation": {
+          "const": "remove_finder_list",
+          "default": "remove_finder_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string"
+        },
+        "ignore_result": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "title": "Ignore Result"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "ClearoutRemoveFinderList",
+      "type": "object"
+    },
+    "ClearoutRemoveVerificationList": {
+      "additionalProperties": false,
+      "description": "Bulk Verify Result Removal.",
+      "properties": {
+        "operation": {
+          "const": "remove_verification_list",
+          "default": "remove_verification_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string"
+        },
+        "ignore_result": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "title": "Ignore Result"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "ClearoutRemoveVerificationList",
+      "type": "object"
+    },
+    "ClearoutValidateName": {
+      "additionalProperties": false,
+      "description": "Name validate.",
+      "properties": {
+        "operation": {
+          "const": "validate_name",
+          "default": "validate_name",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 1000,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 8000,
+          "description": "Provider timeout in milliseconds. Timed out work may continue in the background.",
+          "title": "Timeout"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ClearoutValidateName",
+      "type": "object"
+    },
+    "ClearoutVerifyBusiness": {
+      "additionalProperties": false,
+      "description": "Business Account Verify.",
+      "properties": {
+        "operation": {
+          "const": "verify_business",
+          "default": "verify_business",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider timeout in milliseconds. Timed out work may continue in the background.",
+          "title": "Timeout"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ClearoutVerifyBusiness",
+      "type": "object"
+    },
+    "ClearoutVerifyCatchall": {
+      "additionalProperties": false,
+      "description": "Catch-All Verify.",
+      "properties": {
+        "operation": {
+          "const": "verify_catchall",
+          "default": "verify_catchall",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider timeout in milliseconds. Timed out work may continue in the background.",
+          "title": "Timeout"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ClearoutVerifyCatchall",
+      "type": "object"
+    },
+    "ClearoutVerifyDisposable": {
+      "additionalProperties": false,
+      "description": "Disposable Account Verify.",
+      "properties": {
+        "operation": {
+          "const": "verify_disposable",
+          "default": "verify_disposable",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider timeout in milliseconds. Timed out work may continue in the background.",
+          "title": "Timeout"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ClearoutVerifyDisposable",
+      "type": "object"
+    },
+    "ClearoutVerifyEmail": {
+      "additionalProperties": false,
+      "description": "Instant Verify.",
+      "properties": {
+        "operation": {
+          "const": "verify_email",
+          "default": "verify_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "maximum": 180000,
+              "minimum": 1000,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 130000,
+          "description": "Provider timeout in milliseconds. Timed out work may continue in the background.",
+          "title": "Timeout"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ClearoutVerifyEmail",
+      "type": "object"
+    },
+    "ClearoutVerifyFree": {
+      "additionalProperties": false,
+      "description": "Free Account Verify.",
+      "properties": {
+        "operation": {
+          "const": "verify_free",
+          "default": "verify_free",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider timeout in milliseconds. Timed out work may continue in the background.",
+          "title": "Timeout"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ClearoutVerifyFree",
+      "type": "object"
+    },
+    "ClearoutVerifyGibberish": {
+      "additionalProperties": false,
+      "description": "Gibberish Account Verify.",
+      "properties": {
+        "operation": {
+          "const": "verify_gibberish",
+          "default": "verify_gibberish",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider timeout in milliseconds. Timed out work may continue in the background.",
+          "title": "Timeout"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ClearoutVerifyGibberish",
+      "type": "object"
+    },
+    "ClearoutVerifyRole": {
+      "additionalProperties": false,
+      "description": "Role Account Verify.",
+      "properties": {
+        "operation": {
+          "const": "verify_role",
+          "default": "verify_role",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider timeout in milliseconds. Timed out work may continue in the background.",
+          "title": "Timeout"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ClearoutVerifyRole",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_finder": "#/$defs/ClearoutCancelFinder",
+          "cancel_verification": "#/$defs/ClearoutCancelVerification",
+          "find_company_domains": "#/$defs/ClearoutFindCompanyDomains",
+          "find_email": "#/$defs/ClearoutFindEmail",
+          "find_mx": "#/$defs/ClearoutFindMx",
+          "find_whois": "#/$defs/ClearoutFindWhois",
+          "get_available_credits": "#/$defs/ClearoutGetAvailableCredits",
+          "get_bulk_finder_status": "#/$defs/ClearoutGetBulkFinderStatus",
+          "get_credits": "#/$defs/ClearoutGetCredits",
+          "get_finder_status": "#/$defs/ClearoutGetFinderStatus",
+          "get_limits": "#/$defs/ClearoutGetLimits",
+          "get_plans": "#/$defs/ClearoutGetPlans",
+          "get_verification_status": "#/$defs/ClearoutGetVerificationStatus",
+          "list_finder_jobs": "#/$defs/ClearoutListFinderJobs",
+          "list_verifications": "#/$defs/ClearoutListVerifications",
+          "remove_finder_list": "#/$defs/ClearoutRemoveFinderList",
+          "remove_verification_list": "#/$defs/ClearoutRemoveVerificationList",
+          "validate_name": "#/$defs/ClearoutValidateName",
+          "verify_business": "#/$defs/ClearoutVerifyBusiness",
+          "verify_catchall": "#/$defs/ClearoutVerifyCatchall",
+          "verify_disposable": "#/$defs/ClearoutVerifyDisposable",
+          "verify_email": "#/$defs/ClearoutVerifyEmail",
+          "verify_free": "#/$defs/ClearoutVerifyFree",
+          "verify_gibberish": "#/$defs/ClearoutVerifyGibberish",
+          "verify_role": "#/$defs/ClearoutVerifyRole"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ClearoutVerifyEmail"
+        },
+        {
+          "$ref": "#/$defs/ClearoutGetVerificationStatus"
+        },
+        {
+          "$ref": "#/$defs/ClearoutRemoveVerificationList"
+        },
+        {
+          "$ref": "#/$defs/ClearoutCancelVerification"
+        },
+        {
+          "$ref": "#/$defs/ClearoutListVerifications"
+        },
+        {
+          "$ref": "#/$defs/ClearoutVerifyCatchall"
+        },
+        {
+          "$ref": "#/$defs/ClearoutVerifyDisposable"
+        },
+        {
+          "$ref": "#/$defs/ClearoutVerifyBusiness"
+        },
+        {
+          "$ref": "#/$defs/ClearoutVerifyFree"
+        },
+        {
+          "$ref": "#/$defs/ClearoutVerifyRole"
+        },
+        {
+          "$ref": "#/$defs/ClearoutVerifyGibberish"
+        },
+        {
+          "$ref": "#/$defs/ClearoutGetAvailableCredits"
+        },
+        {
+          "$ref": "#/$defs/ClearoutFindEmail"
+        },
+        {
+          "$ref": "#/$defs/ClearoutGetFinderStatus"
+        },
+        {
+          "$ref": "#/$defs/ClearoutGetBulkFinderStatus"
+        },
+        {
+          "$ref": "#/$defs/ClearoutRemoveFinderList"
+        },
+        {
+          "$ref": "#/$defs/ClearoutCancelFinder"
+        },
+        {
+          "$ref": "#/$defs/ClearoutListFinderJobs"
+        },
+        {
+          "$ref": "#/$defs/ClearoutFindCompanyDomains"
+        },
+        {
+          "$ref": "#/$defs/ClearoutFindMx"
+        },
+        {
+          "$ref": "#/$defs/ClearoutFindWhois"
+        },
+        {
+          "$ref": "#/$defs/ClearoutValidateName"
+        },
+        {
+          "$ref": "#/$defs/ClearoutGetPlans"
+        },
+        {
+          "$ref": "#/$defs/ClearoutGetCredits"
+        },
+        {
+          "$ref": "#/$defs/ClearoutGetLimits"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ClearoutCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Clearout Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
