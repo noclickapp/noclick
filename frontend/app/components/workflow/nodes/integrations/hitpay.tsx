@@ -28,6 +28,7 @@ const HitpayIcon = ({
 
 export const HitpayNode: NodeDefinition = {
     type: 'automation-hitpay',
+    category: 'finance-accounting',
     label: 'HitPay',
     description:
         'Manage payment links, customers and refunds; read charges, balances, payouts and subscription plans',
