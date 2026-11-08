@@ -1,0 +1,860 @@
+{
+  "$defs": {
+    "AddComment": {
+      "properties": {
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "record_id": {
+          "minLength": 1,
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_comment",
+          "default": "add_comment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "text": {
+          "description": "Plain text; @member@example.com mentions a workspace member and notifies them.",
+          "maxLength": 65000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "record_id",
+        "text"
+      ],
+      "title": "AddComment",
+      "type": "object"
+    },
+    "CreateFolder": {
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateFolder",
+      "type": "object"
+    },
+    "CreateRecord": {
+      "properties": {
+        "field_keys": {
+          "default": "id",
+          "description": "Use stable field IDs, or field labels, in request and response fields.",
+          "enum": [
+            "id",
+            "label"
+          ],
+          "title": "Field Keys",
+          "type": "string"
+        },
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_record",
+          "default": "create_record",
+          "title": "Operation",
+          "type": "string"
+        },
+        "fields": {
+          "additionalProperties": true,
+          "description": "Friendly field values. The name key sets the display name. Dates must be epoch milliseconds at UTC midnight; read-only fields cannot be written.",
+          "title": "Fields",
+          "type": "object"
+        }
+      },
+      "required": [
+        "folder_id",
+        "fields"
+      ],
+      "title": "CreateRecord",
+      "type": "object"
+    },
+    "DeleteRecord": {
+      "properties": {
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "record_id": {
+          "minLength": 1,
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_record",
+          "default": "delete_record",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "record_id"
+      ],
+      "title": "DeleteRecord",
+      "type": "object"
+    },
+    "FilterRecords": {
+      "properties": {
+        "field_keys": {
+          "default": "id",
+          "description": "Use stable field IDs, or field labels, in request and response fields.",
+          "enum": [
+            "id",
+            "label"
+          ],
+          "title": "Field Keys",
+          "type": "string"
+        },
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "filter_records",
+          "default": "filter_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filter": {
+          "additionalProperties": true,
+          "description": "Field conditions and _and/_or groups; omit conditions to match all records.",
+          "title": "Filter",
+          "type": "object"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": {
+                  "enum": [
+                    1,
+                    -1
+                  ],
+                  "type": "integer"
+                },
+                "type": "object"
+              },
+              "maxItems": 3,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Up to three single-key objects, each mapping a field to 1 (ascending) or -1 (descending).",
+          "title": "Sort"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Previous nextCursor; keep filter, sort and time zone unchanged.",
+          "title": "Cursor"
+        },
+        "time_zone": {
+          "default": "UTC",
+          "title": "Time Zone",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "FilterRecords",
+      "type": "object"
+    },
+    "GetFolder": {
+      "properties": {
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_folder",
+          "default": "get_folder",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "GetFolder",
+      "type": "object"
+    },
+    "GetRecord": {
+      "properties": {
+        "field_keys": {
+          "default": "id",
+          "description": "Use stable field IDs, or field labels, in request and response fields.",
+          "enum": [
+            "id",
+            "label"
+          ],
+          "title": "Field Keys",
+          "type": "string"
+        },
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "record_id": {
+          "minLength": 1,
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_record",
+          "default": "get_record",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "record_id"
+      ],
+      "title": "GetRecord",
+      "type": "object"
+    },
+    "GetTimelineContent": {
+      "properties": {
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "record_id": {
+          "minLength": 1,
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_timeline_content",
+          "default": "get_timeline_content",
+          "title": "Operation",
+          "type": "string"
+        },
+        "timeline_id": {
+          "minLength": 1,
+          "title": "Timeline Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "record_id",
+        "timeline_id"
+      ],
+      "title": "GetTimelineContent",
+      "type": "object"
+    },
+    "ListFolderTimeline": {
+      "properties": {
+        "field_keys": {
+          "default": "id",
+          "description": "Use stable field IDs, or field labels, in request and response fields.",
+          "enum": [
+            "id",
+            "label"
+          ],
+          "title": "Field Keys",
+          "type": "string"
+        },
+        "from_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive start: ISO date-time or epoch milliseconds.",
+          "title": "From Time"
+        },
+        "to_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive end; use 23:59:59.999Z to include a whole day.",
+          "title": "To Time"
+        },
+        "types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated categories: comment,email,campaign_email,call,chat,calendar,file,record_created,record_updated.",
+          "title": "Types"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Previous nextCursor; keep all filters unchanged. Continue until absent, even after an empty page.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "include_email_stats": {
+          "default": false,
+          "title": "Include Email Stats",
+          "type": "boolean"
+        },
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_folder_timeline",
+          "default": "list_folder_timeline",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "ListFolderTimeline",
+      "type": "object"
+    },
+    "ListFolders": {
+      "properties": {
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListFolders",
+      "type": "object"
+    },
+    "ListRecordTimeline": {
+      "properties": {
+        "field_keys": {
+          "default": "id",
+          "description": "Use stable field IDs, or field labels, in request and response fields.",
+          "enum": [
+            "id",
+            "label"
+          ],
+          "title": "Field Keys",
+          "type": "string"
+        },
+        "from_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive start: ISO date-time or epoch milliseconds.",
+          "title": "From Time"
+        },
+        "to_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive end; use 23:59:59.999Z to include a whole day.",
+          "title": "To Time"
+        },
+        "types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated categories: comment,email,campaign_email,call,chat,calendar,file,record_created,record_updated.",
+          "title": "Types"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Previous nextCursor; keep all filters unchanged. Continue until absent, even after an empty page.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "include_email_stats": {
+          "default": false,
+          "title": "Include Email Stats",
+          "type": "boolean"
+        },
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "record_id": {
+          "minLength": 1,
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_record_timeline",
+          "default": "list_record_timeline",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "record_id"
+      ],
+      "title": "ListRecordTimeline",
+      "type": "object"
+    },
+    "ListUpdatedRecords": {
+      "properties": {
+        "field_keys": {
+          "default": "id",
+          "description": "Use stable field IDs, or field labels, in request and response fields.",
+          "enum": [
+            "id",
+            "label"
+          ],
+          "title": "Field Keys",
+          "type": "string"
+        },
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_updated_records",
+          "default": "list_updated_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date-time, epoch milliseconds, or previous nextSince token. Defaults to 24 hours ago. Feed nextSince back into since to continue.",
+          "title": "Since"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "ListUpdatedRecords",
+      "type": "object"
+    },
+    "LogCall": {
+      "properties": {
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "record_id": {
+          "minLength": 1,
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "log_call",
+          "default": "log_call",
+          "title": "Operation",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 65000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO date-time or epoch milliseconds; defaults to now.",
+          "title": "Time"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Call duration in whole milliseconds.",
+          "title": "Duration"
+        }
+      },
+      "required": [
+        "folder_id",
+        "record_id",
+        "text"
+      ],
+      "title": "LogCall",
+      "type": "object"
+    },
+    "NetHuntTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "nethunt_crm_api_token",
+          "default": "nethunt_crm_api_token",
+          "title": "Credential Type",
+          "type": "string"
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Nethunt CRM API Token",
+      "type": "object",
+      "x-credential-instructions": "In NetHunt Settings \u2192 Integrations \u2192 API & MCP, create a token and paste it here. Use a v2 API token (nh_live_\u2026), with access to the folders you want to automate. NoClick checks the connection by listing accessible folders.",
+      "x-credential-url": "https://nethunt.com/api/docs"
+    },
+    "SearchRecords": {
+      "properties": {
+        "field_keys": {
+          "default": "id",
+          "description": "Use stable field IDs, or field labels, in request and response fields.",
+          "enum": [
+            "id",
+            "label"
+          ],
+          "title": "Field Keys",
+          "type": "string"
+        },
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "search_records",
+          "default": "search_records",
+          "title": "Operation",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "folder_id",
+        "text"
+      ],
+      "title": "SearchRecords",
+      "type": "object"
+    },
+    "UpdateFolder": {
+      "properties": {
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_folder",
+          "default": "update_folder",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "description": "New folder name.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "name"
+      ],
+      "title": "UpdateFolder",
+      "type": "object"
+    },
+    "UpdateRecord": {
+      "properties": {
+        "field_keys": {
+          "default": "id",
+          "description": "Use stable field IDs, or field labels, in request and response fields.",
+          "enum": [
+            "id",
+            "label"
+          ],
+          "title": "Field Keys",
+          "type": "string"
+        },
+        "folder_id": {
+          "minLength": 1,
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "record_id": {
+          "minLength": 1,
+          "title": "Record ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_record",
+          "default": "update_record",
+          "title": "Operation",
+          "type": "string"
+        },
+        "fields": {
+          "additionalProperties": true,
+          "description": "Fields to change; null clears a field and omitted keys stay unchanged. Date fields require UTC-midnight epoch milliseconds.",
+          "title": "Fields",
+          "type": "object"
+        }
+      },
+      "required": [
+        "folder_id",
+        "record_id",
+        "fields"
+      ],
+      "title": "UpdateRecord",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_comment": "#/$defs/AddComment",
+          "create_folder": "#/$defs/CreateFolder",
+          "create_record": "#/$defs/CreateRecord",
+          "delete_record": "#/$defs/DeleteRecord",
+          "filter_records": "#/$defs/FilterRecords",
+          "get_folder": "#/$defs/GetFolder",
+          "get_record": "#/$defs/GetRecord",
+          "get_timeline_content": "#/$defs/GetTimelineContent",
+          "list_folder_timeline": "#/$defs/ListFolderTimeline",
+          "list_folders": "#/$defs/ListFolders",
+          "list_record_timeline": "#/$defs/ListRecordTimeline",
+          "list_updated_records": "#/$defs/ListUpdatedRecords",
+          "log_call": "#/$defs/LogCall",
+          "search_records": "#/$defs/SearchRecords",
+          "update_folder": "#/$defs/UpdateFolder",
+          "update_record": "#/$defs/UpdateRecord"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListFolders"
+        },
+        {
+          "$ref": "#/$defs/GetFolder"
+        },
+        {
+          "$ref": "#/$defs/CreateFolder"
+        },
+        {
+          "$ref": "#/$defs/UpdateFolder"
+        },
+        {
+          "$ref": "#/$defs/CreateRecord"
+        },
+        {
+          "$ref": "#/$defs/UpdateRecord"
+        },
+        {
+          "$ref": "#/$defs/GetRecord"
+        },
+        {
+          "$ref": "#/$defs/DeleteRecord"
+        },
+        {
+          "$ref": "#/$defs/ListUpdatedRecords"
+        },
+        {
+          "$ref": "#/$defs/SearchRecords"
+        },
+        {
+          "$ref": "#/$defs/FilterRecords"
+        },
+        {
+          "$ref": "#/$defs/ListRecordTimeline"
+        },
+        {
+          "$ref": "#/$defs/ListFolderTimeline"
+        },
+        {
+          "$ref": "#/$defs/GetTimelineContent"
+        },
+        {
+          "$ref": "#/$defs/AddComment"
+        },
+        {
+          "$ref": "#/$defs/LogCall"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NetHuntTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Nethunt-crm Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
