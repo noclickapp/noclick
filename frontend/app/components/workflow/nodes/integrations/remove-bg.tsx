@@ -11,6 +11,7 @@ const RemoveBgIcon = ({ className, style }: { className?: string; style?: CSSPro
 
 export const RemoveBgNode: NodeDefinition = {
     type: 'automation-remove-bg', label: 'Remove Bg',
+    category: 'media',
     description: 'Remove image backgrounds, replace backgrounds, crop subjects and check credits',
     Icon: RemoveBgIcon, iconColor: '', keywords: ['remove.bg', 'background removal', 'cutout', 'alpha mask'],
     dimensions: { width: 90, height: 90, iconSize: 48 },
