@@ -1,0 +1,23 @@
+{
+  "balance": {
+    "body": {
+      "balance": 9922.3
+    },
+    "source": "https://dadata.ru/api/balance/"
+  },
+  "ip_location": {
+    "config": {
+      "ip": "46.226.227.20"
+    },
+    "source": "https://dadata.ru/api/iplocate/"
+  },
+  "clean_address": {
+    "config": {
+      "data_type": "address",
+      "data": [
+        "мск сухонска 11/-89"
+      ]
+    },
+    "source": "https://dadata.ru/api/clean/address/"
+  }
+}
