@@ -1,0 +1,188 @@
+{
+  "GET /videos": {
+    "videos": [
+      {
+        "_id": "420c6769343dc7bb51513e63",
+        "name": "Hello from API!",
+        "status": "ready",
+        "tags": [
+          "api"
+        ],
+        "duration": 12.5,
+        "thumbnail": "https://elai-media.s3.eu-west-2.amazonaws.com/videos/420c6769343dc7bb51513e63/thumbnail.jpg",
+        "url": "https://elai-media.s3.eu-west-2.amazonaws.com/videos/420c6769343dc7bb51513e63/hello-from-api.mp4",
+        "createdAt": "2026-08-14T09:12:04.117Z",
+        "updatedAt": "2026-08-14T09:18:41.882Z"
+      }
+    ],
+    "total": 137,
+    "page": 1,
+    "pages": 3
+  },
+  "GET /videos/{videoId}": {
+    "_id": "420c6769343dc7bb51513e63",
+    "name": "Hello from API!",
+    "slides": [
+      {
+        "id": 1,
+        "canvas": {
+          "objects": [
+            {
+              "type": "avatar",
+              "version": 2,
+              "left": 150,
+              "top": 20,
+              "fill": "#4868FF",
+              "scaleX": 0.37,
+              "scaleY": 0.37,
+              "src": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/jade.png",
+              "avatarType": "transparent",
+              "animation": {
+                "type": null
+              }
+            }
+          ],
+          "background": "#ffffff",
+          "version": "4.4.0"
+        },
+        "avatar": {
+          "code": "jade",
+          "name": "Jade",
+          "version": 2,
+          "gender": "female"
+        },
+        "animation": "fade_in",
+        "language": "English",
+        "speech": "Hi there! It's my first video created by Elai API.",
+        "voice": "en-US-AriaNeural",
+        "voiceType": "text",
+        "voiceProvider": "azure"
+      }
+    ],
+    "tags": [
+      "api",
+      "test"
+    ],
+    "status": "draft",
+    "verified": false,
+    "public": false,
+    "url": "https://elai-media.s3.eu-west-2.amazonaws.com/videos/628533740e4e642def3141ab/greetings.mp4",
+    "sourceId": "627be87f8017b119142bd3b7",
+    "deleted": false,
+    "userId": "1",
+    "accountId": "1",
+    "createdAt": "2022-08-29T07:14:49.354Z",
+    "updatedAt": "2022-08-29T07:14:49.354Z"
+  },
+  "POST /videos/render/{videoId}": {
+    "accepted": true
+  },
+  "GET /avatars": [
+    {
+      "_id": "62ea3143b3c0dc1e3ae25e4f",
+      "id": "custom",
+      "name": "Alex (Personal)",
+      "type": "selfie",
+      "version": 1,
+      "status": 4,
+      "gender": "male",
+      "thumbnail": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/custom/custom_roger.jpg",
+      "canvas": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/custom/custom_roger.png",
+      "tilt": {
+        "top": 0.1,
+        "left": -0.05
+      }
+    },
+    {
+      "_id": "6374ca89dc87c5c48f5a8499",
+      "id": "dairon",
+      "name": "Dairon",
+      "version": 1,
+      "status": 2,
+      "gender": "male",
+      "intro": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/dairon.mp4",
+      "tilt": {},
+      "variants": [
+        {
+          "id": "business",
+          "name": "Business",
+          "canvas": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/dairon_business.png",
+          "thumbnail": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/dairon_business.jpg",
+          "gif": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/dairon_business.gif"
+        },
+        {
+          "id": "regular",
+          "name": "Casual",
+          "tilt": {
+            "top": -0.05
+          },
+          "canvas": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/dairon.png",
+          "thumbnail": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/dairon.jpg",
+          "gif": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/dairon.gif"
+        },
+        {
+          "id": "builder",
+          "name": "Constructor",
+          "canvas": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/dairon_builder.png",
+          "thumbnail": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/dairon_builder.jpg",
+          "gif": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/dairon_builder.gif"
+        }
+      ]
+    },
+    {
+      "_id": "6374ca89dc87c5c48f5a849d",
+      "id": "anna",
+      "name": "Anna",
+      "version": 1,
+      "status": 2,
+      "gender": "female",
+      "intro": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/anna.mp4",
+      "tilt": {},
+      "variants": [
+        {
+          "id": "business",
+          "name": "Business",
+          "tilt": {
+            "left": -0.01
+          },
+          "canvas": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/anna_business.png",
+          "thumbnail": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/anna_business.jpg",
+          "gif": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/anna_business.gif"
+        },
+        {
+          "id": "regular",
+          "name": "Casual",
+          "tilt": {
+            "left": -0.03
+          },
+          "canvas": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/anna.png",
+          "thumbnail": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/anna.jpg",
+          "gif": "https://elai-media.s3.eu-west-2.amazonaws.com/avatars/anna.gif"
+        }
+      ]
+    }
+  ],
+  "GET /voices": [
+    {
+      "name": "English",
+      "male": [
+        {
+          "voice": "en-US-AndrewMultilingualNeural",
+          "voiceProvider": "azure",
+          "character": "Andrew M",
+          "name": "English (United States)",
+          "locale": "en-US"
+        }
+      ],
+      "female": [
+        {
+          "voice": "en-US-JennyNeural",
+          "voiceProvider": "azure",
+          "character": "Jenny",
+          "name": "English (United States)",
+          "locale": "en-US"
+        }
+      ]
+    }
+  ]
+}
