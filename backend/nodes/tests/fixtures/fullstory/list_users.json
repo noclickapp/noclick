@@ -1,0 +1,21 @@
+{
+  "results": [
+    {
+      "id": "987654321",
+      "uid": "xyz123",
+      "display_name": "Daniel Falko",
+      "email": "daniel.falko@example.com",
+      "properties": {
+        "pricing_plan": "paid",
+        "popup_help": true,
+        "total_spent": 14.55
+      },
+      "schema": null,
+      "type_conflicts": null,
+      "app_url": "https://app.fullstory.com/ui/orgid/segments/everyone/people:search:abc/user/xyz"
+    }
+  ],
+  "total_records": "1200",
+  "next_page_token": "asd543",
+  "app_url": "https://app.fullstory.com/ui/orgid/segments/everyone/people:search:abc/0"
+}

@@ -1,0 +1,1124 @@
+{
+  "$defs": {
+    "BatchUserData": {
+      "additionalProperties": false,
+      "properties": {
+        "uid": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uid"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "maxProperties": 500,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Properties"
+        },
+        "schema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schema"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        }
+      },
+      "title": "BatchUserData",
+      "type": "object"
+    },
+    "CreateEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key header. Reuse the same key only for an identical request.",
+          "title": "Idempotency Key"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "user": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EventUser"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "session": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EventSession"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "timestamp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp; defaults to the Fullstory server time.",
+          "title": "Timestamp"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Properties"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context"
+        },
+        "schema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schema"
+        },
+        "operation": {
+          "const": "create_event",
+          "default": "create_event",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateEvent",
+      "type": "object"
+    },
+    "CreateUser": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key header. Reuse the same key only for an identical request.",
+          "title": "Idempotency Key"
+        },
+        "uid": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uid"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "maxProperties": 500,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Properties"
+        },
+        "schema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schema"
+        },
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "CreateUser",
+      "type": "object"
+    },
+    "DeleteUser": {
+      "additionalProperties": false,
+      "description": "Request asynchronous deletion; a successful response does not prove erasure is complete.",
+      "properties": {
+        "id": {
+          "description": "Fullstory-assigned user ID, not your application uid.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_user",
+          "default": "delete_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteUser",
+      "type": "object"
+    },
+    "DeleteUserByUID": {
+      "additionalProperties": false,
+      "description": "Delete by your application uid; always send uid to avoid an unfiltered delete.",
+      "properties": {
+        "operation": {
+          "const": "delete_user_by_uid",
+          "default": "delete_user_by_uid",
+          "title": "Operation",
+          "type": "string"
+        },
+        "uid": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Uid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uid"
+      ],
+      "title": "DeleteUserByUID",
+      "type": "object"
+    },
+    "EventData": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "user": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EventUser"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "session": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EventSession"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "timestamp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp; defaults to the Fullstory server time.",
+          "title": "Timestamp"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Properties"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context"
+        },
+        "schema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schema"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "EventData",
+      "type": "object"
+    },
+    "EventSession": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "use_most_recent": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Use Most Recent"
+        }
+      },
+      "title": "EventSession",
+      "type": "object"
+    },
+    "EventUser": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "uid": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uid"
+        }
+      },
+      "title": "EventUser",
+      "type": "object"
+    },
+    "FullstoryAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "fullstory_api_key",
+          "default": "fullstory_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Fullstory API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste a Fullstory API key from Settings > Integrations > API Keys. Use an Architect or Admin key for user reads and deletion, including the connection check. Standard keys can send users and events and manage imports. NoClick sends the key directly in the Authorization header to api.fullstory.com.",
+      "x-credential-url": "https://developer.fullstory.com/server/authentication/"
+    },
+    "GetEventImport": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_event_import",
+          "default": "get_event_import",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetEventImport",
+      "type": "object"
+    },
+    "GetUser": {
+      "additionalProperties": false,
+      "properties": {
+        "include_schema": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Schema"
+        },
+        "id": {
+          "description": "Fullstory-assigned user ID, not your application uid.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetUser",
+      "type": "object"
+    },
+    "GetUserImport": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_user_import",
+          "default": "get_user_import",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetUserImport",
+      "type": "object"
+    },
+    "ImportEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key header. Reuse the same key only for an identical request.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "import_events",
+          "default": "import_events",
+          "title": "Operation",
+          "type": "string"
+        },
+        "requests": {
+          "items": {
+            "$ref": "#/$defs/EventData"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Requests",
+          "type": "array"
+        },
+        "shared": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Shared context; events must omit their own context when shared.context is set.",
+          "title": "Shared"
+        }
+      },
+      "required": [
+        "requests"
+      ],
+      "title": "ImportEvents",
+      "type": "object"
+    },
+    "ImportUsers": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Idempotency-Key header. Reuse the same key only for an identical request.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "import_users",
+          "default": "import_users",
+          "title": "Operation",
+          "type": "string"
+        },
+        "requests": {
+          "items": {
+            "$ref": "#/$defs/BatchUserData"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Requests",
+          "type": "array"
+        }
+      },
+      "required": [
+        "requests"
+      ],
+      "title": "ImportUsers",
+      "type": "object"
+    },
+    "ListEventImportErrors": {
+      "additionalProperties": false,
+      "properties": {
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_page_token from the previous page with the same filters.",
+          "title": "Page Token"
+        },
+        "job_id": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_event_import_errors",
+          "default": "list_event_import_errors",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ListEventImportErrors",
+      "type": "object"
+    },
+    "ListEventImports": {
+      "additionalProperties": false,
+      "properties": {
+        "include_schema": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Schema"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_page_token from the previous page with the same filters.",
+          "title": "Page Token"
+        },
+        "job_id": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_event_imports",
+          "default": "list_event_imports",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ListEventImports",
+      "type": "object"
+    },
+    "ListUserImportErrors": {
+      "additionalProperties": false,
+      "properties": {
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_page_token from the previous page with the same filters.",
+          "title": "Page Token"
+        },
+        "job_id": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_user_import_errors",
+          "default": "list_user_import_errors",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ListUserImportErrors",
+      "type": "object"
+    },
+    "ListUserImports": {
+      "additionalProperties": false,
+      "properties": {
+        "include_schema": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Schema"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_page_token from the previous page with the same filters.",
+          "title": "Page Token"
+        },
+        "job_id": {
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_user_imports",
+          "default": "list_user_imports",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ListUserImports",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "properties": {
+        "include_schema": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Schema"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use next_page_token from the previous page with the same filters.",
+          "title": "Page Token"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string"
+        },
+        "uid": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uid"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "is_identified": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Identified"
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "UpdateUser": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "Fullstory-assigned user ID, not your application uid.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "uid": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uid"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "maxProperties": 500,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Properties"
+        },
+        "schema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schema"
+        },
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateUser",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_event": "#/$defs/CreateEvent",
+          "create_user": "#/$defs/CreateUser",
+          "delete_user": "#/$defs/DeleteUser",
+          "delete_user_by_uid": "#/$defs/DeleteUserByUID",
+          "get_event_import": "#/$defs/GetEventImport",
+          "get_user": "#/$defs/GetUser",
+          "get_user_import": "#/$defs/GetUserImport",
+          "import_events": "#/$defs/ImportEvents",
+          "import_users": "#/$defs/ImportUsers",
+          "list_event_import_errors": "#/$defs/ListEventImportErrors",
+          "list_event_imports": "#/$defs/ListEventImports",
+          "list_user_import_errors": "#/$defs/ListUserImportErrors",
+          "list_user_imports": "#/$defs/ListUserImports",
+          "list_users": "#/$defs/ListUsers",
+          "update_user": "#/$defs/UpdateUser"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/GetUser"
+        },
+        {
+          "$ref": "#/$defs/CreateUser"
+        },
+        {
+          "$ref": "#/$defs/UpdateUser"
+        },
+        {
+          "$ref": "#/$defs/DeleteUser"
+        },
+        {
+          "$ref": "#/$defs/DeleteUserByUID"
+        },
+        {
+          "$ref": "#/$defs/ImportUsers"
+        },
+        {
+          "$ref": "#/$defs/GetUserImport"
+        },
+        {
+          "$ref": "#/$defs/ListUserImportErrors"
+        },
+        {
+          "$ref": "#/$defs/ListUserImports"
+        },
+        {
+          "$ref": "#/$defs/CreateEvent"
+        },
+        {
+          "$ref": "#/$defs/ImportEvents"
+        },
+        {
+          "$ref": "#/$defs/GetEventImport"
+        },
+        {
+          "$ref": "#/$defs/ListEventImportErrors"
+        },
+        {
+          "$ref": "#/$defs/ListEventImports"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FullstoryAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Fullstory Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
