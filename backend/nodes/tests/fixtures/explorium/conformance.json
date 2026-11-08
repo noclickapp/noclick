@@ -1,0 +1,949 @@
+{
+  "contract": {
+    "source_url": "https://developers.explorium.ai/openapi.json",
+    "version": "0.3.72",
+    "sha256": "3e8ca10a58ea18cc01e665f9e2c0848f5c0e23c791d92c4eeafe18ee5b949d8f"
+  },
+  "mode": "CONFORMANCE_WITNESS=full; offline published-schema validation; generated responses, no live account",
+  "verdict": {
+    "provider": "explorium",
+    "ready": true,
+    "blocking": [],
+    "advisory": [],
+    "stats": {
+      "operations": 23,
+      "skipped": 0,
+      "request_ok": 23,
+      "authored_parser_ok": 0,
+      "generated_only": 23,
+      "local_ok": 0
+    }
+  },
+  "report": [
+    {
+      "provider": "explorium",
+      "node_type": "automation-explorium",
+      "checked": 23,
+      "passed": 23,
+      "failed": 0,
+      "fixture_errors": 0,
+      "response_checked": 23,
+      "auth_checked": 23,
+      "scope_checked": 0,
+      "skipped": 0,
+      "coverage": {
+        "implemented": 23,
+        "total": 146
+      },
+      "operations": [
+        {
+          "operation": "get_credits",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.explorium.ai/v2/credits",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v2/credits",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "a11c1655c68a04dcc07f750832e68c7db3c95468fac47d0f570871a0923bd74a"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "get_credits"
+          },
+          "passed": true
+        },
+        {
+          "operation": "match_businesses",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.explorium.ai/v2/businesses/match",
+              "content_type": "application/json",
+              "body": "{\"businesses_to_match\":[{\"name\":\"1\",\"domain\":\"1\",\"url\":\"1\",\"linkedin_url\":\"1\"}]}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "80",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /v2/businesses/match",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "52dcbca57447d59583dc6abaf9d2e2482ade008dc64ebf873e238934c492e2e5"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "match_businesses",
+            "businesses_to_match": [
+              {
+                "name": "1",
+                "domain": "1",
+                "url": "1",
+                "linkedin_url": "1"
+              }
+            ]
+          },
+          "passed": true
+        },
+        {
+          "operation": "match_prospects",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.explorium.ai/v2/prospects/match",
+              "content_type": "application/json",
+              "body": "{\"prospects_to_match\":[{\"business_id\":\"1\",\"full_name\":\"1\",\"company_name\":\"1\",\"email\":\"1\",\"phone_number\":\"1\",\"linkedin\":\"1\"}]}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "125",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /v2/prospects/match",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "9a7bf9fb073df007b92b19838d66e00f3da65ff90571817fa6849b466cc1268e"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "match_prospects",
+            "prospects_to_match": [
+              {
+                "business_id": "1",
+                "full_name": "1",
+                "company_name": "1",
+                "email": "1",
+                "phone_number": "1",
+                "linkedin": "1"
+              }
+            ]
+          },
+          "passed": true
+        },
+        {
+          "operation": "fetch_businesses",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.explorium.ai/v2/businesses",
+              "content_type": "application/json",
+              "body": "{\"mode\":\"full\",\"page_size\":1,\"page\":1,\"next_cursor\":\"1\",\"filters\":{\"business_id\":{\"values\":[\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"]}},\"exclude\":[\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"]}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "177",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /v2/businesses",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "d41131a7d03d509ec54cad2e6dbcc81b342dbde128ef5d76f7e6f990bd91d202"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "mode": "full",
+            "page_size": 1,
+            "page": 1,
+            "next_cursor": "1",
+            "operation": "fetch_businesses",
+            "filters": {
+              "business_id": {
+                "values": [
+                  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                ]
+              }
+            },
+            "exclude": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            ]
+          },
+          "passed": true
+        },
+        {
+          "operation": "fetch_prospects",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.explorium.ai/v2/prospects",
+              "content_type": "application/json",
+              "body": "{\"mode\":\"full\",\"page_size\":1,\"page\":1,\"next_cursor\":\"1\",\"filters\":{\"prospect_id\":{\"values\":[\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"]}},\"exclude\":[\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"]}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "193",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /v2/prospects",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "7830f0302c75017515f266eb09d6704b484602978e311b4ac0aa2fa2cfeb1ef3"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "mode": "full",
+            "page_size": 1,
+            "page": 1,
+            "next_cursor": "1",
+            "operation": "fetch_prospects",
+            "filters": {
+              "prospect_id": {
+                "values": [
+                  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                ]
+              }
+            },
+            "exclude": [
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            ]
+          },
+          "passed": true
+        },
+        {
+          "operation": "get_business_stats",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.explorium.ai/v2/businesses/stats",
+              "content_type": "application/json",
+              "body": "{\"filters\":{\"business_id\":{\"values\":[\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"]}}}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "75",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /v2/businesses/stats",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "2b918f793598d3de817b184ea6d959d6aa00049436ddc55c8912185c2cfa08bd"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "get_business_stats",
+            "filters": {
+              "business_id": {
+                "values": [
+                  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                ]
+              }
+            }
+          },
+          "passed": true
+        },
+        {
+          "operation": "get_prospect_stats",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.explorium.ai/v2/prospects/stats",
+              "content_type": "application/json",
+              "body": "{\"filters\":{\"prospect_id\":{\"values\":[\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"]}}}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "83",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /v2/prospects/stats",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "95578539a5aa5be213de84085d4177304ef805f775b3e3a95503577e1df5c2dd"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "get_prospect_stats",
+            "filters": {
+              "prospect_id": {
+                "values": [
+                  "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                ]
+              }
+            }
+          },
+          "passed": true
+        },
+        {
+          "operation": "enrich_firmographics",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.explorium.ai/v2/businesses/firmographics/enrich",
+              "content_type": "application/json",
+              "body": "{\"business_ids\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "51",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /v2/businesses/firmographics/enrich",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "fb7e1b85e056daa907ce47ce40d7a6f519dac7572022667ef02e113cf5413930"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "business_ids": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "operation": "enrich_firmographics"
+          },
+          "passed": true
+        },
+        {
+          "operation": "enrich_technographics",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.explorium.ai/v2/businesses/technographics/enrich",
+              "content_type": "application/json",
+              "body": "{\"business_ids\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "51",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /v2/businesses/technographics/enrich",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "74a8de96bb299a58838da0e1099acfb962a9203d78382d42a2985b75a04794f0"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "business_ids": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "operation": "enrich_technographics"
+          },
+          "passed": true
+        },
+        {
+          "operation": "enrich_funding",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.explorium.ai/v2/businesses/funding_and_acquisition/enrich",
+              "content_type": "application/json",
+              "body": "{\"business_ids\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "51",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /v2/businesses/funding_and_acquisition/enrich",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "d0026fdd3cada7acd61128f7aeaef4c636cfdfef8a5cf5b96bc6326087dbd6fe"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "business_ids": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "operation": "enrich_funding"
+          },
+          "passed": true
+        },
+        {
+          "operation": "enrich_website_traffic",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.explorium.ai/v2/businesses/website_traffic/enrich",
+              "content_type": "application/json",
+              "body": "{\"business_ids\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "51",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /v2/businesses/website_traffic/enrich",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "966929333dcb5d69f9fd43c4d20e8a1a5268f7572d789f30fc17db30ba5ce56f"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "business_ids": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "operation": "enrich_website_traffic"
+          },
+          "passed": true
+        },
+        {
+          "operation": "enrich_webstack",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.explorium.ai/v2/businesses/webstack/enrich",
+              "content_type": "application/json",
+              "body": "{\"business_ids\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "51",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /v2/businesses/webstack/enrich",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "01f8a273314d1021fda584825729993a78d6cfa714988c50853310573e6859ff"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "business_ids": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "operation": "enrich_webstack"
+          },
+          "passed": true
+        },
+        {
+          "operation": "enrich_company_hierarchy",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.explorium.ai/v2/businesses/company_hierarchies/enrich",
+              "content_type": "application/json",
+              "body": "{\"business_ids\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "51",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /v2/businesses/company_hierarchies/enrich",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "2ec741fce0b66a1370367c4e351ba3820655e9c724112f812ddf542c7f1a9a8c"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "business_ids": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "operation": "enrich_company_hierarchy"
+          },
+          "passed": true
+        },
+        {
+          "operation": "enrich_prospect_profile",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.explorium.ai/v2/prospects/profiles/enrich",
+              "content_type": "application/json",
+              "body": "{\"prospect_ids\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "59",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /v2/prospects/profiles/enrich",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "7426595a06d25fd8e269124bbfa452be0307d825549c295fa71e86f34e43616f"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "enrich_prospect_profile",
+            "prospect_ids": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "passed": true
+        },
+        {
+          "operation": "enrich_prospect_contacts",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.explorium.ai/v2/prospects/contact_information/enrich",
+              "content_type": "application/json",
+              "body": "{\"prospect_ids\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "59",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /v2/prospects/contact_information/enrich",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "9f7bdef220fd5f20edf2dac5c209e8ba5484771364c742983a5353f8e100cdb1"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "enrich_prospect_contacts",
+            "prospect_ids": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "passed": true
+        },
+        {
+          "operation": "list_webhooks",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.explorium.ai/v2/webhooks?status=active",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v2/webhooks",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "2e6c784db3997b0e600e001c0e77981ef9f15400ba3a0a901a8102f0cf94ad69"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "list_webhooks",
+            "status": "active"
+          },
+          "passed": true
+        },
+        {
+          "operation": "create_webhook",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.explorium.ai/v2/webhooks",
+              "content_type": "application/json",
+              "body": "{\"name\":\"1\",\"webhook_url\":\"https://example.test\",\"description\":\"1\",\"headers\":[\"1\"],\"payload_format\":\"json\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "107",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /v2/webhooks",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 201,
+              "response_sha256": "b34e6ec68a8ed7f72bfcf706a89d7447dfe5761152fd710183699b8ba31edbf7"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "create_webhook",
+            "name": "1",
+            "webhook_url": "https://example.test",
+            "description": "1",
+            "headers": [
+              "1"
+            ],
+            "payload_format": "json"
+          },
+          "passed": true
+        },
+        {
+          "operation": "get_webhook",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.explorium.ai/v2/webhooks/2024-01-01",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v2/webhooks/{webhook_id}",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "768cbb6b4169184b24038aafc65c7253d3035e1b770c90ff3dbd559613cfc4c6"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "get_webhook",
+            "webhook_id": "2024-01-01"
+          },
+          "passed": true
+        },
+        {
+          "operation": "update_webhook",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "PATCH",
+              "url": "https://api.explorium.ai/v2/webhooks/2024-01-01",
+              "content_type": "application/json",
+              "body": "{\"name\":\"1\",\"description\":\"1\",\"webhook_url\":\"https://example.test\",\"headers\":[\"1\"],\"payload_format\":\"json\",\"status\":\"active\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "125",
+                "content-type": "application/json"
+              },
+              "spec_operation": "PATCH /v2/webhooks/{webhook_id}",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "768cbb6b4169184b24038aafc65c7253d3035e1b770c90ff3dbd559613cfc4c6"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "update_webhook",
+            "webhook_id": "2024-01-01",
+            "name": "1",
+            "description": "1",
+            "webhook_url": "https://example.test",
+            "headers": [
+              "1"
+            ],
+            "payload_format": "json",
+            "status": "active"
+          },
+          "passed": true
+        },
+        {
+          "operation": "delete_webhook",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "DELETE",
+              "url": "https://api.explorium.ai/v2/webhooks/2024-01-01?force=false",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "DELETE /v2/webhooks/{webhook_id}",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "f441443c9525077c814ee07b44c15df23e3440581fd84f61c65069646bbc2115"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "delete_webhook",
+            "webhook_id": "2024-01-01",
+            "force": false
+          },
+          "passed": true
+        },
+        {
+          "operation": "list_jobs",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.explorium.ai/v2/jobs?status=queued&skip=1",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v2/jobs",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "1999f9c40af0ff4d0a27023d1bb5ea3274b51abdf2908fd207e4192ed44faf17"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "list_jobs",
+            "status": "queued",
+            "skip": 1
+          },
+          "passed": true
+        },
+        {
+          "operation": "get_job",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.explorium.ai/v2/jobs/status/2024-01-01",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v2/jobs/status/{job_id}",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "6acac6d5e817869520cfdfb4c4081c256f445d5309215ead5f3ecdd27c113b9a"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "get_job",
+            "job_id": "2024-01-01"
+          },
+          "passed": true
+        },
+        {
+          "operation": "cancel_job",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.explorium.ai/v2/jobs/cancel/2024-01-01",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.explorium.ai",
+                "content-length": "0",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "api_key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "POST /v2/jobs/cancel/{job_id}",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "6acac6d5e817869520cfdfb4c4081c256f445d5309215ead5f3ecdd27c113b9a"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "cancel_job",
+            "job_id": "2024-01-01"
+          },
+          "passed": true
+        }
+      ]
+    }
+  ]
+}
