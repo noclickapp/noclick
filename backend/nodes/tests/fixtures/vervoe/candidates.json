@@ -1,0 +1,42 @@
+{
+  "success": true,
+  "data": {
+    "currentPage": 2,
+    "total": 11,
+    "count": 1,
+    "hasMorePages": false,
+    "items": [
+      {
+        "fullName": "Full name",
+        "email": "candidate@vervoe.com",
+        "phone": "380971111111",
+        "source": "Email Invitation",
+        "status": "Scored",
+        "statusChangedAt": "2023-05-30T13:51:42+00:00",
+        "rank": 1,
+        "predictedOverallScore": "25%",
+        "predictedSkillScores": "SKILL: 25",
+        "actualOverallScore": "35%",
+        "actualSkillScores": "SKILL: 35",
+        "startedAt": "2023-05-22T13:20:42+00:00",
+        "timeTaken": 17,
+        "submitTime": 29,
+        "tags": [
+          "tag 1"
+        ],
+        "questions": [
+          {
+            "description": "Question 1",
+            "answer": "Answer 1",
+            "score": 5
+          }
+        ],
+        "plagiarismDetected": false,
+        "geoLocationDetection": false,
+        "locations": [
+          null
+        ]
+      }
+    ]
+  }
+}

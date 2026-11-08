@@ -1,0 +1,9 @@
+{
+  "source": "https://raw.githubusercontent.com/vervoe/api-docs/3c101ebf88324dce675e176a8a79e2e6dbb16827/Vervoe-API.v1-8.yaml",
+  "examples": {
+    "applications": "GET /integration/user-assessments: example-1",
+    "application": "GET /integration/user-assessments/{candidateAssessmentUuid}: Example 1 Manual % Overall",
+    "candidates": "GET /integration/assessments/{slug}/candidates?page=1: Example - 1",
+    "rename_folder": "PATCH integration/assessments/folders/{uuid}: Example 1"
+  }
+}
