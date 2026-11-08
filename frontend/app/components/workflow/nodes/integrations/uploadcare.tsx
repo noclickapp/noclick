@@ -11,6 +11,7 @@ const UploadcareIcon = ({ className, style }: { className?: string; style?: CSSP
 
 export const UploadcareNode: NodeDefinition = {
     type: 'automation-uploadcare', label: 'Uploadcare',
+    category: 'media',
     description: 'Manage files, metadata, tags, groups and webhooks',
     Icon: UploadcareIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
