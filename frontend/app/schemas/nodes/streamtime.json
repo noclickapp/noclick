@@ -1,0 +1,1459 @@
+{
+  "$defs": {
+    "CompanyStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "enum": [
+            1,
+            2,
+            3
+          ],
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "CompanyStatus",
+      "type": "object"
+    },
+    "ContactStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "enum": [
+            1,
+            2,
+            3
+          ],
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ContactStatus",
+      "type": "object"
+    },
+    "CreateCompany": {
+      "additionalProperties": false,
+      "description": "Create a company.",
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "isClient": {
+          "default": null,
+          "description": "Whether the company is a client",
+          "title": "Isclient",
+          "type": "boolean"
+        },
+        "isSupplier": {
+          "default": null,
+          "description": "Whether the company is a supplier",
+          "title": "Issupplier",
+          "type": "boolean"
+        },
+        "companyStatus": {
+          "$ref": "#/$defs/CompanyStatus",
+          "default": null,
+          "description": "companyStatus"
+        },
+        "taxNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tax/GST/VAT number",
+          "title": "Taxnumber"
+        },
+        "phone1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary phone number",
+          "title": "Phone1"
+        },
+        "phone2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Secondary phone number",
+          "title": "Phone2"
+        },
+        "websiteAddress": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Website URL",
+          "title": "Websiteaddress"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notes about the company",
+          "title": "Notes"
+        },
+        "operation": {
+          "const": "create_company",
+          "default": "create_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateCompany",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "description": "Create company contact.",
+      "properties": {
+        "firstName": {
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last name",
+          "title": "Lastname"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address",
+          "title": "Email"
+        },
+        "phoneNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone number",
+          "title": "Phonenumber"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position / Job title",
+          "title": "Position"
+        },
+        "contactStatus": {
+          "$ref": "#/$defs/ContactStatus",
+          "default": null,
+          "description": "contactStatus"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "description": "Company Id",
+          "exclusiveMinimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "firstName",
+        "company_id"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateJob": {
+      "additionalProperties": false,
+      "description": "Create a job.",
+      "properties": {
+        "jobLeadUserId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job lead user ID",
+          "title": "Jobleaduserid"
+        },
+        "rateCardId": {
+          "default": null,
+          "description": "The id of the rate card used for this job",
+          "title": "Ratecardid",
+          "type": "integer"
+        },
+        "branchId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The id of the branch this job belongs to",
+          "title": "Branchid"
+        },
+        "jobStatus": {
+          "$ref": "#/$defs/JobStatus",
+          "default": null,
+          "description": "jobStatus"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job number",
+          "title": "Number"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "purchaseOrderNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Client purchase order number",
+          "title": "Purchaseordernumber"
+        },
+        "contactId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The id of the contact this job is being done for",
+          "title": "Contactid"
+        },
+        "operation": {
+          "const": "create_job",
+          "default": "create_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateJob",
+      "type": "object"
+    },
+    "CreateLoggedTime": {
+      "additionalProperties": false,
+      "description": "Create a logged time entry.",
+      "properties": {
+        "userId": {
+          "exclusiveMinimum": 0,
+          "title": "Userid",
+          "type": "integer"
+        },
+        "loggedTimeStatus": {
+          "$ref": "#/$defs/LoggedTimeStatus",
+          "default": null,
+          "description": "loggedTimeStatus"
+        },
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "jobId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "jobId",
+          "title": "Jobid"
+        },
+        "jobItemUserId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "jobItemUserId",
+          "title": "Jobitemuserid"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "notes",
+          "title": "Notes"
+        },
+        "private": {
+          "default": null,
+          "description": "private",
+          "title": "Private",
+          "type": "boolean"
+        },
+        "minutes": {
+          "minimum": 0,
+          "title": "Minutes",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "create_logged_time",
+          "default": "create_logged_time",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "userId",
+        "date",
+        "minutes"
+      ],
+      "title": "CreateLoggedTime",
+      "type": "object"
+    },
+    "DeleteLoggedTime": {
+      "additionalProperties": false,
+      "description": "Delete logged time entry.",
+      "properties": {
+        "operation": {
+          "const": "delete_logged_time",
+          "default": "delete_logged_time",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "logged_time_id": {
+          "description": "Logged Time Id",
+          "exclusiveMinimum": 0,
+          "title": "Logged Time Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "logged_time_id"
+      ],
+      "title": "DeleteLoggedTime",
+      "type": "object"
+    },
+    "GetCompany": {
+      "additionalProperties": false,
+      "description": "Get company by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "description": "Company Id",
+          "exclusiveMinimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "GetCompany",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "description": "Get a specific contact.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "description": "Contact ID",
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetInvoice": {
+      "additionalProperties": false,
+      "description": "Get invoice by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "description": "Invoice Id",
+          "exclusiveMinimum": 0,
+          "title": "Invoice Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "GetInvoice",
+      "type": "object"
+    },
+    "GetJob": {
+      "additionalProperties": false,
+      "description": "Get a job.",
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "description": "Job ID",
+          "exclusiveMinimum": 0,
+          "title": "Job Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJob",
+      "type": "object"
+    },
+    "GetLoggedTime": {
+      "additionalProperties": false,
+      "description": "Get logged time entry by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_logged_time",
+          "default": "get_logged_time",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "logged_time_id": {
+          "description": "Logged Time Id",
+          "exclusiveMinimum": 0,
+          "title": "Logged Time Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "logged_time_id"
+      ],
+      "title": "GetLoggedTime",
+      "type": "object"
+    },
+    "GetOrganisation": {
+      "additionalProperties": false,
+      "description": "Get your organisation's details.",
+      "properties": {
+        "operation": {
+          "const": "get_organisation",
+          "default": "get_organisation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetOrganisation",
+      "type": "object"
+    },
+    "GetQuote": {
+      "additionalProperties": false,
+      "description": "Get quote by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_quote",
+          "default": "get_quote",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "quote_id": {
+          "description": "Quote Id",
+          "exclusiveMinimum": 0,
+          "title": "Quote Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "quote_id"
+      ],
+      "title": "GetQuote",
+      "type": "object"
+    },
+    "GetSearchSetup": {
+      "additionalProperties": false,
+      "description": "Get the configuration details required to construct a search request accurately.",
+      "properties": {
+        "operation": {
+          "const": "get_search_setup",
+          "default": "get_search_setup",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_view": {
+          "description": "Get the specific details of what filters and data is available for a given search.",
+          "enum": [
+            "jobs",
+            "job_milestones",
+            "job_phases",
+            "job_items",
+            "job_item_quote_line_items",
+            "job_item_invoice_line_items",
+            "job_item_users",
+            "job_item_roles",
+            "job_item_sub_items",
+            "time",
+            "expenses",
+            "purchase_order_line_items",
+            "logged_expense_quote_line_items",
+            "logged_expense_invoice_line_items",
+            "quotes",
+            "quote_line_items",
+            "quote_line_item_invoice_line_items",
+            "invoices",
+            "invoice_line_items",
+            "job_groups",
+            "job_group_periods",
+            "companies",
+            "contacts",
+            "users"
+          ],
+          "title": "Search View",
+          "type": "string"
+        }
+      },
+      "required": [
+        "search_view"
+      ],
+      "title": "GetSearchSetup",
+      "type": "object"
+    },
+    "JobStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "JobStatus",
+      "type": "object"
+    },
+    "ListBranches": {
+      "additionalProperties": false,
+      "description": "List branches.",
+      "properties": {
+        "operation": {
+          "const": "list_branches",
+          "default": "list_branches",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListBranches",
+      "type": "object"
+    },
+    "ListCompanyContacts": {
+      "additionalProperties": false,
+      "description": "List company contacts.",
+      "properties": {
+        "operation": {
+          "const": "list_company_contacts",
+          "default": "list_company_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "description": "Company Id",
+          "exclusiveMinimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "ListCompanyContacts",
+      "type": "object"
+    },
+    "ListJobItems": {
+      "additionalProperties": false,
+      "description": "List job items.",
+      "properties": {
+        "operation": {
+          "const": "list_job_items",
+          "default": "list_job_items",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "description": "Job Id",
+          "exclusiveMinimum": 0,
+          "title": "Job Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ListJobItems",
+      "type": "object"
+    },
+    "ListRateCards": {
+      "additionalProperties": false,
+      "description": "List your organisation's rate cards.",
+      "properties": {
+        "operation": {
+          "const": "list_rate_cards",
+          "default": "list_rate_cards",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListRateCards",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "description": "List your organisation's users.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "LoggedTimeStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "enum": [
+            1,
+            2,
+            3
+          ],
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "LoggedTimeStatus",
+      "type": "object"
+    },
+    "SearchRecords": {
+      "additionalProperties": false,
+      "description": "This route will search for individual records that match the given query. If you want to summarise records, use the report endpoint instead..",
+      "properties": {
+        "operation": {
+          "const": "search_records",
+          "default": "search_records",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_view": {
+          "description": "What do you want to search for?",
+          "enum": [
+            "jobs",
+            "job_milestones",
+            "job_phases",
+            "job_items",
+            "job_item_quote_line_items",
+            "job_item_invoice_line_items",
+            "job_item_users",
+            "job_item_roles",
+            "job_item_sub_items",
+            "time",
+            "expenses",
+            "purchase_order_line_items",
+            "logged_expense_quote_line_items",
+            "logged_expense_invoice_line_items",
+            "quotes",
+            "quote_line_items",
+            "quote_line_item_invoice_line_items",
+            "invoices",
+            "invoice_line_items",
+            "job_groups",
+            "job_group_periods",
+            "companies",
+            "contacts",
+            "users"
+          ],
+          "title": "Search View",
+          "type": "string"
+        },
+        "query": {
+          "description": "Filter expression using selectors returned by get_search_setup.",
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "limit": {
+          "default": 30,
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "sortColumn": {
+          "default": null,
+          "description": "A sortColumns value returned by get_search_setup.",
+          "title": "Sortcolumn",
+          "type": "string"
+        },
+        "sortAscending": {
+          "default": true,
+          "title": "Sortascending",
+          "type": "boolean"
+        },
+        "additionalData": {
+          "description": "Related objects supported by get_search_setup.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Additionaldata",
+          "type": "array"
+        }
+      },
+      "required": [
+        "search_view",
+        "query"
+      ],
+      "title": "SearchRecords",
+      "type": "object"
+    },
+    "StreamtimeTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "streamtime_api_token",
+          "default": "streamtime_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Streamtime API Token",
+      "type": "object",
+      "x-credential-instructions": "In Streamtime, the subscriber can request a bearer token from Company Settings. Paste the token here without the Bearer prefix. The token acts with its user's access to the organisation.",
+      "x-credential-url": "https://api.streamtime.net/swagger.json"
+    },
+    "UpdateCompany": {
+      "additionalProperties": false,
+      "description": "Update company.",
+      "properties": {
+        "name": {
+          "default": null,
+          "description": "Company name",
+          "title": "Name",
+          "type": "string"
+        },
+        "isClient": {
+          "default": null,
+          "description": "Whether the company is a client",
+          "title": "Isclient",
+          "type": "boolean"
+        },
+        "isSupplier": {
+          "default": null,
+          "description": "Whether the company is a supplier",
+          "title": "Issupplier",
+          "type": "boolean"
+        },
+        "companyStatus": {
+          "$ref": "#/$defs/CompanyStatus",
+          "default": null,
+          "description": "companyStatus"
+        },
+        "taxNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tax/GST/VAT number",
+          "title": "Taxnumber"
+        },
+        "phone1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary phone number",
+          "title": "Phone1"
+        },
+        "phone2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Secondary phone number",
+          "title": "Phone2"
+        },
+        "websiteAddress": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Website URL",
+          "title": "Websiteaddress"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notes about the company",
+          "title": "Notes"
+        },
+        "operation": {
+          "const": "update_company",
+          "default": "update_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "description": "Company Id",
+          "exclusiveMinimum": 0,
+          "title": "Company Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "UpdateCompany",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "description": "Update a contact.",
+      "properties": {
+        "firstName": {
+          "default": null,
+          "description": "First name",
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last name",
+          "title": "Lastname"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address",
+          "title": "Email"
+        },
+        "phoneNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone number",
+          "title": "Phonenumber"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position / Job title",
+          "title": "Position"
+        },
+        "contactStatus": {
+          "$ref": "#/$defs/ContactStatus",
+          "default": null,
+          "description": "contactStatus"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "description": "Contact ID",
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateJob": {
+      "additionalProperties": false,
+      "description": "Update a job.",
+      "properties": {
+        "jobLeadUserId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job lead user ID",
+          "title": "Jobleaduserid"
+        },
+        "rateCardId": {
+          "default": null,
+          "description": "The id of the rate card used for this job",
+          "title": "Ratecardid",
+          "type": "integer"
+        },
+        "branchId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The id of the branch this job belongs to",
+          "title": "Branchid"
+        },
+        "jobStatus": {
+          "$ref": "#/$defs/JobStatus",
+          "default": null,
+          "description": "jobStatus"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job number",
+          "title": "Number"
+        },
+        "name": {
+          "default": null,
+          "description": "Job name",
+          "title": "Name",
+          "type": "string"
+        },
+        "purchaseOrderNumber": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Client purchase order number",
+          "title": "Purchaseordernumber"
+        },
+        "contactId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The id of the contact this job is being done for",
+          "title": "Contactid"
+        },
+        "operation": {
+          "const": "update_job",
+          "default": "update_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "description": "Job Id",
+          "exclusiveMinimum": 0,
+          "title": "Job Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "UpdateJob",
+      "type": "object"
+    },
+    "UpdateJobStatus": {
+      "additionalProperties": false,
+      "description": "Update a job's status.",
+      "properties": {
+        "operation": {
+          "const": "update_job_status",
+          "default": "update_job_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "description": "Job Id",
+          "exclusiveMinimum": 0,
+          "title": "Job Id",
+          "type": "integer"
+        },
+        "job_status_id": {
+          "description": "New Job Status ID",
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "title": "Job Status Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "job_id",
+        "job_status_id"
+      ],
+      "title": "UpdateJobStatus",
+      "type": "object"
+    },
+    "UpdateLoggedTime": {
+      "additionalProperties": false,
+      "description": "Update logged time entry.",
+      "properties": {
+        "userId": {
+          "default": null,
+          "description": "userId",
+          "title": "Userid",
+          "type": "integer"
+        },
+        "loggedTimeStatus": {
+          "$ref": "#/$defs/LoggedTimeStatus",
+          "default": null,
+          "description": "loggedTimeStatus"
+        },
+        "date": {
+          "default": null,
+          "description": "date",
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "jobId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "jobId",
+          "title": "Jobid"
+        },
+        "jobItemUserId": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "jobItemUserId",
+          "title": "Jobitemuserid"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "notes",
+          "title": "Notes"
+        },
+        "private": {
+          "default": null,
+          "description": "private",
+          "title": "Private",
+          "type": "boolean"
+        },
+        "minutes": {
+          "default": null,
+          "description": "minutes",
+          "title": "Minutes",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_logged_time",
+          "default": "update_logged_time",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "logged_time_id": {
+          "description": "Logged Time Id",
+          "exclusiveMinimum": 0,
+          "title": "Logged Time Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "logged_time_id"
+      ],
+      "title": "UpdateLoggedTime",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_company": "#/$defs/CreateCompany",
+          "create_contact": "#/$defs/CreateContact",
+          "create_job": "#/$defs/CreateJob",
+          "create_logged_time": "#/$defs/CreateLoggedTime",
+          "delete_logged_time": "#/$defs/DeleteLoggedTime",
+          "get_company": "#/$defs/GetCompany",
+          "get_contact": "#/$defs/GetContact",
+          "get_invoice": "#/$defs/GetInvoice",
+          "get_job": "#/$defs/GetJob",
+          "get_logged_time": "#/$defs/GetLoggedTime",
+          "get_organisation": "#/$defs/GetOrganisation",
+          "get_quote": "#/$defs/GetQuote",
+          "get_search_setup": "#/$defs/GetSearchSetup",
+          "list_branches": "#/$defs/ListBranches",
+          "list_company_contacts": "#/$defs/ListCompanyContacts",
+          "list_job_items": "#/$defs/ListJobItems",
+          "list_rate_cards": "#/$defs/ListRateCards",
+          "list_users": "#/$defs/ListUsers",
+          "search_records": "#/$defs/SearchRecords",
+          "update_company": "#/$defs/UpdateCompany",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_job": "#/$defs/UpdateJob",
+          "update_job_status": "#/$defs/UpdateJobStatus",
+          "update_logged_time": "#/$defs/UpdateLoggedTime"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetOrganisation"
+        },
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/ListBranches"
+        },
+        {
+          "$ref": "#/$defs/ListRateCards"
+        },
+        {
+          "$ref": "#/$defs/CreateCompany"
+        },
+        {
+          "$ref": "#/$defs/GetCompany"
+        },
+        {
+          "$ref": "#/$defs/UpdateCompany"
+        },
+        {
+          "$ref": "#/$defs/ListCompanyContacts"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/CreateJob"
+        },
+        {
+          "$ref": "#/$defs/GetJob"
+        },
+        {
+          "$ref": "#/$defs/UpdateJob"
+        },
+        {
+          "$ref": "#/$defs/UpdateJobStatus"
+        },
+        {
+          "$ref": "#/$defs/ListJobItems"
+        },
+        {
+          "$ref": "#/$defs/GetInvoice"
+        },
+        {
+          "$ref": "#/$defs/GetQuote"
+        },
+        {
+          "$ref": "#/$defs/CreateLoggedTime"
+        },
+        {
+          "$ref": "#/$defs/GetLoggedTime"
+        },
+        {
+          "$ref": "#/$defs/UpdateLoggedTime"
+        },
+        {
+          "$ref": "#/$defs/DeleteLoggedTime"
+        },
+        {
+          "$ref": "#/$defs/GetSearchSetup"
+        },
+        {
+          "$ref": "#/$defs/SearchRecords"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/StreamtimeTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Streamtime Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
