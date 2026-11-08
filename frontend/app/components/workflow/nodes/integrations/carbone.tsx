@@ -11,6 +11,7 @@ const CarboneIcon = ({ className, style }: { className?: string; style?: CSSProp
 
 export const CarboneNode: NodeDefinition = {
     type: 'automation-carbone', label: 'Carbone',
+    category: 'documents',
     description: 'Generate and convert documents; manage templates, versions, categories and tags',
     Icon: CarboneIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
