@@ -11,6 +11,7 @@ const AhaIcon = ({ className, style }: { className?: string; style?: CSSProperti
 
 export const AhaNode: NodeDefinition = {
     type: 'automation-aha', label: 'Aha!',
+    category: 'productivity',
     description: 'Automate workspaces, releases, features, epics, ideas, requirements and notes',
     Icon: AhaIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
