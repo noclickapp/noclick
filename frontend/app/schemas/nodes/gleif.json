@@ -1,0 +1,757 @@
+{
+  "$defs": {
+    "GleifGetAssociatedEntityConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lei": {
+          "description": "The entity's 20-character Legal Entity Identifier.",
+          "pattern": "^[A-Z0-9]{20}$",
+          "title": "LEI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_associated_entity",
+          "default": "get_associated_entity",
+          "title": "Associated Entity (Fund Manager Legal Entity)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Associated Entity (Fund Manager Legal Entity)"
+        }
+      },
+      "required": [
+        "lei"
+      ],
+      "title": "GleifGetAssociatedEntityConfig",
+      "type": "object"
+    },
+    "GleifGetDirectParentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lei": {
+          "description": "The entity's 20-character Legal Entity Identifier.",
+          "pattern": "^[A-Z0-9]{20}$",
+          "title": "LEI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_direct_parent",
+          "default": "get_direct_parent",
+          "title": "Direct Parent's LEI Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Direct Parent's LEI Record"
+        }
+      },
+      "required": [
+        "lei"
+      ],
+      "title": "GleifGetDirectParentConfig",
+      "type": "object"
+    },
+    "GleifGetDirectParentRelationshipConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lei": {
+          "description": "The entity's 20-character Legal Entity Identifier.",
+          "pattern": "^[A-Z0-9]{20}$",
+          "title": "LEI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_direct_parent_relationship",
+          "default": "get_direct_parent_relationship",
+          "title": "Direct Parent Relationship(s)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Direct Parent Relationship(s)"
+        }
+      },
+      "required": [
+        "lei"
+      ],
+      "title": "GleifGetDirectParentRelationshipConfig",
+      "type": "object"
+    },
+    "GleifGetDirectParentReportingExceptionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lei": {
+          "description": "The entity's 20-character Legal Entity Identifier.",
+          "pattern": "^[A-Z0-9]{20}$",
+          "title": "LEI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_direct_parent_reporting_exception",
+          "default": "get_direct_parent_reporting_exception",
+          "title": "Direct Parent Reporting Exception(s)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Direct Parent Reporting Exception(s)"
+        }
+      },
+      "required": [
+        "lei"
+      ],
+      "title": "GleifGetDirectParentReportingExceptionConfig",
+      "type": "object"
+    },
+    "GleifGetIssuerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_issuer",
+          "default": "get_issuer",
+          "title": "LEI Issuer By ID",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "LEI Issuer By ID"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GleifGetIssuerConfig",
+      "type": "object"
+    },
+    "GleifGetLegalFormConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_legal_form",
+          "default": "get_legal_form",
+          "title": "Entity Legal Form Details By ID",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Entity Legal Form Details By ID"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GleifGetLegalFormConfig",
+      "type": "object"
+    },
+    "GleifGetLeiIssuerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lei": {
+          "description": "The entity's 20-character Legal Entity Identifier.",
+          "pattern": "^[A-Z0-9]{20}$",
+          "title": "LEI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_lei_issuer",
+          "default": "get_lei_issuer",
+          "title": "LEI Issuer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "LEI Issuer"
+        }
+      },
+      "required": [
+        "lei"
+      ],
+      "title": "GleifGetLeiIssuerConfig",
+      "type": "object"
+    },
+    "GleifGetLeiRecordConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lei": {
+          "description": "The entity's 20-character Legal Entity Identifier.",
+          "pattern": "^[A-Z0-9]{20}$",
+          "title": "LEI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_lei_record",
+          "default": "get_lei_record",
+          "title": "LEI Record By ID (LEI)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "LEI Record By ID (LEI)"
+        }
+      },
+      "required": [
+        "lei"
+      ],
+      "title": "GleifGetLeiRecordConfig",
+      "type": "object"
+    },
+    "GleifGetManagingLouConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lei": {
+          "description": "The entity's 20-character Legal Entity Identifier.",
+          "pattern": "^[A-Z0-9]{20}$",
+          "title": "LEI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_managing_lou",
+          "default": "get_managing_lou",
+          "title": "Managing LOU (LEI Issuer)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Managing LOU (LEI Issuer)"
+        }
+      },
+      "required": [
+        "lei"
+      ],
+      "title": "GleifGetManagingLouConfig",
+      "type": "object"
+    },
+    "GleifGetRegistrationAuthorityConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_registration_authority",
+          "default": "get_registration_authority",
+          "title": "Registration Authority Details By ID",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Registration Authority Details By ID"
+        }
+      },
+      "required": [
+        "resource_id"
+      ],
+      "title": "GleifGetRegistrationAuthorityConfig",
+      "type": "object"
+    },
+    "GleifGetSuccessorEntityConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lei": {
+          "description": "The entity's 20-character Legal Entity Identifier.",
+          "pattern": "^[A-Z0-9]{20}$",
+          "title": "LEI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_successor_entity",
+          "default": "get_successor_entity",
+          "title": "Successor Entity (Legal Entity this Registration is Replaced By)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Successor Entity (Legal Entity this Registration is Replaced By)"
+        }
+      },
+      "required": [
+        "lei"
+      ],
+      "title": "GleifGetSuccessorEntityConfig",
+      "type": "object"
+    },
+    "GleifGetUltimateParentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lei": {
+          "description": "The entity's 20-character Legal Entity Identifier.",
+          "pattern": "^[A-Z0-9]{20}$",
+          "title": "LEI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_ultimate_parent",
+          "default": "get_ultimate_parent",
+          "title": "Ultimate Parent's LEI Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Ultimate Parent's LEI Record"
+        }
+      },
+      "required": [
+        "lei"
+      ],
+      "title": "GleifGetUltimateParentConfig",
+      "type": "object"
+    },
+    "GleifGetUltimateParentRelationshipConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lei": {
+          "description": "The entity's 20-character Legal Entity Identifier.",
+          "pattern": "^[A-Z0-9]{20}$",
+          "title": "LEI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_ultimate_parent_relationship",
+          "default": "get_ultimate_parent_relationship",
+          "title": "Ultimate Parent Relationship(s)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Ultimate Parent Relationship(s)"
+        }
+      },
+      "required": [
+        "lei"
+      ],
+      "title": "GleifGetUltimateParentRelationshipConfig",
+      "type": "object"
+    },
+    "GleifGetUltimateParentReportingExceptionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lei": {
+          "description": "The entity's 20-character Legal Entity Identifier.",
+          "pattern": "^[A-Z0-9]{20}$",
+          "title": "LEI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_ultimate_parent_reporting_exception",
+          "default": "get_ultimate_parent_reporting_exception",
+          "title": "Ultimate Parent Reporting Exception(s)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Ultimate Parent Reporting Exception(s)"
+        }
+      },
+      "required": [
+        "lei"
+      ],
+      "title": "GleifGetUltimateParentReportingExceptionConfig",
+      "type": "object"
+    },
+    "GleifListDirectChildRelationshipsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lei": {
+          "description": "The entity's 20-character Legal Entity Identifier.",
+          "pattern": "^[A-Z0-9]{20}$",
+          "title": "LEI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_direct_child_relationships",
+          "default": "list_direct_child_relationships",
+          "title": "Direct Child Relationship(s)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Direct Child Relationship(s)"
+        }
+      },
+      "required": [
+        "lei"
+      ],
+      "title": "GleifListDirectChildRelationshipsConfig",
+      "type": "object"
+    },
+    "GleifListDirectChildrenConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lei": {
+          "description": "The entity's 20-character Legal Entity Identifier.",
+          "pattern": "^[A-Z0-9]{20}$",
+          "title": "LEI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_direct_children",
+          "default": "list_direct_children",
+          "title": "Direct Child(ren)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Direct Child(ren)"
+        }
+      },
+      "required": [
+        "lei"
+      ],
+      "title": "GleifListDirectChildrenConfig",
+      "type": "object"
+    },
+    "GleifListFieldModificationsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lei": {
+          "description": "The entity's 20-character Legal Entity Identifier.",
+          "pattern": "^[A-Z0-9]{20}$",
+          "title": "LEI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_field_modifications",
+          "default": "list_field_modifications",
+          "title": "All LEI Record field modifications",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "All LEI Record field modifications"
+        }
+      },
+      "required": [
+        "lei"
+      ],
+      "title": "GleifListFieldModificationsConfig",
+      "type": "object"
+    },
+    "GleifListLegalFormsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_legal_forms",
+          "default": "list_legal_forms",
+          "title": "Entity Legal Forms (ELF Codes)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Entity Legal Forms (ELF Codes)"
+        }
+      },
+      "title": "GleifListLegalFormsConfig",
+      "type": "object"
+    },
+    "GleifListLeiIssuersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_lei_issuers",
+          "default": "list_lei_issuers",
+          "title": "LEI Issuers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "LEI Issuers"
+        }
+      },
+      "title": "GleifListLeiIssuersConfig",
+      "type": "object"
+    },
+    "GleifListLeiRecordsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_lei_records",
+          "default": "list_lei_records",
+          "title": "All LEI Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "All LEI Records"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "page_number": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page number",
+          "type": "integer"
+        }
+      },
+      "title": "GleifListLeiRecordsConfig",
+      "type": "object"
+    },
+    "GleifListRegistrationAuthoritiesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_registration_authorities",
+          "default": "list_registration_authorities",
+          "title": "Registration Authorities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Registration Authorities"
+        }
+      },
+      "title": "GleifListRegistrationAuthoritiesConfig",
+      "type": "object"
+    },
+    "GleifListUltimateChildRelationshipsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lei": {
+          "description": "The entity's 20-character Legal Entity Identifier.",
+          "pattern": "^[A-Z0-9]{20}$",
+          "title": "LEI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_ultimate_child_relationships",
+          "default": "list_ultimate_child_relationships",
+          "title": "Ultimate Child Relationship(s)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Ultimate Child Relationship(s)"
+        }
+      },
+      "required": [
+        "lei"
+      ],
+      "title": "GleifListUltimateChildRelationshipsConfig",
+      "type": "object"
+    },
+    "GleifListUltimateChildrenConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "lei": {
+          "description": "The entity's 20-character Legal Entity Identifier.",
+          "pattern": "^[A-Z0-9]{20}$",
+          "title": "LEI",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_ultimate_children",
+          "default": "list_ultimate_children",
+          "title": "Ultimate Child(ren)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Ultimate Child(ren)"
+        }
+      },
+      "required": [
+        "lei"
+      ],
+      "title": "GleifListUltimateChildrenConfig",
+      "type": "object"
+    },
+    "GleifSearchAutocompleteConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Search term",
+          "type": "string"
+        },
+        "field": {
+          "default": "entity.legalName",
+          "enum": [
+            "entity.legalName",
+            "fulltext",
+            "owns",
+            "ownedBy"
+          ],
+          "title": "Search field",
+          "type": "string"
+        },
+        "operation": {
+          "const": "search_autocomplete",
+          "default": "search_autocomplete",
+          "title": "Auto-Completions (Suggested Search Terms)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Auto-Completions (Suggested Search Terms)"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "GleifSearchAutocompleteConfig",
+      "type": "object"
+    },
+    "GleifSearchFuzzyConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Search term",
+          "type": "string"
+        },
+        "field": {
+          "default": "entity.legalName",
+          "enum": [
+            "entity.legalName",
+            "fulltext",
+            "owns",
+            "ownedBy"
+          ],
+          "title": "Search field",
+          "type": "string"
+        },
+        "operation": {
+          "const": "search_fuzzy",
+          "default": "search_fuzzy",
+          "title": "Fuzzy Completions (Approximate Match)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "GLEIF",
+          "x-display-name": "Fuzzy Completions (Approximate Match)"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "GleifSearchFuzzyConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_associated_entity": "#/$defs/GleifGetAssociatedEntityConfig",
+          "get_direct_parent": "#/$defs/GleifGetDirectParentConfig",
+          "get_direct_parent_relationship": "#/$defs/GleifGetDirectParentRelationshipConfig",
+          "get_direct_parent_reporting_exception": "#/$defs/GleifGetDirectParentReportingExceptionConfig",
+          "get_issuer": "#/$defs/GleifGetIssuerConfig",
+          "get_legal_form": "#/$defs/GleifGetLegalFormConfig",
+          "get_lei_issuer": "#/$defs/GleifGetLeiIssuerConfig",
+          "get_lei_record": "#/$defs/GleifGetLeiRecordConfig",
+          "get_managing_lou": "#/$defs/GleifGetManagingLouConfig",
+          "get_registration_authority": "#/$defs/GleifGetRegistrationAuthorityConfig",
+          "get_successor_entity": "#/$defs/GleifGetSuccessorEntityConfig",
+          "get_ultimate_parent": "#/$defs/GleifGetUltimateParentConfig",
+          "get_ultimate_parent_relationship": "#/$defs/GleifGetUltimateParentRelationshipConfig",
+          "get_ultimate_parent_reporting_exception": "#/$defs/GleifGetUltimateParentReportingExceptionConfig",
+          "list_direct_child_relationships": "#/$defs/GleifListDirectChildRelationshipsConfig",
+          "list_direct_children": "#/$defs/GleifListDirectChildrenConfig",
+          "list_field_modifications": "#/$defs/GleifListFieldModificationsConfig",
+          "list_legal_forms": "#/$defs/GleifListLegalFormsConfig",
+          "list_lei_issuers": "#/$defs/GleifListLeiIssuersConfig",
+          "list_lei_records": "#/$defs/GleifListLeiRecordsConfig",
+          "list_registration_authorities": "#/$defs/GleifListRegistrationAuthoritiesConfig",
+          "list_ultimate_child_relationships": "#/$defs/GleifListUltimateChildRelationshipsConfig",
+          "list_ultimate_children": "#/$defs/GleifListUltimateChildrenConfig",
+          "search_autocomplete": "#/$defs/GleifSearchAutocompleteConfig",
+          "search_fuzzy": "#/$defs/GleifSearchFuzzyConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GleifGetLeiRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifListLeiRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifGetDirectParentRelationshipConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifGetDirectParentReportingExceptionConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifGetUltimateParentRelationshipConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifGetUltimateParentReportingExceptionConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifGetUltimateParentConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifGetDirectParentConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifListUltimateChildRelationshipsConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifListDirectChildRelationshipsConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifListUltimateChildrenConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifListDirectChildrenConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifGetLeiIssuerConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifGetAssociatedEntityConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifGetSuccessorEntityConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifGetManagingLouConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifListFieldModificationsConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifListLeiIssuersConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifGetIssuerConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifSearchFuzzyConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifSearchAutocompleteConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifListLegalFormsConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifGetLegalFormConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifListRegistrationAuthoritiesConfig"
+        },
+        {
+          "$ref": "#/$defs/GleifGetRegistrationAuthorityConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Gleif Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
