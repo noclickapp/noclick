@@ -15,6 +15,7 @@ DocsbotAiIcon.displayName = 'DocsbotAiIcon';
 export const DocsbotAiNode: NodeDefinition = {
     type: 'automation-docsbot-ai',
     label: 'DocsBot AI',
+    category: 'ai',
     description: 'Chat, search, leads, conversations and deep research',
     Icon: DocsbotAiIcon,
     iconColor: '',
