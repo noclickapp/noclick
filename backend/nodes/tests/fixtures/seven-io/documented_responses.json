@@ -1,0 +1,170 @@
+{
+  "GET /contacts/{id}": {
+    "body": {
+      "id": 12876881,
+      "avatar": "https://static.seven.io/uploads/contact_images/4A000c0d4e9431F483090dE8D13F3806.jpg",
+      "validation": {
+        "state": "absent",
+        "timestamp": "2024-01-09 16:08:29"
+      },
+      "initials": {
+        "initials": "PM",
+        "color": "9EB384"
+      },
+      "properties": {
+        "firstname": "Peter",
+        "lastname": "Mustermann",
+        "mobile_number": 4917612345678,
+        "home_number": null,
+        "email": null,
+        "address": null,
+        "postal_code": null,
+        "city": null,
+        "birthday": "1977-07-07",
+        "notes": null
+      },
+      "groups": [
+        18008
+      ],
+      "created": "2024-01-09 13:14:48"
+    },
+    "source": "https://docs.seven.io/en/rest-api/endpoints/contacts"
+  },
+  "POST /contacts": {
+    "body": {
+      "id": 12876882,
+      "avatar": "https://static.seven.io/uploads/contact_images/4A000c0d4e9431F483090dE8D13F3806.jpg",
+      "validation": {
+        "state": null,
+        "timestamp": null
+      },
+      "initials": {
+        "initials": "FM",
+        "color": "EEE0C9"
+      },
+      "properties": {
+        "firstname": "Frank",
+        "lastname": "McAllister",
+        "mobile_number": "18007593000",
+        "home_number": null,
+        "email": null,
+        "address": null,
+        "postal_code": null,
+        "city": null,
+        "birthday": null,
+        "notes": null
+      },
+      "groups": [],
+      "created": "2024-01-09 13:12:48"
+    },
+    "source": "https://docs.seven.io/en/rest-api/endpoints/contacts"
+  },
+  "PATCH /contacts/{id}": {
+    "body": {
+      "id": 12876881,
+      "avatar": "https://static.seven.io/uploads/contact_images/4A000c0d4e9431F483090dE8D13F3806.jpg",
+      "validation": {
+        "state": "absent",
+        "timestamp": "2024-01-09 16:08:29"
+      },
+      "initials": {
+        "initials": "CF",
+        "color": "9EB384"
+      },
+      "properties": {
+        "firstname": "Marc",
+        "lastname": "Gump",
+        "mobile_number": 4917612345678,
+        "home_number": null,
+        "email": null,
+        "address": null,
+        "postal_code": null,
+        "city": null,
+        "birthday": "1977-07-07",
+        "notes": null
+      },
+      "groups": [
+        18008
+      ],
+      "created": "2024-01-09 13:14:48"
+    },
+    "source": "https://docs.seven.io/en/rest-api/endpoints/contacts"
+  },
+  "GET /groups/{id}": {
+    "body": {
+      "id": 17923,
+      "name": "A new group",
+      "members_count": 0,
+      "created": "2023-12-21 21:59:53",
+      "dynamic": false
+    },
+    "source": "https://docs.seven.io/en/rest-api/endpoints/groups"
+  },
+  "POST /groups": {
+    "body": {
+      "id": 17923,
+      "name": "A new group",
+      "members_count": 0,
+      "created": "2023-12-21 21:59:53",
+      "dynamic": false
+    },
+    "source": "https://docs.seven.io/en/rest-api/endpoints/groups"
+  },
+  "PATCH /groups/{id}": {
+    "body": {
+      "id": 17923,
+      "name": "New group name",
+      "members_count": 543,
+      "created": "2023-12-21 21:59:53",
+      "dynamic": false
+    },
+    "source": "https://docs.seven.io/en/rest-api/endpoints/groups"
+  },
+  "GET /lookup/format": {
+    "body": {
+      "success": true,
+      "national": "0176 12345678",
+      "international": "+4917612345678",
+      "international_formatted": "+49 176 12345678",
+      "country_name": "Germany",
+      "country_code": "49",
+      "country_iso": "DE",
+      "carrier": "O2",
+      "network_type": "mobile"
+    },
+    "source": "https://docs.seven.io/en/rest-api/endpoints/lookup"
+  },
+  "GET /lookup/hlr": {
+    "body": {
+      "status": true,
+      "status_message": "success",
+      "lookup_outcome": true,
+      "lookup_outcome_message": "success",
+      "international_format_number": "4917612345678",
+      "international_formatted": "+49 176 12345678",
+      "national_format_number": "0176 12345678",
+      "country_code": "DE",
+      "country_name": "Germany",
+      "country_prefix": "49",
+      "current_carrier": {
+        "network_code": "26207",
+        "name": "Telefonica Germany GmbH & Co. OHG",
+        "country": "DE",
+        "network_type": "mobile"
+      },
+      "original_carrier": {
+        "network_code": "26207",
+        "name": "Telefonica Germany GmbH & Co. OHG",
+        "country": "DE",
+        "network_type": "mobile"
+      },
+      "valid_number": "valid",
+      "reachable": "unknown",
+      "ported": "assumed_not_ported",
+      "roaming": "not_roaming",
+      "gsm_code": null,
+      "gsm_message": null
+    },
+    "source": "https://docs.seven.io/en/rest-api/endpoints/lookup"
+  }
+}
