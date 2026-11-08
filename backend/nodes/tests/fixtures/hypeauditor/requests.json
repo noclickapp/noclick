@@ -1,0 +1,341 @@
+{
+  "get_lookalikes": {
+    "config": {
+      "operation": "get_lookalikes",
+      "social_type": "instagram",
+      "usernames": [
+        "creator1",
+        "creator2",
+        "creator3"
+      ],
+      "page": 1,
+      "limit": 20
+    },
+    "method": "GET",
+    "path": "/api/v1/look-alike/usernames",
+    "query": {
+      "social_type": "social_type",
+      "usernames": "usernames[]",
+      "social_ids": "social_ids[]",
+      "page": "page",
+      "limit": "limit"
+    },
+    "body_fields": [],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "list_listeners": {
+    "config": {
+      "operation": "list_listeners",
+      "page": 1,
+      "limit": 5
+    },
+    "method": "GET",
+    "path": "/api/v1/social-listening/listeners",
+    "query": {
+      "page": "page",
+      "limit": "limit"
+    },
+    "body_fields": [],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "create_listener": {
+    "config": {
+      "operation": "create_listener",
+      "value": "rockmusic",
+      "type": "tag",
+      "social_types": [
+        "instagram",
+        "tiktok"
+      ]
+    },
+    "method": "POST",
+    "path": "/api/v1/social-listening/listeners",
+    "query": {},
+    "body_fields": [
+      "value",
+      "type",
+      "social_types"
+    ],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "get_creator_mentions": {
+    "config": {
+      "operation": "get_creator_mentions",
+      "creator_id": 123456,
+      "listener_id": "507f1f77bcf86cd799439011"
+    },
+    "method": "GET",
+    "path": "/api/v1/social-listening/creators/{creator_id}/mentions",
+    "query": {
+      "listener_id": "listener_id"
+    },
+    "body_fields": [],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "list_creators": {
+    "config": {
+      "operation": "list_creators",
+      "page": 1,
+      "limit": 20,
+      "sort_order": "desc",
+      "listener_id": "507f1f77bcf86cd799439011",
+      "with_disabled_listeners": false
+    },
+    "method": "GET",
+    "path": "/api/v1/social-listening/creators",
+    "query": {
+      "page": "page",
+      "limit": "limit",
+      "sort_order": "sort_order",
+      "listener_id": "listener_id",
+      "with_disabled_listeners": "with_disabled_listeners"
+    },
+    "body_fields": [],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "check_report_unlock": {
+    "config": {
+      "operation": "check_report_unlock",
+      "reports": [
+        {
+          "social_type": "instagram",
+          "social_id": "123456789",
+          "username": "influencer_username"
+        }
+      ]
+    },
+    "method": "POST",
+    "path": "/api/v1/report/check-unlock",
+    "query": {},
+    "body_fields": [
+      "reports"
+    ],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "unlock_creator_emails": {
+    "config": {
+      "operation": "unlock_creator_emails",
+      "creators": [
+        {
+          "social_type": "instagram",
+          "social_id": "123456789"
+        }
+      ]
+    },
+    "method": "POST",
+    "path": "/api/v1/report/unlock-emails",
+    "query": {},
+    "body_fields": [
+      "creators"
+    ],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "list_plan_accounts": {
+    "config": {
+      "operation": "list_plan_accounts",
+      "planId": "asd7sad89asdsad798",
+      "page": 1,
+      "limit": 10,
+      "social_type": "instagram",
+      "social_id": "123456789"
+    },
+    "method": "GET",
+    "path": "/api/v1/media-plan/plans/{planId}/accounts",
+    "query": {
+      "page": "page",
+      "limit": "limit",
+      "social_type": "social_type",
+      "social_id": "social_id"
+    },
+    "body_fields": [],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "add_plan_accounts": {
+    "config": {
+      "operation": "add_plan_accounts",
+      "planId": "asd7sad89asdsad798",
+      "accounts": [
+        {
+          "social_type": "instagram",
+          "social_id": "123456789",
+          "username": "influencer_username"
+        }
+      ]
+    },
+    "method": "POST",
+    "path": "/api/v1/media-plan/plans/{planId}/accounts",
+    "query": {},
+    "body_fields": [
+      "accounts"
+    ],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "delete_plan_accounts": {
+    "config": {
+      "operation": "delete_plan_accounts",
+      "planId": "e0de1ed76b984bb8bbaacd81445801ff",
+      "accounts": [
+        {
+          "social_type": "instagram",
+          "social_id": "123456789"
+        }
+      ]
+    },
+    "method": "DELETE",
+    "path": "/api/v1/media-plan/plans/{planId}/accounts",
+    "query": {},
+    "body_fields": [
+      "accounts"
+    ],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "list_plan_creators": {
+    "config": {
+      "operation": "list_plan_creators",
+      "planId": "asd7sad89asdsad798",
+      "page": 1,
+      "limit": 10,
+      "state": "accepted"
+    },
+    "method": "GET",
+    "path": "/api/v1/media-plan/plans/{planId}/creators",
+    "query": {
+      "page": "page",
+      "limit": "limit",
+      "state": "state"
+    },
+    "body_fields": [],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "delete_plan_event": {
+    "config": {
+      "operation": "delete_plan_event",
+      "planId": "e0de1ed76b984bb8bbaacd81445801ff",
+      "eventId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+    },
+    "method": "DELETE",
+    "path": "/api/v1/media-plan/plans/{planId}/events/{eventId}",
+    "query": {},
+    "body_fields": [],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "list_plan_events": {
+    "config": {
+      "operation": "list_plan_events",
+      "planId": "e0de1ed76b984bb8bbaacd81445801ff",
+      "social_type": "instagram",
+      "social_id": "123456789",
+      "page": 1,
+      "limit": 10
+    },
+    "method": "GET",
+    "path": "/api/v1/media-plan/plans/{planId}/events",
+    "query": {
+      "social_type": "social_type",
+      "social_id": "social_id",
+      "page": "page",
+      "limit": "limit"
+    },
+    "body_fields": [],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "create_plan_event": {
+    "config": {
+      "operation": "create_plan_event",
+      "planId": "e0de1ed76b984bb8bbaacd81445801ff",
+      "type": "comment",
+      "value": "Great performance on this campaign!",
+      "social_type": "instagram",
+      "social_id": "123456789"
+    },
+    "method": "POST",
+    "path": "/api/v1/media-plan/plans/{planId}/events",
+    "query": {},
+    "body_fields": [
+      "type",
+      "value",
+      "social_type",
+      "social_id"
+    ],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "list_media_plans": {
+    "config": {
+      "operation": "list_media_plans",
+      "page": 1,
+      "limit": 10,
+      "order_by": "created_at"
+    },
+    "method": "GET",
+    "path": "/api/v1/media-plan/plans",
+    "query": {
+      "page": "page",
+      "limit": "limit",
+      "order_by": "order_by"
+    },
+    "body_fields": [],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "create_media_plan": {
+    "config": {
+      "operation": "create_media_plan",
+      "title": "My Campaign Q1 2025"
+    },
+    "method": "POST",
+    "path": "/api/v1/media-plan/plans",
+    "query": {},
+    "body_fields": [
+      "title"
+    ],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "get_media_plan": {
+    "config": {
+      "operation": "get_media_plan",
+      "planId": "e0de1ed76b984bb8bbaacd81445801ff"
+    },
+    "method": "GET",
+    "path": "/api/v1/media-plan/plans/{planId}",
+    "query": {},
+    "body_fields": [],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "delete_media_plan": {
+    "config": {
+      "operation": "delete_media_plan",
+      "planId": "e0de1ed76b984bb8bbaacd81445801ff"
+    },
+    "method": "DELETE",
+    "path": "/api/v1/media-plan/plans/{planId}",
+    "query": {},
+    "body_fields": [],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "update_media_plan": {
+    "config": {
+      "operation": "update_media_plan",
+      "planId": "e0de1ed76b984bb8bbaacd81445801ff",
+      "title": "My Campaign Q1 2025",
+      "description": "Campaign description with goals and objectives"
+    },
+    "method": "PATCH",
+    "path": "/api/v1/media-plan/plans/{planId}",
+    "query": {},
+    "body_fields": [
+      "title",
+      "description"
+    ],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  },
+  "get_media_plan_metrics": {
+    "config": {
+      "operation": "get_media_plan_metrics",
+      "planId": "e0de1ed76b984bb8bbaacd81445801ff"
+    },
+    "method": "GET",
+    "path": "/api/v1/media-plan/plans/{planId}/metrics",
+    "query": {},
+    "body_fields": [],
+    "source": "https://hypeauditor.com/swagger/public-api/v1/openapi.json"
+  }
+}
