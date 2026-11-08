@@ -1,0 +1,365 @@
+[
+  {
+    "config": {
+      "operation": "get_credits"
+    },
+    "method": "GET",
+    "path": "/v1.1/credits",
+    "body": {
+      "credits": 1000
+    },
+    "http_status": 200,
+    "source": "https://docs.usebouncer.com/api-reference/credits/credits"
+  },
+  {
+    "config": {
+      "operation": "verify_email",
+      "email": "john@usebouncer.com",
+      "timeout": 10
+    },
+    "method": "GET",
+    "path": "/v1.1/email/verify",
+    "body": {
+      "email": "john@usebouncer.com",
+      "status": "deliverable",
+      "reason": "accepted_email",
+      "domain": {
+        "name": "usebouncer.com",
+        "acceptAll": "no",
+        "disposable": "no",
+        "free": "no"
+      },
+      "account": {
+        "role": "no",
+        "disabled": "no",
+        "fullMailbox": "no"
+      },
+      "dns": {
+        "type": "MX",
+        "record": "aspmx.l.google.com."
+      },
+      "provider": "google.com",
+      "score": 100,
+      "toxic": "unknown",
+      "toxicity": 0
+    },
+    "http_status": 200,
+    "source": "https://docs.usebouncer.com/api-reference/real-time/verify-email"
+  },
+  {
+    "config": {
+      "operation": "create_batch",
+      "emails": [
+        "john@usebouncer.com",
+        "jenny@usebouncer.com"
+      ]
+    },
+    "method": "POST",
+    "path": "/v1.1/email/verify/batch",
+    "body": {
+      "batchId": "4d5fdf6b5ee97c4dbbccbfe1",
+      "created": "2023-03-26T18:08:15.033Z",
+      "status": "queued",
+      "quantity": 2,
+      "duplicates": 0
+    },
+    "http_status": 200,
+    "source": "https://docs.usebouncer.com/api-reference/batch/batch-create"
+  },
+  {
+    "config": {
+      "operation": "get_batch",
+      "batch_id": "4d5fdf6b5ee97c4dbbccbfe1",
+      "with_stats": true
+    },
+    "method": "GET",
+    "path": "/v1.1/email/verify/batch/4d5fdf6b5ee97c4dbbccbfe1",
+    "body": {
+      "batchId": "4d5fdf6b5ee97c4dbbccbfe1",
+      "created": "2023-03-26T15:27:26.713Z",
+      "started": "2023-03-26T15:27:30.124Z",
+      "status": "processing",
+      "quantity": 2,
+      "duplicates": 0
+    },
+    "http_status": 200,
+    "source": "https://docs.usebouncer.com/api-reference/batch/batch-status"
+  },
+  {
+    "config": {
+      "operation": "delete_batch",
+      "batch_id": "4d5fdf6b5ee97c4dbbccbfe1"
+    },
+    "method": "DELETE",
+    "path": "/v1.1/email/verify/batch/4d5fdf6b5ee97c4dbbccbfe1",
+    "body": {},
+    "http_status": 200,
+    "source": "https://docs.usebouncer.com/api-reference/batch/batch-delete"
+  },
+  {
+    "config": {
+      "operation": "finish_batch",
+      "batch_id": "4d5fdf6b5ee97c4dbbccbfe1"
+    },
+    "method": "POST",
+    "path": "/v1.1/email/verify/batch/4d5fdf6b5ee97c4dbbccbfe1/finish",
+    "body": {},
+    "http_status": 202,
+    "source": "https://docs.usebouncer.com/api-reference/batch/batch-finish"
+  },
+  {
+    "config": {
+      "operation": "get_batch_results",
+      "batch_id": "4d5fdf6b5ee97c4dbbccbfe1",
+      "download": "all"
+    },
+    "method": "GET",
+    "path": "/v1.1/email/verify/batch/4d5fdf6b5ee97c4dbbccbfe1/download",
+    "body": [
+      {
+        "email": "john@usebouncer.com",
+        "status": "deliverable",
+        "reason": "accepted_email",
+        "domain": {
+          "name": "usebouncer.com",
+          "acceptAll": "no",
+          "disposable": "no",
+          "free": "no"
+        },
+        "account": {
+          "role": "no",
+          "disabled": "no",
+          "fullMailbox": "no"
+        },
+        "dns": {
+          "type": "MX",
+          "record": "aspmx.l.google.com."
+        },
+        "provider": "google.com",
+        "score": 100,
+        "toxic": "unknown",
+        "toxicity": 0
+      },
+      {
+        "email": "jane@usebouncer.com",
+        "status": "deliverable",
+        "reason": "accepted_email",
+        "domain": {
+          "name": "usebouncer.com",
+          "acceptAll": "no",
+          "disposable": "no",
+          "free": "no"
+        },
+        "account": {
+          "role": "no",
+          "disabled": "no",
+          "fullMailbox": "no"
+        },
+        "dns": {
+          "type": "MX",
+          "record": "aspmx.l.google.com."
+        },
+        "provider": "google.com",
+        "score": 100,
+        "toxic": "unknown",
+        "toxicity": 0
+      }
+    ],
+    "http_status": 200,
+    "source": "https://docs.usebouncer.com/api-reference/batch/batch-results"
+  },
+  {
+    "config": {
+      "operation": "verify_batch_sync",
+      "emails": [
+        "jane@usebouncer.com",
+        "john@usebouncer.com"
+      ]
+    },
+    "method": "POST",
+    "path": "/v1.1/email/verify/batch/sync",
+    "body": [
+      {
+        "email": "jane@usebouncer.com",
+        "status": "undeliverable",
+        "reason": "rejected_email",
+        "domain": {
+          "name": "usebouncer.com",
+          "acceptAll": "no",
+          "disposable": "no",
+          "free": "no"
+        },
+        "account": {
+          "role": "no",
+          "disabled": "no",
+          "fullMailbox": "no"
+        },
+        "dns": {
+          "type": "MX",
+          "record": "aspmx.l.google.com."
+        },
+        "provider": "google.com",
+        "score": 0,
+        "toxic": "unknown",
+        "toxicity": 0
+      }
+    ],
+    "http_status": 200,
+    "source": "https://docs.usebouncer.com/api-reference/batch-sync/batch-sync"
+  },
+  {
+    "config": {
+      "operation": "create_batch_sample",
+      "emails": [
+        "john@usebouncer.com",
+        "jenny@usebouncer.com"
+      ]
+    },
+    "method": "POST",
+    "path": "/v1/email/verify/batch/sample",
+    "body": {
+      "id": "666c3e25d4e24d32c918f876",
+      "finished": false,
+      "emails": 3,
+      "sampled": 3,
+      "analysed": {
+        "count": 0,
+        "undeliverable": 0,
+        "unknown": 0,
+        "disposable": 0,
+        "acceptAll": 0,
+        "role": 0,
+        "toxic": 0
+      },
+      "bounceEstimate": 0.0,
+      "toxicity": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      }
+    },
+    "http_status": 200,
+    "source": "https://mintcdn.com/bouncerspzoo/BQFwAx0uVe0rLX4l/api-reference/openapi.yml"
+  },
+  {
+    "config": {
+      "operation": "get_batch_sample",
+      "sample_id": "666c3e25d4e24d32c918f876"
+    },
+    "method": "GET",
+    "path": "/v1/email/verify/batch/sample/666c3e25d4e24d32c918f876",
+    "body": {
+      "id": "666c3e25d4e24d32c918f876",
+      "finished": true,
+      "emails": 3,
+      "sampled": 3,
+      "analysed": {
+        "count": 3,
+        "undeliverable": 1,
+        "unknown": 0,
+        "disposable": 0,
+        "acceptAll": 0,
+        "role": 0,
+        "toxic": 0
+      },
+      "bounceEstimate": 33.0,
+      "toxicity": {
+        "0": 2,
+        "3": 1
+      }
+    },
+    "http_status": 200,
+    "source": "https://mintcdn.com/bouncerspzoo/BQFwAx0uVe0rLX4l/api-reference/openapi.yml"
+  },
+  {
+    "config": {
+      "operation": "create_toxicity_list",
+      "emails": [
+        "jane@usebouncer.com",
+        "john@usebouncer.com"
+      ]
+    },
+    "method": "POST",
+    "path": "/v1/toxicity/list",
+    "body": {
+      "id": "61c69f7907cbda25bc76f7e4",
+      "createdAt": "2023-01-17T13:15:37.563Z",
+      "status": "processing"
+    },
+    "http_status": 200,
+    "source": "https://docs.usebouncer.com/api-reference/toxicity/toxicity-create"
+  },
+  {
+    "config": {
+      "operation": "get_toxicity_list",
+      "list_id": "61c69f7907cbda25bc76f7e4"
+    },
+    "method": "GET",
+    "path": "/v1/toxicity/list/61c69f7907cbda25bc76f7e4",
+    "body": {
+      "id": "61c69f7907cbda25bc76f7e4",
+      "createdAt": "2023-01-17T13:15:37.563Z",
+      "status": "completed"
+    },
+    "http_status": 200,
+    "source": "https://docs.usebouncer.com/api-reference/toxicity/toxicity-status"
+  },
+  {
+    "config": {
+      "operation": "delete_toxicity_list",
+      "list_id": "61c69f7907cbda25bc76f7e4"
+    },
+    "method": "DELETE",
+    "path": "/v1/toxicity/list/61c69f7907cbda25bc76f7e4",
+    "body": {},
+    "http_status": 200,
+    "source": "https://docs.usebouncer.com/api-reference/toxicity/toxicity-delete"
+  },
+  {
+    "config": {
+      "operation": "get_toxicity_results",
+      "list_id": "61c69f7907cbda25bc76f7e4"
+    },
+    "method": "GET",
+    "path": "/v1/toxicity/list/61c69f7907cbda25bc76f7e4/data",
+    "body": [
+      {
+        "email": "jane@usebouncer.com",
+        "toxicity": 0
+      },
+      {
+        "email": "hello@usebouncer.com",
+        "toxicity": 1
+      }
+    ],
+    "http_status": 200,
+    "source": "https://docs.usebouncer.com/api-reference/toxicity/toxicity-results"
+  },
+  {
+    "config": {
+      "operation": "verify_domain",
+      "domain": "usebouncer.com"
+    },
+    "method": "GET",
+    "path": "/v1.1/domain",
+    "body": {
+      "domain": {
+        "name": "usebouncer.com",
+        "acceptAll": "no",
+        "disposable": "no",
+        "free": "no"
+      },
+      "dns": {
+        "type": "MX",
+        "record": "aspmx.l.google.com."
+      },
+      "provider": "google.com",
+      "toxic": "unknown"
+    },
+    "http_status": 200,
+    "source": "https://docs.usebouncer.com/api-reference/domain/verify-domain"
+  }
+]

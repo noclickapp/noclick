@@ -1,0 +1,64 @@
+{
+  "contract": {
+    "source_url": "https://mintcdn.com/bouncerspzoo/BQFwAx0uVe0rLX4l/api-reference/openapi.yml",
+    "version": "1.0.0",
+    "sha256": "57cf93331048d9d71edb5b61c47929b39615e11f4884d8490ded9c243b3dc2cf"
+  },
+  "conformance": {
+    "checked": 15,
+    "passed": 12,
+    "failed": 3,
+    "fixture_errors": 0,
+    "response_checked": 15,
+    "auth_checked": 15,
+    "coverage": {
+      "implemented": 15,
+      "total": 15
+    }
+  },
+  "verdict": {
+    "provider": "bouncer",
+    "ready": false,
+    "blocking": [
+      "create_batch: request: InvalidRequestBody: Request body validation error: Value [{'email': 'john@usebouncer.com'}, {'email': 'jenny@usebouncer.com'}] not valid for schema of type string: (<ValidationError: \"[{'emai",
+      "create_toxicity_list: request: InvalidRequestBody: Request body validation error: Value ['jane@usebouncer.com', 'john@usebouncer.com'] not valid for schema of type string: (<ValidationError: \"['jane@usebouncer.com', 'john@"
+    ],
+    "advisory": [
+      "get_toxicity_results: parser on generated response: execution: ValueError: Unexpected Bouncer response shape"
+    ],
+    "stats": {
+      "operations": 15,
+      "skipped": 0,
+      "request_ok": 13,
+      "authored_parser_ok": 11,
+      "generated_only": 4,
+      "local_ok": 0
+    }
+  },
+  "spec_defects": [
+    {
+      "operation": "create_batch",
+      "kind": "request schema",
+      "description": "POST /v1.1/email/verify/batch declares type string, but provider cURL/Python examples send a JSON array of email objects. The node sends that documented array.",
+      "source": "https://docs.usebouncer.com/api-reference/batch/batch-create"
+    },
+    {
+      "operation": "create_toxicity_list",
+      "kind": "request schema",
+      "description": "POST /v1/toxicity/list declares type string, but its schema example and generated request examples are JSON arrays of email strings. The node sends that documented array.",
+      "source": "https://docs.usebouncer.com/api-reference/toxicity/toxicity-create"
+    },
+    {
+      "operation": "get_toxicity_results",
+      "kind": "response schema (advisory)",
+      "description": "GET /v1/toxicity/list/{id}/data declares an object response while the published example is an array. The harness cannot validate the documented array and generates {}; the node correctly accepts the documented array, covered by its native mock tests.",
+      "source": "https://docs.usebouncer.com/api-reference/toxicity/toxicity-results"
+    },
+    {
+      "operation": "finish_batch",
+      "kind": "success example",
+      "description": "The 200 response example is a 400 error envelope, while 202 documents an empty JSON object. The catalog uses the published empty-object witness; node rejects the error envelope and accepts the documented 202 acknowledgment.",
+      "source": "https://docs.usebouncer.com/api-reference/batch/batch-finish"
+    }
+  ]
+}

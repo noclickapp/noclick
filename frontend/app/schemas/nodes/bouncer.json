@@ -1,0 +1,513 @@
+{
+  "$defs": {
+    "BouncerAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "bouncer_api_key",
+          "default": "bouncer_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Bouncer API Key",
+      "type": "object",
+      "x-credential-instructions": "In Bouncer, open API and generate an API key. Paste the key here. NoClick checks your available credits without spending verification credits.",
+      "x-credential-url": "https://app.usebouncer.com/"
+    },
+    "CreateBatch": {
+      "additionalProperties": false,
+      "properties": {
+        "emails": {
+          "description": "Email addresses to process. Verification and toxicity jobs consume Bouncer credits.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100000,
+          "minItems": 1,
+          "title": "Emails",
+          "type": "array"
+        },
+        "operation": {
+          "const": "create_batch",
+          "default": "create_batch",
+          "title": "Create Verification Batch",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "callback": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional callback URL that Bouncer will POST when the batch completes.",
+          "title": "Callback"
+        }
+      },
+      "required": [
+        "emails"
+      ],
+      "title": "CreateBatch",
+      "type": "object"
+    },
+    "CreateBatchSample": {
+      "additionalProperties": false,
+      "properties": {
+        "emails": {
+          "description": "Email addresses to process. Verification and toxicity jobs consume Bouncer credits.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100000,
+          "minItems": 1,
+          "title": "Emails",
+          "type": "array"
+        },
+        "operation": {
+          "const": "create_batch_sample",
+          "default": "create_batch_sample",
+          "title": "Create Batch Sample",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "emails"
+      ],
+      "title": "CreateBatchSample",
+      "type": "object"
+    },
+    "CreateToxicityList": {
+      "additionalProperties": false,
+      "properties": {
+        "emails": {
+          "description": "Email addresses to process. Verification and toxicity jobs consume Bouncer credits.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100000,
+          "minItems": 1,
+          "title": "Emails",
+          "type": "array"
+        },
+        "operation": {
+          "const": "create_toxicity_list",
+          "default": "create_toxicity_list",
+          "title": "Create Toxicity List Job",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "emails"
+      ],
+      "title": "CreateToxicityList",
+      "type": "object"
+    },
+    "DeleteBatch": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "description": "batchId returned by Create Verification Batch.",
+          "minLength": 1,
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_batch",
+          "default": "delete_batch",
+          "description": "Permanently deletes the emails and results associated with this batch.",
+          "title": "Delete Verification Batch",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "DeleteBatch",
+      "type": "object"
+    },
+    "DeleteToxicityList": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "description": "ID returned by Create Toxicity List Job.",
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_toxicity_list",
+          "default": "delete_toxicity_list",
+          "description": "Permanently deletes the toxicity list job.",
+          "title": "Delete Toxicity List Job",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "DeleteToxicityList",
+      "type": "object"
+    },
+    "FinishBatch": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "description": "batchId returned by Create Verification Batch.",
+          "minLength": 1,
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "finish_batch",
+          "default": "finish_batch",
+          "description": "Stops remaining verification and returns unused credits. Poll status until completed before downloading results.",
+          "title": "Finish Verification Batch",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "FinishBatch",
+      "type": "object"
+    },
+    "GetBatch": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "description": "batchId returned by Create Verification Batch.",
+          "minLength": 1,
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_batch",
+          "default": "get_batch",
+          "title": "Get Batch Status",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "with_stats": {
+          "default": false,
+          "description": "Include additional processing statistics.",
+          "title": "With Stats",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "GetBatch",
+      "type": "object"
+    },
+    "GetBatchResults": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "description": "batchId returned by Create Verification Batch.",
+          "minLength": 1,
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_batch_results",
+          "default": "get_batch_results",
+          "title": "Get Batch Results",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "download": {
+          "default": "all",
+          "enum": [
+            "all",
+            "deliverable",
+            "risky",
+            "undeliverable",
+            "unknown"
+          ],
+          "title": "Download",
+          "type": "string"
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "GetBatchResults",
+      "type": "object"
+    },
+    "GetBatchSample": {
+      "additionalProperties": false,
+      "properties": {
+        "sample_id": {
+          "description": "ID returned by Create Batch Sample.",
+          "minLength": 1,
+          "title": "Sample Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_batch_sample",
+          "default": "get_batch_sample",
+          "title": "Get Batch Sample Status",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "sample_id"
+      ],
+      "title": "GetBatchSample",
+      "type": "object"
+    },
+    "GetCredits": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Get Available Credits",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCredits",
+      "type": "object"
+    },
+    "GetToxicityList": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "description": "ID returned by Create Toxicity List Job.",
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_toxicity_list",
+          "default": "get_toxicity_list",
+          "title": "Get Toxicity List Status",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "GetToxicityList",
+      "type": "object"
+    },
+    "GetToxicityResults": {
+      "additionalProperties": false,
+      "properties": {
+        "list_id": {
+          "description": "ID returned by Create Toxicity List Job.",
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_toxicity_results",
+          "default": "get_toxicity_results",
+          "title": "Get Toxicity List Results",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "GetToxicityResults",
+      "type": "object"
+    },
+    "VerifyBatchSync": {
+      "additionalProperties": false,
+      "properties": {
+        "emails": {
+          "description": "Email addresses to process. Verification and toxicity jobs consume Bouncer credits.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100000,
+          "minItems": 1,
+          "title": "Emails",
+          "type": "array"
+        },
+        "operation": {
+          "const": "verify_batch_sync",
+          "default": "verify_batch_sync",
+          "title": "Verify Emails Synchronously",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "emails"
+      ],
+      "title": "VerifyBatchSync",
+      "type": "object"
+    },
+    "VerifyDomain": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "verify_domain",
+          "default": "verify_domain",
+          "title": "Verify Domain",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "Domain to verify, for example usebouncer.com.",
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "VerifyDomain",
+      "type": "object"
+    },
+    "VerifyEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "verify_email",
+          "default": "verify_email",
+          "title": "Verify Email",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "Email address to verify; malformed addresses can be checked too.",
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "timeout": {
+          "default": 10,
+          "description": "Verification timeout in seconds.",
+          "minimum": 1,
+          "title": "Timeout",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "VerifyEmail",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_batch": "#/$defs/CreateBatch",
+          "create_batch_sample": "#/$defs/CreateBatchSample",
+          "create_toxicity_list": "#/$defs/CreateToxicityList",
+          "delete_batch": "#/$defs/DeleteBatch",
+          "delete_toxicity_list": "#/$defs/DeleteToxicityList",
+          "finish_batch": "#/$defs/FinishBatch",
+          "get_batch": "#/$defs/GetBatch",
+          "get_batch_results": "#/$defs/GetBatchResults",
+          "get_batch_sample": "#/$defs/GetBatchSample",
+          "get_credits": "#/$defs/GetCredits",
+          "get_toxicity_list": "#/$defs/GetToxicityList",
+          "get_toxicity_results": "#/$defs/GetToxicityResults",
+          "verify_batch_sync": "#/$defs/VerifyBatchSync",
+          "verify_domain": "#/$defs/VerifyDomain",
+          "verify_email": "#/$defs/VerifyEmail"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCredits"
+        },
+        {
+          "$ref": "#/$defs/VerifyEmail"
+        },
+        {
+          "$ref": "#/$defs/CreateBatch"
+        },
+        {
+          "$ref": "#/$defs/GetBatch"
+        },
+        {
+          "$ref": "#/$defs/DeleteBatch"
+        },
+        {
+          "$ref": "#/$defs/FinishBatch"
+        },
+        {
+          "$ref": "#/$defs/GetBatchResults"
+        },
+        {
+          "$ref": "#/$defs/VerifyBatchSync"
+        },
+        {
+          "$ref": "#/$defs/CreateBatchSample"
+        },
+        {
+          "$ref": "#/$defs/GetBatchSample"
+        },
+        {
+          "$ref": "#/$defs/CreateToxicityList"
+        },
+        {
+          "$ref": "#/$defs/GetToxicityList"
+        },
+        {
+          "$ref": "#/$defs/DeleteToxicityList"
+        },
+        {
+          "$ref": "#/$defs/GetToxicityResults"
+        },
+        {
+          "$ref": "#/$defs/VerifyDomain"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BouncerAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bouncer Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
