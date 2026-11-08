@@ -1,0 +1,10 @@
+{
+  "fixture": {
+    "file": "fixture.yaml",
+    "sha256": "d110ff1dac601f95d4ee043d053c5d60de22f91e3d581d418da60c0a368681f1",
+    "version": "2026-01-01.fixture",
+    "source_url": "https://provider.example/openapi/fixture.yaml",
+    "node_type": "test-fixture",
+    "credential": {"credential_type": "fixture_token", "token": "<token>"}
+  }
+}

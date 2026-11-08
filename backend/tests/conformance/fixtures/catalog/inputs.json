@@ -1,0 +1,6 @@
+{
+  "list_items": {
+    "config": {"limit": 25},
+    "source": "https://provider.example/docs/items"
+  }
+}
