@@ -385,3 +385,105 @@ async def test_enriched_rerun_preserves_documented_inputs(monkeypatch, status):
     assert report["failed"] == int(status == "error")
     assert report["operations"][0]["config"]["value"] == "documented"
     assert report["operations"][0]["requests"][0]["body"] == '{"value":"documented"}'
+
+
+def scalar_parameter_contract(schema, location="query", **parameter):
+    doc = copy.deepcopy(contract_for({}).doc)
+    doc["openapi"] = "3.1.0"
+    op = doc["paths"]["/items"]["post"]
+    op.pop("requestBody")
+    op["parameters"] = [{
+        "name": "value", "in": location, "required": True,
+        "style": "form" if location == "query" else "simple",
+        "explode": False, "schema": schema, **parameter,
+    }]
+    if location == "path":
+        doc["paths"]["/items/{value}"] = doc["paths"].pop("/items")
+    return harness.Contract(doc)
+
+
+@pytest.mark.parametrize("location", ["query", "path", "header", "cookie"])
+@pytest.mark.parametrize(
+    "schema,good,bad",
+    [
+        ({"type": ["string", "integer"], "pattern": "^[A-Z]+$", "minimum": 2},
+         ["ABC", "2"], ["abc", "1"]),
+        ({"type": ["boolean", "integer"], "enum": [False, True, 0, 1]},
+         ["true", "false", "0", "1"], ["2", "invalid"]),
+        ({"type": ["integer", "number"], "minimum": 2, "maximum": 4},
+         ["2", "2.5"], ["1", "5", "invalid"]),
+    ],
+)
+def test_scalar_union_parameters_accept_any_valid_member(location, schema, good, bad):
+    contract = scalar_parameter_contract(schema, location)
+    original = copy.deepcopy(contract.doc)
+
+    def request(value):
+        return httpx.Request(
+            "POST", "https://example.test/items" + (f"/{value}" if location == "path" else ""),
+            params={"value": value} if location == "query" else None,
+            headers={"value": value} if location == "header" else
+                    {"cookie": f"value={value}"} if location == "cookie" else None,
+        )
+
+    for value in good:
+        contract.validate_request(request(value))
+    for value in bad:
+        with pytest.raises(ValueError):
+            contract.validate_request(request(value))
+    assert contract.doc == original
+
+
+@pytest.mark.parametrize("schema", [
+    {"type": ["string", "object"]},
+    {"type": ["integer", "array"]},
+    {"type": ["null"]},
+    {"anyOf": [{"type": "integer"}, {}]},
+    {"oneOf": [{"type": "string"}, {"type": "object"}]},
+])
+def test_non_scalar_or_untyped_parameter_unions_remain_blocked(schema):
+    contract = scalar_parameter_contract(schema)
+    with pytest.raises((ValueError, harness.FixtureError)):
+        contract.validate_request(httpx.Request("POST", "https://example.test/items?value=1"))
+
+
+@pytest.mark.parametrize("schema,expected", [
+    ({"type": ["string", "integer"]}, "1"),
+    ({"type": ["integer", "string"]}, 1),
+    ({"type": ["string", "integer"], "example": 42}, 42),
+    ({"type": ["integer", "string"], "default": "ABC"}, "ABC"),
+    ({"type": ["integer", "boolean"], "default": False}, False),
+    ({"type": ["integer", "boolean"], "enum": [1, True], "default": True}, True),
+    ({"type": ["boolean", "integer"], "example": 1}, 1),
+])
+def test_scalar_union_samples_prefer_documented_value(schema, expected):
+    for _ in range(2):
+        actual = harness.input_sample({}, schema)
+        assert actual == expected and type(actual) is type(expected)
+
+
+def test_scalar_union_casting_does_not_coerce_json_request_bodies():
+    doc = copy.deepcopy(contract_for({
+        "type": "object", "required": ["value"],
+        "properties": {"value": {"type": ["boolean", "integer"], "enum": [True, 1]}},
+    }).doc)
+    doc["openapi"] = "3.1.0"
+    contract = harness.Contract(doc)
+    for value in (True, 1):
+        contract.validate_request(httpx.Request("POST", "https://example.test/items", json={"value": value}))
+    for value in ("true", "1", 2, {}):
+        with pytest.raises(ValueError):
+            contract.validate_request(httpx.Request("POST", "https://example.test/items", json={"value": value}))
+
+
+@pytest.mark.parametrize("evidence", [
+    {"example": "ABC"},
+    {"examples": {"published": {"value": "ABC"}}},
+])
+def test_scalar_parameter_sampling_reads_parameter_level_examples(evidence):
+    contract = scalar_parameter_contract({"type": ["integer", "string"]}, **evidence)
+    config = harness.enrich_config(
+        contract, {"properties": {"value": {"type": "string"}}},
+        {"value": "old"}, [{"spec_operation": "POST /items"}],
+    )
+    assert config["value"] == "ABC"

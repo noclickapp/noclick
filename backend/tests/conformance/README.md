@@ -164,6 +164,18 @@ identifier format. A matching string cannot prove cross-field ordering, a
 signed receipt or a coherent readback; those need documented inputs and
 scenarios.
 
+## Scalar parameter unions
+
+OpenAPI 3.1 parameter type lists may contain several non-null scalar types
+(string, integer, number, boolean). Input sampling uses the documented example
+or default when available, then the first member deterministically. After normal
+style deserialization, casting tries each member and validates the candidate
+against the complete original schema, including enum, bounds and patterns.
+Mixed object/array and untyped parameter unions remain blockers. JSON request
+bodies are never parameter-cast. Wildcard request content keys select their
+schema through openapi-core; decoding uses the captured concrete Content-Type,
+so application/json under application/* is still checked against that schema.
+
 ## Synthetic files
 
 Inline file fields get the checked-in [minimal files](fixtures/README.md). The
@@ -199,8 +211,15 @@ body text, without schema inference, response generation, placeholder changes,
 or rewriting IDs. Each replay constructs a fresh node and runs its complete
 operation, preserving guards, ancestry checks and readback. An item without a
 saved response is blocked as `no published example response`; a parser failure
-on any replay also blocks. Reports identify Postman items, example indexes and
-published response counts so the verdict can require complete replay coverage.
+on a success replay also blocks. Reports identify Postman items, example indexes
+and published response counts so the verdict can require complete replay coverage.
+
+A published non-2xx response must produce the node's error envelope or a provider
+rejection: an HTTP-status exception tied to that response, or an explicit raise
+inside a status guard on that response. Unrelated exceptions (including JSON or
+shape errors of the same type) still fail, as does returning success or no
+output. A published 2xx response must still parse successfully. OpenAPI response
+selection remains unchanged; its documented error examples are not replayed.
 
 Postman evidence supports only `postman-checked`, with `ready: false`. Mixed
 catalogs retain each OpenAPI operation's existing bar and identify the verdict

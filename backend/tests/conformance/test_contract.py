@@ -353,3 +353,28 @@ def test_json_suffix_media_types_are_validated_as_json(spec, media):
     bad = httpx.Response(200, content=b'{"id": "one"}', headers={"content-type": media}, request=req)
     with pytest.raises(Exception):
         contract.api.validate_response(request_adapter(req), response_adapter(bad))
+
+
+@pytest.mark.parametrize("media", ["application/*", "*/*"])
+def test_wildcard_request_json_keeps_selected_schema(spec, media):
+    operation = spec["paths"]["/items/{id}"]["post"]
+    definition = operation["requestBody"]["content"]["application/json"]
+    operation["requestBody"]["content"] = {media: definition}
+    contract = Contract(spec)
+    contract.validate_request(request(json={"name": "valid"}))
+    with pytest.raises(ValueError):
+        contract.validate_request(request(json={"name": 123}))
+    with pytest.raises(ValueError):
+        contract.validate_request(request(content=b'{invalid json'))
+    if media == "application/*":
+        with pytest.raises(ValueError):
+            contract.validate_request(request(content=b'{}', headers={"authorization": "Bearer fake", "content-type": "text/plain"}))
+
+
+def test_wildcard_request_uses_most_specific_media_schema(spec):
+    content = spec["paths"]["/items/{id}"]["post"]["requestBody"]["content"]
+    content["application/*"] = {"schema": {"type": "integer"}}
+    contract = Contract(spec)
+    contract.validate_request(request(json={"name": "valid"}))
+    with pytest.raises(ValueError):
+        contract.validate_request(request(json=123))

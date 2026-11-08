@@ -534,3 +534,91 @@ def test_json_fields_cannot_hide_behind_another_media_type(collection):
         c.validate_request(
             request(json={"data": {"name": "x", "unknown": 1}}, headers=headers)
         )
+
+
+@pytest.mark.parametrize(
+    "status,behavior,passes",
+    [
+        (400, "raise", True),
+        (404, "raise", True),
+        (409, "raise", True),
+        (400, "http-status", True),
+        (400, "envelope", True),
+        (400, "success", False),
+        (400, "none", False),
+        (400, "unrelated", False),
+        (400, "parser", False),
+        (400, "guard-crash", False),
+        (400, "unrelated-value-error", False),
+        (200, "parser", False),
+        (200, "envelope", False),
+        (200, "raise", True),
+        (400, "request-invalid", False),
+        (400, "continue-success", False),
+    ],
+)
+async def test_runner_distinguishes_published_errors_from_parser_crashes(
+    collection, monkeypatch, tmp_path, status, behavior, passes
+):
+    from nodes.core.registry import NODE_REGISTRY
+    from tests.conformance.verdict import verdict
+
+    class Inputs(BaseModel):
+        operation: Literal["create"]
+
+    class Config(BaseModel):
+        config: Inputs
+        credentials: dict
+
+    collection["item"][0]["response"] = [
+        {"code": status, "body": '{"error": "published failure"}', "header": []}
+    ]
+    seen = []
+
+    class Node:
+        scope_registry = None
+        get_config_model = staticmethod(lambda: Config)
+
+        def __init__(self, **kwargs):
+            pass
+
+        async def execute(self, data):
+            async with httpx.AsyncClient() as client:
+                response = await client.send(request(
+                    json={"undocumented": 1} if behavior == "request-invalid" else {"data": {"name": "x"}}
+                ))
+                seen.append(response.status_code)
+                if behavior in {"raise", "request-invalid"}:
+                    if not 200 <= response.status_code < 300:
+                        raise ValueError(f"Provider HTTP {response.status_code}")
+                if behavior == "guard-crash" and response.status_code >= 400:
+                    raise ValueError(response.json()["missing"])
+                if behavior == "http-status":
+                    response.raise_for_status()
+                if behavior == "envelope":
+                    return {"status": "error", "error": response.text}
+                if behavior == "none":
+                    return None
+                if behavior == "unrelated":
+                    raise RuntimeError("unrelated execution failure")
+                if behavior == "unrelated-value-error":
+                    raise ValueError("unrelated shape failure")
+                if behavior == "parser":
+                    return response.json()["missing"]
+                if behavior == "continue-success":
+                    collection["item"][0]["response"][0]["code"] = 200
+                    await client.send(request(json={"data": {"name": "x"}}))
+            return {"ok": True}
+
+    monkeypatch.setitem(NODE_REGISTRY, "test-postman-errors", Node)
+    monkeypatch.setitem(harness.PROVIDERS, "postman-errors", ("test-postman-errors", {}))
+    monkeypatch.setattr(harness, "spec_entry", lambda _: (None, {}))
+    monkeypatch.setattr(harness, "load_specs", lambda _: [collection])
+    report = await harness.run_provider("postman-errors")
+    assert seen == [status]
+    assert report["fixture_errors"] == 0
+    assert report["passed"] == int(passes)
+    assert report["failed"] == int(not passes)
+    (tmp_path / "manifest.json").write_text(json.dumps({"postman-errors": {"format": "postman"}}))
+    result = verdict(report, tmp_path, False)
+    assert result["state"] == ("postman-checked" if passes else "not-ready")

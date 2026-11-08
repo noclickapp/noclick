@@ -2,13 +2,16 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import base64
 import copy
+import dis
 import fnmatch
 import warnings
 import asyncio
 import hashlib
 import json
+import linecache
 import os
 import re
 import socket
@@ -16,6 +19,7 @@ import struct
 import time
 import zlib
 from contextlib import ExitStack, contextmanager
+from functools import lru_cache
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from http.cookies import SimpleCookie
@@ -928,6 +932,12 @@ def input_sample(doc, schema, selected=(), *, depth=0):
         raise ValueError("Recursive input schema requires a curated witness")
     schema = input_shape(doc, schema, depth=depth)
     typ = schema.get("type", "object" if "properties" in schema else "string")
+    if isinstance(typ, list) and len([t for t in typ if t != "null"]) > 1:
+        scalar_union_types(typ)
+        for key in ("example", "default"):
+            if schema.get(key) is not None:
+                return schema[key]
+        return sample(doc, schema, files=True)
     if typ == "object":
         properties = {
             k: input_shape(doc, v) for k, v in schema.get("properties", {}).items()
@@ -1006,7 +1016,16 @@ def enrich_config(contract, member, config, requests):
         ]:
             param = resolve(contract.doc, param)
             if param["in"] == "query":
-                fields[param["name"]] = param.get("schema", {})
+                fields[param["name"]] = {
+                    **resolve(contract.doc, param.get("schema", {})),
+                    **({"example": param["example"]} if "example" in param else {}),
+                }
+                if "examples" in param and "example" not in fields[param["name"]]:
+                    for example in param["examples"].values():
+                        example = resolve(contract.doc, example)
+                        if "value" in example:
+                            fields[param["name"]]["example"] = example["value"]
+                            break
                 if param.get("required"):
                     required.add(param["name"])
         body = resolve(contract.doc, operation.get("requestBody", {}))
@@ -1134,27 +1153,52 @@ def response_body(payload, media, schema, source, headers):
     return {**result, "content": payload}
 
 
-def wire_type(schema):
-    """A nullable type has the non-null type's parameter serialization.
+def scalar_union_types(types):
+    non_null = list(dict.fromkeys(t for t in types if t != "null"))
+    if not non_null or not set(non_null) <= {"string", "integer", "number", "boolean"}:
+        raise FixtureError(f"Ambiguous parameter serialization for types {types}")
+    return non_null
 
-    This selects a wire decoder only. The original 3.1 schema, including null
-    and every sibling constraint, remains the schema used for validation.
-    """
+
+def wire_type(schema):
+    """Scalar alternatives share a style; validation keeps the entire schema."""
     typ = (schema / "type").read_str_or_list(None)
     if isinstance(typ, list):
         non_null = [t for t in typ if t != "null"]
-        if len(non_null) != 1:
-            raise FixtureError(f"Ambiguous parameter serialization for types {typ}")
-        return non_null[0]
+        if len(non_null) == 1:
+            return non_null[0]
+        return scalar_union_types(typ)[0]
+    if typ is None and any(key in schema for key in ("oneOf", "anyOf")):
+        raise FixtureError("Ambiguous parameter serialization for untyped union")
     return typ
+
+
+class ConcreteMediaTypeValidator:
+    def _find_media_type(self, content, mimetype=None):
+        media, parameters, definition = super()._find_media_type(content, mimetype)
+        # A range selects the schema; the actual Content-Type selects its decoder.
+        if "*" in media and mimetype:
+            media = mimetype.split(";", 1)[0].strip().lower()
+        return media, parameters, definition
 
 
 class NullableSchemaCaster(SchemaCaster):
     def cast(self, value):
-        if isinstance((self.schema / "type").read_str_or_list(None), list):
+        types = (self.schema / "type").read_str_or_list(None)
+        if isinstance(types, list):
             if value is None:
                 return None
-            return self.get_type_caster(wire_type(self.schema))(value)
+            non_null = [t for t in types if t != "null"]
+            if len(non_null) == 1:
+                return self.get_type_caster(wire_type(self.schema))(value)
+            for typ in scalar_union_types(types):
+                try:
+                    candidate = self.get_type_caster(typ)(value)
+                except (ValueError, TypeError, AttributeError):
+                    continue
+                if self.schema_validator.validator.is_valid(candidate):
+                    return candidate
+            raise ValueError(f"Value {value!r} is invalid for every scalar union member")
         return super().cast(value)
 
 
@@ -1333,7 +1377,7 @@ class Contract:
             ),
         )
 
-        class WireRequestValidator(self.api.request_validator_cls):
+        class WireRequestValidator(ConcreteMediaTypeValidator, self.api.request_validator_cls):
             def _get_simple_param_or_header(self, param_or_header, location, name=None):
                 # Absence is not a transmitted default (which may even be null).
                 self._deserialise_style(param_or_header, location, name=name)
@@ -1349,16 +1393,8 @@ class Contract:
 
         self.api.request_validator_cls = WireRequestValidator
 
-        class ConcreteResponseValidator(self.api.response_validator_cls):
-            def _find_media_type(self, content, mimetype=None):
-                media, parameters, definition = super()._find_media_type(
-                    content, mimetype
-                )
-                # A range selects a schema, not a wire decoder. Decode the
-                # actual Content-Type while retaining that schema's validation.
-                if "*" in media and mimetype:
-                    media = mimetype.split(";", 1)[0].strip().lower()
-                return media, parameters, definition
+        class ConcreteResponseValidator(ConcreteMediaTypeValidator, self.api.response_validator_cls):
+            pass
 
         self.api.response_validator_cls = ConcreteResponseValidator
         self.paths = []
@@ -1637,6 +1673,49 @@ class Contract:
             )
 
 
+@lru_cache(maxsize=128)
+def source_tree(filename):
+    return ast.parse("".join(linecache.getlines(filename)))
+
+
+def provider_rejection(exc, response):
+    """Accept an HTTP rejection, not an arbitrary parser crash on an error body.
+
+    For manual provider exceptions, require an explicit raise in a status guard
+    on this exact response. No exception-name allowlist can distinguish a node's
+    deliberate ValueError from JSON/shape failures with the same exception type.
+    """
+    if isinstance(exc, httpx.HTTPStatusError):
+        return exc.response is response
+    tb = exc.__traceback__
+    while tb and tb.tb_next:
+        tb = tb.tb_next
+    if tb is None or dis.opname[tb.tb_frame.f_code.co_code[tb.tb_lasti]] != "RAISE_VARARGS":
+        return False
+    try:
+        tree = source_tree(tb.tb_frame.f_code.co_filename)
+    except (OSError, SyntaxError):
+        return False
+    for guard in ast.walk(tree):
+        if not isinstance(guard, ast.If):
+            continue
+        status_check = any(
+            isinstance(part, ast.Attribute)
+            and part.attr in {"status_code", "is_success", "is_error"}
+            and isinstance(part.value, ast.Name)
+            and tb.tb_frame.f_locals.get(part.value.id) is response
+            for part in ast.walk(guard.test)
+        )
+        if status_check and any(
+            isinstance(part, ast.Raise)
+            and part.lineno <= tb.tb_lineno <= part.end_lineno
+            for statement in guard.body + guard.orelse
+            for part in ast.walk(statement)
+        ):
+            return True
+    return False
+
+
 async def run_provider(provider, *, config_overrides=None, enrich=True):
     from nodes.core.registry import NODE_REGISTRY
 
@@ -1716,6 +1795,8 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
         except FixtureError as exc:
             result.fixture_errors.append(reason(exc))
             continue
+
+        error_responses = []
 
         def transport(request):
             try:
@@ -1822,6 +1903,8 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
                 )
                 record["response_status"] = response.status_code
                 record["response_sha256"] = hashlib.sha256(response.content).hexdigest()
+                if isinstance(contract, PostmanContract) and not 200 <= response.status_code < 300:
+                    error_responses.append(response)
                 return response
             except Exception as exc:
                 result.fixture_errors.append(reason(exc))
@@ -1843,28 +1926,27 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
             )
             with offline(), intercept_http(transport), resolved_offline():
                 output = await node.execute({})
-            if not result.fixture_errors and (
-                output is None
-                or (
-                    isinstance(output, dict)
-                    and (
-                        output.get("status") in ("error", "failed")
-                        or output.get("error")
-                        or output.get("ok") is False
+            expected_error = bool(error_responses)
+            error_envelope = isinstance(output, dict) and (
+                output.get("status") in ("error", "failed")
+                or output.get("error")
+                or output.get("ok") is False
+            )
+            if not result.fixture_errors:
+                if expected_error and not error_envelope:
+                    result.failures.append("node treated published error response as success")
+                elif not expected_error and (output is None or error_envelope):
+                    details = (
+                        {k: output[k] for k in ("status", "error", "ok") if k in output}
+                        if isinstance(output, dict) else output
                     )
-                )
-            ):
-                details = (
-                    {k: output[k] for k in ("status", "error", "ok") if k in output}
-                    if isinstance(output, dict)
-                    else output
-                )
-                result.failures.append(f"node error envelope: {details}")
+                    result.failures.append(f"node error envelope: {details}")
             if not result.requests:
                 result.failures.append("No HTTP request executed")
         except Exception as exc:
             if not result.fixture_errors and not result.failures:
-                result.failures.append("execution: " + reason(exc))
+                if not any(provider_rejection(exc, response) for response in error_responses):
+                    result.failures.append("execution: " + reason(exc))
     if enrich:
         overrides = {}
         for result in results:
