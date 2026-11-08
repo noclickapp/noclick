@@ -15,6 +15,7 @@ NozbeTeamsIcon.displayName = 'NozbeTeamsIcon';
 export const NozbeTeamsNode: NodeDefinition = {
     type: 'automation-nozbe-teams',
     label: 'Nozbe Teams',
+    category: 'productivity',
     description: 'Manage Nozbe spaces, projects, tasks, comments and tags',
     Icon: NozbeTeamsIcon,
     iconColor: '',
