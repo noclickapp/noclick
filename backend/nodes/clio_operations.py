@@ -266,7 +266,7 @@ OPERATIONS: dict[str, Operation] = {
     'trust_line_item_index': Operation('List Trust Line Items', 'Trust Line Items', 'GET', '/trust_line_items.json', 'Outlines the parameters, optional and required, used when requesting the data for all TrustLineItems', (), False),
     'trust_line_item_update': Operation('Update Trust Line Item', 'Trust Line Items', 'PATCH', '/trust_line_items/{id}.json', 'Outlines the parameters and data fields used when updating a single TrustLineItem', (), True),
     'trust_request_create': Operation('Create Trust Request', 'Trust Requests', 'POST', '/trust_requests.json', 'Outlines the parameters and data fields used when creating a new TrustRequest', (), True),
-    'user_who_am_i': Operation('Who Am I User', 'Users', 'GET', '/users/who_am_i.json', 'Outlines the parameters, optional and required, used when requesting the data for a single User', (), False),
+    'get_current_user': Operation('Who Am I User', 'Users', 'GET', '/users/who_am_i.json', 'Outlines the parameters, optional and required, used when requesting the data for a single User', (), False),
     'user_index': Operation('List Users', 'Users', 'GET', '/users.json', 'Outlines the parameters, optional and required, used when requesting the data for all Users', (), False),
     'user_show': Operation('Get User', 'Users', 'GET', '/users/{id}.json', 'Outlines the parameters, optional and required, used when requesting the data for a single User', (), False),
     'utbms_set_index': Operation('List Utbms Sets', 'Utbms Sets', 'GET', '/utbms/sets.json', 'Outlines the parameters, optional and required, used when requesting the data for all UtbmsSets', (), False),

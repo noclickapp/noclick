@@ -92,7 +92,7 @@ class ClioNodeConfig(NodeConfig[ClioConfig, ClioOAuthCredential]):
 class ClioNode(WorkflowNode):
     integration_type = "automation-clio"
     scope_registry = CLIO_SCOPES
-    connection_evidence = ConnectionEvidence(operation="user_who_am_i", noun="account")
+    connection_evidence = ConnectionEvidence(operation="get_current_user", noun="account")
     edit_examples = [
         "List Clio matters", "Create a Clio contact", "Get Clio documents",
         "Track an activity in Clio",

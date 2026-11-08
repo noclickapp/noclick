@@ -101,7 +101,7 @@ async def test_multipart_upload(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_auth_header_cannot_be_overridden(monkeypatch):
-    node = make_node(CONFIG_MODELS["user_who_am_i"](
+    node = make_node(CONFIG_MODELS["get_current_user"](
         headers_json='{"Authorization":"Bearer attacker"}'))
     async def token(_credential):
         return "access"

@@ -9504,6 +9504,53 @@
       "title": "ClioFolderUpdateConfig",
       "type": "object"
     },
+    "ClioGetCurrentUserConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "description": "Outlines the parameters, optional and required, used when requesting the data for a single User",
+          "title": "Who Am I User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Who Am I User",
+          "x-is-trigger": false
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Query parameters as JSON.",
+          "title": "Query Parameters JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "headers_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Clio headers such as If-Match and X-API-VERSION. Authentication is managed by NoClick.",
+          "title": "Request Headers JSON",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ClioGetCurrentUserConfig",
+      "type": "object"
+    },
     "ClioGrantCreateConfig": {
       "properties": {
         "operation": {
@@ -19147,53 +19194,6 @@
       "title": "ClioUserShowConfig",
       "type": "object"
     },
-    "ClioUserWhoAmIConfig": {
-      "properties": {
-        "operation": {
-          "const": "user_who_am_i",
-          "default": "user_who_am_i",
-          "description": "Outlines the parameters, optional and required, used when requesting the data for a single User",
-          "title": "Who Am I User",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Users",
-          "x-display-name": "Who Am I User",
-          "x-is-trigger": false
-        },
-        "query_json": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Query parameters as JSON.",
-          "title": "Query Parameters JSON",
-          "ui:widget": "code_editor",
-          "x-code-language": "json"
-        },
-        "headers_json": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Optional Clio headers such as If-Match and X-API-VERSION. Authentication is managed by NoClick.",
-          "title": "Request Headers JSON",
-          "ui:widget": "code_editor",
-          "x-code-language": "json"
-        }
-      },
-      "title": "ClioUserWhoAmIConfig",
-      "type": "object"
-    },
     "ClioUtbmsCodeIndexConfig": {
       "properties": {
         "operation": {
@@ -19831,6 +19831,7 @@
           "folder_list": "#/$defs/ClioFolderListConfig",
           "folder_show": "#/$defs/ClioFolderShowConfig",
           "folder_update": "#/$defs/ClioFolderUpdateConfig",
+          "get_current_user": "#/$defs/ClioGetCurrentUserConfig",
           "grant_create": "#/$defs/ClioGrantCreateConfig",
           "grant_destroy": "#/$defs/ClioGrantDestroyConfig",
           "grant_funding_source_create": "#/$defs/ClioGrantFundingSourceCreateConfig",
@@ -19978,7 +19979,6 @@
           "trust_request_create": "#/$defs/ClioTrustRequestCreateConfig",
           "user_index": "#/$defs/ClioUserIndexConfig",
           "user_show": "#/$defs/ClioUserShowConfig",
-          "user_who_am_i": "#/$defs/ClioUserWhoAmIConfig",
           "utbms_code_index": "#/$defs/ClioUtbmsCodeIndexConfig",
           "utbms_code_show": "#/$defs/ClioUtbmsCodeShowConfig",
           "utbms_set_index": "#/$defs/ClioUtbmsSetIndexConfig",
@@ -20745,7 +20745,7 @@
           "$ref": "#/$defs/ClioTrustRequestCreateConfig"
         },
         {
-          "$ref": "#/$defs/ClioUserWhoAmIConfig"
+          "$ref": "#/$defs/ClioGetCurrentUserConfig"
         },
         {
           "$ref": "#/$defs/ClioUserIndexConfig"
