@@ -11,6 +11,7 @@ const GoodyIcon = ({ className, style }: { className?: string; style?: CSSProper
 
 export const GoodyNode: NodeDefinition = {
     type: 'automation-goody', label: 'Goody',
+    category: 'marketing',
     description: 'Send gifts, estimate costs, and manage Goody orders and catalogs',
     Icon: GoodyIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
