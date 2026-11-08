@@ -1,0 +1,859 @@
+{
+  "$defs": {
+    "CheckConnection": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Check Box-office Access",
+          "x-is-trigger": false
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "GetEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Get Event Metadata",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "maxLength": 128,
+          "minLength": 4,
+          "pattern": "^ev_[A-Za-z0-9_-]+$",
+          "title": "Event ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact same-box-office ID",
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "ticket_tailor_event"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "GetEvent",
+      "type": "object"
+    },
+    "GetOrder": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "Get Event Order Report",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "maxLength": 128,
+          "minLength": 4,
+          "pattern": "^ev_[A-Za-z0-9_-]+$",
+          "title": "Event ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact same-box-office ID",
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "ticket_tailor_event"
+        },
+        "order_id": {
+          "maxLength": 128,
+          "minLength": 4,
+          "pattern": "^or_[A-Za-z0-9_-]+$",
+          "title": "Order ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact same-box-office ID",
+            "depends_on": "event_id",
+            "field_name": "order_id",
+            "searchable": false
+          },
+          "x-resource-type": "ticket_tailor_order"
+        }
+      },
+      "required": [
+        "event_id",
+        "order_id"
+      ],
+      "title": "GetOrder",
+      "type": "object"
+    },
+    "GetOverview": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_overview",
+          "default": "get_overview",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "Get Box-office Overview",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetOverview",
+      "type": "object"
+    },
+    "GetSeries": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_event_series",
+          "default": "get_event_series",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event Series",
+          "x-display-name": "Get Event Series",
+          "x-is-trigger": false
+        },
+        "event_series_id": {
+          "maxLength": 128,
+          "minLength": 4,
+          "pattern": "^es_[A-Za-z0-9_-]+$",
+          "title": "Event Series ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact same-box-office ID",
+            "field_name": "event_series_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "ticket_tailor_series"
+        }
+      },
+      "required": [
+        "event_series_id"
+      ],
+      "title": "GetSeries",
+      "type": "object"
+    },
+    "GetSeriesEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_series_event",
+          "default": "get_series_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event Series",
+          "x-display-name": "Get Series Occurrence",
+          "x-is-trigger": false
+        },
+        "event_series_id": {
+          "maxLength": 128,
+          "minLength": 4,
+          "pattern": "^es_[A-Za-z0-9_-]+$",
+          "title": "Event Series ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact same-box-office ID",
+            "field_name": "event_series_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "ticket_tailor_series"
+        },
+        "occurrence_id": {
+          "maxLength": 128,
+          "minLength": 4,
+          "pattern": "^ev_[A-Za-z0-9_-]+$",
+          "title": "Occurrence ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact same-box-office ID",
+            "depends_on": "event_series_id",
+            "field_name": "occurrence_id",
+            "searchable": false
+          },
+          "x-resource-type": "ticket_tailor_event"
+        }
+      },
+      "required": [
+        "event_series_id",
+        "occurrence_id"
+      ],
+      "title": "GetSeriesEvent",
+      "type": "object"
+    },
+    "GetTicket": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_issued_ticket",
+          "default": "get_issued_ticket",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "Get Event Ticket Report",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "maxLength": 128,
+          "minLength": 4,
+          "pattern": "^ev_[A-Za-z0-9_-]+$",
+          "title": "Event ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact same-box-office ID",
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "ticket_tailor_event"
+        },
+        "ticket_id": {
+          "maxLength": 128,
+          "minLength": 4,
+          "pattern": "^it_[A-Za-z0-9_-]+$",
+          "title": "Issued Ticket ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact same-box-office ID",
+            "depends_on": "event_id",
+            "field_name": "ticket_id",
+            "searchable": false
+          },
+          "x-resource-type": "ticket_tailor_ticket"
+        }
+      },
+      "required": [
+        "event_id",
+        "ticket_id"
+      ],
+      "title": "GetTicket",
+      "type": "object"
+    },
+    "ListEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 4,
+              "pattern": "^[a-z]+_[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One page only. Enter the returned next cursor; provider link URLs are never followed.",
+          "title": "Next-page Cursor"
+        },
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "List Event Metadata",
+          "x-is-trigger": false
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "published",
+                "sales_closed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "draft",
+            "published",
+            "sales_closed"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListEvents",
+      "type": "object"
+    },
+    "ListOrders": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "List Event Order Reports",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "maxLength": 128,
+          "minLength": 4,
+          "pattern": "^ev_[A-Za-z0-9_-]+$",
+          "title": "Event ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact same-box-office ID",
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "ticket_tailor_event"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 4,
+              "pattern": "^[a-z]+_[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One page only. Enter the returned next cursor; provider link URLs are never followed.",
+          "title": "Next-page Cursor"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "completed",
+                "pending",
+                "canceled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "completed",
+            "pending",
+            "canceled"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "ListOrders",
+      "type": "object"
+    },
+    "ListSeries": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 4,
+              "pattern": "^[a-z]+_[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One page only. Enter the returned next cursor; provider link URLs are never followed.",
+          "title": "Next-page Cursor"
+        },
+        "operation": {
+          "const": "list_event_series",
+          "default": "list_event_series",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event Series",
+          "x-display-name": "List Event Series",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListSeries",
+      "type": "object"
+    },
+    "ListSeriesEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_series_events",
+          "default": "list_series_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event Series",
+          "x-display-name": "List Series Occurrences",
+          "x-is-trigger": false
+        },
+        "event_series_id": {
+          "maxLength": 128,
+          "minLength": 4,
+          "pattern": "^es_[A-Za-z0-9_-]+$",
+          "title": "Event Series ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact same-box-office ID",
+            "field_name": "event_series_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "ticket_tailor_series"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 4,
+              "pattern": "^[a-z]+_[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One page only. Enter the returned next cursor; provider link URLs are never followed.",
+          "title": "Next-page Cursor"
+        }
+      },
+      "required": [
+        "event_series_id"
+      ],
+      "title": "ListSeriesEvents",
+      "type": "object"
+    },
+    "ListTickets": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_issued_tickets",
+          "default": "list_issued_tickets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "List Event Ticket Reports",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "maxLength": 128,
+          "minLength": 4,
+          "pattern": "^ev_[A-Za-z0-9_-]+$",
+          "title": "Event ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact same-box-office ID",
+            "field_name": "event_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "ticket_tailor_event"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 4,
+              "pattern": "^[a-z]+_[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One page only. Enter the returned next cursor; provider link URLs are never followed.",
+          "title": "Next-page Cursor"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "valid",
+                "voided"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "valid",
+            "voided"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "ListTickets",
+      "type": "object"
+    },
+    "TicketTailorCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "ticket_tailor",
+          "default": "ticket_tailor",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Box-office API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expected_box_office_name": {
+          "description": "Exact protected overview name. The API does not provide a stable account ID here.",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Expected Box-office Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "expected_box_office_name"
+      ],
+      "title": "Ticket Tailor API Key",
+      "type": "object",
+      "x-credential-instructions": "Create your own box-office API key in Ticket Tailor settings. The key accesses only that box office. Enter its exact displayed name to check the protected overview response. No OAuth, account creation or automatic key minting is used.",
+      "x-credential-url": "https://developers.tickettailor.com/docs/api/ticket-tailor-api/"
+    },
+    "UpdateDraftOccurrence": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_draft_occurrence",
+          "default": "update_draft_occurrence",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event Series",
+          "x-display-name": "Update Draft Occurrence Dates",
+          "x-is-trigger": false
+        },
+        "event_series_id": {
+          "maxLength": 128,
+          "minLength": 4,
+          "pattern": "^es_[A-Za-z0-9_-]+$",
+          "title": "Event Series ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact same-box-office ID",
+            "field_name": "event_series_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "ticket_tailor_series"
+        },
+        "occurrence_id": {
+          "maxLength": 128,
+          "minLength": 4,
+          "pattern": "^ev_[A-Za-z0-9_-]+$",
+          "title": "Occurrence ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact same-box-office ID",
+            "depends_on": "event_series_id",
+            "field_name": "occurrence_id",
+            "searchable": false
+          },
+          "x-resource-type": "ticket_tailor_event"
+        },
+        "start_date": {
+          "description": "YYYY-MM-DD in the series timezone",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "start_time": {
+          "description": "HH:MM:SS in the series timezone",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "YYYY-MM-DD in the series timezone",
+          "title": "End Date",
+          "type": "string"
+        },
+        "end_time": {
+          "description": "HH:MM:SS in the series timezone",
+          "title": "End Time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_series_id",
+        "occurrence_id",
+        "start_date",
+        "start_time",
+        "end_date",
+        "end_time"
+      ],
+      "title": "UpdateDraftOccurrence",
+      "type": "object"
+    },
+    "UpdateDraftSeries": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_draft_series",
+          "default": "update_draft_series",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event Series",
+          "x-display-name": "Update Draft Series Metadata",
+          "x-is-trigger": false
+        },
+        "event_series_id": {
+          "maxLength": 128,
+          "minLength": 4,
+          "pattern": "^es_[A-Za-z0-9_-]+$",
+          "title": "Event Series ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact same-box-office ID",
+            "field_name": "event_series_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "ticket_tailor_series"
+        },
+        "name": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "venue": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Venue"
+        }
+      },
+      "required": [
+        "event_series_id",
+        "name"
+      ],
+      "title": "UpdateDraftSeries",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "discriminator": {
+        "mapping": {
+          "check_connection": "#/$defs/CheckConnection",
+          "get_event": "#/$defs/GetEvent",
+          "get_event_series": "#/$defs/GetSeries",
+          "get_issued_ticket": "#/$defs/GetTicket",
+          "get_order": "#/$defs/GetOrder",
+          "get_overview": "#/$defs/GetOverview",
+          "get_series_event": "#/$defs/GetSeriesEvent",
+          "list_event_series": "#/$defs/ListSeries",
+          "list_events": "#/$defs/ListEvents",
+          "list_issued_tickets": "#/$defs/ListTickets",
+          "list_orders": "#/$defs/ListOrders",
+          "list_series_events": "#/$defs/ListSeriesEvents",
+          "update_draft_occurrence": "#/$defs/UpdateDraftOccurrence",
+          "update_draft_series": "#/$defs/UpdateDraftSeries"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/GetOverview"
+        },
+        {
+          "$ref": "#/$defs/ListEvents"
+        },
+        {
+          "$ref": "#/$defs/GetEvent"
+        },
+        {
+          "$ref": "#/$defs/ListSeries"
+        },
+        {
+          "$ref": "#/$defs/GetSeries"
+        },
+        {
+          "$ref": "#/$defs/ListSeriesEvents"
+        },
+        {
+          "$ref": "#/$defs/GetSeriesEvent"
+        },
+        {
+          "$ref": "#/$defs/ListTickets"
+        },
+        {
+          "$ref": "#/$defs/GetTicket"
+        },
+        {
+          "$ref": "#/$defs/ListOrders"
+        },
+        {
+          "$ref": "#/$defs/GetOrder"
+        },
+        {
+          "$ref": "#/$defs/UpdateDraftSeries"
+        },
+        {
+          "$ref": "#/$defs/UpdateDraftOccurrence"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TicketTailorCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Ticket-tailor Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
