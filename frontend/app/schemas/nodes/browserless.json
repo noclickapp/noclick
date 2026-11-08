@@ -1,0 +1,720 @@
+{
+  "$defs": {
+    "BrowserlessCancelCrawlConfig": {
+      "additionalProperties": false,
+      "description": "Cancel a running crawl job.",
+      "properties": {
+        "crawl_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Crawl ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_crawl",
+          "default": "cancel_crawl",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "crawl_id"
+      ],
+      "title": "BrowserlessCancelCrawlConfig",
+      "type": "object"
+    },
+    "BrowserlessContentConfig": {
+      "additionalProperties": false,
+      "description": "Read the fully rendered HTML of a page.",
+      "properties": {
+        "url": {
+          "description": "The HTTP or HTTPS page Browserless should visit.",
+          "title": "Page URL",
+          "type": "string"
+        },
+        "wait_for_timeout": {
+          "anyOf": [
+            {
+              "maximum": 120000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wait After Load (ms)"
+        },
+        "operation": {
+          "const": "get_content",
+          "default": "get_content",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "BrowserlessContentConfig",
+      "type": "object"
+    },
+    "BrowserlessCreateSessionConfig": {
+      "additionalProperties": false,
+      "description": "Create a persistent browser session for further automation.",
+      "properties": {
+        "operation": {
+          "const": "create_session",
+          "default": "create_session",
+          "title": "Operation",
+          "type": "string"
+        },
+        "ttl": {
+          "description": "Zero uses your plan's maximum retention.",
+          "minimum": 0,
+          "title": "Session Lifetime (ms)",
+          "type": "integer"
+        },
+        "stealth": {
+          "default": false,
+          "title": "Stealth",
+          "type": "boolean"
+        },
+        "profile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Saved Profile Name"
+        }
+      },
+      "required": [
+        "ttl"
+      ],
+      "title": "BrowserlessCreateSessionConfig",
+      "type": "object"
+    },
+    "BrowserlessDeleteProfileConfig": {
+      "additionalProperties": false,
+      "description": "Permanently delete a saved authentication profile.",
+      "properties": {
+        "profile_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Profile Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_profile",
+          "default": "delete_profile",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_name"
+      ],
+      "title": "BrowserlessDeleteProfileConfig",
+      "type": "object"
+    },
+    "BrowserlessElement": {
+      "additionalProperties": false,
+      "properties": {
+        "selector": {
+          "minLength": 1,
+          "title": "CSS Selector",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selector Timeout (ms)"
+        }
+      },
+      "required": [
+        "selector"
+      ],
+      "title": "BrowserlessElement",
+      "type": "object"
+    },
+    "BrowserlessGetCrawlConfig": {
+      "additionalProperties": false,
+      "description": "Read crawl progress and the current results page.",
+      "properties": {
+        "crawl_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Crawl ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_crawl",
+          "default": "get_crawl",
+          "title": "Operation",
+          "type": "string"
+        },
+        "skip": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Pages to Skip",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "crawl_id"
+      ],
+      "title": "BrowserlessGetCrawlConfig",
+      "type": "object"
+    },
+    "BrowserlessGetProfileConfig": {
+      "additionalProperties": false,
+      "description": "Read a saved profile's metadata.",
+      "properties": {
+        "profile_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Profile Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_name"
+      ],
+      "title": "BrowserlessGetProfileConfig",
+      "type": "object"
+    },
+    "BrowserlessListCrawlsConfig": {
+      "additionalProperties": false,
+      "description": "List the account's crawl jobs, one page at a time.",
+      "properties": {
+        "operation": {
+          "const": "list_crawls",
+          "default": "list_crawls",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Cursor"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "in-progress",
+                "completed",
+                "failed",
+                "cancelled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "in-progress",
+            "completed",
+            "failed",
+            "cancelled"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "BrowserlessListCrawlsConfig",
+      "type": "object"
+    },
+    "BrowserlessListProfilesConfig": {
+      "additionalProperties": false,
+      "description": "List the account's saved authentication profiles.",
+      "properties": {
+        "operation": {
+          "const": "list_profiles",
+          "default": "list_profiles",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "BrowserlessListProfilesConfig",
+      "type": "object"
+    },
+    "BrowserlessMapConfig": {
+      "additionalProperties": false,
+      "description": "Discover links on a site and its sitemap.",
+      "properties": {
+        "operation": {
+          "const": "map_site",
+          "default": "map_site",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "title": "Site URL",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Link Limit",
+          "type": "integer"
+        },
+        "sitemap": {
+          "default": "include",
+          "enum": [
+            "include",
+            "only",
+            "skip"
+          ],
+          "title": "Sitemap",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "BrowserlessMapConfig",
+      "type": "object"
+    },
+    "BrowserlessPdfConfig": {
+      "additionalProperties": false,
+      "description": "Render a page to a PDF file.",
+      "properties": {
+        "url": {
+          "description": "The HTTP or HTTPS page Browserless should visit.",
+          "title": "Page URL",
+          "type": "string"
+        },
+        "wait_for_timeout": {
+          "anyOf": [
+            {
+              "maximum": 120000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wait After Load (ms)"
+        },
+        "operation": {
+          "const": "generate_pdf",
+          "default": "generate_pdf",
+          "title": "Operation",
+          "type": "string"
+        },
+        "print_background": {
+          "default": true,
+          "title": "Print Background",
+          "type": "boolean"
+        },
+        "landscape": {
+          "default": false,
+          "title": "Landscape",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "BrowserlessPdfConfig",
+      "type": "object"
+    },
+    "BrowserlessPerformanceConfig": {
+      "additionalProperties": false,
+      "description": "Run a Lighthouse performance audit.",
+      "properties": {
+        "operation": {
+          "const": "get_performance",
+          "default": "get_performance",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "title": "Page URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "BrowserlessPerformanceConfig",
+      "type": "object"
+    },
+    "BrowserlessRenameProfileConfig": {
+      "additionalProperties": false,
+      "description": "Rename a saved authentication profile.",
+      "properties": {
+        "profile_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Profile Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "rename_profile",
+          "default": "rename_profile",
+          "title": "Operation",
+          "type": "string"
+        },
+        "new_name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "New Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_name",
+        "new_name"
+      ],
+      "title": "BrowserlessRenameProfileConfig",
+      "type": "object"
+    },
+    "BrowserlessScrapeConfig": {
+      "additionalProperties": false,
+      "description": "Extract structured data using CSS selectors.",
+      "properties": {
+        "url": {
+          "description": "The HTTP or HTTPS page Browserless should visit.",
+          "title": "Page URL",
+          "type": "string"
+        },
+        "wait_for_timeout": {
+          "anyOf": [
+            {
+              "maximum": 120000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wait After Load (ms)"
+        },
+        "operation": {
+          "const": "scrape_elements",
+          "default": "scrape_elements",
+          "title": "Operation",
+          "type": "string"
+        },
+        "elements": {
+          "items": {
+            "$ref": "#/$defs/BrowserlessElement"
+          },
+          "minItems": 1,
+          "title": "Elements",
+          "type": "array"
+        }
+      },
+      "required": [
+        "url",
+        "elements"
+      ],
+      "title": "BrowserlessScrapeConfig",
+      "type": "object"
+    },
+    "BrowserlessScreenshotConfig": {
+      "additionalProperties": false,
+      "description": "Capture a page as a PNG file.",
+      "properties": {
+        "url": {
+          "description": "The HTTP or HTTPS page Browserless should visit.",
+          "title": "Page URL",
+          "type": "string"
+        },
+        "wait_for_timeout": {
+          "anyOf": [
+            {
+              "maximum": 120000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wait After Load (ms)"
+        },
+        "operation": {
+          "const": "take_screenshot",
+          "default": "take_screenshot",
+          "title": "Operation",
+          "type": "string"
+        },
+        "full_page": {
+          "default": true,
+          "title": "Full Page",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "BrowserlessScreenshotConfig",
+      "type": "object"
+    },
+    "BrowserlessSearchConfig": {
+      "additionalProperties": false,
+      "description": "Search the web for matching pages.",
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "minLength": 1,
+          "title": "Search Query",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Result Limit",
+          "type": "integer"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "pattern": "^[a-zA-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "BrowserlessSearchConfig",
+      "type": "object"
+    },
+    "BrowserlessStartCrawlConfig": {
+      "additionalProperties": false,
+      "description": "Start an asynchronous crawl of a website.",
+      "properties": {
+        "operation": {
+          "const": "start_crawl",
+          "default": "start_crawl",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "title": "Site URL",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page Limit",
+          "type": "integer"
+        },
+        "max_depth": {
+          "default": 5,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Maximum Depth",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "BrowserlessStartCrawlConfig",
+      "type": "object"
+    },
+    "BrowserlessTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "browserless_token",
+          "default": "browserless_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "sfo",
+          "description": "San Francisco (sfo), London (lon), or Amsterdam (ams).",
+          "enum": [
+            "sfo",
+            "lon",
+            "ams"
+          ],
+          "title": "Region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Browserless API Token",
+      "type": "object",
+      "x-credential-instructions": "Copy your API token from the Browserless account dashboard. Choose the region where your profiles and crawls are stored.",
+      "x-credential-url": "https://www.browserless.io/account"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_crawl": "#/$defs/BrowserlessCancelCrawlConfig",
+          "create_session": "#/$defs/BrowserlessCreateSessionConfig",
+          "delete_profile": "#/$defs/BrowserlessDeleteProfileConfig",
+          "generate_pdf": "#/$defs/BrowserlessPdfConfig",
+          "get_content": "#/$defs/BrowserlessContentConfig",
+          "get_crawl": "#/$defs/BrowserlessGetCrawlConfig",
+          "get_performance": "#/$defs/BrowserlessPerformanceConfig",
+          "get_profile": "#/$defs/BrowserlessGetProfileConfig",
+          "list_crawls": "#/$defs/BrowserlessListCrawlsConfig",
+          "list_profiles": "#/$defs/BrowserlessListProfilesConfig",
+          "map_site": "#/$defs/BrowserlessMapConfig",
+          "rename_profile": "#/$defs/BrowserlessRenameProfileConfig",
+          "scrape_elements": "#/$defs/BrowserlessScrapeConfig",
+          "search": "#/$defs/BrowserlessSearchConfig",
+          "start_crawl": "#/$defs/BrowserlessStartCrawlConfig",
+          "take_screenshot": "#/$defs/BrowserlessScreenshotConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BrowserlessScreenshotConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowserlessPdfConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowserlessContentConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowserlessScrapeConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowserlessPerformanceConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowserlessSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowserlessMapConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowserlessListCrawlsConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowserlessStartCrawlConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowserlessGetCrawlConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowserlessCancelCrawlConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowserlessListProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowserlessGetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowserlessRenameProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowserlessDeleteProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/BrowserlessCreateSessionConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BrowserlessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Browserless Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
