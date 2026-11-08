@@ -1,0 +1,829 @@
+{
+  "$defs": {
+    "BuildiumAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "buildium_api_key",
+          "default": "buildium_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "title": "API Client ID",
+          "type": "string",
+          "ui:sensitive": true,
+          "ui:widget": "password"
+        },
+        "client_secret": {
+          "title": "API Client Secret",
+          "type": "string",
+          "ui:sensitive": true,
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "client_id",
+        "client_secret"
+      ],
+      "title": "Buildium API Key",
+      "type": "object",
+      "x-credential-instructions": "Supply the client ID and secret of an existing account-level Buildium Open API key. The official API requires Premium and administrator API setup; your account's entitlement and current key permissions must be confirmed separately. This node does not enable the API, change permissions or rotate keys.",
+      "x-credential-url": "https://developer.buildium.com/#section/Getting-Started/API-Keys"
+    },
+    "CheckConnection": {
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Check Property API Access",
+          "type": "string"
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "CreatePropertyNote": {
+      "properties": {
+        "operation": {
+          "const": "create_property_note",
+          "default": "create_property_note",
+          "description": "Writes an internal property note. Account automations and staff may observe this change.",
+          "title": "Create Property Note",
+          "type": "string"
+        },
+        "property_id": {
+          "title": "Rental Property",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "property_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "buildium_property"
+        },
+        "note": {
+          "maxLength": 65535,
+          "minLength": 1,
+          "title": "Note",
+          "type": "string",
+          "ui:sensitive": true,
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "property_id",
+        "note"
+      ],
+      "title": "CreatePropertyNote",
+      "type": "object"
+    },
+    "CreateTaskCategory": {
+      "properties": {
+        "operation": {
+          "const": "create_task_category",
+          "default": "create_task_category",
+          "title": "Create Task Category",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Category Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateTaskCategory",
+      "type": "object"
+    },
+    "GetListingContact": {
+      "properties": {
+        "operation": {
+          "const": "get_listing_contact",
+          "default": "get_listing_contact",
+          "title": "Get Listing Contact Metadata",
+          "type": "string"
+        },
+        "listing_contact_id": {
+          "title": "Listing Contact",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "listing_contact_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "buildium_listing_contact"
+        }
+      },
+      "required": [
+        "listing_contact_id"
+      ],
+      "title": "GetListingContact",
+      "type": "object"
+    },
+    "GetProperty": {
+      "properties": {
+        "operation": {
+          "const": "get_property",
+          "default": "get_property",
+          "title": "Get Rental Property Metadata",
+          "type": "string"
+        },
+        "property_id": {
+          "title": "Rental Property",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "property_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "buildium_property"
+        }
+      },
+      "required": [
+        "property_id"
+      ],
+      "title": "GetProperty",
+      "type": "object"
+    },
+    "GetPropertyNote": {
+      "properties": {
+        "operation": {
+          "const": "get_property_note",
+          "default": "get_property_note",
+          "title": "Get Property Note Metadata",
+          "type": "string"
+        },
+        "property_id": {
+          "title": "Rental Property",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "property_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "buildium_property"
+        },
+        "note_id": {
+          "title": "Property Note",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "property_id",
+            "field_name": "note_id",
+            "searchable": true
+          },
+          "x-resource-type": "buildium_note"
+        }
+      },
+      "required": [
+        "property_id",
+        "note_id"
+      ],
+      "title": "GetPropertyNote",
+      "type": "object"
+    },
+    "GetTask": {
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get Task Metadata",
+          "type": "string"
+        },
+        "task_id": {
+          "title": "Task",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "task_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "buildium_task"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "GetTask",
+      "type": "object"
+    },
+    "GetTaskCategory": {
+      "properties": {
+        "operation": {
+          "const": "get_task_category",
+          "default": "get_task_category",
+          "title": "Get Task Category",
+          "type": "string"
+        },
+        "task_category_id": {
+          "title": "Task Category",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "task_category_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "buildium_task_category"
+        }
+      },
+      "required": [
+        "task_category_id"
+      ],
+      "title": "GetTaskCategory",
+      "type": "object"
+    },
+    "GetTenant": {
+      "properties": {
+        "operation": {
+          "const": "get_tenant",
+          "default": "get_tenant",
+          "title": "Get Tenant Metadata",
+          "type": "string"
+        },
+        "tenant_id": {
+          "title": "Tenant",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "tenant_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "buildium_tenant"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "GetTenant",
+      "type": "object"
+    },
+    "GetUnit": {
+      "properties": {
+        "operation": {
+          "const": "get_unit",
+          "default": "get_unit",
+          "title": "Get Unit Metadata",
+          "type": "string"
+        },
+        "property_id": {
+          "title": "Rental Property",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "property_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "buildium_property"
+        },
+        "unit_id": {
+          "title": "Unit",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "property_id",
+            "field_name": "unit_id",
+            "searchable": true
+          },
+          "x-resource-type": "buildium_unit"
+        }
+      },
+      "required": [
+        "property_id",
+        "unit_id"
+      ],
+      "title": "GetUnit",
+      "type": "object"
+    },
+    "GetWorkOrder": {
+      "properties": {
+        "operation": {
+          "const": "get_work_order",
+          "default": "get_work_order",
+          "title": "Get Work Order Metadata",
+          "type": "string"
+        },
+        "work_order_id": {
+          "title": "Work Order",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "work_order_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "buildium_work_order"
+        }
+      },
+      "required": [
+        "work_order_id"
+      ],
+      "title": "GetWorkOrder",
+      "type": "object"
+    },
+    "ListListingContacts": {
+      "properties": {
+        "offset": {
+          "default": 0,
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Results per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_listing_contacts",
+          "default": "list_listing_contacts",
+          "title": "List Listing Contact Metadata",
+          "type": "string"
+        }
+      },
+      "title": "ListListingContacts",
+      "type": "object"
+    },
+    "ListProperties": {
+      "properties": {
+        "offset": {
+          "default": 0,
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Results per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_properties",
+          "default": "list_properties",
+          "title": "List Rental Property Metadata",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "Active",
+                "InActive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property Status",
+          "enum": [
+            "Active",
+            "InActive"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListProperties",
+      "type": "object"
+    },
+    "ListPropertyNotes": {
+      "properties": {
+        "offset": {
+          "default": 0,
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Results per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_property_notes",
+          "default": "list_property_notes",
+          "title": "List Property Note Metadata",
+          "type": "string"
+        },
+        "property_id": {
+          "title": "Rental Property",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "property_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "buildium_property"
+        }
+      },
+      "required": [
+        "property_id"
+      ],
+      "title": "ListPropertyNotes",
+      "type": "object"
+    },
+    "ListTaskCategories": {
+      "properties": {
+        "offset": {
+          "default": 0,
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Results per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_task_categories",
+          "default": "list_task_categories",
+          "title": "List Task Categories",
+          "type": "string"
+        }
+      },
+      "title": "ListTaskCategories",
+      "type": "object"
+    },
+    "ListTasks": {
+      "properties": {
+        "offset": {
+          "default": 0,
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Results per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List Task Metadata",
+          "type": "string"
+        },
+        "title": {
+          "default": "",
+          "maxLength": 200,
+          "title": "Task Title Contains",
+          "type": "string"
+        },
+        "updated_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated From",
+          "ui:widget": "date"
+        },
+        "updated_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated To",
+          "ui:widget": "date"
+        }
+      },
+      "title": "ListTasks",
+      "type": "object"
+    },
+    "ListTenants": {
+      "properties": {
+        "offset": {
+          "default": 0,
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Results per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tenants",
+          "default": "list_tenants",
+          "title": "List Tenant Metadata",
+          "type": "string"
+        }
+      },
+      "title": "ListTenants",
+      "type": "object"
+    },
+    "ListUnits": {
+      "properties": {
+        "offset": {
+          "default": 0,
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Results per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_units",
+          "default": "list_units",
+          "title": "List Units in Rental Property",
+          "type": "string"
+        },
+        "property_id": {
+          "title": "Rental Property",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "property_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "buildium_property"
+        }
+      },
+      "required": [
+        "property_id"
+      ],
+      "title": "ListUnits",
+      "type": "object"
+    },
+    "ListWorkOrders": {
+      "properties": {
+        "offset": {
+          "default": 0,
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Results per Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_work_orders",
+          "default": "list_work_orders",
+          "title": "List Work Order Metadata",
+          "type": "string"
+        }
+      },
+      "title": "ListWorkOrders",
+      "type": "object"
+    },
+    "RenameTaskCategory": {
+      "properties": {
+        "operation": {
+          "const": "rename_task_category",
+          "default": "rename_task_category",
+          "description": "Changes the name used on tasks. System categories are refused.",
+          "title": "Rename Custom Task Category",
+          "type": "string"
+        },
+        "task_category_id": {
+          "title": "Task Category",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "task_category_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "buildium_task_category"
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "New Category Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_category_id",
+        "name"
+      ],
+      "title": "RenameTaskCategory",
+      "type": "object"
+    },
+    "UpdatePropertyNote": {
+      "properties": {
+        "operation": {
+          "const": "update_property_note",
+          "default": "update_property_note",
+          "description": "Replaces the complete note contents; inspect the existing note before choosing this change.",
+          "title": "Replace Property Note",
+          "type": "string"
+        },
+        "property_id": {
+          "title": "Rental Property",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "property_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "buildium_property"
+        },
+        "note_id": {
+          "title": "Property Note",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "property_id",
+            "field_name": "note_id",
+            "searchable": true
+          },
+          "x-resource-type": "buildium_note"
+        },
+        "note": {
+          "maxLength": 65535,
+          "minLength": 1,
+          "title": "Replacement Note",
+          "type": "string",
+          "ui:sensitive": true,
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "property_id",
+        "note_id",
+        "note"
+      ],
+      "title": "UpdatePropertyNote",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_connection": "#/$defs/CheckConnection",
+          "create_property_note": "#/$defs/CreatePropertyNote",
+          "create_task_category": "#/$defs/CreateTaskCategory",
+          "get_listing_contact": "#/$defs/GetListingContact",
+          "get_property": "#/$defs/GetProperty",
+          "get_property_note": "#/$defs/GetPropertyNote",
+          "get_task": "#/$defs/GetTask",
+          "get_task_category": "#/$defs/GetTaskCategory",
+          "get_tenant": "#/$defs/GetTenant",
+          "get_unit": "#/$defs/GetUnit",
+          "get_work_order": "#/$defs/GetWorkOrder",
+          "list_listing_contacts": "#/$defs/ListListingContacts",
+          "list_properties": "#/$defs/ListProperties",
+          "list_property_notes": "#/$defs/ListPropertyNotes",
+          "list_task_categories": "#/$defs/ListTaskCategories",
+          "list_tasks": "#/$defs/ListTasks",
+          "list_tenants": "#/$defs/ListTenants",
+          "list_units": "#/$defs/ListUnits",
+          "list_work_orders": "#/$defs/ListWorkOrders",
+          "rename_task_category": "#/$defs/RenameTaskCategory",
+          "update_property_note": "#/$defs/UpdatePropertyNote"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/ListProperties"
+        },
+        {
+          "$ref": "#/$defs/GetProperty"
+        },
+        {
+          "$ref": "#/$defs/ListUnits"
+        },
+        {
+          "$ref": "#/$defs/GetUnit"
+        },
+        {
+          "$ref": "#/$defs/ListTenants"
+        },
+        {
+          "$ref": "#/$defs/GetTenant"
+        },
+        {
+          "$ref": "#/$defs/ListListingContacts"
+        },
+        {
+          "$ref": "#/$defs/GetListingContact"
+        },
+        {
+          "$ref": "#/$defs/ListWorkOrders"
+        },
+        {
+          "$ref": "#/$defs/GetWorkOrder"
+        },
+        {
+          "$ref": "#/$defs/ListTasks"
+        },
+        {
+          "$ref": "#/$defs/GetTask"
+        },
+        {
+          "$ref": "#/$defs/ListTaskCategories"
+        },
+        {
+          "$ref": "#/$defs/GetTaskCategory"
+        },
+        {
+          "$ref": "#/$defs/ListPropertyNotes"
+        },
+        {
+          "$ref": "#/$defs/GetPropertyNote"
+        },
+        {
+          "$ref": "#/$defs/CreatePropertyNote"
+        },
+        {
+          "$ref": "#/$defs/UpdatePropertyNote"
+        },
+        {
+          "$ref": "#/$defs/CreateTaskCategory"
+        },
+        {
+          "$ref": "#/$defs/RenameTaskCategory"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BuildiumAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Buildium Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List rental properties and their units",
+    "Read task and work order metadata",
+    "Add an internal property note",
+    "Rename a custom task category"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
