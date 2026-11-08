@@ -1,0 +1,453 @@
+[
+  [
+    {
+      "operation": "upsert_contact",
+      "user_id": "customer-123",
+      "name": "Ada",
+      "customData": {
+        "plan": "pro"
+      },
+      "value": 42
+    },
+    "PUT",
+    "/v3/s2s/contacts/customer-123",
+    {
+      "name": "Ada",
+      "customData": {
+        "plan": "pro"
+      },
+      "value": 42
+    },
+    200,
+    {
+      "userId": "customer-123",
+      "name": "Ada"
+    }
+  ],
+  [
+    {
+      "operation": "get_contact",
+      "user_id": "customer-123"
+    },
+    "GET",
+    "/v3/s2s/contacts/customer-123",
+    null,
+    200,
+    {
+      "userId": "customer-123",
+      "name": "Ada"
+    }
+  ],
+  [
+    {
+      "operation": "delete_contact",
+      "user_id": "customer-123"
+    },
+    "DELETE",
+    "/v3/s2s/contacts/customer-123",
+    null,
+    200,
+    {
+      "status": "success"
+    }
+  ],
+  [
+    {
+      "operation": "track_contact_events",
+      "user_id": "customer-123",
+      "events": [
+        {
+          "name": "checkout",
+          "data": {
+            "total": 42
+          }
+        }
+      ]
+    },
+    "POST",
+    "/v3/s2s/contacts/customer-123/events",
+    {
+      "events": [
+        {
+          "name": "checkout",
+          "data": {
+            "total": 42
+          }
+        }
+      ]
+    },
+    202,
+    {
+      "received": 1
+    }
+  ],
+  [
+    {
+      "operation": "create_conversation",
+      "user_id": "customer-123",
+      "message": "Help",
+      "type": "BUG",
+      "tags": [
+        "billing"
+      ],
+      "workflowId": "wf_123"
+    },
+    "POST",
+    "/v3/s2s/contacts/customer-123/conversations",
+    {
+      "message": "Help",
+      "type": "BUG",
+      "tags": [
+        "billing"
+      ],
+      "workflowId": "wf_123"
+    },
+    201,
+    {
+      "id": "conv_123",
+      "closed": false,
+      "archived": false,
+      "unread": true,
+      "workflowActive": false
+    }
+  ],
+  [
+    {
+      "operation": "list_conversations",
+      "user_id": "customer-123"
+    },
+    "GET",
+    "/v3/s2s/contacts/customer-123/conversations",
+    null,
+    200,
+    {
+      "items": [
+        {
+          "id": "conv_123",
+          "closed": false,
+          "archived": false,
+          "unread": true,
+          "workflowActive": false
+        }
+      ],
+      "has_more": true,
+      "next_cursor": "next+cursor"
+    }
+  ],
+  [
+    {
+      "operation": "get_conversation",
+      "conversation_id": "conv_123"
+    },
+    "GET",
+    "/v3/s2s/conversations/conv_123",
+    null,
+    200,
+    {
+      "id": "conv_123",
+      "closed": false,
+      "archived": false,
+      "unread": true,
+      "workflowActive": false
+    }
+  ],
+  [
+    {
+      "operation": "update_conversation",
+      "conversation_id": "conv_123",
+      "attributes": {
+        "order": "42"
+      }
+    },
+    "PATCH",
+    "/v3/s2s/conversations/conv_123",
+    {
+      "attributes": {
+        "order": "42"
+      }
+    },
+    200,
+    {
+      "id": "conv_123",
+      "closed": false,
+      "archived": false,
+      "unread": true,
+      "workflowActive": false
+    }
+  ],
+  [
+    {
+      "operation": "close_conversation",
+      "conversation_id": "conv_123"
+    },
+    "POST",
+    "/v3/s2s/conversations/conv_123/close",
+    null,
+    200,
+    {
+      "id": "conv_123",
+      "closed": false,
+      "archived": false,
+      "unread": true,
+      "workflowActive": false
+    }
+  ],
+  [
+    {
+      "operation": "reopen_conversation",
+      "conversation_id": "conv_123"
+    },
+    "POST",
+    "/v3/s2s/conversations/conv_123/reopen",
+    null,
+    200,
+    {
+      "id": "conv_123",
+      "closed": false,
+      "archived": false,
+      "unread": true,
+      "workflowActive": false
+    }
+  ],
+  [
+    {
+      "operation": "mark_conversation_read",
+      "conversation_id": "conv_123"
+    },
+    "POST",
+    "/v3/s2s/conversations/conv_123/read",
+    null,
+    204,
+    null
+  ],
+  [
+    {
+      "operation": "rate_conversation",
+      "conversation_id": "conv_123",
+      "rating": 0
+    },
+    "POST",
+    "/v3/s2s/conversations/conv_123/rating",
+    {
+      "rating": 0
+    },
+    204,
+    null
+  ],
+  [
+    {
+      "operation": "send_message",
+      "conversation_id": "conv_123",
+      "text": "Hello",
+      "attachments": [
+        {
+          "url": "https://example.com/signed",
+          "contentType": "image/png"
+        }
+      ],
+      "replyToMessageId": "msg_0"
+    },
+    "POST",
+    "/v3/s2s/conversations/conv_123/messages",
+    {
+      "text": "Hello",
+      "attachments": [
+        {
+          "url": "https://example.com/signed",
+          "contentType": "image/png"
+        }
+      ],
+      "replyToMessageId": "msg_0"
+    },
+    201,
+    {
+      "id": "msg_123",
+      "conversationId": "conv_123",
+      "author": {
+        "type": "contact"
+      },
+      "attachments": [],
+      "unread": false,
+      "createdAt": "2026-08-01T10:00:00Z",
+      "text": "Hello"
+    }
+  ],
+  [
+    {
+      "operation": "list_messages",
+      "conversation_id": "conv_123"
+    },
+    "GET",
+    "/v3/s2s/conversations/conv_123/messages",
+    null,
+    200,
+    {
+      "items": [
+        {
+          "id": "msg_123",
+          "conversationId": "conv_123",
+          "author": {
+            "type": "contact"
+          },
+          "attachments": [],
+          "unread": false,
+          "createdAt": "2026-08-01T10:00:00Z",
+          "text": "Hello"
+        }
+      ],
+      "has_more": false,
+      "next_after": null
+    }
+  ],
+  [
+    {
+      "operation": "get_message",
+      "message_id": "msg_123"
+    },
+    "GET",
+    "/v3/s2s/messages/msg_123",
+    null,
+    200,
+    {
+      "id": "msg_123",
+      "conversationId": "conv_123",
+      "author": {
+        "type": "contact"
+      },
+      "attachments": [],
+      "unread": false,
+      "createdAt": "2026-08-01T10:00:00Z",
+      "text": "Hello"
+    }
+  ],
+  [
+    {
+      "operation": "rate_message",
+      "message_id": "msg_123",
+      "rating": "positive"
+    },
+    "POST",
+    "/v3/s2s/messages/msg_123/rating",
+    {
+      "rating": "positive"
+    },
+    204,
+    null
+  ],
+  [
+    {
+      "operation": "get_pending_workflow_step",
+      "conversation_id": "conv_123"
+    },
+    "GET",
+    "/v3/s2s/conversations/conv_123/workflow",
+    null,
+    200,
+    {
+      "step": null
+    }
+  ],
+  [
+    {
+      "operation": "answer_workflow_step",
+      "conversation_id": "conv_123",
+      "botAction": "humanHandoff"
+    },
+    "POST",
+    "/v3/s2s/conversations/conv_123/workflow/answer",
+    {
+      "botAction": "humanHandoff"
+    },
+    202,
+    null
+  ],
+  [
+    {
+      "operation": "run_workflow",
+      "conversation_id": "conv_123",
+      "workflow_id": "wf_123"
+    },
+    "POST",
+    "/v3/s2s/conversations/conv_123/workflow/wf_123/run",
+    null,
+    202,
+    null
+  ],
+  [
+    {
+      "operation": "list_workflows"
+    },
+    "GET",
+    "/v3/s2s/workflows",
+    null,
+    200,
+    [
+      {
+        "id": "wf_123",
+        "name": "Support"
+      }
+    ]
+  ],
+  [
+    {
+      "operation": "list_webhooks"
+    },
+    "GET",
+    "/v3/s2s/webhooks",
+    null,
+    200,
+    [
+      {
+        "id": "wh_123",
+        "url": "https://example.com/gleap",
+        "enabled": true,
+        "events": [
+          "message.created"
+        ],
+        "secret": "masked",
+        "createdAt": "2026-08-01T10:00:00Z"
+      }
+    ]
+  ],
+  [
+    {
+      "operation": "create_webhook",
+      "url": "https://example.com/gleap",
+      "events": [
+        "message.created"
+      ]
+    },
+    "POST",
+    "/v3/s2s/webhooks",
+    {
+      "url": "https://example.com/gleap",
+      "events": [
+        "message.created"
+      ]
+    },
+    201,
+    {
+      "id": "wh_123",
+      "url": "https://example.com/gleap",
+      "enabled": true,
+      "events": [
+        "message.created"
+      ],
+      "secret": "masked",
+      "createdAt": "2026-08-01T10:00:00Z"
+    }
+  ],
+  [
+    {
+      "operation": "delete_webhook",
+      "webhook_id": "wh_123"
+    },
+    "DELETE",
+    "/v3/s2s/webhooks/wh_123",
+    null,
+    200,
+    {
+      "success": true
+    }
+  ]
+]

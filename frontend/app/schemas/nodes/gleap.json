@@ -1,0 +1,1329 @@
+{
+  "$defs": {
+    "Attachment": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Upload URL returned by Gleap; signed URLs expire. NoClick does not fetch this URL.",
+          "title": "Url",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "contentType": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contenttype"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "Attachment",
+      "type": "object"
+    },
+    "ContactEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO timestamp; omit for now.",
+          "title": "Date"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ContactEvent",
+      "type": "object"
+    },
+    "GleapAnswerWorkflowStepConfig": {
+      "additionalProperties": false,
+      "description": "Answer a pending workflow step or request human handoff.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional stable key for retrying this exact POST for 24 hours. Gleap provides at-least-once semantics; do not change the body when reusing a key.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "answer_workflow_step",
+          "default": "answer_workflow_step",
+          "title": "Answer Workflow Step",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "selected": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected"
+        },
+        "rating": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rating"
+        },
+        "attachments": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Attachment"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attachments"
+        },
+        "botAction": {
+          "anyOf": [
+            {
+              "const": "humanHandoff",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Botaction"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "GleapAnswerWorkflowStepConfig",
+      "type": "object"
+    },
+    "GleapCloseConversationConfig": {
+      "additionalProperties": false,
+      "description": "Close conversation; further contact messages are rejected until reopened.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional stable key for retrying this exact POST for 24 hours. Gleap provides at-least-once semantics; do not change the body when reusing a key.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "close_conversation",
+          "default": "close_conversation",
+          "title": "Close Conversation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "title": "Conversation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "GleapCloseConversationConfig",
+      "type": "object"
+    },
+    "GleapCreateConversationConfig": {
+      "additionalProperties": false,
+      "description": "Open a conversation authored as the contact; creates the contact if absent.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional stable key for retrying this exact POST for 24 hours. Gleap provides at-least-once semantics; do not change the body when reusing a key.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "create_conversation",
+          "default": "create_conversation",
+          "title": "Create Conversation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project ticket type; defaults to INQUIRY. FEATURE_REQUEST and CRASH are unsupported.",
+          "title": "Type"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "attachments": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Attachment"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attachments"
+        },
+        "workflowId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workflowid"
+        },
+        "agentId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agentid"
+        }
+      },
+      "required": [
+        "user_id",
+        "message"
+      ],
+      "title": "GleapCreateConversationConfig",
+      "type": "object"
+    },
+    "GleapCreateWebhookConfig": {
+      "additionalProperties": false,
+      "description": "Register an endpoint; its signing secret is returned once, so store it securely.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional stable key for retrying this exact POST for 24 hours. Gleap provides at-least-once semantics; do not change the body when reusing a key.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "description": "HTTPS endpoint to receive Gleap events. Gleap delivers the requests.",
+          "title": "Url",
+          "type": "string"
+        },
+        "events": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Events"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "GleapCreateWebhookConfig",
+      "type": "object"
+    },
+    "GleapDeleteContactConfig": {
+      "additionalProperties": false,
+      "description": "Delete a contact and their conversations.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GleapDeleteContactConfig",
+      "type": "object"
+    },
+    "GleapDeleteWebhookConfig": {
+      "additionalProperties": false,
+      "description": "Delete a project webhook endpoint.",
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "webhook_id": {
+          "title": "Webhook Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "GleapDeleteWebhookConfig",
+      "type": "object"
+    },
+    "GleapGetContactConfig": {
+      "additionalProperties": false,
+      "description": "Fetch a contact and its unread conversation count.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GleapGetContactConfig",
+      "type": "object"
+    },
+    "GleapGetConversationConfig": {
+      "additionalProperties": false,
+      "description": "Fetch customer-visible conversation details.",
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Get Conversation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "title": "Conversation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "GleapGetConversationConfig",
+      "type": "object"
+    },
+    "GleapGetMessageConfig": {
+      "additionalProperties": false,
+      "description": "Fetch a single message.",
+      "properties": {
+        "operation": {
+          "const": "get_message",
+          "default": "get_message",
+          "title": "Get Message",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "message_id": {
+          "title": "Message Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "GleapGetMessageConfig",
+      "type": "object"
+    },
+    "GleapGetPendingWorkflowStepConfig": {
+      "additionalProperties": false,
+      "description": "Read the workflow step waiting for the contact, if any.",
+      "properties": {
+        "operation": {
+          "const": "get_pending_workflow_step",
+          "default": "get_pending_workflow_step",
+          "title": "Get Pending Workflow Step",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "title": "Conversation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "GleapGetPendingWorkflowStepConfig",
+      "type": "object"
+    },
+    "GleapListConversationsConfig": {
+      "additionalProperties": false,
+      "description": "List contact conversations, most recent activity first; bot-only conversations are hidden.",
+      "properties": {
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "List Conversations",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "next_cursor from the preceding page.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GleapListConversationsConfig",
+      "type": "object"
+    },
+    "GleapListMessagesConfig": {
+      "additionalProperties": false,
+      "description": "Read messages oldest first; this does not mark the conversation read.",
+      "properties": {
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "List Messages",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "next_after from the preceding page (last message ID).",
+          "title": "After"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "GleapListMessagesConfig",
+      "type": "object"
+    },
+    "GleapListWebhooksConfig": {
+      "additionalProperties": false,
+      "description": "List project webhook endpoints with masked signing secrets.",
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GleapListWebhooksConfig",
+      "type": "object"
+    },
+    "GleapListWorkflowsConfig": {
+      "additionalProperties": false,
+      "description": "List the project live workflows.",
+      "properties": {
+        "operation": {
+          "const": "list_workflows",
+          "default": "list_workflows",
+          "title": "List Workflows",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GleapListWorkflowsConfig",
+      "type": "object"
+    },
+    "GleapMarkConversationReadConfig": {
+      "additionalProperties": false,
+      "description": "Explicitly mark conversation read for the contact.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional stable key for retrying this exact POST for 24 hours. Gleap provides at-least-once semantics; do not change the body when reusing a key.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "mark_conversation_read",
+          "default": "mark_conversation_read",
+          "title": "Mark Conversation Read",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "title": "Conversation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "GleapMarkConversationReadConfig",
+      "type": "object"
+    },
+    "GleapRateConversationConfig": {
+      "additionalProperties": false,
+      "description": "Submit a contact CSAT rating from zero through ten.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional stable key for retrying this exact POST for 24 hours. Gleap provides at-least-once semantics; do not change the body when reusing a key.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "rate_conversation",
+          "default": "rate_conversation",
+          "title": "Rate Conversation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "rating": {
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Rating",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "rating"
+      ],
+      "title": "GleapRateConversationConfig",
+      "type": "object"
+    },
+    "GleapRateMessageConfig": {
+      "additionalProperties": false,
+      "description": "Rate a message, typically an AI answer.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional stable key for retrying this exact POST for 24 hours. Gleap provides at-least-once semantics; do not change the body when reusing a key.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "rate_message",
+          "default": "rate_message",
+          "title": "Rate Message",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "message_id": {
+          "title": "Message Id",
+          "type": "string"
+        },
+        "rating": {
+          "enum": [
+            "positive",
+            "negative"
+          ],
+          "title": "Rating",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id",
+        "rating"
+      ],
+      "title": "GleapRateMessageConfig",
+      "type": "object"
+    },
+    "GleapReopenConversationConfig": {
+      "additionalProperties": false,
+      "description": "Reopen a closed conversation.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional stable key for retrying this exact POST for 24 hours. Gleap provides at-least-once semantics; do not change the body when reusing a key.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "reopen_conversation",
+          "default": "reopen_conversation",
+          "title": "Reopen Conversation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "title": "Conversation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "GleapReopenConversationConfig",
+      "type": "object"
+    },
+    "GleapRunWorkflowConfig": {
+      "additionalProperties": false,
+      "description": "Start this workflow, replacing any active one; acceptance does not prove completion.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional stable key for retrying this exact POST for 24 hours. Gleap provides at-least-once semantics; do not change the body when reusing a key.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "run_workflow",
+          "default": "run_workflow",
+          "title": "Run Workflow",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "workflow_id": {
+          "title": "Workflow Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "workflow_id"
+      ],
+      "title": "GleapRunWorkflowConfig",
+      "type": "object"
+    },
+    "GleapSendMessageConfig": {
+      "additionalProperties": false,
+      "description": "Send a message authored as the contact.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional stable key for retrying this exact POST for 24 hours. Gleap provides at-least-once semantics; do not change the body when reusing a key.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Send Message",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "attachments": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Attachment"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attachments"
+        },
+        "replyToMessageId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Replytomessageid"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "text"
+      ],
+      "title": "GleapSendMessageConfig",
+      "type": "object"
+    },
+    "GleapServiceAccountCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "gleap_service_account",
+          "default": "gleap_service_account",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "title": "Service account token",
+          "type": "string",
+          "ui:help": "Paste the token without the Bearer prefix.",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Gleap Service Account Token",
+      "type": "object",
+      "x-credential-instructions": "Open your Gleap project, then Settings \u2192 Developer \u2192 API keys. Create a service account and paste its token. Use a separate project for testing. The Project ID is not a credential. The token can read and write contacts and conversations in its project.",
+      "x-credential-url": "https://app.gleap.io",
+      "x-help-url": "https://docs.gleap.ai/en/articles/719-authentication"
+    },
+    "GleapTrackContactEventsConfig": {
+      "additionalProperties": false,
+      "description": "Track contact events that drive outbound messaging and workflows.",
+      "properties": {
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional stable key for retrying this exact POST for 24 hours. Gleap provides at-least-once semantics; do not change the body when reusing a key.",
+          "title": "Idempotency Key"
+        },
+        "operation": {
+          "const": "track_contact_events",
+          "default": "track_contact_events",
+          "title": "Track Contact Events",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        },
+        "events": {
+          "items": {
+            "$ref": "#/$defs/ContactEvent"
+          },
+          "minItems": 1,
+          "title": "Events",
+          "type": "array"
+        }
+      },
+      "required": [
+        "user_id",
+        "events"
+      ],
+      "title": "GleapTrackContactEventsConfig",
+      "type": "object"
+    },
+    "GleapUpdateConversationConfig": {
+      "additionalProperties": false,
+      "description": "Update title and merge customer-visible attributes.",
+      "properties": {
+        "operation": {
+          "const": "update_conversation",
+          "default": "update_conversation",
+          "title": "Update Conversation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attributes"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "GleapUpdateConversationConfig",
+      "type": "object"
+    },
+    "GleapUpsertContactConfig": {
+      "additionalProperties": false,
+      "description": "Create or update a contact.",
+      "properties": {
+        "operation": {
+          "const": "upsert_contact",
+          "default": "upsert_contact",
+          "title": "Upsert Contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "companyId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyid"
+        },
+        "companyName": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Companyname"
+        },
+        "plan": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Plan"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "customData": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customdata"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GleapUpsertContactConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "answer_workflow_step": "#/$defs/GleapAnswerWorkflowStepConfig",
+          "close_conversation": "#/$defs/GleapCloseConversationConfig",
+          "create_conversation": "#/$defs/GleapCreateConversationConfig",
+          "create_webhook": "#/$defs/GleapCreateWebhookConfig",
+          "delete_contact": "#/$defs/GleapDeleteContactConfig",
+          "delete_webhook": "#/$defs/GleapDeleteWebhookConfig",
+          "get_contact": "#/$defs/GleapGetContactConfig",
+          "get_conversation": "#/$defs/GleapGetConversationConfig",
+          "get_message": "#/$defs/GleapGetMessageConfig",
+          "get_pending_workflow_step": "#/$defs/GleapGetPendingWorkflowStepConfig",
+          "list_conversations": "#/$defs/GleapListConversationsConfig",
+          "list_messages": "#/$defs/GleapListMessagesConfig",
+          "list_webhooks": "#/$defs/GleapListWebhooksConfig",
+          "list_workflows": "#/$defs/GleapListWorkflowsConfig",
+          "mark_conversation_read": "#/$defs/GleapMarkConversationReadConfig",
+          "rate_conversation": "#/$defs/GleapRateConversationConfig",
+          "rate_message": "#/$defs/GleapRateMessageConfig",
+          "reopen_conversation": "#/$defs/GleapReopenConversationConfig",
+          "run_workflow": "#/$defs/GleapRunWorkflowConfig",
+          "send_message": "#/$defs/GleapSendMessageConfig",
+          "track_contact_events": "#/$defs/GleapTrackContactEventsConfig",
+          "update_conversation": "#/$defs/GleapUpdateConversationConfig",
+          "upsert_contact": "#/$defs/GleapUpsertContactConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GleapUpsertContactConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapTrackContactEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapCreateConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapListConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapGetConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapUpdateConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapCloseConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapReopenConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapMarkConversationReadConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapRateConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapSendMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapListMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapGetMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapRateMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapGetPendingWorkflowStepConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapAnswerWorkflowStepConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapRunWorkflowConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapListWorkflowsConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/GleapDeleteWebhookConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GleapServiceAccountCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Gleap Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
