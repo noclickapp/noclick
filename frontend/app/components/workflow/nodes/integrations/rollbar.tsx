@@ -18,6 +18,7 @@ const RollbarNodeComponent = (props: NodeProps) => (
 export const RollbarNode: NodeDefinition = {
     type: 'automation-rollbar',
     label: 'Rollbar',
+    category: 'monitoring',
     description: 'Monitor errors, projects, teams, and deploys in Rollbar',
     Icon: RollbarIcon,
     iconColor: '',
