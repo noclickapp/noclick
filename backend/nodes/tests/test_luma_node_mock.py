@@ -125,10 +125,10 @@ class TestLumaAccountMock:
         node = create_luma_node(
             LumaNodeConfig(config=LumaGetSelfConfig(), credentials=api_key_credentials)
         )
-        result = await _run(node, 200, {"api_id": "usr-1", "name": "Ada"})
+        result = await _run(node, 200, {"id": "usr-1", "name": "Ada", "email": "ada@example.com"})
         assert result["status"] == "success"
         assert result["action"] == "get_self"
-        assert result["data"]["api_id"] == "usr-1"
+        assert result["data"]["id"] == "usr-1"
 
 
 # ============================================================================
@@ -738,3 +738,69 @@ def test_webhook_creation_requires_absolute_http_url(value):
 def test_webhook_url_keeps_callback_path_and_query():
     url = "https://example.com/hooks/luma?target=events"
     assert LumaCreateWebhookConfig(url=url).url == url
+
+
+class TestLumaConnectionEvidence:
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("name, label", [("Ada", "Ada"), (None, "ada@example.com")])
+    async def test_connect_names_authenticated_account(self, name, label):
+        from nodes.core.connection_evidence import collect_evidence
+
+        client = create_mock_client(200, {"id": "usr-1", "name": name, "email": "ada@example.com"})
+        client.request = AsyncMock(wraps=client.request)
+        with patch("nodes.luma_node.httpx.AsyncClient", return_value=client):
+            result = await collect_evidence(
+                node_type="automation-luma", user_id="test-user",
+                credential_data={"credential_type": "luma_api_key", "api_key": "test-key"},
+            )
+        assert result.reachable is True
+        assert result.account_label == label
+        assert result.noun == "account"
+        request = client.request.await_args.kwargs
+        assert request["method"] == "GET"
+        assert request["url"] == "https://public-api.luma.com/v1/users/get-self"
+        assert request["headers"]["x-luma-api-key"] == "test-key"
+        assert client.request.await_count == 1
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("status", [401, 403])
+    async def test_connect_rejected_key_is_not_working(self, status):
+        from nodes.core.connection_evidence import collect_evidence
+
+        client = create_mock_client(status, {"message": "Invalid API key"})
+        with patch("nodes.luma_node.httpx.AsyncClient", return_value=client):
+            result = await collect_evidence(
+                node_type="automation-luma", user_id="test-user",
+                credential_data={"credential_type": "luma_api_key", "api_key": "bad-key"},
+            )
+        assert result.reachable is False
+        assert result.account_label is None
+        assert "Invalid API key" in result.error
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("data", [{}, {"message": "not a user"}, {"id": "usr-1", "email": None}])
+    async def test_connect_malformed_user_is_unverified(self, data):
+        from nodes.core.connection_evidence import collect_evidence
+
+        client = create_mock_client(200, data)
+        with patch("nodes.luma_node.httpx.AsyncClient", return_value=client):
+            result = await collect_evidence(
+                node_type="automation-luma", user_id="test-user",
+                credential_data={"credential_type": "luma_api_key", "api_key": "test-key"},
+            )
+        assert result.reachable is None
+        assert result.account_label is None
+
+    @pytest.mark.asyncio
+    async def test_connect_timeout_is_unverified(self):
+        import httpx
+        from nodes.core.connection_evidence import collect_evidence
+
+        client = create_mock_client()
+        client.request = AsyncMock(side_effect=httpx.ReadTimeout("timed out"))
+        with patch("nodes.luma_node.httpx.AsyncClient", return_value=client):
+            result = await collect_evidence(
+                node_type="automation-luma", user_id="test-user",
+                credential_data={"credential_type": "luma_api_key", "api_key": "test-key"},
+            )
+        assert result.reachable is None

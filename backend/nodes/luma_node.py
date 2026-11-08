@@ -31,6 +31,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator, AfterValidator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.core.webhook_trigger import ExternalWebhookTriggerMixin
 
 logger = logging.getLogger(__name__)
@@ -1275,6 +1276,9 @@ class LumaNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """Luma (lu.ma) event-management automation node."""
 
     integration_type = "automation-luma"
+    connection_evidence = ConnectionEvidence(
+        identity_operation="get_self", noun="account", identity_keys=("name", "email"),
+    )
 
     edit_examples = [
         "List all upcoming Luma events",
@@ -1462,9 +1466,17 @@ class LumaNode(ExternalWebhookTriggerMixin, WorkflowNode):
     # Account handlers
     # ------------------------------------------------------------------
     async def _get_self(self, c: LumaGetSelfConfig, api_key: str) -> Dict[str, Any]:
-        return await _luma_request(
+        result = await _luma_request(
             api_key, "GET", "/v1/users/get-self", action_name="get_self"
         )
+        if result.get("status") == "success":
+            data = result.get("data")
+            if (not isinstance(data, dict)
+                    or not isinstance(data.get("id"), str) or not data["id"].strip()
+                    or not isinstance(data.get("email"), str) or not data["email"].strip()
+                    or (data.get("name") is not None and not isinstance(data["name"], str))):
+                return {**result, "status": "error", "error": "Luma returned an unexpected user response", "data": None}
+        return result
 
     # ------------------------------------------------------------------
     # Event handlers
