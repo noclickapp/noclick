@@ -1,0 +1,1102 @@
+{
+  "get_me": {
+    "method": "GET",
+    "path": "/mydetail",
+    "v2": false,
+    "config": {
+      "operation": "get_me"
+    },
+    "response": {
+      "UserId": 33382,
+      "AccountId": 3470,
+      "EmailAddress": "demo@globalcorp360.com",
+      "DisplayName": "Full Access",
+      "StandardWorkHourId": 3489,
+      "FirstName": "Full",
+      "LastName": "Access",
+      "Initials": "FA",
+      "IsNonLoginUser": false,
+      "DefaultLanguage": "English",
+      "IsActive": true,
+      "DateFormatTypeId": 0,
+      "NumberFormatId": 0,
+      "FirstDayOfWeek": -1,
+      "NotifyViaEmailForNewTask": false,
+      "NotifyViaEmailForUpdatedTask": false,
+      "TimeEntryType": 0,
+      "Groups": [
+        {
+          "UserId": 0,
+          "GroupId": 9441
+        }
+      ],
+      "Roles": [
+        {
+          "Id": 12595,
+          "Name": "Full Access"
+        }
+      ]
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "search_projects": {
+    "method": "POST",
+    "path": "/projects/search",
+    "v2": true,
+    "config": {
+      "operation": "search_projects",
+      "filter": {
+        "Name": {
+          "$regex": "Digital"
+        }
+      },
+      "columns": [
+        "Id",
+        "Name",
+        "StartDate",
+        "EndDate",
+        "StatusId"
+      ]
+    },
+    "response": {
+      "total": 13,
+      "pagerid": "784ab02e-55dc-4fa5-bca4-56f4fc4da7ac",
+      "page": 1,
+      "pageSize": 5,
+      "list": [
+        {
+          "Id": 42629,
+          "Name": "New product line",
+          "No": "PR-3470-13080001",
+          "Code": "NP-0001",
+          "StartDate": "2026-01-01T00:00:00Z",
+          "EndDate": "2027-08-15T00:00:00Z",
+          "Duration": 422,
+          "IsActive": true,
+          "Type": {
+            "Id": 111634,
+            "Name": "New product of business process",
+            "Icon": "https://demo.itmplatform.com/UploadData/Iconlibrary/databases.png"
+          },
+          "Status": {
+            "Id": 114615,
+            "Name": "In Progress",
+            "Icon": "https://demo.itmplatform.com/UploadData/Iconlibrary/chart-up-color.png",
+            "IsCompleted": false,
+            "IsAllowTimeEntry": true
+          },
+          "Priority": {
+            "Id": 70134,
+            "Name": "Normal",
+            "Icon": "https://demo.itmplatform.com/UploadData/Iconlibrary/flag-green.png",
+            "IsSelected": true
+          },
+          "ApprovalStatus": {
+            "Id": 70087,
+            "Name": "Approved",
+            "Icon": "https://demo.itmplatform.com/UploadData/Iconlibrary/status.png",
+            "IsSelected": false
+          },
+          "Assessment": {
+            "Id": 27658,
+            "Name": "Critical",
+            "Icon": "/images/assessment/Red.png",
+            "AccountId": 3470
+          },
+          "ProgressComplete": 70,
+          "Expected": 14,
+          "Deviation": 56,
+          "MethodTypeId": 1,
+          "Managers": [
+            {
+              "ProjectUserId": 178329,
+              "UserId": 33379,
+              "EmailAddress": "torel@globalcorp360.com",
+              "DisplayName": "Travis Orellana",
+              "FirstName": "Travis",
+              "LastName": "Orellana",
+              "Category": "Engineer",
+              "Position": "Production Manager",
+              "Initials": "TO"
+            }
+          ],
+          "PerformingUnit": {
+            "Name": "Production"
+          },
+          "BusinessGoal": {
+            "Id": 11963,
+            "Name": "New product range launch"
+          },
+          "Category": {
+            "Id": 36950,
+            "Name": "Business growth"
+          },
+          "AllCustomFields": {
+            "Exposure": {
+              "Text": "High",
+              "Color": "Red"
+            },
+            "ERP Code": 354.411,
+            "Client acceptance date": "2026-02-01T00:00:00Z",
+            "Area": null,
+            "Invoice paid": "Yes"
+          },
+          "CanBeSoftDeleted": false
+        }
+      ]
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "create_project": {
+    "method": "POST",
+    "path": "/projects",
+    "v2": true,
+    "config": {
+      "operation": "create_project",
+      "name": "Cloud Migration Initiative",
+      "description": "Enterprise cloud migration project for legacy infrastructure modernization",
+      "type_id": 8331,
+      "external_client_id": 0,
+      "performing_unit_id": 0,
+      "priority_id": 7891,
+      "status_id": 12740,
+      "start_date": "2026-03-01T00:00:00Z",
+      "end_date": "2026-09-30T00:00:00Z",
+      "sponsor_id": 0,
+      "internal_code": "CM-2026",
+      "internal_cost_center": "IT-500"
+    },
+    "response": {
+      "ProjectId": 1234,
+      "StatusMessage": "Project inserted successfully.",
+      "StatusCode": 201
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "get_project": {
+    "method": "GET",
+    "path": "/projects/{ProjectId}",
+    "v2": true,
+    "config": {
+      "operation": "get_project",
+      "project_id": 55713
+    },
+    "response": {
+      "Id": 42629,
+      "No": "PR-3470-13080001",
+      "Name": "New product line",
+      "Code": "NP-0001",
+      "Description": "<p>Project description (may contain HTML)</p>",
+      "InternalCode": "NP-0001",
+      "InternalCostCenter": "",
+      "StartDate": "2026-01-01T00:00:00Z",
+      "EndDate": "2027-08-15T00:00:00Z",
+      "Duration": 422,
+      "MethodTypeId": 1,
+      "Type": {
+        "Id": 111634,
+        "Name": "New product of business process",
+        "Icon": "https://demo.itmplatform.com/UploadData/Iconlibrary/databases.png"
+      },
+      "Status": {
+        "Id": 114615,
+        "Name": "In Progress",
+        "Icon": "https://demo.itmplatform.com/UploadData/Iconlibrary/chart-up-color.png",
+        "IsCompleted": false,
+        "IsAllowTimeEntry": true
+      },
+      "Priority": {
+        "Id": 70134,
+        "Name": "Normal",
+        "Icon": "https://demo.itmplatform.com/UploadData/Iconlibrary/flag-green.png",
+        "IsSelected": true
+      },
+      "ApprovalStatus": {
+        "Id": 70087,
+        "Name": "Approved",
+        "Icon": "https://demo.itmplatform.com/UploadData/Iconlibrary/status.png",
+        "IsSelected": false,
+        "OnUncheckedChangedTo": 0,
+        "OnCheckedChangedTo": 0
+      },
+      "PerformingUnit": {
+        "Id": 15484,
+        "Name": "Production"
+      },
+      "BusinessGoal": {
+        "Id": 11963,
+        "Name": "New product range launch"
+      },
+      "Category": {
+        "Id": 36950,
+        "IdByLanguage": 36950,
+        "BaseId": 36950,
+        "Name": "Business growth",
+        "NameByLanguage": "Business growth",
+        "LanguageId": 1,
+        "IsService": false
+      },
+      "BaseCurrencyId": 10504,
+      "ExpectedROI": {
+        "Amount": 0,
+        "CurrencyId": 10504,
+        "ExchangeRate": 1,
+        "AppliedDate": "2026-10-26T15:10:02Z",
+        "BaseAmount": 540000
+      },
+      "BusinessBenefit": "<p>Business benefit description (may contain HTML)</p>",
+      "ProcessAffected": {
+        "Id": 16381,
+        "Name": "Market analysis",
+        "BusinessActivityId": 0,
+        "Path": "Commercial\\Market analysis"
+      },
+      "Sponsor": {
+        "Id": 15483,
+        "Name": "R+D"
+      },
+      "InternalClient": {
+        "Id": 15485,
+        "Name": "Sales and Marketing"
+      },
+      "ExternalClient": {
+        "Id": 5742,
+        "AccountId": 3470,
+        "Name": "Government",
+        "StreetAddress": "Avenida principal, 1",
+        "City": "Centro",
+        "State": "Central",
+        "Zipcode": "00001",
+        "EmailAddress": "central@globalcorp360.com",
+        "Phone": "",
+        "Website": "",
+        "Photo": "UploadData/CLIENT_LOGO/5742.png",
+        "FiscalId": null,
+        "Country": null,
+        "ContactName": "",
+        "ContactEmailAddress": "",
+        "ContactPhone": ""
+      },
+      "Asset": {
+        "Id": 18544,
+        "Name": "Flagship Product",
+        "Path": "Products\\Flagship Product"
+      },
+      "ProgressModelId": "DURATION",
+      "AllowManualProgress": true,
+      "RevenueRecognitionModelId": "FIXED",
+      "RevenueModelId": "BASEDONTASKS",
+      "RevenueRecognitionPeriodTypeId": "MONTHLY",
+      "AllowManualAmountInputRR": true,
+      "RevenueRecognitionFutureModelId": "USEREVENUERECOGNITION",
+      "IsRevenueFeatureEnabled": true,
+      "IsRevenueExist": true,
+      "IsHourlyRevenueExist": false,
+      "ActualRevenueMethodId": "MANUAL",
+      "RevenueHoursType": "ESTIMATED",
+      "AllowChangingRevenueHours": false,
+      "AllowNonBilling": true,
+      "AllCustomFields": {
+        "Exposure": {
+          "Text": "High",
+          "Color": "Red"
+        },
+        "ERP Code": 354.411,
+        "Client acceptance date": "2026-02-01T00:00:00Z",
+        "Area": null,
+        "Invoice paid": "Yes"
+      },
+      "IsSprintFeatureEnabled": false,
+      "IsSprintExistWithAllocatedTasks": false,
+      "ShowInTimesheetMode": 0,
+      "CanBeSoftDeleted": false
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "update_project": {
+    "method": "PATCH",
+    "path": "/projects/{ProjectId}",
+    "v2": true,
+    "config": {
+      "operation": "update_project",
+      "project_id": 55713,
+      "name": "Digital Transformation - Phase 2",
+      "description": "Updated project scope to include additional departments",
+      "status_id": 12740,
+      "end_date": "2027-06-30T00:00:00Z",
+      "internal_cost_center": "IT-600"
+    },
+    "response": {
+      "ProjectId": 12262,
+      "StatusMessage": "Project updated successfully.",
+      "StatusCode": 201
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "search_tasks": {
+    "method": "POST",
+    "path": "/Projects/{ProjectId}/Tasks/Search",
+    "v2": false,
+    "config": {
+      "operation": "search_tasks",
+      "project_id": 43407,
+      "filter": {
+        "Name": {
+          "$regex": "Design"
+        }
+      },
+      "columns": [
+        "Id",
+        "Name",
+        "StartDate",
+        "EndDate",
+        "Status",
+        "Priority"
+      ]
+    },
+    "response": {
+      "total": 67,
+      "pagerid": "e81a741c-4e1b-4989-be7d-1e286f273996",
+      "page": 0,
+      "pageSize": 2,
+      "list": [
+        {
+          "Id": 804956,
+          "ProjectId": 42629,
+          "No": "T-42629-13080003",
+          "IdWithinEntity": 0,
+          "Name": "The idea of the product description",
+          "KindId": 3,
+          "Category": "Task",
+          "StartDate": "2026-01-13T00:00:00Z",
+          "EndDate": "2026-02-24T00:00:00Z",
+          "Duration": 31,
+          "CreationDate": "2026-08-17T17:19:00Z",
+          "UpdatedDate": "2026-08-20T10:45:00Z",
+          "Type": {
+            "Id": 105733,
+            "Name": "Generic",
+            "Default": true
+          },
+          "Status": {
+            "Id": 101744,
+            "Name": "To do",
+            "Description": null,
+            "KanbanId": 0,
+            "Color": null,
+            "Order": 0,
+            "Date": null,
+            "Type": {
+              "Id": 2,
+              "Name": null,
+              "IsArchive": false,
+              "IsBacklog": false
+            },
+            "IsCompleted": false,
+            "Default": true,
+            "LanguageId": 1
+          },
+          "Priority": {
+            "Id": 69995,
+            "Name": "Normal",
+            "Default": true
+          },
+          "ParentTask": {
+            "Id": 804954,
+            "Name": "Initial projection stage"
+          },
+          "Sprint": null,
+          "Swimlane": null,
+          "Color": null,
+          "Team": {
+            "Managers": [
+              {
+                "ProjectUserId": 178329,
+                "UserId": 33379,
+                "EmailAddress": "torel@globalcorp360.com",
+                "DisplayName": "Travis Orellana",
+                "FirstName": "Travis",
+                "LastName": "Orellana",
+                "Category": "Engineer",
+                "Position": "Production Manager",
+                "Initials": "TO"
+              }
+            ],
+            "TeamMembers": [
+              {
+                "ProjectUserId": 178331,
+                "UserId": 33374,
+                "EmailAddress": "damar@globalcorp360.com",
+                "DisplayName": "David Martin",
+                "FirstName": "David",
+                "LastName": "Martin",
+                "Category": "Engineer",
+                "Position": "Production Manager",
+                "Initials": "DM"
+              }
+            ]
+          },
+          "Creator": {
+            "UserId": 33373,
+            "EmailAddress": "soporte@itmplatform.com",
+            "DisplayName": "ITM Platform Support",
+            "FirstName": null,
+            "LastName": null,
+            "Category": "Technical support",
+            "Position": "ITM Platform Support",
+            "Initials": ""
+          },
+          "Assessment": {
+            "Id": 27656,
+            "Name": "Good",
+            "Icon": "https://demo.itmplatform.com/App_Themes/Default/Images/Green.png",
+            "AccountId": 3470
+          },
+          "Expected": 100,
+          "Completed": 95,
+          "Deviation": -5,
+          "OverAllocation": false,
+          "Efforts": {
+            "Estimated": "102:00",
+            "Actual": "00:00"
+          },
+          "AssignedEffort": "00:00",
+          "ActualEffortTimeEntry": "00:00",
+          "Costs": {
+            "ActualCost": 4992.75,
+            "PlannedCost": 5530,
+            "ActualPurchase": 0
+          },
+          "Revenues": {
+            "Planned": 0,
+            "Actual": 0
+          },
+          "Price": {
+            "Amount": 0,
+            "CurrencyId": 0,
+            "ExchangeRate": 1,
+            "AppliedDate": "",
+            "BaseAmount": 6490
+          },
+          "ProjectedPurchaseCost": 0,
+          "ActiveBaseline": null,
+          "Position": 0,
+          "DisplayInPortfolio": false,
+          "FavouriteId": -1,
+          "SchedulingMode": "Normal",
+          "ManuallyScheduled": true,
+          "EffortDriven": false,
+          "ConstraintType": null,
+          "ConstraintDate": null,
+          "Rollup": false,
+          "HasPurchases": false,
+          "HasRevenues": false,
+          "HasRisks": false,
+          "HasIssues": false,
+          "HasTimeEntries": false,
+          "HasUsers": true,
+          "HasEfforts": true,
+          "HasDocuments": false,
+          "CanBeSoftDeleted": true,
+          "AllCustomFields": {}
+        },
+        {
+          "Id": 804955,
+          "ProjectId": 42629,
+          "No": "T-42629-13080002",
+          "IdWithinEntity": 0,
+          "Name": "Identified product opportunity",
+          "KindId": 1,
+          "Category": "Milestone",
+          "StartDate": "",
+          "EndDate": "2026-01-01T00:00:00Z",
+          "Duration": 0,
+          "Type": null,
+          "Status": {
+            "Id": 101747,
+            "Name": "Completed",
+            "IsCompleted": true
+          },
+          "Priority": null,
+          "ParentTask": {
+            "Id": 804954,
+            "Name": "Initial projection stage"
+          },
+          "Sprint": null,
+          "Color": null,
+          "CanBeSoftDeleted": true,
+          "AllCustomFields": {}
+        }
+      ]
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "create_task": {
+    "method": "POST",
+    "path": "/Projects/{ProjectId}/Tasks",
+    "v2": true,
+    "config": {
+      "operation": "create_task",
+      "project_id": 43407,
+      "name": "API Integration Development",
+      "details": "Develop REST API integrations with third-party services",
+      "display_in_portfolio": true,
+      "type_name": "Task",
+      "priority_name": "High",
+      "status_name": "To Do",
+      "parent_id": "",
+      "swimlane_name": "Swimlane default",
+      "start_date": "2026-03-01",
+      "end_date": "2026-03-31"
+    },
+    "response": {
+      "Id": 131461,
+      "StatusMessage": "Task created successfully",
+      "StatusCode": 200
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "get_task": {
+    "method": "GET",
+    "path": "/Projects/{ProjectId}/Tasks/{TaskId}",
+    "v2": false,
+    "config": {
+      "operation": "get_task",
+      "project_id": 43407,
+      "task_id": 131459
+    },
+    "response": {
+      "Id": 804954,
+      "ProjectId": 42629,
+      "No": "T-42629-13080001",
+      "Name": "Initial projection stage",
+      "Details": "All project activities are organized into tasks...",
+      "KindId": 2,
+      "RevenueMilestone": false,
+      "StartDate": "2026-01-01T00:00:00Z",
+      "EndDate": "2026-02-11T00:00:00Z",
+      "Duration": 30,
+      "Type": null,
+      "Status": {
+        "Id": 101747,
+        "Name": "Completed",
+        "Description": null,
+        "KanbanId": 0,
+        "Color": null,
+        "Order": 0,
+        "Date": null,
+        "Type": {
+          "Id": 3,
+          "Name": null,
+          "IsArchive": false,
+          "IsBacklog": false
+        },
+        "IsCompleted": true,
+        "Default": false,
+        "LanguageId": 1
+      },
+      "Priority": null,
+      "ParentTask": null,
+      "DisplayInPortfolio": false,
+      "Swimlane": null,
+      "Sprint": null,
+      "FavouriteId": -1,
+      "HasPurchases": false,
+      "HasRevenues": false,
+      "HasRisks": false,
+      "HasIssues": false,
+      "HasTimeEntries": false,
+      "HasUsers": false,
+      "HasEfforts": false,
+      "HasDocuments": true,
+      "CanBeSoftDeleted": true
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "update_task": {
+    "method": "PATCH",
+    "path": "/Projects/{ProjectId}/Tasks/{TaskId}",
+    "v2": true,
+    "config": {
+      "operation": "update_task",
+      "project_id": 43407,
+      "task_id": 131459,
+      "name": "Design Phase - Revised",
+      "details": "Updated design phase with additional UX review requirements",
+      "display_in_portfolio": true,
+      "start_date": "2026-01-15",
+      "end_date": "2026-02-28"
+    },
+    "response": {
+      "Id": 131459,
+      "StatusMessage": "Task updated successfully",
+      "StatusCode": 200
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "delete_task": {
+    "method": "DELETE",
+    "path": "/Projects/{ProjectId}/Tasks/{TaskId}",
+    "v2": true,
+    "config": {
+      "operation": "delete_task",
+      "project_id": 43407,
+      "task_id": 55713
+    },
+    "response": {
+      "Id": 131459,
+      "StatusMessage": "Tasks deleted successfully",
+      "StatusCode": 200
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "list_users": {
+    "method": "GET",
+    "path": "/users",
+    "v2": false,
+    "config": {
+      "operation": "list_users"
+    },
+    "response": [
+      {
+        "UserId": 33373,
+        "AccountId": 3470,
+        "DisplayName": "ITM Platform Support",
+        "FirstName": "Support",
+        "LastName": "ITM Platform",
+        "UserName": "soporte@itmplatform.com",
+        "Photo": "UploadData/PHOTO/32by32_33373.jpg",
+        "LanguageId": 1,
+        "DepartmentId": 0,
+        "IsActive": true,
+        "GroupId": 0,
+        "CurrentPosition": "ITM Platform Support",
+        "ProviderName": "",
+        "ProviderId": 0,
+        "CategoryName": "Technical support",
+        "CategoryId": 15358,
+        "DepartmentName": "",
+        "LanguageName": "English",
+        "StandardWorkingHoursName": "Default",
+        "StandardWorkingHoursId": 3489,
+        "UserRole": "",
+        "UserLicense": "",
+        "UserGroup": "",
+        "IsNonLoginUser": false,
+        "UserEmail": "soporte@itmplatform.com",
+        "PersonnelNumber": ""
+      },
+      {
+        "UserId": 33374,
+        "AccountId": 3470,
+        "DisplayName": "David Martin",
+        "FirstName": "David",
+        "LastName": "Martin",
+        "UserName": "damar@globalcorp360.com",
+        "Photo": "UploadData/PHOTO/32by32_33374.jpg",
+        "LanguageId": 2,
+        "DepartmentId": 15484,
+        "IsActive": true,
+        "CurrentPosition": "Production Manager",
+        "CategoryName": "Engineer",
+        "CategoryId": 15354,
+        "DepartmentName": "Production",
+        "LanguageName": "Spanish",
+        "UserRole": "Full Access",
+        "UserLicense": "Full Access",
+        "IsNonLoginUser": false,
+        "UserEmail": "damar@globalcorp360.com"
+      }
+    ],
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "get_user": {
+    "method": "GET",
+    "path": "/users/{UserId}",
+    "v2": true,
+    "config": {
+      "operation": "get_user",
+      "user_id": 33382
+    },
+    "response": {
+      "UserId": 33382,
+      "AccountId": 3470,
+      "EmailAddress": "demo@globalcorp360.com",
+      "DisplayName": "Full Access",
+      "StandardWorkHourId": 3489,
+      "FirstName": "Full",
+      "LastName": "Access",
+      "Initials": "FA",
+      "IsNonLoginUser": false,
+      "DefaultLanguage": "English",
+      "IsActive": true,
+      "DateFormatTypeId": 0,
+      "NumberFormatId": 0,
+      "FirstDayOfWeek": -1,
+      "NotifyViaEmailForNewTask": false,
+      "NotifyViaEmailForUpdatedTask": false,
+      "TimeEntryType": 0,
+      "Groups": [
+        {
+          "UserId": 0,
+          "GroupId": 9441
+        }
+      ],
+      "Roles": [
+        {
+          "Id": 12595,
+          "Name": "Full Access",
+          "LicenseId": 3,
+          "License": {
+            "Id": 3,
+            "IsProjectManagerLicense": true,
+            "InternalLicenseName": "Full Access (PPM)",
+            "PublicLicenseName": "Full Access"
+          }
+        }
+      ],
+      "CountryId": 0,
+      "Category": "Controller",
+      "Department": "Project Office",
+      "Position": "Demo"
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "list_clients": {
+    "method": "GET",
+    "path": "/clients",
+    "v2": false,
+    "config": {
+      "operation": "list_clients"
+    },
+    "response": {
+      "total": 3,
+      "pagerid": "2d0ac199-e330-4df8-8257-aae2d989e66c",
+      "page": 0,
+      "pageSize": 3,
+      "list": [
+        {
+          "Id": 5740,
+          "AccountId": 3470,
+          "Name": "Buyers Corp.",
+          "StreetAddress": "Central Street",
+          "City": "Metropolis",
+          "State": "Lateral District",
+          "Zipcode": "",
+          "EmailAddress": "buyers@central.cli",
+          "Phone": "778 9765 436",
+          "Fax": "",
+          "Website": "",
+          "CreatedDate": "2025-08-10T11:02:24Z",
+          "Photo": "UploadData\\CLIENT_LOGO\\5740.png",
+          "Year": 0,
+          "UserId": 1,
+          "LanguageId": 33382,
+          "ActualMargin": -1523000,
+          "PlannedMargin": -1586979.25,
+          "TotalActualAmountBudget": 897000,
+          "TotalAmountBudget": 2420000,
+          "TotalPlannedCostBudget": 2019240,
+          "TotalActualCostBudget": 432260.75,
+          "ContactName": "",
+          "ContactEmailAddress": "",
+          "ContactPhone": "",
+          "ContactMobile": "",
+          "ContactFax": ""
+        },
+        {
+          "Id": 5742,
+          "AccountId": 3470,
+          "Name": "Government",
+          "StreetAddress": "Avenida principal, 1",
+          "City": "Centro",
+          "State": "Central",
+          "Zipcode": "00001",
+          "EmailAddress": "central@globalcorp360.com",
+          "Phone": "",
+          "Fax": "",
+          "Website": "",
+          "CreatedDate": "2026-01-26T17:55:29Z",
+          "Photo": "UploadData\\CLIENT_LOGO\\5742.png",
+          "Year": 0,
+          "UserId": 1,
+          "LanguageId": 33382,
+          "ActualMargin": -1240000,
+          "PlannedMargin": -984095.5,
+          "TotalActualAmountBudget": 660000,
+          "TotalAmountBudget": 1900000,
+          "TotalPlannedCostBudget": 1222800,
+          "TotalActualCostBudget": 238704.5,
+          "ContactName": "",
+          "ContactEmailAddress": "",
+          "ContactPhone": "",
+          "ContactMobile": "",
+          "ContactFax": ""
+        }
+      ]
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "search_services": {
+    "method": "POST",
+    "path": "/Services/Search",
+    "v2": true,
+    "config": {
+      "operation": "search_services",
+      "filter": {
+        "Name": {
+          "$regex": "Support"
+        }
+      },
+      "columns": [
+        "Id",
+        "Name",
+        "StartDate",
+        "EndDate",
+        "StatusId"
+      ]
+    },
+    "response": {},
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "create_service": {
+    "method": "POST",
+    "path": "/Services",
+    "v2": true,
+    "config": {
+      "operation": "create_service",
+      "name": "IT Infrastructure Support",
+      "description": "IT infrastructure monitoring, support and maintenance services",
+      "type_id": 8333,
+      "external_client_id": 0,
+      "priority_id": 7893,
+      "start_date": "2026-01-01T00:00:00Z",
+      "end_date": "2026-12-31T00:00:00Z",
+      "sponsor_id": 33382,
+      "internal_code": "SVC-IT-2026",
+      "internal_cost_center": "IT-500"
+    },
+    "response": {
+      "Id": 1135,
+      "StatusMessage": "Service inserted successfully.",
+      "StatusCode": 201
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "get_service": {
+    "method": "GET",
+    "path": "/Services/{ServiceId}",
+    "v2": true,
+    "config": {
+      "operation": "get_service",
+      "service_id": 6048
+    },
+    "response": {},
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "update_service": {
+    "method": "PATCH",
+    "path": "/Services/{ServiceId}",
+    "v2": true,
+    "config": {
+      "operation": "update_service",
+      "service_id": 6048,
+      "name": "IT Infrastructure Support - Extended",
+      "end_date": "2027-06-30T00:00:00Z",
+      "internal_cost_center": "IT-600"
+    },
+    "response": {
+      "Id": 6048,
+      "StatusMessage": "Service updated successfully.",
+      "StatusCode": 200
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "get_timesheet": {
+    "method": "GET",
+    "path": "/timehours/",
+    "v2": false,
+    "config": {
+      "operation": "get_timesheet",
+      "start_date": "2026-07-01",
+      "end_date": "2026-07-31"
+    },
+    "response": {
+      "Timeframe": {
+        "PeriodStart": "2026-01-01",
+        "PeriodEnd": "2026-01-31"
+      },
+      "User": {
+        "UserId": 33382,
+        "PersonnelNumber": "",
+        "DisplayName": "Full Access",
+        "UserPicture32x32": ""
+      },
+      "WorkingHours": [
+        {
+          "Date": "2026-01-01",
+          "WorkingHoursDay": "8:00",
+          "NonWorkingDay": false
+        },
+        {
+          "Date": "2026-01-02",
+          "WorkingHoursDay": "8:00",
+          "NonWorkingDay": false
+        },
+        {
+          "Date": "2026-01-03",
+          "WorkingHoursDay": "0:00",
+          "NonWorkingDay": true
+        }
+      ],
+      "TimeReports": [
+        {
+          "Type": "Waterfall Project",
+          "EntityNo": "PR-3470-13080002",
+          "Completed": false,
+          "EntityId": 42630,
+          "Name": "New flagship product",
+          "IsManager": false,
+          "OrderOnList": 0,
+          "WorkItems": [
+            {
+              "Type": "Task",
+              "WorkItemNo": "T-42630-13080006",
+              "Completed": false,
+              "WorkItemId": 805025,
+              "Name": "Allocate resources for development stage",
+              "IsManager": false,
+              "ProgressReportAllowed": false,
+              "CommentsAllowed": true,
+              "PreviousHoursAccum": "0:00",
+              "TimeEntries": [
+                {
+                  "Date": "2026-01-01",
+                  "EditingAllowed": false,
+                  "TimeEntryAllowed": true,
+                  "EstimatedHours": "4:00",
+                  "ReportedHours": "2:30",
+                  "UserComments": {
+                    "UserComment": "Completed requirements analysis",
+                    "UserCommentDate": "2026-01-01T17:30:00"
+                  },
+                  "Approval": null,
+                  "NonBillableMins": "0:00",
+                  "BillingCategoryId": 15353
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "set_time_entries": {
+    "method": "POST",
+    "path": "/timehours/",
+    "v2": false,
+    "config": {
+      "operation": "set_time_entries",
+      "user_id": 33382,
+      "time_reports": [
+        {
+          "entity_id": 55713,
+          "work_item_id": 131459,
+          "date": "2026-02-03",
+          "reported_hours": "4:00",
+          "user_comment": "Design review and documentation",
+          "billing_category_id": 15353,
+          "non_billable_mins": "0"
+        },
+        {
+          "entity_id": 55713,
+          "work_item_id": 131460,
+          "date": "2026-02-03",
+          "reported_hours": "3:30",
+          "user_comment": "API development and testing"
+        }
+      ]
+    },
+    "response": {
+      "StatusMessage": "Time entries done successfully.",
+      "StatusCode": 200
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  },
+  "list_programs": {
+    "method": "GET",
+    "path": "/programs",
+    "v2": true,
+    "config": {
+      "operation": "list_programs"
+    },
+    "response": {
+      "total": 2,
+      "pagerid": "8f6bc658-4021-45af-ace2-4a827644776b",
+      "page": 0,
+      "pageSize": 2,
+      "list": [
+        {
+          "AccountId": 3470,
+          "IsActive": true,
+          "UserId": 33382,
+          "LanguageId": 1,
+          "Id": 4125,
+          "Name": "Program: Growth projects",
+          "Description": "A program is a set of related projects and services managed in coordination to obtain benefits and control which would not be possible through individual management.",
+          "No": "PG-3470-13090001",
+          "StartDate": "2025-12-31T00:00:00Z",
+          "EndDate": "2027-08-15T00:00:00Z",
+          "Code": "",
+          "Active": true,
+          "GeneralCostBudget": 0,
+          "GeneralEstHours": 1000,
+          "ExtEstHour": 0,
+          "ProgramInternalHour": 6000,
+          "TotalEstHours": 7000,
+          "PurchasesBudget": 5650000,
+          "ExternalCost": 0,
+          "InternalCostBudget": 252000,
+          "TotalBudget": 5902000,
+          "TotalEstBudget": 252000,
+          "DueDate": false,
+          "Stakeholders": "Travis Orellana, ",
+          "BusinessGoals": "Two-yearly plan - New product range launch, Two-yearly plan - Grow sales by 20%, ",
+          "FiscalYear": 2026,
+          "ManagerName": "Full Access, ",
+          "Position": 0,
+          "Priority": {
+            "Id": 24770,
+            "Name": "High",
+            "Icon": "https://demo.itmplatform.com/UploadData/Iconlibrary/flag.png"
+          },
+          "Status": {
+            "Id": 41296,
+            "Name": "In Progress",
+            "Icon": "https://demo.itmplatform.com/UploadData/Iconlibrary/chart-up-color.png"
+          },
+          "Type": {
+            "Id": 24821,
+            "Name": "IT Change",
+            "Icon": "https://demo.itmplatform.com/UploadData/Iconlibrary/node-select-all.png"
+          },
+          "AllCustomFields": {}
+        },
+        {
+          "AccountId": 3470,
+          "IsActive": true,
+          "UserId": 33382,
+          "LanguageId": 1,
+          "Id": 4126,
+          "Name": "Internal improvement initiatives",
+          "No": "PG-3470-13090002",
+          "StartDate": "2025-12-01T00:00:00Z",
+          "Active": true,
+          "AllCustomFields": {}
+        }
+      ]
+    },
+    "source": "https://developers.itmplatform.com/documentation/openapi.json"
+  }
+}
