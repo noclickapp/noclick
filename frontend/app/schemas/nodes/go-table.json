@@ -1,0 +1,1394 @@
+{
+  "$defs": {
+    "GoTableAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "go_table_api_token",
+          "default": "go_table_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "minLength": 1,
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Go Table API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste your Go Table API token. NoClick sends it as a bearer token to gotable.app and lists your accessible restaurants to check the connection.",
+      "x-credential-url": "https://gotable.app/api/docs/v1"
+    },
+    "GoTableCancelReservationConfig": {
+      "additionalProperties": false,
+      "description": "Cancel a reservation.",
+      "properties": {
+        "operation": {
+          "const": "cancel_reservation",
+          "default": "cancel_reservation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "role": {
+          "default": "restaurant",
+          "description": "Role used for reservation email and SMS notifications.",
+          "enum": [
+            "restaurant",
+            "guest"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "skip_email": {
+          "default": false,
+          "description": "Set true to suppress the provider notification.",
+          "title": "Skip Email",
+          "type": "boolean"
+        },
+        "skip_sms": {
+          "default": false,
+          "description": "Set true to suppress the provider notification.",
+          "title": "Skip Sms",
+          "type": "boolean"
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "reservation_id": {
+          "minimum": 1,
+          "title": "Reservation Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "restaurant_id",
+        "reservation_id"
+      ],
+      "title": "GoTableCancelReservationConfig",
+      "type": "object"
+    },
+    "GoTableCreateGuestConfig": {
+      "additionalProperties": false,
+      "description": "Create a guest.",
+      "properties": {
+        "operation": {
+          "const": "create_guest",
+          "default": "create_guest",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Guest's name",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Guest's email address",
+          "title": "Email"
+        },
+        "telephone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Guest's telephone number",
+          "title": "Telephone"
+        },
+        "subscribed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the guest may receive the newsletter",
+          "title": "Subscribed"
+        }
+      },
+      "required": [
+        "restaurant_id",
+        "name"
+      ],
+      "title": "GoTableCreateGuestConfig",
+      "type": "object"
+    },
+    "GoTableCreateReservationConfig": {
+      "additionalProperties": false,
+      "description": "Create a new reservation.",
+      "properties": {
+        "operation": {
+          "const": "create_reservation",
+          "default": "create_reservation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "role": {
+          "default": "restaurant",
+          "description": "Role used for reservation email and SMS notifications.",
+          "enum": [
+            "restaurant",
+            "guest"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "skip_email": {
+          "default": false,
+          "description": "Set true to suppress the provider notification.",
+          "title": "Skip Email",
+          "type": "boolean"
+        },
+        "skip_sms": {
+          "default": false,
+          "description": "Set true to suppress the provider notification.",
+          "title": "Skip Sms",
+          "type": "boolean"
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "Reservation",
+                "WalkIn"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to \"WalkIn\" for walk-in reservations. For walk-ins, date/time defaults to current if not provided.",
+          "title": "Type",
+          "enum": [
+            "Reservation",
+            "WalkIn"
+          ],
+          "x-enum-searchable": true
+        },
+        "offer_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The (optional) ID of the offer we want to book this reservation for.",
+          "title": "Offer Id"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for reservations without a type or \"Reservation\" type. Can be omitted for \"WalkIn\" reservations.",
+          "title": "Date"
+        },
+        "time": {
+          "anyOf": [
+            {
+              "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time (HH:MM) of reservation. Required for reservations without a type or \"Reservation\" type.",
+          "title": "Time"
+        },
+        "party_size": {
+          "description": "Number of guests in the party.",
+          "minimum": 1,
+          "title": "Party Size",
+          "type": "integer"
+        },
+        "guest_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary guest's name",
+          "title": "Guest Name"
+        },
+        "guest_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary guest's email address",
+          "title": "Guest Email"
+        },
+        "guest_telephone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary guest's telephone",
+          "title": "Guest Telephone"
+        },
+        "comments": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary guest's comments for the reservation.",
+          "title": "Comments"
+        },
+        "duration_in_minutes": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The duration of the reservation in minutes",
+          "title": "Duration In Minutes"
+        },
+        "table_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An array of table IDs to assign to this reservation. Ignored when `role=guest`.",
+          "title": "Table Ids"
+        },
+        "table_lock": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to `true` to pin the assigned tables and prevent auto-assignment. Ignored when `role=guest`.",
+          "title": "Table Lock"
+        }
+      },
+      "required": [
+        "restaurant_id",
+        "party_size"
+      ],
+      "title": "GoTableCreateReservationConfig",
+      "type": "object"
+    },
+    "GoTableCreateReservationNoteConfig": {
+      "additionalProperties": false,
+      "description": "Create a new reservation note.",
+      "properties": {
+        "operation": {
+          "const": "create_reservation_note",
+          "default": "create_reservation_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "reservation_id": {
+          "minimum": 1,
+          "title": "Reservation Id",
+          "type": "integer"
+        },
+        "content": {
+          "description": "The HTML contents of the note.",
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "author_id": {
+          "description": "The unique ID of an account that has access to the restaurant.",
+          "minimum": 1,
+          "title": "Author Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "restaurant_id",
+        "reservation_id",
+        "content",
+        "author_id"
+      ],
+      "title": "GoTableCreateReservationNoteConfig",
+      "type": "object"
+    },
+    "GoTableGetCombinationConfig": {
+      "additionalProperties": false,
+      "description": "Find a table combination by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_combination",
+          "default": "get_combination",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "combination_id": {
+          "minimum": 1,
+          "title": "Combination Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "restaurant_id",
+        "combination_id"
+      ],
+      "title": "GoTableGetCombinationConfig",
+      "type": "object"
+    },
+    "GoTableGetGuestConfig": {
+      "additionalProperties": false,
+      "description": "Find a guest by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_guest",
+          "default": "get_guest",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "guest_id": {
+          "minimum": 1,
+          "title": "Guest Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "restaurant_id",
+        "guest_id"
+      ],
+      "title": "GoTableGetGuestConfig",
+      "type": "object"
+    },
+    "GoTableGetOfferAvailabilityConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve availability for the given offer.",
+      "properties": {
+        "operation": {
+          "const": "get_offer_availability",
+          "default": "get_offer_availability",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "offer_id": {
+          "minimum": 1,
+          "title": "Offer Id",
+          "type": "integer"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date or datetime boundary.",
+          "title": "From Date"
+        },
+        "till": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date or datetime boundary.",
+          "title": "Till"
+        }
+      },
+      "required": [
+        "restaurant_id",
+        "offer_id"
+      ],
+      "title": "GoTableGetOfferAvailabilityConfig",
+      "type": "object"
+    },
+    "GoTableGetOfferConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve the information about a specific restaurant's offer.",
+      "properties": {
+        "operation": {
+          "const": "get_offer",
+          "default": "get_offer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "offer_id": {
+          "minimum": 1,
+          "title": "Offer Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "restaurant_id",
+        "offer_id"
+      ],
+      "title": "GoTableGetOfferConfig",
+      "type": "object"
+    },
+    "GoTableGetReservationConfig": {
+      "additionalProperties": false,
+      "description": "Find a reservation by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_reservation",
+          "default": "get_reservation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "reservation_id": {
+          "minimum": 1,
+          "title": "Reservation Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "restaurant_id",
+        "reservation_id"
+      ],
+      "title": "GoTableGetReservationConfig",
+      "type": "object"
+    },
+    "GoTableGetRestaurantAvailabilityConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve availability for the given restaurant.",
+      "properties": {
+        "operation": {
+          "const": "get_restaurant_availability",
+          "default": "get_restaurant_availability",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date or datetime boundary.",
+          "title": "From Date"
+        },
+        "till": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date or datetime boundary.",
+          "title": "Till"
+        }
+      },
+      "required": [
+        "restaurant_id"
+      ],
+      "title": "GoTableGetRestaurantAvailabilityConfig",
+      "type": "object"
+    },
+    "GoTableGetRestaurantConfig": {
+      "additionalProperties": false,
+      "description": "Find a restaurant by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_restaurant",
+          "default": "get_restaurant",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "restaurant_id"
+      ],
+      "title": "GoTableGetRestaurantConfig",
+      "type": "object"
+    },
+    "GoTableGetTableConfig": {
+      "additionalProperties": false,
+      "description": "Find a table by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_table",
+          "default": "get_table",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "table_id": {
+          "minimum": 1,
+          "title": "Table Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "restaurant_id",
+        "table_id"
+      ],
+      "title": "GoTableGetTableConfig",
+      "type": "object"
+    },
+    "GoTableListAccountsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a paginated list of accounts that have access to the restaurant.",
+      "properties": {
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per call; use next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "One page per call; use next_page to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "restaurant_id"
+      ],
+      "title": "GoTableListAccountsConfig",
+      "type": "object"
+    },
+    "GoTableListCombinationsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a paginated list of a restaurant's table combinations.",
+      "properties": {
+        "operation": {
+          "const": "list_combinations",
+          "default": "list_combinations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per call; use next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "One page per call; use next_page to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "restaurant_id"
+      ],
+      "title": "GoTableListCombinationsConfig",
+      "type": "object"
+    },
+    "GoTableListGuestsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a paginated list of guests.",
+      "properties": {
+        "operation": {
+          "const": "list_guests",
+          "default": "list_guests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per call; use next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "One page per call; use next_page to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        }
+      },
+      "required": [
+        "restaurant_id"
+      ],
+      "title": "GoTableListGuestsConfig",
+      "type": "object"
+    },
+    "GoTableListOffersConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a paginated list of a restaurant's offers.",
+      "properties": {
+        "operation": {
+          "const": "list_offers",
+          "default": "list_offers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per call; use next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "One page per call; use next_page to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "restaurant_id"
+      ],
+      "title": "GoTableListOffersConfig",
+      "type": "object"
+    },
+    "GoTableListReservationNotesConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a list of reservation notes.",
+      "properties": {
+        "operation": {
+          "const": "list_reservation_notes",
+          "default": "list_reservation_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "reservation_id": {
+          "minimum": 1,
+          "title": "Reservation Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "restaurant_id",
+        "reservation_id"
+      ],
+      "title": "GoTableListReservationNotesConfig",
+      "type": "object"
+    },
+    "GoTableListReservationsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a paginated list of reservations.",
+      "properties": {
+        "operation": {
+          "const": "list_reservations",
+          "default": "list_reservations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per call; use next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "One page per call; use next_page to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        }
+      },
+      "required": [
+        "restaurant_id"
+      ],
+      "title": "GoTableListReservationsConfig",
+      "type": "object"
+    },
+    "GoTableListRestaurantsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a list of accessible restaurants.",
+      "properties": {
+        "operation": {
+          "const": "list_restaurants",
+          "default": "list_restaurants",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per call; use next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "One page per call; use next_page to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "GoTableListRestaurantsConfig",
+      "type": "object"
+    },
+    "GoTableListReviewsConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a paginated list of a restaurant's reviews.",
+      "properties": {
+        "operation": {
+          "const": "list_reviews",
+          "default": "list_reviews",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per call; use next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "One page per call; use next_page to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "restaurant_id"
+      ],
+      "title": "GoTableListReviewsConfig",
+      "type": "object"
+    },
+    "GoTableListTablesConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a paginated list of a restaurant's tables.",
+      "properties": {
+        "operation": {
+          "const": "list_tables",
+          "default": "list_tables",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "page": {
+          "default": 1,
+          "description": "One page per call; use next_page to continue.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 20,
+          "description": "One page per call; use next_page to continue.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "restaurant_id"
+      ],
+      "title": "GoTableListTablesConfig",
+      "type": "object"
+    },
+    "GoTableUpdateGuestConfig": {
+      "additionalProperties": false,
+      "description": "Update a guest.",
+      "properties": {
+        "operation": {
+          "const": "update_guest",
+          "default": "update_guest",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "guest_id": {
+          "minimum": 1,
+          "title": "Guest Id",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Guest's name",
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Guest's email address",
+          "title": "Email"
+        },
+        "telephone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Guest's telephone number",
+          "title": "Telephone"
+        },
+        "subscribed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the guest may receive the newsletter",
+          "title": "Subscribed"
+        }
+      },
+      "required": [
+        "restaurant_id",
+        "guest_id"
+      ],
+      "title": "GoTableUpdateGuestConfig",
+      "type": "object"
+    },
+    "GoTableUpdateReservationConfig": {
+      "additionalProperties": false,
+      "description": "Update a reservation's details.",
+      "properties": {
+        "operation": {
+          "const": "update_reservation",
+          "default": "update_reservation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "restaurant_id": {
+          "minimum": 1,
+          "title": "Restaurant Id",
+          "type": "integer"
+        },
+        "reservation_id": {
+          "minimum": 1,
+          "title": "Reservation Id",
+          "type": "integer"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for reservations without a type or \"Reservation\" type. Can be omitted for \"WalkIn\" reservations.",
+          "title": "Date"
+        },
+        "time": {
+          "anyOf": [
+            {
+              "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time (HH:MM) of reservation. Required for reservations without a type or \"Reservation\" type.",
+          "title": "Time"
+        },
+        "party_size": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of guests in the party.",
+          "title": "Party Size"
+        },
+        "guest_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary guest's name",
+          "title": "Guest Name"
+        },
+        "guest_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary guest's email address",
+          "title": "Guest Email"
+        },
+        "guest_telephone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary guest's telephone",
+          "title": "Guest Telephone"
+        },
+        "comments": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary guest's comments for the reservation.",
+          "title": "Comments"
+        },
+        "duration_in_minutes": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The duration of the reservation in minutes",
+          "title": "Duration In Minutes"
+        },
+        "table_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IDs of tables to assign to this reservation. Any ID that doesn't belong to this restaurant is silently dropped.",
+          "title": "Table Ids"
+        },
+        "table_lock": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to true to pin the assigned tables and prevent auto-reassignment.",
+          "title": "Table Lock"
+        }
+      },
+      "required": [
+        "restaurant_id",
+        "reservation_id"
+      ],
+      "title": "GoTableUpdateReservationConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_reservation": "#/$defs/GoTableCancelReservationConfig",
+          "create_guest": "#/$defs/GoTableCreateGuestConfig",
+          "create_reservation": "#/$defs/GoTableCreateReservationConfig",
+          "create_reservation_note": "#/$defs/GoTableCreateReservationNoteConfig",
+          "get_combination": "#/$defs/GoTableGetCombinationConfig",
+          "get_guest": "#/$defs/GoTableGetGuestConfig",
+          "get_offer": "#/$defs/GoTableGetOfferConfig",
+          "get_offer_availability": "#/$defs/GoTableGetOfferAvailabilityConfig",
+          "get_reservation": "#/$defs/GoTableGetReservationConfig",
+          "get_restaurant": "#/$defs/GoTableGetRestaurantConfig",
+          "get_restaurant_availability": "#/$defs/GoTableGetRestaurantAvailabilityConfig",
+          "get_table": "#/$defs/GoTableGetTableConfig",
+          "list_accounts": "#/$defs/GoTableListAccountsConfig",
+          "list_combinations": "#/$defs/GoTableListCombinationsConfig",
+          "list_guests": "#/$defs/GoTableListGuestsConfig",
+          "list_offers": "#/$defs/GoTableListOffersConfig",
+          "list_reservation_notes": "#/$defs/GoTableListReservationNotesConfig",
+          "list_reservations": "#/$defs/GoTableListReservationsConfig",
+          "list_restaurants": "#/$defs/GoTableListRestaurantsConfig",
+          "list_reviews": "#/$defs/GoTableListReviewsConfig",
+          "list_tables": "#/$defs/GoTableListTablesConfig",
+          "update_guest": "#/$defs/GoTableUpdateGuestConfig",
+          "update_reservation": "#/$defs/GoTableUpdateReservationConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoTableListRestaurantsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableGetRestaurantConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableListAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableListReservationsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableGetReservationConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableListGuestsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableGetGuestConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableListOffersConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableGetOfferConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableListTablesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableGetTableConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableListCombinationsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableGetCombinationConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableListReviewsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableCreateGuestConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableUpdateGuestConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableCreateReservationConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableUpdateReservationConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableCancelReservationConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableListReservationNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableCreateReservationNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableGetRestaurantAvailabilityConfig"
+        },
+        {
+          "$ref": "#/$defs/GoTableGetOfferAvailabilityConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoTableAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Go-table Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
