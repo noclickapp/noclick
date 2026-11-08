@@ -1,0 +1,682 @@
+{
+  "$defs": {
+    "NewRelicCreateAlertPolicyConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_alert_policy",
+          "default": "create_alert_policy",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Create Alert Policy"
+        },
+        "account_id": {
+          "minimum": 1,
+          "title": "Account Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "account_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "policy_name": {
+          "minLength": 1,
+          "title": "Policy Name",
+          "type": "string"
+        },
+        "incident_preference": {
+          "default": "PER_POLICY",
+          "enum": [
+            "PER_POLICY",
+            "PER_CONDITION",
+            "PER_CONDITION_AND_TARGET"
+          ],
+          "title": "Incident Preference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id",
+        "policy_name"
+      ],
+      "title": "NewRelicCreateAlertPolicyConfig",
+      "type": "object"
+    },
+    "NewRelicCreateDashboardConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_dashboard",
+          "default": "create_dashboard",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Create Dashboard"
+        },
+        "account_id": {
+          "minimum": 1,
+          "title": "Account Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "account_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dashboard_json": {
+          "title": "Dashboard Configuration (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "account_id",
+        "dashboard_json"
+      ],
+      "title": "NewRelicCreateDashboardConfig",
+      "type": "object"
+    },
+    "NewRelicDeleteAlertPolicyConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_alert_policy",
+          "default": "delete_alert_policy",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Delete Alert Policy"
+        },
+        "account_id": {
+          "minimum": 1,
+          "title": "Account Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "account_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "policy_id": {
+          "minLength": 1,
+          "title": "Policy Id",
+          "type": "string"
+        },
+        "confirm_delete": {
+          "description": "Required for deletion operations.",
+          "title": "Confirm deletion",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "account_id",
+        "policy_id",
+        "confirm_delete"
+      ],
+      "title": "NewRelicDeleteAlertPolicyConfig",
+      "type": "object"
+    },
+    "NewRelicDeleteDashboardConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_dashboard",
+          "default": "delete_dashboard",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Delete Dashboard"
+        },
+        "entity_guid": {
+          "minLength": 1,
+          "title": "Entity Guid",
+          "type": "string"
+        },
+        "confirm_delete": {
+          "description": "Required for deletion operations.",
+          "title": "Confirm deletion",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "entity_guid",
+        "confirm_delete"
+      ],
+      "title": "NewRelicDeleteDashboardConfig",
+      "type": "object"
+    },
+    "NewRelicGetAccountConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "Get Account"
+        },
+        "account_id": {
+          "minimum": 1,
+          "title": "Account Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "account_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "NewRelicGetAccountConfig",
+      "type": "object"
+    },
+    "NewRelicGetApplicationConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_application",
+          "default": "get_application",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "APM",
+          "x-display-name": "Get APM Application"
+        },
+        "application_id": {
+          "minimum": 1,
+          "title": "Application Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "application_id"
+      ],
+      "title": "NewRelicGetApplicationConfig",
+      "type": "object"
+    },
+    "NewRelicGetCurrentUserConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "Get Current User"
+        }
+      },
+      "title": "NewRelicGetCurrentUserConfig",
+      "type": "object"
+    },
+    "NewRelicGetDashboardConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_dashboard",
+          "default": "get_dashboard",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Get Dashboard"
+        },
+        "entity_guid": {
+          "minLength": 1,
+          "title": "Entity Guid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entity_guid"
+      ],
+      "title": "NewRelicGetDashboardConfig",
+      "type": "object"
+    },
+    "NewRelicGetEntityConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_entity",
+          "default": "get_entity",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Entities",
+          "x-display-name": "Get Entity"
+        },
+        "entity_guid": {
+          "minLength": 1,
+          "title": "Entity Guid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entity_guid"
+      ],
+      "title": "NewRelicGetEntityConfig",
+      "type": "object"
+    },
+    "NewRelicListAccountsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "List Accounts"
+        }
+      },
+      "title": "NewRelicListAccountsConfig",
+      "type": "object"
+    },
+    "NewRelicListAlertPoliciesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_alert_policies",
+          "default": "list_alert_policies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "List Alert Policies"
+        },
+        "account_id": {
+          "minimum": 1,
+          "title": "Account Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "account_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "NewRelicListAlertPoliciesConfig",
+      "type": "object"
+    },
+    "NewRelicListApplicationMetricsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_application_metrics",
+          "default": "list_application_metrics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "APM",
+          "x-display-name": "List APM Metrics"
+        },
+        "application_id": {
+          "minimum": 1,
+          "title": "Application Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "application_id"
+      ],
+      "title": "NewRelicListApplicationMetricsConfig",
+      "type": "object"
+    },
+    "NewRelicListApplicationsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_applications",
+          "default": "list_applications",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "APM",
+          "x-display-name": "List APM Applications"
+        }
+      },
+      "title": "NewRelicListApplicationsConfig",
+      "type": "object"
+    },
+    "NewRelicListDashboardsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_dashboards",
+          "default": "list_dashboards",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "List Dashboards"
+        }
+      },
+      "title": "NewRelicListDashboardsConfig",
+      "type": "object"
+    },
+    "NewRelicListDeploymentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_deployments",
+          "default": "list_deployments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "APM",
+          "x-display-name": "List APM Deployments"
+        },
+        "application_id": {
+          "minimum": 1,
+          "title": "Application Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "application_id"
+      ],
+      "title": "NewRelicListDeploymentsConfig",
+      "type": "object"
+    },
+    "NewRelicRenameAlertPolicyConfig": {
+      "properties": {
+        "operation": {
+          "const": "rename_alert_policy",
+          "default": "rename_alert_policy",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Rename Alert Policy"
+        },
+        "account_id": {
+          "minimum": 1,
+          "title": "Account Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "account_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "policy_id": {
+          "minLength": 1,
+          "title": "Policy Id",
+          "type": "string"
+        },
+        "policy_name": {
+          "minLength": 1,
+          "title": "Policy Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id",
+        "policy_id",
+        "policy_name"
+      ],
+      "title": "NewRelicRenameAlertPolicyConfig",
+      "type": "object"
+    },
+    "NewRelicRunNrqlConfig": {
+      "properties": {
+        "operation": {
+          "const": "run_nrql",
+          "default": "run_nrql",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Run NRQL Query"
+        },
+        "account_id": {
+          "minimum": 1,
+          "title": "Account Id",
+          "type": "integer",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "account_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "nrql": {
+          "title": "NRQL Query",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "account_id",
+        "nrql"
+      ],
+      "title": "NewRelicRunNrqlConfig",
+      "type": "object"
+    },
+    "NewRelicSearchEntitiesConfig": {
+      "properties": {
+        "operation": {
+          "const": "search_entities",
+          "default": "search_entities",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Entities",
+          "x-display-name": "Search Entities"
+        },
+        "search_query": {
+          "minLength": 1,
+          "title": "Search Query",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "search_query"
+      ],
+      "title": "NewRelicSearchEntitiesConfig",
+      "type": "object"
+    },
+    "NewRelicUndeleteDashboardConfig": {
+      "properties": {
+        "operation": {
+          "const": "undelete_dashboard",
+          "default": "undelete_dashboard",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Undelete Dashboard"
+        },
+        "entity_guid": {
+          "minLength": 1,
+          "title": "Entity Guid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entity_guid"
+      ],
+      "title": "NewRelicUndeleteDashboardConfig",
+      "type": "object"
+    },
+    "NewRelicUserKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "new_relic_user_key",
+          "default": "new_relic_user_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Create a User key in New Relic's API keys page. License and browser keys cannot query NerdGraph.",
+          "minLength": 1,
+          "title": "User API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "us",
+          "enum": [
+            "us",
+            "eu",
+            "jp"
+          ],
+          "title": "Data Center Region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "New Relic User Key",
+      "type": "object",
+      "x-credential-url": "https://one.newrelic.com/api-keys",
+      "x-help-text": "Use a New Relic User key from the US, EU, or JP data center that hosts your account."
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_alert_policy": "#/$defs/NewRelicCreateAlertPolicyConfig",
+          "create_dashboard": "#/$defs/NewRelicCreateDashboardConfig",
+          "delete_alert_policy": "#/$defs/NewRelicDeleteAlertPolicyConfig",
+          "delete_dashboard": "#/$defs/NewRelicDeleteDashboardConfig",
+          "get_account": "#/$defs/NewRelicGetAccountConfig",
+          "get_application": "#/$defs/NewRelicGetApplicationConfig",
+          "get_current_user": "#/$defs/NewRelicGetCurrentUserConfig",
+          "get_dashboard": "#/$defs/NewRelicGetDashboardConfig",
+          "get_entity": "#/$defs/NewRelicGetEntityConfig",
+          "list_accounts": "#/$defs/NewRelicListAccountsConfig",
+          "list_alert_policies": "#/$defs/NewRelicListAlertPoliciesConfig",
+          "list_application_metrics": "#/$defs/NewRelicListApplicationMetricsConfig",
+          "list_applications": "#/$defs/NewRelicListApplicationsConfig",
+          "list_dashboards": "#/$defs/NewRelicListDashboardsConfig",
+          "list_deployments": "#/$defs/NewRelicListDeploymentsConfig",
+          "rename_alert_policy": "#/$defs/NewRelicRenameAlertPolicyConfig",
+          "run_nrql": "#/$defs/NewRelicRunNrqlConfig",
+          "search_entities": "#/$defs/NewRelicSearchEntitiesConfig",
+          "undelete_dashboard": "#/$defs/NewRelicUndeleteDashboardConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/NewRelicGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicListAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicRunNrqlConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicSearchEntitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicGetEntityConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicListDashboardsConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicGetDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicCreateDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicDeleteDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicUndeleteDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicListAlertPoliciesConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicCreateAlertPolicyConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicRenameAlertPolicyConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicDeleteAlertPolicyConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicListApplicationsConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicGetApplicationConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicListDeploymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/NewRelicListApplicationMetricsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NewRelicUserKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "New-relic Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Run an NRQL query to monitor API error rate",
+    "List New Relic APM applications and their deployments",
+    "Search monitored services and dashboards",
+    "Create a New Relic alert policy"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
