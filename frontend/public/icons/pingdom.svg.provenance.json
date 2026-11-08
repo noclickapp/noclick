@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/pingdom.svg",
+  "source": "https://tmp-new-api-doc.s3-eu-west-1.amazonaws.com/sw-pingdom-logo.svg",
+  "license": "Pingdom trademark; official logo linked by the Pingdom API 3.1 contract at https://docs.pingdom.com/API_3.1.yaml, used to identify this integration",
+  "sha256": "0c6e2a86528336928d3e8fd0544bf675da0543a7736473875e28a756e4906507"
+}
