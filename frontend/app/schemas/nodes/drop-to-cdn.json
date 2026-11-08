@@ -1,0 +1,279 @@
+{
+  "$defs": {
+    "DeleteFile": {
+      "additionalProperties": false,
+      "description": "Permanently delete a file and its public CDN URL.",
+      "properties": {
+        "file_id": {
+          "description": "File ID returned by upload or list files",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_file",
+          "default": "delete_file",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "DeleteFile",
+      "type": "object"
+    },
+    "DropToCdnAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "drop_to_cdn_api_key",
+          "default": "drop_to_cdn_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Drop To Cdn API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from Drop to CDN Dashboard \u2192 Settings. Paste only the key, without Bearer. NoClick sends it to api.droptocdn.com and lists your account's files to check the connection. Uploaded files and published HTML receive public CDN URLs; plan quotas and retention rules apply.",
+      "x-credential-url": "https://droptocdn.com/docs"
+    },
+    "GetFile": {
+      "additionalProperties": false,
+      "description": "Fetch metadata for a file owned by your account.",
+      "properties": {
+        "file_id": {
+          "description": "File ID returned by upload or list files",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "File Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GetFile",
+      "type": "object"
+    },
+    "ListFiles": {
+      "additionalProperties": false,
+      "description": "Read one page of your files, newest first; choose cursor or page pagination.",
+      "properties": {
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "next_cursor from the previous response. Do not combine with page.",
+          "title": "Cursor"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "1-based page number. Do not combine with cursor.",
+          "title": "Page"
+        }
+      },
+      "title": "ListFiles",
+      "type": "object"
+    },
+    "PublishPage": {
+      "additionalProperties": false,
+      "description": "Publish HTML as a public hosted page.",
+      "properties": {
+        "retention_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use your plan's retention. Custom retention is ignored on Free.",
+          "title": "Retention Days"
+        },
+        "never_expire": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Skip expiration (paid plans only).",
+          "title": "Never Expire"
+        },
+        "operation": {
+          "const": "publish_page",
+          "default": "publish_page",
+          "title": "Operation",
+          "type": "string"
+        },
+        "html": {
+          "description": "HTML to publish publicly",
+          "minLength": 1,
+          "title": "Html",
+          "type": "string",
+          "ui:language": "html",
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "html"
+      ],
+      "title": "PublishPage",
+      "type": "object"
+    },
+    "UploadFile": {
+      "additionalProperties": false,
+      "description": "Upload a file as multipart data and obtain a public CDN URL.",
+      "properties": {
+        "retention_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use your plan's retention. Custom retention is ignored on Free.",
+          "title": "Retention Days"
+        },
+        "never_expire": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Skip expiration (paid plans only).",
+          "title": "Never Expire"
+        },
+        "operation": {
+          "const": "upload_file",
+          "default": "upload_file",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file": {
+          "description": "File URL, workflow resource ID, data URI or base64. Uploads become publicly accessible; the provider rejects executables, scripts and web pages.",
+          "minLength": 1,
+          "title": "File",
+          "type": "string",
+          "ui:widget": "media_upload"
+        }
+      },
+      "required": [
+        "file"
+      ],
+      "title": "UploadFile",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "delete_file": "#/$defs/DeleteFile",
+          "get_file": "#/$defs/GetFile",
+          "list_files": "#/$defs/ListFiles",
+          "publish_page": "#/$defs/PublishPage",
+          "upload_file": "#/$defs/UploadFile"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListFiles"
+        },
+        {
+          "$ref": "#/$defs/GetFile"
+        },
+        {
+          "$ref": "#/$defs/DeleteFile"
+        },
+        {
+          "$ref": "#/$defs/UploadFile"
+        },
+        {
+          "$ref": "#/$defs/PublishPage"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DropToCdnAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Drop-to-cdn Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
