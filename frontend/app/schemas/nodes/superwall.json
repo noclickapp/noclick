@@ -1,0 +1,639 @@
+{
+  "$defs": {
+    "CheckConnection": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "GetApplication": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "superwall_project"
+        },
+        "application_id": {
+          "title": "Application",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "application_id",
+            "searchable": true
+          },
+          "x-resource-type": "superwall_application"
+        },
+        "operation": {
+          "const": "get_application",
+          "default": "get_application",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "application_id"
+      ],
+      "title": "GetApplication",
+      "type": "object"
+    },
+    "GetChartDefinitions": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "superwall_project"
+        },
+        "application_id": {
+          "title": "Application",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "application_id",
+            "searchable": true
+          },
+          "x-resource-type": "superwall_application"
+        },
+        "operation": {
+          "const": "get_chart_definitions",
+          "default": "get_chart_definitions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "application_id"
+      ],
+      "title": "GetChartDefinitions",
+      "type": "object"
+    },
+    "GetEntitlement": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "superwall_project"
+        },
+        "operation": {
+          "const": "get_entitlement",
+          "default": "get_entitlement",
+          "title": "Operation",
+          "type": "string"
+        },
+        "entitlement_id": {
+          "title": "Entitlement Definition",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "entitlement_id",
+            "searchable": true
+          },
+          "x-resource-type": "superwall_entitlement"
+        }
+      },
+      "required": [
+        "project_id",
+        "entitlement_id"
+      ],
+      "title": "GetEntitlement",
+      "type": "object"
+    },
+    "GetOrganization": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetOrganization",
+      "type": "object"
+    },
+    "GetProduct": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "superwall_project"
+        },
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string"
+        },
+        "product_id": {
+          "title": "Product",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "product_id",
+            "searchable": true
+          },
+          "x-resource-type": "superwall_product"
+        }
+      },
+      "required": [
+        "project_id",
+        "product_id"
+      ],
+      "title": "GetProduct",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "superwall_project"
+        },
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GetProject",
+      "type": "object"
+    },
+    "ListApplications": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "superwall_project"
+        },
+        "operation": {
+          "const": "list_applications",
+          "default": "list_applications",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ListApplications",
+      "type": "object"
+    },
+    "ListEntitlements": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "NoClick page-size bound; the OAS does not state the server maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented forward resource-ID cursor. Filters are repeated on every page.",
+          "title": "Starting After"
+        },
+        "max_pages": {
+          "default": 1,
+          "description": "NoClick request bound, not a vendor quota.",
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Max Pages",
+          "type": "integer"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "superwall_project"
+        },
+        "operation": {
+          "const": "list_entitlements",
+          "default": "list_entitlements",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ListEntitlements",
+      "type": "object"
+    },
+    "ListProducts": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "NoClick page-size bound; the OAS does not state the server maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented forward resource-ID cursor. Filters are repeated on every page.",
+          "title": "Starting After"
+        },
+        "max_pages": {
+          "default": 1,
+          "description": "NoClick request bound, not a vendor quota.",
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Max Pages",
+          "type": "integer"
+        },
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "superwall_project"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string"
+        },
+        "platform": {
+          "anyOf": [
+            {
+              "enum": [
+                "ios",
+                "android",
+                "stripe",
+                "promotional",
+                "custom"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Platform",
+          "enum": [
+            "ios",
+            "android",
+            "stripe",
+            "promotional",
+            "custom"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ListProducts",
+      "type": "object"
+    },
+    "ListProjects": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "NoClick page-size bound; the OAS does not state the server maximum.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Documented forward resource-ID cursor. Filters are repeated on every page.",
+          "title": "Starting After"
+        },
+        "max_pages": {
+          "default": 1,
+          "description": "NoClick request bound, not a vendor quota.",
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Max Pages",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archived"
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "QueryChartData": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "project_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "superwall_project"
+        },
+        "application_id": {
+          "title": "Application",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "project_id",
+            "field_name": "application_id",
+            "searchable": true
+          },
+          "x-resource-type": "superwall_application"
+        },
+        "operation": {
+          "const": "query_chart_data",
+          "default": "query_chart_data",
+          "title": "Operation",
+          "type": "string"
+        },
+        "chart_key": {
+          "title": "Chart Definition",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "application_id",
+            "field_name": "chart_key",
+            "searchable": true
+          },
+          "x-resource-type": "superwall_chart_key"
+        },
+        "date_preset": {
+          "default": "last_7_days",
+          "enum": [
+            "last_24_hours",
+            "today",
+            "yesterday",
+            "last_7_days",
+            "last_30_days",
+            "last_90_days"
+          ],
+          "title": "Date Preset",
+          "type": "string"
+        },
+        "max_data_points": {
+          "default": 100,
+          "description": "NoClick requested bound. An aggregate chart does not prove a complete raw dataset.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Max Data Points",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id",
+        "application_id",
+        "chart_key"
+      ],
+      "title": "QueryChartData",
+      "type": "object"
+    },
+    "SuperwallOrganizationAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "superwall_organization_api_key",
+          "default": "superwall_organization_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "Organization API Key",
+          "type": "string",
+          "ui:sensitive": true,
+          "ui:widget": "password"
+        },
+        "organization_id": {
+          "description": "The numeric organization ID returned with your projects. It is checked against the provider, not decoded from the key.",
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "allowed_project_ids_json": {
+          "description": "JSON string array of existing projects allowed for this workflow. Maximum 50 is a NoClick limit.",
+          "title": "Approved Project IDs",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "witness_project_id": {
+          "description": "One approved project for a protected read-only connection check.",
+          "title": "Connection Witness Project ID",
+          "type": "string"
+        },
+        "read_scopes": {
+          "default": "projects:read",
+          "description": "Space-separated issued read scopes. Saved labels constrain this node; the provider independently checks actual key scopes and project access.",
+          "title": "Read Scopes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key",
+        "organization_id",
+        "allowed_project_ids_json",
+        "witness_project_id"
+      ],
+      "title": "Superwall Organization API Key",
+      "type": "object",
+      "x-credential-instructions": "Enter an issued organization key, its organization ID, approved project IDs and documented read scopes. These saved restrictions narrow this node and do not establish vendor permissions.",
+      "x-help-url": "https://superwall.com/docs/dashboard/dashboard-settings/overview-settings-access-controls"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_connection": "#/$defs/CheckConnection",
+          "get_application": "#/$defs/GetApplication",
+          "get_chart_definitions": "#/$defs/GetChartDefinitions",
+          "get_entitlement": "#/$defs/GetEntitlement",
+          "get_organization": "#/$defs/GetOrganization",
+          "get_product": "#/$defs/GetProduct",
+          "get_project": "#/$defs/GetProject",
+          "list_applications": "#/$defs/ListApplications",
+          "list_entitlements": "#/$defs/ListEntitlements",
+          "list_products": "#/$defs/ListProducts",
+          "list_projects": "#/$defs/ListProjects",
+          "query_chart_data": "#/$defs/QueryChartData"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/GetOrganization"
+        },
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/ListApplications"
+        },
+        {
+          "$ref": "#/$defs/GetApplication"
+        },
+        {
+          "$ref": "#/$defs/ListProducts"
+        },
+        {
+          "$ref": "#/$defs/GetProduct"
+        },
+        {
+          "$ref": "#/$defs/ListEntitlements"
+        },
+        {
+          "$ref": "#/$defs/GetEntitlement"
+        },
+        {
+          "$ref": "#/$defs/GetChartDefinitions"
+        },
+        {
+          "$ref": "#/$defs/QueryChartData"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SuperwallOrganizationAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Superwall Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Read products and entitlement definitions for an approved project",
+    "Query an application's aggregate chart with a bounded date range"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
