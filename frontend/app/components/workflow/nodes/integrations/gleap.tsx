@@ -11,6 +11,7 @@ const GleapIcon = ({ className, style }: { className?: string; style?: CSSProper
 
 export const GleapNode: NodeDefinition = {
     type: 'automation-gleap', label: 'Gleap',
+    category: 'support',
     description: 'Automate contacts, conversations, messages, workflows and webhooks',
     Icon: GleapIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
