@@ -15,6 +15,7 @@ DebounceIcon.displayName = 'DebounceIcon';
 export const DebounceNode: NodeDefinition = {
     type: 'automation-debounce',
     label: 'Debounce',
+    category: 'marketing',
     description: 'Email validation, bulk lists, enrichment and account credits',
     Icon: DebounceIcon,
     iconColor: '',
