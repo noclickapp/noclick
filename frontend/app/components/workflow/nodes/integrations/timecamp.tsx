@@ -11,6 +11,7 @@ const TimecampIcon = ({ className, style }: { className?: string; style?: CSSPro
 
 export const TimecampNode: NodeDefinition = {
     type: 'automation-timecamp', label: 'TimeCamp',
+    category: 'productivity',
     description: 'Manage tasks, time entries, timers, users and tags',
     Icon: TimecampIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
