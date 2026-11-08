@@ -1,0 +1,1682 @@
+{
+  "$defs": {
+    "RepairshoprAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "repairshopr_api_token",
+          "default": "repairshopr_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subdomain": {
+          "description": "The part before .repairshopr.com in your account URL. You can also paste the full account URL.",
+          "title": "Account subdomain",
+          "type": "string"
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "subdomain",
+        "api_token"
+      ],
+      "title": "Repairshopr API Token",
+      "type": "object",
+      "x-credential-instructions": "In RepairShopr, open your user profile and copy an API key with permissions for your workflow. Paste the key and your account subdomain below. NoClick sends the key as a Bearer token and checks the current user and customers to verify the connection.",
+      "x-credential-url": "https://api-docs.repairshopr.com/"
+    },
+    "RepairshoprAddTicketCommentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_ticket_comment",
+          "default": "add_ticket_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "body": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "hidden": {
+          "default": true,
+          "title": "Hidden",
+          "type": "boolean"
+        },
+        "do_not_email": {
+          "default": true,
+          "title": "Do Not Email",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "body"
+      ],
+      "title": "RepairshoprAddTicketCommentConfig",
+      "type": "object"
+    },
+    "RepairshoprCreateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer Id",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "customer_id",
+        "name"
+      ],
+      "title": "RepairshoprCreateContactConfig",
+      "type": "object"
+    },
+    "RepairshoprCreateCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "firstname": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastname": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "business_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Business Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "zip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zip"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "firstname"
+      ],
+      "title": "RepairshoprCreateCustomerConfig",
+      "type": "object"
+    },
+    "RepairshoprCreateLeadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_lead",
+          "default": "create_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "business_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Business Name"
+        },
+        "ticket_subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ticket Subject"
+        },
+        "ticket_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ticket Description"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        }
+      },
+      "required": [
+        "first_name"
+      ],
+      "title": "RepairshoprCreateLeadConfig",
+      "type": "object"
+    },
+    "RepairshoprCreateTicketConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_ticket",
+          "default": "create_ticket",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "minimum": 1,
+          "title": "Customer Id",
+          "type": "integer"
+        },
+        "subject": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "problem_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Problem Type"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        }
+      },
+      "required": [
+        "customer_id",
+        "subject"
+      ],
+      "title": "RepairshoprCreateTicketConfig",
+      "type": "object"
+    },
+    "RepairshoprGetContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RepairshoprGetContactConfig",
+      "type": "object"
+    },
+    "RepairshoprGetCurrentUserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "RepairshoprGetCurrentUserConfig",
+      "type": "object"
+    },
+    "RepairshoprGetCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RepairshoprGetCustomerConfig",
+      "type": "object"
+    },
+    "RepairshoprGetEstimateConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_estimate",
+          "default": "get_estimate",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RepairshoprGetEstimateConfig",
+      "type": "object"
+    },
+    "RepairshoprGetInvoiceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RepairshoprGetInvoiceConfig",
+      "type": "object"
+    },
+    "RepairshoprGetLeadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RepairshoprGetLeadConfig",
+      "type": "object"
+    },
+    "RepairshoprGetProductConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RepairshoprGetProductConfig",
+      "type": "object"
+    },
+    "RepairshoprGetTicketConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_ticket",
+          "default": "get_ticket",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RepairshoprGetTicketConfig",
+      "type": "object"
+    },
+    "RepairshoprListContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One provider page. Increment to read the next page; output preserves the provider's pagination metadata.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        }
+      },
+      "title": "RepairshoprListContactsConfig",
+      "type": "object"
+    },
+    "RepairshoprListCustomersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One provider page. Increment to read the next page; output preserves the provider's pagination metadata.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "RepairshoprListCustomersConfig",
+      "type": "object"
+    },
+    "RepairshoprListEstimatesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One provider page. Increment to read the next page; output preserves the provider's pagination metadata.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_estimates",
+          "default": "list_estimates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "title": "RepairshoprListEstimatesConfig",
+      "type": "object"
+    },
+    "RepairshoprListInvoicesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One provider page. Increment to read the next page; output preserves the provider's pagination metadata.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "paid": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Paid"
+        },
+        "unpaid": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unpaid"
+        },
+        "ticket_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ticket Id"
+        }
+      },
+      "title": "RepairshoprListInvoicesConfig",
+      "type": "object"
+    },
+    "RepairshoprListLeadsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One provider page. Increment to read the next page; output preserves the provider's pagination metadata.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        }
+      },
+      "title": "RepairshoprListLeadsConfig",
+      "type": "object"
+    },
+    "RepairshoprListProductsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One provider page. Increment to read the next page; output preserves the provider's pagination metadata.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "sku": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sku"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "title": "RepairshoprListProductsConfig",
+      "type": "object"
+    },
+    "RepairshoprListTicketCommentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One provider page. Increment to read the next page; output preserves the provider's pagination metadata.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_ticket_comments",
+          "default": "list_ticket_comments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RepairshoprListTicketCommentsConfig",
+      "type": "object"
+    },
+    "RepairshoprListTicketsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One provider page. Increment to read the next page; output preserves the provider's pagination metadata.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_tickets",
+          "default": "list_tickets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        }
+      },
+      "title": "RepairshoprListTicketsConfig",
+      "type": "object"
+    },
+    "RepairshoprUpdateContactConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "name": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "RepairshoprUpdateContactConfig",
+      "type": "object"
+    },
+    "RepairshoprUpdateCustomerConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "firstname": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "lastname": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "business_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Business Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "mobile": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "zip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zip"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RepairshoprUpdateCustomerConfig",
+      "type": "object"
+    },
+    "RepairshoprUpdateLeadConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_lead",
+          "default": "update_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "business_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Business Name"
+        },
+        "ticket_subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ticket Subject"
+        },
+        "ticket_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ticket Description"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RepairshoprUpdateLeadConfig",
+      "type": "object"
+    },
+    "RepairshoprUpdateTicketConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_ticket",
+          "default": "update_ticket",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "problem_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Problem Type"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RepairshoprUpdateTicketConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_ticket_comment": "#/$defs/RepairshoprAddTicketCommentConfig",
+          "create_contact": "#/$defs/RepairshoprCreateContactConfig",
+          "create_customer": "#/$defs/RepairshoprCreateCustomerConfig",
+          "create_lead": "#/$defs/RepairshoprCreateLeadConfig",
+          "create_ticket": "#/$defs/RepairshoprCreateTicketConfig",
+          "get_contact": "#/$defs/RepairshoprGetContactConfig",
+          "get_current_user": "#/$defs/RepairshoprGetCurrentUserConfig",
+          "get_customer": "#/$defs/RepairshoprGetCustomerConfig",
+          "get_estimate": "#/$defs/RepairshoprGetEstimateConfig",
+          "get_invoice": "#/$defs/RepairshoprGetInvoiceConfig",
+          "get_lead": "#/$defs/RepairshoprGetLeadConfig",
+          "get_product": "#/$defs/RepairshoprGetProductConfig",
+          "get_ticket": "#/$defs/RepairshoprGetTicketConfig",
+          "list_contacts": "#/$defs/RepairshoprListContactsConfig",
+          "list_customers": "#/$defs/RepairshoprListCustomersConfig",
+          "list_estimates": "#/$defs/RepairshoprListEstimatesConfig",
+          "list_invoices": "#/$defs/RepairshoprListInvoicesConfig",
+          "list_leads": "#/$defs/RepairshoprListLeadsConfig",
+          "list_products": "#/$defs/RepairshoprListProductsConfig",
+          "list_ticket_comments": "#/$defs/RepairshoprListTicketCommentsConfig",
+          "list_tickets": "#/$defs/RepairshoprListTicketsConfig",
+          "update_contact": "#/$defs/RepairshoprUpdateContactConfig",
+          "update_customer": "#/$defs/RepairshoprUpdateCustomerConfig",
+          "update_lead": "#/$defs/RepairshoprUpdateLeadConfig",
+          "update_ticket": "#/$defs/RepairshoprUpdateTicketConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RepairshoprGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprGetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprCreateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprUpdateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprListTicketsConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprGetTicketConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprCreateTicketConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprUpdateTicketConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprListLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprGetLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprCreateLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprUpdateLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprListInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprGetInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprListEstimatesConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprGetEstimateConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprGetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprListTicketCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/RepairshoprAddTicketCommentConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RepairshoprAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Repairshopr Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
