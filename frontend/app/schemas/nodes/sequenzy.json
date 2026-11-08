@@ -1,0 +1,1149 @@
+{
+  "$defs": {
+    "AddSubscribersToList": {
+      "additionalProperties": false,
+      "description": "Add up to 500 emails to a list, retaining per-email processing outcomes.",
+      "properties": {
+        "operation": {
+          "const": "add_subscribers_to_list",
+          "default": "add_subscribers_to_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "list_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "List Id",
+          "type": "string"
+        },
+        "emails": {
+          "items": {
+            "format": "email",
+            "maxLength": 320,
+            "minLength": 3,
+            "pattern": "^[^\\s/@?#%]+@[^\\s/@?#%]+\\.[^\\s/@?#%]+$",
+            "type": "string"
+          },
+          "maxItems": 500,
+          "minItems": 1,
+          "title": "Emails",
+          "type": "array"
+        },
+        "duplicate_strategy": {
+          "default": "skip",
+          "enum": [
+            "skip",
+            "merge",
+            "overwrite"
+          ],
+          "title": "Duplicate Strategy",
+          "type": "string"
+        },
+        "opt_in_mode": {
+          "default": "default",
+          "enum": [
+            "default",
+            "confirmed",
+            "double_opt_in"
+          ],
+          "title": "Opt In Mode",
+          "type": "string"
+        },
+        "enroll_in_sequences": {
+          "default": false,
+          "title": "Enroll In Sequences",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "list_id",
+        "emails"
+      ],
+      "title": "AddSubscribersToList",
+      "type": "object"
+    },
+    "AddTag": {
+      "additionalProperties": false,
+      "description": "Add a tag; the API may create a missing subscriber and trigger automations.",
+      "properties": {
+        "email": {
+          "format": "email",
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s/@?#%]+@[^\\s/@?#%]+\\.[^\\s/@?#%]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_tag",
+          "default": "add_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tag": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Tag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "tag"
+      ],
+      "title": "AddTag",
+      "type": "object"
+    },
+    "CreateList": {
+      "additionalProperties": false,
+      "description": "Create a subscriber list; descriptions are internal workspace metadata.",
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "is_private": {
+          "default": false,
+          "title": "Is Private",
+          "type": "boolean"
+        },
+        "allow_member_unsubscribe": {
+          "default": false,
+          "title": "Allow Member Unsubscribe",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateList",
+      "type": "object"
+    },
+    "CreateSubscriber": {
+      "additionalProperties": false,
+      "description": "Create or upsert an email contact using the explicit duplicate strategy.",
+      "properties": {
+        "email": {
+          "format": "email",
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s/@?#%]+@[^\\s/@?#%]+\\.[^\\s/@?#%]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_subscriber",
+          "default": "create_subscriber",
+          "title": "Operation",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 255,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "lists": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 255,
+                "minLength": 1,
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit for workspace defaults; [] joins no lists.",
+          "title": "Lists"
+        },
+        "custom_attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Attributes"
+        },
+        "duplicate_strategy": {
+          "default": "skip",
+          "enum": [
+            "skip",
+            "merge",
+            "overwrite"
+          ],
+          "title": "Duplicate Strategy",
+          "type": "string"
+        },
+        "opt_in_mode": {
+          "default": "default",
+          "description": "Use confirmed only when you have verified consent.",
+          "enum": [
+            "default",
+            "confirmed",
+            "double_opt_in"
+          ],
+          "title": "Opt In Mode",
+          "type": "string"
+        },
+        "enroll_in_sequences": {
+          "default": false,
+          "description": "Explicit opt-in to matching automations; may send emails and needs automations:trigger.",
+          "title": "Enroll In Sequences",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CreateSubscriber",
+      "type": "object"
+    },
+    "CreateTag": {
+      "additionalProperties": false,
+      "description": "Create a normalized tag definition.",
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "enum": [
+                "gray",
+                "red",
+                "orange",
+                "amber",
+                "yellow",
+                "lime",
+                "green",
+                "emerald",
+                "teal",
+                "cyan",
+                "sky",
+                "blue",
+                "indigo",
+                "violet",
+                "purple",
+                "fuchsia",
+                "pink",
+                "rose"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color",
+          "enum": [
+            "gray",
+            "red",
+            "orange",
+            "amber",
+            "yellow",
+            "lime",
+            "green",
+            "emerald",
+            "teal",
+            "cyan",
+            "sky",
+            "blue",
+            "indigo",
+            "violet",
+            "purple",
+            "fuchsia",
+            "pink",
+            "rose"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateTag",
+      "type": "object"
+    },
+    "DeleteSubscriber": {
+      "additionalProperties": false,
+      "description": "Delete the email contact; requires subscribers:delete.",
+      "properties": {
+        "email": {
+          "format": "email",
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s/@?#%]+@[^\\s/@?#%]+\\.[^\\s/@?#%]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_subscriber",
+          "default": "delete_subscriber",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "DeleteSubscriber",
+      "type": "object"
+    },
+    "EnrollSubscribers": {
+      "additionalProperties": false,
+      "description": "Enroll up to 500 emails; may send emails and needs sequences:enroll.",
+      "properties": {
+        "operation": {
+          "const": "enroll_subscribers",
+          "default": "enroll_subscribers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "sequence_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sequence Id",
+          "type": "string"
+        },
+        "emails": {
+          "items": {
+            "format": "email",
+            "maxLength": 320,
+            "minLength": 3,
+            "pattern": "^[^\\s/@?#%]+@[^\\s/@?#%]+\\.[^\\s/@?#%]+$",
+            "type": "string"
+          },
+          "maxItems": 500,
+          "minItems": 1,
+          "title": "Emails",
+          "type": "array"
+        },
+        "target_node_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Node Id"
+        }
+      },
+      "required": [
+        "sequence_id",
+        "emails"
+      ],
+      "title": "EnrollSubscribers",
+      "type": "object"
+    },
+    "GetAccountInfo": {
+      "additionalProperties": false,
+      "description": "Read the workspace associated with this API key.",
+      "properties": {
+        "operation": {
+          "const": "get_account_info",
+          "default": "get_account_info",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAccountInfo",
+      "type": "object"
+    },
+    "GetSequence": {
+      "additionalProperties": false,
+      "description": "Read one sequence definition and lifecycle state.",
+      "properties": {
+        "operation": {
+          "const": "get_sequence",
+          "default": "get_sequence",
+          "title": "Operation",
+          "type": "string"
+        },
+        "sequence_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Sequence Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sequence_id"
+      ],
+      "title": "GetSequence",
+      "type": "object"
+    },
+    "GetSubscriber": {
+      "additionalProperties": false,
+      "description": "Read one subscriber by email.",
+      "properties": {
+        "email": {
+          "format": "email",
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s/@?#%]+@[^\\s/@?#%]+\\.[^\\s/@?#%]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_subscriber",
+          "default": "get_subscriber",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "GetSubscriber",
+      "type": "object"
+    },
+    "ListCampaigns": {
+      "additionalProperties": false,
+      "description": "Read one campaign page with the provider's pagination metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "scheduled",
+                "sent",
+                "sending",
+                "cancelled",
+                "paused",
+                "waiting_approval",
+                "rejected"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "draft",
+            "scheduled",
+            "sent",
+            "sending",
+            "cancelled",
+            "paused",
+            "waiting_approval",
+            "rejected"
+          ],
+          "x-enum-searchable": true
+        },
+        "label": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        }
+      },
+      "title": "ListCampaigns",
+      "type": "object"
+    },
+    "ListLists": {
+      "additionalProperties": false,
+      "description": "Read subscriber lists and membership counts.",
+      "properties": {
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListLists",
+      "type": "object"
+    },
+    "ListSequences": {
+      "additionalProperties": false,
+      "description": "Read one sequence page; branch on effectiveStatus for its run state.",
+      "properties": {
+        "operation": {
+          "const": "list_sequences",
+          "default": "list_sequences",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "active",
+                "paused",
+                "archived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "draft",
+            "active",
+            "paused",
+            "archived"
+          ],
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        }
+      },
+      "title": "ListSequences",
+      "type": "object"
+    },
+    "ListSubscribers": {
+      "additionalProperties": false,
+      "description": "Read one subscriber page; reuse pagination.nextCursor with identical filters.",
+      "properties": {
+        "operation": {
+          "const": "list_subscribers",
+          "default": "list_subscribers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "unsubscribed",
+                "bounced",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "unsubscribed",
+            "bounced",
+            "all"
+          ],
+          "x-enum-searchable": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tag names; all must match.",
+          "title": "Tags"
+        },
+        "list_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "List Id"
+        }
+      },
+      "title": "ListSubscribers",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "description": "Read workspace tag definitions.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "RemoveSubscribersFromList": {
+      "additionalProperties": false,
+      "description": "Remove list memberships without deleting the contacts.",
+      "properties": {
+        "operation": {
+          "const": "remove_subscribers_from_list",
+          "default": "remove_subscribers_from_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "list_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "List Id",
+          "type": "string"
+        },
+        "emails": {
+          "items": {
+            "format": "email",
+            "maxLength": 320,
+            "minLength": 3,
+            "pattern": "^[^\\s/@?#%]+@[^\\s/@?#%]+\\.[^\\s/@?#%]+$",
+            "type": "string"
+          },
+          "maxItems": 500,
+          "minItems": 1,
+          "title": "Emails",
+          "type": "array"
+        }
+      },
+      "required": [
+        "list_id",
+        "emails"
+      ],
+      "title": "RemoveSubscribersFromList",
+      "type": "object"
+    },
+    "RemoveTag": {
+      "additionalProperties": false,
+      "description": "Remove one subscriber tag.",
+      "properties": {
+        "email": {
+          "format": "email",
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s/@?#%]+@[^\\s/@?#%]+\\.[^\\s/@?#%]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "remove_tag",
+          "default": "remove_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tag": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Tag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "tag"
+      ],
+      "title": "RemoveTag",
+      "type": "object"
+    },
+    "SequenzyAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "sequenzy_api_key",
+          "default": "sequenzy_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Sequenzy API Key",
+      "type": "object",
+      "x-credential-instructions": "In Sequenzy, open Settings \u2192 API Keys & SMTP and create a workspace API key. Paste the key only. Choose the permissions needed for your actions: subscriber reads/writes/deletes, tags, lists and sequences; event-triggering and enrollment need explicit delivery permissions. Use a workspace key (seq_live_ or legacy ek_), since account keys can implicitly select another workspace. Connection checks read account info and do not prove write permissions.",
+      "x-credential-url": "https://www.sequenzy.com/dashboard"
+    },
+    "TriggerEvent": {
+      "additionalProperties": false,
+      "description": "Record a subscriber event, which may trigger live automations.",
+      "properties": {
+        "email": {
+          "format": "email",
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s/@?#%]+@[^\\s/@?#%]+\\.[^\\s/@?#%]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "trigger_event",
+          "default": "trigger_event",
+          "title": "Operation",
+          "type": "string"
+        },
+        "event": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Event",
+          "type": "string"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Properties"
+        },
+        "event_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider best-effort idempotency key; keep your own ledger for strict deduplication.",
+          "title": "Event Id"
+        }
+      },
+      "required": [
+        "email",
+        "event"
+      ],
+      "title": "TriggerEvent",
+      "type": "object"
+    },
+    "UpdateSubscriber": {
+      "additionalProperties": false,
+      "description": "Update supplied fields; custom attribute merge preserves unspecified keys.",
+      "properties": {
+        "email": {
+          "format": "email",
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s/@?#%]+@[^\\s/@?#%]+\\.[^\\s/@?#%]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_subscriber",
+          "default": "update_subscriber",
+          "title": "Operation",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "custom_attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Attributes"
+        },
+        "custom_attributes_strategy": {
+          "default": "merge",
+          "enum": [
+            "replace",
+            "merge"
+          ],
+          "title": "Custom Attributes Strategy",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "unsubscribed",
+                "bounced",
+                "complained"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unsubscribed performs global unsubscribe; complained records suppression and unsubscribes.",
+          "title": "Status",
+          "enum": [
+            "active",
+            "unsubscribed",
+            "bounced",
+            "complained"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "UpdateSubscriber",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_subscribers_to_list": "#/$defs/AddSubscribersToList",
+          "add_tag": "#/$defs/AddTag",
+          "create_list": "#/$defs/CreateList",
+          "create_subscriber": "#/$defs/CreateSubscriber",
+          "create_tag": "#/$defs/CreateTag",
+          "delete_subscriber": "#/$defs/DeleteSubscriber",
+          "enroll_subscribers": "#/$defs/EnrollSubscribers",
+          "get_account_info": "#/$defs/GetAccountInfo",
+          "get_sequence": "#/$defs/GetSequence",
+          "get_subscriber": "#/$defs/GetSubscriber",
+          "list_campaigns": "#/$defs/ListCampaigns",
+          "list_lists": "#/$defs/ListLists",
+          "list_sequences": "#/$defs/ListSequences",
+          "list_subscribers": "#/$defs/ListSubscribers",
+          "list_tags": "#/$defs/ListTags",
+          "remove_subscribers_from_list": "#/$defs/RemoveSubscribersFromList",
+          "remove_tag": "#/$defs/RemoveTag",
+          "trigger_event": "#/$defs/TriggerEvent",
+          "update_subscriber": "#/$defs/UpdateSubscriber"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/ListSubscribers"
+        },
+        {
+          "$ref": "#/$defs/GetSubscriber"
+        },
+        {
+          "$ref": "#/$defs/CreateSubscriber"
+        },
+        {
+          "$ref": "#/$defs/UpdateSubscriber"
+        },
+        {
+          "$ref": "#/$defs/DeleteSubscriber"
+        },
+        {
+          "$ref": "#/$defs/AddTag"
+        },
+        {
+          "$ref": "#/$defs/RemoveTag"
+        },
+        {
+          "$ref": "#/$defs/TriggerEvent"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/CreateTag"
+        },
+        {
+          "$ref": "#/$defs/ListLists"
+        },
+        {
+          "$ref": "#/$defs/CreateList"
+        },
+        {
+          "$ref": "#/$defs/AddSubscribersToList"
+        },
+        {
+          "$ref": "#/$defs/RemoveSubscribersFromList"
+        },
+        {
+          "$ref": "#/$defs/ListSequences"
+        },
+        {
+          "$ref": "#/$defs/GetSequence"
+        },
+        {
+          "$ref": "#/$defs/EnrollSubscribers"
+        },
+        {
+          "$ref": "#/$defs/ListCampaigns"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SequenzyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Sequenzy Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
