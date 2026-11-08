@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { createHash } from 'node:crypto';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -46,4 +49,14 @@ describe('native Vervoe schema, credential selection and exact official asset', 
     it('renders the exact official SVG', () => {
         expect(renderToStaticMarkup(createElement(VervoeIcon))).toContain('/icons/vervoe.svg');
     });
+});
+
+
+it('ships the Vervoe vector without opaque metadata and with matching provenance', () => {
+    const path = join(__dirname, '../../public/icons/vervoe.svg');
+    const svg = readFileSync(path);
+    const provenance = JSON.parse(readFileSync(path + '.provenance.json', 'utf8'));
+    expect(svg.toString()).not.toMatch(/<metadata\b|c2pa:|c2pa.org/);
+    expect(svg.toString()).toContain('<path');
+    expect(provenance.sha256).toBe(createHash('sha256').update(svg).digest('hex'));
 });

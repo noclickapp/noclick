@@ -2,5 +2,6 @@
   "path": "frontend/public/icons/vervoe.svg",
   "source": "https://vervoe.com",
   "license": "Brand mark of its owner, shown nominatively to identify the service; no trademark rights are claimed or granted.",
-  "sha256": "9e38fb0f58f4f870490faebeda3c651134da6dc0a7050719f0ba5fba967a5fc9"
+  "sha256": "a02872a4afb395182121817ad45a505dab6b5a18c8fa27224fee439a863ab06a",
+  "modifications": "Removed non-rendering C2PA metadata; visible SVG geometry unchanged."
 }
