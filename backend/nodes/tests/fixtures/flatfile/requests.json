@@ -1,0 +1,506 @@
+[
+  {
+    "config": {
+      "operation": "get_current_account"
+    },
+    "method": "GET",
+    "path": "/v1/accounts/current",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "id": "us_acc_123",
+        "name": "Acme"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_environments"
+    },
+    "method": "GET",
+    "path": "/v1/environments",
+    "query": {
+      "pageSize": "20",
+      "pageNumber": "1"
+    },
+    "body": null,
+    "response": {
+      "data": [],
+      "pagination": {
+        "currentPage": 1,
+        "pageCount": 1,
+        "totalCount": 0
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_spaces",
+      "search": "Customers + UK",
+      "archived": false
+    },
+    "method": "GET",
+    "path": "/v1/spaces",
+    "query": {
+      "pageSize": "20",
+      "pageNumber": "1",
+      "search": "Customers + UK",
+      "archived": "false"
+    },
+    "body": null,
+    "response": {
+      "data": [
+        {
+          "id": "us_sp_123",
+          "name": "Customers"
+        }
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "get_space",
+      "space_id": "us_sp_123"
+    },
+    "method": "GET",
+    "path": "/v1/spaces/us_sp_123",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "id": "us_sp_123",
+        "name": "Customers"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "create_space",
+      "name": "Customers",
+      "environment_id": "us_env_123"
+    },
+    "method": "POST",
+    "path": "/v1/spaces",
+    "query": {},
+    "body": {
+      "name": "Customers",
+      "environmentId": "us_env_123"
+    },
+    "response": {
+      "data": {
+        "id": "us_sp_123",
+        "name": "Customers"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_space",
+      "space_id": "us_sp_123",
+      "name": "Customers"
+    },
+    "method": "PATCH",
+    "path": "/v1/spaces/us_sp_123",
+    "query": {},
+    "body": {
+      "name": "Customers"
+    },
+    "response": {
+      "data": {
+        "id": "us_sp_123",
+        "name": "Customers"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_space",
+      "space_id": "us_sp_123"
+    },
+    "method": "DELETE",
+    "path": "/v1/spaces/us_sp_123",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "success": true
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_workbooks",
+      "space_id": "us_sp_123"
+    },
+    "method": "GET",
+    "path": "/v1/workbooks",
+    "query": {
+      "spaceId": "us_sp_123",
+      "includeSheets": "true"
+    },
+    "body": null,
+    "response": {
+      "data": []
+    }
+  },
+  {
+    "config": {
+      "operation": "get_workbook",
+      "workbook_id": "us_wb_123"
+    },
+    "method": "GET",
+    "path": "/v1/workbooks/us_wb_123",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "id": "us_sp_123",
+        "name": "Customers"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "create_workbook",
+      "name": "Customers",
+      "space_id": "us_sp_123",
+      "sheets": [
+        {
+          "name": "Contacts",
+          "fields": [
+            {
+              "type": "string",
+              "key": "email",
+              "label": "Email"
+            }
+          ]
+        }
+      ]
+    },
+    "method": "POST",
+    "path": "/v1/workbooks",
+    "query": {},
+    "body": {
+      "name": "Customers",
+      "spaceId": "us_sp_123",
+      "sheets": [
+        {
+          "name": "Contacts",
+          "fields": [
+            {
+              "type": "string",
+              "key": "email",
+              "label": "Email"
+            }
+          ]
+        }
+      ]
+    },
+    "response": {
+      "data": {
+        "id": "us_sp_123",
+        "name": "Customers"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_workbook",
+      "workbook_id": "us_wb_123",
+      "name": "Customers",
+      "labels": []
+    },
+    "method": "PATCH",
+    "path": "/v1/workbooks/us_wb_123",
+    "query": {},
+    "body": {
+      "name": "Customers",
+      "labels": []
+    },
+    "response": {
+      "data": {
+        "id": "us_sp_123",
+        "name": "Customers"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_workbook",
+      "workbook_id": "us_wb_123"
+    },
+    "method": "DELETE",
+    "path": "/v1/workbooks/us_wb_123",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "success": true
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_sheets",
+      "workbook_id": "us_wb_123"
+    },
+    "method": "GET",
+    "path": "/v1/sheets",
+    "query": {
+      "workbookId": "us_wb_123"
+    },
+    "body": null,
+    "response": {
+      "data": []
+    }
+  },
+  {
+    "config": {
+      "operation": "get_sheet",
+      "sheet_id": "us_sh_123"
+    },
+    "method": "GET",
+    "path": "/v1/sheets/us_sh_123",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "id": "us_sp_123",
+        "name": "Customers"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_sheet",
+      "sheet_id": "us_sh_123",
+      "name": "Contacts",
+      "slug": "contacts"
+    },
+    "method": "PATCH",
+    "path": "/v1/sheets/us_sh_123",
+    "query": {},
+    "body": {
+      "name": "Contacts",
+      "slug": "contacts"
+    },
+    "response": {
+      "data": {
+        "id": "us_sp_123",
+        "name": "Customers"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "get_record_counts",
+      "sheet_id": "us_sh_123",
+      "by_field": true
+    },
+    "method": "GET",
+    "path": "/v1/sheets/us_sh_123/counts",
+    "query": {
+      "byField": "true"
+    },
+    "body": null,
+    "response": {
+      "data": {
+        "total": 1,
+        "valid": 1,
+        "error": 0
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_records",
+      "sheet_id": "us_sh_123",
+      "page_size": 50,
+      "page_number": 2,
+      "filter": "error",
+      "search_field": "email",
+      "search_value": "a+b@example.com",
+      "include_messages": true
+    },
+    "method": "GET",
+    "path": "/v1/sheets/us_sh_123/records",
+    "query": {
+      "pageSize": "50",
+      "pageNumber": "2",
+      "filter": "error",
+      "searchField": "email",
+      "searchValue": "a+b@example.com",
+      "includeMessages": "true"
+    },
+    "body": null,
+    "response": {
+      "data": {
+        "success": true,
+        "records": []
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "insert_records",
+      "sheet_id": "us_sh_123",
+      "records": [
+        {
+          "email": {
+            "value": "john.smith@example.com"
+          },
+          "active": {
+            "value": false
+          },
+          "count": {
+            "value": 0
+          }
+        }
+      ]
+    },
+    "method": "POST",
+    "path": "/v1/sheets/us_sh_123/records",
+    "query": {},
+    "body": [
+      {
+        "email": {
+          "value": "john.smith@example.com"
+        },
+        "active": {
+          "value": false
+        },
+        "count": {
+          "value": 0
+        }
+      }
+    ],
+    "response": {
+      "data": {
+        "success": true,
+        "commitId": "us_vr_123"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_records",
+      "sheet_id": "us_sh_123",
+      "records": [
+        {
+          "id": "us_rc_123",
+          "values": {
+            "email": {
+              "value": "new@example.com"
+            }
+          }
+        }
+      ]
+    },
+    "method": "PUT",
+    "path": "/v1/sheets/us_sh_123/records",
+    "query": {},
+    "body": [
+      {
+        "id": "us_rc_123",
+        "values": {
+          "email": {
+            "value": "new@example.com"
+          }
+        }
+      }
+    ],
+    "response": {
+      "data": {
+        "versionId": "us_vr_123"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_records",
+      "sheet_id": "us_sh_123",
+      "record_ids": [
+        "us_rc_123",
+        "us_rc_456"
+      ]
+    },
+    "method": "DELETE",
+    "path": "/v1/sheets/us_sh_123/records",
+    "query": {
+      "ids": "us_rc_123,us_rc_456"
+    },
+    "body": null,
+    "response": {
+      "data": {
+        "success": true
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_files",
+      "space_id": "us_sp_123"
+    },
+    "method": "GET",
+    "path": "/v1/files",
+    "query": {
+      "pageSize": "20",
+      "pageNumber": "1",
+      "spaceId": "us_sp_123"
+    },
+    "body": null,
+    "response": {
+      "data": []
+    }
+  },
+  {
+    "config": {
+      "operation": "get_file",
+      "file_id": "us_fl_123"
+    },
+    "method": "GET",
+    "path": "/v1/files/us_fl_123",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "id": "us_sp_123",
+        "name": "Customers"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_jobs",
+      "workbook_id": "us_wb_123"
+    },
+    "method": "GET",
+    "path": "/v1/jobs",
+    "query": {
+      "pageSize": "20",
+      "pageNumber": "1",
+      "workbookId": "us_wb_123"
+    },
+    "body": null,
+    "response": {
+      "data": []
+    }
+  },
+  {
+    "config": {
+      "operation": "get_job",
+      "job_id": "us_jb_123"
+    },
+    "method": "GET",
+    "path": "/v1/jobs/us_jb_123",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "id": "us_sp_123",
+        "name": "Customers"
+      }
+    }
+  }
+]

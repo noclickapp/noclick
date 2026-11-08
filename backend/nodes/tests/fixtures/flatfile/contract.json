@@ -1,0 +1,16 @@
+{
+  "provider": "Flatfile",
+  "contract": {
+    "source_url": "https://reference.flatfile.com/openapi.json",
+    "version": "1.0.0",
+    "sha256": "db17492d4cb883290d7f4e7dc7caeb1ef1725c0bb6c9b5bb04583908be47cf21"
+  },
+  "authentication": "https://reference.flatfile.com/overview/auth",
+  "key_instructions": "https://support.flatfile.com/articles/5267468203-where-do-i-find-important-ids-in-the-dashboard",
+  "spec_defect": {
+    "operation": "create_workbook",
+    "docs_url": "https://reference.flatfile.com/api-reference/workbooks/create",
+    "detail": "The documented inline property type string is valid in the oneOf but property_Property has a discriminator without mappings. OpenAPI tooling attempts to resolve nonexistent #/components/schemas/string. Keep the documented wire shape."
+  },
+  "test_data": "All credentials and request/response fixtures are synthetic; no live API calls are made."
+}
