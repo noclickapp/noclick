@@ -1,0 +1,249 @@
+{
+  "generate_document": {
+    "config": {
+      "operation": "generate_document",
+      "template_id": "abc123",
+      "data": {
+        "ClientName": "Acme Corp",
+        "ClientEmail": "legal@acme.com"
+      },
+      "format": "pdf"
+    },
+    "method": "POST",
+    "path": "/api/document-generation/generate",
+    "response": {
+      "test": "response"
+    }
+  },
+  "get_generation_status": {
+    "config": {
+      "operation": "get_generation_status",
+      "job_id": "abc123"
+    },
+    "method": "GET",
+    "path": "/api/document-generation/status/{job_id}",
+    "response": {
+      "test": "response"
+    }
+  },
+  "list_generation_history": {
+    "config": {
+      "operation": "list_generation_history"
+    },
+    "method": "GET",
+    "path": "/api/document-generation/history",
+    "response": {
+      "test": "response"
+    }
+  },
+  "merge_documents": {
+    "config": {
+      "operation": "merge_documents",
+      "file_urls": [
+        "https://yourstorage.com/contracts/nda-v3.pdf",
+        "https://yourstorage.com/contracts/nda-v3.pdf"
+      ],
+      "format": "pdf"
+    },
+    "method": "POST",
+    "path": "/api/document-merge/merge",
+    "response": {
+      "test": "response"
+    }
+  },
+  "list_files": {
+    "config": {
+      "operation": "list_files"
+    },
+    "method": "GET",
+    "path": "/api/files",
+    "response": {
+      "test": "response"
+    }
+  },
+  "save_files": {
+    "config": {
+      "operation": "save_files",
+      "job_id": "bd95b875-78f7-4bc6-b5cf-96bf520ac317"
+    },
+    "method": "POST",
+    "path": "/api/files/save",
+    "response": {
+      "test": "response"
+    }
+  },
+  "get_file_download_url": {
+    "config": {
+      "operation": "get_file_download_url",
+      "id": 1
+    },
+    "method": "GET",
+    "path": "/api/files/download/{id}",
+    "response": {
+      "test": "response"
+    }
+  },
+  "generate_images": {
+    "config": {
+      "operation": "generate_images",
+      "template_id": 1,
+      "field_mapping": {
+        "Full_Name": "name",
+        "Title": "job_title"
+      },
+      "data": [
+        {
+          "name": "John Doe",
+          "job_title": "Engineer"
+        }
+      ]
+    },
+    "method": "POST",
+    "path": "/api/image-generation/generate",
+    "response": {
+      "test": "response"
+    }
+  },
+  "get_image_job": {
+    "config": {
+      "operation": "get_image_job",
+      "id": 42
+    },
+    "method": "GET",
+    "path": "/api/image-generation/jobs/{id}",
+    "response": {
+      "test": "response"
+    }
+  },
+  "list_image_templates": {
+    "config": {
+      "operation": "list_image_templates"
+    },
+    "method": "GET",
+    "path": "/api/image-templates",
+    "response": {
+      "test": "response"
+    }
+  },
+  "get_image_template": {
+    "config": {
+      "operation": "get_image_template",
+      "id": 1
+    },
+    "method": "GET",
+    "path": "/api/image-templates/{id}",
+    "response": {
+      "test": "response"
+    }
+  },
+  "list_signature_requests": {
+    "config": {
+      "operation": "list_signature_requests"
+    },
+    "method": "GET",
+    "path": "/api/signature-requests",
+    "response": {
+      "test": "response"
+    }
+  },
+  "create_signature_request": {
+    "config": {
+      "operation": "create_signature_request",
+      "signers": [
+        {
+          "email": "jane@acme.com"
+        }
+      ],
+      "document_url": "https://yourstorage.com/contracts/nda-v3.pdf"
+    },
+    "method": "POST",
+    "path": "/api/signature-requests",
+    "response": {
+      "test": "response"
+    }
+  },
+  "get_signature_request": {
+    "config": {
+      "operation": "get_signature_request",
+      "id": "abc123"
+    },
+    "method": "GET",
+    "path": "/api/signature-requests/{id}",
+    "response": {
+      "test": "response"
+    }
+  },
+  "cancel_signature_request": {
+    "config": {
+      "operation": "cancel_signature_request",
+      "id": "abc123"
+    },
+    "method": "POST",
+    "path": "/api/signature-requests/{id}/cancel",
+    "response": {
+      "test": "response"
+    }
+  },
+  "list_templates": {
+    "config": {
+      "operation": "list_templates"
+    },
+    "method": "GET",
+    "path": "/api/templates",
+    "response": []
+  },
+  "get_template_placeholders": {
+    "config": {
+      "operation": "get_template_placeholders",
+      "id": "abc123"
+    },
+    "method": "GET",
+    "path": "/api/templates/{id}/placeholders",
+    "response": []
+  },
+  "get_credits": {
+    "config": {
+      "operation": "get_credits"
+    },
+    "method": "GET",
+    "path": "/api/user/credits",
+    "response": {
+      "total": 50,
+      "used": 40,
+      "left": 10
+    }
+  },
+  "list_workflows": {
+    "config": {
+      "operation": "list_workflows"
+    },
+    "method": "GET",
+    "path": "/api/workflows",
+    "response": []
+  },
+  "generate_workflow_documents": {
+    "config": {
+      "operation": "generate_workflow_documents",
+      "workflow_id": "workflow_abc123",
+      "data": {
+        "placeholder1": "value1",
+        "placeholder2": "value2"
+      },
+      "format": "pdf"
+    },
+    "method": "POST",
+    "path": "/api/workflows/generate",
+    "response": {
+      "test": "response"
+    }
+  },
+  "get_workflow_placeholders": {
+    "config": {
+      "operation": "get_workflow_placeholders",
+      "id": "abc123"
+    },
+    "method": "GET",
+    "path": "/api/workflows/{id}/placeholders",
+    "response": []
+  }
+}

@@ -1,0 +1,1250 @@
+{
+  "$defs": {
+    "ActiveMergeAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "active_merge_api_key",
+          "default": "active_merge_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Active Merge API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Active Merge API key. NoClick sends it in the API-KEY header to app.activemerge.com. The connection check reads your account credits.",
+      "x-credential-url": "https://app.activemerge.com/docs"
+    },
+    "CancelSignatureRequest": {
+      "additionalProperties": false,
+      "description": "Cancel a signature request.",
+      "properties": {
+        "operation": {
+          "const": "cancel_signature_request",
+          "default": "cancel_signature_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "UUID of the signature request",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "CancelSignatureRequest",
+      "type": "object"
+    },
+    "CreateSignatureRequest": {
+      "additionalProperties": false,
+      "description": "Send an existing document for signing.",
+      "properties": {
+        "operation": {
+          "const": "create_signature_request",
+          "default": "create_signature_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "document_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Publicly accessible URL to a PDF. Required if job_id is not provided.",
+          "examples": [
+            "https://yourstorage.com/contracts/nda-v3.pdf"
+          ],
+          "format": "url",
+          "title": "Document Url"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "job_id from a previous document generation. Required if document_url is not provided.",
+          "examples": [
+            "018e9f2a-3b7c-7000-8c4d-1e2f3a4b5c6d"
+          ],
+          "title": "Job Id"
+        },
+        "signers": {
+          "description": "List of signers. Literal values only \u2014 no {{Column}} references.",
+          "items": {
+            "$ref": "#/$defs/StandaloneSignerInput"
+          },
+          "minItems": 1,
+          "title": "Signers",
+          "type": "array"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "examples": [
+            "NDA \u2014 Acme Corp"
+          ],
+          "title": "Title"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "examples": [
+            "Please review and sign."
+          ],
+          "title": "Message"
+        },
+        "expires_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "examples": [
+            14
+          ],
+          "title": "Expires Days"
+        },
+        "sequential": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "examples": [
+            false
+          ],
+          "title": "Sequential"
+        }
+      },
+      "required": [
+        "signers"
+      ],
+      "title": "CreateSignatureRequest",
+      "type": "object"
+    },
+    "GenerateDocument": {
+      "additionalProperties": false,
+      "description": "Generate a document based on the provided request data.",
+      "properties": {
+        "operation": {
+          "const": "generate_document",
+          "default": "generate_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "description": "The unique ID of the template to be used for document generation.",
+          "examples": [
+            "abc123"
+          ],
+          "title": "Template Id",
+          "type": "string"
+        },
+        "data": {
+          "additionalProperties": true,
+          "description": "An associative array of data to populate the template placeholders.",
+          "examples": [
+            {
+              "ClientEmail": "legal@acme.com",
+              "ClientName": "Acme Corp"
+            }
+          ],
+          "title": "Data",
+          "type": "object"
+        },
+        "format": {
+          "description": "The format of the document to be generated.",
+          "enum": [
+            "pdf",
+            "docx",
+            "pptx"
+          ],
+          "examples": [
+            "pdf"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "sign_config": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SignConfigInput"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional. When provided, the document is sent for e-signature immediately after generation."
+        }
+      },
+      "required": [
+        "template_id",
+        "data",
+        "format"
+      ],
+      "title": "GenerateDocument",
+      "type": "object"
+    },
+    "GenerateImages": {
+      "additionalProperties": false,
+      "description": "Generate images.",
+      "properties": {
+        "operation": {
+          "const": "generate_images",
+          "default": "generate_images",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "description": "The ID of the image template to use.",
+          "examples": [
+            1
+          ],
+          "minimum": 1,
+          "title": "Template Id",
+          "type": "integer"
+        },
+        "field_mapping": {
+          "additionalProperties": true,
+          "description": "Maps each template placeholder name to a data column name.",
+          "examples": [
+            {
+              "Full_Name": "name",
+              "Title": "job_title"
+            }
+          ],
+          "title": "Field Mapping",
+          "type": "object"
+        },
+        "data": {
+          "description": "JSON array of data rows. Each row is an object with column names as keys. Provide either 'data' or 'data_file', not both.",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "maxItems": 2000,
+          "minItems": 1,
+          "title": "Data",
+          "type": "array"
+        }
+      },
+      "required": [
+        "template_id",
+        "field_mapping",
+        "data"
+      ],
+      "title": "GenerateImages",
+      "type": "object"
+    },
+    "GenerateWorkflowDocuments": {
+      "additionalProperties": false,
+      "description": "Generate documents for a workflow based on the provided request data.",
+      "properties": {
+        "operation": {
+          "const": "generate_workflow_documents",
+          "default": "generate_workflow_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workflow_id": {
+          "description": "The unique ID of the workflow to be used for document generation.",
+          "examples": [
+            "workflow_abc123"
+          ],
+          "title": "Workflow Id",
+          "type": "string"
+        },
+        "data": {
+          "additionalProperties": true,
+          "description": "An associative array of data to populate the template placeholders.",
+          "examples": [
+            {
+              "placeholder1": "value1",
+              "placeholder2": "value2"
+            }
+          ],
+          "title": "Data",
+          "type": "object"
+        },
+        "format": {
+          "description": "The format of the documents to be generated (e.g., PDF, Original Format).",
+          "enum": [
+            "pdf",
+            "original"
+          ],
+          "examples": [
+            "pdf"
+          ],
+          "title": "Format",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id",
+        "data",
+        "format"
+      ],
+      "title": "GenerateWorkflowDocuments",
+      "type": "object"
+    },
+    "GetCredits": {
+      "additionalProperties": false,
+      "description": "Returns the credits details for the authenticated user..",
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCredits",
+      "type": "object"
+    },
+    "GetFileDownloadUrl": {
+      "additionalProperties": false,
+      "description": "Get a temporary download URL for a file.",
+      "properties": {
+        "operation": {
+          "const": "get_file_download_url",
+          "default": "get_file_download_url",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "ID of the file to download",
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetFileDownloadUrl",
+      "type": "object"
+    },
+    "GetGenerationStatus": {
+      "additionalProperties": false,
+      "description": "Get the status of a single generation job.",
+      "properties": {
+        "operation": {
+          "const": "get_generation_status",
+          "default": "get_generation_status",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "description": "The job_id returned by POST /generate.",
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetGenerationStatus",
+      "type": "object"
+    },
+    "GetImageJob": {
+      "additionalProperties": false,
+      "description": "Get job status.",
+      "properties": {
+        "operation": {
+          "const": "get_image_job",
+          "default": "get_image_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The image generation job ID.",
+          "examples": [
+            42
+          ],
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetImageJob",
+      "type": "object"
+    },
+    "GetImageTemplate": {
+      "additionalProperties": false,
+      "description": "Get image template details.",
+      "properties": {
+        "operation": {
+          "const": "get_image_template",
+          "default": "get_image_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "The image template ID.",
+          "examples": [
+            1
+          ],
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetImageTemplate",
+      "type": "object"
+    },
+    "GetSignatureRequest": {
+      "additionalProperties": false,
+      "description": "Get a signature request.",
+      "properties": {
+        "operation": {
+          "const": "get_signature_request",
+          "default": "get_signature_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "UUID of the signature request",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetSignatureRequest",
+      "type": "object"
+    },
+    "GetTemplatePlaceholders": {
+      "additionalProperties": false,
+      "description": "Get placeholders from a template.",
+      "properties": {
+        "operation": {
+          "const": "get_template_placeholders",
+          "default": "get_template_placeholders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Unique ID of the template",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetTemplatePlaceholders",
+      "type": "object"
+    },
+    "GetWorkflowPlaceholders": {
+      "additionalProperties": false,
+      "description": "Get placeholders from a workflow.",
+      "properties": {
+        "operation": {
+          "const": "get_workflow_placeholders",
+          "default": "get_workflow_placeholders",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Unique ID of the workflow",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetWorkflowPlaceholders",
+      "type": "object"
+    },
+    "ListFiles": {
+      "additionalProperties": false,
+      "description": "List files and folders for the authenticated user.",
+      "properties": {
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent folder id to list (optional)",
+          "title": "Id"
+        }
+      },
+      "title": "ListFiles",
+      "type": "object"
+    },
+    "ListGenerationHistory": {
+      "additionalProperties": false,
+      "description": "List generation history with optional filters.",
+      "properties": {
+        "operation": {
+          "const": "list_generation_history",
+          "default": "list_generation_history",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by a specific job_id.",
+          "title": "Job Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "in_progress",
+                "completed",
+                "failed",
+                "expired"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by status.",
+          "title": "Status",
+          "enum": [
+            "in_progress",
+            "completed",
+            "failed",
+            "expired"
+          ],
+          "x-enum-searchable": true
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by template unique_id.",
+          "title": "Template Id"
+        },
+        "date_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter jobs created on or after this date (YYYY-MM-DD).",
+          "format": "date",
+          "title": "Date From"
+        },
+        "date_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter jobs created on or before this date (YYYY-MM-DD).",
+          "format": "date",
+          "title": "Date To"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Results per page (1-100, default 20).",
+          "title": "Per Page"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page number.",
+          "title": "Page"
+        }
+      },
+      "title": "ListGenerationHistory",
+      "type": "object"
+    },
+    "ListImageTemplates": {
+      "additionalProperties": false,
+      "description": "List image templates.",
+      "properties": {
+        "operation": {
+          "const": "list_image_templates",
+          "default": "list_image_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListImageTemplates",
+      "type": "object"
+    },
+    "ListSignatureRequests": {
+      "additionalProperties": false,
+      "description": "List signature requests.",
+      "properties": {
+        "operation": {
+          "const": "list_signature_requests",
+          "default": "list_signature_requests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "sent",
+                "partially_signed",
+                "completed",
+                "declined",
+                "expired",
+                "cancelled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by status",
+          "title": "Status",
+          "enum": [
+            "draft",
+            "sent",
+            "partially_signed",
+            "completed",
+            "declined",
+            "expired",
+            "cancelled"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "examples": [
+            1
+          ],
+          "title": "Page"
+        }
+      },
+      "title": "ListSignatureRequests",
+      "type": "object"
+    },
+    "ListTemplates": {
+      "additionalProperties": false,
+      "description": "List all templates for the authenticated user.",
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTemplates",
+      "type": "object"
+    },
+    "ListWorkflows": {
+      "additionalProperties": false,
+      "description": "List all workflows for the authenticated user.",
+      "properties": {
+        "operation": {
+          "const": "list_workflows",
+          "default": "list_workflows",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListWorkflows",
+      "type": "object"
+    },
+    "MergeDocuments": {
+      "additionalProperties": false,
+      "description": "Merge multiple documents into a single file.",
+      "properties": {
+        "operation": {
+          "const": "merge_documents",
+          "default": "merge_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "file_urls": {
+          "description": "Alternative to files for JSON clients such as Airtable Automations. Public HTTPS file URLs only; do not send both files and file_urls.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "File Urls",
+          "type": "array"
+        },
+        "format": {
+          "description": "Output format. Use 'docx' or 'epub' to merge Word files without conversion. 'epub' requires Pandoc on the server.",
+          "enum": [
+            "pdf",
+            "docx",
+            "epub"
+          ],
+          "examples": [
+            "pdf"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "output_filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filename for the output file (without extension). Max 100 characters. Only applies to 'docx' and 'epub' formats.",
+          "examples": [
+            "my_merged_document"
+          ],
+          "title": "Output Filename"
+        },
+        "page_break": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Insert an explicit page break between each merged document. Only applies to 'docx' and 'epub' formats.",
+          "examples": [
+            true
+          ],
+          "title": "Page Break"
+        },
+        "continuous_numbering": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Run page numbers continuously across all merged documents instead of restarting per section. Only applies to 'docx' and 'epub' formats.",
+          "examples": [
+            true
+          ],
+          "title": "Continuous Numbering"
+        },
+        "strip_headers_footers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use the first document's header and footer throughout, removing headers/footers from subsequent documents. Only applies to 'docx' and 'epub' formats.",
+          "examples": [
+            false
+          ],
+          "title": "Strip Headers Footers"
+        }
+      },
+      "required": [
+        "file_urls",
+        "format"
+      ],
+      "title": "MergeDocuments",
+      "type": "object"
+    },
+    "SaveFiles": {
+      "additionalProperties": false,
+      "description": "Save a generated document to permanent file storage.",
+      "properties": {
+        "operation": {
+          "const": "save_files",
+          "default": "save_files",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "description": "The job_id returned from the document generation endpoint.",
+          "examples": [
+            "bd95b875-78f7-4bc6-b5cf-96bf520ac317"
+          ],
+          "title": "Job Id",
+          "type": "string"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the folder to save into. Omit or null for root folder.",
+          "title": "Folder Id"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom filename (only applies to single-file jobs). Defaults to the generated filename.",
+          "examples": [
+            "contract_signed.pdf"
+          ],
+          "title": "Filename"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "SaveFiles",
+      "type": "object"
+    },
+    "SignConfigInput": {
+      "additionalProperties": false,
+      "properties": {
+        "signers": {
+          "description": "List of signers. Order in array determines signing order when sequential=true.",
+          "items": {
+            "$ref": "#/$defs/SignerInput"
+          },
+          "minItems": 1,
+          "title": "Signers",
+          "type": "array"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Signing request title. Supports {{ColumnName}} references.",
+          "examples": [
+            "Agreement \u2014 {{ClientName}}"
+          ],
+          "title": "Title"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional message shown to signers.",
+          "examples": [
+            "Please review and sign."
+          ],
+          "title": "Message"
+        },
+        "expires_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days until signing links expire. Default: 30.",
+          "examples": [
+            14
+          ],
+          "title": "Expires Days"
+        },
+        "sequential": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When true, each signer is notified only after the previous has signed.",
+          "examples": [
+            false
+          ],
+          "title": "Sequential"
+        }
+      },
+      "required": [
+        "signers"
+      ],
+      "title": "SignConfigInput",
+      "type": "object"
+    },
+    "SignerInput": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "description": "Signer's email. Use {{ColumnName}} to reference a data field, or 'me' for the authenticated user.",
+          "examples": [
+            "{{ClientEmail}}"
+          ],
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "First name. Supports {{ColumnName}} and 'me'.",
+          "examples": [
+            "{{ClientFirstName}}"
+          ],
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last name. Supports {{ColumnName}} and 'me'.",
+          "examples": [
+            "{{ClientLastName}}"
+          ],
+          "title": "Last Name"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "SignerInput",
+      "type": "object"
+    },
+    "StandaloneSignerInput": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "description": "",
+          "examples": [
+            "jane@acme.com"
+          ],
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "examples": [
+            "Jane"
+          ],
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "",
+          "examples": [
+            "Smith"
+          ],
+          "title": "Last Name"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "StandaloneSignerInput",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_signature_request": "#/$defs/CancelSignatureRequest",
+          "create_signature_request": "#/$defs/CreateSignatureRequest",
+          "generate_document": "#/$defs/GenerateDocument",
+          "generate_images": "#/$defs/GenerateImages",
+          "generate_workflow_documents": "#/$defs/GenerateWorkflowDocuments",
+          "get_credits": "#/$defs/GetCredits",
+          "get_file_download_url": "#/$defs/GetFileDownloadUrl",
+          "get_generation_status": "#/$defs/GetGenerationStatus",
+          "get_image_job": "#/$defs/GetImageJob",
+          "get_image_template": "#/$defs/GetImageTemplate",
+          "get_signature_request": "#/$defs/GetSignatureRequest",
+          "get_template_placeholders": "#/$defs/GetTemplatePlaceholders",
+          "get_workflow_placeholders": "#/$defs/GetWorkflowPlaceholders",
+          "list_files": "#/$defs/ListFiles",
+          "list_generation_history": "#/$defs/ListGenerationHistory",
+          "list_image_templates": "#/$defs/ListImageTemplates",
+          "list_signature_requests": "#/$defs/ListSignatureRequests",
+          "list_templates": "#/$defs/ListTemplates",
+          "list_workflows": "#/$defs/ListWorkflows",
+          "merge_documents": "#/$defs/MergeDocuments",
+          "save_files": "#/$defs/SaveFiles"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GenerateDocument"
+        },
+        {
+          "$ref": "#/$defs/GetGenerationStatus"
+        },
+        {
+          "$ref": "#/$defs/ListGenerationHistory"
+        },
+        {
+          "$ref": "#/$defs/MergeDocuments"
+        },
+        {
+          "$ref": "#/$defs/ListFiles"
+        },
+        {
+          "$ref": "#/$defs/SaveFiles"
+        },
+        {
+          "$ref": "#/$defs/GetFileDownloadUrl"
+        },
+        {
+          "$ref": "#/$defs/GenerateImages"
+        },
+        {
+          "$ref": "#/$defs/GetImageJob"
+        },
+        {
+          "$ref": "#/$defs/ListImageTemplates"
+        },
+        {
+          "$ref": "#/$defs/GetImageTemplate"
+        },
+        {
+          "$ref": "#/$defs/ListSignatureRequests"
+        },
+        {
+          "$ref": "#/$defs/CreateSignatureRequest"
+        },
+        {
+          "$ref": "#/$defs/GetSignatureRequest"
+        },
+        {
+          "$ref": "#/$defs/CancelSignatureRequest"
+        },
+        {
+          "$ref": "#/$defs/ListTemplates"
+        },
+        {
+          "$ref": "#/$defs/GetTemplatePlaceholders"
+        },
+        {
+          "$ref": "#/$defs/GetCredits"
+        },
+        {
+          "$ref": "#/$defs/ListWorkflows"
+        },
+        {
+          "$ref": "#/$defs/GenerateWorkflowDocuments"
+        },
+        {
+          "$ref": "#/$defs/GetWorkflowPlaceholders"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ActiveMergeAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Active-merge Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
