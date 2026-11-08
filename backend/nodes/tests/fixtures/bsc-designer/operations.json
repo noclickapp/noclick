@@ -1,0 +1,117 @@
+{
+  "list_documents": {
+    "method": "GET",
+    "path": "/rest/api/documents/list",
+    "operation_id": "getDocumentsListUsingGET"
+  },
+  "get_document": {
+    "method": "GET",
+    "path": "/rest/api/documents/list/{idOrAlias}",
+    "operation_id": "getDocumentInfoUsingGET"
+  },
+  "create_document": {
+    "method": "POST",
+    "path": "/rest/api/documents",
+    "operation_id": "createDocumentUsingPOST"
+  },
+  "update_document": {
+    "method": "PUT",
+    "path": "/rest/api/documents/list/{id}",
+    "operation_id": "updateDocumentUsingPUT"
+  },
+  "delete_document": {
+    "method": "DELETE",
+    "path": "/rest/api/documents/list/{id}",
+    "operation_id": "deleteDocumentUsingDELETE"
+  },
+  "get_document_tree": {
+    "method": "GET",
+    "path": "/rest/api/documents/tree",
+    "operation_id": "getDocumentTreeUsingGET"
+  },
+  "list_indicators": {
+    "method": "GET",
+    "path": "/rest/api/document/{docId}/kpi/list",
+    "operation_id": "getKpiListUsingGET"
+  },
+  "get_indicator_tree": {
+    "method": "GET",
+    "path": "/rest/api/document/{docId}/kpi/tree",
+    "operation_id": "getKpiTreeUsingGET"
+  },
+  "get_indicator": {
+    "method": "GET",
+    "path": "/rest/api/document/{docId}/kpi/{guid}",
+    "operation_id": "getKpiUsingGET"
+  },
+  "update_indicator": {
+    "method": "PUT",
+    "path": "/rest/api/document/{docId}/kpi/{guid}",
+    "operation_id": "setKpiUsingPUT"
+  },
+  "get_indicator_value": {
+    "method": "GET",
+    "path": "/rest/api/document/{docId}/kpi/indicator/{guid}/value/{date}",
+    "operation_id": "getSingleValueUsingGET"
+  },
+  "set_indicator_value": {
+    "method": "POST",
+    "path": "/rest/api/document/{docId}/kpi/indicator/{guid}/value/{date}",
+    "operation_id": "setSingleValueUsingPOST"
+  },
+  "get_all_values": {
+    "method": "GET",
+    "path": "/rest/api/document/{docId}/kpi/batch/all/get-value/{date}",
+    "operation_id": "getAllValuesUsingGET"
+  },
+  "get_selected_values": {
+    "method": "POST",
+    "path": "/rest/api/document/{docId}/kpi/batch/get-value/{date}",
+    "operation_id": "getChosenValuesUsingPOST"
+  },
+  "set_selected_values": {
+    "method": "POST",
+    "path": "/rest/api/document/{docId}/kpi/batch/set-value/{date}",
+    "operation_id": "setChosenValuesUsingPOST"
+  },
+  "list_maps": {
+    "method": "GET",
+    "path": "/rest/api/document/{docId}/maps",
+    "operation_id": "getMapsUsingGET"
+  },
+  "refresh_map": {
+    "method": "PUT",
+    "path": "/rest/api/document/{docId}/maps/{mapId}/wizzards",
+    "operation_id": "runStrategyMapWizardForChosenMapUsingPUT"
+  },
+  "refresh_all_maps": {
+    "method": "PUT",
+    "path": "/rest/api/document/{docId}/maps/all/wizzards",
+    "operation_id": "runStrategyMapWizardForAllMapsUsingPUT"
+  },
+  "get_organization": {
+    "method": "GET",
+    "path": "/rest/api/organization-info",
+    "operation_id": "getOrganizationInfoModelUsingGET"
+  },
+  "list_custom_fields": {
+    "method": "GET",
+    "path": "/rest/api/custom-fields",
+    "operation_id": "getCustomFieldsUsingGET"
+  },
+  "list_indicator_custom_values": {
+    "method": "GET",
+    "path": "/rest/api/document/{docId}/kpi/indicator/{guid}/custom-fields",
+    "operation_id": "getValuesUsingGET"
+  },
+  "get_custom_value": {
+    "method": "GET",
+    "path": "/rest/api/document/{docId}/kpi/indicator/{guid}/custom-fields/{custom-value-id}",
+    "operation_id": "getValueUsingGET"
+  },
+  "set_custom_value": {
+    "method": "PUT",
+    "path": "/rest/api/document/{docId}/kpi/indicator/{guid}/custom-fields/{custom-value-id}",
+    "operation_id": "setValueUsingPUT"
+  }
+}
