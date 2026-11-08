@@ -11,6 +11,7 @@ const IpinfoIoIcon = ({ className, style }: { className?: string; style?: CSSPro
 
 export const IpinfoIoNode: NodeDefinition = {
     type: 'automation-ipinfo-io', label: 'IPinfo',
+    category: 'developer-tools',
     description: 'Enrich IP addresses, check networks and privacy, and generate IP reports',
     Icon: IpinfoIoIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
