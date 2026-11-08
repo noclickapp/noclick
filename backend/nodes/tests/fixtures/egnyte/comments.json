@@ -1,0 +1,20 @@
+{
+  "source": "https://developers.egnyte.com/integration/api/openapi/json",
+  "body": {
+    "total_results": 2,
+    "count": 2,
+    "offset": 0,
+    "notes": [
+      {
+        "id": "4fbba2ef-fb2f-4c54-9392-116f07e39b97",
+        "message": "Test comment",
+        "username": "asmith",
+        "can_delete": true,
+        "creation_time": "2016-05-18T17:56:39.975+0000",
+        "formatted_name": "Anna Smith",
+        "file_path": "/Shared/Documents/testdoc.docx",
+        "group_id": "628ceb16-b9a0-49f8-a0e4-72b72970f871"
+      }
+    ]
+  }
+}
