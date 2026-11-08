@@ -1,0 +1,682 @@
+{
+  "$defs": {
+    "AlttextAiCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "alttext_ai_api_key",
+          "default": "alttext_ai_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Alttext.ai API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste an API key from your AltText.ai account. NoClick sends it in X-API-Key. Key-management reads require a full-access key. Connect checks your account.",
+      "x-credential-url": "https://alttext.ai/account/api_keys"
+    },
+    "CreateImage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_image",
+          "default": "create_image",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "description": "Public image URL to send to AltText.ai",
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "asset_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asset Id"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lang"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 6,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "negative_keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 6,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Negative Keywords"
+        },
+        "gpt_prompt": {
+          "anyOf": [
+            {
+              "maxLength": 768,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gpt Prompt"
+        },
+        "max_chars": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 80,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Chars"
+        },
+        "overwrite": {
+          "default": false,
+          "title": "Overwrite",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "CreateImage",
+      "type": "object"
+    },
+    "DeleteImage": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_image",
+          "default": "delete_image",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_id"
+      ],
+      "title": "DeleteImage",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetApiKey": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_api_key",
+          "default": "get_api_key",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "detail": {
+          "anyOf": [
+            {
+              "const": "full",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detail"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetApiKey",
+      "type": "object"
+    },
+    "GetApiKeyHistory": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_api_key_history",
+          "default": "get_api_key_history",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetApiKeyHistory",
+      "type": "object"
+    },
+    "GetImage": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_image",
+          "default": "get_image",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_id"
+      ],
+      "title": "GetImage",
+      "type": "object"
+    },
+    "ListApiKeys": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_api_keys",
+          "default": "list_api_keys",
+          "title": "Operation",
+          "type": "string"
+        },
+        "status": {
+          "default": "active",
+          "enum": [
+            "active",
+            "revoked",
+            "all"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Q"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "ListApiKeys",
+      "type": "object"
+    },
+    "ListImages": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_images",
+          "default": "list_images",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        }
+      },
+      "title": "ListImages",
+      "type": "object"
+    },
+    "ScrapePage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "scrape_page",
+          "default": "scrape_page",
+          "title": "Operation",
+          "type": "string"
+        },
+        "url": {
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lang"
+        },
+        "include_existing": {
+          "default": false,
+          "title": "Include Existing",
+          "type": "boolean"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 6,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "negative_keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 6,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Negative Keywords"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "ScrapePage",
+      "type": "object"
+    },
+    "SearchImages": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_images",
+          "default": "search_images",
+          "title": "Operation",
+          "type": "string"
+        },
+        "q": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Q",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "SearchImages",
+      "type": "object"
+    },
+    "UpdateAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_account",
+          "default": "update_account",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url"
+        },
+        "notification_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notification Email"
+        }
+      },
+      "title": "UpdateAccount",
+      "type": "object"
+    },
+    "UpdateImage": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_image",
+          "default": "update_image",
+          "title": "Operation",
+          "type": "string"
+        },
+        "alt_text": {
+          "maxLength": 1024,
+          "title": "Alt Text",
+          "type": "string"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadata"
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lang"
+        },
+        "overwrite": {
+          "default": false,
+          "title": "Overwrite",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "asset_id",
+        "alt_text"
+      ],
+      "title": "UpdateImage",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_image": "#/$defs/CreateImage",
+          "delete_image": "#/$defs/DeleteImage",
+          "get_account": "#/$defs/GetAccount",
+          "get_api_key": "#/$defs/GetApiKey",
+          "get_api_key_history": "#/$defs/GetApiKeyHistory",
+          "get_image": "#/$defs/GetImage",
+          "list_api_keys": "#/$defs/ListApiKeys",
+          "list_images": "#/$defs/ListImages",
+          "scrape_page": "#/$defs/ScrapePage",
+          "search_images": "#/$defs/SearchImages",
+          "update_account": "#/$defs/UpdateAccount",
+          "update_image": "#/$defs/UpdateImage"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/UpdateAccount"
+        },
+        {
+          "$ref": "#/$defs/ListImages"
+        },
+        {
+          "$ref": "#/$defs/SearchImages"
+        },
+        {
+          "$ref": "#/$defs/CreateImage"
+        },
+        {
+          "$ref": "#/$defs/GetImage"
+        },
+        {
+          "$ref": "#/$defs/UpdateImage"
+        },
+        {
+          "$ref": "#/$defs/DeleteImage"
+        },
+        {
+          "$ref": "#/$defs/ScrapePage"
+        },
+        {
+          "$ref": "#/$defs/ListApiKeys"
+        },
+        {
+          "$ref": "#/$defs/GetApiKey"
+        },
+        {
+          "$ref": "#/$defs/GetApiKeyHistory"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AlttextAiCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Alttext-ai Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
