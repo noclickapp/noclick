@@ -1,0 +1,915 @@
+{
+  "$defs": {
+    "ClassifyGender": {
+      "additionalProperties": false,
+      "description": "Infer the likely gender of a name.",
+      "properties": {
+        "operation": {
+          "const": "classify_gender",
+          "default": "classify_gender",
+          "title": "Operation",
+          "type": "string"
+        },
+        "firstName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Lastname",
+          "type": "string"
+        }
+      },
+      "required": [
+        "firstName",
+        "lastName"
+      ],
+      "title": "ClassifyGender",
+      "type": "object"
+    },
+    "ClassifyGenderBatch": {
+      "additionalProperties": false,
+      "description": "Infer the likely gender of up to 100 names, detecting automatically the cultural context.",
+      "properties": {
+        "operation": {
+          "const": "classify_gender_batch",
+          "default": "classify_gender_batch",
+          "title": "Operation",
+          "type": "string"
+        },
+        "personalNames": {
+          "items": {
+            "$ref": "#/$defs/FirstLastName"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Personalnames",
+          "type": "array"
+        }
+      },
+      "required": [
+        "personalNames"
+      ],
+      "title": "ClassifyGenderBatch",
+      "type": "object"
+    },
+    "ClassifyGenderFull": {
+      "additionalProperties": false,
+      "description": "Infer the likely gender of a full name, ex. John H. Smith",
+      "properties": {
+        "operation": {
+          "const": "classify_gender_full",
+          "default": "classify_gender_full",
+          "title": "Operation",
+          "type": "string"
+        },
+        "fullName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Fullname",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fullName"
+      ],
+      "title": "ClassifyGenderFull",
+      "type": "object"
+    },
+    "ClassifyGenderFullBatch": {
+      "additionalProperties": false,
+      "description": "Infer the likely gender of up to 100 full names, detecting automatically the cultural context.",
+      "properties": {
+        "operation": {
+          "const": "classify_gender_full_batch",
+          "default": "classify_gender_full_batch",
+          "title": "Operation",
+          "type": "string"
+        },
+        "personalNames": {
+          "items": {
+            "$ref": "#/$defs/PersonalName"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Personalnames",
+          "type": "array"
+        }
+      },
+      "required": [
+        "personalNames"
+      ],
+      "title": "ClassifyGenderFullBatch",
+      "type": "object"
+    },
+    "ClassifyGenderFullGeo": {
+      "additionalProperties": false,
+      "description": "Infer the likely gender of a full name, given a local context (ISO2 country code).",
+      "properties": {
+        "operation": {
+          "const": "classify_gender_full_geo",
+          "default": "classify_gender_full_geo",
+          "title": "Operation",
+          "type": "string"
+        },
+        "fullName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Fullname",
+          "type": "string"
+        },
+        "countryIso2": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "pattern": "^[A-Z]{2}$",
+          "title": "Countryiso2",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fullName",
+        "countryIso2"
+      ],
+      "title": "ClassifyGenderFullGeo",
+      "type": "object"
+    },
+    "ClassifyGenderGeo": {
+      "additionalProperties": false,
+      "description": "Infer the likely gender of a name, given a local context (ISO2 country code).",
+      "properties": {
+        "operation": {
+          "const": "classify_gender_geo",
+          "default": "classify_gender_geo",
+          "title": "Operation",
+          "type": "string"
+        },
+        "firstName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Lastname",
+          "type": "string"
+        },
+        "countryIso2": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "pattern": "^[A-Z]{2}$",
+          "title": "Countryiso2",
+          "type": "string"
+        }
+      },
+      "required": [
+        "firstName",
+        "lastName",
+        "countryIso2"
+      ],
+      "title": "ClassifyGenderGeo",
+      "type": "object"
+    },
+    "ClassifyNameType": {
+      "additionalProperties": false,
+      "description": "Infer the likely type of a proper noun (personal name, brand name, place name etc.)",
+      "properties": {
+        "operation": {
+          "const": "classify_name_type",
+          "default": "classify_name_type",
+          "title": "Operation",
+          "type": "string"
+        },
+        "properNoun": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Propernoun",
+          "type": "string"
+        }
+      },
+      "required": [
+        "properNoun"
+      ],
+      "title": "ClassifyNameType",
+      "type": "object"
+    },
+    "FirstLastName": {
+      "additionalProperties": false,
+      "properties": {
+        "firstName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Lastname",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        }
+      },
+      "required": [
+        "firstName",
+        "lastName"
+      ],
+      "title": "FirstLastName",
+      "type": "object"
+    },
+    "GetApiKeyInfo": {
+      "additionalProperties": false,
+      "description": "Read API Key info.",
+      "properties": {
+        "operation": {
+          "const": "get_api_key_info",
+          "default": "get_api_key_info",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetApiKeyInfo",
+      "type": "object"
+    },
+    "GetApiUsage": {
+      "additionalProperties": false,
+      "description": "Print current API usage.",
+      "properties": {
+        "operation": {
+          "const": "get_api_usage",
+          "default": "get_api_usage",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetApiUsage",
+      "type": "object"
+    },
+    "JapaneseKanjiCandidates": {
+      "additionalProperties": false,
+      "description": "Identify japanese name candidates in KANJI, based on the romanized name ex. Yamamoto Sanae",
+      "properties": {
+        "operation": {
+          "const": "japanese_kanji_candidates",
+          "default": "japanese_kanji_candidates",
+          "title": "Operation",
+          "type": "string"
+        },
+        "japaneseSurnameLatin": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Japanesesurnamelatin",
+          "type": "string"
+        },
+        "japaneseGivenNameLatin": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Japanesegivennamelatin",
+          "type": "string"
+        }
+      },
+      "required": [
+        "japaneseSurnameLatin",
+        "japaneseGivenNameLatin"
+      ],
+      "title": "JapaneseKanjiCandidates",
+      "type": "object"
+    },
+    "JapaneseLatinCandidates": {
+      "additionalProperties": false,
+      "description": "Romanize japanese name, based on the name in Kanji.",
+      "properties": {
+        "operation": {
+          "const": "japanese_latin_candidates",
+          "default": "japanese_latin_candidates",
+          "title": "Operation",
+          "type": "string"
+        },
+        "japaneseSurnameKanji": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Japanesesurnamekanji",
+          "type": "string"
+        },
+        "japaneseGivenNameKanji": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Japanesegivennamekanji",
+          "type": "string"
+        }
+      },
+      "required": [
+        "japaneseSurnameKanji",
+        "japaneseGivenNameKanji"
+      ],
+      "title": "JapaneseLatinCandidates",
+      "type": "object"
+    },
+    "MatchChineseName": {
+      "additionalProperties": false,
+      "description": "Return a score for matching Chinese name ex. \u738b\u6653\u660e with a romanized name ex. Wang Xiaoming",
+      "properties": {
+        "operation": {
+          "const": "match_chinese_name",
+          "default": "match_chinese_name",
+          "title": "Operation",
+          "type": "string"
+        },
+        "chineseSurnameLatin": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Chinesesurnamelatin",
+          "type": "string"
+        },
+        "chineseGivenNameLatin": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Chinesegivennamelatin",
+          "type": "string"
+        },
+        "chineseName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Chinesename",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chineseSurnameLatin",
+        "chineseGivenNameLatin",
+        "chineseName"
+      ],
+      "title": "MatchChineseName",
+      "type": "object"
+    },
+    "MatchJapaneseName": {
+      "additionalProperties": false,
+      "description": "Return a score for matching Japanese name in KANJI ex. \u5c71\u672c \u65e9\u82d7 with a romanized name ex. Yamamoto Sanae",
+      "properties": {
+        "operation": {
+          "const": "match_japanese_name",
+          "default": "match_japanese_name",
+          "title": "Operation",
+          "type": "string"
+        },
+        "japaneseSurnameLatin": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Japanesesurnamelatin",
+          "type": "string"
+        },
+        "japaneseGivenNameLatin": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Japanesegivennamelatin",
+          "type": "string"
+        },
+        "japaneseName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Japanesename",
+          "type": "string"
+        }
+      },
+      "required": [
+        "japaneseSurnameLatin",
+        "japaneseGivenNameLatin",
+        "japaneseName"
+      ],
+      "title": "MatchJapaneseName",
+      "type": "object"
+    },
+    "NamsorAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "namsor_api_key",
+          "default": "namsor_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Namsor API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Namsor API key without a header prefix. NoClick reads your API key information to verify the connection. Classification requests consume your provider's API units; batch requests accept up to 100 names.",
+      "x-credential-url": "https://v2.namsor.com/NamSorAPIv2/sign-in.html"
+    },
+    "ParseChineseName": {
+      "additionalProperties": false,
+      "description": "Infer the likely first/last name structure of a name, ex. \u738b\u6653\u660e -> \u738b(surname) \u6653\u660e(given name)",
+      "properties": {
+        "operation": {
+          "const": "parse_chinese_name",
+          "default": "parse_chinese_name",
+          "title": "Operation",
+          "type": "string"
+        },
+        "chineseName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Chinesename",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chineseName"
+      ],
+      "title": "ParseChineseName",
+      "type": "object"
+    },
+    "ParseChineseNamesBatch": {
+      "additionalProperties": false,
+      "description": "Infer the likely first/last name structure of a name, ex. \u738b\u6653\u660e -> \u738b(surname) \u6653\u660e(given name).",
+      "properties": {
+        "operation": {
+          "const": "parse_chinese_names_batch",
+          "default": "parse_chinese_names_batch",
+          "title": "Operation",
+          "type": "string"
+        },
+        "personalNames": {
+          "items": {
+            "$ref": "#/$defs/PersonalName"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Personalnames",
+          "type": "array"
+        }
+      },
+      "required": [
+        "personalNames"
+      ],
+      "title": "ParseChineseNamesBatch",
+      "type": "object"
+    },
+    "ParseJapaneseName": {
+      "additionalProperties": false,
+      "description": "Infer the likely first/last name structure of a name, ex. \u5c71\u672c \u65e9\u82d7 or Yamamoto Sanae",
+      "properties": {
+        "operation": {
+          "const": "parse_japanese_name",
+          "default": "parse_japanese_name",
+          "title": "Operation",
+          "type": "string"
+        },
+        "japaneseName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Japanesename",
+          "type": "string"
+        }
+      },
+      "required": [
+        "japaneseName"
+      ],
+      "title": "ParseJapaneseName",
+      "type": "object"
+    },
+    "ParseJapaneseNamesBatch": {
+      "additionalProperties": false,
+      "description": "Infer the likely first/last name structure of a name, ex. \u5c71\u672c \u65e9\u82d7 or Yamamoto Sanae",
+      "properties": {
+        "operation": {
+          "const": "parse_japanese_names_batch",
+          "default": "parse_japanese_names_batch",
+          "title": "Operation",
+          "type": "string"
+        },
+        "personalNames": {
+          "items": {
+            "$ref": "#/$defs/PersonalName"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Personalnames",
+          "type": "array"
+        }
+      },
+      "required": [
+        "personalNames"
+      ],
+      "title": "ParseJapaneseNamesBatch",
+      "type": "object"
+    },
+    "ParseName": {
+      "additionalProperties": false,
+      "description": "Infer the likely first/last name structure of a name, ex. John Smith or SMITH, John or SMITH; John.",
+      "properties": {
+        "operation": {
+          "const": "parse_name",
+          "default": "parse_name",
+          "title": "Operation",
+          "type": "string"
+        },
+        "nameFull": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Namefull",
+          "type": "string"
+        }
+      },
+      "required": [
+        "nameFull"
+      ],
+      "title": "ParseName",
+      "type": "object"
+    },
+    "ParseNameGeo": {
+      "additionalProperties": false,
+      "description": "Infer the likely first/last name structure of a name, ex. John Smith or SMITH, John or SMITH; John. For better accuracy, provide a geographic context.",
+      "properties": {
+        "operation": {
+          "const": "parse_name_geo",
+          "default": "parse_name_geo",
+          "title": "Operation",
+          "type": "string"
+        },
+        "nameFull": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Namefull",
+          "type": "string"
+        },
+        "countryIso2": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "pattern": "^[A-Z]{2}$",
+          "title": "Countryiso2",
+          "type": "string"
+        }
+      },
+      "required": [
+        "nameFull",
+        "countryIso2"
+      ],
+      "title": "ParseNameGeo",
+      "type": "object"
+    },
+    "ParseNamesBatch": {
+      "additionalProperties": false,
+      "description": "Infer the likely first/last name structure of a name, ex. John Smith or SMITH, John or SMITH; John.",
+      "properties": {
+        "operation": {
+          "const": "parse_names_batch",
+          "default": "parse_names_batch",
+          "title": "Operation",
+          "type": "string"
+        },
+        "personalNames": {
+          "items": {
+            "$ref": "#/$defs/PersonalName"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Personalnames",
+          "type": "array"
+        }
+      },
+      "required": [
+        "personalNames"
+      ],
+      "title": "ParseNamesBatch",
+      "type": "object"
+    },
+    "ParseNamesGeoBatch": {
+      "additionalProperties": false,
+      "description": "Infer the likely first/last name structure of a name, ex. John Smith or SMITH, John or SMITH; John. Giving a local context improves precision.",
+      "properties": {
+        "operation": {
+          "const": "parse_names_geo_batch",
+          "default": "parse_names_geo_batch",
+          "title": "Operation",
+          "type": "string"
+        },
+        "personalNames": {
+          "items": {
+            "$ref": "#/$defs/PersonalNameGeo"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Personalnames",
+          "type": "array"
+        }
+      },
+      "required": [
+        "personalNames"
+      ],
+      "title": "ParseNamesGeoBatch",
+      "type": "object"
+    },
+    "PersonalName": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional correlation ID echoed by Namsor.",
+          "title": "Id"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PersonalName",
+      "type": "object"
+    },
+    "PersonalNameGeo": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional correlation ID echoed by Namsor.",
+          "title": "Id"
+        },
+        "countryIso2": {
+          "description": "ISO 3166-1 alpha-2 country code.",
+          "pattern": "^[A-Z]{2}$",
+          "title": "Countryiso2",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "countryIso2"
+      ],
+      "title": "PersonalNameGeo",
+      "type": "object"
+    },
+    "RomanizeChineseName": {
+      "additionalProperties": false,
+      "description": "Romanize the Chinese name to Pinyin, ex. \u738b\u6653\u660e -> Wang (surname) Xiaoming (given name)",
+      "properties": {
+        "operation": {
+          "const": "romanize_chinese_name",
+          "default": "romanize_chinese_name",
+          "title": "Operation",
+          "type": "string"
+        },
+        "chineseName": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Chinesename",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chineseName"
+      ],
+      "title": "RomanizeChineseName",
+      "type": "object"
+    },
+    "RomanizeChineseNamesBatch": {
+      "additionalProperties": false,
+      "description": "Romanize a list of Chinese name to Pinyin, ex. \u738b\u6653\u660e -> Wang (surname) Xiaoming (given name).",
+      "properties": {
+        "operation": {
+          "const": "romanize_chinese_names_batch",
+          "default": "romanize_chinese_names_batch",
+          "title": "Operation",
+          "type": "string"
+        },
+        "personalNames": {
+          "items": {
+            "$ref": "#/$defs/PersonalName"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Personalnames",
+          "type": "array"
+        }
+      },
+      "required": [
+        "personalNames"
+      ],
+      "title": "RomanizeChineseNamesBatch",
+      "type": "object"
+    },
+    "SetAnonymization": {
+      "additionalProperties": false,
+      "description": "Activate/deactivate anonymization for a source.",
+      "properties": {
+        "operation": {
+          "const": "set_anonymization",
+          "default": "set_anonymization",
+          "title": "Operation",
+          "type": "string"
+        },
+        "anonymized": {
+          "title": "Anonymized",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "anonymized"
+      ],
+      "title": "SetAnonymization",
+      "type": "object"
+    },
+    "SetLearning": {
+      "additionalProperties": false,
+      "description": "Activate/deactivate learning from a source.",
+      "properties": {
+        "operation": {
+          "const": "set_learning",
+          "default": "set_learning",
+          "title": "Operation",
+          "type": "string"
+        },
+        "learnable": {
+          "title": "Learnable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "learnable"
+      ],
+      "title": "SetLearning",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "classify_gender": "#/$defs/ClassifyGender",
+          "classify_gender_batch": "#/$defs/ClassifyGenderBatch",
+          "classify_gender_full": "#/$defs/ClassifyGenderFull",
+          "classify_gender_full_batch": "#/$defs/ClassifyGenderFullBatch",
+          "classify_gender_full_geo": "#/$defs/ClassifyGenderFullGeo",
+          "classify_gender_geo": "#/$defs/ClassifyGenderGeo",
+          "classify_name_type": "#/$defs/ClassifyNameType",
+          "get_api_key_info": "#/$defs/GetApiKeyInfo",
+          "get_api_usage": "#/$defs/GetApiUsage",
+          "japanese_kanji_candidates": "#/$defs/JapaneseKanjiCandidates",
+          "japanese_latin_candidates": "#/$defs/JapaneseLatinCandidates",
+          "match_chinese_name": "#/$defs/MatchChineseName",
+          "match_japanese_name": "#/$defs/MatchJapaneseName",
+          "parse_chinese_name": "#/$defs/ParseChineseName",
+          "parse_chinese_names_batch": "#/$defs/ParseChineseNamesBatch",
+          "parse_japanese_name": "#/$defs/ParseJapaneseName",
+          "parse_japanese_names_batch": "#/$defs/ParseJapaneseNamesBatch",
+          "parse_name": "#/$defs/ParseName",
+          "parse_name_geo": "#/$defs/ParseNameGeo",
+          "parse_names_batch": "#/$defs/ParseNamesBatch",
+          "parse_names_geo_batch": "#/$defs/ParseNamesGeoBatch",
+          "romanize_chinese_name": "#/$defs/RomanizeChineseName",
+          "romanize_chinese_names_batch": "#/$defs/RomanizeChineseNamesBatch",
+          "set_anonymization": "#/$defs/SetAnonymization",
+          "set_learning": "#/$defs/SetLearning"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetApiKeyInfo"
+        },
+        {
+          "$ref": "#/$defs/GetApiUsage"
+        },
+        {
+          "$ref": "#/$defs/ClassifyNameType"
+        },
+        {
+          "$ref": "#/$defs/ClassifyGender"
+        },
+        {
+          "$ref": "#/$defs/ClassifyGenderGeo"
+        },
+        {
+          "$ref": "#/$defs/ClassifyGenderFull"
+        },
+        {
+          "$ref": "#/$defs/ClassifyGenderFullGeo"
+        },
+        {
+          "$ref": "#/$defs/ParseName"
+        },
+        {
+          "$ref": "#/$defs/ParseNameGeo"
+        },
+        {
+          "$ref": "#/$defs/ParseChineseName"
+        },
+        {
+          "$ref": "#/$defs/RomanizeChineseName"
+        },
+        {
+          "$ref": "#/$defs/MatchChineseName"
+        },
+        {
+          "$ref": "#/$defs/ParseJapaneseName"
+        },
+        {
+          "$ref": "#/$defs/JapaneseKanjiCandidates"
+        },
+        {
+          "$ref": "#/$defs/JapaneseLatinCandidates"
+        },
+        {
+          "$ref": "#/$defs/MatchJapaneseName"
+        },
+        {
+          "$ref": "#/$defs/ParseNamesBatch"
+        },
+        {
+          "$ref": "#/$defs/ParseNamesGeoBatch"
+        },
+        {
+          "$ref": "#/$defs/ParseChineseNamesBatch"
+        },
+        {
+          "$ref": "#/$defs/RomanizeChineseNamesBatch"
+        },
+        {
+          "$ref": "#/$defs/ParseJapaneseNamesBatch"
+        },
+        {
+          "$ref": "#/$defs/ClassifyGenderBatch"
+        },
+        {
+          "$ref": "#/$defs/ClassifyGenderFullBatch"
+        },
+        {
+          "$ref": "#/$defs/SetLearning"
+        },
+        {
+          "$ref": "#/$defs/SetAnonymization"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NamsorAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Namsor Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
