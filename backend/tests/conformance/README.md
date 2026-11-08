@@ -178,11 +178,39 @@ conflicting filename/MIME declarations and unsatisfied constraints are fixture
 errors: the harness never guesses an image, audio or document type. These files
 make an input executable; they are never evidence of a provider's response.
 
+## Postman collection evidence
+
+A pin with `"format": "postman"` accepts only Postman Collection v2.0/v2.1.
+The unchanged file must match its SHA-256 and `info.version` (including an
+explicit `null` pin when the collection publishes no version), and the pin must
+name an absolute HTTP(S) `source_url`. Both single pins and `specs` lists work;
+an undeclared collection cannot masquerade as OpenAPI.
+
+Postman contracts match method, exact literal path segments, variable path
+segments (`:name` and `{{name}}`), and the collection's host. Base-URL variables
+bind only to values published in the collection, never catalog credentials or
+the intercepted request. Enabled query keys, required collection headers,
+authentication placement/scheme and media declarations are checked. JSON field
+paths (including nested array objects) and form fields must occur in the item
+or its saved examples' original request bodies. Scripts are never executed.
+
+Every saved response is replayed with its published status, headers and exact
+body text, without schema inference, response generation, placeholder changes,
+or rewriting IDs. Each replay constructs a fresh node and runs its complete
+operation, preserving guards, ancestry checks and readback. An item without a
+saved response is blocked as `no published example response`; a parser failure
+on any replay also blocks. Reports identify Postman items, example indexes and
+published response counts so the verdict can require complete replay coverage.
+
+Postman evidence supports only `postman-checked`, with `ready: false`. Mixed
+catalogs retain each OpenAPI operation's existing bar and identify the verdict
+per operation. Existing OpenAPI contracts and report formats are unchanged.
+
 ## Merge verdict
 
 `verdict.py` turns a report and its catalog into the verdict the integration
 merge gate reads: a re-cut integration PR merges only when the verdict is ready
-(or `postman-checked`, once Postman evidence lands), its CI is green and its
+(or `postman-checked` for a Postman-only provider), its CI is green and its
 scope check passes. It blocks on any operation without a checked request, a
 request the contract rejects, a fixture error, or a parser failure on a
 provider-authored response; failures on generated responses are advisory.
