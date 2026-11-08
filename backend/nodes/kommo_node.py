@@ -232,6 +232,7 @@ class KommoNode(WorkflowNode):
                 refresh=OAUTH_PROVIDER.bind_refresh(cred_dict),
                 additional_token_fields=OAUTH_PROVIDER.credential_fields,
                 provider="kommo",
+                caller_path="execute",
             )
             credentials.access_token = cred_dict["access_token"]
             credentials.expires_at = cred_dict.get("expires_at")
