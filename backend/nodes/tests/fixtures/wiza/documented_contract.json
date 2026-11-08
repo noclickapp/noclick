@@ -1,0 +1,80 @@
+{
+  "source": "https://docs.wiza.co/swagger/v1/openapi.yaml",
+  "version": "v1",
+  "sha256": "6eb3c27688e3f5f9ad14ac8ff89b925a819d47ee430046fe5d4d6d2808513db3",
+  "operations": {
+    "get_credits": {
+      "method": "GET",
+      "path": "/api/meta/credits",
+      "summary": "Get Credits"
+    },
+    "get_list": {
+      "method": "GET",
+      "path": "/api/lists/{id}",
+      "summary": "Get List"
+    },
+    "get_list_contacts": {
+      "method": "GET",
+      "path": "/api/lists/{id}/contacts",
+      "summary": "Get List Contacts"
+    },
+    "get_individual_reveal": {
+      "method": "GET",
+      "path": "/api/individual_reveals/{id}",
+      "summary": "Get Individual Reveal"
+    },
+    "start_individual_reveal": {
+      "method": "POST",
+      "path": "/api/individual_reveals",
+      "summary": "Start Individual Reveal"
+    },
+    "create_list": {
+      "method": "POST",
+      "path": "/api/lists",
+      "summary": "Create List"
+    },
+    "search_prospects": {
+      "method": "POST",
+      "path": "/api/prospects/search",
+      "summary": "Prospect search"
+    },
+    "create_prospect_list": {
+      "method": "POST",
+      "path": "/api/prospects/create_prospect_list",
+      "summary": "Create prospect list"
+    },
+    "continue_prospect_search": {
+      "method": "POST",
+      "path": "/api/prospects/continue_search",
+      "summary": "Continue prospect search"
+    },
+    "search_companies": {
+      "method": "POST",
+      "path": "/api/accounts/search",
+      "summary": "Company search"
+    },
+    "search_locations": {
+      "method": "GET",
+      "path": "/api/meta/location_autocomplete",
+      "summary": "Search Locations"
+    },
+    "search_technologies": {
+      "method": "GET",
+      "path": "/api/meta/technology_autocomplete",
+      "summary": "Search Technologies"
+    },
+    "enrich_company": {
+      "method": "POST",
+      "path": "/api/company_enrichments",
+      "summary": "Company Enrichment"
+    }
+  },
+  "credits_response": {
+    "credits": {
+      "email_credits": "unlimited",
+      "phone_credits": 100,
+      "export_credits": 0,
+      "api_credits": 100
+    }
+  }
+}

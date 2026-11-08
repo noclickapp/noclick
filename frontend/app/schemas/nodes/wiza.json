@@ -1,0 +1,614 @@
+{
+  "$defs": {
+    "ContinueProspectSearch": {
+      "additionalProperties": false,
+      "description": "Continue a previously created prospect list search.",
+      "properties": {
+        "operation": {
+          "const": "continue_prospect_search",
+          "default": "continue_prospect_search",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "max_profiles": {
+          "default": 10,
+          "maximum": 2500,
+          "minimum": 1,
+          "title": "Max Profiles",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ContinueProspectSearch",
+      "type": "object"
+    },
+    "CreateList": {
+      "additionalProperties": false,
+      "description": "Start bulk enrichment for up to 2500 contacts; this may consume credits.",
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "items_json": {
+          "description": "JSON array of contacts, each using email, LinkedIn URL, or full name with company/domain.",
+          "title": "Items Json",
+          "type": "string",
+          "ui:widget": "code_editor"
+        },
+        "enrichment_level": {
+          "default": "partial",
+          "enum": [
+            "none",
+            "partial",
+            "full"
+          ],
+          "title": "Enrichment Level",
+          "type": "string"
+        },
+        "accept_work": {
+          "default": true,
+          "title": "Accept Work",
+          "type": "boolean"
+        },
+        "accept_personal": {
+          "default": false,
+          "title": "Accept Personal",
+          "type": "boolean"
+        },
+        "accept_generic": {
+          "default": false,
+          "title": "Accept Generic",
+          "type": "boolean"
+        },
+        "skip_duplicates": {
+          "default": true,
+          "title": "Skip Duplicates",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "items_json"
+      ],
+      "title": "CreateList",
+      "type": "object"
+    },
+    "CreateProspectList": {
+      "additionalProperties": false,
+      "description": "Create an enrichment list from prospect search; this may consume credits.",
+      "properties": {
+        "operation": {
+          "const": "create_prospect_list",
+          "default": "create_prospect_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filters_json": {
+          "description": "JSON filters: first_name, last_name, job_title, job_company, company_size, linkedin_slug. Example: {\"job_company\":[{\"v\":\"Wiza\",\"s\":\"i\"}]}",
+          "title": "Filters Json",
+          "type": "string",
+          "ui:widget": "code_editor"
+        },
+        "name": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "max_profiles": {
+          "default": 10,
+          "maximum": 2500,
+          "minimum": 1,
+          "title": "Max Profiles",
+          "type": "integer"
+        },
+        "enrichment_level": {
+          "default": "partial",
+          "enum": [
+            "none",
+            "partial",
+            "full"
+          ],
+          "title": "Enrichment Level",
+          "type": "string"
+        },
+        "accept_work": {
+          "default": true,
+          "title": "Accept Work",
+          "type": "boolean"
+        },
+        "accept_personal": {
+          "default": false,
+          "title": "Accept Personal",
+          "type": "boolean"
+        },
+        "accept_generic": {
+          "default": false,
+          "title": "Accept Generic",
+          "type": "boolean"
+        },
+        "skip_duplicates": {
+          "default": true,
+          "title": "Skip Duplicates",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "filters_json",
+        "name"
+      ],
+      "title": "CreateProspectList",
+      "type": "object"
+    },
+    "EnrichCompany": {
+      "additionalProperties": false,
+      "description": "Enrich a company immediately; successful results consume credits.",
+      "properties": {
+        "operation": {
+          "const": "enrich_company",
+          "default": "enrich_company",
+          "title": "Operation",
+          "type": "string"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Name"
+        },
+        "company_domain": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Domain"
+        },
+        "company_linkedin_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Linkedin Id"
+        },
+        "company_linkedin_slug": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Linkedin Slug"
+        }
+      },
+      "title": "EnrichCompany",
+      "type": "object"
+    },
+    "GetCredits": {
+      "additionalProperties": false,
+      "description": "Read remaining email, phone, export and API credits.",
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetCredits",
+      "type": "object"
+    },
+    "GetIndividualReveal": {
+      "additionalProperties": false,
+      "description": "Get the status and results of an individual reveal.",
+      "properties": {
+        "operation": {
+          "const": "get_individual_reveal",
+          "default": "get_individual_reveal",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetIndividualReveal",
+      "type": "object"
+    },
+    "GetList": {
+      "additionalProperties": false,
+      "description": "Get list processing status and details.",
+      "properties": {
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetList",
+      "type": "object"
+    },
+    "GetListContacts": {
+      "additionalProperties": false,
+      "description": "Get enriched contacts for a list and segment.",
+      "properties": {
+        "operation": {
+          "const": "get_list_contacts",
+          "default": "get_list_contacts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "segment": {
+          "default": "people",
+          "enum": [
+            "people",
+            "valid",
+            "risky"
+          ],
+          "title": "Segment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetListContacts",
+      "type": "object"
+    },
+    "SearchCompanies": {
+      "additionalProperties": false,
+      "description": "Search companies or fetch the next page; returned companies consume credits.",
+      "properties": {
+        "operation": {
+          "const": "search_companies",
+          "default": "search_companies",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filters_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON filters: company_linkedin_id, company_summary, company_industry, technologies, year_founded_start/end. Omit when paging.",
+          "title": "Filters Json",
+          "ui:widget": "code_editor"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque token returned by the previous company search; omit filters when paging.",
+          "title": "Page Token"
+        },
+        "size": {
+          "default": 10,
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "title": "SearchCompanies",
+      "type": "object"
+    },
+    "SearchLocations": {
+      "additionalProperties": false,
+      "description": "Find location names and boundaries accepted by Wiza filters.",
+      "properties": {
+        "operation": {
+          "const": "search_locations",
+          "default": "search_locations",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 200,
+          "minLength": 3,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchLocations",
+      "type": "object"
+    },
+    "SearchProspects": {
+      "additionalProperties": false,
+      "description": "Search prospects using name, title, company, size or LinkedIn filters.",
+      "properties": {
+        "operation": {
+          "const": "search_prospects",
+          "default": "search_prospects",
+          "title": "Operation",
+          "type": "string"
+        },
+        "filters_json": {
+          "description": "JSON filters: first_name, last_name, job_title, job_company, company_size, linkedin_slug. Example: {\"job_company\":[{\"v\":\"Wiza\",\"s\":\"i\"}]}",
+          "title": "Filters Json",
+          "type": "string",
+          "ui:widget": "code_editor"
+        },
+        "size": {
+          "default": 10,
+          "maximum": 30,
+          "minimum": 0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "filters_json"
+      ],
+      "title": "SearchProspects",
+      "type": "object"
+    },
+    "SearchTechnologies": {
+      "additionalProperties": false,
+      "description": "Find technology names and slugs for company searches.",
+      "properties": {
+        "operation": {
+          "const": "search_technologies",
+          "default": "search_technologies",
+          "title": "Operation",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 200,
+          "minLength": 3,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchTechnologies",
+      "type": "object"
+    },
+    "StartIndividualReveal": {
+      "additionalProperties": false,
+      "description": "Start a contact enrichment job; this may consume credits.",
+      "properties": {
+        "operation": {
+          "const": "start_individual_reveal",
+          "default": "start_individual_reveal",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_json": {
+          "description": "One input: {\"profile_url\":\"https://www.linkedin.com/in/stephen-hakami-5babb21b0/\"}, {\"email\":\"stephen@wiza.co\"}, or full_name and company/domain.",
+          "title": "Contact Json",
+          "type": "string",
+          "ui:widget": "code_editor"
+        },
+        "enrichment_level": {
+          "default": "partial",
+          "enum": [
+            "none",
+            "partial",
+            "phone",
+            "full"
+          ],
+          "title": "Enrichment Level",
+          "type": "string"
+        },
+        "accept_work": {
+          "default": true,
+          "title": "Accept Work",
+          "type": "boolean"
+        },
+        "accept_personal": {
+          "default": false,
+          "title": "Accept Personal",
+          "type": "boolean"
+        },
+        "fair_key": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional stable subgroup identifier for fair throughput distribution.",
+          "title": "Fair Key"
+        }
+      },
+      "required": [
+        "contact_json"
+      ],
+      "title": "StartIndividualReveal",
+      "type": "object"
+    },
+    "WizaAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "wiza_api_key",
+          "default": "wiza_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Wiza API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Wiza API key. NoClick sends it as a Bearer token to wiza.co. Connecting reads your remaining credits. Searches and enrichment can consume API credits. Starting a reveal or list returns a job; check its status with the corresponding get operation.",
+      "x-credential-url": "https://docs.wiza.co/account-access/generate-api-key"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "continue_prospect_search": "#/$defs/ContinueProspectSearch",
+          "create_list": "#/$defs/CreateList",
+          "create_prospect_list": "#/$defs/CreateProspectList",
+          "enrich_company": "#/$defs/EnrichCompany",
+          "get_credits": "#/$defs/GetCredits",
+          "get_individual_reveal": "#/$defs/GetIndividualReveal",
+          "get_list": "#/$defs/GetList",
+          "get_list_contacts": "#/$defs/GetListContacts",
+          "search_companies": "#/$defs/SearchCompanies",
+          "search_locations": "#/$defs/SearchLocations",
+          "search_prospects": "#/$defs/SearchProspects",
+          "search_technologies": "#/$defs/SearchTechnologies",
+          "start_individual_reveal": "#/$defs/StartIndividualReveal"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCredits"
+        },
+        {
+          "$ref": "#/$defs/GetList"
+        },
+        {
+          "$ref": "#/$defs/GetListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetIndividualReveal"
+        },
+        {
+          "$ref": "#/$defs/StartIndividualReveal"
+        },
+        {
+          "$ref": "#/$defs/CreateList"
+        },
+        {
+          "$ref": "#/$defs/SearchProspects"
+        },
+        {
+          "$ref": "#/$defs/CreateProspectList"
+        },
+        {
+          "$ref": "#/$defs/ContinueProspectSearch"
+        },
+        {
+          "$ref": "#/$defs/SearchCompanies"
+        },
+        {
+          "$ref": "#/$defs/SearchLocations"
+        },
+        {
+          "$ref": "#/$defs/SearchTechnologies"
+        },
+        {
+          "$ref": "#/$defs/EnrichCompany"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WizaAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Wiza Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

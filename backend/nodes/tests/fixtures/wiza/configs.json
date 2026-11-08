@@ -1,0 +1,63 @@
+{
+  "get_credits": {
+    "operation": "get_credits"
+  },
+  "get_list": {
+    "id": "123",
+    "operation": "get_list"
+  },
+  "get_list_contacts": {
+    "id": "123",
+    "segment": "people",
+    "operation": "get_list_contacts"
+  },
+  "get_individual_reveal": {
+    "id": "123",
+    "operation": "get_individual_reveal"
+  },
+  "start_individual_reveal": {
+    "contact_json": "{\"profile_url\": \"https://www.linkedin.com/in/stephen-hakami-5babb21b0/\"}",
+    "enrichment_level": "partial",
+    "operation": "start_individual_reveal"
+  },
+  "create_list": {
+    "name": "VP of Sales in San Francisco",
+    "items_json": "[{\"full_name\": \"Stephen Hakami\", \"company\": \"Wiza\", \"domain\": \"wiza.co\"}]",
+    "enrichment_level": "partial",
+    "operation": "create_list"
+  },
+  "search_prospects": {
+    "filters_json": "{\"job_company\": [{\"v\": \"Wiza\", \"s\": \"i\"}]}",
+    "size": 10,
+    "operation": "search_prospects"
+  },
+  "create_prospect_list": {
+    "name": "VP of Sales in San Francisco",
+    "filters_json": "{\"job_company\": [{\"v\": \"Wiza\", \"s\": \"i\"}]}",
+    "max_profiles": 10,
+    "enrichment_level": "partial",
+    "operation": "create_prospect_list"
+  },
+  "continue_prospect_search": {
+    "id": 123,
+    "max_profiles": 10,
+    "operation": "continue_prospect_search"
+  },
+  "search_companies": {
+    "filters_json": "{\"company_industry\": [\"Computer Software\"]}",
+    "size": 10,
+    "operation": "search_companies"
+  },
+  "search_locations": {
+    "query": "tor",
+    "operation": "search_locations"
+  },
+  "search_technologies": {
+    "query": "aws",
+    "operation": "search_technologies"
+  },
+  "enrich_company": {
+    "company_name": "Wiza",
+    "operation": "enrich_company"
+  }
+}
