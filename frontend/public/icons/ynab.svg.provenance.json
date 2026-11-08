@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/ynab.svg",
+  "source": "https://api.ynab.com/assets/safari-pinned-tab-0f6609450211c5050f3e0e002911754bd2adc442d0e562a8c49df516fc0f81bc.svg (official mask icon linked from https://api.ynab.com/)",
+  "license": "YNAB brand mark used nominatively to identify the service; trademark rights remain with YNAB.",
+  "sha256": "ffb7d6bf5960f485497f17aa1fd7300ca60d79ba15221ce6a74cd8178ba07223"
+}

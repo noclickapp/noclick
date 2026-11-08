@@ -1,0 +1,578 @@
+[
+  {
+    "config": {
+      "operation": "get_user"
+    },
+    "method": "GET",
+    "path": "/v1/user",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "user": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_plans",
+      "include_accounts": false
+    },
+    "method": "GET",
+    "path": "/v1/plans",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "plans": [
+          {
+            "id": "00000000-0000-4000-8000-000000000001",
+            "name": "Household plan"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "get_plan",
+      "plan_id": "00000000-0000-4000-8000-000000000001"
+    },
+    "method": "GET",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "plan": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_accounts",
+      "plan_id": "00000000-0000-4000-8000-000000000001"
+    },
+    "method": "GET",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/accounts",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "accounts": [
+          {
+            "id": "00000000-0000-4000-8000-000000000003",
+            "name": "Fixture"
+          }
+        ],
+        "server_knowledge": 42
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "get_account",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "account_id": "00000000-0000-4000-8000-000000000002"
+    },
+    "method": "GET",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/accounts/00000000-0000-4000-8000-000000000002",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "account": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "create_account",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "name": "Cash",
+      "type": "cash",
+      "balance": 12340
+    },
+    "method": "POST",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/accounts",
+    "body": {
+      "account": {
+        "name": "Cash",
+        "type": "cash",
+        "balance": 12340
+      }
+    },
+    "status": 201,
+    "response": {
+      "data": {
+        "account": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_categories",
+      "plan_id": "00000000-0000-4000-8000-000000000001"
+    },
+    "method": "GET",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/categories",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "category_groups": [
+          {
+            "id": "00000000-0000-4000-8000-000000000003",
+            "name": "Fixture"
+          }
+        ],
+        "server_knowledge": 42
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "get_category",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "category_id": "00000000-0000-4000-8000-000000000003"
+    },
+    "method": "GET",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/categories/00000000-0000-4000-8000-000000000003",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "category": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_category",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "category_id": "00000000-0000-4000-8000-000000000003",
+      "name": "Food",
+      "note": "Updated",
+      "goal_target": null
+    },
+    "method": "PATCH",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/categories/00000000-0000-4000-8000-000000000003",
+    "body": {
+      "category": {
+        "name": "Food",
+        "note": "Updated",
+        "goal_target": null
+      }
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "category": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_month_category",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "category_id": "00000000-0000-4000-8000-000000000003",
+      "month": "2016-12-01",
+      "budgeted": 500000
+    },
+    "method": "PATCH",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/months/2016-12-01/categories/00000000-0000-4000-8000-000000000003",
+    "body": {
+      "category": {
+        "budgeted": 500000
+      }
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "category": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_payees",
+      "plan_id": "00000000-0000-4000-8000-000000000001"
+    },
+    "method": "GET",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/payees",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "payees": [
+          {
+            "id": "00000000-0000-4000-8000-000000000003",
+            "name": "Fixture"
+          }
+        ],
+        "server_knowledge": 42
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_payee",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "payee_id": "00000000-0000-4000-8000-000000000003",
+      "name": "Local Market"
+    },
+    "method": "PATCH",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/payees/00000000-0000-4000-8000-000000000003",
+    "body": {
+      "payee": {
+        "name": "Local Market"
+      }
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "payee": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_months",
+      "plan_id": "00000000-0000-4000-8000-000000000001"
+    },
+    "method": "GET",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/months",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "months": [
+          {
+            "id": "00000000-0000-4000-8000-000000000003",
+            "name": "Fixture"
+          }
+        ],
+        "server_knowledge": 42
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "get_month",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "month": "2016-12-01"
+    },
+    "method": "GET",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/months/2016-12-01",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "month": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_transactions",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "since_date": "2016-12-01",
+      "until_date": "2016-12-31",
+      "type": "unapproved",
+      "last_knowledge_of_server": 41
+    },
+    "method": "GET",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/transactions",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "transactions": [
+          {
+            "id": "00000000-0000-4000-8000-000000000003",
+            "amount": -12500,
+            "memo": "Groceries",
+            "deleted": true
+          }
+        ],
+        "server_knowledge": 42
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_account_transactions",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "account_id": "00000000-0000-4000-8000-000000000002",
+      "since_date": "2016-12-01",
+      "last_knowledge_of_server": 0
+    },
+    "method": "GET",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/accounts/00000000-0000-4000-8000-000000000002/transactions",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "transactions": [
+          {
+            "id": "00000000-0000-4000-8000-000000000003",
+            "name": "Fixture"
+          }
+        ],
+        "server_knowledge": 42
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "get_transaction",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "transaction_id": "00000000-0000-4000-8000-000000000003"
+    },
+    "method": "GET",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/transactions/00000000-0000-4000-8000-000000000003",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "transaction": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "create_transaction",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "account_id": "00000000-0000-4000-8000-000000000002",
+      "date": "2016-12-01",
+      "amount": -12500,
+      "payee_name": "Local Market",
+      "approved": false,
+      "import_id": "YNAB:-12500:2016-12-01:1"
+    },
+    "method": "POST",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/transactions",
+    "body": {
+      "transaction": {
+        "account_id": "00000000-0000-4000-8000-000000000002",
+        "date": "2016-12-01",
+        "amount": -12500,
+        "payee_name": "Local Market",
+        "approved": false,
+        "import_id": "YNAB:-12500:2016-12-01:1"
+      }
+    },
+    "status": 201,
+    "response": {
+      "data": {
+        "transaction": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_transaction",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "transaction_id": "00000000-0000-4000-8000-000000000003",
+      "memo": "Reviewed",
+      "category_id": null,
+      "amount": -12500,
+      "cleared": "cleared",
+      "approved": true
+    },
+    "method": "PUT",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/transactions/00000000-0000-4000-8000-000000000003",
+    "body": {
+      "transaction": {
+        "memo": "Reviewed",
+        "category_id": null,
+        "amount": -12500,
+        "cleared": "cleared",
+        "approved": true
+      }
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "transaction": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_transaction",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "transaction_id": "00000000-0000-4000-8000-000000000003"
+    },
+    "method": "DELETE",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/transactions/00000000-0000-4000-8000-000000000003",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "transaction": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "list_scheduled_transactions",
+      "plan_id": "00000000-0000-4000-8000-000000000001"
+    },
+    "method": "GET",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/scheduled_transactions",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "scheduled_transactions": [
+          {
+            "id": "00000000-0000-4000-8000-000000000003",
+            "name": "Fixture"
+          }
+        ],
+        "server_knowledge": 42
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "get_scheduled_transaction",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "scheduled_transaction_id": "00000000-0000-4000-8000-000000000003"
+    },
+    "method": "GET",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/scheduled_transactions/00000000-0000-4000-8000-000000000003",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "scheduled_transaction": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "create_scheduled_transaction",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "account_id": "00000000-0000-4000-8000-000000000002",
+      "date": "2027-01-01",
+      "amount": -12500,
+      "frequency": "monthly",
+      "memo": "Rent"
+    },
+    "method": "POST",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/scheduled_transactions",
+    "body": {
+      "scheduled_transaction": {
+        "account_id": "00000000-0000-4000-8000-000000000002",
+        "date": "2027-01-01",
+        "amount": -12500,
+        "frequency": "monthly",
+        "memo": "Rent"
+      }
+    },
+    "status": 201,
+    "response": {
+      "data": {
+        "scheduled_transaction": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "update_scheduled_transaction",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "scheduled_transaction_id": "00000000-0000-4000-8000-000000000003",
+      "account_id": "00000000-0000-4000-8000-000000000002",
+      "date": "2027-01-01",
+      "amount": -12500,
+      "frequency": "monthly",
+      "memo": "Rent"
+    },
+    "method": "PUT",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/scheduled_transactions/00000000-0000-4000-8000-000000000003",
+    "body": {
+      "scheduled_transaction": {
+        "account_id": "00000000-0000-4000-8000-000000000002",
+        "date": "2027-01-01",
+        "amount": -12500,
+        "frequency": "monthly",
+        "memo": "Rent"
+      }
+    },
+    "status": 200,
+    "response": {
+      "data": {
+        "scheduled_transaction": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "delete_scheduled_transaction",
+      "plan_id": "00000000-0000-4000-8000-000000000001",
+      "scheduled_transaction_id": "00000000-0000-4000-8000-000000000003"
+    },
+    "method": "DELETE",
+    "path": "/v1/plans/00000000-0000-4000-8000-000000000001/scheduled_transactions/00000000-0000-4000-8000-000000000003",
+    "body": null,
+    "status": 200,
+    "response": {
+      "data": {
+        "scheduled_transaction": {
+          "id": "00000000-0000-4000-8000-000000000003",
+          "name": "Fixture"
+        }
+      }
+    }
+  }
+]
