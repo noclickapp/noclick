@@ -14,6 +14,7 @@ const ElasticEmailIcon = ({ className, style }: { className?: string; style?: CS
 export const ElasticEmailNode: NodeDefinition = {
     type: 'automation-elastic-email',
     label: 'Elastic Email',
+    category: 'marketing',
     description: 'Manage contacts, lists and templates, send transactional email and check delivery status',
     keywords: ['elasticemail', 'email marketing', 'transactional email', 'mailing lists'],
     Icon: ElasticEmailIcon,
