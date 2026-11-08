@@ -11,6 +11,7 @@ const SendsparkIcon = ({ className, style }: { className?: string; style?: CSSPr
 
 export const SendsparkNode: NodeDefinition = {
     type: 'automation-sendspark', label: 'Sendspark',
+    category: 'media',
     description: 'Personalized video campaigns, prospects, webhooks and transcripts',
     keywords: ['video outreach', 'dynamic video', 'personalized video'],
     Icon: SendsparkIcon, iconColor: '',
