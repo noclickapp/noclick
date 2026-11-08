@@ -1,0 +1,13 @@
+{
+  "check-cherry": {
+    "file": "openapi.json",
+    "sha256": "0ca46542825efd3e57fc1fff80ec613efe8129f45c7488cc0de50282774d5905",
+    "version": "v1",
+    "source_url": "https://www.checkcherry.com/api-docs/v1/business.json",
+    "node_type": "automation-check-cherry",
+    "credential": {
+      "credential_type": "check_cherry_api_key",
+      "api_key": "<token>"
+    }
+  }
+}

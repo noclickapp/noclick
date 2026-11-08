@@ -1,0 +1,2765 @@
+{
+  "$defs": {
+    "AddEventNoteConfig": {
+      "additionalProperties": false,
+      "description": "Add a note to a booking",
+      "properties": {
+        "operation": {
+          "const": "add_event_note",
+          "default": "add_event_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "description": "The unique ID of the booking",
+          "exclusiveMinimum": 0,
+          "title": "Event Id",
+          "type": "integer"
+        },
+        "note": {
+          "description": "The note text to add (private internal note, staff-only)",
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        },
+        "next_follow_up_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set or update the booking's next follow-up date (YYYY-MM-DD)",
+          "title": "Next Follow Up On"
+        }
+      },
+      "required": [
+        "event_id",
+        "note"
+      ],
+      "title": "AddEventNoteConfig",
+      "type": "object"
+    },
+    "AddLeadNoteConfig": {
+      "additionalProperties": false,
+      "description": "Add a note to a lead",
+      "properties": {
+        "operation": {
+          "const": "add_lead_note",
+          "default": "add_lead_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "lead_id": {
+          "description": "The unique ID of the lead",
+          "exclusiveMinimum": 0,
+          "title": "Lead Id",
+          "type": "integer"
+        },
+        "note": {
+          "description": "The note text to add",
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        },
+        "next_follow_up_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set or update the next follow-up date (YYYY-MM-DD)",
+          "title": "Next Follow Up On"
+        }
+      },
+      "required": [
+        "lead_id",
+        "note"
+      ],
+      "title": "AddLeadNoteConfig",
+      "type": "object"
+    },
+    "ArchiveLeadConfig": {
+      "additionalProperties": false,
+      "description": "Archive a lead",
+      "properties": {
+        "operation": {
+          "const": "archive_lead",
+          "default": "archive_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "lead_id": {
+          "description": "The unique ID of the lead",
+          "exclusiveMinimum": 0,
+          "title": "Lead Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "ArchiveLeadConfig",
+      "type": "object"
+    },
+    "BookingPackage": {
+      "additionalProperties": false,
+      "description": "One package on a new booking or proposal; IDs come from List Packages.",
+      "properties": {
+        "event_type_id": {
+          "description": "Existing package ID from List Packages.",
+          "minLength": 1,
+          "title": "Event Type Id",
+          "type": "string"
+        },
+        "starts_at_date": {
+          "format": "date",
+          "title": "Starts At Date",
+          "type": "string"
+        },
+        "starts_at_time": {
+          "description": "Start time, e.g. 14:30.",
+          "minLength": 1,
+          "title": "Starts At Time",
+          "type": "string"
+        },
+        "length_in_minutes": {
+          "maximum": 1440,
+          "minimum": 1,
+          "title": "Length In Minutes",
+          "type": "integer"
+        },
+        "staff_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Staff Id"
+        },
+        "backdrop_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Backdrop Id"
+        },
+        "add_on_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated add-on IDs, with optional quantities such as 2x17.",
+          "title": "Add On Ids"
+        }
+      },
+      "required": [
+        "event_type_id",
+        "starts_at_date",
+        "starts_at_time",
+        "length_in_minutes"
+      ],
+      "title": "BookingPackage",
+      "type": "object"
+    },
+    "CancelAppointmentConfig": {
+      "additionalProperties": false,
+      "description": "Cancel an appointment",
+      "properties": {
+        "operation": {
+          "const": "cancel_appointment",
+          "default": "cancel_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "appointment_id": {
+          "description": "The unique ID of the appointment",
+          "exclusiveMinimum": 0,
+          "title": "Appointment Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "appointment_id"
+      ],
+      "title": "CancelAppointmentConfig",
+      "type": "object"
+    },
+    "CancelEventConfig": {
+      "additionalProperties": false,
+      "description": "Cancel an event",
+      "properties": {
+        "operation": {
+          "const": "cancel_event",
+          "default": "cancel_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "description": "Event ID",
+          "exclusiveMinimum": 0,
+          "title": "Event Id",
+          "type": "integer"
+        },
+        "cancel_reason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reason for cancellation",
+          "title": "Cancel Reason"
+        },
+        "send_cancellation_messages": {
+          "default": false,
+          "description": "Send cancellation messages to contacts",
+          "title": "Send Cancellation Messages",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "CancelEventConfig",
+      "type": "object"
+    },
+    "CheckCherryCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "check_cherry_api_key",
+          "default": "check_cherry_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Integration key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Check Cherry API Key",
+      "type": "object",
+      "x-credential-instructions": "In Check Cherry, open Manage \u2192 Business Settings \u2192 Integrations \u2192 API Overview \u2192 API Keys. Create an Integration Key with lead_read for the connection check and the read/write permissions needed for your operations. Paste the key here; NoClick sends it in the Api-Key header. Keys cannot exceed their creator's permissions.",
+      "x-credential-url": "https://www.checkcherry.com/api/docs"
+    },
+    "CreateAppointmentConfig": {
+      "additionalProperties": false,
+      "description": "Create an appointment",
+      "properties": {
+        "operation": {
+          "const": "create_appointment",
+          "default": "create_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "guest_name": {
+          "description": "Guest name",
+          "minLength": 1,
+          "title": "Guest Name",
+          "type": "string"
+        },
+        "guest_email": {
+          "description": "Guest email address",
+          "minLength": 1,
+          "title": "Guest Email",
+          "type": "string"
+        },
+        "guest_phone": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Guest phone number",
+          "title": "Guest Phone"
+        },
+        "additional_guests": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional guest names or details",
+          "title": "Additional Guests"
+        },
+        "starts_at_date": {
+          "description": "Appointment date (YYYY-MM-DD)",
+          "format": "date",
+          "title": "Starts At Date",
+          "type": "string"
+        },
+        "starts_at_time": {
+          "description": "Appointment start time (e.g., \"2:00 PM\")",
+          "minLength": 1,
+          "title": "Starts At Time",
+          "type": "string"
+        },
+        "length_in_minutes": {
+          "description": "Duration in minutes",
+          "exclusiveMinimum": 0,
+          "title": "Length In Minutes",
+          "type": "integer"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Appointment location (e.g., \"Phone\", \"In Person\")",
+          "title": "Location"
+        },
+        "private_notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Private internal notes",
+          "title": "Private Notes"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Message to the guest",
+          "title": "Message"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Staff member ID to assign (defaults to authenticated user)",
+          "title": "User Id"
+        },
+        "brand_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Brand ID (defaults to the primary brand)",
+          "title": "Brand Id"
+        },
+        "user_appointment_calendar_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Appointment calendar ID for scheduling",
+          "title": "User Appointment Calendar Id"
+        },
+        "created_via": {
+          "default": "app",
+          "description": "How the appointment was created",
+          "enum": [
+            "quick_add",
+            "widget",
+            "app"
+          ],
+          "title": "Created Via",
+          "type": "string"
+        }
+      },
+      "required": [
+        "guest_name",
+        "guest_email",
+        "starts_at_date",
+        "starts_at_time",
+        "length_in_minutes"
+      ],
+      "title": "CreateAppointmentConfig",
+      "type": "object"
+    },
+    "CreateBookingConfig": {
+      "additionalProperties": false,
+      "description": "Create a booking",
+      "properties": {
+        "operation": {
+          "const": "create_booking",
+          "default": "create_booking",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "packages": {
+          "description": "The packages being booked. At least one is required.",
+          "items": {
+            "$ref": "#/$defs/BookingPackage"
+          },
+          "minItems": 1,
+          "title": "Packages",
+          "type": "array"
+        },
+        "contact_name": {
+          "description": "Client's name. Required when `contact_type` is `New Customer`.",
+          "minLength": 1,
+          "title": "Contact Name",
+          "type": "string"
+        },
+        "contact_email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Client's email. Creates a full customer account rather than a plain contact record.",
+          "title": "Contact Email"
+        },
+        "contact_phone": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Client's phone",
+          "title": "Contact Phone"
+        },
+        "contact_company_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Client's company name",
+          "title": "Contact Company Name"
+        },
+        "venue_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Venue name",
+          "title": "Venue Name"
+        },
+        "venue_address": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Venue street address",
+          "title": "Venue Address"
+        },
+        "venue_city": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Venue city",
+          "title": "Venue City"
+        },
+        "venue_state": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Venue state or province code, in whatever form the business's country uses, e.g. `MA`",
+          "title": "Venue State"
+        },
+        "venue_zip": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Venue postal code",
+          "title": "Venue Zip"
+        },
+        "public_notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notes visible to the client",
+          "title": "Public Notes"
+        },
+        "private_notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notes only staff can see",
+          "title": "Private Notes"
+        },
+        "brand_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Brand to book under, which must be an active brand of this business. Defaults to the primary brand.",
+          "title": "Brand Id"
+        },
+        "lead_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead this booking converts, from `GET /api/v1/leads`. The lead's details and attribution carry over and it is marked converted.",
+          "title": "Lead Id"
+        },
+        "signature_collected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Has the signature already been collected? Defaults to `true`, creating a `confirmed` booking. `false` creates it `awaiting_signature`.",
+          "title": "Signature Collected"
+        },
+        "send_booking_confirmation_emails": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Send the client the booking confirmation emails. Requires `contact_email`.",
+          "title": "Send Booking Confirmation Emails"
+        },
+        "send_contact_invitation_to_create_account": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email the client an invitation to create an account. Requires `contact_email`.",
+          "title": "Send Contact Invitation To Create Account"
+        },
+        "contact_type": {
+          "const": "New Customer",
+          "default": "New Customer",
+          "description": "Creates a new customer contact.",
+          "title": "Contact Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "packages",
+        "contact_name"
+      ],
+      "title": "CreateBookingConfig",
+      "type": "object"
+    },
+    "CreateLeadConfig": {
+      "additionalProperties": false,
+      "description": "Add a lead to the database",
+      "properties": {
+        "operation": {
+          "const": "create_lead",
+          "default": "create_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "Contact email address",
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact first name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact last name",
+          "title": "Last Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact phone number",
+          "title": "Phone"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Business or organization name",
+          "title": "Company Name"
+        },
+        "lead_source": {
+          "anyOf": [
+            {
+              "enum": [
+                "Manual Entry",
+                "Lead Form",
+                "Online Booking",
+                "App",
+                "Zapier",
+                "API",
+                "Wedding Wire"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How the lead was acquired",
+          "title": "Lead Source",
+          "enum": [
+            "Manual Entry",
+            "Lead Form",
+            "Online Booking",
+            "App",
+            "Zapier",
+            "API",
+            "Wedding Wire"
+          ],
+          "x-enum-searchable": true
+        },
+        "contact_preference": {
+          "anyOf": [
+            {
+              "enum": [
+                "Email",
+                "Phone",
+                "Text Message"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How the lead prefers to be contacted",
+          "title": "Contact Preference",
+          "enum": [
+            "Email",
+            "Phone",
+            "Text Message"
+          ],
+          "x-enum-searchable": true
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Private internal notes about this lead",
+          "title": "Notes"
+        },
+        "custom_questions": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Responses to custom booking questions configured by the business, as key-value pairs",
+          "title": "Custom Questions"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CreateLeadConfig",
+      "type": "object"
+    },
+    "CreateProposalConfig": {
+      "additionalProperties": false,
+      "description": "Create a proposal",
+      "properties": {
+        "operation": {
+          "const": "create_proposal",
+          "default": "create_proposal",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "packages": {
+          "description": "The packages being proposed. At least one is required.",
+          "items": {
+            "$ref": "#/$defs/BookingPackage"
+          },
+          "minItems": 1,
+          "title": "Packages",
+          "type": "array"
+        },
+        "contact_name": {
+          "description": "Client's name. Required when `contact_type` is `New Customer`.",
+          "minLength": 1,
+          "title": "Contact Name",
+          "type": "string"
+        },
+        "contact_email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Client's email. Creates a full customer account rather than a plain contact record.",
+          "title": "Contact Email"
+        },
+        "contact_phone": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Client's phone",
+          "title": "Contact Phone"
+        },
+        "contact_company_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Client's company name",
+          "title": "Contact Company Name"
+        },
+        "venue_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Venue name",
+          "title": "Venue Name"
+        },
+        "venue_address": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Venue street address",
+          "title": "Venue Address"
+        },
+        "venue_city": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Venue city",
+          "title": "Venue City"
+        },
+        "venue_state": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Venue state or province code, in whatever form the business's country uses, e.g. `MA`",
+          "title": "Venue State"
+        },
+        "venue_zip": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Venue postal code",
+          "title": "Venue Zip"
+        },
+        "public_notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notes visible to the client",
+          "title": "Public Notes"
+        },
+        "private_notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notes only staff can see",
+          "title": "Private Notes"
+        },
+        "brand_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Brand to propose under, which must be an active brand of this business. Defaults to the primary brand.",
+          "title": "Brand Id"
+        },
+        "lead_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead this proposal converts, from `GET /api/v1/leads`. The lead's details and attribution carry over and it is marked converted.",
+          "title": "Lead Id"
+        },
+        "proposal_date_reserved": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hold the date while the client decides, blocking other bookings. Defaults to `false`.",
+          "title": "Proposal Date Reserved"
+        },
+        "proposal_valid_through": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last day the client can accept, as `YYYY-MM-DD`. Must not be in the past, and is capped at the event date. Defaults to the business's own expiry setting.",
+          "title": "Proposal Valid Through"
+        },
+        "contact_type": {
+          "const": "New Customer",
+          "default": "New Customer",
+          "description": "Creates a new customer contact.",
+          "title": "Contact Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "packages",
+        "contact_name"
+      ],
+      "title": "CreateProposalConfig",
+      "type": "object"
+    },
+    "GetAppointmentConfig": {
+      "additionalProperties": false,
+      "description": "Fetch an appointment by ID",
+      "properties": {
+        "operation": {
+          "const": "get_appointment",
+          "default": "get_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Related resources to sideload, comma-separated. The description lists what is available.",
+          "title": "Include"
+        },
+        "appointment_id": {
+          "description": "The unique ID of the appointment",
+          "exclusiveMinimum": 0,
+          "title": "Appointment Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "appointment_id"
+      ],
+      "title": "GetAppointmentConfig",
+      "type": "object"
+    },
+    "GetEventConfig": {
+      "additionalProperties": false,
+      "description": "Fetch event by ID",
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Related resources to sideload, comma-separated. The description lists what is available.",
+          "title": "Include"
+        },
+        "event_id": {
+          "description": "Event ID",
+          "exclusiveMinimum": 0,
+          "title": "Event Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "GetEventConfig",
+      "type": "object"
+    },
+    "GetLeadConfig": {
+      "additionalProperties": false,
+      "description": "Fetch lead by ID",
+      "properties": {
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Related resources to sideload, comma-separated. The description lists what is available.",
+          "title": "Include"
+        },
+        "lead_id": {
+          "description": "The unique ID of the lead to retrieve",
+          "exclusiveMinimum": 0,
+          "title": "Lead Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "GetLeadConfig",
+      "type": "object"
+    },
+    "GetPackageConfig": {
+      "additionalProperties": false,
+      "description": "Fetch a package by ID",
+      "properties": {
+        "operation": {
+          "const": "get_package",
+          "default": "get_package",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Related resources to sideload, comma-separated. The description lists what is available.",
+          "title": "Include"
+        },
+        "package_id": {
+          "description": "The unique ID of the package",
+          "exclusiveMinimum": 0,
+          "title": "Package Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "package_id"
+      ],
+      "title": "GetPackageConfig",
+      "type": "object"
+    },
+    "GetPaymentConfig": {
+      "additionalProperties": false,
+      "description": "Fetch payment by ID",
+      "properties": {
+        "operation": {
+          "const": "get_payment",
+          "default": "get_payment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "payment_id": {
+          "description": "The unique ID of the payment to retrieve",
+          "exclusiveMinimum": 0,
+          "title": "Payment Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "payment_id"
+      ],
+      "title": "GetPaymentConfig",
+      "type": "object"
+    },
+    "ListAppointmentsConfig": {
+      "additionalProperties": false,
+      "description": "Fetch all appointments",
+      "properties": {
+        "operation": {
+          "const": "list_appointments",
+          "default": "list_appointments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by start date (YYYY-MM-DD)",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by end date (YYYY-MM-DD)",
+          "title": "End Date"
+        },
+        "staff_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by staff member ID, or 'my' for the authenticated user",
+          "title": "Staff Id"
+        },
+        "brand_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by brand ID",
+          "title": "Brand Id"
+        },
+        "canceled_status": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by cancellation status",
+          "title": "Canceled Status"
+        },
+        "past_or_future": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to past or future appointments",
+          "title": "Past Or Future"
+        },
+        "search_text": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search across appointment details",
+          "title": "Search Text"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number for pagination (default: 1)",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per": {
+          "default": 25,
+          "description": "Number of results per page (default: 25)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per",
+          "type": "integer"
+        }
+      },
+      "title": "ListAppointmentsConfig",
+      "type": "object"
+    },
+    "ListEventsConfig": {
+      "additionalProperties": false,
+      "description": "Fetch all events",
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Related resources to sideload, comma-separated. The description lists what is available.",
+          "title": "Include"
+        },
+        "event_status": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Status filter. Does not filter cancellation -- use `canceled_status` for that.:\n * `proposal_date_open` \n * `proposal_date_reserved` \n * `proposal_awaiting_review` \n * `awaiting_signature` \n * `confirmed` \n * `any_proposal` \n * `any_confirmed` \n * `any_unsigned` \n ",
+          "title": "Event Status"
+        },
+        "canceled_status": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cancellation filter. Defaults to `hide_canceled`.",
+          "title": "Canceled Status"
+        },
+        "postponed_status": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Postponement filter. Defaults to `hide_postponed`.",
+          "title": "Postponed Status"
+        },
+        "expired_status": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expired-proposal filter. Defaults to `hide_expired`.",
+          "title": "Expired Status"
+        },
+        "past_or_future": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When filter. Defaults to `both`. Ignored when an event date range is supplied.",
+          "title": "Past Or Future"
+        },
+        "event_date_start": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Event Date (Start)",
+          "title": "Event Date Start"
+        },
+        "event_date_end": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Event Date (End)",
+          "title": "Event Date End"
+        },
+        "booked_date_start": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Booked Date (Start)",
+          "title": "Booked Date Start"
+        },
+        "booked_date_end": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Booked Date (End)",
+          "title": "Booked Date End"
+        },
+        "updated_since": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only events changed at or after this time (ISO 8601, such as `2026-10-12T15:00:00Z`)",
+          "title": "Updated Since"
+        },
+        "search_text": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text Search",
+          "title": "Search Text"
+        },
+        "events_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the event with this ID",
+          "title": "Events Id"
+        },
+        "brand_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit to events on this brand",
+          "title": "Brand Id"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit to events for this client",
+          "title": "Client Id"
+        },
+        "staff_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit to events this staff member is assigned to",
+          "title": "Staff Id"
+        },
+        "event_category_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit to events with a package in this service. Service ids come from `GET /api/v1/event_categories`.",
+          "title": "Event Category Id"
+        },
+        "proposal_viewed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Proposals only. `false` returns proposals the client has never opened, `true` those they have. Combine with `expired_status=show_all` to include expired proposals.",
+          "title": "Proposal Viewed"
+        },
+        "recurring_event_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit to bookings generated by this recurring series (plus the booking it was made from). Series ids come from `GET /api/v1/recurring_events`. Pass `canceled_status=show_all` and `postponed_status=show_all` to see every booking in the series.",
+          "title": "Recurring Event Id"
+        },
+        "awaiting_deposit": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only events whose deposit is unpaid",
+          "title": "Awaiting Deposit"
+        },
+        "balance_outstanding": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only events with a balance still owed",
+          "title": "Balance Outstanding"
+        },
+        "past_due": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only events with a past due payment",
+          "title": "Past Due"
+        },
+        "has_unselected_templates": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only events with a design template still unselected",
+          "title": "Has Unselected Templates"
+        },
+        "has_pending_artwork": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only events with artwork pending",
+          "title": "Has Pending Artwork"
+        },
+        "has_unapproved_artwork": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only events with artwork awaiting approval",
+          "title": "Has Unapproved Artwork"
+        },
+        "unsubmitted_forms": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only events with an unsubmitted form",
+          "title": "Unsubmitted Forms"
+        },
+        "no_staff_assigned": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only events with no staff assigned",
+          "title": "No Staff Assigned"
+        },
+        "no_backdrop_assigned": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only events with no backdrop assigned",
+          "title": "No Backdrop Assigned"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort Order. Defaults to `automatic`.",
+          "title": "Sort By"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number for pagination (default: 1)",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per": {
+          "default": 25,
+          "description": "Number of results per page (default: 10, max: 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per",
+          "type": "integer"
+        }
+      },
+      "title": "ListEventsConfig",
+      "type": "object"
+    },
+    "ListLeadsConfig": {
+      "additionalProperties": false,
+      "description": "Fetch all leads",
+      "properties": {
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Related resources to sideload, comma-separated. The description lists what is available.",
+          "title": "Include"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter leads by exact email address match",
+          "title": "Email"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search across lead name, email, phone, venue, and notes",
+          "title": "Text"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number for pagination (default: 1)",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per": {
+          "default": 25,
+          "description": "Number of results per page (default: 25)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per",
+          "type": "integer"
+        }
+      },
+      "title": "ListLeadsConfig",
+      "type": "object"
+    },
+    "ListPackagesConfig": {
+      "additionalProperties": false,
+      "description": "Fetch all packages",
+      "properties": {
+        "operation": {
+          "const": "list_packages",
+          "default": "list_packages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Related resources to sideload, comma-separated. The description lists what is available.",
+          "title": "Include"
+        },
+        "visibility": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by visibility (e.g., 'public_only')",
+          "title": "Visibility"
+        }
+      },
+      "title": "ListPackagesConfig",
+      "type": "object"
+    },
+    "ListPaymentsConfig": {
+      "additionalProperties": false,
+      "description": "Fetch all payments",
+      "properties": {
+        "operation": {
+          "const": "list_payments",
+          "default": "list_payments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter payments by event ID",
+          "title": "Event Id"
+        },
+        "payment_date_start": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter payments on or after this date (YYYY-MM-DD)",
+          "title": "Payment Date Start"
+        },
+        "payment_date_end": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter payments on or before this date (YYYY-MM-DD)",
+          "title": "Payment Date End"
+        },
+        "page": {
+          "default": 1,
+          "description": "Page number for pagination (default: 1)",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per": {
+          "default": 25,
+          "description": "Number of results per page (default: 25)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per",
+          "type": "integer"
+        }
+      },
+      "title": "ListPaymentsConfig",
+      "type": "object"
+    },
+    "UnarchiveLeadConfig": {
+      "additionalProperties": false,
+      "description": "Unarchive a lead",
+      "properties": {
+        "operation": {
+          "const": "unarchive_lead",
+          "default": "unarchive_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "lead_id": {
+          "description": "The unique ID of the lead",
+          "exclusiveMinimum": 0,
+          "title": "Lead Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "UnarchiveLeadConfig",
+      "type": "object"
+    },
+    "UncancelEventConfig": {
+      "additionalProperties": false,
+      "description": "Uncancel an event",
+      "properties": {
+        "operation": {
+          "const": "uncancel_event",
+          "default": "uncancel_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "description": "Event ID",
+          "exclusiveMinimum": 0,
+          "title": "Event Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "UncancelEventConfig",
+      "type": "object"
+    },
+    "UpdateAppointmentConfig": {
+      "additionalProperties": false,
+      "description": "Update an appointment",
+      "properties": {
+        "operation": {
+          "const": "update_appointment",
+          "default": "update_appointment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "appointment_id": {
+          "description": "The unique ID of the appointment",
+          "exclusiveMinimum": 0,
+          "title": "Appointment Id",
+          "type": "integer"
+        },
+        "guest_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Guest name",
+          "title": "Guest Name"
+        },
+        "guest_email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Guest email address",
+          "title": "Guest Email"
+        },
+        "guest_phone": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Guest phone number",
+          "title": "Guest Phone"
+        },
+        "additional_guests": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional guest names or details",
+          "title": "Additional Guests"
+        },
+        "starts_at_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New appointment date (YYYY-MM-DD)",
+          "title": "Starts At Date"
+        },
+        "starts_at_time": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New appointment start time (e.g., \"2:00 PM\")",
+          "title": "Starts At Time"
+        },
+        "length_in_minutes": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Duration in minutes",
+          "title": "Length In Minutes"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Appointment location",
+          "title": "Location"
+        },
+        "location_details": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional location details",
+          "title": "Location Details"
+        },
+        "private_notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Private internal notes",
+          "title": "Private Notes"
+        },
+        "custom_title": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom title override",
+          "title": "Custom Title"
+        },
+        "brand_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Brand ID",
+          "title": "Brand Id"
+        }
+      },
+      "required": [
+        "appointment_id"
+      ],
+      "title": "UpdateAppointmentConfig",
+      "type": "object"
+    },
+    "UpdateEventConfig": {
+      "additionalProperties": false,
+      "description": "Update an event",
+      "properties": {
+        "operation": {
+          "const": "update_event",
+          "default": "update_event",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "event_id": {
+          "description": "Event ID",
+          "exclusiveMinimum": 0,
+          "title": "Event Id",
+          "type": "integer"
+        },
+        "public_notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Public notes visible to the customer",
+          "title": "Public Notes"
+        },
+        "photo_album_url": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL to the photo album",
+          "title": "Photo Album Url"
+        },
+        "photo_album_instructions": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Instructions for the photo album",
+          "title": "Photo Album Instructions"
+        },
+        "video_url": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL to the video",
+          "title": "Video Url"
+        },
+        "video_album_instructions": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Instructions for the video album",
+          "title": "Video Album Instructions"
+        },
+        "next_follow_up_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Next follow-up date (YYYY-MM-DD)",
+          "title": "Next Follow Up On"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "UpdateEventConfig",
+      "type": "object"
+    },
+    "UpdateLeadConfig": {
+      "additionalProperties": false,
+      "description": "Update a lead",
+      "properties": {
+        "operation": {
+          "const": "update_lead",
+          "default": "update_lead",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "lead_id": {
+          "description": "The unique ID of the lead to update",
+          "exclusiveMinimum": 0,
+          "title": "Lead Id",
+          "type": "integer"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact email address",
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact first name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact last name",
+          "title": "Last Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact phone number",
+          "title": "Phone"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Business or organization name",
+          "title": "Company Name"
+        },
+        "lead_source": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How the lead was acquired",
+          "title": "Lead Source"
+        },
+        "contact_preference": {
+          "anyOf": [
+            {
+              "enum": [
+                "Email",
+                "Phone",
+                "Text Message"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How the lead prefers to be contacted",
+          "title": "Contact Preference",
+          "enum": [
+            "Email",
+            "Phone",
+            "Text Message"
+          ],
+          "x-enum-searchable": true
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Private internal notes about this lead",
+          "title": "Notes"
+        },
+        "starts_at_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Requested event date (YYYY-MM-DD)",
+          "title": "Starts At Date"
+        },
+        "starts_at_time": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Requested event start time",
+          "title": "Starts At Time"
+        },
+        "length_in_minutes": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Requested event duration in minutes",
+          "title": "Length In Minutes"
+        },
+        "package_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Package (event type) ID the lead is interested in, from `GET /api/v1/packages`. Must belong to this business.",
+          "title": "Package Id"
+        },
+        "service_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Service (event category) ID the lead is interested in, from `GET /api/v1/event_categories`. Ignored when `package_id` is sent: the package sets the service. Must belong to this business.",
+          "title": "Service Id"
+        },
+        "staff_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Staff member ID requested for the lead's package",
+          "title": "Staff Id"
+        },
+        "next_follow_up_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Next follow-up date (YYYY-MM-DD)",
+          "title": "Next Follow Up On"
+        },
+        "custom_questions": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Responses to custom booking questions, as key-value pairs",
+          "title": "Custom Questions"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "UpdateLeadConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_event_note": "#/$defs/AddEventNoteConfig",
+          "add_lead_note": "#/$defs/AddLeadNoteConfig",
+          "archive_lead": "#/$defs/ArchiveLeadConfig",
+          "cancel_appointment": "#/$defs/CancelAppointmentConfig",
+          "cancel_event": "#/$defs/CancelEventConfig",
+          "create_appointment": "#/$defs/CreateAppointmentConfig",
+          "create_booking": "#/$defs/CreateBookingConfig",
+          "create_lead": "#/$defs/CreateLeadConfig",
+          "create_proposal": "#/$defs/CreateProposalConfig",
+          "get_appointment": "#/$defs/GetAppointmentConfig",
+          "get_event": "#/$defs/GetEventConfig",
+          "get_lead": "#/$defs/GetLeadConfig",
+          "get_package": "#/$defs/GetPackageConfig",
+          "get_payment": "#/$defs/GetPaymentConfig",
+          "list_appointments": "#/$defs/ListAppointmentsConfig",
+          "list_events": "#/$defs/ListEventsConfig",
+          "list_leads": "#/$defs/ListLeadsConfig",
+          "list_packages": "#/$defs/ListPackagesConfig",
+          "list_payments": "#/$defs/ListPaymentsConfig",
+          "unarchive_lead": "#/$defs/UnarchiveLeadConfig",
+          "uncancel_event": "#/$defs/UncancelEventConfig",
+          "update_appointment": "#/$defs/UpdateAppointmentConfig",
+          "update_event": "#/$defs/UpdateEventConfig",
+          "update_lead": "#/$defs/UpdateLeadConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/ArchiveLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/UnarchiveLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/AddLeadNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/CancelEventConfig"
+        },
+        {
+          "$ref": "#/$defs/UncancelEventConfig"
+        },
+        {
+          "$ref": "#/$defs/AddEventNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateBookingConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateProposalConfig"
+        },
+        {
+          "$ref": "#/$defs/ListAppointmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/CancelAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ListPaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetPaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/ListPackagesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetPackageConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CheckCherryCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Check-cherry Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
