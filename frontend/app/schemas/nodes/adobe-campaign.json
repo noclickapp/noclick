@@ -1,0 +1,767 @@
+{
+  "$defs": {
+    "AdobeCampaignAccessTokenCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "adobe_campaign_access_token",
+          "default": "adobe_campaign_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "product_mode": {
+          "description": "v8 REST requires enabled FDA; Enterprise FFDA is unsupported. Standard is a separate existing product tenant.",
+          "enum": [
+            "v8_fda",
+            "campaign_standard"
+          ],
+          "title": "Campaign Product",
+          "type": "string"
+        },
+        "tenant_id": {
+          "description": "Exact instance route identifier supplied by Adobe, including stage suffix if applicable. Use the current v8 tenant after migration; not an IMS @AdobeOrg ID.",
+          "title": "Campaign Tenant ID",
+          "type": "string"
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key (Client ID)",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "access_token": {
+          "description": "Already-issued OAuth server-to-server Bearer token for this tenant and Campaign API product profile. JWT authentication is retired; no token mint or refresh is performed.",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Issued OAuth Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "description": "Actual expiry derived from the issuer's token response. Replace this saved credential when it expires.",
+          "minimum": 1,
+          "title": "Token Expiry (Unix Seconds)",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "product_mode",
+        "tenant_id",
+        "api_key",
+        "access_token",
+        "expires_at"
+      ],
+      "title": "Adobe Campaign Access Token",
+      "type": "object",
+      "x-credential-url": "https://experienceleague.adobe.com/en/docs/campaign/campaign-v8/developer/apis/setting-up-api-access"
+    },
+    "CreateProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "confirm_profile_change": {
+          "const": true,
+          "description": "Mutates real targeting records; tenant automation and notifications are not guaranteed quiet. Only change a record you are authorized to manage.",
+          "title": "Confirm Owned Profile Change",
+          "type": "boolean"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "operation": {
+          "const": "create_profile",
+          "default": "create_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profiles",
+          "x-display-name": "Create Profile",
+          "x-is-trigger": false,
+          "x-read-only": false
+        }
+      },
+      "required": [
+        "confirm_profile_change"
+      ],
+      "title": "CreateProfile",
+      "type": "object"
+    },
+    "CustomMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_api": {
+          "description": "Profile-linked extensions use profileAndServicesExt; unlinked resources use customResources and are not also exposed in the extension API.",
+          "enum": [
+            "profileAndServicesExt",
+            "customResources"
+          ],
+          "title": "Custom Resource API",
+          "type": "string"
+        },
+        "resource_name": {
+          "pattern": "^cus[A-Za-z][A-Za-z0-9_]{0,100}$",
+          "title": "Custom Resource",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "resource_api",
+            "field_name": "resource_name",
+            "searchable": true
+          },
+          "x-resource-type": "resource_name"
+        },
+        "operation": {
+          "const": "get_custom_resource_metadata",
+          "default": "get_custom_resource_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Resources",
+          "x-display-name": "Get Custom Resource Field Metadata",
+          "x-is-trigger": false,
+          "x-read-only": true
+        }
+      },
+      "required": [
+        "resource_api",
+        "resource_name"
+      ],
+      "title": "CustomMetadata",
+      "type": "object"
+    },
+    "CustomRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "resource_api": {
+          "description": "Profile-linked extensions use profileAndServicesExt; unlinked resources use customResources and are not also exposed in the extension API.",
+          "enum": [
+            "profileAndServicesExt",
+            "customResources"
+          ],
+          "title": "Custom Resource API",
+          "type": "string"
+        },
+        "resource_name": {
+          "pattern": "^cus[A-Za-z][A-Za-z0-9_]{0,100}$",
+          "title": "Custom Resource",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "resource_api",
+            "field_name": "resource_name",
+            "searchable": true
+          },
+          "x-resource-type": "resource_name"
+        },
+        "operation": {
+          "const": "get_custom_record",
+          "default": "get_custom_record",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Resources",
+          "x-display-name": "Get Custom Record",
+          "x-is-trigger": false,
+          "x-read-only": true
+        },
+        "record_pkey": {
+          "maxLength": 2049,
+          "minLength": 1,
+          "title": "Current Record PKey",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "resource_name",
+            "field_name": "record_pkey",
+            "searchable": true
+          },
+          "x-resource-type": "record_pkey"
+        }
+      },
+      "required": [
+        "resource_api",
+        "resource_name",
+        "record_pkey"
+      ],
+      "title": "CustomRecord",
+      "type": "object"
+    },
+    "CustomRecords": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 25,
+          "description": "A single bounded page. Large-table continuation is requested explicitly.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste the next_page_url from this same resource, tenant and page size. Never synthesize _lineStart.",
+          "title": "Returned Next Page URL"
+        },
+        "resource_api": {
+          "description": "Profile-linked extensions use profileAndServicesExt; unlinked resources use customResources and are not also exposed in the extension API.",
+          "enum": [
+            "profileAndServicesExt",
+            "customResources"
+          ],
+          "title": "Custom Resource API",
+          "type": "string"
+        },
+        "resource_name": {
+          "pattern": "^cus[A-Za-z][A-Za-z0-9_]{0,100}$",
+          "title": "Custom Resource",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": "resource_api",
+            "field_name": "resource_name",
+            "searchable": true
+          },
+          "x-resource-type": "resource_name"
+        },
+        "operation": {
+          "const": "list_custom_records",
+          "default": "list_custom_records",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Resources",
+          "x-display-name": "List Custom Records",
+          "x-is-trigger": false,
+          "x-read-only": true
+        }
+      },
+      "required": [
+        "resource_api",
+        "resource_name"
+      ],
+      "title": "CustomRecords",
+      "type": "object"
+    },
+    "DeleteProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "confirm_profile_change": {
+          "const": true,
+          "description": "Mutates real targeting records; tenant automation and notifications are not guaranteed quiet. Only change a record you are authorized to manage.",
+          "title": "Confirm Owned Profile Change",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "delete_profile",
+          "default": "delete_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profiles",
+          "x-display-name": "Delete Owned Profile",
+          "x-is-trigger": false,
+          "x-read-only": false
+        },
+        "profile_pkey": {
+          "maxLength": 2049,
+          "minLength": 1,
+          "title": "Current Profile PKey",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "profile_pkey",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "profile_pkey"
+        }
+      },
+      "required": [
+        "confirm_profile_change",
+        "profile_pkey"
+      ],
+      "title": "DeleteProfile",
+      "type": "object"
+    },
+    "LinkedTypes": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_extended_resource_types",
+          "default": "list_extended_resource_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Resources",
+          "x-display-name": "List Profile-linked Resource Types",
+          "x-is-trigger": false,
+          "x-read-only": true
+        }
+      },
+      "title": "LinkedTypes",
+      "type": "object"
+    },
+    "Profile": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profiles",
+          "x-display-name": "Get Profile",
+          "x-is-trigger": false,
+          "x-read-only": true
+        },
+        "profile_pkey": {
+          "maxLength": 2049,
+          "minLength": 1,
+          "title": "Current Profile PKey",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "profile_pkey",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "profile_pkey"
+        },
+        "extended": {
+          "default": false,
+          "title": "Extended Profile Fields",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "profile_pkey"
+      ],
+      "title": "Profile",
+      "type": "object"
+    },
+    "ProfileMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_profile_metadata",
+          "default": "get_profile_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profiles",
+          "x-display-name": "Get Profile Field Metadata",
+          "x-is-trigger": false,
+          "x-read-only": true
+        },
+        "extended": {
+          "default": false,
+          "description": "Use profileAndServicesExt, including v8 timezone; ordinary profileAndServices excludes extensions.",
+          "title": "Extended Profile Fields",
+          "type": "boolean"
+        }
+      },
+      "title": "ProfileMetadata",
+      "type": "object"
+    },
+    "Profiles": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 25,
+          "description": "A single bounded page. Large-table continuation is requested explicitly.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste the next_page_url from this same resource, tenant and page size. Never synthesize _lineStart.",
+          "title": "Returned Next Page URL"
+        },
+        "operation": {
+          "const": "list_profiles",
+          "default": "list_profiles",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profiles",
+          "x-display-name": "List Profiles",
+          "x-is-trigger": false,
+          "x-read-only": true
+        },
+        "extended": {
+          "default": false,
+          "title": "Extended Profile Fields",
+          "type": "boolean"
+        }
+      },
+      "title": "Profiles",
+      "type": "object"
+    },
+    "Service": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_service",
+          "default": "get_service",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Services",
+          "x-display-name": "Get Service",
+          "x-is-trigger": false,
+          "x-read-only": true
+        },
+        "service_pkey": {
+          "maxLength": 2049,
+          "minLength": 1,
+          "title": "Current Service PKey",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "service_pkey",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "service_pkey"
+        }
+      },
+      "required": [
+        "service_pkey"
+      ],
+      "title": "Service",
+      "type": "object"
+    },
+    "ServiceMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_service_metadata",
+          "default": "get_service_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Services",
+          "x-display-name": "Get Service Field Metadata",
+          "x-is-trigger": false,
+          "x-read-only": true
+        }
+      },
+      "title": "ServiceMetadata",
+      "type": "object"
+    },
+    "Services": {
+      "additionalProperties": false,
+      "properties": {
+        "page_size": {
+          "default": 25,
+          "description": "A single bounded page. Large-table continuation is requested explicitly.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "next_page_url": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste the next_page_url from this same resource, tenant and page size. Never synthesize _lineStart.",
+          "title": "Returned Next Page URL"
+        },
+        "operation": {
+          "const": "list_services",
+          "default": "list_services",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Services",
+          "x-display-name": "List Services",
+          "x-is-trigger": false,
+          "x-read-only": true
+        }
+      },
+      "title": "Services",
+      "type": "object"
+    },
+    "UnlinkedTypes": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_custom_resource_types",
+          "default": "list_custom_resource_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Resources",
+          "x-display-name": "List Unlinked Resource Types",
+          "x-is-trigger": false,
+          "x-read-only": true
+        }
+      },
+      "title": "UnlinkedTypes",
+      "type": "object"
+    },
+    "UpdateProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "confirm_profile_change": {
+          "const": true,
+          "description": "Mutates real targeting records; tenant automation and notifications are not guaranteed quiet. Only change a record you are authorized to manage.",
+          "title": "Confirm Owned Profile Change",
+          "type": "boolean"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 254,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "operation": {
+          "const": "update_profile",
+          "default": "update_profile",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profiles",
+          "x-display-name": "Update Profile Fields",
+          "x-is-trigger": false,
+          "x-read-only": false
+        },
+        "profile_pkey": {
+          "maxLength": 2049,
+          "minLength": 1,
+          "title": "Current Profile PKey",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "profile_pkey",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "profile_pkey"
+        }
+      },
+      "required": [
+        "confirm_profile_change",
+        "profile_pkey"
+      ],
+      "title": "UpdateProfile",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "discriminator": {
+        "mapping": {
+          "create_profile": "#/$defs/CreateProfile",
+          "delete_profile": "#/$defs/DeleteProfile",
+          "get_custom_record": "#/$defs/CustomRecord",
+          "get_custom_resource_metadata": "#/$defs/CustomMetadata",
+          "get_profile": "#/$defs/Profile",
+          "get_profile_metadata": "#/$defs/ProfileMetadata",
+          "get_service": "#/$defs/Service",
+          "get_service_metadata": "#/$defs/ServiceMetadata",
+          "list_custom_records": "#/$defs/CustomRecords",
+          "list_custom_resource_types": "#/$defs/UnlinkedTypes",
+          "list_extended_resource_types": "#/$defs/LinkedTypes",
+          "list_profiles": "#/$defs/Profiles",
+          "list_services": "#/$defs/Services",
+          "update_profile": "#/$defs/UpdateProfile"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ProfileMetadata"
+        },
+        {
+          "$ref": "#/$defs/Profiles"
+        },
+        {
+          "$ref": "#/$defs/Profile"
+        },
+        {
+          "$ref": "#/$defs/CreateProfile"
+        },
+        {
+          "$ref": "#/$defs/UpdateProfile"
+        },
+        {
+          "$ref": "#/$defs/DeleteProfile"
+        },
+        {
+          "$ref": "#/$defs/Services"
+        },
+        {
+          "$ref": "#/$defs/Service"
+        },
+        {
+          "$ref": "#/$defs/ServiceMetadata"
+        },
+        {
+          "$ref": "#/$defs/LinkedTypes"
+        },
+        {
+          "$ref": "#/$defs/UnlinkedTypes"
+        },
+        {
+          "$ref": "#/$defs/CustomMetadata"
+        },
+        {
+          "$ref": "#/$defs/CustomRecords"
+        },
+        {
+          "$ref": "#/$defs/CustomRecord"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AdobeCampaignAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Adobe-campaign Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
