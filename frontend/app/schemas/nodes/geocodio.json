@@ -1,0 +1,2341 @@
+{
+  "$defs": {
+    "BatchGeocode": {
+      "additionalProperties": false,
+      "description": "Geocode multiple addresses, preserving array order or custom identifiers.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "cd113",
+                  "cd114",
+                  "cd115",
+                  "cd116",
+                  "cd117",
+                  "cd118",
+                  "cd119",
+                  "cd120",
+                  "cd",
+                  "census2000",
+                  "census2010",
+                  "census2011",
+                  "census2012",
+                  "census2013",
+                  "census2014",
+                  "census2015",
+                  "census2016",
+                  "census2017",
+                  "census2018",
+                  "census2019",
+                  "census2020",
+                  "census2021",
+                  "census2022",
+                  "census2023",
+                  "census2024",
+                  "census2025",
+                  "census",
+                  "stateleg",
+                  "stateleg-next",
+                  "school",
+                  "ffiec",
+                  "zip4",
+                  "acs-demographics",
+                  "acs-demographics-block_group",
+                  "acs-demographics-tract",
+                  "acs-demographics-zcta",
+                  "acs-demographics-place",
+                  "acs-demographics-msa",
+                  "acs-demographics-county",
+                  "acs-demographics-county_subdivision",
+                  "acs-demographics-state",
+                  "acs-demographics-division",
+                  "acs-demographics-region",
+                  "acs-demographics-nation",
+                  "acs-economics",
+                  "acs-economics-block_group",
+                  "acs-economics-tract",
+                  "acs-economics-zcta",
+                  "acs-economics-place",
+                  "acs-economics-msa",
+                  "acs-economics-county",
+                  "acs-economics-county_subdivision",
+                  "acs-economics-state",
+                  "acs-economics-division",
+                  "acs-economics-region",
+                  "acs-economics-nation",
+                  "acs-families",
+                  "acs-families-block_group",
+                  "acs-families-tract",
+                  "acs-families-zcta",
+                  "acs-families-place",
+                  "acs-families-msa",
+                  "acs-families-county",
+                  "acs-families-county_subdivision",
+                  "acs-families-state",
+                  "acs-families-division",
+                  "acs-families-region",
+                  "acs-families-nation",
+                  "acs-housing",
+                  "acs-housing-block_group",
+                  "acs-housing-tract",
+                  "acs-housing-zcta",
+                  "acs-housing-place",
+                  "acs-housing-msa",
+                  "acs-housing-county",
+                  "acs-housing-county_subdivision",
+                  "acs-housing-state",
+                  "acs-housing-division",
+                  "acs-housing-region",
+                  "acs-housing-nation",
+                  "acs-social",
+                  "acs-social-block_group",
+                  "acs-social-tract",
+                  "acs-social-zcta",
+                  "acs-social-place",
+                  "acs-social-msa",
+                  "acs-social-county",
+                  "acs-social-county_subdivision",
+                  "acs-social-state",
+                  "acs-social-division",
+                  "acs-social-region",
+                  "acs-social-nation",
+                  "riding",
+                  "riding-next",
+                  "provriding",
+                  "provriding-next",
+                  "statcan",
+                  "uk-westminster",
+                  "uk-westminster-next",
+                  "uk-devolved",
+                  "uk-devolved-next",
+                  "uk-local",
+                  "uk-local-next",
+                  "uk-census",
+                  "au-census2021",
+                  "au-census",
+                  "au-demographics",
+                  "au-housing",
+                  "au-income",
+                  "au-federal-electorate",
+                  "au-federal-electorate-next",
+                  "au-state-electorate",
+                  "timezone",
+                  "gazetteer"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional data appends; each append adds billable lookups.",
+          "title": "Data Appends"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum results per query. Zero means no limit.",
+          "title": "Limit"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Country"
+        },
+        "destinations": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional destination coordinates or addresses for distance appends.",
+          "title": "Destinations"
+        },
+        "distance_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "driving",
+                "straightline"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Mode",
+          "enum": [
+            "driving",
+            "straightline"
+          ],
+          "x-enum-searchable": true
+        },
+        "distance_units": {
+          "anyOf": [
+            {
+              "enum": [
+                "miles",
+                "km"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Units",
+          "enum": [
+            "miles",
+            "km"
+          ],
+          "x-enum-searchable": true
+        },
+        "distance_max_results": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Max Results"
+        },
+        "distance_max_distance": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Max Distance"
+        },
+        "distance_min_distance": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Min Distance"
+        },
+        "distance_max_duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Max Duration"
+        },
+        "distance_min_duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Min Duration"
+        },
+        "distance_order_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "distance",
+                "duration"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Order By",
+          "enum": [
+            "distance",
+            "duration"
+          ],
+          "x-enum-searchable": true
+        },
+        "distance_sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Sort Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "queries": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            }
+          ],
+          "description": "JSON array of queries or an object mapping your identifiers to queries. Batch lookups including appends must total at most 10,000.",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Queries"
+        },
+        "operation": {
+          "const": "batch_geocode",
+          "default": "batch_geocode",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "queries"
+      ],
+      "title": "BatchGeocode",
+      "type": "object"
+    },
+    "BatchReverseGeocode": {
+      "additionalProperties": false,
+      "description": "Reverse geocode a JSON array or keyed object of latitude,longitude strings.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "cd113",
+                  "cd114",
+                  "cd115",
+                  "cd116",
+                  "cd117",
+                  "cd118",
+                  "cd119",
+                  "cd120",
+                  "cd",
+                  "census2000",
+                  "census2010",
+                  "census2011",
+                  "census2012",
+                  "census2013",
+                  "census2014",
+                  "census2015",
+                  "census2016",
+                  "census2017",
+                  "census2018",
+                  "census2019",
+                  "census2020",
+                  "census2021",
+                  "census2022",
+                  "census2023",
+                  "census2024",
+                  "census2025",
+                  "census",
+                  "stateleg",
+                  "stateleg-next",
+                  "school",
+                  "ffiec",
+                  "zip4",
+                  "acs-demographics",
+                  "acs-demographics-block_group",
+                  "acs-demographics-tract",
+                  "acs-demographics-zcta",
+                  "acs-demographics-place",
+                  "acs-demographics-msa",
+                  "acs-demographics-county",
+                  "acs-demographics-county_subdivision",
+                  "acs-demographics-state",
+                  "acs-demographics-division",
+                  "acs-demographics-region",
+                  "acs-demographics-nation",
+                  "acs-economics",
+                  "acs-economics-block_group",
+                  "acs-economics-tract",
+                  "acs-economics-zcta",
+                  "acs-economics-place",
+                  "acs-economics-msa",
+                  "acs-economics-county",
+                  "acs-economics-county_subdivision",
+                  "acs-economics-state",
+                  "acs-economics-division",
+                  "acs-economics-region",
+                  "acs-economics-nation",
+                  "acs-families",
+                  "acs-families-block_group",
+                  "acs-families-tract",
+                  "acs-families-zcta",
+                  "acs-families-place",
+                  "acs-families-msa",
+                  "acs-families-county",
+                  "acs-families-county_subdivision",
+                  "acs-families-state",
+                  "acs-families-division",
+                  "acs-families-region",
+                  "acs-families-nation",
+                  "acs-housing",
+                  "acs-housing-block_group",
+                  "acs-housing-tract",
+                  "acs-housing-zcta",
+                  "acs-housing-place",
+                  "acs-housing-msa",
+                  "acs-housing-county",
+                  "acs-housing-county_subdivision",
+                  "acs-housing-state",
+                  "acs-housing-division",
+                  "acs-housing-region",
+                  "acs-housing-nation",
+                  "acs-social",
+                  "acs-social-block_group",
+                  "acs-social-tract",
+                  "acs-social-zcta",
+                  "acs-social-place",
+                  "acs-social-msa",
+                  "acs-social-county",
+                  "acs-social-county_subdivision",
+                  "acs-social-state",
+                  "acs-social-division",
+                  "acs-social-region",
+                  "acs-social-nation",
+                  "riding",
+                  "riding-next",
+                  "provriding",
+                  "provriding-next",
+                  "statcan",
+                  "uk-westminster",
+                  "uk-westminster-next",
+                  "uk-devolved",
+                  "uk-devolved-next",
+                  "uk-local",
+                  "uk-local-next",
+                  "uk-census",
+                  "au-census2021",
+                  "au-census",
+                  "au-demographics",
+                  "au-housing",
+                  "au-income",
+                  "au-federal-electorate",
+                  "au-federal-electorate-next",
+                  "au-state-electorate",
+                  "timezone",
+                  "gazetteer"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional data appends; each append adds billable lookups.",
+          "title": "Data Appends"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum results per query. Zero means no limit.",
+          "title": "Limit"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Country"
+        },
+        "destinations": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional destination coordinates or addresses for distance appends.",
+          "title": "Destinations"
+        },
+        "distance_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "driving",
+                "straightline"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Mode",
+          "enum": [
+            "driving",
+            "straightline"
+          ],
+          "x-enum-searchable": true
+        },
+        "distance_units": {
+          "anyOf": [
+            {
+              "enum": [
+                "miles",
+                "km"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Units",
+          "enum": [
+            "miles",
+            "km"
+          ],
+          "x-enum-searchable": true
+        },
+        "distance_max_results": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Max Results"
+        },
+        "distance_max_distance": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Max Distance"
+        },
+        "distance_min_distance": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Min Distance"
+        },
+        "distance_max_duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Max Duration"
+        },
+        "distance_min_duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Min Duration"
+        },
+        "distance_order_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "distance",
+                "duration"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Order By",
+          "enum": [
+            "distance",
+            "duration"
+          ],
+          "x-enum-searchable": true
+        },
+        "distance_sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Sort Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "queries": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            }
+          ],
+          "description": "JSON array of queries or an object mapping your identifiers to queries. Batch lookups including appends must total at most 10,000.",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Queries"
+        },
+        "operation": {
+          "const": "batch_reverse_geocode",
+          "default": "batch_reverse_geocode",
+          "title": "Operation",
+          "type": "string"
+        },
+        "skip_geocoding": {
+          "default": false,
+          "description": "Apply data appends without reverse geocoding.",
+          "title": "Skip Geocoding",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "queries"
+      ],
+      "title": "BatchReverseGeocode",
+      "type": "object"
+    },
+    "CalculateDistance": {
+      "additionalProperties": false,
+      "description": "Measure distance from an origin to up to 100 destinations.",
+      "properties": {
+        "mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "driving",
+                "haversine",
+                "straightline"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mode",
+          "enum": [
+            "driving",
+            "haversine",
+            "straightline"
+          ],
+          "x-enum-searchable": true
+        },
+        "units": {
+          "anyOf": [
+            {
+              "enum": [
+                "miles",
+                "km"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Units",
+          "enum": [
+            "miles",
+            "km"
+          ],
+          "x-enum-searchable": true
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Results"
+        },
+        "max_distance": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Distance"
+        },
+        "min_distance": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Distance"
+        },
+        "max_duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Duration"
+        },
+        "min_duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Duration"
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "distance",
+                "duration"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order By",
+          "enum": [
+            "distance",
+            "duration"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "operation": {
+          "const": "calculate_distance",
+          "default": "calculate_distance",
+          "title": "Operation",
+          "type": "string"
+        },
+        "origin": {
+          "description": "Address or latitude,longitude[,your ID].",
+          "minLength": 1,
+          "title": "Origin",
+          "type": "string"
+        },
+        "destinations": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Destinations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "origin",
+        "destinations"
+      ],
+      "title": "CalculateDistance",
+      "type": "object"
+    },
+    "CalculateDistanceMatrix": {
+      "additionalProperties": false,
+      "description": "Calculate a many-to-many matrix or one-to-one pairs.",
+      "properties": {
+        "mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "driving",
+                "haversine",
+                "straightline"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mode",
+          "enum": [
+            "driving",
+            "haversine",
+            "straightline"
+          ],
+          "x-enum-searchable": true
+        },
+        "units": {
+          "anyOf": [
+            {
+              "enum": [
+                "miles",
+                "km"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Units",
+          "enum": [
+            "miles",
+            "km"
+          ],
+          "x-enum-searchable": true
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Results"
+        },
+        "max_distance": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Distance"
+        },
+        "min_distance": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Distance"
+        },
+        "max_duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Duration"
+        },
+        "min_duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Duration"
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "distance",
+                "duration"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order By",
+          "enum": [
+            "distance",
+            "duration"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "operation": {
+          "const": "calculate_distance_matrix",
+          "default": "calculate_distance_matrix",
+          "title": "Operation",
+          "type": "string"
+        },
+        "origins": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Origins",
+          "type": "array"
+        },
+        "destinations": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Destinations",
+          "type": "array"
+        },
+        "calculation_type": {
+          "default": "matrix",
+          "enum": [
+            "matrix",
+            "pairs"
+          ],
+          "title": "Calculation Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "origins",
+        "destinations"
+      ],
+      "title": "CalculateDistanceMatrix",
+      "type": "object"
+    },
+    "DeleteSpreadsheet": {
+      "additionalProperties": false,
+      "description": "Delete an uploaded spreadsheet and its results.",
+      "properties": {
+        "list_id": {
+          "description": "ID returned by Upload Spreadsheet or List Spreadsheets.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "List ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_spreadsheet",
+          "default": "delete_spreadsheet",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "DeleteSpreadsheet",
+      "type": "object"
+    },
+    "DownloadSpreadsheet": {
+      "additionalProperties": false,
+      "description": "Download a completed spreadsheet as a file; processing jobs must finish first.",
+      "properties": {
+        "list_id": {
+          "description": "ID returned by Upload Spreadsheet or List Spreadsheets.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "List ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "download_spreadsheet",
+          "default": "download_spreadsheet",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "DownloadSpreadsheet",
+      "type": "object"
+    },
+    "GeocodeAddress": {
+      "additionalProperties": false,
+      "description": "Find coordinates for a free-form address or separate address components.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "cd113",
+                  "cd114",
+                  "cd115",
+                  "cd116",
+                  "cd117",
+                  "cd118",
+                  "cd119",
+                  "cd120",
+                  "cd",
+                  "census2000",
+                  "census2010",
+                  "census2011",
+                  "census2012",
+                  "census2013",
+                  "census2014",
+                  "census2015",
+                  "census2016",
+                  "census2017",
+                  "census2018",
+                  "census2019",
+                  "census2020",
+                  "census2021",
+                  "census2022",
+                  "census2023",
+                  "census2024",
+                  "census2025",
+                  "census",
+                  "stateleg",
+                  "stateleg-next",
+                  "school",
+                  "ffiec",
+                  "zip4",
+                  "acs-demographics",
+                  "acs-demographics-block_group",
+                  "acs-demographics-tract",
+                  "acs-demographics-zcta",
+                  "acs-demographics-place",
+                  "acs-demographics-msa",
+                  "acs-demographics-county",
+                  "acs-demographics-county_subdivision",
+                  "acs-demographics-state",
+                  "acs-demographics-division",
+                  "acs-demographics-region",
+                  "acs-demographics-nation",
+                  "acs-economics",
+                  "acs-economics-block_group",
+                  "acs-economics-tract",
+                  "acs-economics-zcta",
+                  "acs-economics-place",
+                  "acs-economics-msa",
+                  "acs-economics-county",
+                  "acs-economics-county_subdivision",
+                  "acs-economics-state",
+                  "acs-economics-division",
+                  "acs-economics-region",
+                  "acs-economics-nation",
+                  "acs-families",
+                  "acs-families-block_group",
+                  "acs-families-tract",
+                  "acs-families-zcta",
+                  "acs-families-place",
+                  "acs-families-msa",
+                  "acs-families-county",
+                  "acs-families-county_subdivision",
+                  "acs-families-state",
+                  "acs-families-division",
+                  "acs-families-region",
+                  "acs-families-nation",
+                  "acs-housing",
+                  "acs-housing-block_group",
+                  "acs-housing-tract",
+                  "acs-housing-zcta",
+                  "acs-housing-place",
+                  "acs-housing-msa",
+                  "acs-housing-county",
+                  "acs-housing-county_subdivision",
+                  "acs-housing-state",
+                  "acs-housing-division",
+                  "acs-housing-region",
+                  "acs-housing-nation",
+                  "acs-social",
+                  "acs-social-block_group",
+                  "acs-social-tract",
+                  "acs-social-zcta",
+                  "acs-social-place",
+                  "acs-social-msa",
+                  "acs-social-county",
+                  "acs-social-county_subdivision",
+                  "acs-social-state",
+                  "acs-social-division",
+                  "acs-social-region",
+                  "acs-social-nation",
+                  "riding",
+                  "riding-next",
+                  "provriding",
+                  "provriding-next",
+                  "statcan",
+                  "uk-westminster",
+                  "uk-westminster-next",
+                  "uk-devolved",
+                  "uk-devolved-next",
+                  "uk-local",
+                  "uk-local-next",
+                  "uk-census",
+                  "au-census2021",
+                  "au-census",
+                  "au-demographics",
+                  "au-housing",
+                  "au-income",
+                  "au-federal-electorate",
+                  "au-federal-electorate-next",
+                  "au-state-electorate",
+                  "timezone",
+                  "gazetteer"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional data appends; each append adds billable lookups.",
+          "title": "Data Appends"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum results per query. Zero means no limit.",
+          "title": "Limit"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Country"
+        },
+        "destinations": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional destination coordinates or addresses for distance appends.",
+          "title": "Destinations"
+        },
+        "distance_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "driving",
+                "straightline"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Mode",
+          "enum": [
+            "driving",
+            "straightline"
+          ],
+          "x-enum-searchable": true
+        },
+        "distance_units": {
+          "anyOf": [
+            {
+              "enum": [
+                "miles",
+                "km"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Units",
+          "enum": [
+            "miles",
+            "km"
+          ],
+          "x-enum-searchable": true
+        },
+        "distance_max_results": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Max Results"
+        },
+        "distance_max_distance": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Max Distance"
+        },
+        "distance_min_distance": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Min Distance"
+        },
+        "distance_max_duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Max Duration"
+        },
+        "distance_min_duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Min Duration"
+        },
+        "distance_order_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "distance",
+                "duration"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Order By",
+          "enum": [
+            "distance",
+            "duration"
+          ],
+          "x-enum-searchable": true
+        },
+        "distance_sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Sort Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "geocode_address",
+          "default": "geocode_address",
+          "title": "Operation",
+          "type": "string"
+        },
+        "q": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "street": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Street"
+        },
+        "street2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Street2"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "county": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "County"
+        },
+        "state_province": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State Province"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "const": "simple",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Format"
+        }
+      },
+      "title": "GeocodeAddress",
+      "type": "object"
+    },
+    "GeocodioAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "geocodio_api_key",
+          "default": "geocodio_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Geocodio API Key",
+      "type": "object",
+      "x-credential-instructions": "Create or copy an API key in your Geocodio dashboard. Paste the key here. Give it the permissions needed for your geocoding, distance or spreadsheet operations. NoClick checks the key by reading your uploaded spreadsheets.",
+      "x-credential-url": "https://dash.geocod.io/apikey/"
+    },
+    "GetSpreadsheet": {
+      "additionalProperties": false,
+      "description": "Read a spreadsheet's processing state and progress.",
+      "properties": {
+        "list_id": {
+          "description": "ID returned by Upload Spreadsheet or List Spreadsheets.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "List ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_spreadsheet",
+          "default": "get_spreadsheet",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "GetSpreadsheet",
+      "type": "object"
+    },
+    "ListSpreadsheets": {
+      "additionalProperties": false,
+      "description": "Read one page of your uploaded spreadsheets.",
+      "properties": {
+        "operation": {
+          "const": "list_spreadsheets",
+          "default": "list_spreadsheets",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "Explicit provider page number; pagination metadata is returned unchanged.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "ListSpreadsheets",
+      "type": "object"
+    },
+    "ParseAddress": {
+      "additionalProperties": false,
+      "description": "Parse a street address into its components.",
+      "properties": {
+        "operation": {
+          "const": "parse_address",
+          "default": "parse_address",
+          "title": "Operation",
+          "type": "string"
+        },
+        "q": {
+          "minLength": 1,
+          "title": "Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "ParseAddress",
+      "type": "object"
+    },
+    "ReverseGeocode": {
+      "additionalProperties": false,
+      "description": "Find addresses or data appends for a latitude,longitude pair.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "cd113",
+                  "cd114",
+                  "cd115",
+                  "cd116",
+                  "cd117",
+                  "cd118",
+                  "cd119",
+                  "cd120",
+                  "cd",
+                  "census2000",
+                  "census2010",
+                  "census2011",
+                  "census2012",
+                  "census2013",
+                  "census2014",
+                  "census2015",
+                  "census2016",
+                  "census2017",
+                  "census2018",
+                  "census2019",
+                  "census2020",
+                  "census2021",
+                  "census2022",
+                  "census2023",
+                  "census2024",
+                  "census2025",
+                  "census",
+                  "stateleg",
+                  "stateleg-next",
+                  "school",
+                  "ffiec",
+                  "zip4",
+                  "acs-demographics",
+                  "acs-demographics-block_group",
+                  "acs-demographics-tract",
+                  "acs-demographics-zcta",
+                  "acs-demographics-place",
+                  "acs-demographics-msa",
+                  "acs-demographics-county",
+                  "acs-demographics-county_subdivision",
+                  "acs-demographics-state",
+                  "acs-demographics-division",
+                  "acs-demographics-region",
+                  "acs-demographics-nation",
+                  "acs-economics",
+                  "acs-economics-block_group",
+                  "acs-economics-tract",
+                  "acs-economics-zcta",
+                  "acs-economics-place",
+                  "acs-economics-msa",
+                  "acs-economics-county",
+                  "acs-economics-county_subdivision",
+                  "acs-economics-state",
+                  "acs-economics-division",
+                  "acs-economics-region",
+                  "acs-economics-nation",
+                  "acs-families",
+                  "acs-families-block_group",
+                  "acs-families-tract",
+                  "acs-families-zcta",
+                  "acs-families-place",
+                  "acs-families-msa",
+                  "acs-families-county",
+                  "acs-families-county_subdivision",
+                  "acs-families-state",
+                  "acs-families-division",
+                  "acs-families-region",
+                  "acs-families-nation",
+                  "acs-housing",
+                  "acs-housing-block_group",
+                  "acs-housing-tract",
+                  "acs-housing-zcta",
+                  "acs-housing-place",
+                  "acs-housing-msa",
+                  "acs-housing-county",
+                  "acs-housing-county_subdivision",
+                  "acs-housing-state",
+                  "acs-housing-division",
+                  "acs-housing-region",
+                  "acs-housing-nation",
+                  "acs-social",
+                  "acs-social-block_group",
+                  "acs-social-tract",
+                  "acs-social-zcta",
+                  "acs-social-place",
+                  "acs-social-msa",
+                  "acs-social-county",
+                  "acs-social-county_subdivision",
+                  "acs-social-state",
+                  "acs-social-division",
+                  "acs-social-region",
+                  "acs-social-nation",
+                  "riding",
+                  "riding-next",
+                  "provriding",
+                  "provriding-next",
+                  "statcan",
+                  "uk-westminster",
+                  "uk-westminster-next",
+                  "uk-devolved",
+                  "uk-devolved-next",
+                  "uk-local",
+                  "uk-local-next",
+                  "uk-census",
+                  "au-census2021",
+                  "au-census",
+                  "au-demographics",
+                  "au-housing",
+                  "au-income",
+                  "au-federal-electorate",
+                  "au-federal-electorate-next",
+                  "au-state-electorate",
+                  "timezone",
+                  "gazetteer"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional data appends; each append adds billable lookups.",
+          "title": "Data Appends"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum results per query. Zero means no limit.",
+          "title": "Limit"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Country"
+        },
+        "destinations": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional destination coordinates or addresses for distance appends.",
+          "title": "Destinations"
+        },
+        "distance_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "driving",
+                "straightline"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Mode",
+          "enum": [
+            "driving",
+            "straightline"
+          ],
+          "x-enum-searchable": true
+        },
+        "distance_units": {
+          "anyOf": [
+            {
+              "enum": [
+                "miles",
+                "km"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Units",
+          "enum": [
+            "miles",
+            "km"
+          ],
+          "x-enum-searchable": true
+        },
+        "distance_max_results": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Max Results"
+        },
+        "distance_max_distance": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Max Distance"
+        },
+        "distance_min_distance": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Min Distance"
+        },
+        "distance_max_duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Max Duration"
+        },
+        "distance_min_duration": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Min Duration"
+        },
+        "distance_order_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "distance",
+                "duration"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Order By",
+          "enum": [
+            "distance",
+            "duration"
+          ],
+          "x-enum-searchable": true
+        },
+        "distance_sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Sort Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "reverse_geocode",
+          "default": "reverse_geocode",
+          "title": "Operation",
+          "type": "string"
+        },
+        "q": {
+          "description": "Latitude,longitude, for example 38.9002898,-76.9990361.",
+          "minLength": 1,
+          "title": "Coordinates",
+          "type": "string"
+        },
+        "skip_geocoding": {
+          "default": false,
+          "description": "Apply fields directly to coordinates instead of reverse geocoding; requires data appends.",
+          "title": "Skip Geocoding",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "ReverseGeocode",
+      "type": "object"
+    },
+    "UploadSpreadsheet": {
+      "additionalProperties": false,
+      "description": "Upload inline CSV data and start a spreadsheet geocoding job.",
+      "properties": {
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "cd113",
+                  "cd114",
+                  "cd115",
+                  "cd116",
+                  "cd117",
+                  "cd118",
+                  "cd119",
+                  "cd120",
+                  "cd",
+                  "census2000",
+                  "census2010",
+                  "census2011",
+                  "census2012",
+                  "census2013",
+                  "census2014",
+                  "census2015",
+                  "census2016",
+                  "census2017",
+                  "census2018",
+                  "census2019",
+                  "census2020",
+                  "census2021",
+                  "census2022",
+                  "census2023",
+                  "census2024",
+                  "census2025",
+                  "census",
+                  "stateleg",
+                  "stateleg-next",
+                  "school",
+                  "ffiec",
+                  "zip4",
+                  "acs-demographics",
+                  "acs-demographics-block_group",
+                  "acs-demographics-tract",
+                  "acs-demographics-zcta",
+                  "acs-demographics-place",
+                  "acs-demographics-msa",
+                  "acs-demographics-county",
+                  "acs-demographics-county_subdivision",
+                  "acs-demographics-state",
+                  "acs-demographics-division",
+                  "acs-demographics-region",
+                  "acs-demographics-nation",
+                  "acs-economics",
+                  "acs-economics-block_group",
+                  "acs-economics-tract",
+                  "acs-economics-zcta",
+                  "acs-economics-place",
+                  "acs-economics-msa",
+                  "acs-economics-county",
+                  "acs-economics-county_subdivision",
+                  "acs-economics-state",
+                  "acs-economics-division",
+                  "acs-economics-region",
+                  "acs-economics-nation",
+                  "acs-families",
+                  "acs-families-block_group",
+                  "acs-families-tract",
+                  "acs-families-zcta",
+                  "acs-families-place",
+                  "acs-families-msa",
+                  "acs-families-county",
+                  "acs-families-county_subdivision",
+                  "acs-families-state",
+                  "acs-families-division",
+                  "acs-families-region",
+                  "acs-families-nation",
+                  "acs-housing",
+                  "acs-housing-block_group",
+                  "acs-housing-tract",
+                  "acs-housing-zcta",
+                  "acs-housing-place",
+                  "acs-housing-msa",
+                  "acs-housing-county",
+                  "acs-housing-county_subdivision",
+                  "acs-housing-state",
+                  "acs-housing-division",
+                  "acs-housing-region",
+                  "acs-housing-nation",
+                  "acs-social",
+                  "acs-social-block_group",
+                  "acs-social-tract",
+                  "acs-social-zcta",
+                  "acs-social-place",
+                  "acs-social-msa",
+                  "acs-social-county",
+                  "acs-social-county_subdivision",
+                  "acs-social-state",
+                  "acs-social-division",
+                  "acs-social-region",
+                  "acs-social-nation",
+                  "riding",
+                  "riding-next",
+                  "provriding",
+                  "provriding-next",
+                  "statcan",
+                  "uk-westminster",
+                  "uk-westminster-next",
+                  "uk-devolved",
+                  "uk-devolved-next",
+                  "uk-local",
+                  "uk-local-next",
+                  "uk-census",
+                  "au-census2021",
+                  "au-census",
+                  "au-demographics",
+                  "au-housing",
+                  "au-income",
+                  "au-federal-electorate",
+                  "au-federal-electorate-next",
+                  "au-state-electorate",
+                  "timezone",
+                  "gazetteer"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional data appends; each append adds billable lookups.",
+          "title": "Data Appends"
+        },
+        "operation": {
+          "const": "upload_spreadsheet",
+          "default": "upload_spreadsheet",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file": {
+          "minLength": 1,
+          "title": "CSV Contents",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "filename": {
+          "description": "CSV filename, for example addresses.csv.",
+          "minLength": 1,
+          "title": "Filename",
+          "type": "string"
+        },
+        "direction": {
+          "default": "forward",
+          "enum": [
+            "forward",
+            "reverse"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "format": {
+          "description": "Geocodio column template, for example {{A}} {{B}} {{C}}. Use {{A}},{{B}} for coordinates.",
+          "minLength": 1,
+          "title": "Column Template",
+          "type": "string"
+        },
+        "callback": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional HTTPS webhook URL notified when the job completes.",
+          "format": "uri",
+          "title": "Callback"
+        }
+      },
+      "required": [
+        "file",
+        "filename",
+        "format"
+      ],
+      "title": "UploadSpreadsheet",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "batch_geocode": "#/$defs/BatchGeocode",
+          "batch_reverse_geocode": "#/$defs/BatchReverseGeocode",
+          "calculate_distance": "#/$defs/CalculateDistance",
+          "calculate_distance_matrix": "#/$defs/CalculateDistanceMatrix",
+          "delete_spreadsheet": "#/$defs/DeleteSpreadsheet",
+          "download_spreadsheet": "#/$defs/DownloadSpreadsheet",
+          "geocode_address": "#/$defs/GeocodeAddress",
+          "get_spreadsheet": "#/$defs/GetSpreadsheet",
+          "list_spreadsheets": "#/$defs/ListSpreadsheets",
+          "parse_address": "#/$defs/ParseAddress",
+          "reverse_geocode": "#/$defs/ReverseGeocode",
+          "upload_spreadsheet": "#/$defs/UploadSpreadsheet"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GeocodeAddress"
+        },
+        {
+          "$ref": "#/$defs/BatchGeocode"
+        },
+        {
+          "$ref": "#/$defs/ReverseGeocode"
+        },
+        {
+          "$ref": "#/$defs/BatchReverseGeocode"
+        },
+        {
+          "$ref": "#/$defs/ParseAddress"
+        },
+        {
+          "$ref": "#/$defs/CalculateDistance"
+        },
+        {
+          "$ref": "#/$defs/CalculateDistanceMatrix"
+        },
+        {
+          "$ref": "#/$defs/ListSpreadsheets"
+        },
+        {
+          "$ref": "#/$defs/UploadSpreadsheet"
+        },
+        {
+          "$ref": "#/$defs/GetSpreadsheet"
+        },
+        {
+          "$ref": "#/$defs/DownloadSpreadsheet"
+        },
+        {
+          "$ref": "#/$defs/DeleteSpreadsheet"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GeocodioAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Geocodio Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

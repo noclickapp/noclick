@@ -1,0 +1,1111 @@
+{
+  "source": "https://api.geocod.io/openapi-spec.json",
+  "version": "2.1.0",
+  "responses": {
+    "GET /geocode": {
+      "results": [
+        {
+          "stable_address_key": "gcod_usndjrg9xn28uz888u3fkm6yusrdg",
+          "address_components": {
+            "number": "1109",
+            "predirectional": "N",
+            "street": "Highland",
+            "suffix": "St",
+            "formatted_street": "N Highland St",
+            "city": "Arlington",
+            "county": "Arlington County",
+            "state_province": "VA",
+            "postal_code": "22201",
+            "country": "US"
+          },
+          "address_lines": [
+            "1109 N Highland St",
+            "",
+            "Arlington, VA 22201"
+          ],
+          "formatted_address": "1109 N Highland St, Arlington, VA 22201",
+          "location": {
+            "lat": 38.886672,
+            "lng": -77.094735
+          },
+          "accuracy": 1,
+          "accuracy_type": "rooftop",
+          "match_type": "building_centroid",
+          "source": "Arlington"
+        }
+      ]
+    },
+    "POST /geocode": {
+      "results": [
+        {
+          "query": "1109 N Highland St, Arlington, VA",
+          "response": {
+            "results": [
+              {
+                "stable_address_key": "gcod_usndjrg9xn28uz888u3fkm6yusrdg",
+                "address_components": {
+                  "number": "1109",
+                  "predirectional": "N",
+                  "street": "Highland",
+                  "suffix": "St",
+                  "formatted_street": "N Highland St",
+                  "city": "Arlington",
+                  "county": "Arlington County",
+                  "state_province": "VA",
+                  "postal_code": "22201",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "1109 N Highland St",
+                  "",
+                  "Arlington, VA 22201"
+                ],
+                "formatted_address": "1109 N Highland St, Arlington, VA 22201",
+                "location": {
+                  "lat": 38.886672,
+                  "lng": -77.094735
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": "building_centroid",
+                "source": "Arlington"
+              }
+            ]
+          }
+        },
+        {
+          "query": "725 8th St SE, Washington DC",
+          "response": {
+            "results": [
+              {
+                "stable_address_key": "gcod_usn9uwkqf9al2kecx449lhvue4mac",
+                "address_components": {
+                  "number": "725",
+                  "street": "8th",
+                  "suffix": "St",
+                  "postdirectional": "SE",
+                  "formatted_street": "8th St SE",
+                  "city": "Washington",
+                  "county": "District of Columbia",
+                  "state_province": "DC",
+                  "postal_code": "20003",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "725 8th St SE",
+                  "",
+                  "Washington, DC 20003"
+                ],
+                "formatted_address": "725 8th St SE, Washington, DC 20003",
+                "location": {
+                  "lat": 38.880394,
+                  "lng": -76.99533
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": null,
+                "source": "Statewide (City of Washington)"
+              }
+            ]
+          }
+        },
+        {
+          "query": "1600 Pennsylvania Ave, Washington DC",
+          "response": {
+            "results": [
+              {
+                "stable_address_key": "gcod_usnqu2qtyk7ac38dlpzanec598p2c",
+                "address_components": {
+                  "number": "1600",
+                  "street": "Pennsylvania",
+                  "suffix": "Ave",
+                  "postdirectional": "NW",
+                  "formatted_street": "Pennsylvania Ave NW",
+                  "city": "Washington",
+                  "county": "District of Columbia",
+                  "state_province": "DC",
+                  "postal_code": "20500",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "1600 Pennsylvania Ave NW",
+                  "",
+                  "Washington, DC 20500"
+                ],
+                "formatted_address": "1600 Pennsylvania Ave NW, Washington, DC 20500",
+                "location": {
+                  "lat": 38.897675,
+                  "lng": -77.036547
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": null,
+                "source": "Statewide (City of Washington)"
+              },
+              {
+                "stable_address_key": "gcod_usn7qj2pmfgexyf47xdw95gw9ng8e",
+                "address_components": {
+                  "number": "1600",
+                  "street": "Pennsylvania",
+                  "suffix": "Ave",
+                  "postdirectional": "SE",
+                  "formatted_street": "Pennsylvania Ave SE",
+                  "city": "Washington",
+                  "county": "District of Columbia",
+                  "state_province": "DC",
+                  "postal_code": "20003",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "1600 Pennsylvania Ave SE",
+                  "",
+                  "Washington, DC 20003"
+                ],
+                "formatted_address": "1600 Pennsylvania Ave SE, Washington, DC 20003",
+                "location": {
+                  "lat": 38.879222,
+                  "lng": -76.981981
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": null,
+                "source": "Statewide (City of Washington)"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "GET /reverse": {
+      "results": [
+        {
+          "stable_address_key": "gcod_usns9336kzhky4334vs7fgmnxvbzb",
+          "address_components": {
+            "number": "510",
+            "street": "H",
+            "suffix": "St",
+            "postdirectional": "NE",
+            "formatted_street": "H St NE",
+            "city": "Washington",
+            "county": "District of Columbia",
+            "state_province": "DC",
+            "postal_code": "20002",
+            "country": "US"
+          },
+          "address_lines": [
+            "510 H St NE",
+            "",
+            "Washington, DC 20002"
+          ],
+          "formatted_address": "510 H St NE, Washington, DC 20002",
+          "location": {
+            "lat": 38.900419,
+            "lng": -76.998968
+          },
+          "accuracy": 1,
+          "accuracy_type": "rooftop",
+          "match_type": null,
+          "source": "Statewide (City of Washington)"
+        },
+        {
+          "stable_address_key": "gcod_usns9336kzhky43398dkxdr7svcsd",
+          "address_components": {
+            "number": "508",
+            "street": "H",
+            "suffix": "St",
+            "postdirectional": "NE",
+            "formatted_street": "H St NE",
+            "city": "Washington",
+            "county": "District of Columbia",
+            "state_province": "DC",
+            "postal_code": "20002",
+            "country": "US"
+          },
+          "address_lines": [
+            "508 H St NE",
+            "",
+            "Washington, DC 20002"
+          ],
+          "formatted_address": "508 H St NE, Washington, DC 20002",
+          "location": {
+            "lat": 38.900432,
+            "lng": -76.999031
+          },
+          "accuracy": 1,
+          "accuracy_type": "rooftop",
+          "match_type": null,
+          "source": "Statewide (City of Washington)"
+        },
+        {
+          "stable_address_key": "gcod_usns9336kzhky4335udnpc4rkaeec",
+          "address_components": {
+            "number": "506",
+            "street": "H",
+            "suffix": "St",
+            "postdirectional": "NE",
+            "formatted_street": "H St NE",
+            "city": "Washington",
+            "county": "District of Columbia",
+            "state_province": "DC",
+            "postal_code": "20002",
+            "country": "US"
+          },
+          "address_lines": [
+            "506 H St NE",
+            "",
+            "Washington, DC 20002"
+          ],
+          "formatted_address": "506 H St NE, Washington, DC 20002",
+          "location": {
+            "lat": 38.900437,
+            "lng": -76.999099
+          },
+          "accuracy": 1,
+          "accuracy_type": "rooftop",
+          "match_type": null,
+          "source": "Statewide (City of Washington)"
+        },
+        {
+          "stable_address_key": "gcod_usns9336kzhky433ajkv8yk2zgg8d",
+          "address_components": {
+            "number": "504",
+            "street": "H",
+            "suffix": "St",
+            "postdirectional": "NE",
+            "formatted_street": "H St NE",
+            "city": "Washington",
+            "county": "District of Columbia",
+            "state_province": "DC",
+            "postal_code": "20002",
+            "country": "US"
+          },
+          "address_lines": [
+            "504 H St NE",
+            "",
+            "Washington, DC 20002"
+          ],
+          "formatted_address": "504 H St NE, Washington, DC 20002",
+          "location": {
+            "lat": 38.900422,
+            "lng": -76.999169
+          },
+          "accuracy": 1,
+          "accuracy_type": "rooftop",
+          "match_type": null,
+          "source": "Statewide (City of Washington)"
+        },
+        {
+          "stable_address_key": "gcod_usns9336kzhky433x7cfk7qufmcy6",
+          "address_components": {
+            "number": "512",
+            "street": "H",
+            "suffix": "St",
+            "postdirectional": "NE",
+            "formatted_street": "H St NE",
+            "city": "Washington",
+            "county": "District of Columbia",
+            "state_province": "DC",
+            "postal_code": "20002",
+            "country": "US"
+          },
+          "address_lines": [
+            "512 H St NE",
+            "",
+            "Washington, DC 20002"
+          ],
+          "formatted_address": "512 H St NE, Washington, DC 20002",
+          "location": {
+            "lat": 38.900435,
+            "lng": -76.998897
+          },
+          "accuracy": 1,
+          "accuracy_type": "rooftop",
+          "match_type": null,
+          "source": "Statewide (City of Washington)"
+        },
+        {
+          "stable_address_key": "gcod_usns9336kzhky43373uq3ssjlwkhb",
+          "address_components": {
+            "number": "514",
+            "street": "H",
+            "suffix": "St",
+            "postdirectional": "NE",
+            "formatted_street": "H St NE",
+            "city": "Washington",
+            "county": "District of Columbia",
+            "state_province": "DC",
+            "postal_code": "20002",
+            "country": "US"
+          },
+          "address_lines": [
+            "514 H St NE",
+            "",
+            "Washington, DC 20002"
+          ],
+          "formatted_address": "514 H St NE, Washington, DC 20002",
+          "location": {
+            "lat": 38.900415,
+            "lng": -76.99883
+          },
+          "accuracy": 1,
+          "accuracy_type": "rooftop",
+          "match_type": null,
+          "source": "Statewide (City of Washington)"
+        }
+      ]
+    },
+    "POST /reverse": {
+      "results": [
+        {
+          "query": "38.9002898,-76.9990361",
+          "response": {
+            "results": [
+              {
+                "stable_address_key": "gcod_usns9336kzhky4334vs7fgmnxvbzb",
+                "address_components": {
+                  "number": "510",
+                  "street": "H",
+                  "suffix": "St",
+                  "postdirectional": "NE",
+                  "formatted_street": "H St NE",
+                  "city": "Washington",
+                  "county": "District of Columbia",
+                  "state_province": "DC",
+                  "postal_code": "20002",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "510 H St NE",
+                  "",
+                  "Washington, DC 20002"
+                ],
+                "formatted_address": "510 H St NE, Washington, DC 20002",
+                "location": {
+                  "lat": 38.900419,
+                  "lng": -76.998968
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": null,
+                "source": "Statewide (City of Washington)"
+              },
+              {
+                "stable_address_key": "gcod_usns9336kzhky43398dkxdr7svcsd",
+                "address_components": {
+                  "number": "508",
+                  "street": "H",
+                  "suffix": "St",
+                  "postdirectional": "NE",
+                  "formatted_street": "H St NE",
+                  "city": "Washington",
+                  "county": "District of Columbia",
+                  "state_province": "DC",
+                  "postal_code": "20002",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "508 H St NE",
+                  "",
+                  "Washington, DC 20002"
+                ],
+                "formatted_address": "508 H St NE, Washington, DC 20002",
+                "location": {
+                  "lat": 38.900432,
+                  "lng": -76.999031
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": null,
+                "source": "Statewide (City of Washington)"
+              },
+              {
+                "stable_address_key": "gcod_usns9336kzhky4335udnpc4rkaeec",
+                "address_components": {
+                  "number": "506",
+                  "street": "H",
+                  "suffix": "St",
+                  "postdirectional": "NE",
+                  "formatted_street": "H St NE",
+                  "city": "Washington",
+                  "county": "District of Columbia",
+                  "state_province": "DC",
+                  "postal_code": "20002",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "506 H St NE",
+                  "",
+                  "Washington, DC 20002"
+                ],
+                "formatted_address": "506 H St NE, Washington, DC 20002",
+                "location": {
+                  "lat": 38.900437,
+                  "lng": -76.999099
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": null,
+                "source": "Statewide (City of Washington)"
+              },
+              {
+                "stable_address_key": "gcod_usns9336kzhky433ajkv8yk2zgg8d",
+                "address_components": {
+                  "number": "504",
+                  "street": "H",
+                  "suffix": "St",
+                  "postdirectional": "NE",
+                  "formatted_street": "H St NE",
+                  "city": "Washington",
+                  "county": "District of Columbia",
+                  "state_province": "DC",
+                  "postal_code": "20002",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "504 H St NE",
+                  "",
+                  "Washington, DC 20002"
+                ],
+                "formatted_address": "504 H St NE, Washington, DC 20002",
+                "location": {
+                  "lat": 38.900422,
+                  "lng": -76.999169
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": null,
+                "source": "Statewide (City of Washington)"
+              },
+              {
+                "stable_address_key": "gcod_usns9336kzhky433x7cfk7qufmcy6",
+                "address_components": {
+                  "number": "512",
+                  "street": "H",
+                  "suffix": "St",
+                  "postdirectional": "NE",
+                  "formatted_street": "H St NE",
+                  "city": "Washington",
+                  "county": "District of Columbia",
+                  "state_province": "DC",
+                  "postal_code": "20002",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "512 H St NE",
+                  "",
+                  "Washington, DC 20002"
+                ],
+                "formatted_address": "512 H St NE, Washington, DC 20002",
+                "location": {
+                  "lat": 38.900435,
+                  "lng": -76.998897
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": null,
+                "source": "Statewide (City of Washington)"
+              },
+              {
+                "stable_address_key": "gcod_usns9336kzhky43373uq3ssjlwkhb",
+                "address_components": {
+                  "number": "514",
+                  "street": "H",
+                  "suffix": "St",
+                  "postdirectional": "NE",
+                  "formatted_street": "H St NE",
+                  "city": "Washington",
+                  "county": "District of Columbia",
+                  "state_province": "DC",
+                  "postal_code": "20002",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "514 H St NE",
+                  "",
+                  "Washington, DC 20002"
+                ],
+                "formatted_address": "514 H St NE, Washington, DC 20002",
+                "location": {
+                  "lat": 38.900415,
+                  "lng": -76.99883
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": null,
+                "source": "Statewide (City of Washington)"
+              }
+            ]
+          }
+        },
+        {
+          "query": "38.886672,-77.094735",
+          "response": {
+            "results": [
+              {
+                "stable_address_key": "gcod_usndjrg9xn28uz888u3fkm6yusrdg",
+                "address_components": {
+                  "number": "1109",
+                  "predirectional": "N",
+                  "street": "Highland",
+                  "suffix": "St",
+                  "formatted_street": "N Highland St",
+                  "city": "Arlington",
+                  "county": "Arlington County",
+                  "state_province": "VA",
+                  "postal_code": "22201",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "1109 N Highland St",
+                  "",
+                  "Arlington, VA 22201"
+                ],
+                "formatted_address": "1109 N Highland St, Arlington, VA 22201",
+                "location": {
+                  "lat": 38.886672,
+                  "lng": -77.094735
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": "building_centroid",
+                "source": "Arlington"
+              },
+              {
+                "stable_address_key": "gcod_usnt6rr3t9mt6gsdk3l42pq6r39me",
+                "address_components": {
+                  "number": "3030",
+                  "street": "Clarendon",
+                  "suffix": "Blvd",
+                  "formatted_street": "Clarendon Blvd",
+                  "city": "Arlington",
+                  "county": "Arlington County",
+                  "state_province": "VA",
+                  "postal_code": "22201",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "3030 Clarendon Blvd",
+                  "",
+                  "Arlington, VA 22201"
+                ],
+                "formatted_address": "3030 Clarendon Blvd, Arlington, VA 22201",
+                "location": {
+                  "lat": 38.886876,
+                  "lng": -77.094702
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": "building_centroid",
+                "source": "Arlington"
+              },
+              {
+                "stable_address_key": "gcod_usndjrg9xn28uz882vzhnruzlwve6",
+                "address_components": {
+                  "number": "1101",
+                  "predirectional": "N",
+                  "street": "Highland",
+                  "suffix": "St",
+                  "formatted_street": "N Highland St",
+                  "city": "Arlington",
+                  "county": "Arlington County",
+                  "state_province": "VA",
+                  "postal_code": "22201",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "1101 N Highland St",
+                  "",
+                  "Arlington, VA 22201"
+                ],
+                "formatted_address": "1101 N Highland St, Arlington, VA 22201",
+                "location": {
+                  "lat": 38.886406,
+                  "lng": -77.094683
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": "building_centroid",
+                "source": "Arlington"
+              },
+              {
+                "stable_address_key": "gcod_usnt6rr3t9mt6gsddzryj3rdqzmrb",
+                "address_components": {
+                  "number": "3020",
+                  "street": "Clarendon",
+                  "suffix": "Blvd",
+                  "formatted_street": "Clarendon Blvd",
+                  "city": "Arlington",
+                  "county": "Arlington County",
+                  "state_province": "VA",
+                  "postal_code": "22201",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "3020 Clarendon Blvd",
+                  "",
+                  "Arlington, VA 22201"
+                ],
+                "formatted_address": "3020 Clarendon Blvd, Arlington, VA 22201",
+                "location": {
+                  "lat": 38.886969,
+                  "lng": -77.094529
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": "building_centroid",
+                "source": "Arlington"
+              },
+              {
+                "stable_address_key": "gcod_usnt6rr3t9mt6gsdupjq5a3gz3yp6",
+                "address_components": {
+                  "number": "3010",
+                  "street": "Clarendon",
+                  "suffix": "Blvd",
+                  "formatted_street": "Clarendon Blvd",
+                  "city": "Arlington",
+                  "county": "Arlington County",
+                  "state_province": "VA",
+                  "postal_code": "22201",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "3010 Clarendon Blvd",
+                  "",
+                  "Arlington, VA 22201"
+                ],
+                "formatted_address": "3010 Clarendon Blvd, Arlington, VA 22201",
+                "location": {
+                  "lat": 38.887008,
+                  "lng": -77.094291
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": "building_centroid",
+                "source": "Arlington"
+              },
+              {
+                "stable_address_key": "gcod_usnt6rr3t9mt6gsdn685r3ltcwg4g",
+                "address_components": {
+                  "number": "3100",
+                  "street": "Clarendon",
+                  "suffix": "Blvd",
+                  "formatted_street": "Clarendon Blvd",
+                  "city": "Arlington",
+                  "county": "Arlington County",
+                  "state_province": "VA",
+                  "postal_code": "22201",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "3100 Clarendon Blvd",
+                  "",
+                  "Arlington, VA 22201"
+                ],
+                "formatted_address": "3100 Clarendon Blvd, Arlington, VA 22201",
+                "location": {
+                  "lat": 38.886437,
+                  "lng": -77.095303
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": "building_centroid",
+                "source": "Arlington"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "GET /parse": {
+      "address_components": {
+        "number": "1109",
+        "predirectional": "N",
+        "street": "Highland",
+        "suffix": "St",
+        "formatted_street": "N Highland St",
+        "city": "Arlington",
+        "state_province": "VA",
+        "postal_code": "22201",
+        "country": "US"
+      },
+      "formatted_address": "1109 N Highland St, Arlington, VA 22201"
+    },
+    "GET /distance": {
+      "origin": {
+        "location": [
+          38.886672,
+          -77.094735
+        ],
+        "geocode": {
+          "stable_address_key": "gcod_usndjrg9xn28uz888u3fkm6yusrdg",
+          "address_components": {
+            "number": "1109",
+            "predirectional": "N",
+            "street": "Highland",
+            "suffix": "St",
+            "formatted_street": "N Highland St",
+            "city": "Arlington",
+            "county": "Arlington County",
+            "state_province": "VA",
+            "postal_code": "22201",
+            "country": "US"
+          },
+          "address_lines": [
+            "1109 N Highland St",
+            "",
+            "Arlington, VA 22201"
+          ],
+          "formatted_address": "1109 N Highland St, Arlington, VA 22201",
+          "location": {
+            "lat": 38.886672,
+            "lng": -77.094735
+          },
+          "accuracy": 1,
+          "accuracy_type": "rooftop",
+          "match_type": "building_centroid",
+          "source": "Arlington"
+        }
+      },
+      "mode": "straightline",
+      "destinations": [
+        {
+          "query": "1600 Pennsylvania Ave, Washington DC",
+          "location": [
+            38.897675,
+            -77.036547
+          ],
+          "id": null,
+          "distance_miles": 3.2,
+          "distance_km": 5.2,
+          "geocode": {
+            "stable_address_key": "gcod_usnqu2qtyk7ac38dlpzanec598p2c",
+            "address_components": {
+              "number": "1600",
+              "street": "Pennsylvania",
+              "suffix": "Ave",
+              "postdirectional": "NW",
+              "formatted_street": "Pennsylvania Ave NW",
+              "city": "Washington",
+              "county": "District of Columbia",
+              "state_province": "DC",
+              "postal_code": "20500",
+              "country": "US"
+            },
+            "address_lines": [
+              "1600 Pennsylvania Ave NW",
+              "",
+              "Washington, DC 20500"
+            ],
+            "formatted_address": "1600 Pennsylvania Ave NW, Washington, DC 20500",
+            "location": {
+              "lat": 38.897675,
+              "lng": -77.036547
+            },
+            "accuracy": 1,
+            "accuracy_type": "rooftop",
+            "match_type": null,
+            "source": "Statewide (City of Washington)"
+          }
+        },
+        {
+          "query": "725 8th St SE, Washington DC",
+          "location": [
+            38.880394,
+            -76.99533
+          ],
+          "id": null,
+          "distance_miles": 5.4,
+          "distance_km": 8.6,
+          "geocode": {
+            "stable_address_key": "gcod_usn9uwkqf9al2kecx449lhvue4mac",
+            "address_components": {
+              "number": "725",
+              "street": "8th",
+              "suffix": "St",
+              "postdirectional": "SE",
+              "formatted_street": "8th St SE",
+              "city": "Washington",
+              "county": "District of Columbia",
+              "state_province": "DC",
+              "postal_code": "20003",
+              "country": "US"
+            },
+            "address_lines": [
+              "725 8th St SE",
+              "",
+              "Washington, DC 20003"
+            ],
+            "formatted_address": "725 8th St SE, Washington, DC 20003",
+            "location": {
+              "lat": 38.880394,
+              "lng": -76.99533
+            },
+            "accuracy": 1,
+            "accuracy_type": "rooftop",
+            "match_type": null,
+            "source": "Statewide (City of Washington)"
+          }
+        }
+      ]
+    },
+    "POST /distance-matrix": {
+      "mode": "straightline",
+      "results": [
+        {
+          "origin": {
+            "query": "1109 N Highland St, Arlington, VA",
+            "location": [
+              38.886672,
+              -77.094735
+            ],
+            "id": null,
+            "geocode": {
+              "stable_address_key": "gcod_usndjrg9xn28uz888u3fkm6yusrdg",
+              "address_components": {
+                "number": "1109",
+                "predirectional": "N",
+                "street": "Highland",
+                "suffix": "St",
+                "formatted_street": "N Highland St",
+                "city": "Arlington",
+                "county": "Arlington County",
+                "state_province": "VA",
+                "postal_code": "22201",
+                "country": "US"
+              },
+              "address_lines": [
+                "1109 N Highland St",
+                "",
+                "Arlington, VA 22201"
+              ],
+              "formatted_address": "1109 N Highland St, Arlington, VA 22201",
+              "location": {
+                "lat": 38.886672,
+                "lng": -77.094735
+              },
+              "accuracy": 1,
+              "accuracy_type": "rooftop",
+              "match_type": "building_centroid",
+              "source": "Arlington"
+            }
+          },
+          "destinations": [
+            {
+              "query": "38.8814,-77.0916",
+              "location": [
+                38.8814,
+                -77.0916
+              ],
+              "id": null,
+              "distance_miles": 0.4,
+              "distance_km": 0.6
+            },
+            {
+              "query": "1600 Pennsylvania Ave, Washington DC",
+              "location": [
+                38.897675,
+                -77.036547
+              ],
+              "id": null,
+              "distance_miles": 3.2,
+              "distance_km": 5.2,
+              "geocode": {
+                "stable_address_key": "gcod_usnqu2qtyk7ac38dlpzanec598p2c",
+                "address_components": {
+                  "number": "1600",
+                  "street": "Pennsylvania",
+                  "suffix": "Ave",
+                  "postdirectional": "NW",
+                  "formatted_street": "Pennsylvania Ave NW",
+                  "city": "Washington",
+                  "county": "District of Columbia",
+                  "state_province": "DC",
+                  "postal_code": "20500",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "1600 Pennsylvania Ave NW",
+                  "",
+                  "Washington, DC 20500"
+                ],
+                "formatted_address": "1600 Pennsylvania Ave NW, Washington, DC 20500",
+                "location": {
+                  "lat": 38.897675,
+                  "lng": -77.036547
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": null,
+                "source": "Statewide (City of Washington)"
+              }
+            }
+          ]
+        },
+        {
+          "origin": {
+            "query": "725 8th St SE, Washington DC",
+            "location": [
+              38.880394,
+              -76.99533
+            ],
+            "id": null,
+            "geocode": {
+              "stable_address_key": "gcod_usn9uwkqf9al2kecx449lhvue4mac",
+              "address_components": {
+                "number": "725",
+                "street": "8th",
+                "suffix": "St",
+                "postdirectional": "SE",
+                "formatted_street": "8th St SE",
+                "city": "Washington",
+                "county": "District of Columbia",
+                "state_province": "DC",
+                "postal_code": "20003",
+                "country": "US"
+              },
+              "address_lines": [
+                "725 8th St SE",
+                "",
+                "Washington, DC 20003"
+              ],
+              "formatted_address": "725 8th St SE, Washington, DC 20003",
+              "location": {
+                "lat": 38.880394,
+                "lng": -76.99533
+              },
+              "accuracy": 1,
+              "accuracy_type": "rooftop",
+              "match_type": null,
+              "source": "Statewide (City of Washington)"
+            }
+          },
+          "destinations": [
+            {
+              "query": "1600 Pennsylvania Ave, Washington DC",
+              "location": [
+                38.897675,
+                -77.036547
+              ],
+              "id": null,
+              "distance_miles": 2.5,
+              "distance_km": 4.1,
+              "geocode": {
+                "stable_address_key": "gcod_usnqu2qtyk7ac38dlpzanec598p2c",
+                "address_components": {
+                  "number": "1600",
+                  "street": "Pennsylvania",
+                  "suffix": "Ave",
+                  "postdirectional": "NW",
+                  "formatted_street": "Pennsylvania Ave NW",
+                  "city": "Washington",
+                  "county": "District of Columbia",
+                  "state_province": "DC",
+                  "postal_code": "20500",
+                  "country": "US"
+                },
+                "address_lines": [
+                  "1600 Pennsylvania Ave NW",
+                  "",
+                  "Washington, DC 20500"
+                ],
+                "formatted_address": "1600 Pennsylvania Ave NW, Washington, DC 20500",
+                "location": {
+                  "lat": 38.897675,
+                  "lng": -77.036547
+                },
+                "accuracy": 1,
+                "accuracy_type": "rooftop",
+                "match_type": null,
+                "source": "Statewide (City of Washington)"
+              }
+            },
+            {
+              "query": "38.8814,-77.0916",
+              "location": [
+                38.8814,
+                -77.0916
+              ],
+              "id": null,
+              "distance_miles": 5.2,
+              "distance_km": 8.3
+            }
+          ]
+        }
+      ]
+    },
+    "GET /lists": {
+      "current_page": 1,
+      "current_page_url": "https://api.geocod.io/v2.1/lists?page=1",
+      "data": [
+        {
+          "id": 148,
+          "fields": [],
+          "file": {
+            "estimated_rows_count": 4050,
+            "filename": "illum-nisi-voluptatem-voluptatem.csv"
+          },
+          "status": {
+            "state": "COMPLETED",
+            "progress": 100,
+            "message": "Completed",
+            "time_left_description": null,
+            "time_left_seconds": null
+          },
+          "download_url": "https://api.geocod.io/v2.1/lists/148/download",
+          "expires_at": "2026-06-07T16:07:39.000000Z"
+        },
+        {
+          "id": 147,
+          "fields": [],
+          "file": {
+            "estimated_rows_count": 3364,
+            "filename": "quo-optio-autem-dolor.csv"
+          },
+          "status": {
+            "state": "COMPLETED",
+            "progress": 100,
+            "message": "Completed",
+            "time_left_description": null,
+            "time_left_seconds": null
+          },
+          "download_url": "https://api.geocod.io/v2.1/lists/147/download",
+          "expires_at": "2026-06-07T16:07:39.000000Z"
+        }
+      ],
+      "first_page_url": "https://api.geocod.io/v2.1/lists?page=1",
+      "from": 1,
+      "next_page_url": null,
+      "path": "https://api.geocod.io/v2.1/lists",
+      "per_page": 15,
+      "prev_page_url": null,
+      "to": 2
+    },
+    "POST /lists": {
+      "id": 146,
+      "file": {
+        "headers": [
+          "address"
+        ],
+        "estimated_rows_count": 2,
+        "filename": "example.csv"
+      }
+    },
+    "GET /lists/{id}": {
+      "id": 149,
+      "fields": [],
+      "file": {
+        "estimated_rows_count": 1042,
+        "filename": "mollitia-dolore-nihil.csv"
+      },
+      "status": {
+        "state": "COMPLETED",
+        "progress": 100,
+        "message": "Completed",
+        "time_left_description": null,
+        "time_left_seconds": null
+      },
+      "download_url": "https://api.geocod.io/v2.1/lists/149/download",
+      "expires_at": "2026-06-07T16:07:39.000000Z"
+    }
+  }
+}
