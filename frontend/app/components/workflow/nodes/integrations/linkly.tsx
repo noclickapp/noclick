@@ -25,6 +25,7 @@ LinklyIcon.displayName = 'LinklyIcon';
 export const LinklyNode: NodeDefinition = {
     type: 'automation-linkly',
     label: 'Linkly',
+    category: 'marketing',
     description:
         'Manage short links, domains, click analytics, conversions and webhooks',
     Icon: LinklyIcon,
