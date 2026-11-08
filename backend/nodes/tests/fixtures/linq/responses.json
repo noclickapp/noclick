@@ -1,0 +1,55 @@
+{
+  "listPhoneNumbers": {
+    "phone_numbers": [
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "phone_number": "+12025551234",
+        "forwarding_number": "+12025559999",
+        "line_type": "iMessage",
+        "reputation": {
+          "status": "HEALTHY",
+          "doc_url": "https://docs.linqapp.com/channel/imessage/guides/phone-numbers/phone-reputation#healthy"
+        }
+      },
+      {
+        "id": "550e8400-e29b-41d4-a716-446655440001",
+        "phone_number": "+12025559876",
+        "forwarding_number": null,
+        "line_type": "RCS",
+        "reputation": {
+          "status": "AT_RISK",
+          "doc_url": "https://docs.linqapp.com/channel/imessage/guides/phone-numbers/phone-reputation#at-risk"
+        }
+      }
+    ]
+  },
+  "listBlockedHandles": {
+    "blocked_handles": [
+      {
+        "handle": "+12025551234",
+        "reason": "spam",
+        "blocked_at": "2026-07-30T16:42:00Z"
+      }
+    ]
+  },
+  "blockHandle": {
+    "blocked_handle": {
+      "handle": "+12025551234",
+      "reason": "spam",
+      "blocked_at": "2026-07-30T16:42:00Z"
+    }
+  },
+  "getAttachment": {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "filename": "photo.jpg",
+    "content_type": "image/jpeg",
+    "size_bytes": 1024000,
+    "status": "complete",
+    "download_url": "https://cdn.linqapp.com/attachments/550e8400-e29b-41d4-a716-446655440000/photo.jpg",
+    "created_at": "2024-01-15T10:30:00Z"
+  },
+  "checkImessageCapability": {
+    "address": "+15551234567",
+    "available": true
+  }
+}

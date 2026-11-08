@@ -1,0 +1,6 @@
+{
+  "source": "https://cdn.linqapp.com/openapi/linq-api-v3.yaml",
+  "version": "1.0.0",
+  "sha256": "30b898da7c2a2eea2727499a4f6be25422f66622ec34673d38a0f05902fa6fd5",
+  "notes": "responses.json copies the published JSON response examples for listPhoneNumbers, listBlockedHandles, blockHandle, getAttachment and checkImessageCapability."
+}

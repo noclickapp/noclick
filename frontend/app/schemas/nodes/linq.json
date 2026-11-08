@@ -1,0 +1,770 @@
+{
+  "$defs": {
+    "BlockHandle": {
+      "additionalProperties": false,
+      "description": "Block inbound delivery and outbound sending for this handle.",
+      "properties": {
+        "operation": {
+          "const": "block_handle",
+          "default": "block_handle",
+          "title": "Operation",
+          "type": "string"
+        },
+        "handle": {
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Handle",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "handle"
+      ],
+      "title": "BlockHandle",
+      "type": "object"
+    },
+    "CheckIMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_imessage",
+          "default": "check_imessage",
+          "title": "Operation",
+          "type": "string"
+        },
+        "address": {
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Address",
+          "type": "string"
+        },
+        "from_number": {
+          "anyOf": [
+            {
+              "pattern": "^\\+[1-9][0-9]{1,14}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Number"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "CheckIMessage",
+      "type": "object"
+    },
+    "CheckRCS": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_rcs",
+          "default": "check_rcs",
+          "title": "Operation",
+          "type": "string"
+        },
+        "address": {
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Address",
+          "type": "string"
+        },
+        "from_number": {
+          "anyOf": [
+            {
+              "pattern": "^\\+[1-9][0-9]{1,14}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From Number"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "CheckRCS",
+      "type": "object"
+    },
+    "CreateChat": {
+      "additionalProperties": false,
+      "description": "Create or reuse a chat and send its required initial text message. First messages cannot contain URLs.",
+      "properties": {
+        "operation": {
+          "const": "create_chat",
+          "default": "create_chat",
+          "title": "Operation",
+          "type": "string"
+        },
+        "from_number": {
+          "description": "Your sending number in E.164 format.",
+          "pattern": "^\\+[1-9][0-9]{1,14}$",
+          "title": "From Number",
+          "type": "string"
+        },
+        "to": {
+          "description": "Recipient phone numbers or email addresses.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 31,
+          "minItems": 1,
+          "title": "To",
+          "type": "array"
+        },
+        "text": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "from_number",
+        "to",
+        "text"
+      ],
+      "title": "CreateChat",
+      "type": "object"
+    },
+    "DeleteMessage": {
+      "additionalProperties": false,
+      "description": "Delete the API record only. This does not unsend the message from recipients' chats.",
+      "properties": {
+        "message_id": {
+          "description": "Linq message UUID.",
+          "format": "uuid",
+          "title": "Message Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_message",
+          "default": "delete_message",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "DeleteMessage",
+      "type": "object"
+    },
+    "EditMessage": {
+      "additionalProperties": false,
+      "description": "Edit a text part within 15 minutes of sending, up to five times.",
+      "properties": {
+        "message_id": {
+          "description": "Linq message UUID.",
+          "format": "uuid",
+          "title": "Message Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "edit_message",
+          "default": "edit_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "part_index": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Part Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "message_id",
+        "text"
+      ],
+      "title": "EditMessage",
+      "type": "object"
+    },
+    "GetAttachment": {
+      "additionalProperties": false,
+      "description": "Read attachment metadata and its download URL; no file download is performed.",
+      "properties": {
+        "operation": {
+          "const": "get_attachment",
+          "default": "get_attachment",
+          "title": "Operation",
+          "type": "string"
+        },
+        "attachment_id": {
+          "format": "uuid",
+          "title": "Attachment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "attachment_id"
+      ],
+      "title": "GetAttachment",
+      "type": "object"
+    },
+    "GetChat": {
+      "additionalProperties": false,
+      "properties": {
+        "chat_id": {
+          "description": "Linq chat UUID.",
+          "format": "uuid",
+          "title": "Chat Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_chat",
+          "default": "get_chat",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "GetChat",
+      "type": "object"
+    },
+    "GetMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "message_id": {
+          "description": "Linq message UUID.",
+          "format": "uuid",
+          "title": "Message Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_message",
+          "default": "get_message",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "GetMessage",
+      "type": "object"
+    },
+    "LinqAPIToken": {
+      "properties": {
+        "credential_type": {
+          "const": "linq_api_token",
+          "default": "linq_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Linq API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste your existing Linq Partner API bearer token without the Bearer prefix. NoClick verifies access by reading your phone numbers.",
+      "x-credential-url": "https://docs.linqapp.com/channel/imessage/getting-started/authentication/"
+    },
+    "ListBlockedHandles": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_blocked_handles",
+          "default": "list_blocked_handles",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListBlockedHandles",
+      "type": "object"
+    },
+    "ListChats": {
+      "additionalProperties": false,
+      "description": "List one page of conversations; preserve the provider's next_cursor.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum results in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy next_cursor from the previous response. Each run fetches one page.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_chats",
+          "default": "list_chats",
+          "title": "Operation",
+          "type": "string"
+        },
+        "from_number": {
+          "anyOf": [
+            {
+              "pattern": "^\\+?[1-9]\\d{1,14}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by sending phone number.",
+          "title": "From Number"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To"
+        }
+      },
+      "title": "ListChats",
+      "type": "object"
+    },
+    "ListMessages": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Maximum results in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy next_cursor from the previous response. Each run fetches one page.",
+          "title": "Cursor"
+        },
+        "chat_id": {
+          "description": "Linq chat UUID.",
+          "format": "uuid",
+          "title": "Chat Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "ListMessages",
+      "type": "object"
+    },
+    "ListPhoneNumbers": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_phone_numbers",
+          "default": "list_phone_numbers",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListPhoneNumbers",
+      "type": "object"
+    },
+    "MarkChatRead": {
+      "additionalProperties": false,
+      "properties": {
+        "chat_id": {
+          "description": "Linq chat UUID.",
+          "format": "uuid",
+          "title": "Chat Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "mark_chat_read",
+          "default": "mark_chat_read",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "MarkChatRead",
+      "type": "object"
+    },
+    "SendMessage": {
+      "additionalProperties": false,
+      "description": "Queue a text message. Acceptance does not prove delivery; read the message status later.",
+      "properties": {
+        "chat_id": {
+          "description": "Linq chat UUID.",
+          "format": "uuid",
+          "title": "Chat Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Operation",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse this key when retrying the same message.",
+          "title": "Idempotency Key"
+        },
+        "reply_to_message_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reply To Message Id"
+        }
+      },
+      "required": [
+        "chat_id",
+        "text"
+      ],
+      "title": "SendMessage",
+      "type": "object"
+    },
+    "SendReaction": {
+      "additionalProperties": false,
+      "description": "Add or remove a standard reaction on a message part.",
+      "properties": {
+        "message_id": {
+          "description": "Linq message UUID.",
+          "format": "uuid",
+          "title": "Message Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "send_reaction",
+          "default": "send_reaction",
+          "title": "Operation",
+          "type": "string"
+        },
+        "reaction_operation": {
+          "default": "add",
+          "enum": [
+            "add",
+            "remove"
+          ],
+          "title": "Reaction Operation",
+          "type": "string"
+        },
+        "reaction_type": {
+          "default": "love",
+          "enum": [
+            "love",
+            "like",
+            "dislike",
+            "laugh",
+            "emphasize",
+            "question"
+          ],
+          "title": "Reaction Type",
+          "type": "string"
+        },
+        "part_index": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Part Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "SendReaction",
+      "type": "object"
+    },
+    "StartTyping": {
+      "additionalProperties": false,
+      "properties": {
+        "chat_id": {
+          "description": "Linq chat UUID.",
+          "format": "uuid",
+          "title": "Chat Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "start_typing",
+          "default": "start_typing",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "StartTyping",
+      "type": "object"
+    },
+    "StopTyping": {
+      "additionalProperties": false,
+      "properties": {
+        "chat_id": {
+          "description": "Linq chat UUID.",
+          "format": "uuid",
+          "title": "Chat Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "stop_typing",
+          "default": "stop_typing",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "StopTyping",
+      "type": "object"
+    },
+    "UnblockHandle": {
+      "additionalProperties": false,
+      "description": "Resume inbound delivery and permit sending to this handle.",
+      "properties": {
+        "operation": {
+          "const": "unblock_handle",
+          "default": "unblock_handle",
+          "title": "Operation",
+          "type": "string"
+        },
+        "handle": {
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Handle",
+          "type": "string"
+        }
+      },
+      "required": [
+        "handle"
+      ],
+      "title": "UnblockHandle",
+      "type": "object"
+    },
+    "UpdateChat": {
+      "additionalProperties": false,
+      "description": "Request a chat name change; confirm final outcome through Linq webhook events.",
+      "properties": {
+        "chat_id": {
+          "description": "Linq chat UUID.",
+          "format": "uuid",
+          "title": "Chat Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_chat",
+          "default": "update_chat",
+          "title": "Operation",
+          "type": "string"
+        },
+        "display_name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Display Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat_id",
+        "display_name"
+      ],
+      "title": "UpdateChat",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "block_handle": "#/$defs/BlockHandle",
+          "check_imessage": "#/$defs/CheckIMessage",
+          "check_rcs": "#/$defs/CheckRCS",
+          "create_chat": "#/$defs/CreateChat",
+          "delete_message": "#/$defs/DeleteMessage",
+          "edit_message": "#/$defs/EditMessage",
+          "get_attachment": "#/$defs/GetAttachment",
+          "get_chat": "#/$defs/GetChat",
+          "get_message": "#/$defs/GetMessage",
+          "list_blocked_handles": "#/$defs/ListBlockedHandles",
+          "list_chats": "#/$defs/ListChats",
+          "list_messages": "#/$defs/ListMessages",
+          "list_phone_numbers": "#/$defs/ListPhoneNumbers",
+          "mark_chat_read": "#/$defs/MarkChatRead",
+          "send_message": "#/$defs/SendMessage",
+          "send_reaction": "#/$defs/SendReaction",
+          "start_typing": "#/$defs/StartTyping",
+          "stop_typing": "#/$defs/StopTyping",
+          "unblock_handle": "#/$defs/UnblockHandle",
+          "update_chat": "#/$defs/UpdateChat"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListChats"
+        },
+        {
+          "$ref": "#/$defs/GetChat"
+        },
+        {
+          "$ref": "#/$defs/CreateChat"
+        },
+        {
+          "$ref": "#/$defs/UpdateChat"
+        },
+        {
+          "$ref": "#/$defs/SendMessage"
+        },
+        {
+          "$ref": "#/$defs/ListMessages"
+        },
+        {
+          "$ref": "#/$defs/GetMessage"
+        },
+        {
+          "$ref": "#/$defs/EditMessage"
+        },
+        {
+          "$ref": "#/$defs/DeleteMessage"
+        },
+        {
+          "$ref": "#/$defs/SendReaction"
+        },
+        {
+          "$ref": "#/$defs/ListPhoneNumbers"
+        },
+        {
+          "$ref": "#/$defs/GetAttachment"
+        },
+        {
+          "$ref": "#/$defs/ListBlockedHandles"
+        },
+        {
+          "$ref": "#/$defs/BlockHandle"
+        },
+        {
+          "$ref": "#/$defs/UnblockHandle"
+        },
+        {
+          "$ref": "#/$defs/MarkChatRead"
+        },
+        {
+          "$ref": "#/$defs/StartTyping"
+        },
+        {
+          "$ref": "#/$defs/StopTyping"
+        },
+        {
+          "$ref": "#/$defs/CheckIMessage"
+        },
+        {
+          "$ref": "#/$defs/CheckRCS"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LinqAPIToken"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Linq Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
