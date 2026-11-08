@@ -11,6 +11,7 @@ const CardlyIcon = ({ className, style }: { className?: string; style?: CSSPrope
 
 export const CardlyNode: NodeDefinition = {
     type: 'automation-cardly', label: 'Cardly',
+    category: 'marketing',
     description: 'Manage contact lists and contacts, preview cards and place orders',
     Icon: CardlyIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
