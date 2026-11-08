@@ -1,0 +1,891 @@
+{
+  "$defs": {
+    "HiveAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "hive_api_key",
+          "default": "hive_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Hive API Key",
+      "type": "object",
+      "x-credential-instructions": "In Hive, open your avatar, My profile, then API info. Paste your API key. Requests run with the key owner's permissions.",
+      "x-credential-url": "https://help.hive.com/en/articles/5407965-getting-started-with-the-hive-api"
+    },
+    "HiveCreateActionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_action",
+          "default": "create_action",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "workspace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workspace"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Id"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "assignees": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignees"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "HiveCreateActionConfig",
+      "type": "object"
+    },
+    "HiveCreateCommentConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "description": "Hive action ID.",
+          "minLength": 1,
+          "title": "Action Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "description": "Comment text posted to the action.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Body",
+          "type": "string"
+        }
+      },
+      "required": [
+        "action_id",
+        "body"
+      ],
+      "title": "HiveCreateCommentConfig",
+      "type": "object"
+    },
+    "HiveCreateLabelConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "workspace_id": {
+          "description": "Hive workspace ID from API info or list workspaces.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_label",
+          "default": "create_label",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "color": {
+          "description": "Hex color such as #3390dc.",
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Color",
+          "type": "string"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "name",
+        "color"
+      ],
+      "title": "HiveCreateLabelConfig",
+      "type": "object"
+    },
+    "HiveDeleteActionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "description": "Hive action ID.",
+          "minLength": 1,
+          "title": "Action Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_action",
+          "default": "delete_action",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "action_id"
+      ],
+      "title": "HiveDeleteActionConfig",
+      "type": "object"
+    },
+    "HiveDeleteProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Hive project ID.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "HiveDeleteProjectConfig",
+      "type": "object"
+    },
+    "HiveGetActionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "description": "Hive action ID.",
+          "minLength": 1,
+          "title": "Action Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_action",
+          "default": "get_action",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "action_id"
+      ],
+      "title": "HiveGetActionConfig",
+      "type": "object"
+    },
+    "HiveGetProjectConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "description": "Hive project ID.",
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "HiveGetProjectConfig",
+      "type": "object"
+    },
+    "HiveListActionHistoryConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "description": "Hive action ID.",
+          "minLength": 1,
+          "title": "Action Id",
+          "type": "string"
+        },
+        "first": {
+          "default": 25,
+          "description": "Page size. Pass endCursor back as after for the next page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "First",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque endCursor from the previous page.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_action_history",
+          "default": "list_action_history",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "action_id"
+      ],
+      "title": "HiveListActionHistoryConfig",
+      "type": "object"
+    },
+    "HiveListActionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "workspace_id": {
+          "description": "Hive workspace ID from API info or list workspaces.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "first": {
+          "default": 25,
+          "description": "Page size. Pass endCursor back as after for the next page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "First",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque endCursor from the previous page.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_actions",
+          "default": "list_actions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "HiveListActionsConfig",
+      "type": "object"
+    },
+    "HiveListCommentsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "description": "Hive action ID.",
+          "minLength": 1,
+          "title": "Action Id",
+          "type": "string"
+        },
+        "first": {
+          "default": 25,
+          "description": "Page size. Pass endCursor back as after for the next page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "First",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque endCursor from the previous page.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "action_id"
+      ],
+      "title": "HiveListCommentsConfig",
+      "type": "object"
+    },
+    "HiveListLabelsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "workspace_id": {
+          "description": "Hive workspace ID from API info or list workspaces.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "first": {
+          "default": 25,
+          "description": "Page size. Pass endCursor back as after for the next page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "First",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque endCursor from the previous page.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_labels",
+          "default": "list_labels",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "HiveListLabelsConfig",
+      "type": "object"
+    },
+    "HiveListMembersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "workspace_id": {
+          "description": "Hive workspace ID from API info or list workspaces.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "first": {
+          "default": 25,
+          "description": "Page size. Pass endCursor back as after for the next page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "First",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque endCursor from the previous page.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "HiveListMembersConfig",
+      "type": "object"
+    },
+    "HiveListProjectsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "HiveListProjectsConfig",
+      "type": "object"
+    },
+    "HiveListSubactionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "description": "Hive action ID.",
+          "minLength": 1,
+          "title": "Action Id",
+          "type": "string"
+        },
+        "first": {
+          "default": 25,
+          "description": "Page size. Pass endCursor back as after for the next page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "First",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque endCursor from the previous page.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_subactions",
+          "default": "list_subactions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "action_id"
+      ],
+      "title": "HiveListSubactionsConfig",
+      "type": "object"
+    },
+    "HiveListWorkspaceProjectsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "workspace_id": {
+          "description": "Hive workspace ID from API info or list workspaces.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "first": {
+          "default": 25,
+          "description": "Page size. Pass endCursor back as after for the next page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "First",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque endCursor from the previous page.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_workspace_projects",
+          "default": "list_workspace_projects",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "HiveListWorkspaceProjectsConfig",
+      "type": "object"
+    },
+    "HiveListWorkspacesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "first": {
+          "default": 25,
+          "description": "Page size. Pass endCursor back as after for the next page.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "First",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque endCursor from the previous page.",
+          "title": "After"
+        },
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "HiveListWorkspacesConfig",
+      "type": "object"
+    },
+    "HiveSearchActionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "workspace_id": {
+          "description": "Hive workspace ID from API info or list workspaces.",
+          "minLength": 1,
+          "title": "Workspace Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "search_actions",
+          "default": "search_actions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_term": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Search Term",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "skip": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Skip",
+          "type": "integer"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Id"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "search_term"
+      ],
+      "title": "HiveSearchActionsConfig",
+      "type": "object"
+    },
+    "HiveUpdateActionConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "description": "Hive action ID.",
+          "minLength": 1,
+          "title": "Action Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_action",
+          "default": "update_action",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "assignees": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignees"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Id"
+        }
+      },
+      "required": [
+        "action_id"
+      ],
+      "title": "HiveUpdateActionConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_action": "#/$defs/HiveCreateActionConfig",
+          "create_comment": "#/$defs/HiveCreateCommentConfig",
+          "create_label": "#/$defs/HiveCreateLabelConfig",
+          "delete_action": "#/$defs/HiveDeleteActionConfig",
+          "delete_project": "#/$defs/HiveDeleteProjectConfig",
+          "get_action": "#/$defs/HiveGetActionConfig",
+          "get_project": "#/$defs/HiveGetProjectConfig",
+          "list_action_history": "#/$defs/HiveListActionHistoryConfig",
+          "list_actions": "#/$defs/HiveListActionsConfig",
+          "list_comments": "#/$defs/HiveListCommentsConfig",
+          "list_labels": "#/$defs/HiveListLabelsConfig",
+          "list_members": "#/$defs/HiveListMembersConfig",
+          "list_projects": "#/$defs/HiveListProjectsConfig",
+          "list_subactions": "#/$defs/HiveListSubactionsConfig",
+          "list_workspace_projects": "#/$defs/HiveListWorkspaceProjectsConfig",
+          "list_workspaces": "#/$defs/HiveListWorkspacesConfig",
+          "search_actions": "#/$defs/HiveSearchActionsConfig",
+          "update_action": "#/$defs/HiveUpdateActionConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HiveListWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveListWorkspaceProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveDeleteProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveListActionsConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveSearchActionsConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveGetActionConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveCreateActionConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveUpdateActionConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveDeleteActionConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveListSubactionsConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveListActionHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveListLabelsConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveCreateLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/HiveListMembersConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HiveAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Hive Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
