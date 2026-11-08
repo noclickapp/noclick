@@ -1,0 +1,547 @@
+{
+  "$defs": {
+    "CreateRecord": {
+      "properties": {
+        "operation": {
+          "const": "create_record",
+          "default": "create_record",
+          "title": "Create Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Create Record",
+          "x-is-trigger": false
+        },
+        "module": {
+          "title": "Module",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a module API name",
+            "field_name": "module",
+            "placeholder": "Select a CRM module\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_json": {
+          "description": "One object keyed by field API names",
+          "title": "Record Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "module",
+        "record_json"
+      ],
+      "title": "CreateRecord",
+      "type": "object"
+    },
+    "DeleteRecord": {
+      "properties": {
+        "operation": {
+          "const": "delete_record",
+          "default": "delete_record",
+          "title": "Delete Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Delete Record",
+          "x-is-trigger": false
+        },
+        "module": {
+          "title": "Module",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a module API name",
+            "field_name": "module",
+            "placeholder": "Select a CRM module\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_id": {
+          "title": "Record ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "module",
+        "record_id"
+      ],
+      "title": "DeleteRecord",
+      "type": "object"
+    },
+    "GetCurrentUser": {
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Current User",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GetCurrentUser",
+      "type": "object"
+    },
+    "GetRecord": {
+      "properties": {
+        "operation": {
+          "const": "get_record",
+          "default": "get_record",
+          "title": "Get Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Get Record",
+          "x-is-trigger": false
+        },
+        "module": {
+          "title": "Module",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a module API name",
+            "field_name": "module",
+            "placeholder": "Select a CRM module\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_id": {
+          "title": "Record ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "module",
+        "record_id"
+      ],
+      "title": "GetRecord",
+      "type": "object"
+    },
+    "ListFields": {
+      "properties": {
+        "operation": {
+          "const": "list_fields",
+          "default": "list_fields",
+          "title": "List Module Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List Module Fields",
+          "x-is-trigger": false
+        },
+        "module": {
+          "title": "Module",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a module API name",
+            "field_name": "module",
+            "placeholder": "Select a CRM module\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "module"
+      ],
+      "title": "ListFields",
+      "type": "object"
+    },
+    "ListModules": {
+      "properties": {
+        "operation": {
+          "const": "list_modules",
+          "default": "list_modules",
+          "title": "List Modules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List Modules",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListModules",
+      "type": "object"
+    },
+    "ListRecords": {
+      "properties": {
+        "operation": {
+          "const": "list_records",
+          "default": "list_records",
+          "title": "List Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "List Records",
+          "x-is-trigger": false
+        },
+        "module": {
+          "title": "Module",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a module API name",
+            "field_name": "module",
+            "placeholder": "Select a CRM module\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "description": "Comma-separated field API names, up to 50",
+          "title": "Fields",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "module",
+        "fields"
+      ],
+      "title": "ListRecords",
+      "type": "object"
+    },
+    "SearchRecords": {
+      "properties": {
+        "operation": {
+          "const": "search_records",
+          "default": "search_records",
+          "title": "Search Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Search Records",
+          "x-is-trigger": false
+        },
+        "module": {
+          "title": "Module",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a module API name",
+            "field_name": "module",
+            "placeholder": "Select a CRM module\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "search_by": {
+          "default": "word",
+          "enum": [
+            "email",
+            "phone",
+            "word",
+            "criteria"
+          ],
+          "title": "Search By",
+          "type": "string"
+        },
+        "search_term": {
+          "description": "For criteria, use Zoho's (Field:equals:value) syntax",
+          "title": "Search Term",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "module",
+        "search_term"
+      ],
+      "title": "SearchRecords",
+      "type": "object"
+    },
+    "UpdateRecord": {
+      "properties": {
+        "operation": {
+          "const": "update_record",
+          "default": "update_record",
+          "title": "Update Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Update Record",
+          "x-is-trigger": false
+        },
+        "module": {
+          "title": "Module",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a module API name",
+            "field_name": "module",
+            "placeholder": "Select a CRM module\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_id": {
+          "title": "Record ID",
+          "type": "string"
+        },
+        "record_json": {
+          "title": "Fields to Update (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "module",
+        "record_id",
+        "record_json"
+      ],
+      "title": "UpdateRecord",
+      "type": "object"
+    },
+    "UpsertRecord": {
+      "properties": {
+        "operation": {
+          "const": "upsert_record",
+          "default": "upsert_record",
+          "title": "Upsert Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Upsert Record",
+          "x-is-trigger": false
+        },
+        "module": {
+          "title": "Module",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a module API name",
+            "field_name": "module",
+            "placeholder": "Select a CRM module\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_json": {
+          "title": "Record Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "duplicate_check_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comma-separated field API names",
+          "title": "Duplicate Check Fields"
+        }
+      },
+      "required": [
+        "module",
+        "record_json"
+      ],
+      "title": "UpsertRecord",
+      "type": "object"
+    },
+    "ZohoCRMOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "zoho_crm_oauth",
+          "default": "zoho_crm_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "api_domain": {
+          "title": "Regional API Domain",
+          "type": "string"
+        },
+        "accounts_server": {
+          "title": "Regional Accounts Server",
+          "type": "string"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User ID"
+        },
+        "user_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "api_domain",
+        "accounts_server"
+      ],
+      "title": "Zoho CRM OAuth",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://api-console.zoho.com/",
+      "x-oauth-provider": "zoho_crm",
+      "x-oauth-scopes": [
+        "ZohoCRM.modules.ALL",
+        "ZohoCRM.settings.fields.READ",
+        "ZohoCRM.settings.modules.READ",
+        "ZohoCRM.users.READ",
+        "ZohoSearch.securesearch.READ"
+      ]
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_record": "#/$defs/CreateRecord",
+          "delete_record": "#/$defs/DeleteRecord",
+          "get_current_user": "#/$defs/GetCurrentUser",
+          "get_record": "#/$defs/GetRecord",
+          "list_fields": "#/$defs/ListFields",
+          "list_modules": "#/$defs/ListModules",
+          "list_records": "#/$defs/ListRecords",
+          "search_records": "#/$defs/SearchRecords",
+          "update_record": "#/$defs/UpdateRecord",
+          "upsert_record": "#/$defs/UpsertRecord"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListModules"
+        },
+        {
+          "$ref": "#/$defs/ListFields"
+        },
+        {
+          "$ref": "#/$defs/GetCurrentUser"
+        },
+        {
+          "$ref": "#/$defs/ListRecords"
+        },
+        {
+          "$ref": "#/$defs/GetRecord"
+        },
+        {
+          "$ref": "#/$defs/SearchRecords"
+        },
+        {
+          "$ref": "#/$defs/CreateRecord"
+        },
+        {
+          "$ref": "#/$defs/UpdateRecord"
+        },
+        {
+          "$ref": "#/$defs/UpsertRecord"
+        },
+        {
+          "$ref": "#/$defs/DeleteRecord"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ZohoCRMOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Zoho-crm Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find a Zoho CRM contact by email",
+    "Create a lead in Zoho CRM",
+    "Update a Zoho CRM deal",
+    "List Zoho CRM modules and fields"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
