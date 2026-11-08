@@ -1,0 +1,7 @@
+{
+  "path": "frontend/public/icons/convertapi.png",
+  "source": "https://v2.convertapi.com/favicon.ico",
+  "license": "ConvertAPI brand mark used nominatively to identify the service; trademark rights remain with ConvertAPI.",
+  "sha256": "eee2f3c7bc56414a80334b277a2794839651640e94a316f5fa4c6dad3520e74d",
+  "transformation": "Decoded the official ICO largest image to PNG without visual changes."
+}

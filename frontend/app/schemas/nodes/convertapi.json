@@ -1,0 +1,654 @@
+{
+  "$defs": {
+    "ConvertAPICredential": {
+      "properties": {
+        "credential_type": {
+          "const": "convertapi_api_secret",
+          "default": "convertapi_api_secret",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_secret": {
+          "minLength": 1,
+          "title": "API secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_secret"
+      ],
+      "title": "ConvertAPI API Secret",
+      "type": "object",
+      "x-credential-instructions": "Paste your ConvertAPI API secret from your account. Use the secret, rather than a restricted API token: account information and usage statistics require it. NoClick sends it as a Bearer credential to v2.convertapi.com. Conversions consume your provider balance and store results temporarily for up to three hours.",
+      "x-credential-url": "https://www.convertapi.com/a/secret"
+    },
+    "ConvertCSVToXLSX": {
+      "additionalProperties": false,
+      "description": "Convert CSV to XLSX; consumes conversion credits.",
+      "properties": {
+        "file": {
+          "description": "Source file URL or previously uploaded ConvertAPI file ID. The provider fetches URL inputs.",
+          "minLength": 1,
+          "title": "File",
+          "type": "string"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional output file name",
+          "title": "File Name"
+        },
+        "operation": {
+          "const": "csv_to_xlsx",
+          "default": "csv_to_xlsx",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file"
+      ],
+      "title": "ConvertCSVToXLSX",
+      "type": "object"
+    },
+    "ConvertDOCXToPDF": {
+      "additionalProperties": false,
+      "description": "Convert DOCX to PDF; consumes conversion credits.",
+      "properties": {
+        "file": {
+          "description": "Source file URL or previously uploaded ConvertAPI file ID. The provider fetches URL inputs.",
+          "minLength": 1,
+          "title": "File",
+          "type": "string"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional output file name",
+          "title": "File Name"
+        },
+        "operation": {
+          "const": "docx_to_pdf",
+          "default": "docx_to_pdf",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file"
+      ],
+      "title": "ConvertDOCXToPDF",
+      "type": "object"
+    },
+    "ConvertHTMLToPDF": {
+      "additionalProperties": false,
+      "description": "Convert HTML to PDF; consumes conversion credits.",
+      "properties": {
+        "file": {
+          "description": "Source file URL or previously uploaded ConvertAPI file ID. The provider fetches URL inputs.",
+          "minLength": 1,
+          "title": "File",
+          "type": "string"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional output file name",
+          "title": "File Name"
+        },
+        "operation": {
+          "const": "html_to_pdf",
+          "default": "html_to_pdf",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file"
+      ],
+      "title": "ConvertHTMLToPDF",
+      "type": "object"
+    },
+    "ConvertJPGToPDF": {
+      "additionalProperties": false,
+      "description": "Convert JPG to PDF; consumes conversion credits.",
+      "properties": {
+        "file": {
+          "description": "Source file URL or previously uploaded ConvertAPI file ID. The provider fetches URL inputs.",
+          "minLength": 1,
+          "title": "File",
+          "type": "string"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional output file name",
+          "title": "File Name"
+        },
+        "operation": {
+          "const": "jpg_to_pdf",
+          "default": "jpg_to_pdf",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file"
+      ],
+      "title": "ConvertJPGToPDF",
+      "type": "object"
+    },
+    "ConvertPDFToDOCX": {
+      "additionalProperties": false,
+      "description": "Convert PDF to DOCX; consumes conversion credits.",
+      "properties": {
+        "file": {
+          "description": "Source file URL or previously uploaded ConvertAPI file ID. The provider fetches URL inputs.",
+          "minLength": 1,
+          "title": "File",
+          "type": "string"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional output file name",
+          "title": "File Name"
+        },
+        "operation": {
+          "const": "pdf_to_docx",
+          "default": "pdf_to_docx",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file"
+      ],
+      "title": "ConvertPDFToDOCX",
+      "type": "object"
+    },
+    "ConvertPDFToJPG": {
+      "additionalProperties": false,
+      "description": "Convert PDF to JPG; consumes conversion credits.",
+      "properties": {
+        "file": {
+          "description": "Source file URL or previously uploaded ConvertAPI file ID. The provider fetches URL inputs.",
+          "minLength": 1,
+          "title": "File",
+          "type": "string"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional output file name",
+          "title": "File Name"
+        },
+        "operation": {
+          "const": "pdf_to_jpg",
+          "default": "pdf_to_jpg",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file"
+      ],
+      "title": "ConvertPDFToJPG",
+      "type": "object"
+    },
+    "ConvertPDFToPNG": {
+      "additionalProperties": false,
+      "description": "Convert PDF to PNG; consumes conversion credits.",
+      "properties": {
+        "file": {
+          "description": "Source file URL or previously uploaded ConvertAPI file ID. The provider fetches URL inputs.",
+          "minLength": 1,
+          "title": "File",
+          "type": "string"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional output file name",
+          "title": "File Name"
+        },
+        "operation": {
+          "const": "pdf_to_png",
+          "default": "pdf_to_png",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file"
+      ],
+      "title": "ConvertPDFToPNG",
+      "type": "object"
+    },
+    "ConvertPDFToTXT": {
+      "additionalProperties": false,
+      "description": "Convert PDF to TXT; consumes conversion credits.",
+      "properties": {
+        "file": {
+          "description": "Source file URL or previously uploaded ConvertAPI file ID. The provider fetches URL inputs.",
+          "minLength": 1,
+          "title": "File",
+          "type": "string"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional output file name",
+          "title": "File Name"
+        },
+        "operation": {
+          "const": "pdf_to_txt",
+          "default": "pdf_to_txt",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file"
+      ],
+      "title": "ConvertPDFToTXT",
+      "type": "object"
+    },
+    "ConvertPDFToXLSX": {
+      "additionalProperties": false,
+      "description": "Convert PDF to XLSX; consumes conversion credits.",
+      "properties": {
+        "file": {
+          "description": "Source file URL or previously uploaded ConvertAPI file ID. The provider fetches URL inputs.",
+          "minLength": 1,
+          "title": "File",
+          "type": "string"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional output file name",
+          "title": "File Name"
+        },
+        "operation": {
+          "const": "pdf_to_xlsx",
+          "default": "pdf_to_xlsx",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file"
+      ],
+      "title": "ConvertPDFToXLSX",
+      "type": "object"
+    },
+    "ConvertPNGToPDF": {
+      "additionalProperties": false,
+      "description": "Convert PNG to PDF; consumes conversion credits.",
+      "properties": {
+        "file": {
+          "description": "Source file URL or previously uploaded ConvertAPI file ID. The provider fetches URL inputs.",
+          "minLength": 1,
+          "title": "File",
+          "type": "string"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional output file name",
+          "title": "File Name"
+        },
+        "operation": {
+          "const": "png_to_pdf",
+          "default": "png_to_pdf",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file"
+      ],
+      "title": "ConvertPNGToPDF",
+      "type": "object"
+    },
+    "ConvertPPTXToPDF": {
+      "additionalProperties": false,
+      "description": "Convert PPTX to PDF; consumes conversion credits.",
+      "properties": {
+        "file": {
+          "description": "Source file URL or previously uploaded ConvertAPI file ID. The provider fetches URL inputs.",
+          "minLength": 1,
+          "title": "File",
+          "type": "string"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional output file name",
+          "title": "File Name"
+        },
+        "operation": {
+          "const": "pptx_to_pdf",
+          "default": "pptx_to_pdf",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file"
+      ],
+      "title": "ConvertPPTXToPDF",
+      "type": "object"
+    },
+    "ConvertXLSXToPDF": {
+      "additionalProperties": false,
+      "description": "Convert XLSX to PDF; consumes conversion credits.",
+      "properties": {
+        "file": {
+          "description": "Source file URL or previously uploaded ConvertAPI file ID. The provider fetches URL inputs.",
+          "minLength": 1,
+          "title": "File",
+          "type": "string"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional output file name",
+          "title": "File Name"
+        },
+        "operation": {
+          "const": "xlsx_to_pdf",
+          "default": "xlsx_to_pdf",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file"
+      ],
+      "title": "ConvertXLSXToPDF",
+      "type": "object"
+    },
+    "DeleteFile": {
+      "additionalProperties": false,
+      "properties": {
+        "file_id": {
+          "description": "Stored ConvertAPI file ID returned by a conversion",
+          "maxLength": 32,
+          "minLength": 32,
+          "title": "File Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_file",
+          "default": "delete_file",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "DeleteFile",
+      "type": "object"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetFileInfo": {
+      "additionalProperties": false,
+      "properties": {
+        "file_id": {
+          "description": "Stored ConvertAPI file ID returned by a conversion",
+          "maxLength": 32,
+          "minLength": 32,
+          "title": "File Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_file_info",
+          "default": "get_file_info",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GetFileInfo",
+      "type": "object"
+    },
+    "GetStatistics": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_statistics",
+          "default": "get_statistics",
+          "title": "Operation",
+          "type": "string"
+        },
+        "start_date": {
+          "description": "Start date, YYYY-MM-DD",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End date, YYYY-MM-DD",
+          "title": "End Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "GetStatistics",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "csv_to_xlsx": "#/$defs/ConvertCSVToXLSX",
+          "delete_file": "#/$defs/DeleteFile",
+          "docx_to_pdf": "#/$defs/ConvertDOCXToPDF",
+          "get_account": "#/$defs/GetAccount",
+          "get_file_info": "#/$defs/GetFileInfo",
+          "get_statistics": "#/$defs/GetStatistics",
+          "html_to_pdf": "#/$defs/ConvertHTMLToPDF",
+          "jpg_to_pdf": "#/$defs/ConvertJPGToPDF",
+          "pdf_to_docx": "#/$defs/ConvertPDFToDOCX",
+          "pdf_to_jpg": "#/$defs/ConvertPDFToJPG",
+          "pdf_to_png": "#/$defs/ConvertPDFToPNG",
+          "pdf_to_txt": "#/$defs/ConvertPDFToTXT",
+          "pdf_to_xlsx": "#/$defs/ConvertPDFToXLSX",
+          "png_to_pdf": "#/$defs/ConvertPNGToPDF",
+          "pptx_to_pdf": "#/$defs/ConvertPPTXToPDF",
+          "xlsx_to_pdf": "#/$defs/ConvertXLSXToPDF"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/GetStatistics"
+        },
+        {
+          "$ref": "#/$defs/GetFileInfo"
+        },
+        {
+          "$ref": "#/$defs/DeleteFile"
+        },
+        {
+          "$ref": "#/$defs/ConvertPDFToDOCX"
+        },
+        {
+          "$ref": "#/$defs/ConvertPDFToXLSX"
+        },
+        {
+          "$ref": "#/$defs/ConvertPDFToJPG"
+        },
+        {
+          "$ref": "#/$defs/ConvertPDFToPNG"
+        },
+        {
+          "$ref": "#/$defs/ConvertPDFToTXT"
+        },
+        {
+          "$ref": "#/$defs/ConvertDOCXToPDF"
+        },
+        {
+          "$ref": "#/$defs/ConvertXLSXToPDF"
+        },
+        {
+          "$ref": "#/$defs/ConvertPPTXToPDF"
+        },
+        {
+          "$ref": "#/$defs/ConvertJPGToPDF"
+        },
+        {
+          "$ref": "#/$defs/ConvertPNGToPDF"
+        },
+        {
+          "$ref": "#/$defs/ConvertHTMLToPDF"
+        },
+        {
+          "$ref": "#/$defs/ConvertCSVToXLSX"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ConvertAPICredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Convertapi Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
