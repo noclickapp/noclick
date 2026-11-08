@@ -1,0 +1,1319 @@
+{
+  "$defs": {
+    "AddProspectsToList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_prospects_to_list",
+          "default": "add_prospects_to_list",
+          "description": "Adds LinkedIn profile URLs to an existing prospect list. Same validation and duplicate rules as create-list. The response describes which URLs were accepted, rejected, or skipped as duplicates.",
+          "title": "Add Prospects To List",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "description": "Prospect list id to add URLs to.",
+          "format": "uuid",
+          "title": "List Id",
+          "type": "string"
+        },
+        "user_urls": {
+          "description": "LinkedIn profile URLs to add.",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "User Urls",
+          "type": "array"
+        },
+        "move_own_duplicated": {
+          "description": "For an active duplicate owned by the destination campaign owner, `true` moves the existing prospect record into this list and `false` skips it into `existedUrlsMap`. Same-list duplicates are skipped silently; deleted same-owner records are reactivated. Teammate duplicates are searched and skipped only when the destination campaign has `skipTeammatesLeads` enabled; this is not global team-wide deduplication.",
+          "title": "Move Own Duplicated",
+          "type": "boolean"
+        },
+        "should_be_deleted_if_inactive": {
+          "description": "If `true`, auto-remove prospects who have no posts on LinkedIn within the last 30 days (checked once, when the backend first pulls their posts). If `false`, keep them regardless of recent posting activity.",
+          "title": "Should Be Deleted If Inactive",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "list_id",
+        "user_urls",
+        "move_own_duplicated",
+        "should_be_deleted_if_inactive"
+      ],
+      "title": "AddProspectsToList",
+      "type": "object"
+    },
+    "ApproveComment": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "approve_comment",
+          "default": "approve_comment",
+          "description": "Approves the current owner-global comment/reaction and queues the consequential LinkedIn action. Success means the command was accepted for the existing Pending/publication lifecycle, not that the comment is already live. Use Get comment when current state is needed. The comment identity is postId + ownerId and the change is owner-global: it also applies to sibling campaign activities of the same owner, even when the feed context came from one campaign.",
+          "title": "Approve Comment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "post_id": {
+          "description": "LinkedIn post identity inside Extrovert.",
+          "format": "uuid",
+          "title": "Post Id",
+          "type": "string"
+        },
+        "owner_id": {
+          "description": "LinkedIn account owner whose comment is addressed. Often a managed account rather than the authenticated user \u2014 use List Team Members first and pick the owner whose LinkedIn profile runs the campaign.",
+          "format": "uuid",
+          "title": "Owner Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id",
+        "owner_id"
+      ],
+      "title": "ApproveComment",
+      "type": "object"
+    },
+    "CreateCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_campaign",
+          "default": "create_campaign",
+          "description": "Creates a new campaign. The campaign owner must already have a Voice.\n\nTwo types (backend values `TARGET_USER` and `KEYWORD` correspond to user-facing 'Prospects campaign' and 'Topic campaign' respectively):\n- `TARGET_USER`: engages with a specific list of LinkedIn profiles.\n- `KEYWORD`: discovers posts by topic bindings.\n\nThe engagement-automation fields `skipTeammatesLeads` and `outreach` apply to `TARGET_USER` (Prospects) campaigns only. For `KEYWORD` (Topic) campaigns they do not apply \u2014 omit them (or leave them off).",
+          "title": "Create Campaign",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "owner_id": {
+          "description": "User ID of the campaign owner. Creating for anyone other than the caller requires the workspace permission to create campaigns for another owner (ADMIN/MANAGER). When creating for a non-managed owner, the acting user is also added as an explicit grantee.",
+          "format": "uuid",
+          "title": "Owner Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Display name for the campaign.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "description": "`TARGET_USER` = Prospects campaign; `KEYWORD` = Topic campaign. Creating a Topic campaign requires `CAN_USE_TOPIC_CAMPAIGNS`.",
+          "enum": [
+            "TARGET_USER",
+            "KEYWORD"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "voice_id": {
+          "description": "Voice ID owned by `ownerId`. A foreign or missing Voice is rejected.",
+          "format": "uuid",
+          "title": "Voice Id",
+          "type": "string"
+        },
+        "skip_teammates_leads": {
+          "description": "If `true`, skip prospects that are already in teammates' campaigns in the same team \u2014 avoids double outreach to the same person. Applies to `TARGET_USER` (Prospects) campaigns only (recommended `true` there); for `KEYWORD` (Topic) campaigns it does not apply \u2014 leave it `false`.",
+          "title": "Skip Teammates Leads",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "owner_id",
+        "name",
+        "type",
+        "voice_id",
+        "skip_teammates_leads"
+      ],
+      "title": "CreateCampaign",
+      "type": "object"
+    },
+    "CreateProspectList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_prospect_list",
+          "default": "create_prospect_list",
+          "description": "Creates a new prospect list inside the given campaign and seeds it with the provided LinkedIn profile URLs. The backend validates URLs and may reject some as invalid, duplicates, or out-of-limit. The response describes which URLs were submitted, rejected, or already existed elsewhere. Profile existence is verified asynchronously after this call: a URL can be accepted into `submittedUrls` and still be dropped later \u2014 check Get Prospect List for the final prospect count before reporting how many were actually added.",
+          "title": "Create Prospect List",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_name": {
+          "description": "Human-readable list name.",
+          "minLength": 1,
+          "title": "List Name",
+          "type": "string"
+        },
+        "campaign_id": {
+          "description": "Use a non-deleted Prospects campaign as the destination. Capacity is normally workspace-wide, but a trial pool with a non-null `perOwnerCeiling` is measured for this campaign owner. An active plan is required; a new list also needs a free prospect-list slot in that campaign.",
+          "format": "uuid",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "user_urls": {
+          "description": "LinkedIn profile URLs to seed the list with.",
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "minItems": 1,
+          "title": "User Urls",
+          "type": "array"
+        },
+        "move_own_duplicated": {
+          "description": "For an active duplicate owned by the destination campaign owner, `true` moves the existing prospect record into this list and `false` skips it into `existedUrlsMap`. Same-list duplicates are skipped silently; deleted same-owner records are reactivated. Teammate duplicates are searched and skipped only when the destination campaign has `skipTeammatesLeads` enabled; this is not global team-wide deduplication.",
+          "title": "Move Own Duplicated",
+          "type": "boolean"
+        },
+        "should_be_deleted_if_inactive": {
+          "description": "If `true`, auto-remove prospects who have no posts on LinkedIn within the last 30 days (checked once, when the backend first pulls their posts). If `false`, keep them regardless of recent posting activity. Useful for pruning low-signal prospects on create.",
+          "title": "Should Be Deleted If Inactive",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "list_name",
+        "campaign_id",
+        "user_urls",
+        "move_own_duplicated",
+        "should_be_deleted_if_inactive"
+      ],
+      "title": "CreateProspectList",
+      "type": "object"
+    },
+    "EditReply": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "edit_reply",
+          "default": "edit_reply",
+          "description": "Sets the exact effective text of an existing reviewable reply. It does not send the message.",
+          "title": "Edit Reply",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dm_id": {
+          "description": "Exact reply ID obtained from Prepare reply or Get conversation.",
+          "format": "uuid",
+          "title": "Dm Id",
+          "type": "string"
+        },
+        "text": {
+          "description": "Replacement reply text, trimmed to 1\u20131250 characters. Empty text cannot clear a reply; this call does not send.",
+          "maxLength": 1250,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dm_id",
+        "text"
+      ],
+      "title": "EditReply",
+      "type": "object"
+    },
+    "ExtrovertApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "extrovert_api_key",
+          "default": "extrovert_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Extrovert API key, without a header name or prefix.",
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Extrovert API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Extrovert API key. NoClick sends it in the X-API-Key header to the Extrovert Client API.",
+      "x-credential-url": "https://www.goextrovert.com/"
+    },
+    "GetCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "description": "Loads full details of a single campaign, including the linked Voice, the whole `commenting` policy, and the full outreach settings (warm up, connection requests, direct messages).",
+          "title": "Get Campaign",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign_id": {
+          "description": "id",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetCampaign",
+      "type": "object"
+    },
+    "GetComment": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_comment",
+          "default": "get_comment",
+          "description": "Returns the current owner-global comment by postId and ownerId across every state. The read is non-destructive and is the recovery check after an ambiguous write. `plannedAt` fills only when the campaign spaces approved comments with a posting interval \u2014 null means posting starts right after approval.",
+          "title": "Get Comment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "post_id": {
+          "description": "Post to read.",
+          "format": "uuid",
+          "title": "Post Id",
+          "type": "string"
+        },
+        "owner_id": {
+          "description": "LinkedIn account owner whose comment state is returned.",
+          "format": "uuid",
+          "title": "Owner Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id",
+        "owner_id"
+      ],
+      "title": "GetComment",
+      "type": "object"
+    },
+    "GetConversation": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "description": "Returns one LinkedIn conversation, its unique active reply, and a bounded delivered-message page. Reading does not clear unread state unless markAsRead is true. Use offset 0 for the latest page and increase it to load older messages.",
+          "title": "Get Conversation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "connection_id": {
+          "description": "Conversation (connection) ID the action addresses.",
+          "format": "uuid",
+          "title": "Connection Id",
+          "type": "string"
+        },
+        "mark_as_read": {
+          "default": false,
+          "description": "When true, request that Extrovert and LinkedIn mark the conversation read. Provider synchronization may finish after this response.",
+          "title": "Mark As Read",
+          "type": "boolean"
+        },
+        "message_limit": {
+          "default": 30,
+          "description": "Number of delivered history messages requested for this page.",
+          "maximum": 30,
+          "minimum": 1,
+          "title": "Message Limit",
+          "type": "integer"
+        },
+        "message_offset": {
+          "default": 0,
+          "description": "Offset from the newest delivered message. 0 returns the latest page; larger offsets load older messages.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Message Offset",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "connection_id"
+      ],
+      "title": "GetConversation",
+      "type": "object"
+    },
+    "GetProspect": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_prospect",
+          "default": "get_prospect",
+          "description": "Loads one prospect by id with the current campaign/list bindings, flags, connection data, and lightweight statistics.",
+          "title": "Get Prospect",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prospect_id": {
+          "description": "id",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Prospect Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prospect_id"
+      ],
+      "title": "GetProspect",
+      "type": "object"
+    },
+    "GetProspectList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_prospect_list",
+          "default": "get_prospect_list",
+          "description": "Loads a single prospect list by id, including counters and the parent campaign id.",
+          "title": "Get Prospect List",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "description": "id",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "List Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "GetProspectList",
+      "type": "object"
+    },
+    "ListCampaigns": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "description": "Returns all campaigns visible to the current user (both types: `TARGET_USER` and `KEYWORD` \u2014 user-facing 'Prospects campaign' and 'Topic campaign' respectively).",
+          "title": "List Campaigns",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCampaigns",
+      "type": "object"
+    },
+    "ListComments": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "description": "Lists one campaign's comment feed for an owner and review state. Results include the post, author, effective prospect context, current draft, state, and only actions valid now. `plannedAt` fills only when the campaign spaces approved comments with a posting interval \u2014 null means posting starts right after approval. This action does not change feed state. After a mutation \u2014 approving or skipping a comment \u2014 restart paging from `offset = 0`, because a page taken at a stale offset can skip or repeat records; this matters most in `Need approval`, which is re-ranked on every request, while the other views are ordered by lifecycle transition time and do not reorder.",
+          "title": "List Comments",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "owner_id": {
+          "description": "LinkedIn account owner whose campaign feed is being read. Often a managed account rather than the authenticated user \u2014 use List Team Members first and pick the owner whose LinkedIn profile runs the campaign.",
+          "format": "uuid",
+          "title": "Owner Id",
+          "type": "string"
+        },
+        "campaign_id": {
+          "description": "Campaign that scopes this feed. Aggregated cross-campaign feed is not part of this action.",
+          "format": "uuid",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "view": {
+          "description": "Feed view, not an exact item-state filter. Need approval may include manual generation; Pending includes accepted generation or posting. Inspect each item\u2019s state and `allowedActions`.",
+          "enum": [
+            "Need approval",
+            "Pending",
+            "Error",
+            "Posted",
+            "Skipped"
+          ],
+          "title": "View",
+          "type": "string"
+        },
+        "prospect_list_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Prospect List filter. Cannot be combined with keywordId.",
+          "title": "Prospect List Id"
+        },
+        "keyword_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Keyword filter. Cannot be combined with prospectListId.",
+          "title": "Keyword Id"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Number of records requested for this page.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Offset from the start of the filtered result set.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "owner_id",
+        "campaign_id",
+        "view"
+      ],
+      "title": "ListComments",
+      "type": "object"
+    },
+    "ListConversations": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "description": "Lists an owner's LinkedIn conversations in the required inbox view: needs-reply, for-review (For Review), auto, unread, all, snoozed or ended. It returns preview, unread count, active workflow state, and valid next actions without marking anything read.",
+          "title": "List Conversations",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "owner_id": {
+          "description": "LinkedIn account owner whose inbox is being read. Often a managed account rather than the authenticated user \u2014 use List Team Members first and pick the owner whose LinkedIn profile holds the conversations.",
+          "format": "uuid",
+          "title": "Owner Id",
+          "type": "string"
+        },
+        "view": {
+          "description": "Required lowercase inbox view. for-review is the For Review tab. Suggested is not accepted.",
+          "enum": [
+            "unread",
+            "all",
+            "needs-reply",
+            "for-review",
+            "auto",
+            "snoozed",
+            "ended"
+          ],
+          "title": "View",
+          "type": "string"
+        },
+        "campaign_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional campaign filter. When omitted, the list covers all campaigns of the owner that the caller can access \u2014 never conversations outside those campaigns.",
+          "title": "Campaign Id"
+        },
+        "prospect_list_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Prospect List filter.",
+          "title": "Prospect List Id"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case-insensitive LinkedIn display-name search, not message text. SQL LIKE wildcards `%` and `_` remain active. Omit for no search; null and blank text are invalid.",
+          "title": "Search"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Number of records requested for this page.",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Offset from the start of the filtered result set.",
+          "maximum": 2147483647,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "owner_id",
+        "view"
+      ],
+      "title": "ListConversations",
+      "type": "object"
+    },
+    "ListProspects": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_prospects",
+          "default": "list_prospects",
+          "description": "Returns visible prospects with their campaign/list bindings and optional pagination information. Use `listId` to scope to a single list, or pass broader filter arrays for campaign-wide prospect management. This endpoint returns existing prospects only \u2014 it does not add them. To add new LinkedIn profiles, add their URLs to a prospect list (`create-list` or `add-users-to-list`).",
+          "title": "List Prospects",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional single-list shortcut. When present, it replaces `listsIds` with `[listId]`; it does not override `campaignsIds`, `search`, importance, frequency, or touch-point filters.",
+          "title": "List Id"
+        },
+        "campaigns_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Campaign IDs to filter within the accessible Prospects scope. Omit or pass `[]` for no campaign restriction; non-empty campaign and list filters intersect with the other active filters.",
+          "title": "Campaigns Ids"
+        },
+        "is_important": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filter to only show important or non-important prospects.",
+          "title": "Is Important"
+        },
+        "post_frequency": {
+          "anyOf": [
+            {
+              "enum": [
+                "MORE_THAN_TWICE_PER_WEEK",
+                "ONE_TO_TWO_TIMES_PER_WEEK",
+                "ONE_TO_THREE_TIMES_PER_MONTH",
+                "LESS_THAN_ONCE_PER_MONTH"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter the stored direct-post weekly frequency estimate: `MORE_THAN_TWICE_PER_WEEK` >2; `ONE_TO_TWO_TIMES_PER_WEEK` 1\u20132 inclusive; `ONE_TO_THREE_TIMES_PER_MONTH` 0.25\u20130.99 inclusive; `LESS_THAN_ONCE_PER_MONTH` <0.25. This is based on fetched activity, not a live or calendar-month LinkedIn count.",
+          "title": "Post Frequency",
+          "enum": [
+            "MORE_THAN_TWICE_PER_WEEK",
+            "ONE_TO_TWO_TIMES_PER_WEEK",
+            "ONE_TO_THREE_TIMES_PER_MONTH",
+            "LESS_THAN_ONCE_PER_MONTH"
+          ],
+          "x-enum-searchable": true
+        },
+        "lists_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "maxItems": 1000,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List IDs to filter by; omit or pass `[]` for no list restriction. If `listId` is supplied, it replaces this array with `[listId]`, rather than intersecting with it. Other active filters still apply.",
+          "title": "Lists Ids"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "prospectName",
+                "campaignName",
+                "postFrequency",
+                "totalComments",
+                "lastComment",
+                "lastPostCheck"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort field: `prospectName` = stored LinkedIn full name; `campaignName` = campaign name; `postFrequency` = direct weekly post frequency; `totalComments` = published direct comments only; `lastComment` = stored direct comment timestamp (may include `POSTING`); `lastPostCheck` = last successful post-fetch finish. Omit for name ascending.",
+          "title": "Sort By",
+          "enum": [
+            "prospectName",
+            "campaignName",
+            "postFrequency",
+            "totalComments",
+            "lastComment",
+            "lastPostCheck"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "ASC",
+                "DESC"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`ASC` sorts the chosen field ascending; `DESC` sorts it descending. If omitted, `lastComment` and `lastPostCheck` default to `DESC` and other explicit fields to `ASC`. If `sortBy` is omitted, the backend uses name `ASC` even if `sortOrder` is supplied.",
+          "title": "Sort Order",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case-insensitive stored LinkedIn full-name search after whitespace normalization; `%` and `_` remain SQL LIKE wildcards. Does not search headline, company or profile URL. An empty normalized term adds no search restriction. A non-empty term currently replaces the default successful-enrichment predicate.",
+          "title": "Search"
+        },
+        "number_of_touch_points": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "NOT_COMMENTED",
+                  "COMMENTED_1_TIME",
+                  "COMMENTED_2_TIMES",
+                  "COMMENTED_3_TIMES",
+                  "COMMENTED_4_TIMES",
+                  "COMMENTED_5_TIMES",
+                  "COMMENTED_6_AND_MORE_TIMES"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OR-filter on published or already `POSTING` direct-plus-indirect comments, not likes, DMs or connection requests. Omitting it or passing `[]` disables this filter. `COMMENTED_1_TIME` through `COMMENTED_5_TIMES` mean exactly 1 through 5; `COMMENTED_6_AND_MORE_TIMES` means 6 or more.",
+          "title": "Number Of Touch Points"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 1000,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional positive integer page size, at most 1000; omitted uses the backend default of 5. This is pagination, not a total-results cap. Pass it explicitly and use the returned pagination to read further pages.",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "maximum": 2147483647,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional zero-based offset in the same filtered result; omitted starts at 0. Keep the same filters and ordering when advancing pages. The public maximum is 2147483647.",
+          "title": "Offset"
+        }
+      },
+      "title": "ListProspects",
+      "type": "object"
+    },
+    "ListTeamMembers": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_team_members",
+          "default": "list_team_members",
+          "description": "Returns all users visible to the current user inside their selected team. Optionally narrow the result by `registrationType` \u2014 e.g. to show only invited members or only managed accounts.",
+          "title": "List Team Members",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "registration_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "NEW_USER_SIGNUP",
+                "NEW_USER_WORKSPACE_INVITE_CONFIRM",
+                "SUB_USER"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filter by how the user entered the system. `NEW_USER_SIGNUP` \u2014 self-signup; `NEW_USER_WORKSPACE_INVITE_CONFIRM` \u2014 accepted a team invite; `SUB_USER` \u2014 managed account created by another user.",
+          "title": "Registration Type",
+          "enum": [
+            "NEW_USER_SIGNUP",
+            "NEW_USER_WORKSPACE_INVITE_CONFIRM",
+            "SUB_USER"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListTeamMembers",
+      "type": "object"
+    },
+    "MarkProspectImportant": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "mark_prospect_important",
+          "default": "mark_prospect_important",
+          "description": "Single-prospect operation: updates the important flag for one prospect.",
+          "title": "Mark Prospect Important",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prospect_id": {
+          "description": "Prospect id to update.",
+          "format": "uuid",
+          "title": "Prospect Id",
+          "type": "string"
+        },
+        "is_important": {
+          "description": "Whether the prospect should be marked as important.",
+          "title": "Is Important",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "prospect_id",
+        "is_important"
+      ],
+      "title": "MarkProspectImportant",
+      "type": "object"
+    },
+    "PrepareReply": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "prepare_reply",
+          "default": "prepare_reply",
+          "description": "Prepares one reviewable reply for a conversation from the exact supplied text, without Extrovert generation. It returns the exact dmId required for Send reply and never sends in the same call. Text that repeats a message the owner sent in this conversation in the last 24 hours (ignoring extra whitespace) is rejected with a conflict whose message starts with \"Duplicate reply:\", and nothing is prepared.",
+          "title": "Prepare Reply",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "connection_id": {
+          "description": "Conversation (connection) ID the action addresses.",
+          "format": "uuid",
+          "title": "Connection Id",
+          "type": "string"
+        },
+        "text": {
+          "description": "Reply text to prepare, trimmed to 1\u20131250 characters. A queued suggestion may be promoted; an existing reviewable reply must be edited instead.",
+          "maxLength": 1250,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "connection_id",
+        "text"
+      ],
+      "title": "PrepareReply",
+      "type": "object"
+    },
+    "ReplaceProspectNotes": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "replace_prospect_notes",
+          "default": "replace_prospect_notes",
+          "description": "Replaces the relationship note on a real LEAD prospect. Empty text clears it. Existing campaign permissions apply; drafts and automation state are unchanged. Notes add context for comment and DM generation. Generation already receives relevant post and message-history context, so repeating it in Notes is usually unnecessary. Focus on additional relationship context.",
+          "title": "Replace Prospect Notes",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prospect_id": {
+          "description": "id",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Prospect Id",
+          "type": "string"
+        },
+        "notes": {
+          "description": "Exact manual note text; empty clears. Maximum 2000 characters.",
+          "maxLength": 2000,
+          "title": "Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prospect_id",
+        "notes"
+      ],
+      "title": "ReplaceProspectNotes",
+      "type": "object"
+    },
+    "SendReply": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "send_reply",
+          "default": "send_reply",
+          "description": "Sends the exact prepared dmId to the LinkedIn prospect. Queued (the default) accepts the reply for the owner's normal scheduler interval and returns its process ID, not provider confirmation. Immediate waits for explicit provider acceptance, not a read receipt. An uncertain immediate outcome may already have sent the reply. History changed leaves the stale reply unsent and refreshes the conversation. A reply whose text repeats a message the owner sent in this conversation in the last 24 hours (ignoring extra whitespace) is never sent: the call fails with a conflict whose message starts with \"Duplicate reply:\", or a queued send ends as History changed with error code duplicate-reply.",
+          "title": "Send Reply",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dm_id": {
+          "description": "Exact reply ID obtained from Prepare reply or Get conversation.",
+          "format": "uuid",
+          "title": "Dm Id",
+          "type": "string"
+        },
+        "mode": {
+          "default": "queued",
+          "description": "Queued (default): Extrovert schedules the send within the owner's interval, daily limits and working hours. Immediate: sends now and waits for LinkedIn to accept it.",
+          "enum": [
+            "queued",
+            "immediate"
+          ],
+          "title": "Mode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dm_id"
+      ],
+      "title": "SendReply",
+      "type": "object"
+    },
+    "SetCommentDraft": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "set_comment_draft",
+          "default": "set_comment_draft",
+          "description": "Sets the exact comment text for later review and approval. It creates an ordinary draft when none exists and never calls Extrovert generation. If the text includes the post author's full LinkedIn name or a leading part of it, Extrovert automatically tags the author once when publishing, preferring the most complete matching name. Match a literal leading part of the LinkedIn name, preserving all leading emoji and the exact spelling. A matching name must contain at least two letters; emoji-only prefixes are skipped. It does not post the comment. The comment identity is postId + ownerId and the change is owner-global: it also applies to sibling campaign activities of the same owner, even when the feed context came from one campaign.",
+          "title": "Set Comment Draft",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "post_id": {
+          "description": "LinkedIn post identity inside Extrovert.",
+          "format": "uuid",
+          "title": "Post Id",
+          "type": "string"
+        },
+        "owner_id": {
+          "description": "LinkedIn account owner whose comment is addressed. Often a managed account rather than the authenticated user \u2014 use List Team Members first and pick the owner whose LinkedIn profile runs the campaign.",
+          "format": "uuid",
+          "title": "Owner Id",
+          "type": "string"
+        },
+        "text": {
+          "description": "Replacement draft text; surrounding whitespace is trimmed. Empty text cannot clear it. This does not generate or post.",
+          "maxLength": 1250,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id",
+        "owner_id",
+        "text"
+      ],
+      "title": "SetCommentDraft",
+      "type": "object"
+    },
+    "SkipComment": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "skip_comment",
+          "default": "skip_comment",
+          "description": "Moves the owner-global comment out of the active review flow without posting a comment or reaction. Use unskip to restore a Skipped comment to review. The comment identity is postId + ownerId and the change is owner-global: it also applies to sibling campaign activities of the same owner, even when the feed context came from one campaign.",
+          "title": "Skip Comment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "post_id": {
+          "description": "LinkedIn post identity inside Extrovert.",
+          "format": "uuid",
+          "title": "Post Id",
+          "type": "string"
+        },
+        "owner_id": {
+          "description": "LinkedIn account owner whose comment is addressed. Often a managed account rather than the authenticated user \u2014 use List Team Members first and pick the owner whose LinkedIn profile runs the campaign.",
+          "format": "uuid",
+          "title": "Owner Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id",
+        "owner_id"
+      ],
+      "title": "SkipComment",
+      "type": "object"
+    },
+    "SnoozeConversation": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "snooze_conversation",
+          "default": "snooze_conversation",
+          "description": "Postpones a conversation until the start of an exact calendar day in the owner's timezone. Until then it is Snoozed: Extrovert recommends and sends nothing in it, and a current attention reason is cleared. Works whether or not the conversation has a recommendation. Does not send or generate a message.",
+          "title": "Snooze Conversation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "connection_id": {
+          "description": "Conversation (connection) ID the action addresses.",
+          "format": "uuid",
+          "title": "Connection Id",
+          "type": "string"
+        },
+        "until_date": {
+          "description": "Calendar day the conversation returns on, YYYY-MM-DD, in the owner's timezone.",
+          "format": "date",
+          "title": "Until Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "connection_id",
+        "until_date"
+      ],
+      "title": "SnoozeConversation",
+      "type": "object"
+    },
+    "StartCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "start_campaign",
+          "default": "start_campaign",
+          "description": "Activates a campaign (sets `isActive` to `true`): the post feed resumes updating, DM drafts are suggested again, and connection requests start being sent per the campaign's settings. The campaign must be properly configured first (a Voice, and either a ProspectList for `TARGET_USER` \u2014 user-facing 'Prospects campaign' \u2014 or Monitored Topics bound to the campaign for `KEYWORD` \u2014 user-facing 'Topic campaign').",
+          "title": "Start Campaign",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign_id": {
+          "description": "id",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "StartCampaign",
+      "type": "object"
+    },
+    "StopCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "stop_campaign",
+          "default": "stop_campaign",
+          "description": "Pauses a campaign (sets `isActive` to `false`): the post feed stops updating, no DM drafts are suggested, and no connection requests are sent until the campaign is started again. Existing posts in the approval queue are preserved.",
+          "title": "Stop Campaign",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign_id": {
+          "description": "id",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Campaign Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "StopCampaign",
+      "type": "object"
+    },
+    "UpdateCampaign": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_campaign",
+          "default": "update_campaign",
+          "description": "Updates the editable fields of an existing campaign. `id`, `name`, `voiceId` and `skipTeammatesLeads` are required (full replace). Backend types `TARGET_USER` and `KEYWORD` correspond to user-facing 'Prospects campaign' and 'Topic campaign' respectively.\n\n**`KEYWORD` campaigns: only `name` and the comment policy are editable.** The backend rejects with a 409 state-conflict whenever `skipTeammatesLeads`, an explicitly passed `outreach.connectionRequests.enabled`, or an explicitly passed `outreach.directMessages.enabled` differs from the current value. Omitting the optional `outreach` and `commenting` objects means \"no change\" and is always safe.",
+          "title": "Update Campaign",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaign_id": {
+          "description": "Campaign id to update.",
+          "format": "uuid",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "name": {
+          "description": "Updated display name.",
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "voice_id": {
+          "description": "Voice id the campaign should use after the update. Always required: detaching a Voice is intentionally not possible through this API (internally an omitted field would mean 'remove'), so pass the current `voice.id` to keep it or another valid id to switch.",
+          "format": "uuid",
+          "title": "Voice Id",
+          "type": "string"
+        },
+        "skip_teammates_leads": {
+          "description": "Prospects campaigns: skip profiles already present in teammates' campaigns. Enabling is rejected if duplicate prospects already exist; resolve those duplicates first. Keep the stored value for Topic campaigns.",
+          "title": "Skip Teammates Leads",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "name",
+        "voice_id",
+        "skip_teammates_leads"
+      ],
+      "title": "UpdateCampaign",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_prospects_to_list": "#/$defs/AddProspectsToList",
+          "approve_comment": "#/$defs/ApproveComment",
+          "create_campaign": "#/$defs/CreateCampaign",
+          "create_prospect_list": "#/$defs/CreateProspectList",
+          "edit_reply": "#/$defs/EditReply",
+          "get_campaign": "#/$defs/GetCampaign",
+          "get_comment": "#/$defs/GetComment",
+          "get_conversation": "#/$defs/GetConversation",
+          "get_prospect": "#/$defs/GetProspect",
+          "get_prospect_list": "#/$defs/GetProspectList",
+          "list_campaigns": "#/$defs/ListCampaigns",
+          "list_comments": "#/$defs/ListComments",
+          "list_conversations": "#/$defs/ListConversations",
+          "list_prospects": "#/$defs/ListProspects",
+          "list_team_members": "#/$defs/ListTeamMembers",
+          "mark_prospect_important": "#/$defs/MarkProspectImportant",
+          "prepare_reply": "#/$defs/PrepareReply",
+          "replace_prospect_notes": "#/$defs/ReplaceProspectNotes",
+          "send_reply": "#/$defs/SendReply",
+          "set_comment_draft": "#/$defs/SetCommentDraft",
+          "skip_comment": "#/$defs/SkipComment",
+          "snooze_conversation": "#/$defs/SnoozeConversation",
+          "start_campaign": "#/$defs/StartCampaign",
+          "stop_campaign": "#/$defs/StopCampaign",
+          "update_campaign": "#/$defs/UpdateCampaign"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListTeamMembers"
+        },
+        {
+          "$ref": "#/$defs/ListCampaigns"
+        },
+        {
+          "$ref": "#/$defs/GetCampaign"
+        },
+        {
+          "$ref": "#/$defs/CreateCampaign"
+        },
+        {
+          "$ref": "#/$defs/UpdateCampaign"
+        },
+        {
+          "$ref": "#/$defs/StartCampaign"
+        },
+        {
+          "$ref": "#/$defs/StopCampaign"
+        },
+        {
+          "$ref": "#/$defs/CreateProspectList"
+        },
+        {
+          "$ref": "#/$defs/GetProspectList"
+        },
+        {
+          "$ref": "#/$defs/AddProspectsToList"
+        },
+        {
+          "$ref": "#/$defs/ListProspects"
+        },
+        {
+          "$ref": "#/$defs/GetProspect"
+        },
+        {
+          "$ref": "#/$defs/ReplaceProspectNotes"
+        },
+        {
+          "$ref": "#/$defs/MarkProspectImportant"
+        },
+        {
+          "$ref": "#/$defs/ListComments"
+        },
+        {
+          "$ref": "#/$defs/GetComment"
+        },
+        {
+          "$ref": "#/$defs/SetCommentDraft"
+        },
+        {
+          "$ref": "#/$defs/ApproveComment"
+        },
+        {
+          "$ref": "#/$defs/SkipComment"
+        },
+        {
+          "$ref": "#/$defs/ListConversations"
+        },
+        {
+          "$ref": "#/$defs/GetConversation"
+        },
+        {
+          "$ref": "#/$defs/PrepareReply"
+        },
+        {
+          "$ref": "#/$defs/EditReply"
+        },
+        {
+          "$ref": "#/$defs/SendReply"
+        },
+        {
+          "$ref": "#/$defs/SnoozeConversation"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ExtrovertApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Extrovert Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

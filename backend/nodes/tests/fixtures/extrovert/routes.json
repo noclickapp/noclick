@@ -1,0 +1,399 @@
+{
+  "list_team_members": {
+    "method": "GET",
+    "path": "/client/v2/user/team-members",
+    "path_fields": {},
+    "query": {
+      "registrationType": "registration_type"
+    },
+    "body": {},
+    "has_body": false,
+    "success": [
+      200
+    ]
+  },
+  "list_campaigns": {
+    "method": "GET",
+    "path": "/client/v2/campaign",
+    "path_fields": {},
+    "query": {},
+    "body": {},
+    "has_body": false,
+    "success": [
+      200
+    ]
+  },
+  "get_campaign": {
+    "method": "GET",
+    "path": "/client/v2/campaign/{id}",
+    "path_fields": {
+      "id": "campaign_id"
+    },
+    "query": {},
+    "body": {},
+    "has_body": false,
+    "success": [
+      200
+    ]
+  },
+  "create_campaign": {
+    "method": "POST",
+    "path": "/client/v2/campaign",
+    "path_fields": {},
+    "query": {},
+    "body": {
+      "ownerId": "owner_id",
+      "name": "name",
+      "type": "type",
+      "voiceId": "voice_id",
+      "skipTeammatesLeads": "skip_teammates_leads"
+    },
+    "has_body": true,
+    "success": [
+      201
+    ]
+  },
+  "update_campaign": {
+    "method": "PATCH",
+    "path": "/client/v2/campaign/{id}",
+    "path_fields": {
+      "id": "campaign_id"
+    },
+    "query": {},
+    "body": {
+      "id": "campaign_id",
+      "name": "name",
+      "voiceId": "voice_id",
+      "skipTeammatesLeads": "skip_teammates_leads"
+    },
+    "has_body": true,
+    "success": [
+      200
+    ]
+  },
+  "start_campaign": {
+    "method": "POST",
+    "path": "/client/v2/campaign/{id}/start",
+    "path_fields": {
+      "id": "campaign_id"
+    },
+    "query": {},
+    "body": {},
+    "has_body": false,
+    "success": [
+      200
+    ]
+  },
+  "stop_campaign": {
+    "method": "POST",
+    "path": "/client/v2/campaign/{id}/stop",
+    "path_fields": {
+      "id": "campaign_id"
+    },
+    "query": {},
+    "body": {},
+    "has_body": false,
+    "success": [
+      200
+    ]
+  },
+  "create_prospect_list": {
+    "method": "POST",
+    "path": "/client/v2/prospect-list",
+    "path_fields": {},
+    "query": {},
+    "body": {
+      "listName": "list_name",
+      "campaignId": "campaign_id",
+      "userUrls": "user_urls",
+      "moveOwnDuplicated": "move_own_duplicated",
+      "shouldBeDeletedIfInactive": "should_be_deleted_if_inactive"
+    },
+    "has_body": true,
+    "success": [
+      201
+    ]
+  },
+  "get_prospect_list": {
+    "method": "GET",
+    "path": "/client/v2/prospect-list/{id}",
+    "path_fields": {
+      "id": "list_id"
+    },
+    "query": {},
+    "body": {},
+    "has_body": false,
+    "success": [
+      200
+    ]
+  },
+  "add_prospects_to_list": {
+    "method": "POST",
+    "path": "/client/v2/prospect-list/{id}/add-users-to-list",
+    "path_fields": {
+      "id": "list_id"
+    },
+    "query": {},
+    "body": {
+      "listId": "list_id",
+      "userUrls": "user_urls",
+      "moveOwnDuplicated": "move_own_duplicated",
+      "shouldBeDeletedIfInactive": "should_be_deleted_if_inactive"
+    },
+    "has_body": true,
+    "success": [
+      200
+    ]
+  },
+  "list_prospects": {
+    "method": "GET",
+    "path": "/client/v2/prospects",
+    "path_fields": {},
+    "query": {
+      "listId": "list_id",
+      "campaignsIds": "campaigns_ids",
+      "isImportant": "is_important",
+      "postFrequency": "post_frequency",
+      "listsIds": "lists_ids",
+      "sortBy": "sort_by",
+      "sortOrder": "sort_order",
+      "search": "search",
+      "numberOfTouchPoints": "number_of_touch_points",
+      "limit": "limit",
+      "offset": "offset"
+    },
+    "body": {},
+    "has_body": false,
+    "success": [
+      200
+    ]
+  },
+  "get_prospect": {
+    "method": "GET",
+    "path": "/client/v2/prospects/{id}",
+    "path_fields": {
+      "id": "prospect_id"
+    },
+    "query": {},
+    "body": {},
+    "has_body": false,
+    "success": [
+      200
+    ]
+  },
+  "replace_prospect_notes": {
+    "method": "POST",
+    "path": "/client/v2/prospects/{id}/replace-notes",
+    "path_fields": {
+      "id": "prospect_id"
+    },
+    "query": {},
+    "body": {
+      "notes": "notes"
+    },
+    "has_body": true,
+    "success": [
+      200
+    ]
+  },
+  "mark_prospect_important": {
+    "method": "POST",
+    "path": "/client/v2/prospects/{id}/mark-important",
+    "path_fields": {
+      "id": "prospect_id"
+    },
+    "query": {},
+    "body": {
+      "prospectId": "prospect_id",
+      "isImportant": "is_important"
+    },
+    "has_body": true,
+    "success": [
+      200
+    ]
+  },
+  "list_comments": {
+    "method": "GET",
+    "path": "/client/v2/comments",
+    "path_fields": {},
+    "query": {
+      "ownerId": "owner_id",
+      "campaignId": "campaign_id",
+      "view": "view",
+      "prospectListId": "prospect_list_id",
+      "keywordId": "keyword_id",
+      "limit": "limit",
+      "offset": "offset"
+    },
+    "body": {},
+    "has_body": false,
+    "success": [
+      200
+    ]
+  },
+  "get_comment": {
+    "method": "GET",
+    "path": "/client/v2/comments/{postId}",
+    "path_fields": {
+      "postId": "post_id"
+    },
+    "query": {
+      "ownerId": "owner_id"
+    },
+    "body": {},
+    "has_body": false,
+    "success": [
+      200
+    ]
+  },
+  "set_comment_draft": {
+    "method": "PATCH",
+    "path": "/client/v2/comments/{postId}/draft",
+    "path_fields": {
+      "postId": "post_id"
+    },
+    "query": {},
+    "body": {
+      "postId": "post_id",
+      "ownerId": "owner_id",
+      "text": "text"
+    },
+    "has_body": true,
+    "success": [
+      200
+    ]
+  },
+  "approve_comment": {
+    "method": "POST",
+    "path": "/client/v2/comments/{postId}/approve",
+    "path_fields": {
+      "postId": "post_id"
+    },
+    "query": {},
+    "body": {
+      "postId": "post_id",
+      "ownerId": "owner_id"
+    },
+    "has_body": true,
+    "success": [
+      202
+    ]
+  },
+  "skip_comment": {
+    "method": "POST",
+    "path": "/client/v2/comments/{postId}/skip",
+    "path_fields": {
+      "postId": "post_id"
+    },
+    "query": {},
+    "body": {
+      "postId": "post_id",
+      "ownerId": "owner_id"
+    },
+    "has_body": true,
+    "success": [
+      200
+    ]
+  },
+  "list_conversations": {
+    "method": "GET",
+    "path": "/client/v2/dm-conversations",
+    "path_fields": {},
+    "query": {
+      "ownerId": "owner_id",
+      "view": "view",
+      "campaignId": "campaign_id",
+      "prospectListId": "prospect_list_id",
+      "search": "search",
+      "limit": "limit",
+      "offset": "offset"
+    },
+    "body": {},
+    "has_body": false,
+    "success": [
+      200
+    ]
+  },
+  "get_conversation": {
+    "method": "GET",
+    "path": "/client/v2/dm-conversations/{connectionId}",
+    "path_fields": {
+      "connectionId": "connection_id"
+    },
+    "query": {
+      "markAsRead": "mark_as_read",
+      "messageLimit": "message_limit",
+      "messageOffset": "message_offset"
+    },
+    "body": {},
+    "has_body": false,
+    "success": [
+      200
+    ]
+  },
+  "prepare_reply": {
+    "method": "POST",
+    "path": "/client/v2/dm-conversations/{connectionId}/replies",
+    "path_fields": {
+      "connectionId": "connection_id"
+    },
+    "query": {},
+    "body": {
+      "connectionId": "connection_id",
+      "text": "text"
+    },
+    "has_body": true,
+    "success": [
+      200,
+      201
+    ]
+  },
+  "edit_reply": {
+    "method": "PATCH",
+    "path": "/client/v2/dm-replies/{dmId}",
+    "path_fields": {
+      "dmId": "dm_id"
+    },
+    "query": {},
+    "body": {
+      "dmId": "dm_id",
+      "text": "text"
+    },
+    "has_body": true,
+    "success": [
+      200
+    ]
+  },
+  "send_reply": {
+    "method": "POST",
+    "path": "/client/v2/dm-replies/{dmId}/send",
+    "path_fields": {
+      "dmId": "dm_id"
+    },
+    "query": {},
+    "body": {
+      "dmId": "dm_id",
+      "mode": "mode"
+    },
+    "has_body": true,
+    "success": [
+      200
+    ]
+  },
+  "snooze_conversation": {
+    "method": "POST",
+    "path": "/client/v2/dm-conversations/{connectionId}/snooze",
+    "path_fields": {
+      "connectionId": "connection_id"
+    },
+    "query": {},
+    "body": {
+      "connectionId": "connection_id",
+      "untilDate": "until_date"
+    },
+    "has_body": true,
+    "success": [
+      200
+    ]
+  }
+}

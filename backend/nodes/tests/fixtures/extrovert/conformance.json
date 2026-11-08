@@ -1,0 +1,1005 @@
+{
+  "contract": {
+    "version": "1.0",
+    "source_url": "https://api.goextrovert.com/client/v2/docs-json",
+    "sha256": "b9a2bde8f15dc53bd48ab4e65c8b19795ad198ff875e188eeffd9ad6f3275268"
+  },
+  "witness_mode": "full",
+  "live_account_tested": false,
+  "verdict": {
+    "provider": "extrovert",
+    "ready": true,
+    "blocking": [],
+    "advisory": [],
+    "stats": {
+      "operations": 25,
+      "skipped": 0,
+      "request_ok": 25,
+      "authored_parser_ok": 0,
+      "generated_only": 25,
+      "local_ok": 0
+    }
+  },
+  "report": [
+    {
+      "provider": "extrovert",
+      "node_type": "automation-extrovert",
+      "checked": 25,
+      "passed": 25,
+      "failed": 0,
+      "fixture_errors": 0,
+      "response_checked": 25,
+      "auth_checked": 25,
+      "scope_checked": 0,
+      "skipped": 0,
+      "coverage": {
+        "implemented": 25,
+        "total": 112
+      },
+      "operations": [
+        {
+          "operation": "list_team_members",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.goextrovert.com/client/v2/user/team-members?registrationType=NEW_USER_SIGNUP",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /client/v2/user/team-members",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "11a290781afa8cc6651000b4c1d5733ec7356f0e585dde8b352ff29eaba8435f"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "list_team_members",
+            "registration_type": "NEW_USER_SIGNUP"
+          },
+          "passed": true
+        },
+        {
+          "operation": "list_campaigns",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.goextrovert.com/client/v2/campaign",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /client/v2/campaign",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "db77a5cacefad52d4282be109499bd1134bcb62f13bc33a8d755fd9090a35f0b"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "list_campaigns"
+          },
+          "passed": true
+        },
+        {
+          "operation": "get_campaign",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.goextrovert.com/client/v2/campaign/1",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /client/v2/campaign/{id}",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "e5ecd33c0c3bac10dd0650abff788e30de053df30eeb4dffac70af57a008b3da"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "get_campaign",
+            "campaign_id": "1"
+          },
+          "passed": true
+        },
+        {
+          "operation": "create_campaign",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.goextrovert.com/client/v2/campaign",
+              "content_type": "application/json",
+              "body": "{\"ownerId\":\"00000000-0000-4000-8000-000000000001\",\"name\":\"1\",\"type\":\"TARGET_USER\",\"voiceId\":\"00000000-0000-4000-8000-000000000001\",\"skipTeammatesLeads\":false}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "158",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /client/v2/campaign",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 201,
+              "response_sha256": "8fc8d1f68de9d49caa66cdf24c2cb9fd24c0d281d8d7a02769c210967c54af1c"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "create_campaign",
+            "owner_id": "00000000-0000-4000-8000-000000000001",
+            "name": "1",
+            "type": "TARGET_USER",
+            "voice_id": "00000000-0000-4000-8000-000000000001",
+            "skip_teammates_leads": false
+          },
+          "passed": true
+        },
+        {
+          "operation": "update_campaign",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "PATCH",
+              "url": "https://api.goextrovert.com/client/v2/campaign/00000000-0000-4000-8000-000000000001",
+              "content_type": "application/json",
+              "body": "{\"id\":\"00000000-0000-4000-8000-000000000001\",\"name\":\"1\",\"voiceId\":\"00000000-0000-4000-8000-000000000001\",\"skipTeammatesLeads\":false}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "132",
+                "content-type": "application/json"
+              },
+              "spec_operation": "PATCH /client/v2/campaign/{id}",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "e76ea6329a8e42f637a04d6343cf9c7c86ad75ba964f3e1dcaf1d9efb07d70bc"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "update_campaign",
+            "campaign_id": "00000000-0000-4000-8000-000000000001",
+            "name": "1",
+            "voice_id": "00000000-0000-4000-8000-000000000001",
+            "skip_teammates_leads": false
+          },
+          "passed": true
+        },
+        {
+          "operation": "start_campaign",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.goextrovert.com/client/v2/campaign/1/start",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "content-length": "0",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "POST /client/v2/campaign/{id}/start",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "e76ea6329a8e42f637a04d6343cf9c7c86ad75ba964f3e1dcaf1d9efb07d70bc"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "start_campaign",
+            "campaign_id": "1"
+          },
+          "passed": true
+        },
+        {
+          "operation": "stop_campaign",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.goextrovert.com/client/v2/campaign/1/stop",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "content-length": "0",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "POST /client/v2/campaign/{id}/stop",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "e76ea6329a8e42f637a04d6343cf9c7c86ad75ba964f3e1dcaf1d9efb07d70bc"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "stop_campaign",
+            "campaign_id": "1"
+          },
+          "passed": true
+        },
+        {
+          "operation": "create_prospect_list",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.goextrovert.com/client/v2/prospect-list",
+              "content_type": "application/json",
+              "body": "{\"listName\":\"1\",\"campaignId\":\"00000000-0000-4000-8000-000000000001\",\"userUrls\":[\"1\"],\"moveOwnDuplicated\":false,\"shouldBeDeletedIfInactive\":false}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "145",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /client/v2/prospect-list",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 201,
+              "response_sha256": "0acef3efb4abdae67d282c9624729c80de209bdd39719e45fa1e24417ea7c344"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "create_prospect_list",
+            "list_name": "1",
+            "campaign_id": "00000000-0000-4000-8000-000000000001",
+            "user_urls": [
+              "1"
+            ],
+            "move_own_duplicated": false,
+            "should_be_deleted_if_inactive": false
+          },
+          "passed": true
+        },
+        {
+          "operation": "get_prospect_list",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.goextrovert.com/client/v2/prospect-list/1",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /client/v2/prospect-list/{id}",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "707c18d0df29c2c70555b9a370a4c94b50f3c0e28f7c9946b2fa7f20a8d2e7f5"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "get_prospect_list",
+            "list_id": "1"
+          },
+          "passed": true
+        },
+        {
+          "operation": "add_prospects_to_list",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.goextrovert.com/client/v2/prospect-list/00000000-0000-4000-8000-000000000001/add-users-to-list",
+              "content_type": "application/json",
+              "body": "{\"listId\":\"00000000-0000-4000-8000-000000000001\",\"userUrls\":[\"1\"],\"moveOwnDuplicated\":false,\"shouldBeDeletedIfInactive\":false}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "126",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /client/v2/prospect-list/{id}/add-users-to-list",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "0acef3efb4abdae67d282c9624729c80de209bdd39719e45fa1e24417ea7c344"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "add_prospects_to_list",
+            "list_id": "00000000-0000-4000-8000-000000000001",
+            "user_urls": [
+              "1"
+            ],
+            "move_own_duplicated": false,
+            "should_be_deleted_if_inactive": false
+          },
+          "passed": true
+        },
+        {
+          "operation": "list_prospects",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.goextrovert.com/client/v2/prospects?listId=00000000-0000-4000-8000-000000000001&campaignsIds=00000000-0000-4000-8000-000000000001&isImportant=false&postFrequency=MORE_THAN_TWICE_PER_WEEK&listsIds=00000000-0000-4000-8000-000000000001&sortBy=prospectName&sortOrder=ASC&search=1&numberOfTouchPoints=NOT_COMMENTED&limit=1&offset=1",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /client/v2/prospects",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "0c901e23903ed5042f46d47f50f4b2cefe6484b8ac6b40a10a20b5b1a502189b"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "list_prospects",
+            "list_id": "00000000-0000-4000-8000-000000000001",
+            "campaigns_ids": [
+              "00000000-0000-4000-8000-000000000001"
+            ],
+            "is_important": false,
+            "post_frequency": "MORE_THAN_TWICE_PER_WEEK",
+            "lists_ids": [
+              "00000000-0000-4000-8000-000000000001"
+            ],
+            "sort_by": "prospectName",
+            "sort_order": "ASC",
+            "search": "1",
+            "number_of_touch_points": [
+              "NOT_COMMENTED"
+            ],
+            "limit": 1,
+            "offset": 1
+          },
+          "passed": true
+        },
+        {
+          "operation": "get_prospect",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.goextrovert.com/client/v2/prospects/1",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /client/v2/prospects/{id}",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "1ac80861fc892cf88c3591dda49cbb51517364ee8da5d331db7631767e894902"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "get_prospect",
+            "prospect_id": "1"
+          },
+          "passed": true
+        },
+        {
+          "operation": "replace_prospect_notes",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.goextrovert.com/client/v2/prospects/1/replace-notes",
+              "content_type": "application/json",
+              "body": "{\"notes\":\"1\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "13",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /client/v2/prospects/{id}/replace-notes",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "1ac80861fc892cf88c3591dda49cbb51517364ee8da5d331db7631767e894902"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "replace_prospect_notes",
+            "prospect_id": "1",
+            "notes": "1"
+          },
+          "passed": true
+        },
+        {
+          "operation": "mark_prospect_important",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.goextrovert.com/client/v2/prospects/00000000-0000-4000-8000-000000000001/mark-important",
+              "content_type": "application/json",
+              "body": "{\"prospectId\":\"00000000-0000-4000-8000-000000000001\",\"isImportant\":false}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "73",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /client/v2/prospects/{id}/mark-important",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "e76ea6329a8e42f637a04d6343cf9c7c86ad75ba964f3e1dcaf1d9efb07d70bc"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "mark_prospect_important",
+            "prospect_id": "00000000-0000-4000-8000-000000000001",
+            "is_important": false
+          },
+          "passed": true
+        },
+        {
+          "operation": "list_comments",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.goextrovert.com/client/v2/comments?ownerId=00000000-0000-4000-8000-000000000001&campaignId=00000000-0000-4000-8000-000000000001&view=Need+approval&prospectListId=00000000-0000-4000-8000-000000000001&keywordId=00000000-0000-4000-8000-000000000001&limit=10&offset=0",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /client/v2/comments",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "35231d54c6d16b198820adaa267aa99f93d579836626a98ec3396912036ccf0d"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "list_comments",
+            "owner_id": "00000000-0000-4000-8000-000000000001",
+            "campaign_id": "00000000-0000-4000-8000-000000000001",
+            "view": "Need approval",
+            "prospect_list_id": "00000000-0000-4000-8000-000000000001",
+            "keyword_id": "00000000-0000-4000-8000-000000000001",
+            "limit": 10,
+            "offset": 0
+          },
+          "passed": true
+        },
+        {
+          "operation": "get_comment",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.goextrovert.com/client/v2/comments/00000000-0000-4000-8000-000000000001?ownerId=00000000-0000-4000-8000-000000000001",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /client/v2/comments/{postId}",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "4f32f3f9d411d1617c59030b2a32741532830e47f1f8df435bb7aa33d6ddcc5b"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "get_comment",
+            "post_id": "00000000-0000-4000-8000-000000000001",
+            "owner_id": "00000000-0000-4000-8000-000000000001"
+          },
+          "passed": true
+        },
+        {
+          "operation": "set_comment_draft",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "PATCH",
+              "url": "https://api.goextrovert.com/client/v2/comments/00000000-0000-4000-8000-000000000001/draft",
+              "content_type": "application/json",
+              "body": "{\"postId\":\"00000000-0000-4000-8000-000000000001\",\"ownerId\":\"00000000-0000-4000-8000-000000000001\",\"text\":\"1\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "109",
+                "content-type": "application/json"
+              },
+              "spec_operation": "PATCH /client/v2/comments/{postId}/draft",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "e76ea6329a8e42f637a04d6343cf9c7c86ad75ba964f3e1dcaf1d9efb07d70bc"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "set_comment_draft",
+            "post_id": "00000000-0000-4000-8000-000000000001",
+            "owner_id": "00000000-0000-4000-8000-000000000001",
+            "text": "1"
+          },
+          "passed": true
+        },
+        {
+          "operation": "approve_comment",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.goextrovert.com/client/v2/comments/00000000-0000-4000-8000-000000000001/approve",
+              "content_type": "application/json",
+              "body": "{\"postId\":\"00000000-0000-4000-8000-000000000001\",\"ownerId\":\"00000000-0000-4000-8000-000000000001\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "98",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /client/v2/comments/{postId}/approve",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 202,
+              "response_sha256": "e76ea6329a8e42f637a04d6343cf9c7c86ad75ba964f3e1dcaf1d9efb07d70bc"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "approve_comment",
+            "post_id": "00000000-0000-4000-8000-000000000001",
+            "owner_id": "00000000-0000-4000-8000-000000000001"
+          },
+          "passed": true
+        },
+        {
+          "operation": "skip_comment",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.goextrovert.com/client/v2/comments/00000000-0000-4000-8000-000000000001/skip",
+              "content_type": "application/json",
+              "body": "{\"postId\":\"00000000-0000-4000-8000-000000000001\",\"ownerId\":\"00000000-0000-4000-8000-000000000001\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "98",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /client/v2/comments/{postId}/skip",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "e76ea6329a8e42f637a04d6343cf9c7c86ad75ba964f3e1dcaf1d9efb07d70bc"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "skip_comment",
+            "post_id": "00000000-0000-4000-8000-000000000001",
+            "owner_id": "00000000-0000-4000-8000-000000000001"
+          },
+          "passed": true
+        },
+        {
+          "operation": "list_conversations",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.goextrovert.com/client/v2/dm-conversations?ownerId=00000000-0000-4000-8000-000000000001&view=unread&campaignId=00000000-0000-4000-8000-000000000001&prospectListId=00000000-0000-4000-8000-000000000001&search=1&limit=20&offset=0",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /client/v2/dm-conversations",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "6cb68ea1583fc50a8e5cbed843eff092cf17c81fb8c8038a53a769195f9ba5f7"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "list_conversations",
+            "owner_id": "00000000-0000-4000-8000-000000000001",
+            "view": "unread",
+            "campaign_id": "00000000-0000-4000-8000-000000000001",
+            "prospect_list_id": "00000000-0000-4000-8000-000000000001",
+            "search": "1",
+            "limit": 20,
+            "offset": 0
+          },
+          "passed": true
+        },
+        {
+          "operation": "get_conversation",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.goextrovert.com/client/v2/dm-conversations/00000000-0000-4000-8000-000000000001?markAsRead=false&messageLimit=30&messageOffset=0",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /client/v2/dm-conversations/{connectionId}",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "53647d565d77ed0c36f80c60ad0e5f86e105922a22cfc9ec3dbddbfc283d2545"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "get_conversation",
+            "connection_id": "00000000-0000-4000-8000-000000000001",
+            "mark_as_read": false,
+            "message_limit": 30,
+            "message_offset": 0
+          },
+          "passed": true
+        },
+        {
+          "operation": "prepare_reply",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.goextrovert.com/client/v2/dm-conversations/00000000-0000-4000-8000-000000000001/replies",
+              "content_type": "application/json",
+              "body": "{\"connectionId\":\"00000000-0000-4000-8000-000000000001\",\"text\":\"1\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "66",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /client/v2/dm-conversations/{connectionId}/replies",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "f02486ec0c0c86cab0698aa1a3b35467195385ae245ddbe5f96e86cd9bc29d68"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "prepare_reply",
+            "connection_id": "00000000-0000-4000-8000-000000000001",
+            "text": "1"
+          },
+          "passed": true
+        },
+        {
+          "operation": "edit_reply",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "PATCH",
+              "url": "https://api.goextrovert.com/client/v2/dm-replies/00000000-0000-4000-8000-000000000001",
+              "content_type": "application/json",
+              "body": "{\"dmId\":\"00000000-0000-4000-8000-000000000001\",\"text\":\"1\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "58",
+                "content-type": "application/json"
+              },
+              "spec_operation": "PATCH /client/v2/dm-replies/{dmId}",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "e76ea6329a8e42f637a04d6343cf9c7c86ad75ba964f3e1dcaf1d9efb07d70bc"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "edit_reply",
+            "dm_id": "00000000-0000-4000-8000-000000000001",
+            "text": "1"
+          },
+          "passed": true
+        },
+        {
+          "operation": "send_reply",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.goextrovert.com/client/v2/dm-replies/00000000-0000-4000-8000-000000000001/send",
+              "content_type": "application/json",
+              "body": "{\"dmId\":\"00000000-0000-4000-8000-000000000001\",\"mode\":\"queued\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "63",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /client/v2/dm-replies/{dmId}/send",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "fc89dae1e6a9aa0bf933584296a76a5cfab855f613cc0c458e9600503590a86c"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "send_reply",
+            "dm_id": "00000000-0000-4000-8000-000000000001",
+            "mode": "queued"
+          },
+          "passed": true
+        },
+        {
+          "operation": "snooze_conversation",
+          "scenario": null,
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.goextrovert.com/client/v2/dm-conversations/00000000-0000-4000-8000-000000000001/snooze",
+              "content_type": "application/json",
+              "body": "{\"connectionId\":\"00000000-0000-4000-8000-000000000001\",\"untilDate\":\"2024-01-01\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.goextrovert.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "80",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /client/v2/dm-conversations/{connectionId}/snooze",
+              "security_declared": true,
+              "response_source": "generated",
+              "response_status": 200,
+              "response_sha256": "e76ea6329a8e42f637a04d6343cf9c7c86ad75ba964f3e1dcaf1d9efb07d70bc"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "snooze_conversation",
+            "connection_id": "00000000-0000-4000-8000-000000000001",
+            "until_date": "2024-01-01"
+          },
+          "passed": true
+        }
+      ]
+    }
+  ]
+}
