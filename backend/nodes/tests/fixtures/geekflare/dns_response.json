@@ -1,0 +1,32 @@
+{
+  "timestamp": 1793873112973,
+  "apiStatus": "success",
+  "apiCode": 200,
+  "meta": {
+    "url": "example.com",
+    "types": [
+      "A",
+      "MX"
+    ],
+    "test": {
+      "id": "zmkqoxxu075dwn4u61yoqhq2rwo0029m"
+    }
+  },
+  "data": {
+    "A": [
+      "172.67.70.213",
+      "104.26.11.88",
+      "104.26.10.88"
+    ],
+    "MX": [
+      {
+        "exchange": "alt3.aspmx.l.google.com",
+        "priority": 10
+      },
+      {
+        "exchange": "aspmx.l.google.com",
+        "priority": 1
+      }
+    ]
+  }
+}

@@ -1,0 +1,1080 @@
+{
+  "$defs": {
+    "AuditLighthouse": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "audit_lighthouse",
+          "default": "audit_lighthouse",
+          "title": "Run Lighthouse Audit",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "device": {
+          "default": "desktop",
+          "enum": [
+            "desktop",
+            "mobile"
+          ],
+          "title": "Device",
+          "type": "string"
+        },
+        "followRedirect": {
+          "default": false,
+          "title": "Follow Redirects",
+          "type": "boolean"
+        },
+        "parameters": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extra Lighthouse Parameters"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "AuditLighthouse",
+      "type": "object"
+    },
+    "CancelCrawl": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_crawl",
+          "default": "cancel_crawl",
+          "title": "Cancel Crawl Job",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "CancelCrawl",
+      "type": "object"
+    },
+    "CheckBrokenLinks": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "check_broken_links",
+          "default": "check_broken_links",
+          "title": "Check Broken Links",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "followRedirect": {
+          "default": false,
+          "title": "Follow Redirects",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "CheckBrokenLinks",
+      "type": "object"
+    },
+    "CheckDNSSEC": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "check_dnssec",
+          "default": "check_dnssec",
+          "title": "Check DNSSEC",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "CheckDNSSEC",
+      "type": "object"
+    },
+    "CheckRedirects": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "check_redirects",
+          "default": "check_redirects",
+          "title": "Check Redirect Chain",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "CheckRedirects",
+      "type": "object"
+    },
+    "CheckSite": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "check_site",
+          "default": "check_site",
+          "title": "Check Site Status",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "followRedirect": {
+          "default": false,
+          "title": "Follow Redirects",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "CheckSite",
+      "type": "object"
+    },
+    "DiscoverLinks": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "maxDepth": {
+          "default": 3,
+          "maximum": 20,
+          "minimum": 0,
+          "title": "Maximum Depth",
+          "type": "integer"
+        },
+        "maxPages": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Maximum Pages",
+          "type": "integer"
+        },
+        "includeExternal": {
+          "default": false,
+          "title": "Include External Links",
+          "type": "boolean"
+        },
+        "allowPatterns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allowed URL Patterns"
+        },
+        "denyPatterns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Denied URL Patterns"
+        },
+        "timeout": {
+          "default": 99,
+          "maximum": 300,
+          "minimum": 1,
+          "title": "Timeout (Seconds)",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "discover_links",
+          "default": "discover_links",
+          "title": "Discover Links",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "DiscoverLinks",
+      "type": "object"
+    },
+    "GeekflareAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "geekflare_api_key",
+          "default": "geekflare_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Geekflare API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from the Geekflare dashboard. NoClick sends it as x-api-key to api.geekflare.com. Connecting reads your crawl jobs without starting a crawl.",
+      "x-credential-url": "https://dash.geekflare.com/"
+    },
+    "GetBrand": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_brand",
+          "default": "get_brand",
+          "title": "Get Brand Data",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "refresh": {
+          "default": false,
+          "title": "Refresh Cached Brand Data",
+          "type": "boolean"
+        },
+        "mode": {
+          "default": "standard",
+          "enum": [
+            "standard",
+            "enriched"
+          ],
+          "title": "Brand Detail Level",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "GetBrand",
+      "type": "object"
+    },
+    "GetCrawl": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_crawl",
+          "default": "get_crawl",
+          "title": "Get Crawl Job and Pages",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCrawl",
+      "type": "object"
+    },
+    "GetDiscovery": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_discovery",
+          "default": "get_discovery",
+          "title": "Get Discovery Job",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetDiscovery",
+      "type": "object"
+    },
+    "GetHTTPHeaders": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_http_headers",
+          "default": "get_http_headers",
+          "title": "Get HTTP Headers",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "followRedirect": {
+          "default": false,
+          "title": "Follow Redirects",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "GetHTTPHeaders",
+      "type": "object"
+    },
+    "ListCrawls": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_crawls",
+          "default": "list_crawls",
+          "title": "List Crawl Jobs",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "queued",
+                "running",
+                "completed",
+                "failed",
+                "cancelled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Status",
+          "enum": [
+            "queued",
+            "running",
+            "completed",
+            "failed",
+            "cancelled"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListCrawls",
+      "type": "object"
+    },
+    "LookupDNS": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "lookup_dns",
+          "default": "lookup_dns",
+          "title": "Look Up DNS Records",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "types": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "A",
+                  "AAAA",
+                  "CNAME",
+                  "MX",
+                  "CAA",
+                  "NS",
+                  "SOA",
+                  "SRV",
+                  "TXT"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Record Types"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "LookupDNS",
+      "type": "object"
+    },
+    "MeasureLoadTime": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "measure_load_time",
+          "default": "measure_load_time",
+          "title": "Measure Page Load Time",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "followRedirect": {
+          "default": false,
+          "title": "Follow Redirects",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "MeasureLoadTime",
+      "type": "object"
+    },
+    "MeasureTTFB": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "measure_ttfb",
+          "default": "measure_ttfb",
+          "title": "Measure Time to First Byte",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "followRedirect": {
+          "default": false,
+          "title": "Follow Redirects",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "MeasureTTFB",
+      "type": "object"
+    },
+    "PingHost": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "ping_host",
+          "default": "ping_host",
+          "title": "Ping Host",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "PingHost",
+      "type": "object"
+    },
+    "ScanTLS": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "operation": {
+          "const": "scan_tls",
+          "default": "scan_tls",
+          "title": "Scan TLS Configuration",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "ScanTLS",
+      "type": "object"
+    },
+    "ScrapeMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "device": {
+          "default": "desktop",
+          "enum": [
+            "desktop",
+            "mobile"
+          ],
+          "title": "Device",
+          "type": "string"
+        },
+        "blockAds": {
+          "default": true,
+          "title": "Block Ads",
+          "type": "boolean"
+        },
+        "renderJS": {
+          "default": true,
+          "title": "Render JavaScript",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "scrape_metadata",
+          "default": "scrape_metadata",
+          "title": "Scrape Metadata",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "format": {
+          "default": "json",
+          "enum": [
+            "json",
+            "markdown"
+          ],
+          "title": "Output Format",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "ScrapeMetadata",
+      "type": "object"
+    },
+    "ScrapeWebpage": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "device": {
+          "default": "desktop",
+          "enum": [
+            "desktop",
+            "mobile"
+          ],
+          "title": "Device",
+          "type": "string"
+        },
+        "blockAds": {
+          "default": true,
+          "title": "Block Ads",
+          "type": "boolean"
+        },
+        "renderJS": {
+          "default": true,
+          "title": "Render JavaScript",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "scrape_webpage",
+          "default": "scrape_webpage",
+          "title": "Scrape Webpage",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "format": {
+          "items": {
+            "enum": [
+              "html",
+              "markdown",
+              "json",
+              "markdown-llm",
+              "html-llm",
+              "text",
+              "text-llm"
+            ],
+            "type": "string"
+          },
+          "title": "Output Formats",
+          "type": "array"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "ScrapeWebpage",
+      "type": "object"
+    },
+    "SearchWeb": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "search_web",
+          "default": "search_web",
+          "title": "Search Web or News",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Search Query",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Result Limit",
+          "type": "integer"
+        },
+        "source": {
+          "default": "web",
+          "enum": [
+            "web",
+            "news",
+            "images"
+          ],
+          "title": "Search Source",
+          "type": "string"
+        },
+        "format": {
+          "default": "json",
+          "enum": [
+            "json",
+            "markdown",
+            "html"
+          ],
+          "title": "Output Format",
+          "type": "string"
+        },
+        "scrape": {
+          "default": false,
+          "title": "Scrape Result Pages",
+          "type": "boolean"
+        },
+        "groundedAnswer": {
+          "default": false,
+          "title": "Generate Grounded Answer",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchWeb",
+      "type": "object"
+    },
+    "StartCrawl": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "maxDepth": {
+          "default": 3,
+          "maximum": 20,
+          "minimum": 0,
+          "title": "Maximum Depth",
+          "type": "integer"
+        },
+        "maxPages": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Maximum Pages",
+          "type": "integer"
+        },
+        "includeExternal": {
+          "default": false,
+          "title": "Include External Links",
+          "type": "boolean"
+        },
+        "allowPatterns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allowed URL Patterns"
+        },
+        "denyPatterns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Denied URL Patterns"
+        },
+        "timeout": {
+          "default": 99,
+          "maximum": 300,
+          "minimum": 1,
+          "title": "Timeout (Seconds)",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "start_crawl",
+          "default": "start_crawl",
+          "title": "Start Crawl Job",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "format": {
+          "default": "markdown",
+          "enum": [
+            "markdown",
+            "html"
+          ],
+          "title": "Page Output Format",
+          "type": "string"
+        },
+        "renderJS": {
+          "default": true,
+          "title": "Render JavaScript",
+          "type": "boolean"
+        },
+        "blockAds": {
+          "default": true,
+          "title": "Block Ads",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "StartCrawl",
+      "type": "object"
+    },
+    "StartDiscovery": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "description": "Public HTTP or HTTPS URL to inspect.",
+          "maxLength": 8192,
+          "title": "Target URL",
+          "type": "string"
+        },
+        "maxDepth": {
+          "default": 3,
+          "maximum": 20,
+          "minimum": 0,
+          "title": "Maximum Depth",
+          "type": "integer"
+        },
+        "maxPages": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Maximum Pages",
+          "type": "integer"
+        },
+        "includeExternal": {
+          "default": false,
+          "title": "Include External Links",
+          "type": "boolean"
+        },
+        "allowPatterns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Allowed URL Patterns"
+        },
+        "denyPatterns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Denied URL Patterns"
+        },
+        "timeout": {
+          "default": 99,
+          "maximum": 300,
+          "minimum": 1,
+          "title": "Timeout (Seconds)",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "start_discovery",
+          "default": "start_discovery",
+          "title": "Start Discovery Job",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "StartDiscovery",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "audit_lighthouse": "#/$defs/AuditLighthouse",
+          "cancel_crawl": "#/$defs/CancelCrawl",
+          "check_broken_links": "#/$defs/CheckBrokenLinks",
+          "check_dnssec": "#/$defs/CheckDNSSEC",
+          "check_redirects": "#/$defs/CheckRedirects",
+          "check_site": "#/$defs/CheckSite",
+          "discover_links": "#/$defs/DiscoverLinks",
+          "get_brand": "#/$defs/GetBrand",
+          "get_crawl": "#/$defs/GetCrawl",
+          "get_discovery": "#/$defs/GetDiscovery",
+          "get_http_headers": "#/$defs/GetHTTPHeaders",
+          "list_crawls": "#/$defs/ListCrawls",
+          "lookup_dns": "#/$defs/LookupDNS",
+          "measure_load_time": "#/$defs/MeasureLoadTime",
+          "measure_ttfb": "#/$defs/MeasureTTFB",
+          "ping_host": "#/$defs/PingHost",
+          "scan_tls": "#/$defs/ScanTLS",
+          "scrape_metadata": "#/$defs/ScrapeMetadata",
+          "scrape_webpage": "#/$defs/ScrapeWebpage",
+          "search_web": "#/$defs/SearchWeb",
+          "start_crawl": "#/$defs/StartCrawl",
+          "start_discovery": "#/$defs/StartDiscovery"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ScrapeMetadata"
+        },
+        {
+          "$ref": "#/$defs/ScrapeWebpage"
+        },
+        {
+          "$ref": "#/$defs/LookupDNS"
+        },
+        {
+          "$ref": "#/$defs/CheckSite"
+        },
+        {
+          "$ref": "#/$defs/CheckRedirects"
+        },
+        {
+          "$ref": "#/$defs/CheckBrokenLinks"
+        },
+        {
+          "$ref": "#/$defs/ScanTLS"
+        },
+        {
+          "$ref": "#/$defs/MeasureTTFB"
+        },
+        {
+          "$ref": "#/$defs/MeasureLoadTime"
+        },
+        {
+          "$ref": "#/$defs/GetHTTPHeaders"
+        },
+        {
+          "$ref": "#/$defs/CheckDNSSEC"
+        },
+        {
+          "$ref": "#/$defs/PingHost"
+        },
+        {
+          "$ref": "#/$defs/AuditLighthouse"
+        },
+        {
+          "$ref": "#/$defs/SearchWeb"
+        },
+        {
+          "$ref": "#/$defs/GetBrand"
+        },
+        {
+          "$ref": "#/$defs/DiscoverLinks"
+        },
+        {
+          "$ref": "#/$defs/StartDiscovery"
+        },
+        {
+          "$ref": "#/$defs/GetDiscovery"
+        },
+        {
+          "$ref": "#/$defs/StartCrawl"
+        },
+        {
+          "$ref": "#/$defs/ListCrawls"
+        },
+        {
+          "$ref": "#/$defs/GetCrawl"
+        },
+        {
+          "$ref": "#/$defs/CancelCrawl"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GeekflareAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Geekflare Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,24 @@
+{
+  "timestamp": 1783943217189,
+  "apiStatus": "success",
+  "apiCode": 200,
+  "message": "Site is reachable.",
+  "meta": {
+    "url": "https://example.com",
+    "followRedirect": true,
+    "redirectedURL": "https://example.com/",
+    "test": {
+      "id": "mxqx9v9y0742lap6altwdteqd28t23nq"
+    }
+  },
+  "data": {
+    "dns": 10,
+    "connect": 12,
+    "tls": 9,
+    "send": 19,
+    "wait": 86,
+    "total": 88,
+    "statusCode": 200,
+    "reasonPhrase": "OK"
+  }
+}
