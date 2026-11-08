@@ -103,8 +103,11 @@
     "source": "https://docs.daily.co/openapi.json",
     "operation_id": "CreateMeetingToken",
     "body": {
-      "token": "REDACTED.SAMPLE.JWT"
-    }
+      "token": "daily-example-meeting-token"
+    },
+    "redactions": [
+      "The published JWT is replaced with a visibly synthetic token; this fixture tests forwarding, not JWT validation."
+    ]
   },
   "validate_meeting_token": {
     "source": "https://docs.daily.co/openapi.json",

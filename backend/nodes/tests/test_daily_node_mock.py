@@ -1,4 +1,5 @@
-"""Daily provider examples and request contracts, using an offline transport."""
+"""Daily provider examples with a synthetic JWT substitute, using an offline transport."""
+import importlib.util
 import json
 from pathlib import Path
 
@@ -10,6 +11,22 @@ from nodes.core.registry import NodeFactory
 
 TOKEN = "synthetic-daily-key-42"
 EXAMPLES = json.loads((Path(__file__).parent / "fixtures/daily/responses.json").read_text())
+
+
+def test_daily_response_fixtures_have_no_real_shaped_credentials():
+    # Provider documentation can itself contain signed credentials. Apply the
+    # export's actual scanner rather than exempting fixtures or duplicating rules.
+    root = Path(__file__).resolve().parents[3]
+    scanner_path = root / "scripts/scan_real_secrets.py"
+    if not scanner_path.exists():
+        scanner_path = root / "oss/scan_real_secrets.py"
+    spec = importlib.util.spec_from_file_location("daily_secret_scanner", scanner_path)
+    scanner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(scanner)
+    fixture = Path(__file__).parent / "fixtures/daily/responses.json"
+    assert not scanner.find_secrets(fixture.read_bytes())
+    assert EXAMPLES["create_meeting_token"]["body"]["token"] == "daily-example-meeting-token"
+    assert EXAMPLES["create_meeting_token"]["redactions"]
 
 
 @pytest.fixture(autouse=True)
