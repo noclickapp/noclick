@@ -11,6 +11,7 @@ const OpnFormIcon = ({ className, style }: { className?: string; style?: CSSProp
 
 export const OpnFormNode: NodeDefinition = {
     type: 'automation-opn-form', label: 'Opn Form',
+    category: 'forms',
     description: 'Manage workspaces, forms, submissions and webhooks',
     Icon: OpnFormIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
