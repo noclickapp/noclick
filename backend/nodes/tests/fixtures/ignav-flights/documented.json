@@ -1,0 +1,429 @@
+{
+  "quickstart": {
+    "source": "https://ignav.com/docs/quickstart",
+    "responses": [
+      {
+        "origin": "SFO",
+        "destination": "JFK",
+        "departure_date": "2026-12-07",
+        "observed_at": "2026-01-01T12:00:00Z",
+        "itineraries": [
+          {
+            "price": {
+              "amount": 299,
+              "currency": "USD",
+              "status": "verified"
+            },
+            "outbound": {
+              "carrier": "American Airlines",
+              "duration_minutes": 330,
+              "segments": [
+                {
+                  "marketing_carrier_code": "AA",
+                  "flight_number": "100",
+                  "operating_carrier_name": "American Airlines",
+                  "departure_airport": "SFO",
+                  "departure_time_local": "2026-12-07T08:00:00",
+                  "departure_timezone": "America/Los_Angeles",
+                  "departure_time_utc": "2026-12-07T15:00:00Z",
+                  "arrival_airport": "JFK",
+                  "arrival_time_local": "2026-12-07T16:30:00",
+                  "arrival_timezone": "America/New_York",
+                  "arrival_time_utc": "2026-12-07T20:30:00Z",
+                  "duration_minutes": 330,
+                  "aircraft": "Boeing 777"
+                }
+              ]
+            },
+            "cabin_class": "economy",
+            "has_mixed_carriers": false,
+            "ignav_id": "5e4fcd2f1dc340649eb19f6ee2afb57a"
+          }
+        ]
+      }
+    ]
+  },
+  "search": {
+    "source": "https://ignav.com/docs/search",
+    "responses": [
+      {
+        "legs": [
+          {
+            "origin": "SFO",
+            "destination": "DEN",
+            "departure_date": "2026-12-07"
+          },
+          {
+            "origin": "COS",
+            "destination": "ORD",
+            "departure_date": "2026-12-11"
+          }
+        ],
+        "observed_at": "2026-01-01T12:00:00Z",
+        "itineraries": [
+          {
+            "price": {
+              "amount": 742,
+              "currency": "USD",
+              "status": "verified"
+            },
+            "legs": [
+              {
+                "carrier": "American Airlines",
+                "duration_minutes": 150,
+                "segments": [
+                  {
+                    "marketing_carrier_code": "AA",
+                    "flight_number": "1412",
+                    "operating_carrier_name": "American Airlines",
+                    "departure_airport": "SFO",
+                    "departure_time_local": "2026-12-07T09:00:00",
+                    "departure_timezone": "America/Los_Angeles",
+                    "departure_time_utc": "2026-12-07T16:00:00Z",
+                    "arrival_airport": "DEN",
+                    "arrival_time_local": "2026-12-07T12:30:00",
+                    "arrival_timezone": "America/Denver",
+                    "arrival_time_utc": "2026-12-07T18:30:00Z",
+                    "duration_minutes": 150,
+                    "aircraft": "Boeing 737"
+                  }
+                ]
+              },
+              {
+                "carrier": "American Airlines",
+                "duration_minutes": 150,
+                "segments": [
+                  {
+                    "marketing_carrier_code": "AA",
+                    "flight_number": "2285",
+                    "operating_carrier_name": "American Airlines",
+                    "departure_airport": "COS",
+                    "departure_time_local": "2026-12-11T09:00:00",
+                    "departure_timezone": "America/Denver",
+                    "departure_time_utc": "2026-12-11T15:00:00Z",
+                    "arrival_airport": "ORD",
+                    "arrival_time_local": "2026-12-11T12:30:00",
+                    "arrival_timezone": "America/Chicago",
+                    "arrival_time_utc": "2026-12-11T17:30:00Z",
+                    "duration_minutes": 150,
+                    "aircraft": "Boeing 737"
+                  }
+                ]
+              }
+            ],
+            "cabin_class": "economy",
+            "has_mixed_carriers": false,
+            "ignav_id": "b2c3d4e5f6789012345678abcdef0123"
+          }
+        ]
+      },
+      {
+        "itinerary": {
+          "price": {
+            "amount": 742,
+            "currency": "USD",
+            "status": "verified"
+          },
+          "legs": [
+            {
+              "carrier": "American Airlines",
+              "duration_minutes": 150,
+              "segments": [
+                {
+                  "marketing_carrier_code": "AA",
+                  "flight_number": "1412",
+                  "operating_carrier_name": "American Airlines",
+                  "departure_airport": "SFO",
+                  "departure_time_local": "2026-12-07T09:00:00",
+                  "departure_timezone": "America/Los_Angeles",
+                  "departure_time_utc": "2026-12-07T16:00:00Z",
+                  "arrival_airport": "DEN",
+                  "arrival_time_local": "2026-12-07T12:30:00",
+                  "arrival_timezone": "America/Denver",
+                  "arrival_time_utc": "2026-12-07T18:30:00Z",
+                  "duration_minutes": 150,
+                  "aircraft": "Boeing 737"
+                }
+              ]
+            },
+            {
+              "carrier": "American Airlines",
+              "duration_minutes": 150,
+              "segments": [
+                {
+                  "marketing_carrier_code": "AA",
+                  "flight_number": "2285",
+                  "operating_carrier_name": "American Airlines",
+                  "departure_airport": "COS",
+                  "departure_time_local": "2026-12-11T09:00:00",
+                  "departure_timezone": "America/Denver",
+                  "departure_time_utc": "2026-12-11T15:00:00Z",
+                  "arrival_airport": "ORD",
+                  "arrival_time_local": "2026-12-11T12:30:00",
+                  "arrival_timezone": "America/Chicago",
+                  "arrival_time_utc": "2026-12-11T17:30:00Z",
+                  "duration_minutes": 150,
+                  "aircraft": "Boeing 737"
+                }
+              ]
+            }
+          ],
+          "cabin_class": "economy",
+          "has_mixed_carriers": false
+        },
+        "booking_options": [
+          {
+            "leg_indexes": [
+              0,
+              1
+            ],
+            "links": [
+              {
+                "provider_name": "American Airlines",
+                "provider_type": "airline",
+                "price": {
+                  "amount": 742,
+                  "currency": "USD",
+                  "status": "verified"
+                },
+                "url": "aa.com/booking/..."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "booking-links": {
+    "source": "https://ignav.com/docs/booking-links",
+    "responses": [
+      {
+        "itinerary": {
+          "price": {
+            "amount": 488,
+            "currency": "USD",
+            "status": "verified"
+          },
+          "outbound": {
+            "carrier": "American Airlines",
+            "duration_minutes": 330,
+            "segments": [
+              {
+                "marketing_carrier_code": "AA",
+                "flight_number": "100",
+                "operating_carrier_name": "American Airlines",
+                "departure_airport": "SFO",
+                "departure_time_local": "2026-12-07T08:00:00",
+                "departure_timezone": "America/Los_Angeles",
+                "departure_time_utc": "2026-12-07T15:00:00Z",
+                "arrival_airport": "JFK",
+                "arrival_time_local": "2026-12-07T16:30:00",
+                "arrival_timezone": "America/New_York",
+                "arrival_time_utc": "2026-12-07T20:30:00Z",
+                "duration_minutes": 330,
+                "aircraft": "Boeing 777"
+              }
+            ]
+          },
+          "cabin_class": "economy",
+          "has_mixed_carriers": false
+        },
+        "booking_options": [
+          {
+            "legs": [
+              "outbound"
+            ],
+            "links": [
+              {
+                "provider_name": "American Airlines",
+                "provider_type": "airline",
+                "fare_name": "Main Cabin",
+                "specificity": "exact_flight",
+                "price": {
+                  "amount": 488,
+                  "currency": "USD",
+                  "status": "verified"
+                },
+                "url": "aa.com/booking/..."
+              },
+              {
+                "provider_name": "Expedia",
+                "provider_type": "third_party",
+                "price": {
+                  "amount": 502,
+                  "currency": "USD",
+                  "status": "verified"
+                },
+                "url": "expedia.com/flights/..."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "cheapest-dates": {
+    "source": "https://ignav.com/docs/cheapest-dates",
+    "responses": [
+      {
+        "origin": "NYC",
+        "destination": "LON",
+        "dates": [
+          {
+            "departure_date": "2026-12-07",
+            "return_date": "2026-12-14",
+            "price": {
+              "amount": 1178,
+              "currency": "GBP",
+              "status": "unverified"
+            }
+          },
+          {
+            "departure_date": "2026-12-08",
+            "return_date": "2026-12-15",
+            "price": null
+          }
+        ],
+        "observed_at": "2026-10-18T12:00:00Z"
+      }
+    ]
+  },
+  "airports": {
+    "source": "https://ignav.com/docs/airports",
+    "responses": [
+      [
+        {
+          "code": "SFO",
+          "name": "San Francisco International Airport",
+          "city": "San Francisco",
+          "country": "US"
+        },
+        {
+          "code": "SJC",
+          "name": "Norman Y. Mineta San Jose International Airport",
+          "city": "San Jose",
+          "country": "US"
+        }
+      ]
+    ]
+  },
+  "health": {
+    "source": "https://ignav.com/docs/health",
+    "responses": [
+      {
+        "ok": true,
+        "release": "a1b2c3d4"
+      }
+    ]
+  },
+  "one-way": {
+    "source": "https://ignav.com/docs/one-way",
+    "responses": [
+      {
+        "origin": "SFO",
+        "destination": "JFK",
+        "departure_date": "2026-12-07",
+        "observed_at": "2026-01-01T12:00:00Z",
+        "itineraries": [
+          {
+            "price": {
+              "amount": 299,
+              "currency": "USD",
+              "status": "verified"
+            },
+            "outbound": {
+              "carrier": "American Airlines",
+              "duration_minutes": 330,
+              "segments": [
+                {
+                  "marketing_carrier_code": "AA",
+                  "flight_number": "100",
+                  "operating_carrier_name": "American Airlines",
+                  "departure_airport": "SFO",
+                  "departure_time_local": "2026-12-07T08:00:00",
+                  "departure_timezone": "America/Los_Angeles",
+                  "departure_time_utc": "2026-12-07T15:00:00Z",
+                  "arrival_airport": "JFK",
+                  "arrival_time_local": "2026-12-07T16:30:00",
+                  "arrival_timezone": "America/New_York",
+                  "arrival_time_utc": "2026-12-07T20:30:00Z",
+                  "duration_minutes": 330,
+                  "aircraft": "Boeing 777"
+                }
+              ]
+            },
+            "cabin_class": "economy",
+            "has_mixed_carriers": false,
+            "ignav_id": "5e4fcd2f1dc340649eb19f6ee2afb57a"
+          }
+        ]
+      }
+    ]
+  },
+  "round-trip": {
+    "source": "https://ignav.com/docs/round-trip",
+    "responses": [
+      {
+        "origin": "SFO",
+        "destination": "LHR",
+        "departure_date": "2026-12-07",
+        "return_date": "2026-12-14",
+        "observed_at": "2026-01-01T12:00:00Z",
+        "itineraries": [
+          {
+            "price": {
+              "amount": 899,
+              "currency": "USD",
+              "status": "verified"
+            },
+            "outbound": {
+              "carrier": "British Airways",
+              "duration_minutes": 625,
+              "segments": [
+                {
+                  "marketing_carrier_code": "BA",
+                  "flight_number": "286",
+                  "operating_carrier_name": "British Airways",
+                  "departure_airport": "SFO",
+                  "departure_time_local": "2026-12-07T17:30:00",
+                  "departure_timezone": "America/Los_Angeles",
+                  "departure_time_utc": "2026-12-08T00:30:00Z",
+                  "arrival_airport": "LHR",
+                  "arrival_time_local": "2026-12-08T11:55:00",
+                  "arrival_timezone": "Europe/London",
+                  "arrival_time_utc": "2026-12-08T10:55:00Z",
+                  "duration_minutes": 625,
+                  "aircraft": "Airbus A380"
+                }
+              ]
+            },
+            "inbound": {
+              "carrier": "British Airways",
+              "duration_minutes": 660,
+              "segments": [
+                {
+                  "marketing_carrier_code": "BA",
+                  "flight_number": "287",
+                  "operating_carrier_name": "British Airways",
+                  "departure_airport": "LHR",
+                  "departure_time_local": "2026-12-14T10:00:00",
+                  "departure_timezone": "Europe/London",
+                  "departure_time_utc": "2026-12-14T09:00:00Z",
+                  "arrival_airport": "SFO",
+                  "arrival_time_local": "2026-12-14T13:00:00",
+                  "arrival_timezone": "America/Los_Angeles",
+                  "arrival_time_utc": "2026-12-14T20:00:00Z",
+                  "duration_minutes": 660,
+                  "aircraft": "Airbus A380"
+                }
+              ]
+            },
+            "cabin_class": "economy",
+            "has_mixed_carriers": false,
+            "ignav_id": "a1b2c3d4e5f6789012345678abcdef01"
+          }
+        ]
+      }
+    ]
+  }
+}
