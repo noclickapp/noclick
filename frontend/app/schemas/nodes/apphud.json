@@ -1,0 +1,522 @@
+{
+  "$defs": {
+    "ApphudAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "apphud_s2s_api_key",
+          "default": "apphud_s2s_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Existing App-level S2S API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "app_id": {
+          "description": "The eight-character application identifier from App settings. This is not a bundle ID. The fixed key/app pair is used on every chart request.",
+          "pattern": "^[A-Za-z0-9]{8}$",
+          "title": "Apphud Application ID",
+          "type": "string"
+        },
+        "chart_ids": {
+          "description": "Explicit local restrictions. Catalog discovery never extends this list; it does not prove account identity or paid access.",
+          "items": {
+            "pattern": "^[A-Za-z0-9_-]{1,128}$",
+            "type": "string"
+          },
+          "maxItems": 40,
+          "title": "Allowed Chart IDs",
+          "type": "array"
+        },
+        "allowed_operations": {
+          "description": "List Charts is required for current protected discovery. All supported operations are analytics reads, including POST queries.",
+          "items": {
+            "enum": [
+              "list_charts",
+              "get_chart_options",
+              "get_filter_values",
+              "query_line_chart",
+              "query_column_chart"
+            ],
+            "type": "string"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Allowed Operations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "api_key",
+        "app_id",
+        "allowed_operations"
+      ],
+      "title": "Apphud App-level S2S API Key",
+      "type": "object",
+      "x-credential-description": "Supply an existing app-level S2S key, not an SDK or Customer API query key. Sent only in the Bearer header. Expert+ availability and this key\u2019s entitlement remain unverified until protected reads succeed.",
+      "x-credential-url": "https://docs.apphud.com/docs/analytics-api"
+    },
+    "ApphudFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,128}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "enum": [
+                "equals",
+                "not_equals",
+                "contains",
+                "not_contains"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Condition",
+          "enum": [
+            "equals",
+            "not_equals",
+            "contains",
+            "not_contains"
+          ],
+          "x-enum-searchable": true
+        },
+        "values": {
+          "items": {
+            "$ref": "#/$defs/ApphudFilterValue"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Values",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "values"
+      ],
+      "title": "ApphudFilter",
+      "type": "object"
+    },
+    "ApphudFilterValue": {
+      "additionalProperties": false,
+      "properties": {
+        "condition": {
+          "enum": [
+            "equals",
+            "not_equals",
+            "contains",
+            "not_contains"
+          ],
+          "title": "Condition",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "condition",
+        "value"
+      ],
+      "title": "ApphudFilterValue",
+      "type": "object"
+    },
+    "ApphudGetChartOptionsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "chart_id": {
+          "pattern": "^[A-Za-z0-9_-]{1,128}$",
+          "title": "Chart",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "chart_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_chart_options",
+          "default": "get_chart_options",
+          "title": "Get Chart Options",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Get Chart Options",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "chart_id"
+      ],
+      "title": "ApphudGetChartOptionsConfig",
+      "type": "object"
+    },
+    "ApphudGetFilterValuesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "chart_id": {
+          "pattern": "^[A-Za-z0-9_-]{1,128}$",
+          "title": "Chart",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "chart_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_filter_values",
+          "default": "get_filter_values",
+          "title": "Discover Filter Values",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Discover Filter Values",
+          "x-is-trigger": false
+        },
+        "filter_id": {
+          "pattern": "^[A-Za-z0-9_-]{1,128}$",
+          "title": "Filter",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "depends_on": [
+              "chart_id"
+            ],
+            "field_name": "filter_id",
+            "searchable": true
+          }
+        },
+        "filters": {
+          "description": "Different filters combine with AND. Values inside a filter combine with OR unless a negative filter-level condition changes this.",
+          "items": {
+            "$ref": "#/$defs/ApphudFilter"
+          },
+          "maxItems": 20,
+          "title": "Filters",
+          "type": "array"
+        }
+      },
+      "required": [
+        "chart_id",
+        "filter_id"
+      ],
+      "title": "ApphudGetFilterValuesConfig",
+      "type": "object"
+    },
+    "ApphudListChartsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_charts",
+          "default": "list_charts",
+          "title": "List App Charts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "List App Charts",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ApphudListChartsConfig",
+      "type": "object"
+    },
+    "ApphudPagination": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "maximum": 2000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "ApphudPagination",
+      "type": "object"
+    },
+    "ApphudQueryColumnChartConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "chart_id": {
+          "pattern": "^[A-Za-z0-9_-]{1,128}$",
+          "title": "Chart",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "chart_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "time_range": {
+          "$ref": "#/$defs/ApphudTimeRange"
+        },
+        "additional": {
+          "description": "Exact string keys and string values discovered from the current chart catalog. Required calculation parameters must be supplied; no guessed defaults.",
+          "maxProperties": 20,
+          "patternProperties": {
+            "^[A-Za-z0-9_-]{1,128}$": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "title": "Additional",
+          "type": "object"
+        },
+        "filters": {
+          "items": {
+            "$ref": "#/$defs/ApphudFilter"
+          },
+          "maxItems": 20,
+          "title": "Filters",
+          "type": "array"
+        },
+        "operation": {
+          "const": "query_column_chart",
+          "default": "query_column_chart",
+          "title": "Query Column Chart",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Query Column Chart",
+          "x-is-trigger": false
+        },
+        "segments": {
+          "items": {
+            "$ref": "#/$defs/ApphudSegment"
+          },
+          "maxItems": 2,
+          "title": "Segments",
+          "type": "array"
+        },
+        "pagination": {
+          "$ref": "#/$defs/ApphudPagination",
+          "description": "One page only, up to 2000 rows. No total count is documented. Fewer than the requested limit finishes paging."
+        },
+        "sorting": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ApphudSorting"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "chart_id",
+        "time_range"
+      ],
+      "title": "ApphudQueryColumnChartConfig",
+      "type": "object"
+    },
+    "ApphudQueryLineChartConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "chart_id": {
+          "pattern": "^[A-Za-z0-9_-]{1,128}$",
+          "title": "Chart",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "chart_id",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "time_range": {
+          "$ref": "#/$defs/ApphudTimeRange"
+        },
+        "additional": {
+          "description": "Exact string keys and string values discovered from the current chart catalog. Required calculation parameters must be supplied; no guessed defaults.",
+          "maxProperties": 20,
+          "patternProperties": {
+            "^[A-Za-z0-9_-]{1,128}$": {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "title": "Additional",
+          "type": "object"
+        },
+        "filters": {
+          "items": {
+            "$ref": "#/$defs/ApphudFilter"
+          },
+          "maxItems": 20,
+          "title": "Filters",
+          "type": "array"
+        },
+        "operation": {
+          "const": "query_line_chart",
+          "default": "query_line_chart",
+          "title": "Query Line Chart",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Query Line Chart",
+          "x-is-trigger": false
+        },
+        "segments": {
+          "description": "The API uses only the first segment for line charts; this node accepts at most one.",
+          "items": {
+            "$ref": "#/$defs/ApphudSegment"
+          },
+          "maxItems": 1,
+          "title": "Segments",
+          "type": "array"
+        }
+      },
+      "required": [
+        "chart_id",
+        "time_range"
+      ],
+      "title": "ApphudQueryLineChartConfig",
+      "type": "object"
+    },
+    "ApphudSegment": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,128}$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ApphudSegment",
+      "type": "object"
+    },
+    "ApphudSorting": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "description": "Segment or a documented chart value name. The API validates chart-specific value names.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Field",
+          "type": "string"
+        },
+        "order": {
+          "default": "ASC",
+          "enum": [
+            "ASC",
+            "DESC"
+          ],
+          "title": "Order",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field"
+      ],
+      "title": "ApphudSorting",
+      "type": "object"
+    },
+    "ApphudTimeRange": {
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "From (ISO-8601 with Offset)",
+          "type": "string"
+        },
+        "to": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "To (ISO-8601 with Same Offset)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "from",
+        "to"
+      ],
+      "title": "ApphudTimeRange",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "discriminator": {
+        "mapping": {
+          "get_chart_options": "#/$defs/ApphudGetChartOptionsConfig",
+          "get_filter_values": "#/$defs/ApphudGetFilterValuesConfig",
+          "list_charts": "#/$defs/ApphudListChartsConfig",
+          "query_column_chart": "#/$defs/ApphudQueryColumnChartConfig",
+          "query_line_chart": "#/$defs/ApphudQueryLineChartConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ApphudListChartsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApphudGetChartOptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApphudGetFilterValuesConfig"
+        },
+        {
+          "$ref": "#/$defs/ApphudQueryLineChartConfig"
+        },
+        {
+          "$ref": "#/$defs/ApphudQueryColumnChartConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ApphudAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Apphud Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
