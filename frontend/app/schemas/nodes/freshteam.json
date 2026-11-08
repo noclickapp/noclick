@@ -1,0 +1,888 @@
+{
+  "$defs": {
+    "CheckConnection": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_connection",
+          "default": "check_connection",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connection",
+          "x-display-name": "Check Tenant API Access",
+          "x-is-trigger": false
+        }
+      },
+      "title": "CheckConnection",
+      "type": "object"
+    },
+    "CreateCandidateSource": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_candidate_source",
+          "default": "create_candidate_source",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recruiting Reference",
+          "x-display-name": "Create Candidate Source Metadata",
+          "x-is-trigger": false
+        },
+        "label": {
+          "description": "Creates an account-wide recruiting source. No documented API delete is exposed; root must qualify owned UI cleanup before a real lifecycle.",
+          "maxLength": 128,
+          "minLength": 2,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "title": "CreateCandidateSource",
+      "type": "object"
+    },
+    "FreshteamCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "freshteam",
+          "default": "freshteam",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account_name": {
+          "description": "Your account label or exact https://account.freshteam.com origin. Other Freshworks products and arbitrary hosts are not accepted.",
+          "title": "Freshteam Account",
+          "type": "string"
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "account_name",
+        "api_key"
+      ],
+      "title": "Freshteam",
+      "type": "object",
+      "x-credential-instructions": "Supply the API key already issued in your Freshteam profile > API Settings and your owned account name. Requests use Authorization: Bearer on that account only. No OAuth app, password login or token minting is performed; read permissions and plan access remain operation-specific.",
+      "x-credential-url": "https://support.freshteam.com/support/solutions/articles/19000107072-how-to-use-freshteam-developer-api-"
+    },
+    "GetApplicant": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "maxLength": 16,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,15}$",
+          "title": "Job Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact Freshteam ID or field name",
+            "field_name": "job_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "applicant_id": {
+          "maxLength": 16,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,15}$",
+          "title": "Applicant Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact Freshteam ID or field name",
+            "depends_on": "job_id",
+            "field_name": "applicant_id",
+            "searchable": false
+          }
+        },
+        "operation": {
+          "const": "get_applicant",
+          "default": "get_applicant",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recruiting",
+          "x-display-name": "Get Job Applicant Metadata",
+          "x-is-trigger": false
+        },
+        "field_name": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[a-z][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optionally read one qualified custom text metadata field for an explicit write readback.",
+          "title": "Field Name",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact Freshteam ID or field name",
+            "depends_on": "job_id",
+            "field_name": "field_name",
+            "searchable": false
+          }
+        }
+      },
+      "required": [
+        "job_id",
+        "applicant_id"
+      ],
+      "title": "GetApplicant",
+      "type": "object"
+    },
+    "GetEmployee": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_employee",
+          "default": "get_employee",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "Get Employee Metadata",
+          "x-is-trigger": false
+        },
+        "employee_id": {
+          "maxLength": 16,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,15}$",
+          "title": "Employee Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact Freshteam ID or field name",
+            "field_name": "employee_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "employee_id"
+      ],
+      "title": "GetEmployee",
+      "type": "object"
+    },
+    "GetJob": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "maxLength": 16,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,15}$",
+          "title": "Job Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact Freshteam ID or field name",
+            "field_name": "job_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recruiting",
+          "x-display-name": "Get Job Posting Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJob",
+      "type": "object"
+    },
+    "ListApplicantFields": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "maxLength": 16,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,15}$",
+          "title": "Job Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact Freshteam ID or field name",
+            "field_name": "job_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_applicant_fields",
+          "default": "list_applicant_fields",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recruiting",
+          "x-display-name": "List Job Applicant Field Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ListApplicantFields",
+      "type": "object"
+    },
+    "ListApplicants": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per request. Freshteam documents 50 records per page; the node does not follow response URLs or scan automatically.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "job_id": {
+          "maxLength": 16,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,15}$",
+          "title": "Job Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact Freshteam ID or field name",
+            "field_name": "job_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_applicants",
+          "default": "list_applicants",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recruiting",
+          "x-display-name": "List Job Applicant Metadata",
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "on_hold",
+                "rejected",
+                "archived",
+                "moved",
+                "dropped"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "open",
+            "on_hold",
+            "rejected",
+            "archived",
+            "moved",
+            "dropped"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ListApplicants",
+      "type": "object"
+    },
+    "ListBranches": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_branches",
+          "default": "list_branches",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Branch Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListBranches",
+      "type": "object"
+    },
+    "ListBusinessUnits": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_business_units",
+          "default": "list_business_units",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Business Units",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListBusinessUnits",
+      "type": "object"
+    },
+    "ListCandidateSources": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_candidate_sources",
+          "default": "list_candidate_sources",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recruiting Reference",
+          "x-display-name": "List Candidate Sources",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListCandidateSources",
+      "type": "object"
+    },
+    "ListDepartments": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_departments",
+          "default": "list_departments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Departments",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListDepartments",
+      "type": "object"
+    },
+    "ListEmployees": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per request. Freshteam documents 50 records per page; the node does not follow response URLs or scan automatically.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_employees",
+          "default": "list_employees",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "List Employee Metadata",
+          "x-is-trigger": false
+        },
+        "department_id": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "minLength": 1,
+              "pattern": "^[1-9][0-9]{0,15}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Department Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact Freshteam ID or field name",
+            "field_name": "department_id",
+            "searchable": false
+          }
+        },
+        "branch_id": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "minLength": 1,
+              "pattern": "^[1-9][0-9]{0,15}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Branch Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact Freshteam ID or field name",
+            "field_name": "branch_id",
+            "searchable": false
+          }
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "inactive"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "inactive"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListEmployees",
+      "type": "object"
+    },
+    "ListJobFields": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_job_fields",
+          "default": "list_job_fields",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recruiting",
+          "x-display-name": "List Job Form Field Metadata",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListJobFields",
+      "type": "object"
+    },
+    "ListJobs": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "One page per request. Freshteam documents 50 records per page; the node does not follow response URLs or scan automatically.",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recruiting",
+          "x-display-name": "List Job Posting Metadata",
+          "x-is-trigger": false
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "published",
+                "internal",
+                "private",
+                "on_hold",
+                "closed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "draft",
+            "published",
+            "internal",
+            "private",
+            "on_hold",
+            "closed"
+          ],
+          "x-enum-searchable": true
+        },
+        "department_id": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "minLength": 1,
+              "pattern": "^[1-9][0-9]{0,15}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Department Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact Freshteam ID or field name",
+            "field_name": "department_id",
+            "searchable": false
+          }
+        },
+        "branch_id": {
+          "anyOf": [
+            {
+              "maxLength": 16,
+              "minLength": 1,
+              "pattern": "^[1-9][0-9]{0,15}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Branch Id",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact Freshteam ID or field name",
+            "field_name": "branch_id",
+            "searchable": false
+          }
+        },
+        "remote": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unset leaves the filter out. False explicitly selects non-remote jobs.",
+          "title": "Remote"
+        }
+      },
+      "title": "ListJobs",
+      "type": "object"
+    },
+    "ListLevels": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_levels",
+          "default": "list_levels",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Job Levels",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListLevels",
+      "type": "object"
+    },
+    "ListSourceCategories": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_source_categories",
+          "default": "list_source_categories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recruiting Reference",
+          "x-display-name": "List Candidate Source Categories",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListSourceCategories",
+      "type": "object"
+    },
+    "ListSubDepartments": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_sub_departments",
+          "default": "list_sub_departments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Sub-Departments",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListSubDepartments",
+      "type": "object"
+    },
+    "ListTeams": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Teams",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListTeams",
+      "type": "object"
+    },
+    "ListUserFunctions": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_user_functions",
+          "default": "list_user_functions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List User Functions",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ListUserFunctions",
+      "type": "object"
+    },
+    "UpdateApplicantTextField": {
+      "additionalProperties": false,
+      "properties": {
+        "job_id": {
+          "maxLength": 16,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,15}$",
+          "title": "Job Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact Freshteam ID or field name",
+            "field_name": "job_id",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        },
+        "applicant_id": {
+          "maxLength": 16,
+          "minLength": 1,
+          "pattern": "^[1-9][0-9]{0,15}$",
+          "title": "Applicant Id",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact Freshteam ID or field name",
+            "depends_on": "job_id",
+            "field_name": "applicant_id",
+            "searchable": false
+          }
+        },
+        "operation": {
+          "const": "update_applicant_text_field",
+          "default": "update_applicant_text_field",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recruiting",
+          "x-display-name": "Update Applicant Custom Text Metadata",
+          "x-is-trigger": false
+        },
+        "field_name": {
+          "description": "Existing non-default applicant text/paragraph field from the selected job. Use a non-sensitive internal CRM metadata field; no hiring-stage or employee changes.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "title": "Custom Text Field",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Exact Freshteam ID or field name",
+            "depends_on": "job_id",
+            "field_name": "field_name",
+            "searchable": false
+          }
+        },
+        "value": {
+          "description": "Replaces this text metadata. The node refuses applicants with other populated custom fields because sparse-map preservation is not documented.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id",
+        "applicant_id",
+        "field_name",
+        "value"
+      ],
+      "title": "UpdateApplicantTextField",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "discriminator": {
+        "mapping": {
+          "check_connection": "#/$defs/CheckConnection",
+          "create_candidate_source": "#/$defs/CreateCandidateSource",
+          "get_applicant": "#/$defs/GetApplicant",
+          "get_employee": "#/$defs/GetEmployee",
+          "get_job": "#/$defs/GetJob",
+          "list_applicant_fields": "#/$defs/ListApplicantFields",
+          "list_applicants": "#/$defs/ListApplicants",
+          "list_branches": "#/$defs/ListBranches",
+          "list_business_units": "#/$defs/ListBusinessUnits",
+          "list_candidate_sources": "#/$defs/ListCandidateSources",
+          "list_departments": "#/$defs/ListDepartments",
+          "list_employees": "#/$defs/ListEmployees",
+          "list_job_fields": "#/$defs/ListJobFields",
+          "list_jobs": "#/$defs/ListJobs",
+          "list_levels": "#/$defs/ListLevels",
+          "list_source_categories": "#/$defs/ListSourceCategories",
+          "list_sub_departments": "#/$defs/ListSubDepartments",
+          "list_teams": "#/$defs/ListTeams",
+          "list_user_functions": "#/$defs/ListUserFunctions",
+          "update_applicant_text_field": "#/$defs/UpdateApplicantTextField"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CheckConnection"
+        },
+        {
+          "$ref": "#/$defs/ListDepartments"
+        },
+        {
+          "$ref": "#/$defs/ListBranches"
+        },
+        {
+          "$ref": "#/$defs/ListTeams"
+        },
+        {
+          "$ref": "#/$defs/ListSubDepartments"
+        },
+        {
+          "$ref": "#/$defs/ListBusinessUnits"
+        },
+        {
+          "$ref": "#/$defs/ListLevels"
+        },
+        {
+          "$ref": "#/$defs/ListUserFunctions"
+        },
+        {
+          "$ref": "#/$defs/ListEmployees"
+        },
+        {
+          "$ref": "#/$defs/GetEmployee"
+        },
+        {
+          "$ref": "#/$defs/ListJobs"
+        },
+        {
+          "$ref": "#/$defs/GetJob"
+        },
+        {
+          "$ref": "#/$defs/ListJobFields"
+        },
+        {
+          "$ref": "#/$defs/ListApplicantFields"
+        },
+        {
+          "$ref": "#/$defs/ListApplicants"
+        },
+        {
+          "$ref": "#/$defs/GetApplicant"
+        },
+        {
+          "$ref": "#/$defs/UpdateApplicantTextField"
+        },
+        {
+          "$ref": "#/$defs/ListCandidateSources"
+        },
+        {
+          "$ref": "#/$defs/ListSourceCategories"
+        },
+        {
+          "$ref": "#/$defs/CreateCandidateSource"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FreshteamCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Freshteam Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
