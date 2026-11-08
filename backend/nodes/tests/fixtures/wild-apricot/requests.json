@@ -1,0 +1,21 @@
+[
+  {"config":{"operation":"list_accounts"},"method":"GET","path":"/accounts","response":[{"Id":42,"Name":"Neighborhood Club"}]},
+  {"config":{"operation":"get_account","account_id":42},"method":"GET","path":"/accounts/42","response":{"Id":42,"Name":"Neighborhood Club"}},
+  {"config":{"operation":"list_contacts","account_id":42,"top":20,"skip":40,"simple_query":"Pat","select":"'First name'"},"method":"GET","path":"/accounts/42/contacts","query":{"$top":"20","$skip":"40","simpleQuery":"Pat","$select":"'First name'"},"response":{"Contacts":[{"Id":7,"FieldValues":[]}]}},
+  {"config":{"operation":"get_contact","account_id":42,"contact_id":7},"method":"GET","path":"/accounts/42/contacts/7","response":{"Id":7,"FieldValues":[]}},
+  {"config":{"operation":"get_my_contact","account_id":42},"method":"GET","path":"/accounts/42/contacts/me","query":{"includeDetails":"true"},"response":{"Id":7,"FieldValues":[]}},
+  {"config":{"operation":"update_my_contact","account_id":42,"contact_id":7,"field_values":[{"FieldName":"First name","SystemCode":"FirstName","Value":"Pat"}]},"method":"PUT","path":"/accounts/42/contacts/me","body":{"Id":7,"FieldValues":[{"FieldName":"First name","SystemCode":"FirstName","Value":"Pat"}]},"response":{"Id":7,"FieldValues":[{"FieldName":"First name","SystemCode":"FirstName","Value":"Pat"}]}},
+  {"config":{"operation":"get_contact_fields","account_id":42},"method":"GET","path":"/accounts/42/contactfields","query":{"showSectionDividers":"false"},"response":[{"FieldName":"First name","SystemCode":"FirstName"}]},
+  {"config":{"operation":"list_membership_levels","account_id":42},"method":"GET","path":"/accounts/42/membershiplevels","response":[{"Id":3,"Name":"Annual"}]},
+  {"config":{"operation":"list_events","account_id":42,"filter":"IsUpcoming eq true"},"method":"GET","path":"/accounts/42/events","query":{"$top":"100","$skip":"0","$filter":"IsUpcoming eq true"},"response":{"Events":[{"Id":8,"Name":"Annual meeting"}]}},
+  {"config":{"operation":"get_event","account_id":42,"event_id":8},"method":"GET","path":"/accounts/42/events/8","response":[{"Id":8,"Name":"Annual meeting"}]},
+  {"config":{"operation":"list_registrations","account_id":42,"event_id":8,"is_upcoming":false},"method":"GET","path":"/accounts/42/eventregistrations","query":{"$top":"100","$skip":"0","eventId":"8","isUpcoming":"false"},"response":[{"Id":9}]},
+  {"config":{"operation":"get_registration","account_id":42,"registration_id":9},"method":"GET","path":"/accounts/42/eventregistrations/9","response":{"Id":9}},
+  {"config":{"operation":"create_registration","account_id":42,"event_id":8,"registration_type_id":2,"payment_method_type":"Offline"},"method":"POST","path":"/accounts/42/eventregistrations","body":{"EventId":8,"RegistrationTypeId":2,"RegistrationFields":[],"ShowToPublic":false,"ForWaitList":false,"NumberOfGuests":0,"PaymentMethodType":"Offline"},"response":9},
+  {"config":{"operation":"delete_registration","account_id":42,"registration_id":9},"method":"DELETE","path":"/accounts/42/eventregistrations/9","response":{"Id":9}},
+  {"config":{"operation":"calculate_registration_costs","account_id":42,"event_id":8,"registration_type_id":2},"method":"POST","path":"/rpc/42/CalculateEventRegistrationCosts","body":{"EventId":8,"RegistrationTypeId":2,"RegistrationFields":[],"ShowToPublic":false,"ForWaitList":false,"NumberOfGuests":0},"response":{"Id":11,"Total":25}},
+  {"config":{"operation":"verify_registration_code","account_id":42,"event_id":8,"registration_type_id":2,"code":"MEMBER"},"method":"POST","path":"/rpc/42/verifyEventRegistrationCode","body":{"eventId":8,"registrationTypeId":2,"code":"MEMBER"},"response":false},
+  {"config":{"operation":"cancel_registration","account_id":42,"registration_id":9},"method":"POST","path":"/rpc/42/CancelEventRegistration","body":9,"response":true},
+  {"config":{"operation":"list_invoices","account_id":42,"open_balance_only":true,"event_registration_id":9},"method":"GET","path":"/accounts/42/invoices","query":{"$top":"100","$skip":"0","openBalanceOnly":"true","eventRegistrationId":"9"},"response":[{"Id":11}]},
+  {"config":{"operation":"list_payments","account_id":42},"method":"GET","path":"/accounts/42/payments","query":{"$top":"100","$skip":"0"},"response":[]}
+]
