@@ -1,0 +1,815 @@
+{
+  "get_me": {
+    "method": "GET",
+    "path": "/me",
+    "request": {},
+    "response": {
+      "accounts": [],
+      "email": "jane@acmestore.com",
+      "lastModified": "2025-06-05T12:18:32.721Z",
+      "name": "Jane Smith",
+      "_id": "64b7f0c2a1d3e4f5a6b7c8d9",
+      "createdAt": "2025-03-12T15:04:21.000Z"
+    },
+    "source": "https://apidocs.zigpoll.com/reference/get_me.md"
+  },
+  "list_accounts": {
+    "method": "GET",
+    "path": "/accounts",
+    "request": {},
+    "response": [
+      {
+        "_id": "",
+        "createdAt": "2025-03-12T15:04:23.000Z",
+        "title": "Acme Store",
+        "isShopify": true,
+        "plan": {
+          "label": "Premium",
+          "id": "",
+          "key": "premium",
+          "price": 79,
+          "submissionLimit": 350,
+          "accountLimit": 8,
+          "forceBranding": false,
+          "emailLimit": 5000,
+          "smsLimit": 500,
+          "syntheticSubmissionLimit": 3000,
+          "manualInsightsLimit": 100,
+          "allowApiAccess": true
+        },
+        "owner": "",
+        "admin": [
+          "",
+          ""
+        ],
+        "polls": [
+          "",
+          ""
+        ],
+        "lastModified": "2025-06-05T08:52:12.287Z",
+        "submissionCount": 112,
+        "surveyResponseCount": 41,
+        "totalSurveyResponseCount": 1893,
+        "emailCampaignCount": 0,
+        "smsCount": 0,
+        "responseCount": 7053,
+        "participantCount": 14587,
+        "emailCount": 4251,
+        "voteCount": 32027,
+        "isSynthetic": false
+      }
+    ],
+    "source": "https://apidocs.zigpoll.com/reference/get_accounts.md"
+  },
+  "get_account": {
+    "method": "GET",
+    "path": "/account",
+    "request": {
+      "accountId": "64b7f0c2a1d3e4f5a6b7c8da"
+    },
+    "response": {
+      "_id": "",
+      "createdAt": "2025-03-12T15:04:23.000Z",
+      "title": "Acme Store",
+      "isShopify": true,
+      "plan": {
+        "label": "Premium",
+        "id": "",
+        "key": "premium",
+        "price": 79,
+        "submissionLimit": 350,
+        "accountLimit": 8,
+        "forceBranding": false,
+        "emailLimit": 5000,
+        "smsLimit": 500,
+        "syntheticSubmissionLimit": 3000,
+        "manualInsightsLimit": 100,
+        "allowApiAccess": true
+      },
+      "owner": "",
+      "admin": [
+        "",
+        ""
+      ],
+      "polls": [
+        "",
+        ""
+      ],
+      "lastModified": "2025-06-05T08:52:12.287Z",
+      "submissionCount": 112,
+      "surveyResponseCount": 41,
+      "totalSurveyResponseCount": 1893,
+      "emailCampaignCount": 0,
+      "smsCount": 0,
+      "responseCount": 7053,
+      "participantCount": 14587,
+      "emailCount": 4251,
+      "voteCount": 32027,
+      "isSynthetic": false
+    },
+    "source": "https://apidocs.zigpoll.com/reference/get_account.md"
+  },
+  "list_polls": {
+    "method": "GET",
+    "path": "/polls",
+    "request": {
+      "accountId": "64b7f0c2a1d3e4f5a6b7c8da"
+    },
+    "response": [
+      {
+        "_id": "",
+        "createdAt": "2019-04-01T20:01:53.000Z",
+        "title": "Homepage",
+        "status": "live",
+        "isVisible": true,
+        "isArchived": false,
+        "pageRules": [
+          "/"
+        ],
+        "accountId": "",
+        "slides": [
+          "",
+          "",
+          ""
+        ],
+        "lastModified": "2023-04-22T13:26:37.729Z",
+        "renderCount": 65872,
+        "presentationCount": 1619,
+        "openCount": 25694,
+        "engagementCount": 403,
+        "voteCount": 10147,
+        "submissionCount": 123,
+        "surveyResponseCount": 41,
+        "participantCount": 3390,
+        "responseCount": 233,
+        "completeCount": 1975,
+        "closeCount": 9323,
+        "emailCount": 184,
+        "outboundEmailCount": 512,
+        "isSynthetic": false
+      }
+    ],
+    "source": "https://apidocs.zigpoll.com/reference/get_polls.md"
+  },
+  "get_poll": {
+    "method": "GET",
+    "path": "/poll",
+    "request": {
+      "pollId": "6789abcdef012345"
+    },
+    "response": {
+      "_id": "",
+      "createdAt": "2019-04-01T20:01:53.000Z",
+      "createdVia": "dashboard",
+      "title": "Homepage",
+      "status": "live",
+      "isVisible": true,
+      "isArchived": false,
+      "pageRules": [
+        "/"
+      ],
+      "accountId": "",
+      "slides": [
+        "",
+        "",
+        ""
+      ],
+      "lastModified": "2023-04-22T13:26:37.729Z",
+      "renderCount": 65872,
+      "presentationCount": 1619,
+      "openCount": 25694,
+      "engagementCount": 403,
+      "voteCount": 10147,
+      "submissionCount": 123,
+      "surveyResponseCount": 41,
+      "participantCount": 3390,
+      "responseCount": 233,
+      "completeCount": 1975,
+      "closeCount": 9323,
+      "emailCount": 184,
+      "outboundEmailCount": 512,
+      "isSynthetic": false
+    },
+    "source": "https://apidocs.zigpoll.com/reference/get_poll.md"
+  },
+  "list_slides": {
+    "method": "GET",
+    "path": "/slides",
+    "request": {
+      "pollId": "6789abcdef012345"
+    },
+    "response": [
+      {
+        "_id": "",
+        "createdAt": "2019-04-01T20:42:55.000Z",
+        "title": "<p>How would your rate our customer service?</p>",
+        "handle": "Ecommerce Example - 3",
+        "answers": [
+          {
+            "title": "Very Unsatisfied",
+            "handle": "very-unsatisfied",
+            "votes": 38
+          },
+          {
+            "title": "Unsatisfied",
+            "handle": "unsatisfied",
+            "votes": 51
+          },
+          {
+            "title": "Neutral",
+            "handle": "neutral",
+            "votes": 173
+          },
+          {
+            "title": "Satisfied",
+            "handle": "satisfied",
+            "votes": 297
+          },
+          {
+            "title": "Very Satisfied",
+            "handle": "very-satisfied",
+            "votes": 324
+          }
+        ],
+        "copy": "",
+        "type": "satisfaction",
+        "optional": false,
+        "pollId": "",
+        "lastModified": "2022-11-10T02:04:25.314Z",
+        "viewCount": 1369,
+        "presentationCount": 346,
+        "engagementCount": 279
+      }
+    ],
+    "source": "https://apidocs.zigpoll.com/reference/get_slides.md"
+  },
+  "get_slide": {
+    "method": "GET",
+    "path": "/slide",
+    "request": {
+      "slideId": "abcdef0123456789"
+    },
+    "response": {
+      "_id": "",
+      "createdAt": "2019-04-01T20:42:55.000Z",
+      "title": "<p>How would your rate our customer service?</p>",
+      "handle": "Ecommerce Example - 3",
+      "answers": [
+        {
+          "title": "Very Unsatisfied",
+          "handle": "very-unsatisfied",
+          "votes": 38
+        },
+        {
+          "title": "Unsatisfied",
+          "handle": "unsatisfied",
+          "votes": 51
+        },
+        {
+          "title": "Neutral",
+          "handle": "neutral",
+          "votes": 173
+        },
+        {
+          "title": "Satisfied",
+          "handle": "satisfied",
+          "votes": 297
+        },
+        {
+          "title": "Very Satisfied",
+          "handle": "very-satisfied",
+          "votes": 324
+        }
+      ],
+      "copy": "",
+      "type": "satisfaction",
+      "optional": false,
+      "pollId": "",
+      "lastModified": "2022-11-10T02:04:25.314Z",
+      "viewCount": 1369,
+      "presentationCount": 346,
+      "engagementCount": 279
+    },
+    "source": "https://apidocs.zigpoll.com/reference/get_slide.md"
+  },
+  "list_responses": {
+    "method": "GET",
+    "path": "/responses",
+    "request": {
+      "pollId": "6789abcdef012345",
+      "limit": "50",
+      "order": "newest"
+    },
+    "response": {
+      "data": [
+        {
+          "_id": "",
+          "createdAt": "2025-06-02T10:49:46.000Z",
+          "accountId": "",
+          "pollId": "",
+          "slideId": "",
+          "participantId": "",
+          "orderValue": 123,
+          "metadata": {
+            "browser-language": "en",
+            "original-referrer": "https://l.facebook.com/",
+            "landing-page": "https://www.zigpoll.com/?utm_source=an&utm_medium=paid&utm_campaign=%7B%7Bcampaign_name%7D%7D&utm_content=%7B%7Bad_name%7D%7D_%7B%7Bad_id%7D%7D&utm_term=%7B%7Badset_name%7D%7D_%7B%7Badset_id%7D%7D&utm_id=120225485157290566&fbclid=IwY2xjawKqYQNleHRuA2FlbQEwAGFkaWQBqyE3Ey1m5gEeNj41jEocZJ8jjn9RECZkpsSVgcaU8ljo1G9FhCdJJojhHOhoe7WKkuBPCXM_aem_vfCc8zuZh7DfzliB1ahjOw&campaign_id=120225485157290566&ad_id=120225669987670566",
+            "url": "https://www.zigpoll.com/examples",
+            "utm_source": "an",
+            "utm_medium": "paid",
+            "utm_campaign": "{{campaign_name}}",
+            "utm_content": "{{ad_name}}_{{ad_id}}",
+            "utm_term": "{{adset_name}}_{{adset_id}}",
+            "ad_id": "120225669987670566",
+            "campaign_id": "120225485157290566"
+          },
+          "response": "Very Satisfied",
+          "answers": [
+            {
+              "handle": "very-satisfied",
+              "title": "Very Satisfied"
+            }
+          ],
+          "userAgent": "Mozilla/5.0 (Linux; Android 14; SM-A156U1 Build/UP1A.231005.007; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/136.0.7103.125 Mobile Safari/537.36",
+          "valueType": "vote"
+        }
+      ],
+      "hasNextPage": true,
+      "endCursor": ""
+    },
+    "source": "https://apidocs.zigpoll.com/reference/get_responses.md"
+  },
+  "list_participants": {
+    "method": "GET",
+    "path": "/participants",
+    "request": {
+      "pollId": "6789abcdef012345",
+      "limit": "50"
+    },
+    "response": {
+      "data": [
+        {
+          "_id": "",
+          "createdAt": "2025-06-02T10:49:41.000Z",
+          "customId": false,
+          "id": "",
+          "ipAddress": "216.73.160.90",
+          "ipDetails": {
+            "ip": "216.73.160.90",
+            "continent_code": "NA",
+            "continent_name": "North America",
+            "country_code": "US",
+            "country_name": "United States",
+            "region_code": "NY",
+            "region_name": "New York",
+            "city": "New York",
+            "zip": "10020",
+            "latitude": "40.7589111328125",
+            "longitude": "-73.97901916503906"
+          },
+          "polls": [
+            "",
+            ""
+          ],
+          "responses": [
+            {
+              "response": "Red / Black",
+              "pollId": "",
+              "slideId": ""
+            },
+            {
+              "response": "Very Satisfied",
+              "pollId": "",
+              "slideId": ""
+            },
+            {
+              "response": "Word of Mouth",
+              "pollId": "",
+              "slideId": ""
+            },
+            {
+              "response": "Content",
+              "pollId": "",
+              "slideId": ""
+            }
+          ],
+          "slides": [
+            "",
+            "",
+            "",
+            ""
+          ],
+          "trackedEmails": [],
+          "updatedAt": "2025-06-02T10:50:11.047Z",
+          "userAgent": "Mozilla/5.0 (Linux; Android 14; SM-A156U1 Build/UP1A.231005.007; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/136.0.7103.125 Mobile Safari/537.36"
+        }
+      ],
+      "hasNextPage": true,
+      "endCursor": ""
+    },
+    "source": "https://apidocs.zigpoll.com/reference/get_participants.md"
+  },
+  "list_emails": {
+    "method": "GET",
+    "path": "/emails",
+    "request": {
+      "pollId": "6789abcdef012345",
+      "limit": "50"
+    },
+    "response": {
+      "data": [
+        {
+          "_id": "",
+          "createdAt": "2025-06-04T18:21:51.000Z",
+          "email": "shopper@example.com",
+          "pollId": "",
+          "slideId": "",
+          "accountId": "",
+          "participantId": ""
+        }
+      ],
+      "hasNextPage": true,
+      "endCursor": ""
+    },
+    "source": "https://apidocs.zigpoll.com/reference/get_emails.md"
+  },
+  "list_insights": {
+    "method": "GET",
+    "path": "/insights",
+    "request": {
+      "pollId": "6789abcdef012345",
+      "limit": "50"
+    },
+    "response": {
+      "data": [
+        {
+          "_id": "123",
+          "slideId": "456",
+          "content": null,
+          "items": [
+            {
+              "id": "1,",
+              "title": "Survey Customization and Targeting",
+              "description": "Users frequently inquire about customizing surveys based on product purchases, customer tags, or segments such as new vs returning customers. There is also interest in conditional logic for surveys to adapt questions dynamically based on previous answers."
+            },
+            {
+              "id": "2,",
+              "title": "Integration and Data Export",
+              "description": "Many customers seek guidance on integrating survey responses with platforms like Klaviyo, Google Sheets, and Slack. They also want to understand how to export data, automate workflows, and ensure seamless data syncing for marketing and analysis purposes."
+            },
+            {
+              "id": "3,",
+              "title": "Technical Issues and Survey Visibility",
+              "description": "There are reports of surveys not showing on checkout or thank you pages, issues with post-purchase surveys after Shopify updates, and problems with exit intent surveys on mobile. Customers request troubleshooting help and advice on ensuring reliable survey display."
+            },
+            {
+              "id": "4,",
+              "title": "Branding and Subscription Management",
+              "description": "Users express interest in removing or customizing Zigpoll branding on surveys, understanding subscription limits and billing, managing user access, and requesting features such as plan upgrades, auto-upgrades, and pausing subscriptions without data loss."
+            }
+          ],
+          "accountId": "789",
+          "pollId": "101"
+        }
+      ],
+      "hasNextPage": true,
+      "endCursor": ""
+    },
+    "source": "https://apidocs.zigpoll.com/reference/get_insights.md"
+  },
+  "get_metadata": {
+    "method": "GET",
+    "path": "/poll/metadata",
+    "request": {
+      "pollId": "6789abcdef012345"
+    },
+    "response": {
+      "key": "utm_source",
+      "values": [
+        {
+          "value": "facebook",
+          "responses": 412,
+          "answers": [
+            {
+              "answer": "Very Satisfied",
+              "count": 240
+            },
+            {
+              "answer": "Neutral",
+              "count": 172
+            }
+          ]
+        }
+      ],
+      "truncated": false,
+      "limit": 25
+    },
+    "source": "https://apidocs.zigpoll.com/reference/get_poll-metadata.md"
+  },
+  "get_locations": {
+    "method": "GET",
+    "path": "/poll/locations",
+    "request": {
+      "pollId": "6789abcdef012345"
+    },
+    "response": {
+      "totalParticipants": 3390,
+      "countries": [
+        {
+          "value": "United States",
+          "participants": 2104,
+          "percentage": 62.1
+        }
+      ],
+      "regions": [],
+      "cities": [],
+      "limit": 25,
+      "truncated": {
+        "countries": false,
+        "regions": false,
+        "cities": false
+      }
+    },
+    "source": "https://apidocs.zigpoll.com/reference/get_poll-locations.md"
+  },
+  "get_devices": {
+    "method": "GET",
+    "path": "/poll/devices",
+    "request": {
+      "pollId": "6789abcdef012345"
+    },
+    "response": {
+      "totalParticipants": 3390,
+      "deviceTypes": [
+        {
+          "value": "Mobile",
+          "participants": 2431,
+          "percentage": 71.7
+        }
+      ],
+      "browsers": [],
+      "operatingSystems": [],
+      "truncated": false,
+      "distinctUserAgentLimit": 5000
+    },
+    "source": "https://apidocs.zigpoll.com/reference/get_poll-devices.md"
+  },
+  "get_trends": {
+    "method": "GET",
+    "path": "/poll/trends",
+    "request": {
+      "pollId": "6789abcdef012345"
+    },
+    "response": {
+      "pollId": "",
+      "unit": "distinct responding participants per day",
+      "trends": [
+        {
+          "day": "2026-08-01",
+          "count": 143
+        }
+      ]
+    },
+    "source": "https://apidocs.zigpoll.com/reference/get_poll-trends.md"
+  },
+  "create_poll": {
+    "method": "POST",
+    "path": "/poll",
+    "request": {
+      "accountId": "64b7f0c2a1d3e4f5a6b7c8da",
+      "title": "Post-Purchase Feedback",
+      "pageRules": [
+        "/thank-you"
+      ],
+      "isSynthetic": false
+    },
+    "response": {
+      "_id": "6789abcdef012345",
+      "createdAt": "2026-02-18T12:00:00.000Z",
+      "createdVia": "api",
+      "title": "Post-Purchase Feedback",
+      "status": "draft",
+      "isVisible": false,
+      "isArchived": false,
+      "pageRules": [
+        "/thank-you"
+      ],
+      "accountId": "64b7f0c2a1d3e4f5a6b7c8da",
+      "slides": [],
+      "lastModified": null,
+      "renderCount": 0,
+      "presentationCount": 0,
+      "openCount": 0,
+      "engagementCount": 0,
+      "voteCount": 0,
+      "submissionCount": 0,
+      "surveyResponseCount": 0,
+      "participantCount": 0,
+      "responseCount": 0,
+      "completeCount": 0,
+      "closeCount": 0,
+      "emailCount": 0,
+      "outboundEmailCount": 0,
+      "isSynthetic": false
+    },
+    "source": "https://apidocs.zigpoll.com/reference/post_poll.md"
+  },
+  "update_poll": {
+    "method": "POST",
+    "path": "/poll/update",
+    "request": {
+      "pollId": "6789abcdef012345",
+      "title": "Updated Poll Title",
+      "isVisible": true
+    },
+    "response": {
+      "_id": "6789abcdef012345",
+      "createdAt": "2026-02-18T12:00:00.000Z",
+      "title": "Updated Poll Title",
+      "status": "live",
+      "isVisible": true,
+      "isArchived": false,
+      "pageRules": [],
+      "accountId": "64b7f0c2a1d3e4f5a6b7c8da",
+      "slides": [
+        "slide1",
+        "slide2"
+      ],
+      "lastModified": "2026-02-18T13:00:00.000Z",
+      "renderCount": 0,
+      "presentationCount": 0,
+      "openCount": 0,
+      "engagementCount": 0,
+      "voteCount": 0,
+      "submissionCount": 0,
+      "surveyResponseCount": 0,
+      "participantCount": 0,
+      "responseCount": 0,
+      "completeCount": 0,
+      "closeCount": 0,
+      "emailCount": 0,
+      "outboundEmailCount": 0,
+      "isSynthetic": false
+    },
+    "source": "https://apidocs.zigpoll.com/reference/post_poll-update.md"
+  },
+  "create_slide": {
+    "method": "POST",
+    "path": "/slide",
+    "request": {
+      "pollId": "6789abcdef012345",
+      "type": "question",
+      "title": "What is your favorite color?",
+      "answers": [
+        {
+          "title": "Red"
+        },
+        {
+          "title": "Blue"
+        },
+        {
+          "title": "Green"
+        }
+      ]
+    },
+    "response": {
+      "_id": "abcdef0123456789",
+      "createdAt": "2026-02-18T12:00:00.000Z",
+      "title": "What is your favorite color?",
+      "handle": "what-is-your-favorite-color",
+      "answers": [
+        {
+          "title": "Red",
+          "handle": "red"
+        },
+        {
+          "title": "Blue",
+          "handle": "blue"
+        },
+        {
+          "title": "Green",
+          "handle": "green"
+        }
+      ],
+      "copy": null,
+      "type": "question",
+      "optional": false,
+      "pollId": "6789abcdef012345",
+      "lastModified": null,
+      "viewCount": 0,
+      "presentationCount": 0,
+      "engagementCount": 0,
+      "responseCount": 0
+    },
+    "source": "https://apidocs.zigpoll.com/reference/post_slide.md"
+  },
+  "update_slide": {
+    "method": "POST",
+    "path": "/slide/update",
+    "request": {
+      "slideId": "abcdef0123456789",
+      "title": "What is your favorite color? (updated)",
+      "answers": [
+        {
+          "title": "Red"
+        },
+        {
+          "title": "Blue"
+        },
+        {
+          "title": "Green"
+        },
+        {
+          "title": "Yellow"
+        }
+      ]
+    },
+    "response": {
+      "_id": "abcdef0123456789",
+      "createdAt": "2026-02-18T12:00:00.000Z",
+      "title": "What is your favorite color? (updated)",
+      "handle": "what-is-your-favorite-color",
+      "answers": [
+        {
+          "title": "Red",
+          "handle": "red",
+          "votes": 42
+        },
+        {
+          "title": "Blue",
+          "handle": "blue",
+          "votes": 31
+        },
+        {
+          "title": "Green",
+          "handle": "green",
+          "votes": 17
+        },
+        {
+          "title": "Yellow",
+          "handle": "yellow",
+          "votes": 0
+        }
+      ],
+      "copy": null,
+      "type": "question",
+      "optional": false,
+      "pollId": "6789abcdef012345",
+      "lastModified": "2026-02-18T13:00:00.000Z",
+      "viewCount": 150,
+      "presentationCount": 90,
+      "engagementCount": 80,
+      "responseCount": 90
+    },
+    "source": "https://apidocs.zigpoll.com/reference/post_slide-update.md"
+  },
+  "send_email": {
+    "method": "POST",
+    "path": "/send-email",
+    "request": {
+      "pollId": "6789abcdef012345",
+      "recipients": [
+        "person@acme.test"
+      ]
+    },
+    "response": {
+      "success": true,
+      "sent": 2,
+      "skipped": [
+        "not-an-email"
+      ]
+    },
+    "source": "https://apidocs.zigpoll.com/reference/sendemail.md"
+  },
+  "send_sms": {
+    "method": "POST",
+    "path": "/send-sms",
+    "request": {
+      "pollId": "6789abcdef012345",
+      "recipients": [
+        "+12025550123"
+      ],
+      "message": "Please share your feedback"
+    },
+    "response": {
+      "success": true
+    },
+    "source": "https://apidocs.zigpoll.com/reference/sendsms.md"
+  },
+  "generate_survey_link": {
+    "method": "POST",
+    "path": "/generate-survey-link",
+    "request": {
+      "pollId": "6789abcdef012345",
+      "metadata": {
+        "order": "order-42"
+      },
+      "expiresAt": "2027-01-01T00:00:00Z"
+    },
+    "response": {
+      "url": "https://share.zigpoll.com/a/abc123",
+      "activityId": "abc123"
+    },
+    "source": "https://apidocs.zigpoll.com/reference/generatesurveylink.md"
+  }
+}

@@ -1,0 +1,1254 @@
+{
+  "$defs": {
+    "Answer": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "Answer",
+      "type": "object"
+    },
+    "ZigpollAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "zigpoll_api_key",
+          "default": "zigpoll_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Zigpoll API Key",
+      "type": "object",
+      "x-credential-instructions": "In the Zigpoll Dashboard, open Integrations, scroll to Private Keys, add a key and copy it here. API access requires an Advanced plan or higher. NoClick sends the key directly in the Authorization header to v1.zigpoll.com.",
+      "x-credential-url": "https://apidocs.zigpoll.com/reference/authentication-1"
+    },
+    "ZigpollCreatePollConfig": {
+      "additionalProperties": false,
+      "description": "Create poll.",
+      "properties": {
+        "accountId": {
+          "minLength": 1,
+          "title": "Account ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_poll",
+          "default": "create_poll",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Survey title",
+          "type": "string"
+        },
+        "pageRules": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page rules"
+        },
+        "pageExcludeRules": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Excluded page rules"
+        },
+        "isSynthetic": {
+          "default": false,
+          "title": "Synthetic research survey",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "accountId",
+        "title"
+      ],
+      "title": "ZigpollCreatePollConfig",
+      "type": "object"
+    },
+    "ZigpollCreateSlideConfig": {
+      "additionalProperties": false,
+      "description": "Create slide.",
+      "properties": {
+        "pollId": {
+          "minLength": 1,
+          "title": "Survey ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_slide",
+          "default": "create_slide",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type": {
+          "enum": [
+            "question",
+            "checkbox",
+            "dropdown",
+            "autocomplete",
+            "image-choice",
+            "binary",
+            "legal-consent",
+            "inline-multiple-choice",
+            "star-rating",
+            "range",
+            "satisfaction",
+            "slider",
+            "short-answer",
+            "long-answer",
+            "email-capture",
+            "phone-capture",
+            "date",
+            "file-upload",
+            "country",
+            "rank",
+            "form",
+            "copy",
+            "thank-you",
+            "reward",
+            "action",
+            "matrix"
+          ],
+          "title": "Question type",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Question title"
+        },
+        "copy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body copy"
+        },
+        "answers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Answer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Answer options"
+        },
+        "rows": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Answer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matrix rows"
+        }
+      },
+      "required": [
+        "pollId",
+        "type"
+      ],
+      "title": "ZigpollCreateSlideConfig",
+      "type": "object"
+    },
+    "ZigpollGenerateSurveyLinkConfig": {
+      "additionalProperties": false,
+      "description": "Generate a unique survey link.",
+      "properties": {
+        "pollId": {
+          "minLength": 1,
+          "title": "Survey ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "generate_survey_link",
+          "default": "generate_survey_link",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tracking metadata"
+        },
+        "expiresAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 datetime.",
+          "format": "date-time",
+          "title": "Expires at"
+        }
+      },
+      "required": [
+        "pollId"
+      ],
+      "title": "ZigpollGenerateSurveyLinkConfig",
+      "type": "object"
+    },
+    "ZigpollGetAccountConfig": {
+      "additionalProperties": false,
+      "description": "Get account.",
+      "properties": {
+        "accountId": {
+          "minLength": 1,
+          "title": "Account ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "accountId"
+      ],
+      "title": "ZigpollGetAccountConfig",
+      "type": "object"
+    },
+    "ZigpollGetDevicesConfig": {
+      "additionalProperties": false,
+      "description": "Device, browser and OS breakdown.",
+      "properties": {
+        "pollId": {
+          "minLength": 1,
+          "title": "Survey ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_devices",
+          "default": "get_devices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "pollId"
+      ],
+      "title": "ZigpollGetDevicesConfig",
+      "type": "object"
+    },
+    "ZigpollGetLocationsConfig": {
+      "additionalProperties": false,
+      "description": "Geographic breakdown.",
+      "properties": {
+        "pollId": {
+          "minLength": 1,
+          "title": "Survey ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_locations",
+          "default": "get_locations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "pollId"
+      ],
+      "title": "ZigpollGetLocationsConfig",
+      "type": "object"
+    },
+    "ZigpollGetMeConfig": {
+      "additionalProperties": false,
+      "description": "Get current user.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ZigpollGetMeConfig",
+      "type": "object"
+    },
+    "ZigpollGetMetadataConfig": {
+      "additionalProperties": false,
+      "description": "Response metadata breakdown.",
+      "properties": {
+        "pollId": {
+          "minLength": 1,
+          "title": "Survey ID",
+          "type": "string"
+        },
+        "createdAfter": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JavaScript timestamp in milliseconds.",
+          "title": "Created on or after"
+        },
+        "createdBefore": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JavaScript timestamp in milliseconds.",
+          "title": "Created on or before"
+        },
+        "operation": {
+          "const": "get_metadata",
+          "default": "get_metadata",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to discover available metadata keys.",
+          "title": "Metadata key"
+        }
+      },
+      "required": [
+        "pollId"
+      ],
+      "title": "ZigpollGetMetadataConfig",
+      "type": "object"
+    },
+    "ZigpollGetPollConfig": {
+      "additionalProperties": false,
+      "description": "Get poll.",
+      "properties": {
+        "pollId": {
+          "minLength": 1,
+          "title": "Survey ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_poll",
+          "default": "get_poll",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "pollId"
+      ],
+      "title": "ZigpollGetPollConfig",
+      "type": "object"
+    },
+    "ZigpollGetSlideConfig": {
+      "additionalProperties": false,
+      "description": "Get slide.",
+      "properties": {
+        "slideId": {
+          "minLength": 1,
+          "title": "Question ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_slide",
+          "default": "get_slide",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "slideId"
+      ],
+      "title": "ZigpollGetSlideConfig",
+      "type": "object"
+    },
+    "ZigpollGetTrendsConfig": {
+      "additionalProperties": false,
+      "description": "Responses over time.",
+      "properties": {
+        "pollId": {
+          "minLength": 1,
+          "title": "Survey ID",
+          "type": "string"
+        },
+        "createdAfter": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JavaScript timestamp in milliseconds.",
+          "title": "Created on or after"
+        },
+        "createdBefore": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JavaScript timestamp in milliseconds.",
+          "title": "Created on or before"
+        },
+        "operation": {
+          "const": "get_trends",
+          "default": "get_trends",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "pollId"
+      ],
+      "title": "ZigpollGetTrendsConfig",
+      "type": "object"
+    },
+    "ZigpollListAccountsConfig": {
+      "additionalProperties": false,
+      "description": "Get all accounts.",
+      "properties": {
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ZigpollListAccountsConfig",
+      "type": "object"
+    },
+    "ZigpollListEmailsConfig": {
+      "additionalProperties": false,
+      "description": "Get all emails.",
+      "properties": {
+        "pollId": {
+          "minLength": 1,
+          "title": "Survey ID",
+          "type": "string"
+        },
+        "startCursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Previous page's endCursor. Omit for the first page.",
+          "title": "Start cursor"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "createdAfter": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JavaScript timestamp in milliseconds.",
+          "title": "Created on or after"
+        },
+        "createdBefore": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JavaScript timestamp in milliseconds.",
+          "title": "Created on or before"
+        },
+        "operation": {
+          "const": "list_emails",
+          "default": "list_emails",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "pollId"
+      ],
+      "title": "ZigpollListEmailsConfig",
+      "type": "object"
+    },
+    "ZigpollListInsightsConfig": {
+      "additionalProperties": false,
+      "description": "Get all insights.",
+      "properties": {
+        "pollId": {
+          "minLength": 1,
+          "title": "Survey ID",
+          "type": "string"
+        },
+        "startCursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Previous page's endCursor. Omit for the first page.",
+          "title": "Start cursor"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_insights",
+          "default": "list_insights",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "pollId"
+      ],
+      "title": "ZigpollListInsightsConfig",
+      "type": "object"
+    },
+    "ZigpollListParticipantsConfig": {
+      "additionalProperties": false,
+      "description": "Get all participants.",
+      "properties": {
+        "pollId": {
+          "minLength": 1,
+          "title": "Survey ID",
+          "type": "string"
+        },
+        "startCursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Previous page's endCursor. Omit for the first page.",
+          "title": "Start cursor"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "createdAfter": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JavaScript timestamp in milliseconds.",
+          "title": "Created on or after"
+        },
+        "createdBefore": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JavaScript timestamp in milliseconds.",
+          "title": "Created on or before"
+        },
+        "operation": {
+          "const": "list_participants",
+          "default": "list_participants",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "pollId"
+      ],
+      "title": "ZigpollListParticipantsConfig",
+      "type": "object"
+    },
+    "ZigpollListPollsConfig": {
+      "additionalProperties": false,
+      "description": "Get all polls.",
+      "properties": {
+        "accountId": {
+          "minLength": 1,
+          "title": "Account ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_polls",
+          "default": "list_polls",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "accountId"
+      ],
+      "title": "ZigpollListPollsConfig",
+      "type": "object"
+    },
+    "ZigpollListResponsesConfig": {
+      "additionalProperties": false,
+      "description": "Get all responses.",
+      "properties": {
+        "pollId": {
+          "minLength": 1,
+          "title": "Survey ID",
+          "type": "string"
+        },
+        "startCursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Previous page's endCursor. Omit for the first page.",
+          "title": "Start cursor"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "createdAfter": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JavaScript timestamp in milliseconds.",
+          "title": "Created on or after"
+        },
+        "createdBefore": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JavaScript timestamp in milliseconds.",
+          "title": "Created on or before"
+        },
+        "operation": {
+          "const": "list_responses",
+          "default": "list_responses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "enum": [
+                "fixed-choice",
+                "open-ended"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter",
+          "enum": [
+            "fixed-choice",
+            "open-ended"
+          ],
+          "x-enum-searchable": true
+        },
+        "order": {
+          "default": "newest",
+          "enum": [
+            "newest",
+            "oldest"
+          ],
+          "title": "Order",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pollId"
+      ],
+      "title": "ZigpollListResponsesConfig",
+      "type": "object"
+    },
+    "ZigpollListSlidesConfig": {
+      "additionalProperties": false,
+      "description": "Get all slides.",
+      "properties": {
+        "pollId": {
+          "minLength": 1,
+          "title": "Survey ID",
+          "type": "string"
+        },
+        "createdAfter": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JavaScript timestamp in milliseconds.",
+          "title": "Created on or after"
+        },
+        "createdBefore": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JavaScript timestamp in milliseconds.",
+          "title": "Created on or before"
+        },
+        "operation": {
+          "const": "list_slides",
+          "default": "list_slides",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "pollId"
+      ],
+      "title": "ZigpollListSlidesConfig",
+      "type": "object"
+    },
+    "ZigpollSendEmailConfig": {
+      "additionalProperties": false,
+      "description": "Send email campaign.",
+      "properties": {
+        "pollId": {
+          "minLength": 1,
+          "title": "Survey ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "send_email",
+          "default": "send_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "recipients": {
+          "description": "Zigpoll skips invalid and placeholder addresses and reports sent and skipped recipients. Acknowledgement does not prove delivery.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Recipient email addresses",
+          "type": "array"
+        }
+      },
+      "required": [
+        "pollId",
+        "recipients"
+      ],
+      "title": "ZigpollSendEmailConfig",
+      "type": "object"
+    },
+    "ZigpollSendSmsConfig": {
+      "additionalProperties": false,
+      "description": "Send SMS campaign.",
+      "properties": {
+        "pollId": {
+          "minLength": 1,
+          "title": "Survey ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "recipients": {
+          "description": "E.164 or domestic numbers. Acknowledgement does not prove delivery.",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Recipient phone numbers",
+          "type": "array"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message override"
+        }
+      },
+      "required": [
+        "pollId",
+        "recipients"
+      ],
+      "title": "ZigpollSendSmsConfig",
+      "type": "object"
+    },
+    "ZigpollUpdatePollConfig": {
+      "additionalProperties": false,
+      "description": "Update poll.",
+      "properties": {
+        "pollId": {
+          "minLength": 1,
+          "title": "Survey ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_poll",
+          "default": "update_poll",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Survey title"
+        },
+        "isVisible": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Requires at least one question and an unarchived survey.",
+          "title": "Visible"
+        },
+        "isArchived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Archived"
+        },
+        "pageRules": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the complete page rules array.",
+          "title": "Page rules"
+        },
+        "pageExcludeRules": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the complete exclusion array.",
+          "title": "Excluded page rules"
+        }
+      },
+      "required": [
+        "pollId"
+      ],
+      "title": "ZigpollUpdatePollConfig",
+      "type": "object"
+    },
+    "ZigpollUpdateSlideConfig": {
+      "additionalProperties": false,
+      "description": "Update slide.",
+      "properties": {
+        "slideId": {
+          "minLength": 1,
+          "title": "Question ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_slide",
+          "default": "update_slide",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Question title"
+        },
+        "copy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body copy"
+        },
+        "answers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Answer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replaces the complete options array.",
+          "title": "Answer options"
+        },
+        "nextSlide": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use -1 to end the survey.",
+          "title": "Next question ID"
+        }
+      },
+      "required": [
+        "slideId"
+      ],
+      "title": "ZigpollUpdateSlideConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_poll": "#/$defs/ZigpollCreatePollConfig",
+          "create_slide": "#/$defs/ZigpollCreateSlideConfig",
+          "generate_survey_link": "#/$defs/ZigpollGenerateSurveyLinkConfig",
+          "get_account": "#/$defs/ZigpollGetAccountConfig",
+          "get_devices": "#/$defs/ZigpollGetDevicesConfig",
+          "get_locations": "#/$defs/ZigpollGetLocationsConfig",
+          "get_me": "#/$defs/ZigpollGetMeConfig",
+          "get_metadata": "#/$defs/ZigpollGetMetadataConfig",
+          "get_poll": "#/$defs/ZigpollGetPollConfig",
+          "get_slide": "#/$defs/ZigpollGetSlideConfig",
+          "get_trends": "#/$defs/ZigpollGetTrendsConfig",
+          "list_accounts": "#/$defs/ZigpollListAccountsConfig",
+          "list_emails": "#/$defs/ZigpollListEmailsConfig",
+          "list_insights": "#/$defs/ZigpollListInsightsConfig",
+          "list_participants": "#/$defs/ZigpollListParticipantsConfig",
+          "list_polls": "#/$defs/ZigpollListPollsConfig",
+          "list_responses": "#/$defs/ZigpollListResponsesConfig",
+          "list_slides": "#/$defs/ZigpollListSlidesConfig",
+          "send_email": "#/$defs/ZigpollSendEmailConfig",
+          "send_sms": "#/$defs/ZigpollSendSmsConfig",
+          "update_poll": "#/$defs/ZigpollUpdatePollConfig",
+          "update_slide": "#/$defs/ZigpollUpdateSlideConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ZigpollGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollListAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollListPollsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollGetPollConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollListSlidesConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollGetSlideConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollListResponsesConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollListParticipantsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollListEmailsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollListInsightsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollGetMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollGetLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollGetDevicesConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollGetTrendsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollCreatePollConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollUpdatePollConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollCreateSlideConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollUpdateSlideConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollSendEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollSendSmsConfig"
+        },
+        {
+          "$ref": "#/$defs/ZigpollGenerateSurveyLinkConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ZigpollAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Zigpoll Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
