@@ -1,0 +1,182 @@
+[
+  [
+    {
+      "operation": "lookup_filtered",
+      "ip": "8.8.8.8",
+      "filter": "asn"
+    },
+    {
+      "asn": {
+        "asn": "AS15169"
+      }
+    }
+  ],
+  [
+    {
+      "operation": "batch_lookup",
+      "ips": [
+        "8.8.8.8",
+        "1.1.1.1"
+      ]
+    },
+    {
+      "8.8.8.8": {
+        "ip": "8.8.8.8",
+        "country": "United States",
+        "country_code": "US"
+      },
+      "1.1.1.1": {
+        "error": "Not found"
+      }
+    }
+  ],
+  [
+    {
+      "operation": "lookup_self"
+    },
+    {
+      "ip": "8.8.8.8",
+      "country": "United States",
+      "country_code": "US",
+      "is_eu": false,
+      "city": "Mountain View",
+      "continent": "North America",
+      "latitude": 37.38605,
+      "longitude": -122.08385,
+      "time_zone": "America/Los_Angeles",
+      "postal_code": "94035",
+      "subdivision": "California",
+      "currency_code": "USD",
+      "calling_code": "1",
+      "is_anycast": true,
+      "is_satellite": false,
+      "asn": {
+        "asn": "AS15169",
+        "route": "8.8.8.0/24",
+        "netname": "GOOGLE",
+        "name": "Google LLC",
+        "country_code": "US",
+        "domain": "google.com",
+        "type": "hosting",
+        "rir": "ARIN"
+      },
+      "privacy": {
+        "is_abuser": false,
+        "is_anonymous": true,
+        "is_bogon": false,
+        "is_hosting": true,
+        "is_icloud_relay": false,
+        "is_proxy": false,
+        "is_tor": false,
+        "is_vpn": true
+      },
+      "hosting": {
+        "provider": "Google Cloud",
+        "domain": "cloud.google.com",
+        "network": "8.8.8.0/24"
+      },
+      "company": {
+        "name": "Google LLC",
+        "domain": "google.com",
+        "country_code": "US",
+        "type": "hosting"
+      },
+      "abuse": {
+        "address": "1600 Amphitheatre Parkway, Mountain View, CA, 94043, US",
+        "country_code": "US",
+        "email": "[email\u00a0protected]",
+        "name": "Google LLC",
+        "network": "8.8.8.0 - 8.8.8.255",
+        "phone": "+1-650-253-0000"
+      }
+    }
+  ],
+  [
+    {
+      "operation": "batch_lookup",
+      "ips": [
+        "8.8.8.8",
+        "1.1.1.1"
+      ]
+    },
+    {
+      "8.8.8.8": {
+        "ip": "8.8.8.8",
+        "country": "United States",
+        "country_code": "US",
+        "is_eu": false,
+        "city": "Mountain View",
+        "continent": "North America",
+        "latitude": 37.40599,
+        "longitude": -122.078514,
+        "time_zone": "America/Los_Angeles",
+        "postal_code": "94043",
+        "subdivision": "California",
+        "currency_code": "USD",
+        "calling_code": "1",
+        "is_anycast": true,
+        "is_satellite": false,
+        "asn": {
+          "asn": "AS15169",
+          "route": "8.8.8.0/24",
+          "netname": "GOOGLE",
+          "name": "Google LLC",
+          "country_code": "US",
+          "domain": "google.com",
+          "type": "hosting",
+          "rir": "ARIN"
+        },
+        "privacy": {
+          "is_abuser": false,
+          "is_anonymous": false,
+          "is_bogon": false,
+          "is_hosting": true,
+          "is_icloud_relay": false,
+          "is_proxy": false,
+          "is_tor": false,
+          "is_vpn": false
+        }
+      },
+      "1.1.1.1": {
+        "ip": "1.1.1.1",
+        "country": "United States",
+        "country_code": "US",
+        "is_eu": false,
+        "city": "Los Angeles",
+        "continent": "North America",
+        "latitude": 34.0522,
+        "longitude": -118.2437,
+        "time_zone": "America/Los_Angeles",
+        "postal_code": "90009",
+        "subdivision": "California",
+        "currency_code": "USD",
+        "calling_code": "1",
+        "is_anycast": true,
+        "is_satellite": false,
+        "asn": {
+          "asn": "AS13335",
+          "route": "1.1.1.0/24",
+          "netname": "CLOUDFLARENET",
+          "name": "Cloudflare, Inc.",
+          "country_code": "US",
+          "domain": "cloudflare.com",
+          "type": "hosting",
+          "rir": "ARIN"
+        },
+        "privacy": {
+          "is_abuser": false,
+          "is_anonymous": false,
+          "is_bogon": false,
+          "is_hosting": true,
+          "is_icloud_relay": false,
+          "is_proxy": false,
+          "is_tor": false,
+          "is_vpn": false
+        }
+      },
+      "invalid-ip": {
+        "error": "Invalid IP address"
+      }
+    }
+  ]
+]
