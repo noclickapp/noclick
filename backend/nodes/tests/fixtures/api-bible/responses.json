@@ -1,0 +1,64 @@
+{
+  "bibles": {
+    "data": [
+      {
+        "id": "de4e12af7f28f599-01",
+        "name": "King James Version",
+        "abbreviation": "KJV",
+        "language": {
+          "id": "eng",
+          "name": "English"
+        }
+      }
+    ]
+  },
+  "passage": {
+    "data": {
+      "id": "JHN.3.16-JHN.3.17",
+      "bibleId": "de4e12af7f28f599-01",
+      "reference": "John 3:16-17",
+      "content": "Fixture text",
+      "verseCount": 2,
+      "copyright": "Fixture copyright"
+    },
+    "meta": {
+      "fumsId": "fixture-fums",
+      "fumsJsInclude": "https://example.test/fixture.js",
+      "fumsNoScript": "<img src='https://example.test/fixture'>"
+    }
+  },
+  "search": {
+    "data": {
+      "query": "love",
+      "limit": 10,
+      "offset": 10,
+      "total": 25,
+      "verseCount": 25,
+      "verses": [
+        {
+          "id": "JHN.3.16",
+          "text": "Fixture text",
+          "reference": "John 3:16"
+        }
+      ]
+    },
+    "meta": {
+      "fumsId": "fixture-search"
+    }
+  },
+  "audio": {
+    "data": {
+      "id": "GEN.1",
+      "bibleId": "fixture-audio",
+      "resourceUrl": "https://example.test/fixture.mp3",
+      "expiresAt": 1794182400,
+      "bookId": "GEN",
+      "number": "1",
+      "reference": "Genesis 1",
+      "copyright": "Fixture copyright"
+    },
+    "meta": {
+      "fumsId": "fixture-audio"
+    }
+  }
+}
