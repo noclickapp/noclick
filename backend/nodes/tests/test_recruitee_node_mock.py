@@ -77,3 +77,9 @@ async def test_empty_delete_acknowledgement(monkeypatch):
 @pytest.mark.parametrize("company_id",["../other",0,-1])
 def test_company_boundary(company_id):
  with pytest.raises(ValueError): RecruiteeCredential(api_token=TOKEN,company_id=company_id)
+
+def test_provider_fixture_contains_no_real_shaped_credentials():
+ import runpy
+ scanner = runpy.run_path(str(Path(__file__).resolve().parents[3] / 'oss/scan_real_secrets.py'))
+ fixture = Path(__file__).parent / 'fixtures/recruitee/responses.json'
+ assert not scanner['find_secrets'](fixture.read_bytes())
