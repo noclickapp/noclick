@@ -80,6 +80,11 @@ def test_company_boundary(company_id):
 
 def test_provider_fixture_contains_no_real_shaped_credentials():
  import runpy
- scanner = runpy.run_path(str(Path(__file__).resolve().parents[3] / 'oss/scan_real_secrets.py'))
+ root = Path(__file__).resolve().parents[3]
+ # The open edition exports this same scanner under scripts/. Fail if neither exists.
+ scanner_path = root / 'oss/scan_real_secrets.py'
+ if not scanner_path.is_file():
+  scanner_path = root / 'scripts/scan_real_secrets.py'
+ scanner = runpy.run_path(str(scanner_path))
  fixture = Path(__file__).parent / 'fixtures/recruitee/responses.json'
  assert not scanner['find_secrets'](fixture.read_bytes())
