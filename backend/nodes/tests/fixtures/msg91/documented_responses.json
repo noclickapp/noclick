@@ -1,0 +1,557 @@
+{
+  "POST /api/v5/flow": {
+    "body": {
+      "type": "success",
+      "message": "5e1e93cad6fc054d8e759a5b"
+    },
+    "source": "https://docs.msg91.com/sms/send-sms.md"
+  },
+  "POST /api/v5/sms/addTemplate": {
+    "body": {
+      "data": {
+        "msg": "Template created successfully",
+        "template_id": "669a29fbd6fc053066739b42"
+      },
+      "errors": [],
+      "status": "success",
+      "hasError": false
+    },
+    "source": "https://docs.msg91.com/sms/add-flow.md"
+  },
+  "POST /api/v5/sms/getTemplateVersions": {
+    "body": {
+      "data": [
+        {
+          "id": "123456",
+          "DLT_ID": "1234567890123456",
+          "status": "1",
+          "user_id": "67890",
+          "version": "v1.0",
+          "sms_type": "NORMAL",
+          "sender_id": "SENDER",
+          "dlt_reason": "",
+          "template_id": "66599071d6fc0570c311f352",
+          "dlt_verified": "10",
+          "active_status": "1",
+          "reject_reason": "",
+          "template_data": "##var## You have received this SMS as per your testing.\nTo start sending actual content, kindly contact Support.\n\n--\nTeam MSG91",
+          "template_name": "template name"
+        }
+      ],
+      "errors": [],
+      "status": "success",
+      "hasError": false
+    },
+    "source": "https://docs.msg91.com/sms/get-template-versions.md"
+  },
+  "POST /api/v5/otp": {
+    "body": {
+      "type": "success",
+      "request_id": "34676b6d426b303131363537"
+    },
+    "source": "https://docs.msg91.com/otp/sendotp.md"
+  },
+  "GET /api/v5/otp/verify": {
+    "body": {
+      "type": "success",
+      "message": "OTP verified success"
+    },
+    "source": "https://docs.msg91.com/otp/verify-otp.md"
+  },
+  "GET /api/v5/otp/retry": {
+    "body": {
+      "type": "success",
+      "message": "retry send successfully"
+    },
+    "source": "https://docs.msg91.com/otp/resend-otp.md"
+  },
+  "POST /api/v5/email/send": {
+    "body": {
+      "data": {
+        "unique_id": "a1d2e4b8-4d04-41f9-b8f2-34be6a5c6d49"
+      },
+      "errors": {},
+      "status": "success",
+      "message": "Thank you. Your request has been queued.",
+      "hasError": false
+    },
+    "source": "https://docs.msg91.com/email/send-email.md"
+  },
+  "POST /api/v5/email/templates": {
+    "body": {
+      "data": {
+        "id": 30577,
+        "name": "Welcome Template",
+        "slug": "welcome_template_28",
+        "user_id": 18797,
+        "versions": [
+          {
+            "id": 45460,
+            "body": "<!doctype html><html><body><h1>Hello {{first_name}},</h1><p>Thanks for joining us at {{company_name}}. Click <a href={{cta_url}}>here</a> to get started.</p></body></html>",
+            "meta": {
+              "score": 1,
+              "matched_keywords": {
+                "body": {
+                  "1": {
+                    "thanks for": 1
+                  }
+                }
+              }
+            },
+            "name": "v1.0",
+            "slug": "welcome_template_28",
+            "files": null,
+            "subject": "Welcome {{first_name}} \ud83d\udc4b",
+            "amp_html": null,
+            "is_draft": 0,
+            "editor_id": 1,
+            "is_active": true,
+            "reason_id": null,
+            "status_id": 1,
+            "variables": [
+              "first_name",
+              "company_name",
+              "cta_url"
+            ],
+            "created_at": "2025-08-22T04:21:15.000000Z",
+            "deleted_at": null,
+            "text_plain": null,
+            "updated_at": "2025-08-22T04:21:15.000000Z",
+            "description": null,
+            "template_id": 30577,
+            "mail_type_id": 1,
+            "preview_link": "https://mailer-prod-api-assets.s3.ap-southeast-2.amazonaws.com/templates/1693463812-outbound-9-template-placeholder.png",
+            "template_syntax": "handlebars"
+          }
+        ],
+        "created_at": "2025-08-22T04:21:15.000000Z",
+        "updated_at": "2025-08-22T04:21:15.000000Z"
+      },
+      "errors": {},
+      "status": "success",
+      "hasError": false
+    },
+    "source": "https://docs.msg91.com/email/create-new-template.md"
+  },
+  "GET /api/v5/flows": {
+    "body": {
+      "data": [
+        {
+          "flow_id": "645b6443d6fc0503960dff32",
+          "flow_name": "Multipart"
+        }
+      ],
+      "msg_type": "Success"
+    },
+    "source": "https://docs.msg91.com/sms/list-sms-templates.md"
+  },
+  "POST /api/v5/report/logs/p/sms": {
+    "body": {
+      "data": [
+        {
+          "status": "Delivered",
+          "telNum": "91XXXXXXXXXX",
+          "requestDate": "2024-07-22 18:16:04",
+          "deliveryDate": "2024-07-22",
+          "deliveryTime": "18:16:07",
+          "sentDateTime": "2024-07-22 18:16:08"
+        }
+      ],
+      "metadata": {
+        "jobId": "9c783281-272a-4fa7-afc1-8a0a754d791b",
+        "stats": {
+          "cacheHit": false,
+          "mbsBilled": 965.738496,
+          "billedBytes": "965738496",
+          "processedBytes": "965646977"
+        },
+        "total": 6,
+        "tables": [
+          "report_data_rt",
+          "request_data_rt"
+        ],
+        "tableId": "anon681757b2_4303_4bb2_9b06_5c6f31cbabf4",
+        "datasetId": "_17aafb89b974f682651acb204cc289255f2f70bb",
+        "paginationToken": "fixture-pagination-token"
+      }
+    },
+    "source": "https://docs.msg91.com/sms/sms-logs.md"
+  },
+  "GET /api/v5/report/analytics/p/sms": {
+    "body": {
+      "data": [],
+      "total": {
+        "ndnc": 0,
+        "failed": 0,
+        "message": 0,
+        "filtered": 0,
+        "rejected": 0,
+        "delivered": 0,
+        "ndncLength": 0,
+        "retryCount": 0,
+        "failedLength": 0,
+        "totalCredits": 0,
+        "failedCredits": 0,
+        "messageLength": 0,
+        "filteredLength": 0,
+        "rejectedLength": 0,
+        "deliveredLength": 0,
+        "rejectedCredits": 0,
+        "deliveredCredits": 0
+      }
+    },
+    "source": "https://docs.msg91.com/sms/sms-analytics.md"
+  },
+  "GET /api/v5/report/logs/p/otp": {
+    "body": {
+      "data": [
+        {
+          "status": "Delivered",
+          "telNum": "91XXXXXXXXXX",
+          "requestDate": "2024-07-22 18:16:04",
+          "deliveryDate": "2024-07-22",
+          "deliveryTime": "18:16:07",
+          "sentDateTime": "2024-07-22 18:16:08"
+        }
+      ],
+      "metadata": {
+        "jobId": "9c783281-272a-4fa7-afc1-8a0a754d791b",
+        "stats": {
+          "cacheHit": false,
+          "mbsBilled": 965.738496,
+          "billedBytes": "965738496",
+          "processedBytes": "965646977"
+        },
+        "total": 6,
+        "tables": [
+          "report_data_rt",
+          "request_data_rt"
+        ],
+        "tableId": "anon681757b2_4303_4bb2_9b06_5c6f31cbabf4",
+        "datasetId": "_17aafb89b974f682651acb204cc289255f2f70bb",
+        "paginationToken": "fixture-pagination-token"
+      }
+    },
+    "source": "https://docs.msg91.com/otp/otp-logs.md"
+  },
+  "GET /api/v5/report/analytics/p/otp": {
+    "body": {
+      "data": [
+        {
+          "date": "2024-06-01",
+          "ndnc": 0,
+          "sent": 1,
+          "failed": 0,
+          "rejected": 0,
+          "delivered": 1,
+          "ndncLength": 0,
+          "sentLength": 1,
+          "failedCredit": 0,
+          "failedLength": 0,
+          "missingLength": 0,
+          "rejectedCredit": 0,
+          "rejectedLength": 0,
+          "avgDeliveryTime": 1,
+          "balanceDeducted": 0.25,
+          "deliveredCredit": 0.25,
+          "deliveredLength": 1
+        },
+        {
+          "date": "2024-06-19",
+          "ndnc": 0,
+          "sent": 13,
+          "failed": 0,
+          "rejected": 0,
+          "delivered": 13,
+          "ndncLength": 0,
+          "sentLength": 13,
+          "failedCredit": 0,
+          "failedLength": 0,
+          "missingLength": 0,
+          "rejectedCredit": 0,
+          "rejectedLength": 0,
+          "avgDeliveryTime": 1,
+          "balanceDeducted": 3.25,
+          "deliveredCredit": 3.25,
+          "deliveredLength": 13
+        }
+      ],
+      "total": {
+        "failed": 0,
+        "message": 14,
+        "filtered": 0,
+        "delivered": 14,
+        "failedLength": 0,
+        "totalCredits": 3.5,
+        "failedCredits": 0,
+        "messageLength": 14,
+        "filteredLength": 0,
+        "avgDeliveryTime": 1,
+        "deliveredLength": 14,
+        "rejectedCredits": 0,
+        "deliveredCredits": 3.5
+      }
+    },
+    "source": "https://docs.msg91.com/otp/otp-analytics.md"
+  },
+  "GET /api/v5/report/logs/mail": {
+    "body": {
+      "data": [
+        {
+          "cc": "[]",
+          "bcc": "[]",
+          "rto": "[]",
+          "UUID": null,
+          "attc": "[]",
+          "irto": null,
+          "tvid": "45560",
+          "vbls": "[]",
+          "CRQID": null,
+          "msgId": "<1772449579-a1340ec1-fe04-4aa2-a393-27bf94ddd2f7-0@e4q4nx.mailer91.com>",
+          "domain": "e4q4nx.mailer91.com",
+          "events": [],
+          "isSmtp": 0,
+          "nodeId": null,
+          "opened": 0,
+          "sendTo": "[{\"email\":\"joe@msg91.com\"},{\"email\":\"bull@msg91.com\"},{\"email\":\"doe@msg91.com\"},{\"email\":\"ross@msg91.com\"}]",
+          "source": "API",
+          "status": "Delivered",
+          "clicked": 0,
+          "service": "mail",
+          "subject": "Techspace",
+          "mailType": "Transactional",
+          "timeline": [
+            "{ \"timestamp\": \"2026-03-02 16:36:19\", \"eventId\": 1, \"description\": null}",
+            "{ \"timestamp\": \"2026-03-02 16:36:24\", \"eventId\": 2, \"description\": null}",
+            "{ \"timestamp\": \"2026-03-02 16:36:26\", \"eventId\": 4, \"description\": \"aspmx.l.google.com\"}"
+          ],
+          "companyId": "372700",
+          "createdAt": "2026-03-02 16:36:19",
+          "requestId": "c3cae0ead91915b7afc8a61bb6fe756a97b2cc1b",
+          "spamScore": null,
+          "complaints": 0,
+          "description": "OK",
+          "senderEmail": "msg91@e4q4nx.mailer91.com",
+          "campaignName": null,
+          "pluginSource": null,
+          "templateName": "techspace",
+          "unsubscribed": 0,
+          "failureReason": null,
+          "recipientEmail": "joe@msg91.com",
+          "mailerRequestId": "a1340ec1-fe04-4aa2-a393-27bf94ddd2f7",
+          "statusUpdatedAt": "2026-03-02 16:36:26",
+          "campaignRequestId": null
+        },
+        {
+          "cc": "[]",
+          "bcc": "[]",
+          "rto": "[]",
+          "UUID": null,
+          "attc": "[]",
+          "irto": null,
+          "tvid": "45560",
+          "vbls": "[]",
+          "CRQID": null,
+          "msgId": "<1772449579-a1340ec1-fe04-4aa2-a393-27bf94ddd2f7-0@e4q4nx.mailer91.com>",
+          "domain": "e4q4nx.mailer91.com",
+          "events": [],
+          "isSmtp": 0,
+          "nodeId": null,
+          "opened": 0,
+          "sendTo": "[{\"email\":\"xxx@msg91.com\"},{\"email\":\"bull@msg91.com\"},{\"email\":\"doe@msg91.com\"},{\"email\":\"ross@msg91.com\"}]",
+          "source": "API",
+          "status": "Delivered",
+          "clicked": 0,
+          "service": "mail",
+          "subject": "Techspace",
+          "mailType": "Transactional",
+          "timeline": [
+            "{ \"timestamp\": \"2026-03-02 16:36:19\", \"eventId\": 1, \"description\": null}",
+            "{ \"timestamp\": \"2026-03-02 16:36:24\", \"eventId\": 2, \"description\": null}",
+            "{ \"timestamp\": \"2026-03-02 16:36:27\", \"eventId\": 4, \"description\": \"aspmx.l.google.com\"}"
+          ],
+          "companyId": "372700",
+          "createdAt": "2026-03-02 16:36:19",
+          "requestId": "d5badde74e03081f4e13dc4081e2d8439fcfb3ce",
+          "spamScore": null,
+          "complaints": 0,
+          "description": "OK",
+          "senderEmail": "msg91@e4q4nx.mailer91.com",
+          "campaignName": null,
+          "pluginSource": null,
+          "templateName": "techspace",
+          "unsubscribed": 0,
+          "failureReason": null,
+          "recipientEmail": "doe@msg91.com",
+          "mailerRequestId": "a1340ec1-fe04-4aa2-a393-27bf94ddd2f7",
+          "statusUpdatedAt": "2026-03-02 16:36:27",
+          "campaignRequestId": null
+        },
+        {
+          "cc": "[]",
+          "bcc": "[]",
+          "rto": "[]",
+          "UUID": null,
+          "attc": "[]",
+          "irto": null,
+          "tvid": "45560",
+          "vbls": "[]",
+          "CRQID": null,
+          "msgId": "<1772449579-a1340ec1-fe04-4aa2-a393-27bf94ddd2f7-0@e4q4nx.mailer91.com>",
+          "domain": "e4q4nx.mailer91.com",
+          "events": [],
+          "isSmtp": 0,
+          "nodeId": null,
+          "opened": 0,
+          "sendTo": "[{\"email\":\"lalitpurve@msg91.com\"},{\"email\":\"bull@msg91.com\"},{\"email\":\"doe@msg91.com\"},{\"email\":\"rajatgarg@msg91.com\"}]",
+          "source": "API",
+          "status": "Delivered",
+          "clicked": 0,
+          "service": "mail",
+          "subject": "Techspace",
+          "mailType": "Transactional",
+          "timeline": [
+            "{ \"timestamp\": \"2026-03-02 16:36:19\", \"eventId\": 1, \"description\": null}",
+            "{ \"timestamp\": \"2026-03-02 16:36:24\", \"eventId\": 2, \"description\": null}",
+            "{ \"timestamp\": \"2026-03-02 16:36:27\", \"eventId\": 4, \"description\": \"aspmx.l.google.com\"}"
+          ],
+          "companyId": "372700",
+          "createdAt": "2026-03-02 16:36:19",
+          "requestId": "31e2233e8db5649ca1dbe1c2884f26e42a537c7d",
+          "spamScore": null,
+          "complaints": 0,
+          "description": "OK",
+          "senderEmail": "msg91@e4q4nx.mailer91.com",
+          "campaignName": null,
+          "pluginSource": null,
+          "templateName": "techspace",
+          "unsubscribed": 0,
+          "failureReason": null,
+          "recipientEmail": "bull@msg91.com",
+          "mailerRequestId": "a1340ec1-fe04-4aa2-a393-27bf94ddd2f7",
+          "statusUpdatedAt": "2026-03-02 16:36:27",
+          "campaignRequestId": null
+        },
+        {
+          "cc": "[]",
+          "bcc": "[]",
+          "rto": "[]",
+          "attc": "[]",
+          "tvid": "45560",
+          "vbls": "[]",
+          "msgId": "<1772449579-a1340ec1-fe04-4aa2-a393-27bf94ddd2f7-0@e4q4nx.mailer91.com>",
+          "domain": "e4q4nx.mailer91.com",
+          "events": [],
+          "isSmtp": 0,
+          "opened": 0,
+          "sendTo": "[{\"email\":\"joe@msg91.com\"},{\"email\":\"bull@msg91.com\"},{\"email\":\"doe@msg91.com\"},{\"email\":\"xxx@msg91.com\"}]",
+          "source": "API",
+          "status": "Delivered",
+          "clicked": 0,
+          "service": "mail",
+          "subject": "Techspace",
+          "mailType": "Transactional",
+          "timeline": [
+            "{ \"timestamp\": \"2026-03-02 16:36:26\", \"eventId\": 4, \"description\": \"aspmx.l.google.com\"}"
+          ],
+          "companyId": "372700",
+          "createdAt": "2026-03-02 16:36:19",
+          "requestId": "fde274066c68699b9fcc39057306f67d0b47659c",
+          "complaints": 0,
+          "description": "OK",
+          "senderEmail": "msg91@e4q4nx.mailer91.com",
+          "templateName": "techspace",
+          "unsubscribed": 0,
+          "recipientEmail": "rajatgarg@msg91.com",
+          "mailerRequestId": "a1340ec1-fe04-4aa2-a393-27bf94ddd2f7",
+          "statusUpdatedAt": "2026-03-02 16:36:26"
+        }
+      ],
+      "metadata": {
+        "total": 4
+      }
+    },
+    "source": "https://docs.msg91.com/email/email-logs.md"
+  },
+  "GET /api/v5/report/analytics/p/mail": {
+    "body": {
+      "data": [
+        {
+          "date": "YYYY-MM-DD",
+          "total": 0,
+          "failed": 1,
+          "opened": 0,
+          "queued": 0,
+          "volume": 0,
+          "bounced": 0,
+          "clicked": 0,
+          "content": 0,
+          "invalid": 0,
+          "accepted": 0,
+          "rejected": 0,
+          "completed": 0,
+          "delivered": 0,
+          "technical": 0,
+          "complaints": 0,
+          "reputation": 0,
+          "unclassified": 0,
+          "uniqueOpened": 0,
+          "unsubscribed": 0,
+          "uniqueClicked": 0,
+          "avgDeliveryTime": 0,
+          "uniqueComplaints": 0,
+          "mailboxUnavailable": 0,
+          "processedFromAcceptedStage": 0
+        }
+      ],
+      "total": {
+        "total": 0,
+        "failed": 0,
+        "opened": 0,
+        "queued": 0,
+        "volume": 0,
+        "bounced": 0,
+        "clicked": 0,
+        "content": 0,
+        "invalid": 0,
+        "accepted": 0,
+        "rejected": 0,
+        "completed": 0,
+        "delivered": 0,
+        "technical": 0,
+        "complaints": 0,
+        "reputation": 0,
+        "unclassified": 0,
+        "uniqueOpened": 0,
+        "unsubscribed": 0,
+        "uniqueClicked": 0,
+        "avgDeliveryTime": 0,
+        "uniqueComplaints": 0,
+        "mailboxUnavailable": 0
+      },
+      "metadata": {
+        "jobId": "",
+        "stats": {
+          "cacheHit": false,
+          "mbsBilled": 537.919488,
+          "billedBytes": "537919488",
+          "processedBytes": "537048003"
+        },
+        "total": 1,
+        "tables": [
+          "",
+          "",
+          ""
+        ],
+        "tableId": "",
+        "datasetId": "",
+        "paginationToken": "fixture-pagination-token"
+      }
+    },
+    "source": "https://docs.msg91.com/email/email-analytics.md"
+  },
+  "POST /api/v5/segmento/api/v1/phonebooks/{phonebook_id}/contacts/filters": {
+    "body": "\"{\\n   \\\"data\\\":{\\n      \\\"data\\\":[\\n         {\\n            \\\"_id\\\":{\\n               \\\"$oid\\\":\\\"62308525c14d6327c23b7192\\\"\\n            },\\n            \\\"fields\\\":{\\n               \\\"n\\\":\\\"testing name updated\\\",\\n               \\\"p\\\":\\\"23472347234\\\",\\n               \\\"e\\\":\\\"testing@gmail.com\\\"\\n            },\\n            \\\"id\\\":\\\"62308525c14d6327c23b7192\\\"\\n         }\\n      ],\\n      \\\"itemsPerPage\\\":25,\\n      \\\"pageNumber\\\":1,\\n      \\\"totalEntityCount\\\":1,\\n      \\\"totalPageCount\\\":1,\\n      \\\"totalEntityCountWithoutFilter\\\":1\\n   },\\n   \\\"status\\\":\\\"success\\\",\\n   \\\"hasError\\\":false,\\n   \\\"errors\\\":[\\n      \\n   ]\\n}\"",
+    "source": "https://docs.msg91.com/segmento/filtersearch-contact.md"
+  }
+}
