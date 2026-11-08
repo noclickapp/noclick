@@ -11,6 +11,7 @@ const TemplatedIcon = ({ className, style }: { className?: string; style?: CSSPr
 
 export const TemplatedNode: NodeDefinition = {
     type: 'automation-templated', label: 'Templated',
+    category: 'media',
     description: 'Generate images and PDFs and manage templates, renders, folders, uploads and fonts',
     Icon: TemplatedIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
