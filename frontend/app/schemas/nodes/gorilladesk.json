@@ -1,0 +1,2247 @@
+{
+  "$defs": {
+    "AddCustomerLocationConfig": {
+      "additionalProperties": false,
+      "description": "Add a customer location.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "address_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address To"
+        },
+        "address_line_1": {
+          "minLength": 1,
+          "title": "Address Line 1",
+          "type": "string"
+        },
+        "address_line_2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Line 2"
+        },
+        "city": {
+          "minLength": 1,
+          "title": "City",
+          "type": "string"
+        },
+        "state": {
+          "minLength": 1,
+          "title": "State",
+          "type": "string"
+        },
+        "zip": {
+          "minLength": 1,
+          "title": "Zip",
+          "type": "string"
+        },
+        "county": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "County"
+        },
+        "billing_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billing To"
+        },
+        "billing_address_line_1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billing Address Line 1"
+        },
+        "billing_address_line_2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billing Address Line 2"
+        },
+        "billing_city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billing City"
+        },
+        "billing_state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billing State"
+        },
+        "billing_zip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billing Zip"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Longitude"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "operation": {
+          "const": "add_customer_location",
+          "default": "add_customer_location",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "GorillaDesk resource ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "address_line_1",
+        "city",
+        "state",
+        "zip",
+        "customer_id"
+      ],
+      "title": "AddCustomerLocationConfig",
+      "type": "object"
+    },
+    "CreateCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Create a customer.",
+      "properties": {
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "account_number": {
+          "anyOf": [
+            {
+              "pattern": ".*[0-9]$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Must end with a number.",
+          "title": "Account Number"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "inactive",
+                "lead"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "inactive",
+            "lead"
+          ],
+          "x-enum-searchable": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "phones": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CustomerPhone"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phones"
+        },
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "location": {
+          "$ref": "#/$defs/Location"
+        }
+      },
+      "required": [
+        "first_name",
+        "location"
+      ],
+      "title": "CreateCustomerConfig",
+      "type": "object"
+    },
+    "CreateCustomerNoteConfig": {
+      "additionalProperties": false,
+      "description": "Create a customer note.",
+      "properties": {
+        "operation": {
+          "const": "create_customer_note",
+          "default": "create_customer_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "GorillaDesk resource ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "content": {
+          "description": "Text of the customer note. This operation does not notify users or upload attachments.",
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id",
+        "content"
+      ],
+      "title": "CreateCustomerNoteConfig",
+      "type": "object"
+    },
+    "CustomerPhone": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "phone": {
+          "minLength": 1,
+          "title": "Phone",
+          "type": "string"
+        },
+        "type": {
+          "description": "Phone type ID from GorillaDesk.",
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phone",
+        "type"
+      ],
+      "title": "CustomerPhone",
+      "type": "object"
+    },
+    "GetCompanyConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve company.",
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCompanyConfig",
+      "type": "object"
+    },
+    "GetCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a customer.",
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "GorillaDesk resource ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "GetCustomerConfig",
+      "type": "object"
+    },
+    "GetEstimateConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve an estimate.",
+      "properties": {
+        "operation": {
+          "const": "get_estimate",
+          "default": "get_estimate",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "estimate_id": {
+          "description": "GorillaDesk resource ID.",
+          "minLength": 1,
+          "title": "Estimate Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "estimate_id"
+      ],
+      "title": "GetEstimateConfig",
+      "type": "object"
+    },
+    "GetInvoiceConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve an invoice.",
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "description": "GorillaDesk resource ID.",
+          "minLength": 1,
+          "title": "Invoice Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "GetInvoiceConfig",
+      "type": "object"
+    },
+    "GetJobConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a job.",
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "description": "GorillaDesk resource ID.",
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJobConfig",
+      "type": "object"
+    },
+    "GetPaymentConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a payment.",
+      "properties": {
+        "operation": {
+          "const": "get_payment",
+          "default": "get_payment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "payment_id": {
+          "description": "GorillaDesk resource ID.",
+          "minLength": 1,
+          "title": "Payment Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "payment_id"
+      ],
+      "title": "GetPaymentConfig",
+      "type": "object"
+    },
+    "GetScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a schedule.",
+      "properties": {
+        "operation": {
+          "const": "get_schedule",
+          "default": "get_schedule",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "schedule_id": {
+          "description": "GorillaDesk resource ID.",
+          "minLength": 1,
+          "title": "Schedule Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schedule_id"
+      ],
+      "title": "GetScheduleConfig",
+      "type": "object"
+    },
+    "GetUserConfig": {
+      "additionalProperties": false,
+      "description": "Retrieve a user.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "user_id": {
+          "description": "GorillaDesk resource ID.",
+          "minLength": 1,
+          "title": "User Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "GetUserConfig",
+      "type": "object"
+    },
+    "GorillaDeskAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "gorilladesk_api_key",
+          "default": "gorilladesk_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "GorillaDesk API Key",
+      "type": "object",
+      "x-credential-instructions": "Generate a company API key in GorillaDesk \u2192 Addons \u2192 API. Paste the key without the Bearer prefix. NoClick checks your company profile when connecting.",
+      "x-credential-url": "https://beta.gorilladesk.com/addons/api"
+    },
+    "ListBranchesConfig": {
+      "additionalProperties": false,
+      "description": "List all branches.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Number of records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding result.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_branches",
+          "default": "list_branches",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword"
+        }
+      },
+      "title": "ListBranchesConfig",
+      "type": "object"
+    },
+    "ListCustomersConfig": {
+      "additionalProperties": false,
+      "description": "List all customers.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Number of records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding result.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "deleted"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "active",
+            "deleted"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "inactive",
+                "lead"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "inactive",
+            "lead"
+          ],
+          "x-enum-searchable": true
+        },
+        "account_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Number"
+        },
+        "created_gt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created Gt"
+        },
+        "created_gte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created Gte"
+        },
+        "created_lt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created Lt"
+        },
+        "created_lte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created Lte"
+        },
+        "updated_gt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated Gt"
+        },
+        "updated_gte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated Gte"
+        },
+        "updated_lt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated Lt"
+        },
+        "updated_lte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated Lte"
+        }
+      },
+      "title": "ListCustomersConfig",
+      "type": "object"
+    },
+    "ListEstimatesConfig": {
+      "additionalProperties": false,
+      "description": "List estimates.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Number of records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding result.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_estimates",
+          "default": "list_estimates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Id"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "deleted",
+                "archived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "active",
+            "deleted",
+            "archived"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "pending",
+                "won",
+                "lost"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "draft",
+            "pending",
+            "won",
+            "lost"
+          ],
+          "x-enum-searchable": true
+        },
+        "sign_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "emailed",
+                "pending_sig",
+                "signed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sign Status",
+          "enum": [
+            "draft",
+            "emailed",
+            "pending_sig",
+            "signed"
+          ],
+          "x-enum-searchable": true
+        },
+        "date_gt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Gt"
+        },
+        "date_gte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Gte"
+        },
+        "date_lt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Lt"
+        },
+        "date_lte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Lte"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword"
+        }
+      },
+      "title": "ListEstimatesConfig",
+      "type": "object"
+    },
+    "ListInvoicesConfig": {
+      "additionalProperties": false,
+      "description": "List invoices.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Number of records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding result.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Id"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "deleted",
+                "archived"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "active",
+            "deleted",
+            "archived"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "sent",
+                "paid",
+                "partial",
+                "partial_paid",
+                "write_off",
+                "failed",
+                "void"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "draft",
+            "sent",
+            "paid",
+            "partial",
+            "partial_paid",
+            "write_off",
+            "failed",
+            "void"
+          ],
+          "x-enum-searchable": true
+        },
+        "sign_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "emailed",
+                "pending_sig",
+                "signed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sign Status",
+          "enum": [
+            "draft",
+            "emailed",
+            "pending_sig",
+            "signed"
+          ],
+          "x-enum-searchable": true
+        },
+        "date_gt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Gt"
+        },
+        "date_gte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Gte"
+        },
+        "date_lt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Lt"
+        },
+        "date_lte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Lte"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword"
+        }
+      },
+      "title": "ListInvoicesConfig",
+      "type": "object"
+    },
+    "ListJobActivitiesConfig": {
+      "additionalProperties": false,
+      "description": "List job activities.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Number of records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding result.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_job_activities",
+          "default": "list_job_activities",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "description": "GorillaDesk resource ID.",
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        },
+        "date_gt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Gt"
+        },
+        "date_lt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Lt"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ListJobActivitiesConfig",
+      "type": "object"
+    },
+    "ListJobStatusesConfig": {
+      "additionalProperties": false,
+      "description": "List job statuses.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Number of records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding result.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_job_statuses",
+          "default": "list_job_statuses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword"
+        }
+      },
+      "title": "ListJobStatusesConfig",
+      "type": "object"
+    },
+    "ListJobsConfig": {
+      "additionalProperties": false,
+      "description": "List jobs.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Number of records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding result.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "deleted"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State",
+          "enum": [
+            "active",
+            "deleted"
+          ],
+          "x-enum-searchable": true
+        },
+        "date_gt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Gt"
+        },
+        "date_gte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Gte"
+        },
+        "date_lt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Lt"
+        },
+        "date_lte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Lte"
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword"
+        }
+      },
+      "title": "ListJobsConfig",
+      "type": "object"
+    },
+    "ListLeadsConfig": {
+      "additionalProperties": false,
+      "description": "List inbound leads.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Number of records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding result.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Number"
+        },
+        "created_gt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created Gt"
+        },
+        "created_gte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created Gte"
+        },
+        "created_lt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created Lt"
+        },
+        "created_lte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created Lte"
+        }
+      },
+      "title": "ListLeadsConfig",
+      "type": "object"
+    },
+    "ListPaymentsConfig": {
+      "additionalProperties": false,
+      "description": "List payments.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Number of records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding result.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_payments",
+          "default": "list_payments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "invoice_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invoice Id"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "failed",
+                "pending",
+                "paid"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "failed",
+            "pending",
+            "paid"
+          ],
+          "x-enum-searchable": true
+        },
+        "date_gt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Gt"
+        },
+        "date_gte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Gte"
+        },
+        "date_lt": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Lt"
+        },
+        "date_lte": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date Lte"
+        }
+      },
+      "title": "ListPaymentsConfig",
+      "type": "object"
+    },
+    "ListSchedulesConfig": {
+      "additionalProperties": false,
+      "description": "List schedules.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Number of records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding result.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_schedules",
+          "default": "list_schedules",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListSchedulesConfig",
+      "type": "object"
+    },
+    "ListServicesConfig": {
+      "additionalProperties": false,
+      "description": "List service templates.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Number of records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding result.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_services",
+          "default": "list_services",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListServicesConfig",
+      "type": "object"
+    },
+    "ListSourcesConfig": {
+      "additionalProperties": false,
+      "description": "List all sources.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Number of records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding result.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_sources",
+          "default": "list_sources",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "keyword": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keyword"
+        }
+      },
+      "title": "ListSourcesConfig",
+      "type": "object"
+    },
+    "ListUsersConfig": {
+      "additionalProperties": false,
+      "description": "List all users.",
+      "properties": {
+        "limit": {
+          "default": 20,
+          "description": "Number of records in this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Use next_offset from the preceding result.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListUsersConfig",
+      "type": "object"
+    },
+    "Location": {
+      "additionalProperties": false,
+      "description": "GorillaDesk's documented writable location fields (id is read-only).",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "address_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address To"
+        },
+        "address_line_1": {
+          "minLength": 1,
+          "title": "Address Line 1",
+          "type": "string"
+        },
+        "address_line_2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Line 2"
+        },
+        "city": {
+          "minLength": 1,
+          "title": "City",
+          "type": "string"
+        },
+        "state": {
+          "minLength": 1,
+          "title": "State",
+          "type": "string"
+        },
+        "zip": {
+          "minLength": 1,
+          "title": "Zip",
+          "type": "string"
+        },
+        "county": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "County"
+        },
+        "billing_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billing To"
+        },
+        "billing_address_line_1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billing Address Line 1"
+        },
+        "billing_address_line_2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billing Address Line 2"
+        },
+        "billing_city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billing City"
+        },
+        "billing_state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billing State"
+        },
+        "billing_zip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billing Zip"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Longitude"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "address_line_1",
+        "city",
+        "state",
+        "zip"
+      ],
+      "title": "Location",
+      "type": "object"
+    },
+    "UpdateCustomerConfig": {
+      "additionalProperties": false,
+      "description": "Update a customer.",
+      "properties": {
+        "first_name": {
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "account_number": {
+          "anyOf": [
+            {
+              "pattern": ".*[0-9]$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Must end with a number.",
+          "title": "Account Number"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "inactive",
+                "lead"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "inactive",
+            "lead"
+          ],
+          "x-enum-searchable": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "company": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company"
+        },
+        "phones": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/CustomerPhone"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phones"
+        },
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "GorillaDesk resource ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "first_name",
+        "customer_id"
+      ],
+      "title": "UpdateCustomerConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_customer_location": "#/$defs/AddCustomerLocationConfig",
+          "create_customer": "#/$defs/CreateCustomerConfig",
+          "create_customer_note": "#/$defs/CreateCustomerNoteConfig",
+          "get_company": "#/$defs/GetCompanyConfig",
+          "get_customer": "#/$defs/GetCustomerConfig",
+          "get_estimate": "#/$defs/GetEstimateConfig",
+          "get_invoice": "#/$defs/GetInvoiceConfig",
+          "get_job": "#/$defs/GetJobConfig",
+          "get_payment": "#/$defs/GetPaymentConfig",
+          "get_schedule": "#/$defs/GetScheduleConfig",
+          "get_user": "#/$defs/GetUserConfig",
+          "list_branches": "#/$defs/ListBranchesConfig",
+          "list_customers": "#/$defs/ListCustomersConfig",
+          "list_estimates": "#/$defs/ListEstimatesConfig",
+          "list_invoices": "#/$defs/ListInvoicesConfig",
+          "list_job_activities": "#/$defs/ListJobActivitiesConfig",
+          "list_job_statuses": "#/$defs/ListJobStatusesConfig",
+          "list_jobs": "#/$defs/ListJobsConfig",
+          "list_leads": "#/$defs/ListLeadsConfig",
+          "list_payments": "#/$defs/ListPaymentsConfig",
+          "list_schedules": "#/$defs/ListSchedulesConfig",
+          "list_services": "#/$defs/ListServicesConfig",
+          "list_sources": "#/$defs/ListSourcesConfig",
+          "list_users": "#/$defs/ListUsersConfig",
+          "update_customer": "#/$defs/UpdateCustomerConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/ListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/GetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/AddCustomerLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomerNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ListLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/ListJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/ListJobActivitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ListEstimatesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetEstimateConfig"
+        },
+        {
+          "$ref": "#/$defs/ListPaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetPaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSchedulesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/ListServicesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListBranchesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSourcesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListJobStatusesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GorillaDeskAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Gorilladesk Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
