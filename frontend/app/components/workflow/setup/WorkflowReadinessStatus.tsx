@@ -85,6 +85,14 @@ export function WorkflowReadinessStatus({
                             ))}
                         </ul>
                     )}
+                    {report.warnings?.map((warning, i) => (
+                        <p
+                            key={`${warning.node_id}-warning-${i}`}
+                            className="mb-0 text-muted-foreground"
+                        >
+                            {warning.message}
+                        </p>
+                    ))}
                     {report.destinations.map((destination) => (
                         <p
                             key={destination.node_id + destination.operation}

@@ -58,7 +58,16 @@ def activation_graph_scope(workflow_id, graph):
         _activation_graph.reset(token)
 
 
-def activation_issues(graph: dict, trigger_id: Optional[str] = None) -> list[dict]:
+# An agent's tool with no account connected warns and never blocks: the agent runs without it, and only a call to that
+# tool fails, so its trigger stays on (blocking would take down the schedule of an agent that runs fine).
+TOOL_NOT_CONNECTED = "tool_not_connected"
+# A step with no account connected, which a product binding its credential on every run excuses (``bound_nodes``).
+_UNCONNECTED = ("missing_credentials", TOOL_NOT_CONNECTED)
+
+
+def activation_judgment(graph: dict, trigger_id: Optional[str] = None) -> tuple[list[dict], list[dict]]:
+    """``(issues, warnings)`` of the steps ``trigger_id`` reaches (every enabled step without one): an issue blocks
+    activation and runs, a warning (``TOOL_NOT_CONNECTED``) never does."""
     from nodes.core.registry import NODE_REGISTRY
     from nodes.agent.node_op_tools import (
         is_node_op_provider,
@@ -106,7 +115,7 @@ def activation_issues(graph: dict, trigger_id: Optional[str] = None) -> list[dic
             and e.get("targetHandle") == "bottom"
             and e["source"] in enabled
         }
-    issues = []
+    issues, warnings = [], []
     if trigger_id is not None and trigger_id not in enabled:
         return [
             {
@@ -114,7 +123,7 @@ def activation_issues(graph: dict, trigger_id: Optional[str] = None) -> list[dic
                 "code": "disabled",
                 "message": "Enable the trigger before activating it.",
             }
-        ]
+        ], warnings
     for nid in sorted(scope):
         n = by_id[nid]
         kind, cfg = n.get("type", ""), n["config"]
@@ -137,14 +146,24 @@ def activation_issues(graph: dict, trigger_id: Optional[str] = None) -> list[dic
             else node_requires_credentials(kind, operation, cfg)
         )
         if needs_credential and not extract_credential_ids(cfg):
-            missing_key = None if provider else unfunded_platform_key_text(kind, operation, cfg)
-            issues.append(
-                {
-                    "node_id": nid,
-                    "code": "missing_credentials",
-                    "message": f"{cfg.get('label') or nid}: {missing_key or 'connect an account'}",
-                }
-            )
+            label = cfg.get("label") or nid
+            if provider:
+                warnings.append(
+                    {
+                        "node_id": nid,
+                        "code": TOOL_NOT_CONNECTED,
+                        "message": f"{label}: the agent can't use this tool until an account is connected.",
+                    }
+                )
+            else:
+                missing_key = unfunded_platform_key_text(kind, operation, cfg)
+                issues.append(
+                    {
+                        "node_id": nid,
+                        "code": "missing_credentials",
+                        "message": f"{label}: {missing_key or 'connect an account'}",
+                    }
+                )
         if not provider:
             result = node_cls.validate_config({"config": cfg})
             # A saved node holds credentialIds, never the credentials a run
@@ -168,7 +187,12 @@ def activation_issues(graph: dict, trigger_id: Optional[str] = None) -> list[dic
                         "message": f"{cfg.get('label') or nid}: {error}",
                     }
                 )
-    return issues
+    return issues, warnings
+
+
+def activation_issues(graph: dict, trigger_id: Optional[str] = None) -> list[dict]:
+    """What blocks the steps ``trigger_id`` reaches: ``activation_judgment``'s issues."""
+    return activation_judgment(graph, trigger_id)[0]
 
 
 async def bound_nodes(pool, workflow_id) -> set[str]:
@@ -180,15 +204,25 @@ async def bound_nodes(pool, workflow_id) -> set[str]:
     return set(await bound(pool, str(workflow_id))) if bound is not None else set()
 
 
-async def unbound_issues(pool, workflow_id, graph: dict, trigger_id: Optional[str] = None) -> list[dict]:
-    """``activation_issues`` less the missing credentials of ``bound_nodes``:
+async def unbound_judgment(
+    pool, workflow_id, graph: dict, trigger_id: Optional[str] = None
+) -> tuple[list[dict], list[dict]]:
+    """``activation_judgment`` less the unconnected steps of ``bound_nodes``:
     the one judgment of a saved graph, for activation, runs and readiness. The
-    product is asked only when one is missing."""
-    issues = activation_issues(graph, trigger_id)
-    if not any(i["code"] == "missing_credentials" for i in issues):
-        return issues
+    product is asked only when a step is unconnected."""
+    judged = activation_judgment(graph, trigger_id)
+    if not any(i["code"] in _UNCONNECTED for found in judged for i in found):
+        return judged
     nodes = await bound_nodes(pool, workflow_id)
-    return [i for i in issues if i["code"] != "missing_credentials" or i["node_id"] not in nodes]
+    issues, warnings = (
+        [i for i in found if i["code"] not in _UNCONNECTED or i["node_id"] not in nodes] for found in judged
+    )
+    return issues, warnings
+
+
+async def unbound_issues(pool, workflow_id, graph: dict, trigger_id: Optional[str] = None) -> list[dict]:
+    """What blocks activation and runs: ``unbound_judgment``'s issues."""
+    return (await unbound_judgment(pool, workflow_id, graph, trigger_id))[0]
 
 
 async def require_activation_ready(pool, workflow_id, node_id):
@@ -228,7 +262,7 @@ async def readiness_report(
         and node_config(n).get("disabled") not in (True, "true")
         and n.get("type") != "trigger-run"
     ]
-    issues = await unbound_issues(pool, workflow_id, graph)
+    issues, warnings = await unbound_judgment(pool, workflow_id, graph)
     for trigger in triggers:
         error = node_config(trigger).get("trigger_error")
         if error:
@@ -327,6 +361,7 @@ async def readiness_report(
                         "recipients": op["field_scopes"]["to"],
                     }
                 )
+    # Warnings never decide it: what they name doesn't stop the workflow running.
     if issues:
         status = "needs_setup"
     elif observations:
@@ -346,6 +381,7 @@ async def readiness_report(
         "deadline_watches": watches,
         "alarm_node_ids": alarm_ids,
         "issues": issues,
+        "warnings": warnings,
         "unverified": unverified,
         "observations": observations,
         "destinations": destinations,

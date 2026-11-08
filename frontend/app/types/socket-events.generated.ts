@@ -13916,6 +13916,7 @@ export interface WorkflowInfo1 {
 export interface WorkflowReadinessReport {
   status: "needs_setup" | "configured" | "waiting_for_input" | "deadline_armed" | "input_observed" | "manual_only";
   issues: ReadinessIssue[];
+  warnings?: ReadinessIssue[];
   unverified?: ReadinessIssue[];
   registered_trigger_ids: string[];
   observations: TriggerObservation[];

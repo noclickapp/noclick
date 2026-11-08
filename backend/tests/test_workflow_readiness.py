@@ -9,13 +9,16 @@ from utils.workflow_readiness import (
     STATUS_MEANINGS,
     activation_graph_scope,
     activation_issues,
+    activation_judgment,
     readiness_report,
     require_activation_ready,
     unbound_issues,
+    unbound_judgment,
     WorkflowNotReadyError,
 )
 from utils.webhook_manager import WebhookManager
 from nodes.whatsapp_node import WhatsAppNode
+from wss.sender.workflow_readiness_responses import WorkflowReadinessReport
 
 
 def monitor_graph(message=None):
@@ -167,15 +170,26 @@ def test_a_provider_that_takes_no_account_never_requires_one():
             assert not node_requires_credentials(node_type, None, {"agent_tool_operations": allowed}), node_type
 
 
-def test_a_tool_that_takes_an_account_still_asks_for_one():
+def test_a_tool_that_takes_an_account_warns_until_it_has_one_and_never_blocks():
+    """An agent runs without a tool that has no account, and only a call to that tool fails: it's a warning naming the
+    step, never an issue that keeps the agent's schedule off. The same step wired as a step of its own still blocks."""
     graph = weekly_digest_graph(True)
     graph["nodes"][2] = {"id": "email", "type": "automation-gmail",
-                         "config": {"agent_tool_operations": ["send_email_message"]}}
-    assert [(i["node_id"], i["code"]) for i in activation_issues(graph, "monday")] == [
-        ("email", "missing_credentials")
-    ]
-    graph["nodes"][2]["config"]["credentialIds"] = {"google_gmail_oauth": str(uuid.uuid4())}
+                         "config": {"label": "Gmail", "agent_tool_operations": ["send_email_message"]}}
+    for trigger_id in ("monday", None):
+        assert activation_judgment(graph, trigger_id) == ([], [{
+            "node_id": "email", "code": "tool_not_connected",
+            "message": "Gmail: the agent can't use this tool until an account is connected."}])
     assert activation_issues(graph, "monday") == []
+    graph["nodes"][2]["config"]["credentialIds"] = {"google_gmail_oauth": str(uuid.uuid4())}
+    assert activation_judgment(graph, "monday") == ([], [])
+
+    step = weekly_digest_graph(False)
+    step["nodes"][2] = {"id": "email", "type": "automation-gmail",
+                        "config": {"label": "Gmail", "operation": "send_email_message", "to": "me@example.test",
+                                   "subject": "Events", "body": "{{ $('brain').response }}"}}
+    issues, warnings = activation_judgment(step, "monday")
+    assert [(i["node_id"], i["code"]) for i in issues] == [("email", "missing_credentials")] and warnings == []
 
 
 async def test_credentials_a_product_binds_per_run_dont_block_activation(monkeypatch):
@@ -185,22 +199,32 @@ async def test_credentials_a_product_binds_per_run_dont_block_activation(monkeyp
     from utils import capabilities
 
     graph = monitor_graph("Inspect the update.")
+    del graph["nodes"][1]["config"]["credentialIds"]
     del graph["nodes"][2]["config"]["credentialIds"]
-    assert [i["code"] for i in activation_issues(graph, "in")] == ["missing_credentials"]
+    assert activation_judgment(graph, "in") == (
+        [{"node_id": "brain", "code": "missing_credentials", "message": "brain: connect an account"}],
+        [{"node_id": "alerts", "code": "tool_not_connected",
+          "message": "alerts: the agent can't use this tool until an account is connected."}])
     workflow_id, other = str(uuid.uuid4()), str(uuid.uuid4())
-    bound, asked = {workflow_id: {"alerts"}}, []
+    bound, asked = {workflow_id: {"brain", "alerts"}}, []
 
     async def bound_credentials(pool, wid):
         asked.append(wid)
         return bound.get(wid, set())
 
     monkeypatch.setitem(capabilities._providers, capabilities.BOUND_CREDENTIALS, bound_credentials)
+    assert await unbound_judgment(None, workflow_id, graph, "in") == ([], [])
     assert await unbound_issues(None, workflow_id, graph, "in") == []
     with activation_graph_scope(workflow_id, graph):
         await require_activation_ready(None, workflow_id, "in")
     with activation_graph_scope(other, graph):
-        with pytest.raises(WorkflowNotReadyError, match="connect an account"):
+        with pytest.raises(WorkflowNotReadyError, match="brain: connect an account"):
             await require_activation_ready(None, other, "in")
+    # Unbound, the tool alone still only warns.
+    graph["nodes"][1]["config"]["credentialIds"] = {"agent_claude_code_oauth": str(uuid.uuid4())}
+    with activation_graph_scope(other, graph):
+        await require_activation_ready(None, other, "in")
+    assert [w["node_id"] for w in (await unbound_judgment(None, other, graph, "in"))[1]] == ["alerts"]
     graph["nodes"][1]["config"]["temperature"] = 3
     bound[workflow_id] = {"alerts", "brain"}
     with activation_graph_scope(workflow_id, graph):
@@ -227,9 +251,40 @@ async def test_readiness_judges_a_bound_credential_as_activation_does(real_datab
 
     monkeypatch.setitem(capabilities._providers, capabilities.BOUND_CREDENTIALS, bound_credentials)
     report = await readiness_report(real_database.pool, workflow_id, graph, credential_health={})
-    assert report["issues"] == [] and report["status"] != "needs_setup"
+    assert report["issues"] == report["warnings"] == [] and report["status"] != "needs_setup"
+    # Unbound, the tool is named as a warning, which leaves the status as it would be without it.
     other = await readiness_report(real_database.pool, str(uuid.uuid4()), graph, credential_health={})
-    assert [(i["node_id"], i["code"]) for i in other["issues"]] == [("alerts", "missing_credentials")]
+    assert other["issues"] == [] and other["status"] == report["status"]
+    assert [(i["node_id"], i["code"]) for i in other["warnings"]] == [("alerts", "tool_not_connected")]
+    WorkflowReadinessReport.model_validate(other)
+
+
+async def test_an_agents_unconnected_tool_never_keeps_its_trigger_from_registering(real_database, monkeypatch):
+    """The nightly trigger check would tear down a schedule whose agent ran every time, for one tool with no account
+    (only a call to that tool fails, and the agent can say so). Registration goes ahead and readiness warns; a step
+    of the trigger's path missing its account is still refused."""
+    graph = monitor_graph("Inspect the update.")
+    del graph["nodes"][2]["config"]["credentialIds"]
+    loader = AsyncMock(return_value={"values": {"webhook_url": "https://example.test/hook"}})
+    monkeypatch.setattr(WhatsAppNode, "load_field_value", loader)
+    kwargs = dict(user_id=str(uuid.uuid4()), workflow_id=str(uuid.uuid4()), node_id="in",
+                  node_type="automation-whatsapp", operation="receive_message",
+                  config=graph["nodes"][0]["config"], workflow_graph=graph)
+    assert (await WebhookManager.provision_node_webhook(real_database.pool, **kwargs))["webhook_url"]
+    loader.assert_awaited_once()
+    report = await readiness_report(real_database.pool, kwargs["workflow_id"], graph, credential_health={})
+    assert report["status"] != "needs_setup" and report["issues"] == []
+    assert report["warnings"] == [{"node_id": "alerts", "code": "tool_not_connected",
+                                   "message": "alerts: the agent can't use this tool until an account is connected."}]
+
+    graph["nodes"].append({"id": "log", "type": "automation-whatsapp",
+                           "config": {"label": "Log it", "operation": "send_text_message", "to": "manager",
+                                      "message": "{{ $('brain').response }}"}})
+    graph["edges"].append({"source": "brain", "target": "log"})
+    loader.reset_mock()
+    with pytest.raises(WorkflowNotReadyError, match="Log it: connect an account"):
+        await WebhookManager.provision_node_webhook(real_database.pool, **kwargs)
+    loader.assert_not_awaited()
 
 
 async def test_broken_path_cannot_register_and_repair_can(real_database, monkeypatch):
@@ -380,8 +435,6 @@ def test_each_status_says_what_it_means():
     nothing needs doing: registered isn't tested, and that was said of an automation whose every run failed
     (2026-10-28)."""
     from typing import get_args
-
-    from wss.sender.workflow_readiness_responses import WorkflowReadinessReport
 
     assert set(STATUS_MEANINGS) == set(get_args(WorkflowReadinessReport.model_fields["status"].annotation))
     meaning = STATUS_MEANINGS["waiting_for_input"]

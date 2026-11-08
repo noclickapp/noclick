@@ -45,6 +45,8 @@ class WorkflowReadinessReport(BaseModel):
         "manual_only",
     ]
     issues: list[ReadinessIssue]
+    # What doesn't stop it running but a call needs: an agent's tool with no account connected.
+    warnings: list[ReadinessIssue] = Field(default_factory=list)
     # Steps no run has completed yet: configured, not tested.
     unverified: list[ReadinessIssue] = Field(default_factory=list)
     registered_trigger_ids: list[str]

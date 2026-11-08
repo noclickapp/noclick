@@ -801,6 +801,31 @@ async def _unfinished_setup(db, owner, node_type, config, **_):
     return workflow_id
 
 
+async def _agent_with_an_unconnected_tool(db, owner, node_type, config, **_):
+    """A trigger whose agent has a tool with no account: the agent runs, and only a call to that tool fails."""
+    workflow_id = str(uuid.uuid4())
+    graph = {
+        "nodes": [_step(node_type, config),
+                  _step("agent", {"model": "claude-code", "message": "Answer.",
+                                  "credentialIds": {"agent_claude_code_oauth": str(uuid.uuid4())}}, node_id="agent"),
+                  _step(STRIPE, {"agent_tool_operations": ["create_customer"]}, node_id="tool")],
+        "edges": [{"id": "e", "source": NODE, "target": "agent"},
+                  {"id": "t", "source": "tool", "target": "agent", "sourceHandle": "top", "targetHandle": "bottom"}],
+    }
+    await db.execute("INSERT INTO workflows (id, owner_id, name, workflow) VALUES ($1, $2, $3, $4::jsonb)",
+                     workflow_id, owner, LABEL, graph)
+    return workflow_id
+
+
+async def _stale_agent_with_an_unconnected_tool(db, owner, node_type, config, operation, provider, **_):
+    """Registered at older settings: re-registered, where a step missing its account has it torn down."""
+    workflow_id = await _agent_with_an_unconnected_tool(db, owner, node_type, config)
+    await _row(db, workflow_id, operation=operation or "__schedule__", fingerprint="an-older-fingerprint")
+    if node_type == CRON:
+        provider.schedule(workflow_id, NODE, ["0 9 * * *"], "UTC", await _row_url(db, workflow_id))
+    return workflow_id
+
+
 async def _stale_unfinished_setup(db, owner, node_type, config, operation, **_):
     workflow_id = await _unfinished_setup(db, owner, node_type, config)
     await _row(db, workflow_id, operation=operation or "__schedule__", fingerprint="an-older-fingerprint")
@@ -872,6 +897,11 @@ SCENARIOS = [
     (_step_removed, STRIPE, ON_EVENT, "would_deregister", "deregistered", False),
     (_unfinished_setup, CRON, HOURLY, "refused", "raises", False),
     (_stale_unfinished_setup, CRON, HOURLY, "would_deregister", "raises", False),
+    # An agent's tool with no account warns and never holds its trigger off.
+    (_agent_with_an_unconnected_tool, CRON, HOURLY, "would_register", "registered", False),
+    (_stale_agent_with_an_unconnected_tool, CRON, HOURLY, "would_reregister", "registered", False),
+    (_agent_with_an_unconnected_tool, STRIPE, ON_EVENT, "would_register", "registered", False),
+    (_stale_agent_with_an_unconnected_tool, STRIPE, ON_EVENT, "would_reregister", "registered", False),
     (_never_registered, STRIPE, ON_EVENT, "would_register", "registered", False),
     (_stale, STRIPE, ON_EVENT, "would_reregister", "registered", False),
     (_torn_down_row, STRIPE, ON_EVENT, "would_register", "registered", False),

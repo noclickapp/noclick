@@ -217,8 +217,9 @@ def credential_check(missing: str, active_trigger: bool) -> str:
         "and say what is missing."
     )
     if active_trigger:
-        text += (" Its trigger stays off until every step it reaches is connected, then starts: leave it on and "
-                 "say it starts once they connect.")
+        text += (" Its trigger stays off until every step it reaches is connected, then starts (an agent's tool "
+                 "doesn't hold it off: only a call to that tool fails): leave it on and say what waits on the "
+                 "connection.")
     return text
 
 
