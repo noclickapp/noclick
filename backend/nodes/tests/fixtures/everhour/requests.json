@@ -1,0 +1,452 @@
+{
+  "source": "https://developers.everhour.com/openapi.json",
+  "note": "Synthetic response fixtures; request examples exercise documented field names and values.",
+  "cases": [
+    {
+      "operation": "get_current_user",
+      "config": {},
+      "method": "GET",
+      "path": "/users/me",
+      "query": {},
+      "body": null,
+      "response": {
+        "id": 1304,
+        "name": "John Bender",
+        "apiKey": "provider-returned-key"
+      }
+    },
+    {
+      "operation": "list_users",
+      "config": {
+        "query": "John",
+        "limit": 10
+      },
+      "method": "GET",
+      "path": "/team/users",
+      "query": {
+        "query": "John",
+        "limit": "10"
+      },
+      "body": null,
+      "response": [
+        {
+          "id": 1304,
+          "name": "John Bender"
+        }
+      ]
+    },
+    {
+      "operation": "list_clients",
+      "config": {
+        "query": "Vending Inc"
+      },
+      "method": "GET",
+      "path": "/clients",
+      "query": {
+        "query": "Vending Inc"
+      },
+      "body": null,
+      "response": [
+        {
+          "id": 123,
+          "name": "Vending Inc"
+        }
+      ]
+    },
+    {
+      "operation": "get_client",
+      "config": {
+        "client_id": 123
+      },
+      "method": "GET",
+      "path": "/clients/123",
+      "query": {},
+      "body": null,
+      "response": {
+        "id": 123,
+        "name": "Client Name"
+      }
+    },
+    {
+      "operation": "create_client",
+      "config": {
+        "name": "Client Name",
+        "email": [
+          "billing@example.com"
+        ]
+      },
+      "method": "POST",
+      "path": "/clients",
+      "query": {},
+      "body": {
+        "name": "Client Name",
+        "email": [
+          "billing@example.com"
+        ]
+      },
+      "response": {
+        "id": 123
+      }
+    },
+    {
+      "operation": "update_client",
+      "config": {
+        "client_id": 123,
+        "name": "Client Name",
+        "defaultDiscount": 0,
+        "projects": []
+      },
+      "method": "PUT",
+      "path": "/clients/123",
+      "query": {},
+      "body": {
+        "name": "Client Name",
+        "defaultDiscount": 0,
+        "projects": []
+      },
+      "response": {
+        "id": 123
+      }
+    },
+    {
+      "operation": "list_projects",
+      "config": {
+        "page": 2,
+        "limit": 10,
+        "query": "Development"
+      },
+      "method": "GET",
+      "path": "/projects",
+      "query": {
+        "page": "2",
+        "limit": "10",
+        "query": "Development"
+      },
+      "body": null,
+      "response": [
+        {
+          "id": "ev:1234567789001"
+        }
+      ]
+    },
+    {
+      "operation": "get_project",
+      "config": {
+        "project_id": "ev:1234567789001"
+      },
+      "method": "GET",
+      "path": "/projects/ev:1234567789001",
+      "query": {},
+      "body": null,
+      "response": {
+        "id": "ev:1234567789001"
+      }
+    },
+    {
+      "operation": "create_project",
+      "config": {
+        "name": "Project Name",
+        "project_type": "board",
+        "users": [
+          1304,
+          1543
+        ],
+        "privacy": false
+      },
+      "method": "POST",
+      "path": "/projects",
+      "query": {},
+      "body": {
+        "name": "Project Name",
+        "type": "board",
+        "users": [
+          1304,
+          1543
+        ],
+        "privacy": false
+      },
+      "response": {
+        "id": "ev:1234567789001"
+      }
+    },
+    {
+      "operation": "update_project",
+      "config": {
+        "project_id": "ev:1234567789001",
+        "project_type": "list",
+        "client": 123
+      },
+      "method": "PUT",
+      "path": "/projects/ev:1234567789001",
+      "query": {},
+      "body": {
+        "type": "list",
+        "client": 123
+      },
+      "response": {
+        "id": "ev:1234567789001"
+      }
+    },
+    {
+      "operation": "archive_project",
+      "config": {
+        "project_id": "ev:1234567789001",
+        "archived": false
+      },
+      "method": "PATCH",
+      "path": "/projects/ev:1234567789001/archive",
+      "query": {},
+      "body": {
+        "archived": false
+      },
+      "response": {
+        "id": "ev:1234567789001"
+      }
+    },
+    {
+      "operation": "list_tasks",
+      "config": {
+        "project_id": "ev:1234567789001",
+        "exclude_closed": false,
+        "page": 2,
+        "limit": 250
+      },
+      "method": "GET",
+      "path": "/projects/ev:1234567789001/tasks",
+      "query": {
+        "exclude-closed": "false",
+        "page": "2",
+        "limit": "250"
+      },
+      "body": null,
+      "response": [
+        {
+          "id": "ev:3000010034"
+        }
+      ]
+    },
+    {
+      "operation": "get_task",
+      "config": {
+        "task_id": "ev:3000010034"
+      },
+      "method": "GET",
+      "path": "/tasks/ev:3000010034",
+      "query": {},
+      "body": null,
+      "response": {
+        "id": "ev:3000010034"
+      }
+    },
+    {
+      "operation": "create_task",
+      "config": {
+        "project_id": "ev:1234567789001",
+        "name": "Task Name",
+        "task_status": "open",
+        "assignees": [
+          {
+            "userId": 1304
+          }
+        ]
+      },
+      "method": "POST",
+      "path": "/projects/ev:1234567789001/tasks",
+      "query": {},
+      "body": {
+        "name": "Task Name",
+        "status": "open",
+        "assignees": [
+          {
+            "userId": 1304
+          }
+        ]
+      },
+      "response": {
+        "id": "ev:3000010034"
+      }
+    },
+    {
+      "operation": "update_task",
+      "config": {
+        "task_id": "ev:3000010034",
+        "task_status": "closed",
+        "dueOn": "2018-03-05",
+        "labels": [
+          "high",
+          "bug"
+        ]
+      },
+      "method": "PUT",
+      "path": "/tasks/ev:3000010034",
+      "query": {},
+      "body": {
+        "status": "closed",
+        "dueOn": "2018-03-05",
+        "labels": [
+          "high",
+          "bug"
+        ]
+      },
+      "response": {
+        "id": "ev:3000010034"
+      }
+    },
+    {
+      "operation": "delete_task",
+      "config": {
+        "task_id": "ev:3000010034"
+      },
+      "method": "DELETE",
+      "path": "/tasks/ev:3000010034",
+      "query": {},
+      "body": null,
+      "response": null
+    },
+    {
+      "operation": "search_tasks",
+      "config": {
+        "query": "Managem",
+        "project": "ev:1234567789001",
+        "searchInClosed": false,
+        "limit": 20
+      },
+      "method": "GET",
+      "path": "/tasks/search",
+      "query": {
+        "query": "Managem",
+        "project": "ev:1234567789001",
+        "searchInClosed": "false",
+        "limit": "20"
+      },
+      "body": null,
+      "response": [
+        {
+          "id": "ev:3000010034"
+        }
+      ]
+    },
+    {
+      "operation": "list_time",
+      "config": {
+        "from_date": "2018-01-01",
+        "to_date": "2018-01-31",
+        "limit": 10,
+        "page": 3
+      },
+      "method": "GET",
+      "path": "/team/time",
+      "query": {
+        "from": "2018-01-01",
+        "to": "2018-01-31",
+        "limit": "10",
+        "page": "3"
+      },
+      "body": null,
+      "response": [
+        {
+          "id": 8006001,
+          "time": 3600
+        }
+      ]
+    },
+    {
+      "operation": "add_time",
+      "config": {
+        "time": 3600,
+        "date": "2018-01-20",
+        "task": "ev:3000010034",
+        "user": 1304,
+        "comment": "some notes"
+      },
+      "method": "POST",
+      "path": "/time",
+      "query": {},
+      "body": {
+        "time": 3600,
+        "date": "2018-01-20",
+        "task": "ev:3000010034",
+        "user": 1304,
+        "comment": "some notes"
+      },
+      "response": {
+        "id": 8006001,
+        "time": 3600
+      }
+    },
+    {
+      "operation": "update_time",
+      "config": {
+        "time_id": 8006001,
+        "time": 0
+      },
+      "method": "PUT",
+      "path": "/time/8006001",
+      "query": {},
+      "body": {
+        "time": 0
+      },
+      "response": {
+        "id": 8006001,
+        "time": 0
+      }
+    },
+    {
+      "operation": "delete_time",
+      "config": {
+        "time_id": 8006001
+      },
+      "method": "DELETE",
+      "path": "/time/8006001",
+      "query": {},
+      "body": null,
+      "response": {
+        "id": 8006001,
+        "time": 0
+      }
+    },
+    {
+      "operation": "start_timer",
+      "config": {
+        "task": "ev:9876543210",
+        "userDate": "2018-01-16",
+        "comment": "some notes"
+      },
+      "method": "POST",
+      "path": "/timers",
+      "query": {},
+      "body": {
+        "task": "ev:9876543210",
+        "userDate": "2018-01-16",
+        "comment": "some notes"
+      },
+      "response": {
+        "status": "active"
+      }
+    },
+    {
+      "operation": "get_timer",
+      "config": {},
+      "method": "GET",
+      "path": "/timers/current",
+      "query": {},
+      "body": null,
+      "response": {}
+    },
+    {
+      "operation": "stop_timer",
+      "config": {},
+      "method": "DELETE",
+      "path": "/timers/current",
+      "query": {},
+      "body": null,
+      "response": {
+        "status": "stopped",
+        "taskTime": {
+          "time": 3600
+        },
+        "timecard": null
+      }
+    }
+  ]
+}
