@@ -424,7 +424,11 @@
         },
         "metadata_json": {
           "description": "JSON array of {\"key\":\"topic\",\"values\":[\"owned-fixture\"]}. Replaces document metadata; no text-replacement contract is assumed.",
+          "examples": [
+            "[]"
+          ],
           "maxLength": 12000,
+          "pattern": "^\\s*\\[[\\s\\S]*\\]\\s*$",
           "title": "Metadata Tags",
           "type": "string",
           "ui:widget": "code_editor",
