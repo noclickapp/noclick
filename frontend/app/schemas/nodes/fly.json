@@ -1,0 +1,1139 @@
+{
+  "$defs": {
+    "FlyCreateAppConfig": {
+      "additionalProperties": false,
+      "description": "Create app.",
+      "properties": {
+        "operation": {
+          "const": "create_app",
+          "default": "create_app",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "org_slug": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Org Slug",
+          "type": "string"
+        },
+        "network": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Network"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reuse for retries of the same create request.",
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "name",
+        "org_slug"
+      ],
+      "title": "FlyCreateAppConfig",
+      "type": "object"
+    },
+    "FlyCreateMachineConfig": {
+      "additionalProperties": false,
+      "description": "Create machine.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_machine",
+          "default": "create_machine",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "machine_config": {
+          "additionalProperties": true,
+          "description": "Complete Fly Machine config object, including image, env, services, guest and mounts as needed. Updating replaces the configuration; provide all fields to retain.",
+          "title": "Machine Config",
+          "type": "object",
+          "ui:widget": "json"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region"
+        },
+        "skip_launch": {
+          "default": false,
+          "title": "Skip Launch",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "app_name",
+        "machine_config"
+      ],
+      "title": "FlyCreateMachineConfig",
+      "type": "object"
+    },
+    "FlyCreateVolumeConfig": {
+      "additionalProperties": false,
+      "description": "Create volume.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_volume",
+          "default": "create_volume",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "region": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Region",
+          "type": "string"
+        },
+        "size_gb": {
+          "minimum": 1,
+          "title": "Size Gb",
+          "type": "integer"
+        },
+        "encrypted": {
+          "default": true,
+          "title": "Encrypted",
+          "type": "boolean"
+        },
+        "snapshot_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Snapshot Id"
+        }
+      },
+      "required": [
+        "app_name",
+        "name",
+        "region",
+        "size_gb"
+      ],
+      "title": "FlyCreateVolumeConfig",
+      "type": "object"
+    },
+    "FlyCreateVolumeSnapshotConfig": {
+      "additionalProperties": false,
+      "description": "Create volume snapshot.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "volume_id": {
+          "description": "Volume ID returned by list or create.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Volume Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_volume_snapshot",
+          "default": "create_volume_snapshot",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "app_name",
+        "volume_id"
+      ],
+      "title": "FlyCreateVolumeSnapshotConfig",
+      "type": "object"
+    },
+    "FlyDeleteAppConfig": {
+      "additionalProperties": false,
+      "description": "Delete app.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_app",
+          "default": "delete_app",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "app_name"
+      ],
+      "title": "FlyDeleteAppConfig",
+      "type": "object"
+    },
+    "FlyDeleteMachineConfig": {
+      "additionalProperties": false,
+      "description": "Delete machine.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "machine_id": {
+          "description": "Machine ID returned by list or create.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Machine Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_machine",
+          "default": "delete_machine",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "force": {
+          "default": false,
+          "description": "Kill a running Machine before deleting it.",
+          "title": "Force",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "app_name",
+        "machine_id"
+      ],
+      "title": "FlyDeleteMachineConfig",
+      "type": "object"
+    },
+    "FlyDeleteVolumeConfig": {
+      "additionalProperties": false,
+      "description": "Delete volume.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "volume_id": {
+          "description": "Volume ID returned by list or create.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Volume Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_volume",
+          "default": "delete_volume",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "app_name",
+        "volume_id"
+      ],
+      "title": "FlyDeleteVolumeConfig",
+      "type": "object"
+    },
+    "FlyExtendVolumeConfig": {
+      "additionalProperties": false,
+      "description": "Extend volume.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "volume_id": {
+          "description": "Volume ID returned by list or create.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Volume Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "extend_volume",
+          "default": "extend_volume",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "size_gb": {
+          "description": "New size in GB; volumes cannot shrink.",
+          "minimum": 1,
+          "title": "Size Gb",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "app_name",
+        "volume_id",
+        "size_gb"
+      ],
+      "title": "FlyExtendVolumeConfig",
+      "type": "object"
+    },
+    "FlyGetAppConfig": {
+      "additionalProperties": false,
+      "description": "Get app.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_app",
+          "default": "get_app",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "app_name"
+      ],
+      "title": "FlyGetAppConfig",
+      "type": "object"
+    },
+    "FlyGetCurrentTokenConfig": {
+      "additionalProperties": false,
+      "description": "Get current token.",
+      "properties": {
+        "operation": {
+          "const": "get_current_token",
+          "default": "get_current_token",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "FlyGetCurrentTokenConfig",
+      "type": "object"
+    },
+    "FlyGetMachineConfig": {
+      "additionalProperties": false,
+      "description": "Get machine.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "machine_id": {
+          "description": "Machine ID returned by list or create.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Machine Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_machine",
+          "default": "get_machine",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "app_name",
+        "machine_id"
+      ],
+      "title": "FlyGetMachineConfig",
+      "type": "object"
+    },
+    "FlyGetVolumeConfig": {
+      "additionalProperties": false,
+      "description": "Get volume.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "volume_id": {
+          "description": "Volume ID returned by list or create.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Volume Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_volume",
+          "default": "get_volume",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "app_name",
+        "volume_id"
+      ],
+      "title": "FlyGetVolumeConfig",
+      "type": "object"
+    },
+    "FlyListAppsConfig": {
+      "additionalProperties": false,
+      "description": "List apps.",
+      "properties": {
+        "operation": {
+          "const": "list_apps",
+          "default": "list_apps",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "org_slug": {
+          "description": "Organization slug, or personal.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Org Slug",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 5000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "org_slug"
+      ],
+      "title": "FlyListAppsConfig",
+      "type": "object"
+    },
+    "FlyListMachineEventsConfig": {
+      "additionalProperties": false,
+      "description": "List machine events.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "machine_id": {
+          "description": "Machine ID returned by list or create.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Machine Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_machine_events",
+          "default": "list_machine_events",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "app_name",
+        "machine_id"
+      ],
+      "title": "FlyListMachineEventsConfig",
+      "type": "object"
+    },
+    "FlyListMachinesConfig": {
+      "additionalProperties": false,
+      "description": "List machines.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Page size; the provider may return an empty page with a next cursor.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pass next_cursor from the previous result within 30 minutes.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_machines",
+          "default": "list_machines",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region"
+        },
+        "include_deleted": {
+          "default": false,
+          "title": "Include Deleted",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "app_name"
+      ],
+      "title": "FlyListMachinesConfig",
+      "type": "object"
+    },
+    "FlyListVolumeSnapshotsConfig": {
+      "additionalProperties": false,
+      "description": "List volume snapshots.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "volume_id": {
+          "description": "Volume ID returned by list or create.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Volume Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_volume_snapshots",
+          "default": "list_volume_snapshots",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "app_name",
+        "volume_id"
+      ],
+      "title": "FlyListVolumeSnapshotsConfig",
+      "type": "object"
+    },
+    "FlyListVolumesConfig": {
+      "additionalProperties": false,
+      "description": "List volumes.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Page size; the provider may return an empty page with a next cursor.",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 4096,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pass next_cursor from the previous result within 30 minutes.",
+          "title": "Cursor"
+        },
+        "operation": {
+          "const": "list_volumes",
+          "default": "list_volumes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "app_name"
+      ],
+      "title": "FlyListVolumesConfig",
+      "type": "object"
+    },
+    "FlyRestartMachineConfig": {
+      "additionalProperties": false,
+      "description": "Restart machine.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "machine_id": {
+          "description": "Machine ID returned by list or create.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Machine Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "restart_machine",
+          "default": "restart_machine",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "signal": {
+          "anyOf": [
+            {
+              "enum": [
+                "SIGHUP",
+                "SIGINT",
+                "SIGQUIT",
+                "SIGKILL",
+                "SIGUSR1",
+                "SIGUSR2",
+                "SIGTERM"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signal",
+          "enum": [
+            "SIGHUP",
+            "SIGINT",
+            "SIGQUIT",
+            "SIGKILL",
+            "SIGUSR1",
+            "SIGUSR2",
+            "SIGTERM"
+          ],
+          "x-enum-searchable": true
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Go duration such as 30s.",
+          "title": "Timeout"
+        }
+      },
+      "required": [
+        "app_name",
+        "machine_id"
+      ],
+      "title": "FlyRestartMachineConfig",
+      "type": "object"
+    },
+    "FlyStartMachineConfig": {
+      "additionalProperties": false,
+      "description": "Start machine.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "machine_id": {
+          "description": "Machine ID returned by list or create.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Machine Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "start_machine",
+          "default": "start_machine",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "app_name",
+        "machine_id"
+      ],
+      "title": "FlyStartMachineConfig",
+      "type": "object"
+    },
+    "FlyStopMachineConfig": {
+      "additionalProperties": false,
+      "description": "Stop machine.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "machine_id": {
+          "description": "Machine ID returned by list or create.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Machine Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "stop_machine",
+          "default": "stop_machine",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "signal": {
+          "anyOf": [
+            {
+              "enum": [
+                "SIGHUP",
+                "SIGINT",
+                "SIGQUIT",
+                "SIGKILL",
+                "SIGUSR1",
+                "SIGUSR2",
+                "SIGTERM"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signal",
+          "enum": [
+            "SIGHUP",
+            "SIGINT",
+            "SIGQUIT",
+            "SIGKILL",
+            "SIGUSR1",
+            "SIGUSR2",
+            "SIGTERM"
+          ],
+          "x-enum-searchable": true
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Go duration such as 30s.",
+          "title": "Timeout"
+        }
+      },
+      "required": [
+        "app_name",
+        "machine_id"
+      ],
+      "title": "FlyStopMachineConfig",
+      "type": "object"
+    },
+    "FlySuspendMachineConfig": {
+      "additionalProperties": false,
+      "description": "Suspend machine.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "machine_id": {
+          "description": "Machine ID returned by list or create.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Machine Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "suspend_machine",
+          "default": "suspend_machine",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "app_name",
+        "machine_id"
+      ],
+      "title": "FlySuspendMachineConfig",
+      "type": "object"
+    },
+    "FlyTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "fly_api_token",
+          "default": "fly_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Fly API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an app-scoped deploy token for one app, or an organization token for app creation and organization-wide access. Create the narrowest token needed using fly tokens create deploy or fly tokens create org. Read-only tokens support reads only. NoClick sends it as a Bearer token to api.machines.dev.",
+      "x-credential-url": "https://docs.fly.io/security/tokens"
+    },
+    "FlyUpdateMachineConfig": {
+      "additionalProperties": false,
+      "description": "Update machine.",
+      "properties": {
+        "app_name": {
+          "description": "Fly app name, for example my-app.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "App Name",
+          "type": "string"
+        },
+        "machine_id": {
+          "description": "Machine ID returned by list or create.",
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Machine Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_machine",
+          "default": "update_machine",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "machine_config": {
+          "additionalProperties": true,
+          "description": "Complete Fly Machine config object, including image, env, services, guest and mounts as needed. Updating replaces the configuration; provide all fields to retain.",
+          "title": "Machine Config",
+          "type": "object",
+          "ui:widget": "json"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region"
+        },
+        "skip_launch": {
+          "default": false,
+          "title": "Skip Launch",
+          "type": "boolean"
+        },
+        "current_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optimistic concurrency guard from the previous machine response.",
+          "title": "Current Version"
+        }
+      },
+      "required": [
+        "app_name",
+        "machine_id",
+        "machine_config"
+      ],
+      "title": "FlyUpdateMachineConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_app": "#/$defs/FlyCreateAppConfig",
+          "create_machine": "#/$defs/FlyCreateMachineConfig",
+          "create_volume": "#/$defs/FlyCreateVolumeConfig",
+          "create_volume_snapshot": "#/$defs/FlyCreateVolumeSnapshotConfig",
+          "delete_app": "#/$defs/FlyDeleteAppConfig",
+          "delete_machine": "#/$defs/FlyDeleteMachineConfig",
+          "delete_volume": "#/$defs/FlyDeleteVolumeConfig",
+          "extend_volume": "#/$defs/FlyExtendVolumeConfig",
+          "get_app": "#/$defs/FlyGetAppConfig",
+          "get_current_token": "#/$defs/FlyGetCurrentTokenConfig",
+          "get_machine": "#/$defs/FlyGetMachineConfig",
+          "get_volume": "#/$defs/FlyGetVolumeConfig",
+          "list_apps": "#/$defs/FlyListAppsConfig",
+          "list_machine_events": "#/$defs/FlyListMachineEventsConfig",
+          "list_machines": "#/$defs/FlyListMachinesConfig",
+          "list_volume_snapshots": "#/$defs/FlyListVolumeSnapshotsConfig",
+          "list_volumes": "#/$defs/FlyListVolumesConfig",
+          "restart_machine": "#/$defs/FlyRestartMachineConfig",
+          "start_machine": "#/$defs/FlyStartMachineConfig",
+          "stop_machine": "#/$defs/FlyStopMachineConfig",
+          "suspend_machine": "#/$defs/FlySuspendMachineConfig",
+          "update_machine": "#/$defs/FlyUpdateMachineConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FlyGetCurrentTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyListAppsConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyCreateAppConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyGetAppConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyDeleteAppConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyListMachinesConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyCreateMachineConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyUpdateMachineConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyGetMachineConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyDeleteMachineConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyStartMachineConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyStopMachineConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyRestartMachineConfig"
+        },
+        {
+          "$ref": "#/$defs/FlySuspendMachineConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyListMachineEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyListVolumesConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyCreateVolumeConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyGetVolumeConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyDeleteVolumeConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyExtendVolumeConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyListVolumeSnapshotsConfig"
+        },
+        {
+          "$ref": "#/$defs/FlyCreateVolumeSnapshotConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FlyTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Fly Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
