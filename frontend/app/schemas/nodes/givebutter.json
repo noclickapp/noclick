@@ -1,0 +1,1167 @@
+{
+  "$defs": {
+    "AddContactTags": {
+      "description": "Add tags while retaining the contact's existing tags.",
+      "properties": {
+        "operation": {
+          "const": "add_contact_tags",
+          "default": "add_contact_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "tags": {
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tags"
+      ],
+      "title": "AddContactTags",
+      "type": "object"
+    },
+    "CreateCampaign": {
+      "description": "Create a fundraising campaign.",
+      "properties": {
+        "operation": {
+          "const": "create_campaign",
+          "default": "create_campaign",
+          "title": "Operation",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "general",
+            "collect",
+            "fundraise",
+            "event"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 150,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "subtitle": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subtitle"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "goal": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Goal"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slug"
+        },
+        "end_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End At"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        }
+      },
+      "required": [
+        "type",
+        "title"
+      ],
+      "title": "CreateCampaign",
+      "type": "object"
+    },
+    "CreateContact": {
+      "description": "Create an individual donor contact without forcing a duplicate.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "first_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "primary_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Primary Email"
+        },
+        "primary_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Primary Phone"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateContactActivity": {
+      "description": "Record a donor interaction or volunteer activity.",
+      "properties": {
+        "operation": {
+          "const": "create_contact_activity",
+          "default": "create_contact_activity",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "type": {
+          "enum": [
+            "email",
+            "meeting",
+            "note",
+            "phone_call",
+            "sms",
+            "completed_task",
+            "volunteer_activity"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "occurred_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Occurred At"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timezone"
+        }
+      },
+      "required": [
+        "contact_id",
+        "type"
+      ],
+      "title": "CreateContactActivity",
+      "type": "object"
+    },
+    "CreateFund": {
+      "description": "Create a designation fund.",
+      "properties": {
+        "operation": {
+          "const": "create_fund",
+          "default": "create_fund",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateFund",
+      "type": "object"
+    },
+    "GetCampaign": {
+      "description": "Read a campaign by its Givebutter ID.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "exclusiveMinimum": 0,
+          "title": "Campaign Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "GetCampaign",
+      "type": "object"
+    },
+    "GetContact": {
+      "description": "Read one contact.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetFund": {
+      "description": "Read one designation fund.",
+      "properties": {
+        "operation": {
+          "const": "get_fund",
+          "default": "get_fund",
+          "title": "Operation",
+          "type": "string"
+        },
+        "fund_id": {
+          "exclusiveMinimum": 0,
+          "title": "Fund Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "fund_id"
+      ],
+      "title": "GetFund",
+      "type": "object"
+    },
+    "GetPlan": {
+      "description": "Read one recurring donation plan.",
+      "properties": {
+        "operation": {
+          "const": "get_plan",
+          "default": "get_plan",
+          "title": "Operation",
+          "type": "string"
+        },
+        "plan_id": {
+          "exclusiveMinimum": 0,
+          "title": "Plan Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "plan_id"
+      ],
+      "title": "GetPlan",
+      "type": "object"
+    },
+    "GetTransaction": {
+      "description": "Read one donation transaction.",
+      "properties": {
+        "operation": {
+          "const": "get_transaction",
+          "default": "get_transaction",
+          "title": "Operation",
+          "type": "string"
+        },
+        "transaction_id": {
+          "exclusiveMinimum": 0,
+          "title": "Transaction Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "transaction_id"
+      ],
+      "title": "GetTransaction",
+      "type": "object"
+    },
+    "GivebutterAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "givebutter_api_key",
+          "default": "givebutter_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Givebutter API Key",
+      "type": "object",
+      "x-credential-instructions": "In Givebutter, open Settings \u2192 Developers \u2192 API and copy your API key. Paste the key without the Bearer prefix. NoClick sends it only to api.givebutter.com. Access to your campaigns is checked when connecting.",
+      "x-credential-url": "https://help.givebutter.com/en/articles/5489015-how-to-access-the-givebutter-public-api-key"
+    },
+    "ListCampaigns": {
+      "description": "List the first page of account campaigns, with pagination metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Operation",
+          "type": "string"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope"
+        }
+      },
+      "title": "ListCampaigns",
+      "type": "object"
+    },
+    "ListContactActivities": {
+      "description": "Read the first page of a contact's activity timeline.",
+      "properties": {
+        "operation": {
+          "const": "list_contact_activities",
+          "default": "list_contact_activities",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ListContactActivities",
+      "type": "object"
+    },
+    "ListContacts": {
+      "description": "Find donors by email or name; returns one page and pagination metadata.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "firstName": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "lastName": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "individual",
+                "company"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "individual",
+            "company"
+          ],
+          "x-enum-searchable": true
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        },
+        "updatedAfter": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updatedafter"
+        },
+        "createdAfter": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Createdafter"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListFunds": {
+      "description": "List the first page of designation funds.",
+      "properties": {
+        "operation": {
+          "const": "list_funds",
+          "default": "list_funds",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListFunds",
+      "type": "object"
+    },
+    "ListPlans": {
+      "description": "List the first page of recurring donation plans.",
+      "properties": {
+        "operation": {
+          "const": "list_plans",
+          "default": "list_plans",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListPlans",
+      "type": "object"
+    },
+    "ListTransactions": {
+      "description": "List the first page of donations, optionally filtered by dates or contacts.",
+      "properties": {
+        "operation": {
+          "const": "list_transactions",
+          "default": "list_transactions",
+          "title": "Operation",
+          "type": "string"
+        },
+        "transactedAfter": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transactedafter"
+        },
+        "transactedBefore": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transactedbefore"
+        },
+        "updatedAfter": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updatedafter"
+        },
+        "contacts": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contacts"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Method"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "enum": [
+                "all",
+                "benefiting",
+                "chapters"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope",
+          "enum": [
+            "all",
+            "benefiting",
+            "chapters"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListTransactions",
+      "type": "object"
+    },
+    "RemoveContactTags": {
+      "description": "Remove the named tags from a contact.",
+      "properties": {
+        "operation": {
+          "const": "remove_contact_tags",
+          "default": "remove_contact_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "tags": {
+          "items": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tags"
+      ],
+      "title": "RemoveContactTags",
+      "type": "object"
+    },
+    "RestoreContact": {
+      "description": "Restore an archived contact.",
+      "properties": {
+        "operation": {
+          "const": "restore_contact",
+          "default": "restore_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "RestoreContact",
+      "type": "object"
+    },
+    "UpdateCampaign": {
+      "description": "Update campaign details; only supplied fields are sent.",
+      "properties": {
+        "operation": {
+          "const": "update_campaign",
+          "default": "update_campaign",
+          "title": "Operation",
+          "type": "string"
+        },
+        "campaign_id": {
+          "exclusiveMinimum": 0,
+          "title": "Campaign Id",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 150,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "subtitle": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subtitle"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "goal": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Goal"
+        },
+        "end_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End At"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "UpdateCampaign",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "description": "Update supplied donor profile fields.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string"
+        },
+        "contact_id": {
+          "exclusiveMinimum": 0,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "preferred_name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preferred Name"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateFund": {
+      "description": "Update a designation fund's name and optional code.",
+      "properties": {
+        "operation": {
+          "const": "update_fund",
+          "default": "update_fund",
+          "title": "Operation",
+          "type": "string"
+        },
+        "fund_id": {
+          "exclusiveMinimum": 0,
+          "title": "Fund Id",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code"
+        }
+      },
+      "required": [
+        "fund_id",
+        "name"
+      ],
+      "title": "UpdateFund",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contact_tags": "#/$defs/AddContactTags",
+          "create_campaign": "#/$defs/CreateCampaign",
+          "create_contact": "#/$defs/CreateContact",
+          "create_contact_activity": "#/$defs/CreateContactActivity",
+          "create_fund": "#/$defs/CreateFund",
+          "get_campaign": "#/$defs/GetCampaign",
+          "get_contact": "#/$defs/GetContact",
+          "get_fund": "#/$defs/GetFund",
+          "get_plan": "#/$defs/GetPlan",
+          "get_transaction": "#/$defs/GetTransaction",
+          "list_campaigns": "#/$defs/ListCampaigns",
+          "list_contact_activities": "#/$defs/ListContactActivities",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_funds": "#/$defs/ListFunds",
+          "list_plans": "#/$defs/ListPlans",
+          "list_transactions": "#/$defs/ListTransactions",
+          "remove_contact_tags": "#/$defs/RemoveContactTags",
+          "restore_contact": "#/$defs/RestoreContact",
+          "update_campaign": "#/$defs/UpdateCampaign",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_fund": "#/$defs/UpdateFund"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListCampaigns"
+        },
+        {
+          "$ref": "#/$defs/GetCampaign"
+        },
+        {
+          "$ref": "#/$defs/CreateCampaign"
+        },
+        {
+          "$ref": "#/$defs/UpdateCampaign"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/RestoreContact"
+        },
+        {
+          "$ref": "#/$defs/AddContactTags"
+        },
+        {
+          "$ref": "#/$defs/RemoveContactTags"
+        },
+        {
+          "$ref": "#/$defs/ListContactActivities"
+        },
+        {
+          "$ref": "#/$defs/CreateContactActivity"
+        },
+        {
+          "$ref": "#/$defs/ListFunds"
+        },
+        {
+          "$ref": "#/$defs/GetFund"
+        },
+        {
+          "$ref": "#/$defs/CreateFund"
+        },
+        {
+          "$ref": "#/$defs/UpdateFund"
+        },
+        {
+          "$ref": "#/$defs/ListTransactions"
+        },
+        {
+          "$ref": "#/$defs/GetTransaction"
+        },
+        {
+          "$ref": "#/$defs/ListPlans"
+        },
+        {
+          "$ref": "#/$defs/GetPlan"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GivebutterAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Givebutter Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,15 @@
+{
+  "data": [
+    {
+      "id": "42",
+      "title": "Annual Appeal"
+    }
+  ],
+  "links": {
+    "next": "https://api.givebutter.com/v1/campaigns?page=2"
+  },
+  "meta": {
+    "current_page": 1,
+    "last_page": 2
+  }
+}
