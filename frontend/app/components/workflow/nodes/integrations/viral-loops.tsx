@@ -11,6 +11,7 @@ ViralLoopsIcon.displayName = 'ViralLoopsIcon';
 export const ViralLoopsNode: NodeDefinition = {
     type: 'automation-viral-loops',
     label: 'Viral Loops',
+    category: 'marketing',
     description: 'Campaign stats, participants, referrals, conversions and rewards',
     keywords: ['referral', 'waitlist', 'giveaway', 'viral marketing'],
     Icon: ViralLoopsIcon,
