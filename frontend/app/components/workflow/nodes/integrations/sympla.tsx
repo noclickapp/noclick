@@ -10,7 +10,7 @@ const SymplaIcon = ({ className, style }: { className?: string; style?: CSSPrope
 );
 
 export const SymplaNode: NodeDefinition = {
-    type: 'automation-sympla', label: 'Sympla',
+    type: 'automation-sympla', category: 'bookings', label: 'Sympla',
     description: 'Read events, orders, participants and presentations, and check in tickets',
     Icon: SymplaIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

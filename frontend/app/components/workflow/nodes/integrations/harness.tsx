@@ -10,7 +10,7 @@ const HarnessIcon = ({ className, style }: { className?: string; style?: CSSProp
 );
 
 export const HarnessNode: NodeDefinition = {
-    type: 'automation-harness', label: 'Harness',
+    type: 'automation-harness', category: 'developer-tools', label: 'Harness',
     description: 'Manage Harness projects, services, environments and pipeline executions',
     Icon: HarnessIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

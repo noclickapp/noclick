@@ -12,7 +12,7 @@ const TapfiliateIcon = ({ className, style }: { className?: string; style?: CSSP
 );
 
 export const TapfiliateNode: NodeDefinition = {
-    type: 'automation-tapfiliate', label: 'Tapfiliate',
+    type: 'automation-tapfiliate', category: 'marketing', label: 'Tapfiliate',
     description: 'Manage affiliates, referred customers, conversions and commissions',
     keywords: ['affiliate marketing', 'referrals', 'commissions', 'conversion tracking'],
     Icon: TapfiliateIcon, iconColor: '',

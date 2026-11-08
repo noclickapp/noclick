@@ -10,7 +10,7 @@ const DataboxIcon = ({ className, style }: { className?: string; style?: CSSProp
 );
 
 export const DataboxNode: NodeDefinition = {
-    type: 'automation-databox', label: 'Databox',
+    type: 'automation-databox', category: 'analytics-bi', label: 'Databox',
     description: 'Manage datasets, ingest records, read metrics and automate dashboards',
     Icon: DataboxIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

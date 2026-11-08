@@ -28,6 +28,7 @@ const AvomaIcon = ({
 
 export const AvomaNode: NodeDefinition = {
     type: 'automation-avoma',
+    category: 'meetings',
     label: 'Avoma',
     description:
         'Read meetings, notes, transcripts and users; manage meeting types and outcomes',

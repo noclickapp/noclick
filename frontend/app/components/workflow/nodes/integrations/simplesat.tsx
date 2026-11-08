@@ -12,7 +12,7 @@ const SimplesatIcon = ({ className, style }: { className?: string; style?: CSSPr
 );
 
 export const SimplesatNode: NodeDefinition = {
-    type: 'automation-simplesat', label: 'Simplesat',
+    type: 'automation-simplesat', category: 'support', label: 'Simplesat',
     description: 'Manage customers, feedback, surveys and team members',
     Icon: SimplesatIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

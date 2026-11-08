@@ -10,7 +10,7 @@ const SeamIcon = ({ className, style }: { className?: string; style?: CSSPropert
 );
 
 export const SeamNode: NodeDefinition = {
-    type: 'automation-seam', label: 'Seam',
+    type: 'automation-seam', category: 'developer-tools', label: 'Seam',
     description: 'Manage smart locks, devices, access codes and connected accounts',
     Icon: SeamIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

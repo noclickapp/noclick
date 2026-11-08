@@ -16,6 +16,7 @@ export const HiveNode: NodeDefinition = {
     type: 'automation-hive',
     label: 'Hive',
     description: 'Automate Hive actions, projects, comments and labels',
+    category: 'productivity',
     Icon: HiveIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

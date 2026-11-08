@@ -16,6 +16,7 @@ export const ManusNode: NodeDefinition = {
     type: 'automation-manus',
     label: 'Manus',
     description: 'Automate tasks, messages, projects, files and webhooks',
+    category: 'ai',
     Icon: ManusIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

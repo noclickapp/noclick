@@ -10,7 +10,7 @@ const AmazingMarvinIcon = ({ className, style }: { className?: string; style?: C
 );
 
 export const AmazingMarvinNode: NodeDefinition = {
-    type: 'automation-amazing-marvin', label: 'Amazing Marvin',
+    type: 'automation-amazing-marvin', category: 'productivity', label: 'Amazing Marvin',
     description: 'Automate tasks, projects, daily planning, habits and time tracking',
     Icon: AmazingMarvinIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

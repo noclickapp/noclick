@@ -10,7 +10,7 @@ const EgnyteIcon = ({ className, style }: { className?: string; style?: CSSPrope
 );
 
 export const EgnyteNode: NodeDefinition = {
-    type: 'automation-egnyte', label: 'Egnyte',
+    type: 'automation-egnyte', category: 'databases-storage', label: 'Egnyte',
     description: 'Manage files, folders, sharing links, comments and events',
     Icon: EgnyteIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

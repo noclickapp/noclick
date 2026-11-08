@@ -16,6 +16,7 @@ export const BrilliantDirectoriesNode: NodeDefinition = {
     type: 'automation-brilliant-directories',
     label: 'Brilliant Directories',
     description: 'Manage directory members, leads, reviews, posts and membership plans',
+    category: 'courses',
     Icon: BrilliantDirectoriesIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

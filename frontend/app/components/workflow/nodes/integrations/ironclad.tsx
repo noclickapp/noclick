@@ -10,7 +10,7 @@ const IroncladIcon = ({ className, style }: { className?: string; style?: CSSPro
 );
 
 export const IroncladNode: NodeDefinition = {
-    type: 'automation-ironclad', label: 'Ironclad',
+    type: 'automation-ironclad', category: 'documents', label: 'Ironclad',
     description: 'Launch and manage contract workflows, records, comments and entities',
     keywords: ['contracts', 'CLM', 'legal', 'agreements'],
     Icon: IroncladIcon, iconColor: '',

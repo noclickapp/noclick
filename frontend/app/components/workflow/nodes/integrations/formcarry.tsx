@@ -12,7 +12,7 @@ const FormcarryIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHT
 );
 FormcarryIcon.displayName = 'FormcarryIcon';
 export const FormcarryNode: NodeDefinition = {
-    type: 'automation-formcarry', label: 'Formcarry',
+    type: 'automation-formcarry', category: 'forms', label: 'Formcarry',
     description: 'Manage forms, submissions, notifications and webhooks',
     keywords: ['forms', 'submissions', 'spam', 'webhooks'],
     Icon: FormcarryIcon, iconColor: '',

@@ -10,7 +10,7 @@ const FomoIcon = ({ className, style }: { className?: string; style?: CSSPropert
 );
 
 export const FomoNode: NodeDefinition = {
-    type: 'automation-fomo', label: 'Fomo',
+    type: 'automation-fomo', category: 'marketing', label: 'Fomo',
     description: 'Create and manage social proof events, notification templates and widget settings',
     keywords: ['social proof', 'notifications', 'conversions', 'testimonials'],
     Icon: FomoIcon, iconColor: '',

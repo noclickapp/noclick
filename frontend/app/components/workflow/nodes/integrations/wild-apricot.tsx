@@ -12,7 +12,7 @@ const WildApricotIcon = ({ className, style }: { className?: string; style?: CSS
 );
 
 export const WildApricotNode: NodeDefinition = {
-    type: 'automation-wild-apricot', label: 'Wild Apricot',
+    type: 'automation-wild-apricot', category: 'nonprofit', label: 'Wild Apricot',
     description: 'Manage member profiles and event registrations; read contacts, events, invoices and payments',
     Icon: WildApricotIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -10,7 +10,7 @@ const RoamIcon = ({ className, style }: { className?: string; style?: CSSPropert
 );
 
 export const RoamNode: NodeDefinition = {
-    type: 'automation-roam', label: 'Roam',
+    type: 'automation-roam', category: 'communication', label: 'Roam',
     description: 'Automate Roam chat, users, groups and meetings',
     Icon: RoamIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

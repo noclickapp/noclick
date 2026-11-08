@@ -10,7 +10,7 @@ const HeyGenIcon = ({ className, style }: { className?: string; style?: CSSPrope
 );
 
 export const HeyGenNode: NodeDefinition = {
-    type: 'automation-heygen', label: 'HeyGen',
+    type: 'automation-heygen', category: 'ai', label: 'HeyGen',
     description: 'Create avatar and template videos, translate videos, and manage media',
     Icon: HeyGenIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

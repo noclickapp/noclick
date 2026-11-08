@@ -15,6 +15,7 @@ export const TypefullyNode: NodeDefinition = {
     type: 'automation-typefully',
     label: 'Typefully',
     description: 'Manage social drafts, publishing, media, tags and posting queues',
+    category: 'social-media',
     keywords: ['Twitter', 'X', 'LinkedIn', 'Threads', 'Bluesky', 'Mastodon', 'Substack', 'social media'],
     Icon: TypefullyIcon,
     iconColor: '',

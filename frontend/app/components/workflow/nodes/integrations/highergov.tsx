@@ -12,7 +12,7 @@ const HigherGovIcon = ({ className, style }: { className?: string; style?: CSSPr
 );
 
 export const HigherGovNode: NodeDefinition = {
-    type: 'automation-highergov', label: 'HigherGov',
+    type: 'automation-highergov', category: 'crm-sales', label: 'HigherGov',
     description: 'Read government opportunities, awards, contractors and your pursuits',
     keywords: ['Highergov', 'government contracting', 'federal grants', 'procurement'],
     Icon: HigherGovIcon, iconColor: '',

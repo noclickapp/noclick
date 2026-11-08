@@ -10,7 +10,7 @@ const ZulipIcon = ({ className, style }: { className?: string; style?: CSSProper
 );
 
 export const ZulipNode: NodeDefinition = {
-    type: 'automation-zulip', label: 'Zulip',
+    type: 'automation-zulip', category: 'communication', label: 'Zulip',
     description: 'Send and manage messages, reactions, channels, subscriptions and users',
     Icon: ZulipIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

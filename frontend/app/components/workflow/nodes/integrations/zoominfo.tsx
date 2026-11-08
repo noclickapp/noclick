@@ -16,6 +16,7 @@ export const ZoomInfoNode: NodeDefinition = {
     type: 'automation-zoominfo',
     label: 'ZoomInfo',
     description: 'Search and enrich prospects, inspect usage, and manage audiences',
+    category: 'crm-sales',
     Icon: ZoomInfoIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

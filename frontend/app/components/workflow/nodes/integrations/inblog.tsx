@@ -10,7 +10,7 @@ const InblogIcon = ({ className, style }: { className?: string; style?: CSSPrope
 );
 
 export const InblogNode: NodeDefinition = {
-    type: 'automation-inblog', label: 'Inblog',
+    type: 'automation-inblog', category: 'content-research', label: 'Inblog',
     description: 'Manage blog posts, tags, authors, redirects and form responses',
     Icon: InblogIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

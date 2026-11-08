@@ -10,7 +10,7 @@ const EterminIcon = ({ className, style }: { className?: string; style?: CSSProp
 );
 
 export const EterminNode: NodeDefinition = {
-    type: 'automation-etermin', label: 'eTermin',
+    type: 'automation-etermin', category: 'bookings', label: 'eTermin',
     description: 'Manage appointments, contacts, services, calendars, availability and absences',
     Icon: EterminIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

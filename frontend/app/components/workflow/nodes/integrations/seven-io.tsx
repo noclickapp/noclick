@@ -18,6 +18,7 @@ export const SevenIoNode: NodeDefinition = {
     type: 'automation-seven-io',
     label: 'Seven Io',
     description: 'SMS, contacts, groups, journals and number lookup',
+    category: 'communication',
     Icon: SevenIoIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },
