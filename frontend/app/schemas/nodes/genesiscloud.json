@@ -1,0 +1,135 @@
+{
+  "$defs": {
+    "GenesisCloudAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "genesiscloud_api_token",
+          "default": "genesiscloud_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "description": "Your Genesis Cloud API token, without the Bearer prefix.",
+          "title": "Api Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Genesis Cloud API Token",
+      "type": "object",
+      "x-credential-instructions": "In the Genesis Cloud dashboard, open Keys and Tokens. Generate or copy an API token and paste it here without the Bearer prefix. Connecting checks access to your existing instances.",
+      "x-credential-type": "api_key",
+      "x-credential-url": "https://developers.genesiscloud.com/compute-api/"
+    },
+    "GetInstanceConfig": {
+      "description": "Read one protected existing instance by its exact selected UUID.",
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Include human-readable instance names. Names can disclose business resources.",
+          "title": "Include Names",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "get_instance",
+          "default": "get_instance",
+          "title": "Operation",
+          "type": "string"
+        },
+        "instance_id": {
+          "description": "Exact existing instance UUID. Enter an explicit ID or resolved workflow reference; catalog/detail access proves reachability only.",
+          "maxLength": 36,
+          "minLength": 36,
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+          "title": "Instance Id",
+          "type": "string",
+          "x-resource-type": "genesiscloud_instance_id"
+        }
+      },
+      "required": [
+        "instance_id"
+      ],
+      "title": "GetInstanceConfig",
+      "type": "object"
+    },
+    "ListInstancesConfig": {
+      "description": "Read one documented existing-instance page, excluding network and credential details.",
+      "properties": {
+        "include_names": {
+          "default": false,
+          "description": "Include human-readable instance names. Names can disclose business resources.",
+          "title": "Include Names",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "list_instances",
+          "default": "list_instances",
+          "title": "Operation",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "description": "Positive provider page. The native cap of 1,000,000 is a local bound, not a documented provider maximum.",
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 50,
+          "description": "One provider page, 1\u2013100 rows; documented default is 50. No automatic paging.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Per Page",
+          "type": "integer"
+        }
+      },
+      "title": "ListInstancesConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_instance": "#/$defs/GetInstanceConfig",
+          "list_instances": "#/$defs/ListInstancesConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListInstancesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetInstanceConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GenesisCloudAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Genesiscloud Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
