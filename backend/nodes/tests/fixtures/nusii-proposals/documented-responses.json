@@ -1,0 +1,622 @@
+[
+  {
+    "operation": "get_account",
+    "config": {
+      "operation": "get_account"
+    },
+    "response": {
+      "data": {
+        "id": "3",
+        "type": "accounts",
+        "attributes": {
+          "email": "hello@your_company.com",
+          "name": "Your Company Name",
+          "subdomain": "your_company",
+          "web": "www.your_company.com",
+          "currency": "USD",
+          "address": "Your Street Address 50",
+          "address_state": "New York",
+          "postcode": "10022",
+          "city": "New York",
+          "country": "US",
+          "country_name": "United States",
+          "telephone": "1234567890"
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#get-my-account"
+  },
+  {
+    "operation": "get_client",
+    "config": {
+      "operation": "get_client",
+      "client_id": 1
+    },
+    "response": {
+      "data": {
+        "id": "4",
+        "type": "clients",
+        "attributes": {
+          "email": "support@nusii.com",
+          "name": "Michael",
+          "surname": "Koper",
+          "full_name": "Michael Koper",
+          "currency": "EUR",
+          "business": "Michael Koper BV",
+          "locale": "nl",
+          "pdf_page_size": "A4",
+          "web": "www.michaelkoper.com",
+          "telephone": "1234567890",
+          "address": "Madrid Street 34",
+          "city": "Madrid",
+          "postcode": "28018",
+          "country": "Spain",
+          "state": "Madrid"
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#get-a-client"
+  },
+  {
+    "operation": "create_client",
+    "config": {
+      "name": "John",
+      "email": "john@doe.com",
+      "operation": "create_client"
+    },
+    "response": {
+      "data": {
+        "id": "104",
+        "type": "clients",
+        "attributes": {
+          "email": "john@doe.com",
+          "name": "John",
+          "surname": "Doe",
+          "full_name": "John Doe",
+          "currency": "EUR",
+          "business": "Michael Koper BV",
+          "locale": "en",
+          "pdf_page_size": "A4",
+          "web": "www.michaelkoper.com",
+          "telephone": "1234567890",
+          "address": "Madrid Street 34",
+          "city": "Madrid",
+          "postcode": "28018",
+          "country": "Spain",
+          "state": "Madrid"
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#create-a-client"
+  },
+  {
+    "operation": "update_client",
+    "config": {
+      "client_id": 104,
+      "name": "John",
+      "operation": "update_client"
+    },
+    "response": {
+      "data": {
+        "id": "126",
+        "type": "clients",
+        "attributes": {
+          "email": "support@nusii.com",
+          "name": "Michael",
+          "surname": "Koper",
+          "full_name": "Michael Koper",
+          "currency": "EUR",
+          "business": "Michael Koper BV",
+          "locale": "nl",
+          "pdf_page_size": "A4",
+          "web": "www.michaelkoper.com",
+          "telephone": "1234567890",
+          "address": "Madrid Street 34",
+          "city": "Madrid",
+          "postcode": "28018",
+          "country": "Spain",
+          "state": "Madrid"
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#update-a-client"
+  },
+  {
+    "operation": "delete_client",
+    "config": {
+      "operation": "delete_client",
+      "client_id": 1
+    },
+    "response": {
+      "data": {
+        "id": "12",
+        "type": "clients",
+        "attributes": {
+          "email": "support@nusii.com",
+          "name": "Michael",
+          "surname": "Koper",
+          "full_name": "Michael Koper",
+          "currency": "EUR",
+          "business": "Michael Koper BV",
+          "locale": "nl",
+          "pdf_page_size": "A4",
+          "web": "www.michaelkoper.com",
+          "telephone": "1234567890",
+          "address": "Madrid Street 34",
+          "city": "Madrid",
+          "postcode": "28018",
+          "country": "Spain",
+          "state": "Madrid"
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#delete-a-client"
+  },
+  {
+    "operation": "get_proposal",
+    "config": {
+      "operation": "get_proposal",
+      "proposal_id": 1
+    },
+    "response": {
+      "data": {
+        "id": "126",
+        "type": "proposals",
+        "attributes": {
+          "title": "Webdesign yourwebsite.com",
+          "account_id": 3,
+          "status": "draft",
+          "public_id": "-NqDAkiqpiFLuuw",
+          "prepared_by_id": 3,
+          "client_id": 5,
+          "sender_id": null,
+          "currency": "USD"
+        },
+        "relationships": {
+          "sections": {
+            "data": [
+              {
+                "id": "414",
+                "type": "sections"
+              }
+            ]
+          },
+          "recipients": {
+            "data": [
+              {
+                "id": "1",
+                "type": "recipients"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#get-a-proposal"
+  },
+  {
+    "operation": "create_proposal",
+    "config": {
+      "title": "Webdesign yourwebsite.com",
+      "client_id": 100,
+      "operation": "create_proposal"
+    },
+    "response": {
+      "data": {
+        "id": "126",
+        "type": "proposals",
+        "attributes": {
+          "title": "Webdesign yourwebsite.com",
+          "account_id": 3,
+          "status": "draft",
+          "public_id": "-NqDAkiqpiFLuuw",
+          "prepared_by_id": 3,
+          "client_id": 5,
+          "sender_id": null,
+          "currency": "USD"
+        },
+        "relationships": {
+          "sections": {
+            "data": [
+              {
+                "id": "414",
+                "type": "sections"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#create-a-proposal"
+  },
+  {
+    "operation": "update_proposal",
+    "config": {
+      "proposal_id": 126,
+      "title": "Webdesign yourwebsite.com",
+      "operation": "update_proposal"
+    },
+    "response": {
+      "data": {
+        "id": "126",
+        "type": "proposals",
+        "attributes": {
+          "title": "Webdesign yourwebsite.com",
+          "account_id": 3,
+          "status": "draft",
+          "public_id": "-NqDAkiqpiFLuuw",
+          "prepared_by_id": 3,
+          "client_id": 5,
+          "sender_id": null,
+          "currency": "USD"
+        },
+        "relationships": {
+          "sections": {
+            "data": [
+              {
+                "id": "414",
+                "type": "sections"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#update-a-proposal"
+  },
+  {
+    "operation": "delete_proposal",
+    "config": {
+      "operation": "delete_proposal",
+      "proposal_id": 1
+    },
+    "response": {
+      "data": {
+        "id": "126",
+        "type": "proposals",
+        "attributes": {
+          "title": "Webdesign yourwebsite.com",
+          "account_id": 3,
+          "status": "draft",
+          "public_id": "-NqDAkiqpiFLuuw",
+          "prepared_by_id": 3,
+          "client_id": 5,
+          "sender_id": null,
+          "currency": "USD"
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#delete-a-proposal"
+  },
+  {
+    "operation": "archive_proposal",
+    "config": {
+      "operation": "archive_proposal",
+      "proposal_id": 1
+    },
+    "response": {
+      "data": {
+        "id": "126",
+        "type": "proposals",
+        "attributes": {
+          "title": "Webdesign yourwebsite.com",
+          "account_id": 3,
+          "status": "draft",
+          "public_id": "-NqDAkiqpiFLuuw",
+          "prepared_by_id": 3,
+          "client_id": 5,
+          "sender_id": null,
+          "currency": "USD",
+          "archived_at": "2019-01-01T10:00:00.000Z"
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#archive-a-proposal"
+  },
+  {
+    "operation": "send_proposal",
+    "config": {
+      "proposal_id": 100,
+      "email": "your_client@email.com",
+      "subject": "Your Proposal",
+      "operation": "send_proposal"
+    },
+    "response": {
+      "status": "sent",
+      "sent_at": "2026-03-02T17:27:54.000Z",
+      "sender_id": 42,
+      "sender_name": "Michael Koper"
+    },
+    "source": "https://developer.nusii.com/#send-a-proposal"
+  },
+  {
+    "operation": "get_template",
+    "config": {
+      "operation": "get_template",
+      "template_id": 1
+    },
+    "response": {
+      "data": {
+        "id": "12",
+        "type": "templates",
+        "attributes": {
+          "name": "Web Design Proposal",
+          "account_id": 3,
+          "created_at": "2024-01-15T10:30:00.000Z",
+          "public_template": false,
+          "dummy_template": false
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#get-a-template"
+  },
+  {
+    "operation": "get_section",
+    "config": {
+      "operation": "get_section",
+      "section_id": 1
+    },
+    "response": {
+      "data": {
+        "id": "164",
+        "type": "sections",
+        "attributes": {
+          "currency": "GBP",
+          "account_id": 3,
+          "proposal_id": 126,
+          "template_id": null,
+          "title": "Introduction",
+          "name": null,
+          "body": "<p>Hello {{ client.first_name }}</p>",
+          "position": 0,
+          "reusable": false,
+          "section_type": "cost",
+          "created_at": "2017-03-03T12:23:37.686Z",
+          "updated_at": "2017-03-03T12:23:45.828Z",
+          "page_break": false,
+          "optional": false,
+          "selected": false,
+          "include_total": false,
+          "total_in_cents": 50000,
+          "total_formatted": "\u00a3500.00",
+          "maximum_total_in_cents": null,
+          "maximum_total_formatted": null
+        },
+        "relationships": {
+          "line_items": {
+            "data": [
+              {
+                "id": "76",
+                "type": "line_items"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#get-a-section"
+  },
+  {
+    "operation": "create_section",
+    "config": {
+      "title": "Introduction",
+      "operation": "create_section"
+    },
+    "response": {
+      "data": {
+        "id": "164",
+        "type": "sections",
+        "attributes": {
+          "currency": "GBP",
+          "account_id": 3,
+          "proposal_id": 126,
+          "template_id": null,
+          "title": "Introduction",
+          "name": "Introduction",
+          "body": null,
+          "position": 0,
+          "reusable": false,
+          "section_type": "cost",
+          "created_at": "2017-03-03T12:23:37.686Z",
+          "updated_at": "2017-03-03T12:23:45.828Z",
+          "page_break": false,
+          "optional": false,
+          "selected": false,
+          "include_total": false,
+          "total_in_cents": 50000,
+          "total_formatted": "\u00a3500.00",
+          "maximum_total_in_cents": null,
+          "maximum_total_formatted": null
+        },
+        "relationships": {
+          "line_items": {
+            "data": [
+              {
+                "id": "76",
+                "type": "line_items"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#create-a-section"
+  },
+  {
+    "operation": "update_section",
+    "config": {
+      "section_id": 164,
+      "title": "Introduction",
+      "operation": "update_section"
+    },
+    "response": {
+      "data": {
+        "id": "126",
+        "type": "sections",
+        "attributes": {
+          "currency": "GBP",
+          "account_id": 3,
+          "proposal_id": 126,
+          "template_id": null,
+          "title": "Introduction",
+          "name": null,
+          "body": null,
+          "position": 0,
+          "reusable": false,
+          "section_type": "cost",
+          "created_at": "2017-03-03T12:23:37.686Z",
+          "updated_at": "2017-03-03T12:23:45.828Z",
+          "page_break": false,
+          "optional": false,
+          "selected": false,
+          "include_total": false,
+          "total_in_cents": 50000,
+          "total_formatted": "\u00a3500.00",
+          "maximum_total_in_cents": null,
+          "maximum_total_formatted": null
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#update-a-section"
+  },
+  {
+    "operation": "delete_section",
+    "config": {
+      "operation": "delete_section",
+      "section_id": 1
+    },
+    "response": {
+      "data": {
+        "id": "164",
+        "type": "sections",
+        "attributes": {
+          "currency": "GBP",
+          "account_id": 3,
+          "proposal_id": 126,
+          "template_id": null,
+          "title": "Introduction",
+          "name": null,
+          "body": null,
+          "position": 0,
+          "reusable": false,
+          "section_type": "cost",
+          "created_at": "2017-03-03T12:23:37.686Z",
+          "updated_at": "2017-03-03T12:23:45.828Z",
+          "page_break": false,
+          "optional": false,
+          "selected": false,
+          "include_total": false,
+          "total_in_cents": 50000,
+          "total_formatted": "\u00a3500.00",
+          "maximum_total_in_cents": null,
+          "maximum_total_formatted": null
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#delete-a-section"
+  },
+  {
+    "operation": "create_line_item",
+    "config": {
+      "section_id": 100,
+      "name": "Development Costs",
+      "operation": "create_line_item"
+    },
+    "response": {
+      "data": {
+        "id": "157",
+        "type": "line_items",
+        "attributes": {
+          "section_id": 458,
+          "name": "",
+          "position": 2,
+          "cost_type": "fixed",
+          "recurring_type": null,
+          "per_type": null,
+          "choice_type": "none",
+          "quantity": null,
+          "updated_at": "2017-11-27T10:45:09.919Z",
+          "created_at": "2017-11-27T10:45:09.919Z",
+          "currency": "GBP",
+          "amount": null,
+          "amount_in_cents": null,
+          "amount_formatted": "\u00a30.00",
+          "maximum_amount_in_cents": null,
+          "maximum_amount_formatted": null,
+          "total_in_cents": 0,
+          "total_formatted": "\u00a30.00"
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#create-a-line-item"
+  },
+  {
+    "operation": "update_line_item",
+    "config": {
+      "line_item_id": 157,
+      "amount": 10000,
+      "operation": "update_line_item"
+    },
+    "response": {
+      "data": {
+        "id": "157",
+        "type": "line_items",
+        "attributes": {
+          "section_id": 458,
+          "name": "",
+          "position": 2,
+          "cost_type": "fixed",
+          "recurring_type": null,
+          "per_type": null,
+          "choice_type": "none",
+          "quantity": null,
+          "updated_at": "2017-11-27T10:45:09.919Z",
+          "created_at": "2017-11-27T10:45:09.919Z",
+          "currency": "GBP",
+          "amount": 10000,
+          "amount_in_cents": 10000,
+          "amount_formatted": "\u00a3100.00",
+          "maximum_amount_in_cents": null,
+          "maximum_amount_formatted": null,
+          "total_in_cents": 10000,
+          "total_formatted": "\u00a3100.00"
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#update-a-line-item"
+  },
+  {
+    "operation": "delete_line_item",
+    "config": {
+      "operation": "delete_line_item",
+      "line_item_id": 1
+    },
+    "response": {
+      "data": {
+        "id": "157",
+        "type": "line_items",
+        "attributes": {
+          "section_id": 458,
+          "name": "",
+          "position": 2,
+          "cost_type": "fixed",
+          "recurring_type": null,
+          "per_type": null,
+          "choice_type": "none",
+          "quantity": null,
+          "updated_at": "2017-11-27T10:45:09.919Z",
+          "created_at": "2017-11-27T10:45:09.919Z",
+          "currency": "GBP",
+          "amount": 10000,
+          "amount_in_cents": 10000,
+          "amount_formatted": "\u00a3100.00",
+          "maximum_amount_in_cents": null,
+          "maximum_amount_formatted": null,
+          "total_in_cents": 10000,
+          "total_formatted": "\u00a3100.00"
+        }
+      }
+    },
+    "source": "https://developer.nusii.com/#delete-a-line-item"
+  }
+]
