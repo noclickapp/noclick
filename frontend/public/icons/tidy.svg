@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="310" height="310"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 310 310">
+  <ellipse fill="#302f2f" cx="210.1" cy="156.3" rx="35.4" ry="34.4"></ellipse>
+  <ellipse fill="#302f2f" cx="210.1" cy="38.6" rx="35.4" ry="34.4"></ellipse>
+  <ellipse fill="#302f2f" cx="99.9" cy="156.3" rx="35.4" ry="34.4"></ellipse>
+  <ellipse fill="#302f2f" cx="99.9" cy="273.9" rx="35.4" ry="34.4"></ellipse>
+</svg><style>@media (prefers-color-scheme: light) { :root { filter: none; } }
+@media (prefers-color-scheme: dark) { :root { filter: invert(100%); } }
+</style></svg>
