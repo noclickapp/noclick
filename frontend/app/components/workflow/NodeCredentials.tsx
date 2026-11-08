@@ -771,7 +771,7 @@ const NodeCredentialsForm = ({ nodeType, nodeData = {}, credentialIds = {}, onCh
     // unasked only when no usable number exists, to repair a dead one, or once "Connect another account" asks to add one.
     const usableNumber = requiredCredentials
         .filter((req) => isQRScanCredential(req.schema))
-        .some((req) => availableCredentials.some((c) => c.credential_type === req.credential_type && !c.over_cap && !c.revoked_at && !isDisconnected(c)));
+        .some((req) => availableCredentials.some((c) => c.credential_type === req.credential_type && !c.over_cap && !c.revoked_at));
     const connectOpen = connecting !== null || pickers.length === 0 || anyUnhealthy || !!qrRepair;
 
     const editing = pickers.flatMap(({ req, matching }) => matching.filter((c) => c.id === editingCredentialId).map((cred) => ({ req, cred })))[0];

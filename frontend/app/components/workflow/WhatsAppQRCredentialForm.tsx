@@ -9,6 +9,7 @@ import { sendEventAsync } from '~/lib/socket-sender';
 import type { OAuthExchange } from '~/hooks/oauth/OAuthExchangeContext';
 import { invalidateCredentialsCache } from '~/utils/credentialAutoSelect';
 import { InstanceKeyPrompt } from '~/components/credential/InstanceKeyPrompt';
+import { BUTTON_SECONDARY } from '~/components/shell/buttons';
 
 interface WhatsAppQRCredentialFormProps {
     credentialType: string;
@@ -27,6 +28,7 @@ interface WhatsAppQRCredentialFormProps {
     // "scan me", and every scan of a phone that is already linked rebinds its
     // credential to a fresh connection (2026-08-29 — two needless re-scans).
     // The form then idles behind a button until the user asks for a new link.
+    // Ignored for a reconnect, which only ever starts on a click.
     autoStart?: boolean;
     startLabel?: string;
 }
@@ -42,7 +44,10 @@ export const WhatsAppQRCredentialForm = ({
     onCredentialCreated, sendEvent, reconnectCredentialId, autoStart = true,
     startLabel = 'Connect a different WhatsApp number',
 }: WhatsAppQRCredentialFormProps) => {
-    const [flowState, setFlowState] = useState<QRFlowState>(autoStart ? 'loading' : 'idle');
+    // A reconnect restarts the dead session, which logs the phone out, so only a click starts one: a short blip
+    // would have come back from the saved login on its own.
+    const autoMint = autoStart && !reconnectCredentialId;
+    const [flowState, setFlowState] = useState<QRFlowState>(autoMint ? 'loading' : 'idle');
     const [qrCode, setQrCode] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
@@ -118,14 +123,13 @@ export const WhatsAppQRCredentialForm = ({
         }
     }, [startPolling, reconnectCredentialId]);
 
-    // Auto-start on mount, or the moment autoStart flips true (an attached
-    // credential turning disconnected → reconnect scan).
+    // Auto-start on mount, or the moment autoStart flips true (the last number went away).
     useEffect(() => {
-        if (autoStart && !startedRef.current) {
+        if (autoMint && !startedRef.current) {
             startedRef.current = true;
             startQRFlow();
         }
-    }, [autoStart, startQRFlow]);
+    }, [autoMint, startQRFlow]);
 
     const pollStatus = async (connId: string) => {
         try {
@@ -158,10 +162,22 @@ export const WhatsAppQRCredentialForm = ({
     };
 
     if (flowState === 'idle') {
+        const begin = () => { startedRef.current = true; startQRFlow(); };
+        if (reconnectCredentialId) {
+            return (
+                <div className="space-y-2">
+                    <button type="button" onClick={begin} className={BUTTON_SECONDARY}>
+                        <RefreshCw className="h-3.5 w-3.5" />
+                        Reconnect WhatsApp
+                    </button>
+                    <p className="text-[12.5px] text-muted-foreground">Shows a new QR code to scan with the same phone.</p>
+                </div>
+            );
+        }
         return (
             <button
                 type="button"
-                onClick={() => { startedRef.current = true; startQRFlow(); }}
+                onClick={begin}
                 className="flex items-center gap-2 rounded-full border border-border px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
             >
                 <Smartphone className="h-3.5 w-3.5" />

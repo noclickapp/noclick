@@ -51,29 +51,23 @@ describe('WhatsAppQRCredentialForm', () => {
         expect(await screen.findByAltText('WhatsApp QR Code')).toBeTruthy();
     });
 
-    it('starts a reconnect scan the moment autoStart flips true', async () => {
+    // A reconnect restarts the dead session at WAHooks, which logs the phone out: a short blip the health check
+    // would have recovered becomes a forced re-scan. Only the user's click may start one.
+    it('never auto-starts a reconnect: it idles behind Reconnect WhatsApp until clicked', async () => {
         const send = transport();
-        const { rerender } = render(
-            <WhatsAppQRCredentialForm
-                credentialType="whatsapp_qr"
-                onCredentialCreated={() => {}}
-                sendEvent={send as never}
-                autoStart={false}
-            />,
-        );
+        const props = { credentialType: 'whatsapp_qr', onCredentialCreated: () => {}, sendEvent: send as never, reconnectCredentialId: 'cred-1' };
+        const { rerender } = render(<WhatsAppQRCredentialForm {...props} autoStart />);
+        rerender(<WhatsAppQRCredentialForm {...props} autoStart={false} />);
+        rerender(<WhatsAppQRCredentialForm {...props} autoStart />);
+        const button = screen.getByRole('button', { name: 'Reconnect WhatsApp' });
+        expect(screen.getByText('Shows a new QR code to scan with the same phone.')).toBeTruthy();
         expect(send).not.toHaveBeenCalled();
-        rerender(
-            <WhatsAppQRCredentialForm
-                credentialType="whatsapp_qr"
-                onCredentialCreated={() => {}}
-                sendEvent={send as never}
-                autoStart
-                reconnectCredentialId="cred-1"
-            />,
-        );
+
+        fireEvent.click(button);
         await waitFor(() =>
             expect(send).toHaveBeenCalledWith({ event_name: 'whatsapp:qr:start', reconnect_credential_id: 'cred-1' }),
         );
+        expect(await screen.findByAltText('WhatsApp QR Code')).toBeTruthy();
     });
 
     it('asks for the instance WAHooks key in place when the backend reports it missing', async () => {
