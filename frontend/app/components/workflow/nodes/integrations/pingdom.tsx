@@ -15,6 +15,7 @@ PingdomIcon.displayName = 'PingdomIcon';
 export const PingdomNode: NodeDefinition = {
     type: 'automation-pingdom',
     label: 'Pingdom',
+    category: 'monitoring',
     description: 'Uptime checks, maintenance windows, alerts and performance reports',
     Icon: PingdomIcon,
     iconColor: '',
