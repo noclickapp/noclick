@@ -1,0 +1,1132 @@
+{
+  "source": "https://raw.githubusercontent.com/accredible/api-documentation/master/openapi.json",
+  "responses": {
+    "POST /v1/credentials": {
+      "credential": {
+        "id": "10000005",
+        "name": "Example Certificate",
+        "description": "This is an example description - you can write anything you want here.\n\nWe recommend describing the achievement.",
+        "approve": true,
+        "grade": null,
+        "complete": true,
+        "issued_on": "2014-08-14",
+        "course_link": "https://www.accredible.com",
+        "custom_attributes": {
+          "Location": "London"
+        },
+        "expired_on": null,
+        "group_name": "Example Certificate Design",
+        "group_id": 9549,
+        "url": "https://www.credential.net/10000005",
+        "encoded_id": "10000005",
+        "private": false,
+        "seo_image": "https://api.accredible.com/v1/frontend/credential_seo_image/10000005",
+        "certificate": {
+          "image": {
+            "preview": "https://api.accredible.com/v1/frontend/credential_website_embed_image/certificate/10000005"
+          }
+        },
+        "badge": {
+          "image": {
+            "preview": "https://api.accredible.com/v1/frontend/credential_badge_image/10000005"
+          }
+        },
+        "evidence_items": [
+          {
+            "id": 826,
+            "description": "Final Grade",
+            "preview_image_url": null,
+            "link_url": null,
+            "type": "grade",
+            "string_object": {
+              "grade": 80
+            },
+            "supplemental": false,
+            "position": 1
+          },
+          {
+            "id": 10,
+            "description": "Presentation",
+            "preview_image_url": "https://s3.amazonaws.com/staging_accredible_api_evidence_items/previews/10/medium/open-uri20140316-15300-14jngj.jpg?1408372366",
+            "link_url": "https://s3.amazonaws.com/staging_accredible_api_evidence_items/files/10/original/open-uri20140316-15300-14jngj.pdf",
+            "type": "file",
+            "string_object": null,
+            "supplemental": true,
+            "position": 4
+          }
+        ],
+        "references": [
+          {
+            "id": 2,
+            "description": "Although he had difficulty with the course material at first, John learned a lot throughout the course. His final project was one of the best in his class.",
+            "relationship": "mentored",
+            "supplemental": false,
+            "approve": true,
+            "referee": {
+              "name": "Example Person",
+              "email": null,
+              "avatar": "https://s3.amazonaws.com/staging_accredible_api_individuals/images/4/thumb/open-uri20140815-11960-1r0hppg?1408416647"
+            }
+          }
+        ],
+        "recipient": {
+          "name": "Jordan Smith",
+          "email": "jor@dan.org",
+          "phone_number": "+14155552671",
+          "id": "ct992",
+          "linked_identity_id": "3f2b8c1e-9a4d-4e7b-b1c2-5d6e7f8a9b0c",
+          "meta_data": {
+            "bar": "foo"
+          }
+        },
+        "issuer": {
+          "name": "Example Organization",
+          "description": null,
+          "url": "http://www.accredible.com",
+          "id": 4897
+        },
+        "meta_data": {
+          "foo": "bar"
+        },
+        "skills": [
+          {
+            "id": 59302,
+            "name": "Active Listening",
+            "identifier": "2.A.1.b",
+            "description": "Giving full attention to what other people are saying, taking time to understand the points being made.",
+            "url": "https://www.onetonline.org/find/descriptor/result/2.A.1.b",
+            "breadcrumbs": [
+              {
+                "id": 59298,
+                "name": "Worker Requirements",
+                "identifier": "2"
+              },
+              {
+                "id": 59299,
+                "name": "Basic Skills",
+                "identifier": "2.A"
+              },
+              {
+                "id": 59300,
+                "name": "Content",
+                "identifier": "2.A.1"
+              }
+            ]
+          },
+          {
+            "id": 59301,
+            "name": "Reading Comprehension",
+            "identifier": "2.A.1.a",
+            "description": "Understanding written sentences and paragraphs in work related documents.",
+            "url": "https://www.onetonline.org/find/descriptor/result/2.A.1.a",
+            "breadcrumbs": [
+              {
+                "id": 59298,
+                "name": "Worker Requirements",
+                "identifier": "2"
+              },
+              {
+                "id": 59299,
+                "name": "Basic Skills",
+                "identifier": "2.A"
+              },
+              {
+                "id": 59300,
+                "name": "Content",
+                "identifier": "2.A.1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "GET /v1/credentials/{id}": {
+      "credential": {
+        "id": "10000005",
+        "name": "Example Certificate",
+        "description": "This is an example description - you can write anything you want here.\n\nWe recommend describing the achievement.",
+        "approve": true,
+        "grade": null,
+        "complete": true,
+        "issued_on": "2014-08-14",
+        "course_link": "https://www.accredible.com",
+        "custom_attributes": {
+          "Location": "London"
+        },
+        "expired_on": null,
+        "group_name": "Example Certificate Design",
+        "group_id": 9549,
+        "url": "https://www.credential.net/10000005",
+        "encoded_id": "10000005",
+        "private": false,
+        "seo_image": "https://api.accredible.com/v1/frontend/credential_seo_image/10000005",
+        "certificate": {
+          "image": {
+            "preview": "https://api.accredible.com/v1/frontend/credential_website_embed_image/certificate/10000005"
+          }
+        },
+        "badge": {
+          "image": {
+            "preview": "https://api.accredible.com/v1/frontend/credential_badge_image/10000005"
+          }
+        },
+        "evidence_items": [
+          {
+            "id": 826,
+            "description": "Final Grade",
+            "preview_image_url": null,
+            "link_url": null,
+            "type": "grade",
+            "string_object": {
+              "grade": 80
+            },
+            "supplemental": false,
+            "position": 1
+          },
+          {
+            "id": 10,
+            "description": "Presentation",
+            "preview_image_url": "https://s3.amazonaws.com/staging_accredible_api_evidence_items/previews/10/medium/open-uri20140316-15300-14jngj.jpg?1408372366",
+            "link_url": "https://s3.amazonaws.com/staging_accredible_api_evidence_items/files/10/original/open-uri20140316-15300-14jngj.pdf",
+            "type": "file",
+            "string_object": null,
+            "supplemental": true,
+            "position": 4
+          }
+        ],
+        "references": [
+          {
+            "id": 2,
+            "description": "Although he had difficulty with the course material at first, John learned a lot throughout the course. His final project was one of the best in his class.",
+            "relationship": "mentored",
+            "supplemental": false,
+            "approve": true,
+            "referee": {
+              "name": "Example Person",
+              "email": null,
+              "avatar": "https://s3.amazonaws.com/staging_accredible_api_individuals/images/4/thumb/open-uri20140815-11960-1r0hppg?1408416647"
+            }
+          }
+        ],
+        "recipient": {
+          "name": "Jordan Smith",
+          "email": "jor@dan.org",
+          "phone_number": "+14155552671",
+          "id": "dw373",
+          "linked_identity_id": "3f2b8c1e-9a4d-4e7b-b1c2-5d6e7f8a9b0c",
+          "meta_data": null
+        },
+        "issuer": {
+          "name": "Example Organization",
+          "description": null,
+          "url": "http://www.accredible.com",
+          "id": 4897
+        },
+        "meta_data": null,
+        "skills": [
+          {
+            "id": 59302,
+            "name": "Active Listening",
+            "identifier": "2.A.1.b",
+            "description": "Giving full attention to what other people are saying, taking time to understand the points being made.",
+            "url": "https://www.onetonline.org/find/descriptor/result/2.A.1.b",
+            "breadcrumbs": [
+              {
+                "id": 59298,
+                "name": "Worker Requirements",
+                "identifier": "2"
+              },
+              {
+                "id": 59299,
+                "name": "Basic Skills",
+                "identifier": "2.A"
+              },
+              {
+                "id": 59300,
+                "name": "Content",
+                "identifier": "2.A.1"
+              }
+            ]
+          },
+          {
+            "id": 59301,
+            "name": "Reading Comprehension",
+            "identifier": "2.A.1.a",
+            "description": "Understanding written sentences and paragraphs in work related documents.",
+            "url": "https://www.onetonline.org/find/descriptor/result/2.A.1.a",
+            "breadcrumbs": [
+              {
+                "id": 59298,
+                "name": "Worker Requirements",
+                "identifier": "2"
+              },
+              {
+                "id": 59299,
+                "name": "Basic Skills",
+                "identifier": "2.A"
+              },
+              {
+                "id": 59300,
+                "name": "Content",
+                "identifier": "2.A.1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "GET /v1/all_credentials": {
+      "credentials": [
+        {
+          "id": 10250009,
+          "name": "TestCourse",
+          "description": "Test Description",
+          "grade": null,
+          "complete": true,
+          "issued_on": "2015-07-03",
+          "allow_supplemental_references": null,
+          "allow_supplemental_evidence": null,
+          "course_link": "http://example.com",
+          "custom_attributes": null,
+          "expired_on": null,
+          "group_name": "test",
+          "private": false,
+          "recipient": {
+            "name": "John Doe",
+            "email": "person2@example.com",
+            "id": 772,
+            "linked_identity_id": "3f2b8c1e-9a4d-4e7b-b1c2-5d6e7f8a9b0c",
+            "meta_data": {
+              "zip_code": "10459"
+            }
+          },
+          "issuer": {
+            "name": "Example Provider",
+            "description": " Best place to manage online learning",
+            "url": "http://www.accredible.com"
+          },
+          "meta_data": {
+            "foo": "bar"
+          }
+        },
+        {
+          "id": 10250010,
+          "name": "TestCourse",
+          "description": "Test Description",
+          "grade": null,
+          "complete": true,
+          "issued_on": "2015-07-03",
+          "allow_supplemental_references": null,
+          "allow_supplemental_evidence": null,
+          "course_link": "http://example.com",
+          "custom_attributes": null,
+          "expired_on": null,
+          "group_name": "test",
+          "private": false,
+          "recipient": {
+            "name": "John Doe",
+            "email": "person2@example.com",
+            "id": 883,
+            "linked_identity_id": "9a41b7d2-6c3e-4f15-a8b9-2d7e1f0c4b63",
+            "meta_data": null
+          },
+          "issuer": {
+            "name": "Example Provider",
+            "description": " Best place to manage online learning",
+            "url": "http://www.accredible.com"
+          },
+          "meta_data": null
+        }
+      ],
+      "meta": {
+        "current_page": 1,
+        "next_page": 2,
+        "prev_page": null,
+        "total_pages": 795,
+        "total_count": 1590
+      }
+    },
+    "POST /v1/credentials/search": {
+      "credentials": [
+        {
+          "id": 10250009,
+          "name": "TestCourse",
+          "description": "Test Description",
+          "grade": null,
+          "complete": true,
+          "issued_on": "2015-07-03",
+          "allow_supplemental_references": null,
+          "allow_supplemental_evidence": null,
+          "course_link": "http://example.com",
+          "custom_attributes": null,
+          "expired_on": null,
+          "group_name": "test",
+          "private": false,
+          "seo_image": "https://api.accredible.com/v1/frontend/credential_seo_image/10250009",
+          "encoded_id": "gqm1e46g",
+          "recipient": {
+            "name": "John Doe",
+            "email": "person2@example.com",
+            "id": 772,
+            "linked_identity_id": "3f2b8c1e-9a4d-4e7b-b1c2-5d6e7f8a9b0c",
+            "meta_data": {
+              "zip_code": "10459"
+            }
+          },
+          "issuer": {
+            "name": "Example Provider",
+            "description": " Best place to manage online learning",
+            "url": "http://www.accredible.com"
+          },
+          "meta_data": {
+            "foo": "bar"
+          },
+          "skills": [
+            {
+              "id": 59302,
+              "name": "Active Listening",
+              "identifier": "2.A.1.b",
+              "description": "Giving full attention to what other people are saying, taking time to understand the points being made.",
+              "url": "https://www.onetonline.org/find/descriptor/result/2.A.1.b",
+              "breadcrumbs": [
+                {
+                  "id": 59298,
+                  "name": "Worker Requirements",
+                  "identifier": "2"
+                },
+                {
+                  "id": 59299,
+                  "name": "Basic Skills",
+                  "identifier": "2.A"
+                },
+                {
+                  "id": 59300,
+                  "name": "Content",
+                  "identifier": "2.A.1"
+                }
+              ]
+            },
+            {
+              "id": 59301,
+              "name": "Reading Comprehension",
+              "identifier": "2.A.1.a",
+              "description": "Understanding written sentences and paragraphs in work related documents.",
+              "url": "https://www.onetonline.org/find/descriptor/result/2.A.1.a",
+              "breadcrumbs": [
+                {
+                  "id": 59298,
+                  "name": "Worker Requirements",
+                  "identifier": "2"
+                },
+                {
+                  "id": 59299,
+                  "name": "Basic Skills",
+                  "identifier": "2.A"
+                },
+                {
+                  "id": 59300,
+                  "name": "Content",
+                  "identifier": "2.A.1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 10250010,
+          "name": "TestCourse",
+          "description": "Test Description",
+          "grade": null,
+          "complete": true,
+          "issued_on": "2015-07-03",
+          "allow_supplemental_references": null,
+          "allow_supplemental_evidence": null,
+          "course_link": "http://example.com",
+          "custom_attributes": null,
+          "expired_on": null,
+          "group_name": "test",
+          "private": false,
+          "seo_image": "https://api.accredible.com/v1/frontend/credential_seo_image/10250010",
+          "encoded_id": "gqm1e36g",
+          "recipient": {
+            "name": "John Doe",
+            "email": "person2@example.com",
+            "id": 883,
+            "linked_identity_id": "9a41b7d2-6c3e-4f15-a8b9-2d7e1f0c4b63",
+            "meta_data": null
+          },
+          "issuer": {
+            "name": "Example Provider",
+            "description": " Best place to manage online learning",
+            "url": "http://www.accredible.com"
+          },
+          "meta_data": null,
+          "skills": []
+        }
+      ],
+      "meta": {
+        "current_page": 1,
+        "next_page": 2,
+        "prev_page": null,
+        "total_pages": 795,
+        "total_count": 1590
+      }
+    },
+    "POST /v1/credentials/analytics/{id}": {
+      "analytics": [
+        {
+          "credential_id": 10533900,
+          "event": "privacy_updated",
+          "created_at": "2018-02-13T07:00:00.000Z"
+        },
+        {
+          "credential_id": 10533900,
+          "event": "recipient_view_certificate",
+          "created_at": "2018-02-13T07:00:00.000Z"
+        },
+        {
+          "credential_id": 10533900,
+          "event": "credential_user_verified",
+          "created_at": "2018-02-13T07:00:00.000Z"
+        }
+      ]
+    },
+    "POST /v1/issuer/groups": {
+      "group": {
+        "id": 12472,
+        "name": "new group",
+        "course_description": "Desscription of course",
+        "course_name": "Intro to Programming",
+        "learning_outcomes": [
+          "Skill One",
+          "Skill Two"
+        ],
+        "attach_pdf": true,
+        "course_link": "http://www.example.com",
+        "language": "en",
+        "design_name": "test",
+        "updated_at": "2016-08-29T07:03:25.000Z",
+        "created_at": "2016-08-29T06:14:18.000Z",
+        "design_id": 23,
+        "blockchain": false,
+        "certificate_design_id": null,
+        "badge_design_id": null,
+        "primary_design_id": null,
+        "department_id": 123,
+        "meta_data": {
+          "foo": "bar"
+        },
+        "generate_private_credential": false,
+        "auto_expiry": 1,
+        "auto_expiry_unit": "years",
+        "signup_url_show": false,
+        "signup_url": "http://www.example.com",
+        "course_link_show": false,
+        "organization_link_show": false,
+        "skill_category": {
+          "id": 1,
+          "name": "Example Category"
+        },
+        "achievement_type": "Certificate",
+        "collections": [
+          {
+            "id": 1,
+            "name": "one",
+            "description": null
+          },
+          {
+            "id": 2,
+            "name": "two",
+            "description": "description example"
+          }
+        ],
+        "earning_criteria": [
+          {
+            "id": "8f3c0c8c-5e1b-4f2a-9c4a-1f2c5c3a0001",
+            "kind": "course",
+            "text": "Complete the Intro to Programming course",
+            "required": true,
+            "position": 1
+          },
+          {
+            "id": "8f3c0c8c-5e1b-4f2a-9c4a-1f2c5c3a0002",
+            "kind": "exam",
+            "text": "Pass the final exam with 70% or higher",
+            "required": true,
+            "position": 2
+          }
+        ],
+        "skill_framework": {
+          "id": 44,
+          "name": "O*NET Skills",
+          "source_type": "external",
+          "taxonomy": "ONET",
+          "provider": "U.S. Department of Labor",
+          "description": null,
+          "attribution": {
+            "text": "O*NET is sponsored by the U.S. Department of Labor",
+            "url": "https://www.onetonline.org/"
+          },
+          "version": {
+            "id": 512,
+            "version": "30.0",
+            "status": "active"
+          }
+        },
+        "skills": [
+          {
+            "id": 59302,
+            "name": "Active Listening",
+            "identifier": "2.A.1.b",
+            "description": "Giving full attention to what other people are saying, taking time to understand the points being made.",
+            "url": "https://www.onetonline.org/find/descriptor/result/2.A.1.b",
+            "breadcrumbs": [
+              {
+                "id": 59298,
+                "name": "Worker Requirements",
+                "identifier": "2"
+              },
+              {
+                "id": 59299,
+                "name": "Basic Skills",
+                "identifier": "2.A"
+              },
+              {
+                "id": 59300,
+                "name": "Content",
+                "identifier": "2.A.1"
+              }
+            ]
+          },
+          {
+            "id": 59301,
+            "name": "Reading Comprehension",
+            "identifier": "2.A.1.a",
+            "description": "Understanding written sentences and paragraphs in work related documents.",
+            "url": "https://www.onetonline.org/find/descriptor/result/2.A.1.a",
+            "breadcrumbs": [
+              {
+                "id": 59298,
+                "name": "Worker Requirements",
+                "identifier": "2"
+              },
+              {
+                "id": 59299,
+                "name": "Basic Skills",
+                "identifier": "2.A"
+              },
+              {
+                "id": 59300,
+                "name": "Content",
+                "identifier": "2.A.1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "GET /v1/issuer/groups/{group_id}": {
+      "group": {
+        "id": 12472,
+        "name": "new group",
+        "course_description": "Desscription of course",
+        "course_name": "Intro to Programming",
+        "learning_outcomes": null,
+        "attach_pdf": true,
+        "course_link": "http://www.example.com",
+        "language": "en",
+        "design_name": "test",
+        "updated_at": "2016-08-29T07:03:25.000Z",
+        "created_at": "2016-08-29T06:14:18.000Z",
+        "design_id": 23,
+        "blockchain": false,
+        "certificate_design_id": null,
+        "badge_design_id": null,
+        "primary_design_id": null,
+        "department_id": 123,
+        "meta_data": null,
+        "generate_private_credential": false,
+        "auto_expiry": 1,
+        "auto_expiry_unit": "years",
+        "signup_url_show": false,
+        "signup_url": "http://www.example.com",
+        "course_link_show": false,
+        "organization_link_show": false,
+        "skill_category": {
+          "id": 1,
+          "name": "Example Category"
+        },
+        "achievement_type": null,
+        "collections": [
+          {
+            "id": 1,
+            "name": "one",
+            "description": null
+          },
+          {
+            "id": 2,
+            "name": "two",
+            "description": "description example"
+          }
+        ],
+        "earning_criteria": [
+          {
+            "id": "8f3c0c8c-5e1b-4f2a-9c4a-1f2c5c3a0001",
+            "kind": "course",
+            "text": "Complete the Intro to Programming course",
+            "required": true,
+            "position": 1
+          },
+          {
+            "id": "8f3c0c8c-5e1b-4f2a-9c4a-1f2c5c3a0002",
+            "kind": "exam",
+            "text": "Pass the final exam with 70% or higher",
+            "required": true,
+            "position": 2
+          }
+        ],
+        "skill_framework": {
+          "id": 44,
+          "name": "O*NET Skills",
+          "source_type": "external",
+          "taxonomy": "ONET",
+          "provider": "U.S. Department of Labor",
+          "description": null,
+          "attribution": {
+            "text": "O*NET is sponsored by the U.S. Department of Labor",
+            "url": "https://www.onetonline.org/"
+          },
+          "version": {
+            "id": 512,
+            "version": "30.0",
+            "status": "active"
+          }
+        },
+        "skills": [
+          {
+            "id": 59302,
+            "name": "Active Listening",
+            "identifier": "2.A.1.b",
+            "description": "Giving full attention to what other people are saying, taking time to understand the points being made.",
+            "url": "https://www.onetonline.org/find/descriptor/result/2.A.1.b",
+            "breadcrumbs": [
+              {
+                "id": 59298,
+                "name": "Worker Requirements",
+                "identifier": "2"
+              },
+              {
+                "id": 59299,
+                "name": "Basic Skills",
+                "identifier": "2.A"
+              },
+              {
+                "id": 59300,
+                "name": "Content",
+                "identifier": "2.A.1"
+              }
+            ]
+          },
+          {
+            "id": 59301,
+            "name": "Reading Comprehension",
+            "identifier": "2.A.1.a",
+            "description": "Understanding written sentences and paragraphs in work related documents.",
+            "url": "https://www.onetonline.org/find/descriptor/result/2.A.1.a",
+            "breadcrumbs": [
+              {
+                "id": 59298,
+                "name": "Worker Requirements",
+                "identifier": "2"
+              },
+              {
+                "id": 59299,
+                "name": "Basic Skills",
+                "identifier": "2.A"
+              },
+              {
+                "id": 59300,
+                "name": "Content",
+                "identifier": "2.A.1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "PUT /v1/issuer/groups/{group_id}": {
+      "group": {
+        "id": 12472,
+        "name": "updated new group",
+        "course_description": "Desscription of course",
+        "course_name": "updated course name",
+        "learning_outcomes": null,
+        "attach_pdf": true,
+        "course_link": "http://www.example.com",
+        "language": "en",
+        "design_name": "test",
+        "updated_at": "2016-08-29T07:03:25.000Z",
+        "created_at": "2016-08-29T06:14:18.000Z",
+        "design_id": 23,
+        "blockchain": false,
+        "certificate_design_id": null,
+        "badge_design_id": null,
+        "primary_design_id": null,
+        "department_id": 123,
+        "meta_data": {
+          "foo": "bar"
+        },
+        "generate_private_credential": false,
+        "auto_expiry": 1,
+        "auto_expiry_unit": "years",
+        "signup_url_show": false,
+        "signup_url": "http://www.example.com",
+        "course_link_show": false,
+        "organization_link_show": false,
+        "skill_category": {
+          "id": 1,
+          "name": "Example Category"
+        },
+        "achievement_type": "Badge",
+        "collections": [
+          {
+            "id": 1,
+            "name": "one",
+            "description": null
+          },
+          {
+            "id": 2,
+            "name": "two",
+            "description": "description example"
+          }
+        ],
+        "earning_criteria": [
+          {
+            "id": "8f3c0c8c-5e1b-4f2a-9c4a-1f2c5c3a0001",
+            "kind": "course",
+            "text": "Complete the updated course",
+            "required": true,
+            "position": 1
+          },
+          {
+            "id": "8f3c0c8c-5e1b-4f2a-9c4a-1f2c5c3a0003",
+            "kind": "degree",
+            "text": "Hold an associated degree",
+            "required": false,
+            "position": 2
+          }
+        ],
+        "skill_framework": {
+          "id": 44,
+          "name": "O*NET Skills",
+          "source_type": "external",
+          "taxonomy": "ONET",
+          "provider": "U.S. Department of Labor",
+          "description": null,
+          "attribution": {
+            "text": "O*NET is sponsored by the U.S. Department of Labor",
+            "url": "https://www.onetonline.org/"
+          },
+          "version": {
+            "id": 512,
+            "version": "30.0",
+            "status": "active"
+          }
+        },
+        "skills": [
+          {
+            "id": 59302,
+            "name": "Active Listening",
+            "identifier": "2.A.1.b",
+            "description": "Giving full attention to what other people are saying, taking time to understand the points being made.",
+            "url": "https://www.onetonline.org/find/descriptor/result/2.A.1.b",
+            "breadcrumbs": [
+              {
+                "id": 59298,
+                "name": "Worker Requirements",
+                "identifier": "2"
+              },
+              {
+                "id": 59299,
+                "name": "Basic Skills",
+                "identifier": "2.A"
+              },
+              {
+                "id": 59300,
+                "name": "Content",
+                "identifier": "2.A.1"
+              }
+            ]
+          },
+          {
+            "id": 59301,
+            "name": "Reading Comprehension",
+            "identifier": "2.A.1.a",
+            "description": "Understanding written sentences and paragraphs in work related documents.",
+            "url": "https://www.onetonline.org/find/descriptor/result/2.A.1.a",
+            "breadcrumbs": [
+              {
+                "id": 59298,
+                "name": "Worker Requirements",
+                "identifier": "2"
+              },
+              {
+                "id": 59299,
+                "name": "Basic Skills",
+                "identifier": "2.A"
+              },
+              {
+                "id": 59300,
+                "name": "Content",
+                "identifier": "2.A.1"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "POST /v1/issuer/groups/search": {
+      "groups": [
+        {
+          "id": 12472,
+          "name": "new group",
+          "course_description": "Desscription of course",
+          "course_name": "Intro to Programming",
+          "learning_outcomes": null,
+          "attach_pdf": true,
+          "course_link": "http://www.example.com",
+          "language": "en",
+          "design_name": "test",
+          "updated_at": "2016-08-29T07:03:25.000Z",
+          "created_at": "2016-08-29T06:14:18.000Z",
+          "design_id": 23,
+          "blockchain": false,
+          "certificate_design_id": 23,
+          "badge_design_id": null,
+          "primary_design_id": 23,
+          "department_id": 123,
+          "meta_data": {
+            "course_id": "TK764"
+          },
+          "generate_private_credential": false,
+          "auto_expiry": 1,
+          "auto_expiry_unit": "years",
+          "signup_url_show": false,
+          "signup_url": "http://www.example.com",
+          "course_link_show": false,
+          "organization_link_show": false,
+          "skill_category": {
+            "id": 1,
+            "name": "Example Category"
+          },
+          "achievement_type": null,
+          "collections": [
+            {
+              "id": 1,
+              "name": "one",
+              "description": null
+            }
+          ],
+          "earning_criteria": [
+            {
+              "id": "8f3c0c8c-5e1b-4f2a-9c4a-1f2c5c3a0001",
+              "kind": "course",
+              "text": "Complete the Intro to Programming course",
+              "required": true,
+              "position": 1
+            }
+          ],
+          "skill_framework": {
+            "id": 44,
+            "name": "O*NET Skills",
+            "source_type": "external",
+            "taxonomy": "ONET",
+            "provider": "U.S. Department of Labor",
+            "description": null,
+            "attribution": {
+              "text": "O*NET is sponsored by the U.S. Department of Labor",
+              "url": "https://www.onetonline.org/"
+            },
+            "version": {
+              "id": 512,
+              "version": "30.0",
+              "status": "active"
+            }
+          },
+          "skills": [
+            {
+              "id": 59302,
+              "name": "Active Listening",
+              "identifier": "2.A.1.b",
+              "description": "Giving full attention to what other people are saying, taking time to understand the points being made.",
+              "url": "https://www.onetonline.org/find/descriptor/result/2.A.1.b",
+              "breadcrumbs": [
+                {
+                  "id": 59298,
+                  "name": "Worker Requirements",
+                  "identifier": "2"
+                },
+                {
+                  "id": 59299,
+                  "name": "Basic Skills",
+                  "identifier": "2.A"
+                },
+                {
+                  "id": 59300,
+                  "name": "Content",
+                  "identifier": "2.A.1"
+                }
+              ]
+            },
+            {
+              "id": 59301,
+              "name": "Reading Comprehension",
+              "identifier": "2.A.1.a",
+              "description": "Understanding written sentences and paragraphs in work related documents.",
+              "url": "https://www.onetonline.org/find/descriptor/result/2.A.1.a",
+              "breadcrumbs": [
+                {
+                  "id": 59298,
+                  "name": "Worker Requirements",
+                  "identifier": "2"
+                },
+                {
+                  "id": 59299,
+                  "name": "Basic Skills",
+                  "identifier": "2.A"
+                },
+                {
+                  "id": 59300,
+                  "name": "Content",
+                  "identifier": "2.A.1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 12473,
+          "name": "new group",
+          "course_description": "Desscription of course",
+          "course_name": "Intro to Programming",
+          "learning_outcomes": [
+            "skill one",
+            "skill two"
+          ],
+          "attach_pdf": false,
+          "course_link": "http://www.example.com",
+          "language": "en",
+          "design_name": "test",
+          "updated_at": "2016-08-29T07:03:25.000Z",
+          "created_at": "2016-08-29T06:14:18.000Z",
+          "blockchain": true,
+          "design_id": null,
+          "certificate_design_id": null,
+          "badge_design_id": 345,
+          "primary_design_id": null,
+          "department_id": 123,
+          "meta_data": {
+            "course_id": "TK765"
+          },
+          "generate_private_credential": false,
+          "auto_expiry": 1,
+          "auto_expiry_unit": "years",
+          "signup_url_show": false,
+          "signup_url": "http://www.example.com",
+          "course_link_show": false,
+          "organization_link_show": false,
+          "skill_category": {
+            "id": 1,
+            "name": "Example Category"
+          },
+          "achievement_type": null,
+          "collections": [
+            {
+              "id": 1,
+              "name": "one",
+              "description": null
+            },
+            {
+              "id": 2,
+              "name": "two",
+              "description": "description example"
+            }
+          ],
+          "earning_criteria": [
+            {
+              "id": "8f3c0c8c-5e1b-4f2a-9c4a-1f2c5c3a0201",
+              "kind": "skill",
+              "text": "Demonstrate proficiency in Python",
+              "required": true,
+              "position": 1
+            },
+            {
+              "id": "8f3c0c8c-5e1b-4f2a-9c4a-1f2c5c3a0202",
+              "kind": "exam",
+              "text": "Pass the final exam with 70% or higher",
+              "required": false,
+              "position": 2
+            }
+          ],
+          "skill_framework": null,
+          "skills": []
+        }
+      ],
+      "meta": {
+        "current_page": 1,
+        "next_page": 2,
+        "prev_page": null,
+        "total_pages": 119,
+        "total_count": 238
+      }
+    },
+    "POST /v1/departments/search": {
+      "departments": {
+        "id": 1234,
+        "name": "New Department Name",
+        "description": "Example description text.",
+        "url": "https://www.example.com",
+        "logo": "https://images.credential.net/example/department_logo.png",
+        "page_banner": "https://images.credential.net/example/banner_image.png",
+        "whitelabel_logo": "https://images.credential.net/example/whitelabel_logo.png",
+        "linkedin_company_id": "5098253",
+        "meta_data": {
+          "internal_id": "R12",
+          "faculty": "physics"
+        },
+        "generate_private_credential": false
+      }
+    },
+    "POST /v1/attribute_keys/search": {
+      "attribute_keys": [
+        {
+          "id": 1234,
+          "name": "New Custom Attribute Key",
+          "kind": "text",
+          "department_id": 123
+        }
+      ],
+      "meta": {
+        "current_page": 1,
+        "next_page": null,
+        "prev_page": null,
+        "total_pages": 1,
+        "total_count": 1
+      }
+    },
+    "GET /v1/issuer/details": {
+      "issuer": {
+        "id": 1,
+        "name": "Example Provider",
+        "email": "dev@accredible.com",
+        "certificate_left": 100,
+        "language": "en",
+        "url": "http://www.accredible.com",
+        "spiderable": true,
+        "whitelisted_domain": "http://www.accredible.com/",
+        "linkedin_company_id": null,
+        "linkedin_school_id": null
+      }
+    }
+  }
+}
