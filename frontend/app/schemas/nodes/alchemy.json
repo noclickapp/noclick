@@ -1,0 +1,492 @@
+{
+  "$defs": {
+    "AlchemyAccessKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "alchemy_access_key",
+          "default": "alchemy_access_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Access key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_key"
+      ],
+      "title": "Alchemy Access Key",
+      "type": "object",
+      "x-credential-instructions": "Create an access key in Alchemy Dashboard \u2192 Security. Enable App Management read permissions for reads, or read and write for changes. Paste the access key here, without Bearer. An app API key cannot authenticate the Admin API. See https://www.alchemy.com/docs/reference/admin-api/overview.",
+      "x-credential-url": "https://dashboard.alchemy.com/settings/security"
+    },
+    "AllowlistEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "AllowlistEntry",
+      "type": "object"
+    },
+    "CreateApp": {
+      "additionalProperties": false,
+      "description": "Create an app with network IDs returned by list_chains.",
+      "properties": {
+        "operation": {
+          "const": "create_app",
+          "default": "create_app",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "network_allowlist": {
+          "description": "Network IDs, for example ETH_MAINNET. Replaces the entire network selection.",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "title": "Network Allowlist",
+          "type": "array"
+        },
+        "products": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "node-api",
+                  "nft-api",
+                  "swaps-api",
+                  "block-timestamp-api",
+                  "token-api",
+                  "transfers-api",
+                  "bundler-api",
+                  "debug-api",
+                  "embedded-accounts",
+                  "gas-manager-api",
+                  "trace-api",
+                  "prices-api",
+                  "transaction-simulation-api",
+                  "transaction-receipts-api",
+                  "user-operations-api",
+                  "smart-websockets",
+                  "webhooks",
+                  "grpc"
+                ],
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Products"
+        }
+      },
+      "required": [
+        "name",
+        "network_allowlist"
+      ],
+      "title": "CreateApp",
+      "type": "object"
+    },
+    "DeleteApp": {
+      "additionalProperties": false,
+      "description": "Permanently delete the specified app, invalidating its API access.",
+      "properties": {
+        "app_id": {
+          "description": "Alchemy app ID from list_apps; not an API key.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "App Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_app",
+          "default": "delete_app",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "app_id"
+      ],
+      "title": "DeleteApp",
+      "type": "object"
+    },
+    "GetApp": {
+      "additionalProperties": false,
+      "description": "Retrieve an app's metadata and allowlists; API keys and RPC URLs are omitted.",
+      "properties": {
+        "app_id": {
+          "description": "Alchemy app ID from list_apps; not an API key.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "App Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_app",
+          "default": "get_app",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "app_id"
+      ],
+      "title": "GetApp",
+      "type": "object"
+    },
+    "ListApps": {
+      "additionalProperties": false,
+      "description": "List this account's apps, one page at a time; pass back next_cursor.",
+      "properties": {
+        "operation": {
+          "const": "list_apps",
+          "default": "list_apps",
+          "title": "Operation",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 8192,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque next_cursor from the previous page.",
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 25,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "ListApps",
+      "type": "object"
+    },
+    "ListChains": {
+      "additionalProperties": false,
+      "description": "List supported chain network IDs for app configuration.",
+      "properties": {
+        "operation": {
+          "const": "list_chains",
+          "default": "list_chains",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListChains",
+      "type": "object"
+    },
+    "UpdateAddressAllowlist": {
+      "additionalProperties": false,
+      "description": "Replace the address allowlist; an empty list clears restrictions.",
+      "properties": {
+        "app_id": {
+          "description": "Alchemy app ID from list_apps; not an API key.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "App Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_address_allowlist",
+          "default": "update_address_allowlist",
+          "title": "Operation",
+          "type": "string"
+        },
+        "address_allowlist": {
+          "items": {
+            "$ref": "#/$defs/AllowlistEntry"
+          },
+          "maxItems": 1000,
+          "title": "Address Allowlist",
+          "type": "array"
+        }
+      },
+      "required": [
+        "app_id",
+        "address_allowlist"
+      ],
+      "title": "UpdateAddressAllowlist",
+      "type": "object"
+    },
+    "UpdateApp": {
+      "additionalProperties": false,
+      "description": "Change an app's name or description without replacing its allowlists.",
+      "properties": {
+        "app_id": {
+          "description": "Alchemy app ID from list_apps; not an API key.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "App Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_app",
+          "default": "update_app",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "app_id"
+      ],
+      "title": "UpdateApp",
+      "type": "object"
+    },
+    "UpdateIpAllowlist": {
+      "additionalProperties": false,
+      "description": "Replace the IP/CIDR allowlist; an empty list clears restrictions.",
+      "properties": {
+        "app_id": {
+          "description": "Alchemy app ID from list_apps; not an API key.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "App Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_ip_allowlist",
+          "default": "update_ip_allowlist",
+          "title": "Operation",
+          "type": "string"
+        },
+        "ip_allowlist": {
+          "items": {
+            "$ref": "#/$defs/AllowlistEntry"
+          },
+          "maxItems": 1000,
+          "title": "Ip Allowlist",
+          "type": "array"
+        }
+      },
+      "required": [
+        "app_id",
+        "ip_allowlist"
+      ],
+      "title": "UpdateIpAllowlist",
+      "type": "object"
+    },
+    "UpdateNetworkAllowlist": {
+      "additionalProperties": false,
+      "description": "Replace all enabled networks; an empty list removes all networks.",
+      "properties": {
+        "app_id": {
+          "description": "Alchemy app ID from list_apps; not an API key.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "App Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_network_allowlist",
+          "default": "update_network_allowlist",
+          "title": "Operation",
+          "type": "string"
+        },
+        "network_allowlist": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "title": "Network Allowlist",
+          "type": "array"
+        }
+      },
+      "required": [
+        "app_id",
+        "network_allowlist"
+      ],
+      "title": "UpdateNetworkAllowlist",
+      "type": "object"
+    },
+    "UpdateOriginAllowlist": {
+      "additionalProperties": false,
+      "description": "Replace the origin allowlist; an empty list clears restrictions.",
+      "properties": {
+        "app_id": {
+          "description": "Alchemy app ID from list_apps; not an API key.",
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "App Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_origin_allowlist",
+          "default": "update_origin_allowlist",
+          "title": "Operation",
+          "type": "string"
+        },
+        "origin_allowlist": {
+          "items": {
+            "$ref": "#/$defs/AllowlistEntry"
+          },
+          "maxItems": 1000,
+          "title": "Origin Allowlist",
+          "type": "array"
+        }
+      },
+      "required": [
+        "app_id",
+        "origin_allowlist"
+      ],
+      "title": "UpdateOriginAllowlist",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_app": "#/$defs/CreateApp",
+          "delete_app": "#/$defs/DeleteApp",
+          "get_app": "#/$defs/GetApp",
+          "list_apps": "#/$defs/ListApps",
+          "list_chains": "#/$defs/ListChains",
+          "update_address_allowlist": "#/$defs/UpdateAddressAllowlist",
+          "update_app": "#/$defs/UpdateApp",
+          "update_ip_allowlist": "#/$defs/UpdateIpAllowlist",
+          "update_network_allowlist": "#/$defs/UpdateNetworkAllowlist",
+          "update_origin_allowlist": "#/$defs/UpdateOriginAllowlist"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListChains"
+        },
+        {
+          "$ref": "#/$defs/ListApps"
+        },
+        {
+          "$ref": "#/$defs/GetApp"
+        },
+        {
+          "$ref": "#/$defs/CreateApp"
+        },
+        {
+          "$ref": "#/$defs/UpdateApp"
+        },
+        {
+          "$ref": "#/$defs/DeleteApp"
+        },
+        {
+          "$ref": "#/$defs/UpdateNetworkAllowlist"
+        },
+        {
+          "$ref": "#/$defs/UpdateAddressAllowlist"
+        },
+        {
+          "$ref": "#/$defs/UpdateOriginAllowlist"
+        },
+        {
+          "$ref": "#/$defs/UpdateIpAllowlist"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AlchemyAccessKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Alchemy Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

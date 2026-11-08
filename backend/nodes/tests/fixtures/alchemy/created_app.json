@@ -1,0 +1,23 @@
+{
+  "data": {
+    "id": "k5c99fzeegrljz2i",
+    "name": "Test App",
+    "description": "App for full workflow test",
+    "apiKey": "Ow7sB2EbdOgDvAU5P3N0V",
+    "webhookApiKey": "1JIfTRjWbCv4gZS2IWEyTxKHO8eqa2C7",
+    "chainNetworks": [
+      {
+        "name": "Ethereum Mainnet",
+        "id": "ETH_MAINNET",
+        "networkChainId": "1",
+        "rpcUrl": "https://eth-mainnet.g.alchemy.com/v2/Ow7sB2EbdOgDvAU5P3N0V",
+        "wsUrl": "wss://eth-mainnet.g.alchemy.com/v2/Ow7sB2EbdOgDvAU5P3N0V"
+      }
+    ],
+    "products": [],
+    "addressAllowlist": [],
+    "originAllowlist": [],
+    "ipAllowlist": [],
+    "createdAt": "2026-02-05T16:03:03.121+00:00"
+  }
+}
