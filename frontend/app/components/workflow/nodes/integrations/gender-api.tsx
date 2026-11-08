@@ -9,8 +9,9 @@ const GenderApiIcon = ({ className, style }: { className?: string; style?: CSSPr
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} />
 );
 
-export const GenderApiNode: NodeDefinition = {
+export const GenderApiNode: NodeDefinition & { category: 'marketing' } = {
     type: 'automation-gender-api', label: 'Gender Api',
+    category: 'marketing',
     description: 'Query gender and country of origin from names and emails, and monitor account credits',
     keywords: ['Gender-API', 'name enrichment', 'country of origin'],
     Icon: GenderApiIcon, iconColor: '',
