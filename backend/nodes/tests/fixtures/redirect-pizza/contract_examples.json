@@ -1,0 +1,1394 @@
+{
+  "list_redirects": {
+    "config": {
+      "page": 1,
+      "per_page": 20,
+      "query": "status:active tag:marketing"
+    },
+    "response": {
+      "data": [
+        {
+          "id": 709085934,
+          "sources": [
+            {
+              "id": 3525426,
+              "url": "feeney.com",
+              "regex": false,
+              "paused": false
+            }
+          ],
+          "domains": [
+            {
+              "id": 1026151278,
+              "fqdn": "feeney.com",
+              "is_root_domain": true,
+              "hsts": false,
+              "prevent_foreign_embedding": false,
+              "referrer_policy": "no-referrer-when-downgrade",
+              "settings": {
+                "waf": {
+                  "status": "inherit"
+                },
+                "hsts": {
+                  "status": "inherit"
+                },
+                "prevent_foreign_embedding": {
+                  "status": "inherit"
+                },
+                "acme_profile_shortlived": {
+                  "status": "inherit"
+                },
+                "referrer_policy": {
+                  "status": "inherit"
+                },
+                "robots_txt": {
+                  "status": "inherit"
+                }
+              },
+              "dns": {
+                "verified": true,
+                "required_settings": [
+                  {
+                    "type": "A",
+                    "name": "@",
+                    "value": "89.106.200.1"
+                  }
+                ],
+                "automatic_dns": {
+                  "available": false,
+                  "apply_url": null
+                }
+              },
+              "ssl": {
+                "active": true
+              },
+              "created_at": "2026-08-21T12:21:44+00:00",
+              "updated_at": "2026-08-21T12:21:44+00:00"
+            }
+          ],
+          "destination": "https://schaden.com/quia-officia-est-dignissimos-neque",
+          "redirect_type": "permanent",
+          "keep_query_string": false,
+          "uri_forwarding": false,
+          "tracking": true,
+          "paused": false,
+          "tags": [],
+          "notes": null,
+          "created_at": "2026-08-21T12:21:44+00:00",
+          "updated_at": "2026-08-21T12:21:44+00:00"
+        },
+        {
+          "id": 1815690827,
+          "sources": [
+            {
+              "id": 3525427,
+              "url": "oreilly.net",
+              "regex": false,
+              "paused": false
+            }
+          ],
+          "domains": [
+            {
+              "id": 117490891,
+              "fqdn": "oreilly.net",
+              "is_root_domain": true,
+              "hsts": false,
+              "prevent_foreign_embedding": false,
+              "referrer_policy": "no-referrer-when-downgrade",
+              "settings": {
+                "waf": {
+                  "status": "inherit"
+                },
+                "hsts": {
+                  "status": "inherit"
+                },
+                "prevent_foreign_embedding": {
+                  "status": "inherit"
+                },
+                "acme_profile_shortlived": {
+                  "status": "inherit"
+                },
+                "referrer_policy": {
+                  "status": "inherit"
+                },
+                "robots_txt": {
+                  "status": "inherit"
+                }
+              },
+              "dns": {
+                "verified": true,
+                "required_settings": [
+                  {
+                    "type": "A",
+                    "name": "@",
+                    "value": "89.106.200.1"
+                  }
+                ],
+                "automatic_dns": {
+                  "available": false,
+                  "apply_url": null
+                }
+              },
+              "ssl": {
+                "active": true
+              },
+              "created_at": "2026-08-21T12:21:44+00:00",
+              "updated_at": "2026-08-21T12:21:44+00:00"
+            }
+          ],
+          "destination": "https://doyle.net/quia-perspiciatis-deserunt-ducimus-corrupti-et",
+          "redirect_type": "permanent",
+          "keep_query_string": false,
+          "uri_forwarding": false,
+          "tracking": true,
+          "paused": false,
+          "tags": [],
+          "notes": null,
+          "created_at": "2026-08-21T12:21:44+00:00",
+          "updated_at": "2026-08-21T12:21:44+00:00"
+        }
+      ],
+      "links": {
+        "first": "/?page=1",
+        "last": "/?page=1",
+        "prev": null,
+        "next": null
+      },
+      "meta": {
+        "current_page": 1,
+        "from": 1,
+        "last_page": 1,
+        "links": [
+          {
+            "url": null,
+            "label": "\u00ab Previous",
+            "page": null,
+            "active": false
+          },
+          {
+            "url": "/?page=1",
+            "label": "1",
+            "page": 1,
+            "active": true
+          },
+          {
+            "url": null,
+            "label": "Next \u00bb",
+            "page": null,
+            "active": false
+          }
+        ],
+        "path": "/",
+        "per_page": 20,
+        "to": 2,
+        "total": 2
+      }
+    },
+    "method": "GET",
+    "path": "/api/v1/redirects",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "create_redirect": {
+    "config": {
+      "sources": [
+        "www.example.com"
+      ],
+      "destination": "https://example.org",
+      "redirect_type": "permanent",
+      "uri_forwarding": true,
+      "keep_query_string": false,
+      "tracking": true,
+      "tags": [
+        "marketing",
+        "blog"
+      ],
+      "notes": "This redirect is for a marketing campaign",
+      "merge": true,
+      "upsert": false
+    },
+    "response": {
+      "data": {
+        "id": 907027368,
+        "sources": [
+          {
+            "id": 3525428,
+            "url": "haag.org",
+            "regex": false,
+            "paused": false
+          }
+        ],
+        "domains": [
+          {
+            "id": 1241499688,
+            "fqdn": "haag.org",
+            "is_root_domain": true,
+            "hsts": false,
+            "prevent_foreign_embedding": false,
+            "referrer_policy": "no-referrer-when-downgrade",
+            "settings": {
+              "waf": {
+                "status": "inherit"
+              },
+              "hsts": {
+                "status": "inherit"
+              },
+              "prevent_foreign_embedding": {
+                "status": "inherit"
+              },
+              "acme_profile_shortlived": {
+                "status": "inherit"
+              },
+              "referrer_policy": {
+                "status": "inherit"
+              },
+              "robots_txt": {
+                "status": "inherit"
+              }
+            },
+            "dns": {
+              "verified": true,
+              "required_settings": [
+                {
+                  "type": "A",
+                  "name": "@",
+                  "value": "89.106.200.1"
+                }
+              ],
+              "automatic_dns": {
+                "available": false,
+                "apply_url": null
+              }
+            },
+            "ssl": {
+              "active": true
+            },
+            "created_at": "2026-08-21T12:21:44+00:00",
+            "updated_at": "2026-08-21T12:21:44+00:00"
+          }
+        ],
+        "destination": "http://cartwright.com/",
+        "redirect_type": "permanent",
+        "keep_query_string": false,
+        "uri_forwarding": false,
+        "tracking": true,
+        "paused": false,
+        "tags": [],
+        "notes": null,
+        "created_at": "2026-08-21T12:21:44+00:00",
+        "updated_at": "2026-08-21T12:21:44+00:00"
+      }
+    },
+    "method": "POST",
+    "path": "/api/v1/redirects",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "get_redirect": {
+    "config": {
+      "id": 123456789
+    },
+    "response": {
+      "data": {
+        "id": 2026837765,
+        "sources": [
+          {
+            "id": 3525429,
+            "url": "king.biz",
+            "regex": false,
+            "paused": false
+          }
+        ],
+        "domains": [
+          {
+            "id": 332742021,
+            "fqdn": "king.biz",
+            "is_root_domain": true,
+            "hsts": false,
+            "prevent_foreign_embedding": false,
+            "referrer_policy": "no-referrer-when-downgrade",
+            "settings": {
+              "waf": {
+                "status": "inherit"
+              },
+              "hsts": {
+                "status": "inherit"
+              },
+              "prevent_foreign_embedding": {
+                "status": "inherit"
+              },
+              "acme_profile_shortlived": {
+                "status": "inherit"
+              },
+              "referrer_policy": {
+                "status": "inherit"
+              },
+              "robots_txt": {
+                "status": "inherit"
+              }
+            },
+            "dns": {
+              "verified": true,
+              "required_settings": [
+                {
+                  "type": "A",
+                  "name": "@",
+                  "value": "89.106.200.1"
+                }
+              ],
+              "automatic_dns": {
+                "available": false,
+                "apply_url": null
+              }
+            },
+            "ssl": {
+              "active": true
+            },
+            "created_at": "2026-08-21T12:21:44+00:00",
+            "updated_at": "2026-08-21T12:21:44+00:00"
+          }
+        ],
+        "destination": "https://kuvalis.com/",
+        "redirect_type": "permanent",
+        "keep_query_string": false,
+        "uri_forwarding": false,
+        "tracking": true,
+        "paused": false,
+        "tags": [],
+        "notes": null,
+        "created_at": "2026-08-21T12:21:44+00:00",
+        "updated_at": "2026-08-21T12:21:44+00:00"
+      }
+    },
+    "method": "GET",
+    "path": "/api/v1/redirects/{id}",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "update_redirect": {
+    "config": {
+      "sources": [
+        "old.example.com",
+        "old2.example.com"
+      ],
+      "destination": "https://example.org",
+      "redirect_type": "permanent",
+      "uri_forwarding": true,
+      "keep_query_string": false,
+      "tracking": true,
+      "tags": [
+        "tag1",
+        "tag2"
+      ],
+      "notes": "This redirect is for a marketing campaign",
+      "id": 123456789
+    },
+    "response": {
+      "data": {
+        "id": 1118182242,
+        "sources": [
+          {
+            "id": 3525430,
+            "url": "wolff.info",
+            "regex": false,
+            "paused": false
+          }
+        ],
+        "domains": [
+          {
+            "id": 1435247074,
+            "fqdn": "wolff.info",
+            "is_root_domain": true,
+            "hsts": false,
+            "prevent_foreign_embedding": false,
+            "referrer_policy": "no-referrer-when-downgrade",
+            "settings": {
+              "waf": {
+                "status": "inherit"
+              },
+              "hsts": {
+                "status": "inherit"
+              },
+              "prevent_foreign_embedding": {
+                "status": "inherit"
+              },
+              "acme_profile_shortlived": {
+                "status": "inherit"
+              },
+              "referrer_policy": {
+                "status": "inherit"
+              },
+              "robots_txt": {
+                "status": "inherit"
+              }
+            },
+            "dns": {
+              "verified": true,
+              "required_settings": [
+                {
+                  "type": "A",
+                  "name": "@",
+                  "value": "89.106.200.1"
+                }
+              ],
+              "automatic_dns": {
+                "available": false,
+                "apply_url": null
+              }
+            },
+            "ssl": {
+              "active": true
+            },
+            "created_at": "2026-08-21T12:21:44+00:00",
+            "updated_at": "2026-08-21T12:21:44+00:00"
+          }
+        ],
+        "destination": "http://howe.com/ut-et-recusandae-modi-rerum-ex-repellendus",
+        "redirect_type": "permanent",
+        "keep_query_string": false,
+        "uri_forwarding": false,
+        "tracking": true,
+        "paused": false,
+        "tags": [],
+        "notes": null,
+        "created_at": "2026-08-21T12:21:44+00:00",
+        "updated_at": "2026-08-21T12:21:44+00:00"
+      }
+    },
+    "method": "PUT",
+    "path": "/api/v1/redirects/{id}",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "delete_redirect": {
+    "config": {
+      "id": 123456789
+    },
+    "response": null,
+    "method": "DELETE",
+    "path": "/api/v1/redirects/{id}",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "pause_redirect": {
+    "config": {
+      "id": 123456789
+    },
+    "response": null,
+    "method": "POST",
+    "path": "/api/v1/redirects/{id}/pause",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "resume_redirect": {
+    "config": {
+      "id": 123456789
+    },
+    "response": null,
+    "method": "POST",
+    "path": "/api/v1/redirects/{id}/resume",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "pause_source": {
+    "config": {
+      "redirect_id": 123456789,
+      "source_id": 123456789
+    },
+    "response": null,
+    "method": "POST",
+    "path": "/api/v1/redirects/{redirect_id}/sources/{source_id}/pause",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "resume_source": {
+    "config": {
+      "redirect_id": 123456789,
+      "source_id": 123456789
+    },
+    "response": null,
+    "method": "POST",
+    "path": "/api/v1/redirects/{redirect_id}/sources/{source_id}/resume",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "list_email_forwards": {
+    "config": {
+      "page": 1,
+      "per_page": 20
+    },
+    "response": {
+      "data": [
+        {
+          "id": 1214494024,
+          "domain": {
+            "id": 476779839,
+            "fqdn": "smitham.com",
+            "is_root_domain": true,
+            "hsts": false,
+            "prevent_foreign_embedding": false,
+            "referrer_policy": "no-referrer-when-downgrade",
+            "settings": {
+              "waf": {
+                "status": "inherit"
+              },
+              "hsts": {
+                "status": "inherit"
+              },
+              "prevent_foreign_embedding": {
+                "status": "inherit"
+              },
+              "acme_profile_shortlived": {
+                "status": "inherit"
+              },
+              "referrer_policy": {
+                "status": "inherit"
+              },
+              "robots_txt": {
+                "status": "inherit"
+              }
+            },
+            "dns": {
+              "verified": false,
+              "required_settings": [],
+              "automatic_dns": {
+                "available": false,
+                "apply_url": null
+              }
+            },
+            "ssl": {
+              "active": false
+            },
+            "created_at": "2026-08-21T12:21:44+00:00",
+            "updated_at": "2026-08-21T12:21:44+00:00"
+          },
+          "alias": "*",
+          "destination": "hirthe.theo@hauck.com",
+          "created_at": "2026-08-21T12:21:44+00:00",
+          "updated_at": "2026-08-21T12:21:44+00:00"
+        },
+        {
+          "id": 307936933,
+          "domain": {
+            "id": 1715609244,
+            "fqdn": "cartwright.com",
+            "is_root_domain": true,
+            "hsts": false,
+            "prevent_foreign_embedding": false,
+            "referrer_policy": "no-referrer-when-downgrade",
+            "settings": {
+              "waf": {
+                "status": "inherit"
+              },
+              "hsts": {
+                "status": "inherit"
+              },
+              "prevent_foreign_embedding": {
+                "status": "inherit"
+              },
+              "acme_profile_shortlived": {
+                "status": "inherit"
+              },
+              "referrer_policy": {
+                "status": "inherit"
+              },
+              "robots_txt": {
+                "status": "inherit"
+              }
+            },
+            "dns": {
+              "verified": false,
+              "required_settings": [],
+              "automatic_dns": {
+                "available": false,
+                "apply_url": null
+              }
+            },
+            "ssl": {
+              "active": false
+            },
+            "created_at": "2026-08-21T12:21:44+00:00",
+            "updated_at": "2026-08-21T12:21:44+00:00"
+          },
+          "alias": "*",
+          "destination": "kconsidine@hotmail.com",
+          "created_at": "2026-08-21T12:21:44+00:00",
+          "updated_at": "2026-08-21T12:21:44+00:00"
+        }
+      ],
+      "links": {
+        "first": "/?page=1",
+        "last": "/?page=1",
+        "prev": null,
+        "next": null
+      },
+      "meta": {
+        "current_page": 1,
+        "from": 1,
+        "last_page": 1,
+        "links": [
+          {
+            "url": null,
+            "label": "\u00ab Previous",
+            "page": null,
+            "active": false
+          },
+          {
+            "url": "/?page=1",
+            "label": "1",
+            "page": 1,
+            "active": true
+          },
+          {
+            "url": null,
+            "label": "Next \u00bb",
+            "page": null,
+            "active": false
+          }
+        ],
+        "path": "/",
+        "per_page": 20,
+        "to": 2,
+        "total": 2
+      }
+    },
+    "method": "GET",
+    "path": "/api/v1/email-forwards",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "create_email_forward": {
+    "config": {
+      "alias": "*",
+      "domain": "example.com",
+      "destination": "info@example.com"
+    },
+    "response": {
+      "data": {
+        "id": 518559327,
+        "domain": {
+          "id": 1913681494,
+          "fqdn": "wisoky.com",
+          "is_root_domain": true,
+          "hsts": false,
+          "prevent_foreign_embedding": false,
+          "referrer_policy": "no-referrer-when-downgrade",
+          "settings": {
+            "waf": {
+              "status": "inherit"
+            },
+            "hsts": {
+              "status": "inherit"
+            },
+            "prevent_foreign_embedding": {
+              "status": "inherit"
+            },
+            "acme_profile_shortlived": {
+              "status": "inherit"
+            },
+            "referrer_policy": {
+              "status": "inherit"
+            },
+            "robots_txt": {
+              "status": "inherit"
+            }
+          },
+          "dns": {
+            "verified": false,
+            "required_settings": [],
+            "automatic_dns": {
+              "available": false,
+              "apply_url": null
+            }
+          },
+          "ssl": {
+            "active": false
+          },
+          "created_at": "2026-08-21T12:21:45+00:00",
+          "updated_at": "2026-08-21T12:21:45+00:00"
+        },
+        "alias": "*",
+        "destination": "hirthe.theo@hauck.com",
+        "created_at": "2026-08-21T12:21:45+00:00",
+        "updated_at": "2026-08-21T12:21:45+00:00"
+      }
+    },
+    "method": "POST",
+    "path": "/api/v1/email-forwards",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "get_email_forward": {
+    "config": {
+      "id": 123456789
+    },
+    "response": {
+      "data": {
+        "id": 1412538882,
+        "domain": {
+          "id": 674824953,
+          "fqdn": "glover.biz",
+          "is_root_domain": true,
+          "hsts": false,
+          "prevent_foreign_embedding": false,
+          "referrer_policy": "no-referrer-when-downgrade",
+          "settings": {
+            "waf": {
+              "status": "inherit"
+            },
+            "hsts": {
+              "status": "inherit"
+            },
+            "prevent_foreign_embedding": {
+              "status": "inherit"
+            },
+            "acme_profile_shortlived": {
+              "status": "inherit"
+            },
+            "referrer_policy": {
+              "status": "inherit"
+            },
+            "robots_txt": {
+              "status": "inherit"
+            }
+          },
+          "dns": {
+            "verified": false,
+            "required_settings": [],
+            "automatic_dns": {
+              "available": false,
+              "apply_url": null
+            }
+          },
+          "ssl": {
+            "active": false
+          },
+          "created_at": "2026-08-21T12:21:44+00:00",
+          "updated_at": "2026-08-21T12:21:44+00:00"
+        },
+        "alias": "*",
+        "destination": "hirthe.theo@hauck.com",
+        "created_at": "2026-08-21T12:21:45+00:00",
+        "updated_at": "2026-08-21T12:21:45+00:00"
+      }
+    },
+    "method": "GET",
+    "path": "/api/v1/email-forwards/{id}",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "update_email_forward": {
+    "config": {
+      "destination": "info@example.com",
+      "id": 123456789
+    },
+    "response": {
+      "data": {
+        "id": 1623694268,
+        "domain": {
+          "id": 886012851,
+          "fqdn": "beier.com",
+          "is_root_domain": true,
+          "hsts": false,
+          "prevent_foreign_embedding": false,
+          "referrer_policy": "no-referrer-when-downgrade",
+          "settings": {
+            "waf": {
+              "status": "inherit"
+            },
+            "hsts": {
+              "status": "inherit"
+            },
+            "prevent_foreign_embedding": {
+              "status": "inherit"
+            },
+            "acme_profile_shortlived": {
+              "status": "inherit"
+            },
+            "referrer_policy": {
+              "status": "inherit"
+            },
+            "robots_txt": {
+              "status": "inherit"
+            }
+          },
+          "dns": {
+            "verified": false,
+            "required_settings": [],
+            "automatic_dns": {
+              "available": false,
+              "apply_url": null
+            }
+          },
+          "ssl": {
+            "active": false
+          },
+          "created_at": "2026-08-21T12:21:45+00:00",
+          "updated_at": "2026-08-21T12:21:45+00:00"
+        },
+        "alias": "*",
+        "destination": "hirthe.theo@hauck.com",
+        "created_at": "2026-08-21T12:21:45+00:00",
+        "updated_at": "2026-08-21T12:21:45+00:00"
+      }
+    },
+    "method": "PUT",
+    "path": "/api/v1/email-forwards/{id}",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "delete_email_forward": {
+    "config": {
+      "id": 123456789
+    },
+    "response": null,
+    "method": "DELETE",
+    "path": "/api/v1/email-forwards/{id}",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "list_email_forward_logs": {
+    "config": {
+      "start": "2025-04-30",
+      "end": "2025-04-30 16:52:10",
+      "query": "forward:sales@example.com",
+      "cursor": "architecto",
+      "per_page": 100
+    },
+    "response": {
+      "data": [
+        {
+          "id": 1,
+          "received_at": "2025-04-30 16:52:10",
+          "updated_at": "2025-04-30 16:52:12",
+          "email_forward_id": 1234567890,
+          "domain": "example.com",
+          "recipient": "sales@example.com",
+          "mail_from": "sender@example.org",
+          "destination": "info@example.com",
+          "subject": "Quarterly update",
+          "status": "delivered",
+          "message_id": "<abc123@example.org>",
+          "source_hostname": "mail.example.org",
+          "last_event_message": "Sent."
+        }
+      ],
+      "links": {
+        "first": null,
+        "last": null,
+        "prev": null,
+        "next": "https://redirect.pizza/api/v1/email-forwards/logs?cursor=eyJpZCI6MSwiX3BvaW50c1RvTmV4dEl0ZW1zIjp0cnVlfQ"
+      },
+      "meta": {
+        "path": "https://redirect.pizza/api/v1/email-forwards/logs",
+        "per_page": 100,
+        "next_cursor": "eyJpZCI6MSwiX3BvaW50c1RvTmV4dEl0ZW1zIjp0cnVlfQ",
+        "prev_cursor": null
+      },
+      "filters": {
+        "start": "2025-04-01 00:00:00",
+        "end": "2025-04-30 23:59:59",
+        "query": null
+      }
+    },
+    "method": "GET",
+    "path": "/api/v1/email-forwards/logs",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "get_total_hits": {
+    "config": {
+      "start": "2025-04-30",
+      "end": "2025-05-20",
+      "query": "redirect:1234567890"
+    },
+    "response": {
+      "data": {
+        "count": 150
+      },
+      "filters": {
+        "start": "2025-04-30",
+        "end": "2025-05-20",
+        "query": null
+      }
+    },
+    "method": "GET",
+    "path": "/api/v1/analytics/hits",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "get_time_series": {
+    "config": {
+      "start": "2025-04-30",
+      "end": "2025-05-20",
+      "query": "redirect:1234567890"
+    },
+    "response": {
+      "data": [
+        {
+          "key": "2025-04-30",
+          "count": 34
+        },
+        {
+          "key": "2025-05-01",
+          "count": 50
+        }
+      ],
+      "filters": {
+        "start": "2025-04-30",
+        "end": "2025-05-20",
+        "query": null
+      }
+    },
+    "method": "GET",
+    "path": "/api/v1/analytics/time-series",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "get_dimensions": {
+    "config": {
+      "start": "architecto",
+      "end": "architecto",
+      "query": "architecto",
+      "page": 1,
+      "per_page": 10,
+      "dimension": "redirects"
+    },
+    "response": {
+      "data": [
+        {
+          "key": "google.com",
+          "count": 124
+        },
+        {
+          "key": "bing.com",
+          "count": 42
+        }
+      ],
+      "meta": {
+        "current_page": 1,
+        "from": 1,
+        "per_page": 10,
+        "to": 10
+      },
+      "filters": {
+        "start": "2025-04-30",
+        "end": "2025-05-20",
+        "query": null
+      }
+    },
+    "method": "GET",
+    "path": "/api/v1/analytics/dimensions/{dimension}",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "list_raw_hits": {
+    "config": {
+      "start": "2025-04-30",
+      "end": "2025-04-30 16:52:10",
+      "query": "redirect:1234567890",
+      "cursor": "eyJwYWdlIjoxLCJwZXJfcGFnZSI6MTAsInBlci1wYWdlIjp7fX0=",
+      "per_page": 10000
+    },
+    "response": {
+      "data": [
+        {
+          "id": 7530912458910375602,
+          "created_at": "2025-04-30 16:52:10",
+          "redirect_id": 1234567890,
+          "tracking": "FULL",
+          "redirect_type": "temporary",
+          "full_url": "https://app.example.org/login?ref=abc123",
+          "destination_url": "https://portal.example.org/dashboard",
+          "ip": "203.0.113.X",
+          "scheme": "https",
+          "method": "POST",
+          "is_crawler": 0,
+          "waf_blocked": 0,
+          "waf_rules": null,
+          "continent_name": "Asia",
+          "continent": "AS",
+          "country": "JP",
+          "subdivision_name": "Tokyo Metropolis",
+          "subdivision_code": "TYO",
+          "city": "Tokyo",
+          "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+          "referer": "https://referrer.example.org/home",
+          "referer_host": "referrer.example.org",
+          "browser_name": "Chrome",
+          "operating_system": "Windows",
+          "platform": "Desktop",
+          "device_type": "Computer"
+        }
+      ],
+      "links": {
+        "first": null,
+        "last": null,
+        "prev": null,
+        "next": "https://redirect.pizza/api/v1/analytics/raw?cursor=eyJjb3VudGVyIjowLCJpZCI6NzUzMDkxMjQ1ODkxMDM3NTYwMiwiX3BvaW50c1RvTmV4dEl0ZW1zIjp0cnVlfQ=="
+      },
+      "meta": {
+        "path": "https://redirect.pizza/api/v1/analytics/analytics/raw",
+        "per_page": 1,
+        "next_cursor": "eyJjb3VudGVyIjowLCJpZCI6NzUzMDkxMjQ1ODkxMDM3NTYwMiwiX3BvaW50c1RvTmV4dEl0ZW1zIjp0cnVlfQ==",
+        "prev_cursor": null
+      },
+      "filters": {
+        "start": "2025-04-30 16:50:10",
+        "end": "2025-04-30 16:52:10",
+        "query": null
+      }
+    },
+    "method": "GET",
+    "path": "/api/v1/analytics/raw",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "list_domains": {
+    "config": {
+      "page": 1,
+      "per_page": 20,
+      "query": "status:unverified example.com"
+    },
+    "response": {
+      "data": [
+        {
+          "id": 2124836624,
+          "fqdn": "marquardt.com",
+          "is_root_domain": true,
+          "hsts": false,
+          "prevent_foreign_embedding": false,
+          "referrer_policy": "no-referrer-when-downgrade",
+          "settings": {
+            "waf": {
+              "status": "inherit"
+            },
+            "hsts": {
+              "status": "inherit"
+            },
+            "prevent_foreign_embedding": {
+              "status": "inherit"
+            },
+            "acme_profile_shortlived": {
+              "status": "inherit"
+            },
+            "referrer_policy": {
+              "status": "inherit"
+            },
+            "robots_txt": {
+              "status": "inherit"
+            }
+          },
+          "dns": {
+            "verified": false,
+            "required_settings": [],
+            "automatic_dns": {
+              "available": false,
+              "apply_url": null
+            }
+          },
+          "ssl": {
+            "active": false
+          },
+          "created_at": "2026-08-21T12:21:45+00:00",
+          "updated_at": "2026-08-21T12:21:45+00:00"
+        },
+        {
+          "id": 1084052333,
+          "fqdn": "koch.biz",
+          "is_root_domain": true,
+          "hsts": false,
+          "prevent_foreign_embedding": false,
+          "referrer_policy": "no-referrer-when-downgrade",
+          "settings": {
+            "waf": {
+              "status": "inherit"
+            },
+            "hsts": {
+              "status": "inherit"
+            },
+            "prevent_foreign_embedding": {
+              "status": "inherit"
+            },
+            "acme_profile_shortlived": {
+              "status": "inherit"
+            },
+            "referrer_policy": {
+              "status": "inherit"
+            },
+            "robots_txt": {
+              "status": "inherit"
+            }
+          },
+          "dns": {
+            "verified": false,
+            "required_settings": [],
+            "automatic_dns": {
+              "available": false,
+              "apply_url": null
+            }
+          },
+          "ssl": {
+            "active": false
+          },
+          "created_at": "2026-08-21T12:21:45+00:00",
+          "updated_at": "2026-08-21T12:21:45+00:00"
+        }
+      ],
+      "links": {
+        "first": "/?page=1",
+        "last": "/?page=1",
+        "prev": null,
+        "next": null
+      },
+      "meta": {
+        "current_page": 1,
+        "from": 1,
+        "last_page": 1,
+        "links": [
+          {
+            "url": null,
+            "label": "\u00ab Previous",
+            "page": null,
+            "active": false
+          },
+          {
+            "url": "/?page=1",
+            "label": "1",
+            "page": 1,
+            "active": true
+          },
+          {
+            "url": null,
+            "label": "Next \u00bb",
+            "page": null,
+            "active": false
+          }
+        ],
+        "path": "/",
+        "per_page": 20,
+        "to": 2,
+        "total": 2
+      }
+    },
+    "method": "GET",
+    "path": "/api/v1/domains",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "get_domain": {
+    "config": {
+      "id": 123456789
+    },
+    "response": {
+      "data": {
+        "id": 192169162,
+        "fqdn": "hirthe.com",
+        "is_root_domain": true,
+        "hsts": false,
+        "prevent_foreign_embedding": false,
+        "referrer_policy": "no-referrer-when-downgrade",
+        "settings": {
+          "waf": {
+            "status": "inherit"
+          },
+          "hsts": {
+            "status": "inherit"
+          },
+          "prevent_foreign_embedding": {
+            "status": "inherit"
+          },
+          "acme_profile_shortlived": {
+            "status": "inherit"
+          },
+          "referrer_policy": {
+            "status": "inherit"
+          },
+          "robots_txt": {
+            "status": "inherit"
+          }
+        },
+        "dns": {
+          "verified": false,
+          "required_settings": [],
+          "automatic_dns": {
+            "available": false,
+            "apply_url": null
+          }
+        },
+        "ssl": {
+          "active": false
+        },
+        "created_at": "2026-08-21T12:21:45+00:00",
+        "updated_at": "2026-08-21T12:21:45+00:00"
+      }
+    },
+    "method": "GET",
+    "path": "/api/v1/domains/{id}",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "delete_domain": {
+    "config": {
+      "id": 123456789
+    },
+    "response": null,
+    "method": "DELETE",
+    "path": "/api/v1/domains/{id}",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "check_dns": {
+    "config": {
+      "id": 123456789
+    },
+    "response": {
+      "data": {
+        "id": 386579844,
+        "fqdn": "dare.org",
+        "is_root_domain": true,
+        "hsts": false,
+        "prevent_foreign_embedding": false,
+        "referrer_policy": "no-referrer-when-downgrade",
+        "settings": {
+          "waf": {
+            "status": "inherit"
+          },
+          "hsts": {
+            "status": "inherit"
+          },
+          "prevent_foreign_embedding": {
+            "status": "inherit"
+          },
+          "acme_profile_shortlived": {
+            "status": "inherit"
+          },
+          "referrer_policy": {
+            "status": "inherit"
+          },
+          "robots_txt": {
+            "status": "inherit"
+          }
+        },
+        "dns": {
+          "verified": false,
+          "required_settings": [],
+          "automatic_dns": {
+            "available": false,
+            "apply_url": null
+          }
+        },
+        "ssl": {
+          "active": false
+        },
+        "created_at": "2026-08-21T12:21:45+00:00",
+        "updated_at": "2026-08-21T12:21:45+00:00"
+      }
+    },
+    "method": "POST",
+    "path": "/api/v1/domains/{id}/check-dns",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "get_team": {
+    "config": {},
+    "response": {
+      "data": {
+        "id": 146753,
+        "name": "Price Ltd",
+        "summary_frequency": "monthly",
+        "summary_receivers": null,
+        "hostnames": {
+          "current": 0,
+          "limit": 5
+        },
+        "hits": {
+          "current": null,
+          "projected": null,
+          "limit": 100000
+        },
+        "users": {
+          "current": 0,
+          "limit": 1
+        },
+        "nameservers": [
+          "ns1.ns1.redirect.pizza",
+          "ns2.ns2.redirect.pizza"
+        ],
+        "settings": {
+          "broken_destination_monitor": {
+            "status": "disabled"
+          },
+          "flatten": {
+            "status": "disabled"
+          },
+          "waf": {
+            "status": "disabled"
+          },
+          "hsts": {
+            "status": "disabled"
+          },
+          "prevent_foreign_embedding": {
+            "status": "disabled"
+          },
+          "acme_profile_shortlived": {
+            "status": "disabled"
+          },
+          "referrer_policy": {
+            "status": "enabled",
+            "value": "no-referrer-when-downgrade"
+          },
+          "robots_txt": {
+            "status": "disabled"
+          }
+        }
+      }
+    },
+    "method": "GET",
+    "path": "/api/v1/team",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  },
+  "list_team_members": {
+    "config": {
+      "page": 1,
+      "per_page": 20
+    },
+    "response": {
+      "data": [
+        {
+          "id": 499910253,
+          "email": "rJm9UNPpbDpwsXKtvftLTwSXI188uKvg@enflow.nl",
+          "role": "member",
+          "status": "active",
+          "access_type": "all",
+          "tags": [],
+          "created_at": null
+        },
+        {
+          "id": 1739262922,
+          "email": "DKup1D3wCkPprIGUKqHQU2DTFeMz8uML@enflow.nl",
+          "role": "member",
+          "status": "active",
+          "access_type": "all",
+          "tags": [],
+          "created_at": null
+        }
+      ],
+      "links": {
+        "first": "/?page=1",
+        "last": "/?page=1",
+        "prev": null,
+        "next": null
+      },
+      "meta": {
+        "current_page": 1,
+        "from": 1,
+        "last_page": 1,
+        "links": [
+          {
+            "url": null,
+            "label": "\u00ab Previous",
+            "page": null,
+            "active": false
+          },
+          {
+            "url": "/?page=1",
+            "label": "1",
+            "page": 1,
+            "active": true
+          },
+          {
+            "url": null,
+            "label": "Next \u00bb",
+            "page": null,
+            "active": false
+          }
+        ],
+        "path": "/",
+        "per_page": 20,
+        "to": 2,
+        "total": 2
+      }
+    },
+    "method": "GET",
+    "path": "/api/v1/users",
+    "source": "https://redirect.pizza/api-docs/openapi.yaml?v=84c557d085f1db7257a24e7a97e57c22"
+  }
+}
