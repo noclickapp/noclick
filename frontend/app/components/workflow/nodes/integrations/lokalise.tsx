@@ -13,6 +13,7 @@ const LokaliseIcon = ({ className, style }: { className?: string; style?: CSSPro
 
 export const LokaliseNode: NodeDefinition = {
     type: 'automation-lokalise', label: 'Lokalise',
+    category: 'developer-tools',
     description: 'Manage localization projects, keys, translations, languages, tasks and comments',
     keywords: ['translation', 'localization', 'localisation', 'i18n'],
     Icon: LokaliseIcon, iconColor: '',
