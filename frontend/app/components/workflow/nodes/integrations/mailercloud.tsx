@@ -14,6 +14,7 @@ MailercloudIcon.displayName = 'MailercloudIcon';
 export const MailercloudNode: NodeDefinition = {
     type: 'automation-mailercloud',
     label: 'Mailercloud',
+    category: 'marketing',
     description: 'Manage contacts, lists and tags; read campaigns and engagement',
     keywords: ['email marketing', 'newsletter', 'subscriber', 'mailercloud'],
     Icon: MailercloudIcon,
