@@ -1,0 +1,14 @@
+{
+ "provider": "pipeline-crm",
+ "ready": true,
+ "blocking": [],
+ "advisory": [],
+ "stats": {
+  "operations": 23,
+  "skipped": 0,
+  "request_ok": 23,
+  "authored_parser_ok": 0,
+  "generated_only": 23,
+  "local_ok": 0
+ }
+}

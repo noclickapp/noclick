@@ -1,0 +1,22 @@
+{
+  "source": "https://app.pipelinecrm.com/openapi.json",
+  "create_deal": {
+    "name": "Acme Corporation - Q4 renewal"
+  },
+  "create_person": {
+    "full_name": "Jane Rivera"
+  },
+  "create_company": {
+    "name": "Acme Corporation"
+  },
+  "create_note": {
+    "content": "This is the content",
+    "deal_id": 4521
+  },
+  "create_calendar_entry": {
+    "name": "Send revised quote",
+    "category_id": 2,
+    "due_date": "2026-09-08",
+    "type": "CalendarTask"
+  }
+}

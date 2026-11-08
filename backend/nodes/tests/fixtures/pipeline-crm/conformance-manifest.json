@@ -1,0 +1,13 @@
+{
+  "pipeline-crm": {
+    "file": "openapi.json",
+    "sha256": "04af70ba5f52f935d26099b2ce626d224f0003d2bfe5984bee2afb2d30068f96",
+    "version": "v3",
+    "source_url": "https://app.pipelinecrm.com/openapi.json",
+    "node_type": "automation-pipeline-crm",
+    "credential": {
+      "credential_type": "pipeline_crm_api_token",
+      "api_token": "<token>"
+    }
+  }
+}
