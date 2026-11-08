@@ -1,0 +1,788 @@
+{
+  "$defs": {
+    "CancelSignatureRequest": {
+      "additionalProperties": false,
+      "description": "Queue cancellation of an incomplete request; completion arrives by provider callback.",
+      "properties": {
+        "signature_request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Signature Request Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "cancel_signature_request",
+          "default": "cancel_signature_request",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "signature_request_id"
+      ],
+      "title": "CancelSignatureRequest",
+      "type": "object"
+    },
+    "DeleteTemplate": {
+      "additionalProperties": false,
+      "description": "Delete a reusable template.",
+      "properties": {
+        "template_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Template Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "DeleteTemplate",
+      "type": "object"
+    },
+    "DropboxSignAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "dropbox_sign_api_key",
+          "default": "dropbox_sign_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Dropbox Sign API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Dropbox Sign API key from Settings > API. NoClick uses Basic authentication with an empty password. This key is separate from a Dropbox storage token and has account-wide permissions. Live signature requests require the appropriate API plan.",
+      "x-credential-url": "https://app.hellosign.com/home/myAccount#api"
+    },
+    "GetAccount": {
+      "additionalProperties": false,
+      "description": "Read the API key owner's account.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetAccount",
+      "type": "object"
+    },
+    "GetSignatureRequest": {
+      "additionalProperties": false,
+      "description": "Read a signature request and its signatures.",
+      "properties": {
+        "signature_request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Signature Request Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_signature_request",
+          "default": "get_signature_request",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "signature_request_id"
+      ],
+      "title": "GetSignatureRequest",
+      "type": "object"
+    },
+    "GetSignatureRequestFileUrl": {
+      "additionalProperties": false,
+      "description": "Get a temporary PDF download URL without downloading the document.",
+      "properties": {
+        "signature_request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Signature Request Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_signature_request_file_url",
+          "default": "get_signature_request_file_url",
+          "title": "Operation",
+          "type": "string"
+        },
+        "force_download": {
+          "default": 1,
+          "description": "1 downloads; 0 displays in the browser. The URL expires.",
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Force Download",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "signature_request_id"
+      ],
+      "title": "GetSignatureRequestFileUrl",
+      "type": "object"
+    },
+    "GetTeam": {
+      "additionalProperties": false,
+      "description": "Read the connected account's team.",
+      "properties": {
+        "operation": {
+          "const": "get_team",
+          "default": "get_team",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetTeam",
+      "type": "object"
+    },
+    "GetTemplate": {
+      "additionalProperties": false,
+      "description": "Read a template's signer roles, CC roles and fields.",
+      "properties": {
+        "template_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Template Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "GetTemplate",
+      "type": "object"
+    },
+    "GetTemplateFileUrl": {
+      "additionalProperties": false,
+      "description": "Get a temporary template PDF download URL.",
+      "properties": {
+        "template_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Template Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_template_file_url",
+          "default": "get_template_file_url",
+          "title": "Operation",
+          "type": "string"
+        },
+        "force_download": {
+          "default": 1,
+          "enum": [
+            0,
+            1
+          ],
+          "title": "Force Download",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "GetTemplateFileUrl",
+      "type": "object"
+    },
+    "ListSignatureRequests": {
+      "additionalProperties": false,
+      "description": "List or search signature requests, including signer status.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; one page is returned per execution.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Team member account ID, or all. Omit for the connected account.",
+          "title": "Account Id"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dropbox Sign search query.",
+          "title": "Query"
+        },
+        "operation": {
+          "const": "list_signature_requests",
+          "default": "list_signature_requests",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSignatureRequests",
+      "type": "object"
+    },
+    "ListTemplates": {
+      "additionalProperties": false,
+      "description": "List or search reusable templates.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; one page is returned per execution.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Team member account ID, or all. Omit for the connected account.",
+          "title": "Account Id"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dropbox Sign search query.",
+          "title": "Query"
+        },
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTemplates",
+      "type": "object"
+    },
+    "ReleaseSignatureRequestHold": {
+      "additionalProperties": false,
+      "description": "Release a held signature request so it can be signed.",
+      "properties": {
+        "signature_request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Signature Request Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "release_signature_request_hold",
+          "default": "release_signature_request_hold",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "signature_request_id"
+      ],
+      "title": "ReleaseSignatureRequestHold",
+      "type": "object"
+    },
+    "RemindSignatureRequest": {
+      "additionalProperties": false,
+      "description": "Send a reminder email to a signer.",
+      "properties": {
+        "signature_request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Signature Request Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "remind_signature_request",
+          "default": "remind_signature_request",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email_address": {
+          "format": "email",
+          "title": "Email Address",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include when multiple signers share an email address.",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "signature_request_id",
+        "email_address"
+      ],
+      "title": "RemindSignatureRequest",
+      "type": "object"
+    },
+    "RemoveSignatureRequestAccess": {
+      "additionalProperties": false,
+      "description": "Remove the connected account's access to a request; this does not cancel it.",
+      "properties": {
+        "signature_request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Signature Request Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "remove_signature_request_access",
+          "default": "remove_signature_request_access",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "signature_request_id"
+      ],
+      "title": "RemoveSignatureRequestAccess",
+      "type": "object"
+    },
+    "SendSignatureRequest": {
+      "additionalProperties": false,
+      "description": "Send documents at public file URLs for signatures.",
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "test_mode": {
+          "default": true,
+          "description": "Test requests are not legally binding. Set false to send a live signature request.",
+          "title": "Test Mode",
+          "type": "boolean"
+        },
+        "allow_decline": {
+          "default": false,
+          "title": "Allow Decline",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "send_signature_request",
+          "default": "send_signature_request",
+          "title": "Operation",
+          "type": "string"
+        },
+        "file_urls": {
+          "description": "JSON array of document URLs, e.g. [\"https://example.com/contract.pdf\"]. Dropbox Sign downloads these; NoClick does not fetch them.",
+          "title": "File Urls",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "signers": {
+          "description": "JSON array of {\"name\":\"Jack\",\"email_address\":\"jack@example.com\",\"order\":0}.",
+          "title": "Signers",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "cc_email_addresses": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of CC email addresses.",
+          "title": "Cc Email Addresses",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "use_text_tags": {
+          "default": false,
+          "description": "Parse Dropbox Sign text tags in documents.",
+          "title": "Use Text Tags",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "file_urls",
+        "signers"
+      ],
+      "title": "SendSignatureRequest",
+      "type": "object"
+    },
+    "SendWithTemplate": {
+      "additionalProperties": false,
+      "description": "Send a signature request using existing template roles and merge fields.",
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "test_mode": {
+          "default": true,
+          "description": "Test requests are not legally binding. Set false to send a live signature request.",
+          "title": "Test Mode",
+          "type": "boolean"
+        },
+        "allow_decline": {
+          "default": false,
+          "title": "Allow Decline",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "send_with_template",
+          "default": "send_with_template",
+          "title": "Operation",
+          "type": "string"
+        },
+        "template_ids": {
+          "description": "JSON array of template IDs in document order.",
+          "title": "Template Ids",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "signers": {
+          "description": "JSON array of {\"role\":\"Client\",\"name\":\"Jack\",\"email_address\":\"jack@example.com\"}. Roles are case-sensitive.",
+          "title": "Signers",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "ccs": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of role and email_address objects. Required when the template has CC roles.",
+          "title": "Ccs",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of name, value and optional editor/required objects. Required for template merge fields.",
+          "title": "Custom Fields",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "template_ids",
+        "signers"
+      ],
+      "title": "SendWithTemplate",
+      "type": "object"
+    },
+    "UpdateSignatureRequest": {
+      "additionalProperties": false,
+      "description": "Update an existing recipient's name or email address.",
+      "properties": {
+        "signature_request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Signature Request Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_signature_request",
+          "default": "update_signature_request",
+          "title": "Operation",
+          "type": "string"
+        },
+        "signature_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Signature Id",
+          "type": "string"
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "format": "email",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Address"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "signature_request_id",
+        "signature_id"
+      ],
+      "title": "UpdateSignatureRequest",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_signature_request": "#/$defs/CancelSignatureRequest",
+          "delete_template": "#/$defs/DeleteTemplate",
+          "get_account": "#/$defs/GetAccount",
+          "get_signature_request": "#/$defs/GetSignatureRequest",
+          "get_signature_request_file_url": "#/$defs/GetSignatureRequestFileUrl",
+          "get_team": "#/$defs/GetTeam",
+          "get_template": "#/$defs/GetTemplate",
+          "get_template_file_url": "#/$defs/GetTemplateFileUrl",
+          "list_signature_requests": "#/$defs/ListSignatureRequests",
+          "list_templates": "#/$defs/ListTemplates",
+          "release_signature_request_hold": "#/$defs/ReleaseSignatureRequestHold",
+          "remind_signature_request": "#/$defs/RemindSignatureRequest",
+          "remove_signature_request_access": "#/$defs/RemoveSignatureRequestAccess",
+          "send_signature_request": "#/$defs/SendSignatureRequest",
+          "send_with_template": "#/$defs/SendWithTemplate",
+          "update_signature_request": "#/$defs/UpdateSignatureRequest"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetAccount"
+        },
+        {
+          "$ref": "#/$defs/ListSignatureRequests"
+        },
+        {
+          "$ref": "#/$defs/GetSignatureRequest"
+        },
+        {
+          "$ref": "#/$defs/SendSignatureRequest"
+        },
+        {
+          "$ref": "#/$defs/SendWithTemplate"
+        },
+        {
+          "$ref": "#/$defs/RemindSignatureRequest"
+        },
+        {
+          "$ref": "#/$defs/UpdateSignatureRequest"
+        },
+        {
+          "$ref": "#/$defs/CancelSignatureRequest"
+        },
+        {
+          "$ref": "#/$defs/ReleaseSignatureRequestHold"
+        },
+        {
+          "$ref": "#/$defs/RemoveSignatureRequestAccess"
+        },
+        {
+          "$ref": "#/$defs/ListTemplates"
+        },
+        {
+          "$ref": "#/$defs/GetTemplate"
+        },
+        {
+          "$ref": "#/$defs/DeleteTemplate"
+        },
+        {
+          "$ref": "#/$defs/GetTeam"
+        },
+        {
+          "$ref": "#/$defs/GetSignatureRequestFileUrl"
+        },
+        {
+          "$ref": "#/$defs/GetTemplateFileUrl"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DropboxSignAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Dropbox-sign Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
