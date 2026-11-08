@@ -10,7 +10,7 @@ const EmaillistverifyIcon = ({ className, style }: { className?: string; style?:
 );
 
 export const EmaillistverifyNode: NodeDefinition = {
-    type: 'automation-emaillistverify', label: 'EmailListVerify',
+    type: 'automation-emaillistverify', category: 'marketing', label: 'EmailListVerify',
     description: 'Verify emails, manage verification jobs and test inbox placement',
     Icon: EmaillistverifyIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
