@@ -1,0 +1,73 @@
+{
+  "source": "https://apis.botstar.com/docs/public-api.yaml",
+  "entity": {
+    "id": "1",
+    "name": "Polo Shirt",
+    "fields": [
+      {
+        "unique_name": "description",
+        "name": "Product description",
+        "data_type": "text"
+      },
+      {
+        "unique_name": "photo",
+        "name": "Product photo",
+        "data_type": "image"
+      },
+      {
+        "unique_name": "color",
+        "name": "Product colors",
+        "data_type": "single_option",
+        "options": {
+          "predefined_data": [
+            {
+              "value": "red",
+              "label": "Red",
+              "label_en": "Red"
+            },
+            {
+              "value": "yellow",
+              "label": "Yellow",
+              "label_en": "Yellow"
+            }
+          ]
+        }
+      },
+      {
+        "unique_name": "size",
+        "name": "Product sizes",
+        "data_type": "multiple_values"
+      },
+      {
+        "unique_name": "price",
+        "name": "Product price",
+        "data_type": "text"
+      },
+      {
+        "unique_name": "date",
+        "name": "Date of manufacture",
+        "data_type": "date"
+      }
+    ]
+  },
+  "item": {
+    "id": "1",
+    "name": "Summer Polo Shirt",
+    "status": "enabled",
+    "description": "This is one of our products in our new collection for Summer Time. Get it now?",
+    "photo": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnSFbSOfrpCk9x4vz_WXaabW8NOiZsoAPfYQ&usqp=CAU",
+    "color": [
+      "red",
+      "yellow"
+    ],
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "price": "$10",
+    "date": "17-03-2020"
+  }
+}
