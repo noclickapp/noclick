@@ -15,6 +15,7 @@ FinmoIcon.displayName = 'FinmoIcon';
 export const FinmoNode: NodeDefinition = {
     type: 'automation-finmo',
     label: 'Finmo',
+    category: 'finance-accounting',
     description: 'Customers, payins, payouts, refunds, wallets and transactions',
     Icon: FinmoIcon,
     iconColor: '',
