@@ -1,0 +1,762 @@
+{
+  "$defs": {
+    "AddContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "emails": {
+          "description": "Contacts to add using single opt-in. Supply only contacts who consented.",
+          "items": {
+            "$ref": "#/$defs/Contact"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Emails",
+          "type": "array"
+        },
+        "operation": {
+          "const": "add_contacts",
+          "default": "add_contacts",
+          "title": "Add Contacts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id",
+        "emails"
+      ],
+      "title": "AddContactsConfig",
+      "type": "object"
+    },
+    "CancelCampaignConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "cancel_campaign",
+          "default": "cancel_campaign",
+          "title": "Cancel Campaign",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "CancelCampaignConfig",
+      "type": "object"
+    },
+    "Contact": {
+      "properties": {
+        "email": {
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variables"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "Contact",
+      "type": "object"
+    },
+    "CreateMailingListConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "bookName": {
+          "minLength": 1,
+          "title": "Mailing List Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_mailing_list",
+          "default": "create_mailing_list",
+          "title": "Create Mailing List",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "bookName"
+      ],
+      "title": "CreateMailingListConfig",
+      "type": "object"
+    },
+    "CreateTagConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "color": {
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Color",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Create Tag",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "color"
+      ],
+      "title": "CreateTagConfig",
+      "type": "object"
+    },
+    "DeleteContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "emails": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Emails",
+          "type": "array"
+        },
+        "operation": {
+          "const": "delete_contacts",
+          "default": "delete_contacts",
+          "title": "Delete Contacts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id",
+        "emails"
+      ],
+      "title": "DeleteContactsConfig",
+      "type": "object"
+    },
+    "DeleteMailingListConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_mailing_list",
+          "default": "delete_mailing_list",
+          "title": "Delete Mailing List",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteMailingListConfig",
+      "type": "object"
+    },
+    "DeleteTagConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_tag",
+          "default": "delete_tag",
+          "title": "Delete Tag",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteTagConfig",
+      "type": "object"
+    },
+    "GetBalanceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_balance",
+          "default": "get_balance",
+          "title": "Get Balance",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetBalanceConfig",
+      "type": "object"
+    },
+    "GetCampaignConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Get Campaign",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCampaignConfig",
+      "type": "object"
+    },
+    "GetContactCountConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_contact_count",
+          "default": "get_contact_count",
+          "title": "Get Contact Count",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetContactCountConfig",
+      "type": "object"
+    },
+    "GetMailingListConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_mailing_list",
+          "default": "get_mailing_list",
+          "title": "Get Mailing List",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetMailingListConfig",
+      "type": "object"
+    },
+    "ListCampaignsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Records in this page; use offset to retrieve subsequent pages.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "List Campaigns",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCampaignsConfig",
+      "type": "object"
+    },
+    "ListContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Records in this page; use offset to retrieve subsequent pages.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "order": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        },
+        "not_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Not Active"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ListContactsConfig",
+      "type": "object"
+    },
+    "ListMailingListsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Records in this page; use offset to retrieve subsequent pages.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_mailing_lists",
+          "default": "list_mailing_lists",
+          "title": "List Mailing Lists",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListMailingListsConfig",
+      "type": "object"
+    },
+    "ListSendersConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_senders",
+          "default": "list_senders",
+          "title": "List Senders",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListSendersConfig",
+      "type": "object"
+    },
+    "ListTagsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List Tags",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTagsConfig",
+      "type": "object"
+    },
+    "ListTemplatesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 100,
+          "description": "Records in this page; use offset to retrieve subsequent pages.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "owner": {
+          "default": "me",
+          "enum": [
+            "me",
+            "sendpulse"
+          ],
+          "title": "Owner",
+          "type": "string"
+        },
+        "only_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Only Active"
+        },
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "List Templates",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTemplatesConfig",
+      "type": "object"
+    },
+    "ListVariablesConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_variables",
+          "default": "list_variables",
+          "title": "List Variables",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ListVariablesConfig",
+      "type": "object"
+    },
+    "RenameMailingListConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "New Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "rename_mailing_list",
+          "default": "rename_mailing_list",
+          "title": "Rename Mailing List",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "RenameMailingListConfig",
+      "type": "object"
+    },
+    "SendPulseAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "send_pulse_api_key",
+          "default": "send_pulse_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "SendPulse API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste the long-lived API key from SendPulse account settings. NoClick sends it as a Bearer token to api.sendpulse.com. This is not the OAuth client secret or a one-hour access token.",
+      "x-credential-url": "https://login.sendpulse.com/settings/api"
+    },
+    "UnsubscribeContactsConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "emails": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Emails",
+          "type": "array"
+        },
+        "operation": {
+          "const": "unsubscribe_contacts",
+          "default": "unsubscribe_contacts",
+          "title": "Unsubscribe Contacts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id",
+        "emails"
+      ],
+      "title": "UnsubscribeContactsConfig",
+      "type": "object"
+    },
+    "UpdateTagConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Resource ID",
+          "type": "integer"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "color": {
+          "pattern": "^#[0-9a-fA-F]{6}$",
+          "title": "Color",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_tag",
+          "default": "update_tag",
+          "title": "Update Tag",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "color"
+      ],
+      "title": "UpdateTagConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contacts": "#/$defs/AddContactsConfig",
+          "cancel_campaign": "#/$defs/CancelCampaignConfig",
+          "create_mailing_list": "#/$defs/CreateMailingListConfig",
+          "create_tag": "#/$defs/CreateTagConfig",
+          "delete_contacts": "#/$defs/DeleteContactsConfig",
+          "delete_mailing_list": "#/$defs/DeleteMailingListConfig",
+          "delete_tag": "#/$defs/DeleteTagConfig",
+          "get_balance": "#/$defs/GetBalanceConfig",
+          "get_campaign": "#/$defs/GetCampaignConfig",
+          "get_contact_count": "#/$defs/GetContactCountConfig",
+          "get_mailing_list": "#/$defs/GetMailingListConfig",
+          "list_campaigns": "#/$defs/ListCampaignsConfig",
+          "list_contacts": "#/$defs/ListContactsConfig",
+          "list_mailing_lists": "#/$defs/ListMailingListsConfig",
+          "list_senders": "#/$defs/ListSendersConfig",
+          "list_tags": "#/$defs/ListTagsConfig",
+          "list_templates": "#/$defs/ListTemplatesConfig",
+          "list_variables": "#/$defs/ListVariablesConfig",
+          "rename_mailing_list": "#/$defs/RenameMailingListConfig",
+          "unsubscribe_contacts": "#/$defs/UnsubscribeContactsConfig",
+          "update_tag": "#/$defs/UpdateTagConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListMailingListsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetMailingListConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateMailingListConfig"
+        },
+        {
+          "$ref": "#/$defs/RenameMailingListConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteMailingListConfig"
+        },
+        {
+          "$ref": "#/$defs/ListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/AddContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/UnsubscribeContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetContactCountConfig"
+        },
+        {
+          "$ref": "#/$defs/ListVariablesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/CancelCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/ListSendersConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteTagConfig"
+        },
+        {
+          "$ref": "#/$defs/GetBalanceConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SendPulseAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Send-pulse Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
