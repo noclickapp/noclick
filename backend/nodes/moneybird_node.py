@@ -101,66 +101,30 @@ class ListContactsConfig(PageInput):
     operation: Literal["list_contacts"] = Field("list_contacts", json_schema_extra={"ui:hidden": True})
     query: str | None = None
 
-class GetContactConfig(AdministrationInput):
-    operation: Literal["get_contact"] = Field("get_contact", json_schema_extra={"ui:hidden": True})
-    id: ID
-
 class CreateContactConfig(AdministrationInput):
     operation: Literal["create_contact"] = Field("create_contact", json_schema_extra={"ui:hidden": True})
     contact: NewContact
 
-class UpdateContactConfig(AdministrationInput):
-    operation: Literal["update_contact"] = Field("update_contact", json_schema_extra={"ui:hidden": True})
-    id: ID
-    contact: ContactFields
-
 class ListSalesInvoicesConfig(PageInput):
     operation: Literal["list_sales_invoices"] = Field("list_sales_invoices", json_schema_extra={"ui:hidden": True})
-
-class GetSalesInvoiceConfig(AdministrationInput):
-    operation: Literal["get_sales_invoice"] = Field("get_sales_invoice", json_schema_extra={"ui:hidden": True})
-    id: ID
 
 class CreateSalesInvoiceConfig(AdministrationInput):
     operation: Literal["create_sales_invoice"] = Field("create_sales_invoice", json_schema_extra={"ui:hidden": True})
     sales_invoice: NewDocument
 
-class UpdateSalesInvoiceConfig(AdministrationInput):
-    operation: Literal["update_sales_invoice"] = Field("update_sales_invoice", json_schema_extra={"ui:hidden": True})
-    id: ID
-    sales_invoice: DocumentFields
-
 class ListEstimatesConfig(PageInput):
     operation: Literal["list_estimates"] = Field("list_estimates", json_schema_extra={"ui:hidden": True})
-
-class GetEstimateConfig(AdministrationInput):
-    operation: Literal["get_estimate"] = Field("get_estimate", json_schema_extra={"ui:hidden": True})
-    id: ID
 
 class CreateEstimateConfig(AdministrationInput):
     operation: Literal["create_estimate"] = Field("create_estimate", json_schema_extra={"ui:hidden": True})
     estimate: NewDocument
 
-class UpdateEstimateConfig(AdministrationInput):
-    operation: Literal["update_estimate"] = Field("update_estimate", json_schema_extra={"ui:hidden": True})
-    id: ID
-    estimate: DocumentFields
-
 class ListProductsConfig(PageInput):
     operation: Literal["list_products"] = Field("list_products", json_schema_extra={"ui:hidden": True})
-
-class GetProductConfig(AdministrationInput):
-    operation: Literal["get_product"] = Field("get_product", json_schema_extra={"ui:hidden": True})
-    id: ID
 
 class CreateProductConfig(AdministrationInput):
     operation: Literal["create_product"] = Field("create_product", json_schema_extra={"ui:hidden": True})
     product: NewProduct
-
-class UpdateProductConfig(AdministrationInput):
-    operation: Literal["update_product"] = Field("update_product", json_schema_extra={"ui:hidden": True})
-    id: ID
-    product: ProductFields
 
 class ListLedgerAccountsConfig(AdministrationInput):
     operation: Literal["list_ledger_accounts"] = Field("list_ledger_accounts", json_schema_extra={"ui:hidden": True})
@@ -171,12 +135,12 @@ class ListTaxRatesConfig(AdministrationInput):
 class ListFinancialAccountsConfig(AdministrationInput):
     operation: Literal["list_financial_accounts"] = Field("list_financial_accounts", json_schema_extra={"ui:hidden": True})
 
-MoneybirdConfig = Annotated[Union[ListAdministrationsConfig, ListContactsConfig, GetContactConfig, CreateContactConfig, UpdateContactConfig, ListSalesInvoicesConfig, GetSalesInvoiceConfig, CreateSalesInvoiceConfig, UpdateSalesInvoiceConfig, ListEstimatesConfig, GetEstimateConfig, CreateEstimateConfig, UpdateEstimateConfig, ListProductsConfig, GetProductConfig, CreateProductConfig, UpdateProductConfig, ListLedgerAccountsConfig, ListTaxRatesConfig, ListFinancialAccountsConfig], Field(discriminator="operation")]
+MoneybirdConfig = Annotated[Union[ListAdministrationsConfig, ListContactsConfig, CreateContactConfig, ListSalesInvoicesConfig, CreateSalesInvoiceConfig, ListEstimatesConfig, CreateEstimateConfig, ListProductsConfig, CreateProductConfig, ListLedgerAccountsConfig, ListTaxRatesConfig, ListFinancialAccountsConfig], Field(discriminator="operation")]
 
 class MoneybirdFullConfig(NodeConfig[MoneybirdConfig, MoneybirdTokenCredential]):
     pass
 
-ROUTES = {'list_administrations': ('GET', '/administrations', None), 'list_contacts': ('GET', '/{administration_id}/contacts', None), 'get_contact': ('GET', '/{administration_id}/contacts/{id}', None), 'create_contact': ('POST', '/{administration_id}/contacts', 'contact'), 'update_contact': ('PATCH', '/{administration_id}/contacts/{id}', 'contact'), 'list_sales_invoices': ('GET', '/{administration_id}/sales_invoices', None), 'get_sales_invoice': ('GET', '/{administration_id}/sales_invoices/{id}', None), 'create_sales_invoice': ('POST', '/{administration_id}/sales_invoices', 'sales_invoice'), 'update_sales_invoice': ('PATCH', '/{administration_id}/sales_invoices/{id}', 'sales_invoice'), 'list_estimates': ('GET', '/{administration_id}/estimates', None), 'get_estimate': ('GET', '/{administration_id}/estimates/{id}', None), 'create_estimate': ('POST', '/{administration_id}/estimates', 'estimate'), 'update_estimate': ('PATCH', '/{administration_id}/estimates/{id}', 'estimate'), 'list_products': ('GET', '/{administration_id}/products', None), 'get_product': ('GET', '/{administration_id}/products/{id}', None), 'create_product': ('POST', '/{administration_id}/products', 'product'), 'update_product': ('PATCH', '/{administration_id}/products/{id}', 'product'), 'list_ledger_accounts': ('GET', '/{administration_id}/ledger_accounts', None), 'list_tax_rates': ('GET', '/{administration_id}/tax_rates', None), 'list_financial_accounts': ('GET', '/{administration_id}/financial_accounts', None)}
+ROUTES = {'list_administrations': ('GET', '/administrations', None), 'list_contacts': ('GET', '/{administration_id}/contacts', None), 'create_contact': ('POST', '/{administration_id}/contacts', 'contact'), 'list_sales_invoices': ('GET', '/{administration_id}/sales_invoices', None), 'create_sales_invoice': ('POST', '/{administration_id}/sales_invoices', 'sales_invoice'), 'list_estimates': ('GET', '/{administration_id}/estimates', None), 'create_estimate': ('POST', '/{administration_id}/estimates', 'estimate'), 'list_products': ('GET', '/{administration_id}/products', None), 'create_product': ('POST', '/{administration_id}/products', 'product'), 'list_ledger_accounts': ('GET', '/{administration_id}/ledger_accounts', None), 'list_tax_rates': ('GET', '/{administration_id}/tax_rates', None), 'list_financial_accounts': ('GET', '/{administration_id}/financial_accounts', None)}
 
 class MoneybirdNode(WorkflowNode):
     integration_type = "automation-moneybird"
