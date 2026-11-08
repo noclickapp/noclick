@@ -1,0 +1,1002 @@
+{
+  "$defs": {
+    "DockCertsAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "dock_certs_api_key",
+          "default": "dock_certs_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "environment": {
+          "default": "production",
+          "enum": [
+            "production",
+            "sandbox"
+          ],
+          "title": "Environment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Dock Certs API Key",
+      "type": "object",
+      "x-credential-instructions": "In Truvera Workspace (formerly Dock Certs), create an API key and paste it here without Bearer. Choose the same environment in which you created the key. Sandbox uses test data; production uses live data.",
+      "x-credential-url": "https://truvera.io/"
+    },
+    "DockCertsCreateDid": {
+      "additionalProperties": false,
+      "description": "Submit DID creation; the returned job is not proof of blockchain completion.",
+      "properties": {
+        "operation": {
+          "const": "create_did",
+          "default": "create_did",
+          "title": "Create Did",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "did_type": {
+          "default": "cheqd",
+          "enum": [
+            "cheqd",
+            "dock",
+            "key"
+          ],
+          "title": "DID Type",
+          "type": "string"
+        },
+        "key_type": {
+          "default": "ed25519",
+          "enum": [
+            "ed25519",
+            "bjj",
+            "secp256r1",
+            "secp256k1",
+            "sr25519"
+          ],
+          "title": "Key Type",
+          "type": "string"
+        },
+        "include_didcomm_service": {
+          "default": true,
+          "title": "Include Didcomm Service",
+          "type": "boolean"
+        }
+      },
+      "title": "DockCertsCreateDid",
+      "type": "object"
+    },
+    "DockCertsCreateProofRequest": {
+      "additionalProperties": false,
+      "description": "Create proof request.",
+      "properties": {
+        "operation": {
+          "const": "create_proof_request",
+          "default": "create_proof_request",
+          "title": "Create Proof Request",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 256,
+          "title": "Name",
+          "type": "string"
+        },
+        "nonce": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nonce"
+        },
+        "did": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Did"
+        },
+        "template": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Proof template UUID",
+          "title": "Template"
+        },
+        "request": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "PEX request with name, purpose and input_descriptors.",
+          "title": "Request"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "DockCertsCreateProofRequest",
+      "type": "object"
+    },
+    "DockCertsCreateSchema": {
+      "additionalProperties": false,
+      "description": "Submit schema creation; use get_job to observe completion.",
+      "properties": {
+        "operation": {
+          "const": "create_schema",
+          "default": "create_schema",
+          "title": "Create Schema",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "schema_document": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "string"
+            }
+          ],
+          "description": "JSON Schema document, including name, properties, required, and optional $metadata.",
+          "title": "Schema Document"
+        }
+      },
+      "required": [
+        "schema_document"
+      ],
+      "title": "DockCertsCreateSchema",
+      "type": "object"
+    },
+    "DockCertsCreateTemplate": {
+      "additionalProperties": false,
+      "description": "Create template.",
+      "properties": {
+        "operation": {
+          "const": "create_template",
+          "default": "create_template",
+          "title": "Create Template",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 256,
+          "title": "Name",
+          "type": "string"
+        },
+        "html": {
+          "maxLength": 10000000,
+          "title": "Html",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "css": {
+          "maxLength": 10000000,
+          "title": "Css",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name",
+        "html",
+        "css"
+      ],
+      "title": "DockCertsCreateTemplate",
+      "type": "object"
+    },
+    "DockCertsDeleteCredential": {
+      "additionalProperties": false,
+      "description": "Permanently delete this credential.",
+      "properties": {
+        "operation": {
+          "const": "delete_credential",
+          "default": "delete_credential",
+          "title": "Delete Credential",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "credential_id": {
+          "format": "uri",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Credential URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "credential_id"
+      ],
+      "title": "DockCertsDeleteCredential",
+      "type": "object"
+    },
+    "DockCertsDeleteProofRequest": {
+      "additionalProperties": false,
+      "description": "Permanently delete this proof request.",
+      "properties": {
+        "operation": {
+          "const": "delete_proof_request",
+          "default": "delete_proof_request",
+          "title": "Delete Proof Request",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "proof_request_id": {
+          "format": "uuid",
+          "title": "Proof Request ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "proof_request_id"
+      ],
+      "title": "DockCertsDeleteProofRequest",
+      "type": "object"
+    },
+    "DockCertsDeleteSchema": {
+      "additionalProperties": false,
+      "description": "Permanently delete this schema.",
+      "properties": {
+        "operation": {
+          "const": "delete_schema",
+          "default": "delete_schema",
+          "title": "Delete Schema",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "schema_id": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Schema Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_id"
+      ],
+      "title": "DockCertsDeleteSchema",
+      "type": "object"
+    },
+    "DockCertsDeleteTemplate": {
+      "additionalProperties": false,
+      "description": "Permanently delete this template.",
+      "properties": {
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "title": "Delete Template",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "format": "uuid",
+          "title": "Template ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "DockCertsDeleteTemplate",
+      "type": "object"
+    },
+    "DockCertsGetCredential": {
+      "additionalProperties": false,
+      "description": "Get credential.",
+      "properties": {
+        "operation": {
+          "const": "get_credential",
+          "default": "get_credential",
+          "title": "Get Credential",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "credential_id": {
+          "format": "uri",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Credential URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "credential_id"
+      ],
+      "title": "DockCertsGetCredential",
+      "type": "object"
+    },
+    "DockCertsGetDid": {
+      "additionalProperties": false,
+      "description": "Get did.",
+      "properties": {
+        "operation": {
+          "const": "get_did",
+          "default": "get_did",
+          "title": "Get Did",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "did": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Did",
+          "type": "string"
+        }
+      },
+      "required": [
+        "did"
+      ],
+      "title": "DockCertsGetDid",
+      "type": "object"
+    },
+    "DockCertsGetJob": {
+      "additionalProperties": false,
+      "description": "Get job.",
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Get Job",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Job Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "DockCertsGetJob",
+      "type": "object"
+    },
+    "DockCertsGetProfile": {
+      "additionalProperties": false,
+      "description": "Get profile.",
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Get Profile",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "did": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Did",
+          "type": "string"
+        }
+      },
+      "required": [
+        "did"
+      ],
+      "title": "DockCertsGetProfile",
+      "type": "object"
+    },
+    "DockCertsGetProofRequest": {
+      "additionalProperties": false,
+      "description": "Get proof request.",
+      "properties": {
+        "operation": {
+          "const": "get_proof_request",
+          "default": "get_proof_request",
+          "title": "Get Proof Request",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "proof_request_id": {
+          "format": "uuid",
+          "title": "Proof Request ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "proof_request_id"
+      ],
+      "title": "DockCertsGetProofRequest",
+      "type": "object"
+    },
+    "DockCertsGetSchema": {
+      "additionalProperties": false,
+      "description": "Get schema.",
+      "properties": {
+        "operation": {
+          "const": "get_schema",
+          "default": "get_schema",
+          "title": "Get Schema",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "schema_id": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Schema Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_id"
+      ],
+      "title": "DockCertsGetSchema",
+      "type": "object"
+    },
+    "DockCertsGetTemplate": {
+      "additionalProperties": false,
+      "description": "Get template.",
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Get Template",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "format": "uuid",
+          "title": "Template ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "DockCertsGetTemplate",
+      "type": "object"
+    },
+    "DockCertsIssueCredential": {
+      "additionalProperties": false,
+      "description": "Issue a verifiable credential without persisting encrypted contents.",
+      "properties": {
+        "operation": {
+          "const": "issue_credential",
+          "default": "issue_credential",
+          "title": "Issue Credential",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "credential": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "string"
+            }
+          ],
+          "description": "Truvera credential input: issuer DID, subject, optional context, schema, name, type and dates.",
+          "title": "Credential"
+        },
+        "revocable": {
+          "default": false,
+          "title": "Revocable",
+          "type": "boolean"
+        },
+        "distribute": {
+          "default": false,
+          "description": "Ask Truvera to deliver to the subject; may send email or DID messages.",
+          "title": "Distribute",
+          "type": "boolean"
+        },
+        "format": {
+          "default": "jsonld",
+          "enum": [
+            "jsonld",
+            "jwt",
+            "sdjwt"
+          ],
+          "title": "Format",
+          "type": "string"
+        }
+      },
+      "required": [
+        "credential"
+      ],
+      "title": "DockCertsIssueCredential",
+      "type": "object"
+    },
+    "DockCertsListCredentials": {
+      "additionalProperties": false,
+      "description": "List credentials.",
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Number of items to skip. This operation returns one page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 64,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_credentials",
+          "default": "list_credentials",
+          "title": "List Credentials",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Credential ID, subject reference, issuer, type or date filter.",
+          "title": "Filter"
+        },
+        "subject_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact holder DID filter.",
+          "title": "Subject Id"
+        }
+      },
+      "title": "DockCertsListCredentials",
+      "type": "object"
+    },
+    "DockCertsListDids": {
+      "additionalProperties": false,
+      "description": "List dids.",
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Number of items to skip. This operation returns one page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 64,
+          "description": "Items per page. Increase offset by limit to request the next page.",
+          "maximum": 64,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_dids",
+          "default": "list_dids",
+          "title": "List Dids",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "did_type": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by DID type.",
+          "title": "Did Type"
+        }
+      },
+      "title": "DockCertsListDids",
+      "type": "object"
+    },
+    "DockCertsListProfiles": {
+      "additionalProperties": false,
+      "description": "List profiles.",
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Number of items to skip. This operation returns one page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 64,
+          "description": "Items per page. Increase offset by limit to request the next page.",
+          "maximum": 64,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_profiles",
+          "default": "list_profiles",
+          "title": "List Profiles",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DockCertsListProfiles",
+      "type": "object"
+    },
+    "DockCertsListProofRequests": {
+      "additionalProperties": false,
+      "description": "List proof requests.",
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Number of items to skip. This operation returns one page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 64,
+          "description": "Items per page. Increase offset by limit to request the next page.",
+          "maximum": 64,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_proof_requests",
+          "default": "list_proof_requests",
+          "title": "List Proof Requests",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DockCertsListProofRequests",
+      "type": "object"
+    },
+    "DockCertsListSchemas": {
+      "additionalProperties": false,
+      "description": "List schemas.",
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Number of items to skip. This operation returns one page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 64,
+          "description": "Items per page. Increase offset by limit to request the next page.",
+          "maximum": 64,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_schemas",
+          "default": "list_schemas",
+          "title": "List Schemas",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_ecosystems": {
+          "default": true,
+          "title": "Include Ecosystems",
+          "type": "boolean"
+        }
+      },
+      "title": "DockCertsListSchemas",
+      "type": "object"
+    },
+    "DockCertsListTemplates": {
+      "additionalProperties": false,
+      "description": "List templates.",
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Number of items to skip. This operation returns one page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 64,
+          "description": "Items per page. Increase offset by limit to request the next page.",
+          "maximum": 64,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "List Templates",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "DockCertsListTemplates",
+      "type": "object"
+    },
+    "DockCertsRevokeCredential": {
+      "additionalProperties": false,
+      "description": "Revoke credential.",
+      "properties": {
+        "operation": {
+          "const": "revoke_credential",
+          "default": "revoke_credential",
+          "title": "Revoke Credential",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "credential_id": {
+          "format": "uri",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Credential URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "credential_id"
+      ],
+      "title": "DockCertsRevokeCredential",
+      "type": "object"
+    },
+    "DockCertsUnrevokeCredential": {
+      "additionalProperties": false,
+      "description": "Unrevoke credential.",
+      "properties": {
+        "operation": {
+          "const": "unrevoke_credential",
+          "default": "unrevoke_credential",
+          "title": "Unrevoke Credential",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "credential_id": {
+          "format": "uri",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Credential URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "credential_id"
+      ],
+      "title": "DockCertsUnrevokeCredential",
+      "type": "object"
+    },
+    "DockCertsVerifyCredential": {
+      "additionalProperties": false,
+      "description": "Verify credential.",
+      "properties": {
+        "operation": {
+          "const": "verify_credential",
+          "default": "verify_credential",
+          "title": "Verify Credential",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "presentation": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "contentMediaType": "application/json",
+              "contentSchema": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "string"
+            }
+          ],
+          "description": "Signed verifiable credential or presentation JSON, sent unchanged to /verify.",
+          "title": "Presentation"
+        }
+      },
+      "required": [
+        "presentation"
+      ],
+      "title": "DockCertsVerifyCredential",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_did": "#/$defs/DockCertsCreateDid",
+          "create_proof_request": "#/$defs/DockCertsCreateProofRequest",
+          "create_schema": "#/$defs/DockCertsCreateSchema",
+          "create_template": "#/$defs/DockCertsCreateTemplate",
+          "delete_credential": "#/$defs/DockCertsDeleteCredential",
+          "delete_proof_request": "#/$defs/DockCertsDeleteProofRequest",
+          "delete_schema": "#/$defs/DockCertsDeleteSchema",
+          "delete_template": "#/$defs/DockCertsDeleteTemplate",
+          "get_credential": "#/$defs/DockCertsGetCredential",
+          "get_did": "#/$defs/DockCertsGetDid",
+          "get_job": "#/$defs/DockCertsGetJob",
+          "get_profile": "#/$defs/DockCertsGetProfile",
+          "get_proof_request": "#/$defs/DockCertsGetProofRequest",
+          "get_schema": "#/$defs/DockCertsGetSchema",
+          "get_template": "#/$defs/DockCertsGetTemplate",
+          "issue_credential": "#/$defs/DockCertsIssueCredential",
+          "list_credentials": "#/$defs/DockCertsListCredentials",
+          "list_dids": "#/$defs/DockCertsListDids",
+          "list_profiles": "#/$defs/DockCertsListProfiles",
+          "list_proof_requests": "#/$defs/DockCertsListProofRequests",
+          "list_schemas": "#/$defs/DockCertsListSchemas",
+          "list_templates": "#/$defs/DockCertsListTemplates",
+          "revoke_credential": "#/$defs/DockCertsRevokeCredential",
+          "unrevoke_credential": "#/$defs/DockCertsUnrevokeCredential",
+          "verify_credential": "#/$defs/DockCertsVerifyCredential"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DockCertsListProfiles"
+        },
+        {
+          "$ref": "#/$defs/DockCertsGetProfile"
+        },
+        {
+          "$ref": "#/$defs/DockCertsListDids"
+        },
+        {
+          "$ref": "#/$defs/DockCertsGetDid"
+        },
+        {
+          "$ref": "#/$defs/DockCertsListTemplates"
+        },
+        {
+          "$ref": "#/$defs/DockCertsGetTemplate"
+        },
+        {
+          "$ref": "#/$defs/DockCertsDeleteTemplate"
+        },
+        {
+          "$ref": "#/$defs/DockCertsListCredentials"
+        },
+        {
+          "$ref": "#/$defs/DockCertsGetCredential"
+        },
+        {
+          "$ref": "#/$defs/DockCertsDeleteCredential"
+        },
+        {
+          "$ref": "#/$defs/DockCertsListSchemas"
+        },
+        {
+          "$ref": "#/$defs/DockCertsGetSchema"
+        },
+        {
+          "$ref": "#/$defs/DockCertsDeleteSchema"
+        },
+        {
+          "$ref": "#/$defs/DockCertsListProofRequests"
+        },
+        {
+          "$ref": "#/$defs/DockCertsGetProofRequest"
+        },
+        {
+          "$ref": "#/$defs/DockCertsDeleteProofRequest"
+        },
+        {
+          "$ref": "#/$defs/DockCertsCreateDid"
+        },
+        {
+          "$ref": "#/$defs/DockCertsCreateTemplate"
+        },
+        {
+          "$ref": "#/$defs/DockCertsIssueCredential"
+        },
+        {
+          "$ref": "#/$defs/DockCertsRevokeCredential"
+        },
+        {
+          "$ref": "#/$defs/DockCertsUnrevokeCredential"
+        },
+        {
+          "$ref": "#/$defs/DockCertsVerifyCredential"
+        },
+        {
+          "$ref": "#/$defs/DockCertsCreateSchema"
+        },
+        {
+          "$ref": "#/$defs/DockCertsCreateProofRequest"
+        },
+        {
+          "$ref": "#/$defs/DockCertsGetJob"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DockCertsAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Dock-certs Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
