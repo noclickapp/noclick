@@ -1,0 +1,741 @@
+{
+  "$defs": {
+    "ChatMessage": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "system",
+            "user",
+            "assistant"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "content": {
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "content"
+      ],
+      "title": "ChatMessage",
+      "type": "object"
+    },
+    "CreateChatCompletion": {
+      "additionalProperties": false,
+      "description": "Create chat completion.",
+      "properties": {
+        "operation": {
+          "const": "create_chat_completion",
+          "default": "create_chat_completion",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "messages": {
+          "items": {
+            "$ref": "#/$defs/ChatMessage"
+          },
+          "minItems": 1,
+          "title": "Messages",
+          "type": "array"
+        },
+        "temperature": {
+          "anyOf": [
+            {
+              "maximum": 2,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Temperature"
+        },
+        "max_completion_tokens": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Completion Tokens"
+        }
+      },
+      "required": [
+        "model",
+        "messages"
+      ],
+      "title": "CreateChatCompletion",
+      "type": "object"
+    },
+    "CreateEmbeddings": {
+      "additionalProperties": false,
+      "description": "Create embeddings.",
+      "properties": {
+        "operation": {
+          "const": "create_embeddings",
+          "default": "create_embeddings",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "minLength": 1,
+          "title": "Model",
+          "type": "string"
+        },
+        "input": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "title": "Input"
+        },
+        "dimensions": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dimensions"
+        }
+      },
+      "required": [
+        "model",
+        "input"
+      ],
+      "title": "CreateEmbeddings",
+      "type": "object"
+    },
+    "CreateKey": {
+      "additionalProperties": false,
+      "description": "Create key.",
+      "properties": {
+        "operation": {
+          "const": "create_key",
+          "default": "create_key",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1000000,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "limit_reset": {
+          "anyOf": [
+            {
+              "enum": [
+                "daily",
+                "weekly",
+                "monthly"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit Reset",
+          "enum": [
+            "daily",
+            "weekly",
+            "monthly"
+          ],
+          "x-enum-searchable": true
+        },
+        "include_byok_in_limit": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Byok In Limit"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateKey",
+      "type": "object"
+    },
+    "DeleteKey": {
+      "additionalProperties": false,
+      "description": "Delete key.",
+      "properties": {
+        "operation": {
+          "const": "delete_key",
+          "default": "delete_key",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "hash": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:-]+$",
+          "title": "Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "hash"
+      ],
+      "title": "DeleteKey",
+      "type": "object"
+    },
+    "GetActivity": {
+      "additionalProperties": false,
+      "description": "Get activity.",
+      "properties": {
+        "operation": {
+          "const": "get_activity",
+          "default": "get_activity",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "date": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        }
+      },
+      "title": "GetActivity",
+      "type": "object"
+    },
+    "GetCredits": {
+      "additionalProperties": false,
+      "description": "Get credits.",
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCredits",
+      "type": "object"
+    },
+    "GetCurrentKey": {
+      "additionalProperties": false,
+      "description": "Get current key.",
+      "properties": {
+        "operation": {
+          "const": "get_current_key",
+          "default": "get_current_key",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCurrentKey",
+      "type": "object"
+    },
+    "GetGeneration": {
+      "additionalProperties": false,
+      "description": "Get generation.",
+      "properties": {
+        "operation": {
+          "const": "get_generation",
+          "default": "get_generation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "maxLength": 128,
+          "pattern": "^gen-[0-9A-Za-z-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetGeneration",
+      "type": "object"
+    },
+    "GetKey": {
+      "additionalProperties": false,
+      "description": "Get key.",
+      "properties": {
+        "operation": {
+          "const": "get_key",
+          "default": "get_key",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "hash": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:-]+$",
+          "title": "Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "hash"
+      ],
+      "title": "GetKey",
+      "type": "object"
+    },
+    "ListEmbeddingModels": {
+      "additionalProperties": false,
+      "description": "List embedding models.",
+      "properties": {
+        "operation": {
+          "const": "list_embedding_models",
+          "default": "list_embedding_models",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListEmbeddingModels",
+      "type": "object"
+    },
+    "ListKeys": {
+      "additionalProperties": false,
+      "description": "List keys.",
+      "properties": {
+        "operation": {
+          "const": "list_keys",
+          "default": "list_keys",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "include_disabled": {
+          "default": false,
+          "title": "Include Disabled",
+          "type": "boolean"
+        },
+        "include_expired": {
+          "default": false,
+          "title": "Include Expired",
+          "type": "boolean"
+        }
+      },
+      "title": "ListKeys",
+      "type": "object"
+    },
+    "ListModelEndpoints": {
+      "additionalProperties": false,
+      "description": "List model endpoints.",
+      "properties": {
+        "operation": {
+          "const": "list_model_endpoints",
+          "default": "list_model_endpoints",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "author": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:-]+$",
+          "title": "Author",
+          "type": "string"
+        },
+        "slug": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:-]+$",
+          "title": "Slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "author",
+        "slug"
+      ],
+      "title": "ListModelEndpoints",
+      "type": "object"
+    },
+    "ListModels": {
+      "additionalProperties": false,
+      "description": "List models.",
+      "properties": {
+        "operation": {
+          "const": "list_models",
+          "default": "list_models",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "programming",
+                "roleplay",
+                "marketing",
+                "marketing/seo",
+                "technology",
+                "science",
+                "translation",
+                "legal",
+                "finance",
+                "health",
+                "trivia",
+                "academia"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category",
+          "enum": [
+            "programming",
+            "roleplay",
+            "marketing",
+            "marketing/seo",
+            "technology",
+            "science",
+            "translation",
+            "legal",
+            "finance",
+            "health",
+            "trivia",
+            "academia"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListModels",
+      "type": "object"
+    },
+    "ListProviders": {
+      "additionalProperties": false,
+      "description": "List providers.",
+      "properties": {
+        "operation": {
+          "const": "list_providers",
+          "default": "list_providers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListProviders",
+      "type": "object"
+    },
+    "ListUserModels": {
+      "additionalProperties": false,
+      "description": "List user models.",
+      "properties": {
+        "operation": {
+          "const": "list_user_models",
+          "default": "list_user_models",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListUserModels",
+      "type": "object"
+    },
+    "OpenRouterAPIKey": {
+      "properties": {
+        "credential_type": {
+          "const": "openrouter_api_key",
+          "default": "openrouter_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "OpenRouter API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste an OpenRouter API key. Chat and embeddings require credit. Listing, creating, updating and deleting API keys and reading credits or activity require a management key with the corresponding permissions. The connection check reads the current key label and limits; it does not prove access to every operation.",
+      "x-credential-url": "https://openrouter.ai/settings/keys"
+    },
+    "UpdateKey": {
+      "additionalProperties": false,
+      "description": "Update key.",
+      "properties": {
+        "operation": {
+          "const": "update_key",
+          "default": "update_key",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "hash": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:-]+$",
+          "title": "Hash",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "exclusiveMaximum": 1000000,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "limit_reset": {
+          "anyOf": [
+            {
+              "enum": [
+                "daily",
+                "weekly",
+                "monthly"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit Reset",
+          "enum": [
+            "daily",
+            "weekly",
+            "monthly"
+          ],
+          "x-enum-searchable": true
+        },
+        "disabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Disabled"
+        },
+        "include_byok_in_limit": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Byok In Limit"
+        }
+      },
+      "required": [
+        "hash"
+      ],
+      "title": "UpdateKey",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_chat_completion": "#/$defs/CreateChatCompletion",
+          "create_embeddings": "#/$defs/CreateEmbeddings",
+          "create_key": "#/$defs/CreateKey",
+          "delete_key": "#/$defs/DeleteKey",
+          "get_activity": "#/$defs/GetActivity",
+          "get_credits": "#/$defs/GetCredits",
+          "get_current_key": "#/$defs/GetCurrentKey",
+          "get_generation": "#/$defs/GetGeneration",
+          "get_key": "#/$defs/GetKey",
+          "list_embedding_models": "#/$defs/ListEmbeddingModels",
+          "list_keys": "#/$defs/ListKeys",
+          "list_model_endpoints": "#/$defs/ListModelEndpoints",
+          "list_models": "#/$defs/ListModels",
+          "list_providers": "#/$defs/ListProviders",
+          "list_user_models": "#/$defs/ListUserModels",
+          "update_key": "#/$defs/UpdateKey"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCurrentKey"
+        },
+        {
+          "$ref": "#/$defs/GetCredits"
+        },
+        {
+          "$ref": "#/$defs/ListModels"
+        },
+        {
+          "$ref": "#/$defs/ListUserModels"
+        },
+        {
+          "$ref": "#/$defs/ListEmbeddingModels"
+        },
+        {
+          "$ref": "#/$defs/ListProviders"
+        },
+        {
+          "$ref": "#/$defs/ListModelEndpoints"
+        },
+        {
+          "$ref": "#/$defs/GetGeneration"
+        },
+        {
+          "$ref": "#/$defs/GetActivity"
+        },
+        {
+          "$ref": "#/$defs/ListKeys"
+        },
+        {
+          "$ref": "#/$defs/GetKey"
+        },
+        {
+          "$ref": "#/$defs/CreateKey"
+        },
+        {
+          "$ref": "#/$defs/UpdateKey"
+        },
+        {
+          "$ref": "#/$defs/DeleteKey"
+        },
+        {
+          "$ref": "#/$defs/CreateChatCompletion"
+        },
+        {
+          "$ref": "#/$defs/CreateEmbeddings"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OpenRouterAPIKey"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Openrouter Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
