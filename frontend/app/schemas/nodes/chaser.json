@@ -1,0 +1,1648 @@
+{
+  "$defs": {
+    "ChaserAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "chaser_api_key",
+          "default": "chaser_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_secret": {
+          "minLength": 1,
+          "title": "API secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key",
+        "api_secret"
+      ],
+      "title": "Chaser API Key",
+      "type": "object",
+      "x-credential-instructions": "In Chaser, open Organisation Settings > Integrations > Get API keys. Paste both the API key and API secret. NoClick uses Basic authentication to the Chaser API.",
+      "x-credential-url": "https://my.chaserhq.com/settings/integrations"
+    },
+    "ChaserCreateContactPersonConfig": {
+      "description": "Create contact person.",
+      "properties": {
+        "operation": {
+          "const": "create_contact_person",
+          "default": "create_contact_person",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "external_id": {
+          "title": "External Id",
+          "type": "string"
+        },
+        "contact_first_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact First Name"
+        },
+        "contact_last_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Last Name"
+        },
+        "contact_email_address": {
+          "anyOf": [
+            {
+              "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Email Address"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "mobile_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile Number"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "ACTIVE",
+                "ARCHIVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "ACTIVE",
+            "ARCHIVED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "customer_id",
+        "external_id"
+      ],
+      "title": "ChaserCreateContactPersonConfig",
+      "type": "object"
+    },
+    "ChaserCreateCustomerConfig": {
+      "description": "Create customer.",
+      "properties": {
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "external_id": {
+          "title": "External Id",
+          "type": "string"
+        },
+        "company_name": {
+          "minLength": 1,
+          "title": "Company Name",
+          "type": "string"
+        },
+        "contact_first_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact First Name"
+        },
+        "contact_last_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Last Name"
+        },
+        "contact_email_address": {
+          "anyOf": [
+            {
+              "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Email Address"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "mobile_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile Number"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "ACTIVE",
+                "ARCHIVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "ACTIVE",
+            "ARCHIVED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "external_id",
+        "company_name"
+      ],
+      "title": "ChaserCreateCustomerConfig",
+      "type": "object"
+    },
+    "ChaserCreateCustomerNoteConfig": {
+      "description": "Create customer note.",
+      "properties": {
+        "operation": {
+          "const": "create_customer_note",
+          "default": "create_customer_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "reminder_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 date and time including timezone.",
+          "format": "date-time",
+          "title": "Reminder Date"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        }
+      },
+      "required": [
+        "customer_id",
+        "message"
+      ],
+      "title": "ChaserCreateCustomerNoteConfig",
+      "type": "object"
+    },
+    "ChaserCreateInvoiceConfig": {
+      "description": "Create invoice.",
+      "properties": {
+        "operation": {
+          "const": "create_invoice",
+          "default": "create_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "invoice_number": {
+          "title": "Invoice Number",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "DRAFT",
+            "SUBMITTED",
+            "AUTHORISED",
+            "PAID",
+            "VOIDED",
+            "DELETED"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "currency_code": {
+          "pattern": "^[A-Z]{3}$",
+          "title": "Currency Code",
+          "type": "string"
+        },
+        "amount_due": {
+          "minimum": 0,
+          "title": "Amount Due",
+          "type": "number"
+        },
+        "amount_paid": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Amount Paid"
+        },
+        "total": {
+          "minimum": 0,
+          "title": "Total",
+          "type": "number"
+        },
+        "sub_total": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sub Total"
+        },
+        "date": {
+          "description": "RFC 3339 date and time including timezone.",
+          "format": "date-time",
+          "title": "Date",
+          "type": "string"
+        },
+        "due_date": {
+          "description": "RFC 3339 date and time including timezone.",
+          "format": "date-time",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "fully_paid_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 date and time including timezone.",
+          "format": "date-time",
+          "title": "Fully Paid Date"
+        },
+        "expect_payment_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 date and time including timezone.",
+          "format": "date-time",
+          "title": "Expect Payment Date"
+        },
+        "customer_external_id": {
+          "title": "Customer External Id",
+          "type": "string"
+        },
+        "invoice_pdf_link_source": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "^https?://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invoice Pdf Link Source"
+        }
+      },
+      "required": [
+        "invoice_id",
+        "invoice_number",
+        "status",
+        "currency_code",
+        "amount_due",
+        "total",
+        "date",
+        "due_date",
+        "customer_external_id"
+      ],
+      "title": "ChaserCreateInvoiceConfig",
+      "type": "object"
+    },
+    "ChaserDeleteContactPersonConfig": {
+      "description": "Delete contact person.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact_person",
+          "default": "delete_contact_person",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "contact_person_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Contact Person Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id",
+        "contact_person_id"
+      ],
+      "title": "ChaserDeleteContactPersonConfig",
+      "type": "object"
+    },
+    "ChaserDeleteCustomerNoteConfig": {
+      "description": "Delete customer note.",
+      "properties": {
+        "operation": {
+          "const": "delete_customer_note",
+          "default": "delete_customer_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "note_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Note Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id",
+        "note_id"
+      ],
+      "title": "ChaserDeleteCustomerNoteConfig",
+      "type": "object"
+    },
+    "ChaserGetContactPersonConfig": {
+      "description": "Get contact person by id.",
+      "properties": {
+        "operation": {
+          "const": "get_contact_person",
+          "default": "get_contact_person",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "contact_person_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Contact Person Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id",
+        "contact_person_id"
+      ],
+      "title": "ChaserGetContactPersonConfig",
+      "type": "object"
+    },
+    "ChaserGetCustomerConfig": {
+      "description": "Get customers by id.",
+      "properties": {
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "ChaserGetCustomerConfig",
+      "type": "object"
+    },
+    "ChaserGetInvoiceConfig": {
+      "description": "Get invoice by id.",
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Invoice Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "ChaserGetInvoiceConfig",
+      "type": "object"
+    },
+    "ChaserGetOrganisationConfig": {
+      "description": "Get current organisation.",
+      "properties": {
+        "operation": {
+          "const": "get_organisation",
+          "default": "get_organisation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ChaserGetOrganisationConfig",
+      "type": "object"
+    },
+    "ChaserListContactPersonsConfig": {
+      "description": "Get contact persons.",
+      "properties": {
+        "operation": {
+          "const": "list_contact_persons",
+          "default": "list_contact_persons",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "ChaserListContactPersonsConfig",
+      "type": "object"
+    },
+    "ChaserListCustomerNotesConfig": {
+      "description": "Get customer notes.",
+      "properties": {
+        "operation": {
+          "const": "list_customer_notes",
+          "default": "list_customer_notes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "ChaserListCustomerNotesConfig",
+      "type": "object"
+    },
+    "ChaserListCustomersConfig": {
+      "description": "Get customers.",
+      "properties": {
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact-match external_id filter.",
+          "title": "External Id"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact-match company_name filter.",
+          "title": "Company Name"
+        },
+        "contact_first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact-match contact_first_name filter.",
+          "title": "Contact First Name"
+        },
+        "contact_last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact-match contact_last_name filter.",
+          "title": "Contact Last Name"
+        },
+        "contact_email_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact-match contact_email_address filter.",
+          "title": "Contact Email Address"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact-match status filter.",
+          "title": "Status"
+        }
+      },
+      "title": "ChaserListCustomersConfig",
+      "type": "object"
+    },
+    "ChaserListInvoicesConfig": {
+      "description": "Get invoices.",
+      "properties": {
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "invoice_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact-match invoice_id filter.",
+          "title": "Invoice Id"
+        },
+        "invoice_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact-match invoice_number filter.",
+          "title": "Invoice Number"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact-match status filter.",
+          "title": "Status"
+        },
+        "currency_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact-match currency_code filter.",
+          "title": "Currency Code"
+        },
+        "amount_due": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Amount Due"
+        },
+        "amount_paid": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Amount Paid"
+        },
+        "total": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total"
+        },
+        "sub_total": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sub Total"
+        },
+        "customer_external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exact-match customer_external_id filter.",
+          "title": "Customer External Id"
+        }
+      },
+      "title": "ChaserListInvoicesConfig",
+      "type": "object"
+    },
+    "ChaserPauseCustomerChasingConfig": {
+      "description": "Pause customer chasing.",
+      "properties": {
+        "operation": {
+          "const": "pause_customer_chasing",
+          "default": "pause_customer_chasing",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "ChaserPauseCustomerChasingConfig",
+      "type": "object"
+    },
+    "ChaserPauseInvoiceChasingConfig": {
+      "description": "Pause invoice chasing.",
+      "properties": {
+        "operation": {
+          "const": "pause_invoice_chasing",
+          "default": "pause_invoice_chasing",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Invoice Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "ChaserPauseInvoiceChasingConfig",
+      "type": "object"
+    },
+    "ChaserResumeCustomerChasingConfig": {
+      "description": "Resume customer chasing.",
+      "properties": {
+        "operation": {
+          "const": "resume_customer_chasing",
+          "default": "resume_customer_chasing",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "ChaserResumeCustomerChasingConfig",
+      "type": "object"
+    },
+    "ChaserResumeInvoiceChasingConfig": {
+      "description": "Resume invoice chasing.",
+      "properties": {
+        "operation": {
+          "const": "resume_invoice_chasing",
+          "default": "resume_invoice_chasing",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Invoice Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "ChaserResumeInvoiceChasingConfig",
+      "type": "object"
+    },
+    "ChaserUpdateContactPersonConfig": {
+      "description": "Update contact person.",
+      "properties": {
+        "operation": {
+          "const": "update_contact_person",
+          "default": "update_contact_person",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "contact_person_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Contact Person Id",
+          "type": "string"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "contact_first_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact First Name"
+        },
+        "contact_last_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Last Name"
+        },
+        "contact_email_address": {
+          "anyOf": [
+            {
+              "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Email Address"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "mobile_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile Number"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "ACTIVE",
+                "ARCHIVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "ACTIVE",
+            "ARCHIVED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "customer_id",
+        "contact_person_id"
+      ],
+      "title": "ChaserUpdateContactPersonConfig",
+      "type": "object"
+    },
+    "ChaserUpdateCustomerConfig": {
+      "description": "Update customer.",
+      "properties": {
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Id"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Name"
+        },
+        "contact_first_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact First Name"
+        },
+        "contact_last_name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Last Name"
+        },
+        "contact_email_address": {
+          "anyOf": [
+            {
+              "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Email Address"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "mobile_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile Number"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "ACTIVE",
+                "ARCHIVED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "ACTIVE",
+            "ARCHIVED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "customer_id"
+      ],
+      "title": "ChaserUpdateCustomerConfig",
+      "type": "object"
+    },
+    "ChaserUpdateCustomerNoteConfig": {
+      "description": "Update customer note.",
+      "properties": {
+        "operation": {
+          "const": "update_customer_note",
+          "default": "update_customer_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "customer_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "note_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Note Id",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "reminder_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 date and time including timezone.",
+          "format": "date-time",
+          "title": "Reminder Date"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type"
+        }
+      },
+      "required": [
+        "customer_id",
+        "note_id"
+      ],
+      "title": "ChaserUpdateCustomerNoteConfig",
+      "type": "object"
+    },
+    "ChaserUpdateInvoiceConfig": {
+      "description": "Update invoice.",
+      "properties": {
+        "operation": {
+          "const": "update_invoice",
+          "default": "update_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "description": "Chaser internal ID or ext_ prefixed external ID.",
+          "minLength": 1,
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "invoice_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invoice Number"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "DRAFT",
+                "SUBMITTED",
+                "AUTHORISED",
+                "PAID",
+                "VOIDED",
+                "DELETED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "DRAFT",
+            "SUBMITTED",
+            "AUTHORISED",
+            "PAID",
+            "VOIDED",
+            "DELETED"
+          ],
+          "x-enum-searchable": true
+        },
+        "currency_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency Code"
+        },
+        "amount_due": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Amount Due"
+        },
+        "amount_paid": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Amount Paid"
+        },
+        "total": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total"
+        },
+        "sub_total": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sub Total"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 date and time including timezone.",
+          "format": "date-time",
+          "title": "Date"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 date and time including timezone.",
+          "format": "date-time",
+          "title": "Due Date"
+        },
+        "fully_paid_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 date and time including timezone.",
+          "format": "date-time",
+          "title": "Fully Paid Date"
+        },
+        "expect_payment_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 date and time including timezone.",
+          "format": "date-time",
+          "title": "Expect Payment Date"
+        },
+        "customer_external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer External Id"
+        },
+        "invoice_pdf_link_source": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "pattern": "^https?://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invoice Pdf Link Source"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "ChaserUpdateInvoiceConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact_person": "#/$defs/ChaserCreateContactPersonConfig",
+          "create_customer": "#/$defs/ChaserCreateCustomerConfig",
+          "create_customer_note": "#/$defs/ChaserCreateCustomerNoteConfig",
+          "create_invoice": "#/$defs/ChaserCreateInvoiceConfig",
+          "delete_contact_person": "#/$defs/ChaserDeleteContactPersonConfig",
+          "delete_customer_note": "#/$defs/ChaserDeleteCustomerNoteConfig",
+          "get_contact_person": "#/$defs/ChaserGetContactPersonConfig",
+          "get_customer": "#/$defs/ChaserGetCustomerConfig",
+          "get_invoice": "#/$defs/ChaserGetInvoiceConfig",
+          "get_organisation": "#/$defs/ChaserGetOrganisationConfig",
+          "list_contact_persons": "#/$defs/ChaserListContactPersonsConfig",
+          "list_customer_notes": "#/$defs/ChaserListCustomerNotesConfig",
+          "list_customers": "#/$defs/ChaserListCustomersConfig",
+          "list_invoices": "#/$defs/ChaserListInvoicesConfig",
+          "pause_customer_chasing": "#/$defs/ChaserPauseCustomerChasingConfig",
+          "pause_invoice_chasing": "#/$defs/ChaserPauseInvoiceChasingConfig",
+          "resume_customer_chasing": "#/$defs/ChaserResumeCustomerChasingConfig",
+          "resume_invoice_chasing": "#/$defs/ChaserResumeInvoiceChasingConfig",
+          "update_contact_person": "#/$defs/ChaserUpdateContactPersonConfig",
+          "update_customer": "#/$defs/ChaserUpdateCustomerConfig",
+          "update_customer_note": "#/$defs/ChaserUpdateCustomerNoteConfig",
+          "update_invoice": "#/$defs/ChaserUpdateInvoiceConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ChaserGetOrganisationConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserListCustomersConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserGetCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserCreateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserUpdateCustomerConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserListInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserGetInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserCreateInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserUpdateInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserListContactPersonsConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserGetContactPersonConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserCreateContactPersonConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserUpdateContactPersonConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserDeleteContactPersonConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserListCustomerNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserCreateCustomerNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserUpdateCustomerNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserDeleteCustomerNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserPauseCustomerChasingConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserResumeCustomerChasingConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserPauseInvoiceChasingConfig"
+        },
+        {
+          "$ref": "#/$defs/ChaserResumeInvoiceChasingConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ChaserAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Chaser Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
