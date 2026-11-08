@@ -1,0 +1,464 @@
+{
+  "source": "https://api.bugbug.io/docs/schema/",
+  "version": "v2",
+  "cases": [
+    {
+      "operation": "list_projects",
+      "config": {},
+      "method": "GET",
+      "path": "/v2/projects/",
+      "query": {
+        "page": "1",
+        "page_size": "10"
+      },
+      "body": null,
+      "status": 200,
+      "response": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+          {
+            "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+            "name": "CI smoke"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "list_profiles",
+      "config": {},
+      "method": "GET",
+      "path": "/v2/profiles/",
+      "query": {
+        "page": "1",
+        "page_size": "10"
+      },
+      "body": null,
+      "status": 200,
+      "response": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+          {
+            "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+            "name": "CI smoke"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "get_profile",
+      "config": {
+        "profile_id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91"
+      },
+      "method": "GET",
+      "path": "/v2/profiles/8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91/",
+      "query": {},
+      "body": null,
+      "status": 200,
+      "response": {
+        "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke",
+        "status": "queued"
+      }
+    },
+    {
+      "operation": "list_tests",
+      "config": {},
+      "method": "GET",
+      "path": "/v2/tests/",
+      "query": {
+        "page": "1",
+        "page_size": "10"
+      },
+      "body": null,
+      "status": 200,
+      "response": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+          {
+            "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+            "name": "CI smoke"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "get_test",
+      "config": {
+        "test_id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91"
+      },
+      "method": "GET",
+      "path": "/v2/tests/8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91/",
+      "query": {},
+      "body": null,
+      "status": 200,
+      "response": {
+        "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke",
+        "status": "queued"
+      }
+    },
+    {
+      "operation": "create_test",
+      "config": {
+        "name": "CI smoke"
+      },
+      "method": "POST",
+      "path": "/v2/tests/",
+      "query": {},
+      "body": {
+        "name": "CI smoke"
+      },
+      "status": 201,
+      "response": {
+        "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke",
+        "status": "queued"
+      }
+    },
+    {
+      "operation": "update_test",
+      "config": {
+        "test_id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke"
+      },
+      "method": "PATCH",
+      "path": "/v2/tests/8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91/",
+      "query": {},
+      "body": {
+        "name": "CI smoke"
+      },
+      "status": 200,
+      "response": {
+        "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke",
+        "status": "queued"
+      }
+    },
+    {
+      "operation": "delete_test",
+      "config": {
+        "test_id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91"
+      },
+      "method": "DELETE",
+      "path": "/v2/tests/8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91/",
+      "query": {},
+      "body": null,
+      "status": 204,
+      "response": null
+    },
+    {
+      "operation": "list_suites",
+      "config": {},
+      "method": "GET",
+      "path": "/v2/suites/",
+      "query": {
+        "page": "1",
+        "page_size": "10"
+      },
+      "body": null,
+      "status": 200,
+      "response": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+          {
+            "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+            "name": "CI smoke"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "get_suite",
+      "config": {
+        "suite_id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91"
+      },
+      "method": "GET",
+      "path": "/v2/suites/8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91/",
+      "query": {},
+      "body": null,
+      "status": 200,
+      "response": {
+        "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke",
+        "status": "queued"
+      }
+    },
+    {
+      "operation": "create_suite",
+      "config": {
+        "run_profile_id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke"
+      },
+      "method": "POST",
+      "path": "/v2/suites/",
+      "query": {},
+      "body": {
+        "name": "CI smoke",
+        "runProfileId": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91"
+      },
+      "status": 201,
+      "response": {
+        "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke",
+        "status": "queued"
+      }
+    },
+    {
+      "operation": "update_suite",
+      "config": {
+        "suite_id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke"
+      },
+      "method": "PATCH",
+      "path": "/v2/suites/8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91/",
+      "query": {},
+      "body": {
+        "name": "CI smoke"
+      },
+      "status": 200,
+      "response": {
+        "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke",
+        "status": "queued"
+      }
+    },
+    {
+      "operation": "delete_suite",
+      "config": {
+        "suite_id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91"
+      },
+      "method": "DELETE",
+      "path": "/v2/suites/8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91/",
+      "query": {},
+      "body": null,
+      "status": 204,
+      "response": null
+    },
+    {
+      "operation": "list_test_runs",
+      "config": {},
+      "method": "GET",
+      "path": "/v2/testruns/",
+      "query": {
+        "page": "1",
+        "page_size": "10"
+      },
+      "body": null,
+      "status": 200,
+      "response": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+          {
+            "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+            "name": "CI smoke"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "run_test",
+      "config": {
+        "test_id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91"
+      },
+      "method": "POST",
+      "path": "/v2/testruns/",
+      "query": {},
+      "body": {
+        "testId": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91"
+      },
+      "status": 200,
+      "response": {
+        "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke",
+        "status": "queued"
+      }
+    },
+    {
+      "operation": "get_test_run",
+      "config": {
+        "run_id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91"
+      },
+      "method": "GET",
+      "path": "/v2/testruns/8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91/",
+      "query": {},
+      "body": null,
+      "status": 200,
+      "response": {
+        "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke",
+        "status": "queued"
+      }
+    },
+    {
+      "operation": "get_test_run_status",
+      "config": {
+        "run_id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91"
+      },
+      "method": "GET",
+      "path": "/v2/testruns/8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91/status/",
+      "query": {},
+      "body": null,
+      "status": 200,
+      "response": {
+        "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke",
+        "status": "queued"
+      }
+    },
+    {
+      "operation": "stop_test_run",
+      "config": {
+        "run_id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91"
+      },
+      "method": "POST",
+      "path": "/v2/testruns/8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91/stop/",
+      "query": {},
+      "body": null,
+      "status": 200,
+      "response": {
+        "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke",
+        "status": "queued"
+      }
+    },
+    {
+      "operation": "list_suite_runs",
+      "config": {},
+      "method": "GET",
+      "path": "/v2/suiteruns/",
+      "query": {
+        "page": "1",
+        "page_size": "10"
+      },
+      "body": null,
+      "status": 200,
+      "response": {
+        "count": 1,
+        "next": null,
+        "previous": null,
+        "results": [
+          {
+            "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+            "name": "CI smoke"
+          }
+        ]
+      }
+    },
+    {
+      "operation": "run_suite",
+      "config": {
+        "suite_id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91"
+      },
+      "method": "POST",
+      "path": "/v2/suiteruns/",
+      "query": {},
+      "body": {
+        "suiteId": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91"
+      },
+      "status": 200,
+      "response": {
+        "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke",
+        "status": "queued"
+      }
+    },
+    {
+      "operation": "get_suite_run",
+      "config": {
+        "run_id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91"
+      },
+      "method": "GET",
+      "path": "/v2/suiteruns/8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91/",
+      "query": {},
+      "body": null,
+      "status": 200,
+      "response": {
+        "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke",
+        "status": "queued"
+      }
+    },
+    {
+      "operation": "get_suite_run_status",
+      "config": {
+        "run_id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91"
+      },
+      "method": "GET",
+      "path": "/v2/suiteruns/8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91/status/",
+      "query": {},
+      "body": null,
+      "status": 200,
+      "response": {
+        "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke",
+        "status": "queued"
+      }
+    },
+    {
+      "operation": "stop_suite_run",
+      "config": {
+        "run_id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91"
+      },
+      "method": "POST",
+      "path": "/v2/suiteruns/8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91/stop/",
+      "query": {},
+      "body": null,
+      "status": 200,
+      "response": {
+        "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke",
+        "status": "queued"
+      }
+    },
+    {
+      "operation": "list_variables",
+      "config": {},
+      "method": "GET",
+      "path": "/v2/variables/",
+      "query": {},
+      "body": null,
+      "status": 200,
+      "response": [
+        {
+          "key": "email",
+          "value": "qa@example.test",
+          "type": "value"
+        }
+      ]
+    },
+    {
+      "operation": "create_variable",
+      "config": {
+        "key": "email",
+        "type": "value",
+        "value": "qa@example.test",
+        "is_secret": true
+      },
+      "method": "POST",
+      "path": "/v2/variables/",
+      "query": {},
+      "body": {
+        "key": "email",
+        "type": "value",
+        "value": "qa@example.test",
+        "isSecret": true
+      },
+      "status": 201,
+      "response": {
+        "id": "8f0c2a4e-1b7d-4c5e-9a3f-2d6b1e0c7a91",
+        "name": "CI smoke",
+        "status": "queued"
+      }
+    }
+  ]
+}

@@ -1,0 +1,1714 @@
+{
+  "$defs": {
+    "BugbugTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "bugbug_api_token",
+          "default": "bugbug_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "description": "Project API token from BugBug Integrations \u2192 API Token.",
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Bugbug API Token",
+      "type": "object",
+      "x-credential-instructions": "In your BugBug project, open Integrations \u2192 API Token and copy the API Token. Paste it without the Token prefix. The Public API requires the Business plan. This token acts on one project.",
+      "x-credential-url": "https://docs.bugbug.io/integrations/public-api"
+    },
+    "CreateSuite": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "auto_add_new_tests": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Add New Tests Automatically"
+        },
+        "auto_retry": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Automatic Retries"
+        },
+        "before_after_all_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enable Before/After All"
+        },
+        "run_in_parallel": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run in Parallel"
+        },
+        "tests": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Test IDs"
+        },
+        "before_all": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before All Test IDs"
+        },
+        "after_all": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After All Test IDs"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 64,
+                "type": "string"
+              },
+              "maxItems": 64,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag Names"
+        },
+        "operation": {
+          "const": "create_suite",
+          "default": "create_suite",
+          "title": "Create Suite",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "run_profile_id": {
+          "format": "uuid",
+          "title": "Run Profile ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_profile_id"
+      ],
+      "title": "CreateSuite",
+      "type": "object"
+    },
+    "CreateTest": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "screen_size_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "desktop",
+                "mobile",
+                "custom"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Screen Size",
+          "enum": [
+            "desktop",
+            "mobile",
+            "custom"
+          ],
+          "x-enum-searchable": true
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder ID"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 64,
+                "type": "string"
+              },
+              "maxItems": 64,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supplied tags replace the current set when updating. An empty list clears them.",
+          "title": "Tag Names"
+        },
+        "operation": {
+          "const": "create_test",
+          "default": "create_test",
+          "title": "Create Test",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CreateTest",
+      "type": "object"
+    },
+    "CreateVariable": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_variable",
+          "default": "create_variable",
+          "title": "Create Variable",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "key": {
+          "maxLength": 50,
+          "title": "Variable Key",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "value",
+            "evaluate"
+          ],
+          "title": "Variable Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "is_secret": {
+          "default": false,
+          "title": "Secret Variable",
+          "type": "boolean"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "key",
+        "type"
+      ],
+      "title": "CreateVariable",
+      "type": "object"
+    },
+    "DeleteSuite": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_suite",
+          "default": "delete_suite",
+          "title": "Delete Suite",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "suite_id": {
+          "description": "Permanently delete this suite.",
+          "format": "uuid",
+          "title": "Suite ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "suite_id"
+      ],
+      "title": "DeleteSuite",
+      "type": "object"
+    },
+    "DeleteTest": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_test",
+          "default": "delete_test",
+          "title": "Delete Test",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "test_id": {
+          "description": "Permanently delete this test.",
+          "format": "uuid",
+          "title": "Test ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "test_id"
+      ],
+      "title": "DeleteTest",
+      "type": "object"
+    },
+    "GetProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Get Profile",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "profile_id": {
+          "format": "uuid",
+          "title": "Profile ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "GetProfile",
+      "type": "object"
+    },
+    "GetSuite": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_suite",
+          "default": "get_suite",
+          "title": "Get Suite",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "suite_id": {
+          "format": "uuid",
+          "title": "Suite ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "suite_id"
+      ],
+      "title": "GetSuite",
+      "type": "object"
+    },
+    "GetSuiteRun": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_suite_run",
+          "default": "get_suite_run",
+          "title": "Get Suite Run",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "run_id": {
+          "format": "uuid",
+          "title": "Suite Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "GetSuiteRun",
+      "type": "object"
+    },
+    "GetSuiteRunStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_suite_run_status",
+          "default": "get_suite_run_status",
+          "title": "Get Suite Run Status",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "run_id": {
+          "format": "uuid",
+          "title": "Suite Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "GetSuiteRunStatus",
+      "type": "object"
+    },
+    "GetTest": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_test",
+          "default": "get_test",
+          "title": "Get Test",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "test_id": {
+          "format": "uuid",
+          "title": "Test ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "test_id"
+      ],
+      "title": "GetTest",
+      "type": "object"
+    },
+    "GetTestRun": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_test_run",
+          "default": "get_test_run",
+          "title": "Get Test Run",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "run_id": {
+          "format": "uuid",
+          "title": "Test Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "GetTestRun",
+      "type": "object"
+    },
+    "GetTestRunStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_test_run_status",
+          "default": "get_test_run_status",
+          "title": "Get Test Run Status",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "run_id": {
+          "format": "uuid",
+          "title": "Test Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "GetTestRunStatus",
+      "type": "object"
+    },
+    "ListProfiles": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Read one page. Increment this value when the response has a next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_profiles",
+          "default": "list_profiles",
+          "title": "List Profiles",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListProfiles",
+      "type": "object"
+    },
+    "ListProjects": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Read one page. Increment this value when the response has a next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "created",
+                "-created",
+                "name",
+                "-name"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "created",
+            "-created",
+            "name",
+            "-name"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "ListSuiteRuns": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Read one page. Increment this value when the response has a next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "created",
+                "-created",
+                "started",
+                "-started"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "created",
+            "-created",
+            "started",
+            "-started"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "auto_retrying",
+                "error",
+                "failed",
+                "initialized",
+                "passed",
+                "paused",
+                "queued",
+                "recording",
+                "running",
+                "skipped",
+                "stopped"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Status",
+          "enum": [
+            "auto_retrying",
+            "error",
+            "failed",
+            "initialized",
+            "passed",
+            "paused",
+            "queued",
+            "recording",
+            "running",
+            "skipped",
+            "stopped"
+          ],
+          "x-enum-searchable": true
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags Filter"
+        },
+        "operation": {
+          "const": "list_suite_runs",
+          "default": "list_suite_runs",
+          "title": "List Suite Runs",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "suite_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suite ID"
+        }
+      },
+      "title": "ListSuiteRuns",
+      "type": "object"
+    },
+    "ListSuites": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Read one page. Increment this value when the response has a next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "created",
+                "-created",
+                "name",
+                "-name"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "created",
+            "-created",
+            "name",
+            "-name"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_suites",
+          "default": "list_suites",
+          "title": "List Suites",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "latest_run": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Latest Run"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags Filter"
+        }
+      },
+      "title": "ListSuites",
+      "type": "object"
+    },
+    "ListTestRuns": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Read one page. Increment this value when the response has a next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "created",
+                "-created",
+                "started",
+                "-started"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "created",
+            "-created",
+            "started",
+            "-started"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "auto_retrying",
+                "error",
+                "failed",
+                "initialized",
+                "passed",
+                "paused",
+                "queued",
+                "recording",
+                "running",
+                "skipped",
+                "stopped"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Status",
+          "enum": [
+            "auto_retrying",
+            "error",
+            "failed",
+            "initialized",
+            "passed",
+            "paused",
+            "queued",
+            "recording",
+            "running",
+            "skipped",
+            "stopped"
+          ],
+          "x-enum-searchable": true
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags Filter"
+        },
+        "operation": {
+          "const": "list_test_runs",
+          "default": "list_test_runs",
+          "title": "List Test Runs",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "test_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Test ID"
+        }
+      },
+      "title": "ListTestRuns",
+      "type": "object"
+    },
+    "ListTests": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Read one page. Increment this value when the response has a next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 10,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "ordering": {
+          "anyOf": [
+            {
+              "enum": [
+                "created",
+                "-created",
+                "name",
+                "-name"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort",
+          "enum": [
+            "created",
+            "-created",
+            "name",
+            "-name"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "list_tests",
+          "default": "list_tests",
+          "title": "List Tests",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "latest_run": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Latest Run"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags Filter"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder ID"
+        },
+        "no_folder": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Only Tests Without a Folder"
+        }
+      },
+      "title": "ListTests",
+      "type": "object"
+    },
+    "ListVariables": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_variables",
+          "default": "list_variables",
+          "title": "List Variables",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListVariables",
+      "type": "object"
+    },
+    "RunSuite": {
+      "additionalProperties": false,
+      "properties": {
+        "run_profile_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use the test or suite's default profile.",
+          "title": "Run Profile ID"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/VariableOverride"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Keys must already exist in the project.",
+          "title": "Variable Overrides"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 64,
+                "type": "string"
+              },
+              "maxItems": 64,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Tag Names"
+        },
+        "operation": {
+          "const": "run_suite",
+          "default": "run_suite",
+          "title": "Run Suite",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "suite_id": {
+          "description": "Queue a cloud suite run; returns immediately without waiting for completion.",
+          "format": "uuid",
+          "title": "Suite ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "suite_id"
+      ],
+      "title": "RunSuite",
+      "type": "object"
+    },
+    "RunTest": {
+      "additionalProperties": false,
+      "properties": {
+        "run_profile_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use the test or suite's default profile.",
+          "title": "Run Profile ID"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/VariableOverride"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Keys must already exist in the project.",
+          "title": "Variable Overrides"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 64,
+                "type": "string"
+              },
+              "maxItems": 64,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Tag Names"
+        },
+        "operation": {
+          "const": "run_test",
+          "default": "run_test",
+          "title": "Run Test",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "test_id": {
+          "description": "Queue a cloud test run; returns immediately without waiting for completion.",
+          "format": "uuid",
+          "title": "Test ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "test_id"
+      ],
+      "title": "RunTest",
+      "type": "object"
+    },
+    "StopSuiteRun": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "stop_suite_run",
+          "default": "stop_suite_run",
+          "title": "Stop Suite Run",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "run_id": {
+          "format": "uuid",
+          "title": "Suite Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "StopSuiteRun",
+      "type": "object"
+    },
+    "StopTestRun": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "stop_test_run",
+          "default": "stop_test_run",
+          "title": "Stop Test Run",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "run_id": {
+          "format": "uuid",
+          "title": "Test Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "StopTestRun",
+      "type": "object"
+    },
+    "UpdateSuite": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "auto_add_new_tests": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Add New Tests Automatically"
+        },
+        "auto_retry": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Automatic Retries"
+        },
+        "before_after_all_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enable Before/After All"
+        },
+        "run_in_parallel": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run in Parallel"
+        },
+        "tests": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Test IDs"
+        },
+        "before_all": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before All Test IDs"
+        },
+        "after_all": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After All Test IDs"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 64,
+                "type": "string"
+              },
+              "maxItems": 64,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag Names"
+        },
+        "operation": {
+          "const": "update_suite",
+          "default": "update_suite",
+          "title": "Update Suite",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "suite_id": {
+          "format": "uuid",
+          "title": "Suite ID",
+          "type": "string"
+        },
+        "run_profile_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Run Profile ID"
+        }
+      },
+      "required": [
+        "suite_id"
+      ],
+      "title": "UpdateSuite",
+      "type": "object"
+    },
+    "UpdateTest": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "screen_size_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "desktop",
+                "mobile",
+                "custom"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Screen Size",
+          "enum": [
+            "desktop",
+            "mobile",
+            "custom"
+          ],
+          "x-enum-searchable": true
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Folder ID"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 64,
+                "type": "string"
+              },
+              "maxItems": 64,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Supplied tags replace the current set when updating. An empty list clears them.",
+          "title": "Tag Names"
+        },
+        "operation": {
+          "const": "update_test",
+          "default": "update_test",
+          "title": "Update Test",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "test_id": {
+          "format": "uuid",
+          "title": "Test ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "test_id"
+      ],
+      "title": "UpdateTest",
+      "type": "object"
+    },
+    "VariableOverride": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "maxLength": 128,
+          "title": "Existing Variable Key",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Override Value"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "VariableOverride",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_suite": "#/$defs/CreateSuite",
+          "create_test": "#/$defs/CreateTest",
+          "create_variable": "#/$defs/CreateVariable",
+          "delete_suite": "#/$defs/DeleteSuite",
+          "delete_test": "#/$defs/DeleteTest",
+          "get_profile": "#/$defs/GetProfile",
+          "get_suite": "#/$defs/GetSuite",
+          "get_suite_run": "#/$defs/GetSuiteRun",
+          "get_suite_run_status": "#/$defs/GetSuiteRunStatus",
+          "get_test": "#/$defs/GetTest",
+          "get_test_run": "#/$defs/GetTestRun",
+          "get_test_run_status": "#/$defs/GetTestRunStatus",
+          "list_profiles": "#/$defs/ListProfiles",
+          "list_projects": "#/$defs/ListProjects",
+          "list_suite_runs": "#/$defs/ListSuiteRuns",
+          "list_suites": "#/$defs/ListSuites",
+          "list_test_runs": "#/$defs/ListTestRuns",
+          "list_tests": "#/$defs/ListTests",
+          "list_variables": "#/$defs/ListVariables",
+          "run_suite": "#/$defs/RunSuite",
+          "run_test": "#/$defs/RunTest",
+          "stop_suite_run": "#/$defs/StopSuiteRun",
+          "stop_test_run": "#/$defs/StopTestRun",
+          "update_suite": "#/$defs/UpdateSuite",
+          "update_test": "#/$defs/UpdateTest"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/ListProfiles"
+        },
+        {
+          "$ref": "#/$defs/GetProfile"
+        },
+        {
+          "$ref": "#/$defs/ListTests"
+        },
+        {
+          "$ref": "#/$defs/GetTest"
+        },
+        {
+          "$ref": "#/$defs/CreateTest"
+        },
+        {
+          "$ref": "#/$defs/UpdateTest"
+        },
+        {
+          "$ref": "#/$defs/DeleteTest"
+        },
+        {
+          "$ref": "#/$defs/ListSuites"
+        },
+        {
+          "$ref": "#/$defs/GetSuite"
+        },
+        {
+          "$ref": "#/$defs/CreateSuite"
+        },
+        {
+          "$ref": "#/$defs/UpdateSuite"
+        },
+        {
+          "$ref": "#/$defs/DeleteSuite"
+        },
+        {
+          "$ref": "#/$defs/ListTestRuns"
+        },
+        {
+          "$ref": "#/$defs/RunTest"
+        },
+        {
+          "$ref": "#/$defs/GetTestRun"
+        },
+        {
+          "$ref": "#/$defs/GetTestRunStatus"
+        },
+        {
+          "$ref": "#/$defs/StopTestRun"
+        },
+        {
+          "$ref": "#/$defs/ListSuiteRuns"
+        },
+        {
+          "$ref": "#/$defs/RunSuite"
+        },
+        {
+          "$ref": "#/$defs/GetSuiteRun"
+        },
+        {
+          "$ref": "#/$defs/GetSuiteRunStatus"
+        },
+        {
+          "$ref": "#/$defs/StopSuiteRun"
+        },
+        {
+          "$ref": "#/$defs/ListVariables"
+        },
+        {
+          "$ref": "#/$defs/CreateVariable"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BugbugTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bugbug Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Run a BugBug test",
+    "Check a suite run's status",
+    "List failed test runs"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
