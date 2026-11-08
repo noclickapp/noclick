@@ -1,0 +1,480 @@
+{
+  "source": "https://api.arize.com/v2/spec.yaml",
+  "operations": {
+    "list_spaces": {
+      "spaces": [
+        {
+          "id": "spc_001",
+          "organization_id": "QWNjb3VudE9yZ2FuaXphdGlvbjox",
+          "name": "LLM Evaluation",
+          "description": "Space for evaluating LLM performance",
+          "created_at": "2024-01-01T12:00:00Z",
+          "is_private": false
+        },
+        {
+          "id": "spc_002",
+          "organization_id": "QWNjb3VudE9yZ2FuaXphdGlvbjox",
+          "name": "Customer Support Bot",
+          "description": "Production chatbot monitoring",
+          "created_at": "2024-01-02T12:00:00Z",
+          "is_private": false
+        },
+        {
+          "id": "spc_003",
+          "organization_id": "QWNjb3VudE9yZ2FuaXphdGlvbjoy",
+          "name": "RAG Pipeline",
+          "description": "Retrieval-augmented generation experiments",
+          "created_at": "2024-01-03T12:00:00Z",
+          "is_private": true
+        }
+      ],
+      "pagination": {
+        "next_cursor": "cursor_12345",
+        "has_more": true
+      }
+    },
+    "list_projects": {
+      "projects": [
+        {
+          "id": "project_001",
+          "name": "My Project",
+          "space_id": "space_12345",
+          "created_at": "2024-01-01T12:00:00Z"
+        }
+      ],
+      "pagination": {
+        "next_cursor": "cursor_12345",
+        "has_more": true
+      }
+    },
+    "get_project": {
+      "id": "project_001",
+      "name": "My Project",
+      "space_id": "space_12345",
+      "created_at": "2024-01-01T12:00:00Z"
+    },
+    "list_datasets": {
+      "datasets": [
+        {
+          "id": "RGF0YXNldDoxOmFCY0Q=",
+          "created_at": "2024-01-01T12:00:00Z",
+          "updated_at": "2024-01-02T12:00:00Z",
+          "name": "Sample Dataset 1",
+          "space_id": "U3BhY2U6MTphQmNE"
+        },
+        {
+          "id": "RGF0YXNldDoyOmFCY0Q=",
+          "created_at": "2024-01-02T12:00:00Z",
+          "updated_at": "2024-01-03T12:00:00Z",
+          "name": "Sample Dataset 2",
+          "space_id": "U3BhY2U6MTphQmNE"
+        },
+        {
+          "id": "RGF0YXNldDozOmFCY0Q=",
+          "created_at": "2024-01-03T12:00:00Z",
+          "updated_at": "2024-01-04T12:00:00Z",
+          "name": "Sample Dataset 3",
+          "space_id": "U3BhY2U6MjphQmNE"
+        }
+      ],
+      "pagination": {
+        "next_cursor": "cursor_12345",
+        "has_more": true
+      }
+    },
+    "create_dataset": {
+      "id": "RGF0YXNldDoxOmFCY0Q=",
+      "created_at": "2024-01-01T12:00:00Z",
+      "updated_at": "2024-01-02T12:00:00Z",
+      "name": "Sample Dataset",
+      "space_id": "U3BhY2U6MTphQmNE",
+      "versions": [
+        {
+          "id": "RGF0YXNldFZlcnNpb246MTphQmNE",
+          "name": "v1.0",
+          "dataset_id": "RGF0YXNldDoxOmFCY0Q=",
+          "created_at": "2024-01-01T12:00:00Z",
+          "updated_at": "2024-01-02T12:00:00Z"
+        },
+        {
+          "id": "RGF0YXNldFZlcnNpb246MjphQmNE",
+          "name": "v1.1",
+          "dataset_id": "RGF0YXNldDoxOmFCY0Q=",
+          "created_at": "2024-02-01T12:00:00Z",
+          "updated_at": "2024-02-02T12:00:00Z"
+        }
+      ]
+    },
+    "get_dataset": {
+      "id": "RGF0YXNldDoxOmFCY0Q=",
+      "created_at": "2024-01-01T12:00:00Z",
+      "updated_at": "2024-01-02T12:00:00Z",
+      "name": "Sample Dataset",
+      "space_id": "U3BhY2U6MTphQmNE",
+      "versions": [
+        {
+          "id": "RGF0YXNldFZlcnNpb246MTphQmNE",
+          "name": "v1.0",
+          "dataset_id": "RGF0YXNldDoxOmFCY0Q=",
+          "created_at": "2024-01-01T12:00:00Z",
+          "updated_at": "2024-01-02T12:00:00Z"
+        },
+        {
+          "id": "RGF0YXNldFZlcnNpb246MjphQmNE",
+          "name": "v1.1",
+          "dataset_id": "RGF0YXNldDoxOmFCY0Q=",
+          "created_at": "2024-02-01T12:00:00Z",
+          "updated_at": "2024-02-02T12:00:00Z"
+        }
+      ]
+    },
+    "update_dataset": {
+      "id": "RGF0YXNldDoxOmFCY0Q=",
+      "created_at": "2024-01-01T12:00:00Z",
+      "updated_at": "2024-01-02T12:00:00Z",
+      "name": "Sample Dataset",
+      "space_id": "U3BhY2U6MTphQmNE",
+      "versions": [
+        {
+          "id": "RGF0YXNldFZlcnNpb246MTphQmNE",
+          "name": "v1.0",
+          "dataset_id": "RGF0YXNldDoxOmFCY0Q=",
+          "created_at": "2024-01-01T12:00:00Z",
+          "updated_at": "2024-01-02T12:00:00Z"
+        },
+        {
+          "id": "RGF0YXNldFZlcnNpb246MjphQmNE",
+          "name": "v1.1",
+          "dataset_id": "RGF0YXNldDoxOmFCY0Q=",
+          "created_at": "2024-02-01T12:00:00Z",
+          "updated_at": "2024-02-02T12:00:00Z"
+        }
+      ]
+    },
+    "delete_dataset": null,
+    "list_dataset_examples": {
+      "examples": [
+        {
+          "id": "550e8400-e29b-41d4-a716-446655440000",
+          "created_at": "2024-01-01T12:00:00Z",
+          "updated_at": "2024-01-02T12:00:00Z",
+          "question": "What is 2 + 2?",
+          "answer": 4,
+          "topic": "arithmetic",
+          "isCorrect": true
+        },
+        {
+          "id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+          "created_at": "2024-01-02T12:00:00Z",
+          "updated_at": "2024-01-03T12:00:00Z",
+          "question": "What is the square root of 16?",
+          "answer": 4,
+          "topic": "geometry",
+          "isCorrect": true
+        },
+        {
+          "id": "9c7f6b2e-4a3d-11e9-8bad-f5b7b8c1ae7e",
+          "created_at": "2024-01-03T12:00:00Z",
+          "updated_at": "2024-01-04T12:00:00Z",
+          "question": "If 3x = 12, what is x?",
+          "answer": 3,
+          "topic": "algebra",
+          "isCorrect": false
+        }
+      ],
+      "pagination": {
+        "next_cursor": "cursor_12345",
+        "has_more": true
+      }
+    },
+    "insert_dataset_examples": {
+      "id": "RGF0YXNldDoxOmFCY0Q=",
+      "name": "Sample Dataset",
+      "space_id": "U3BhY2U6MTphQmNE",
+      "created_at": "2024-01-01T12:00:00Z",
+      "updated_at": "2024-01-02T12:00:00Z",
+      "dataset_version_id": "RGF0YXNldFZlcnNpb246MTphQmNE",
+      "example_ids": [
+        "550e8400-e29b-41d4-a716-446655440000",
+        "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+      ]
+    },
+    "update_dataset_examples": {
+      "id": "RGF0YXNldDoxOmFCY0Q=",
+      "name": "Sample Dataset",
+      "space_id": "U3BhY2U6MTphQmNE",
+      "created_at": "2024-01-01T12:00:00Z",
+      "updated_at": "2024-01-02T12:00:00Z",
+      "dataset_version_id": "RGF0YXNldFZlcnNpb246MTphQmNE",
+      "example_ids": [
+        "550e8400-e29b-41d4-a716-446655440000",
+        "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+      ]
+    },
+    "delete_dataset_examples": {
+      "completed": true,
+      "deleted_example_ids": [
+        "550e8400-e29b-41d4-a716-446655440000",
+        "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
+      ],
+      "not_deleted_example_ids": []
+    },
+    "list_experiments": {
+      "experiments": [
+        {
+          "id": "RXhwZXJpbWVudDoxOmFCY0Q=",
+          "space_id": "U3BhY2U6MTphQmNE",
+          "name": "Experiment 1",
+          "dataset_id": "RGF0YXNldDoxOmFCY0Q=",
+          "dataset_version_id": "RGF0YXNldFZlcnNpb246MTphQmNE",
+          "created_at": "2024-01-01T12:00:00Z",
+          "updated_at": "2024-01-02T12:00:00Z",
+          "integration_id": null
+        },
+        {
+          "id": "RXhwZXJpbWVudDoyOmFCY0Q=",
+          "space_id": "U3BhY2U6MTphQmNE",
+          "name": "Experiment 2",
+          "dataset_id": "RGF0YXNldDoyOmFCY0Q=",
+          "dataset_version_id": "RGF0YXNldFZlcnNpb246MjphQmNE",
+          "created_at": "2024-01-02T12:00:00Z",
+          "updated_at": "2024-01-03T12:00:00Z",
+          "integration_id": "UmVtb3RlRW5kcG9pbnRJbnRlZ3JhdGlvbjoxOmFCY0Q="
+        }
+      ],
+      "pagination": {
+        "next_cursor": "cursor_12345",
+        "has_more": true
+      }
+    },
+    "create_experiment": {
+      "id": "RXhwZXJpbWVudDoxOmFCY0Q=",
+      "space_id": "U3BhY2U6MTphQmNE",
+      "name": "Experiment 1",
+      "dataset_id": "RGF0YXNldDoxOmFCY0Q=",
+      "dataset_version_id": "RGF0YXNldFZlcnNpb246MTphQmNE",
+      "created_at": "2024-01-01T12:00:00Z",
+      "updated_at": "2024-01-02T12:00:00Z",
+      "integration_id": null
+    },
+    "get_experiment": {
+      "id": "RXhwZXJpbWVudDoxOmFCY0Q=",
+      "space_id": "U3BhY2U6MTphQmNE",
+      "name": "Experiment 1",
+      "dataset_id": "RGF0YXNldDoxOmFCY0Q=",
+      "dataset_version_id": "RGF0YXNldFZlcnNpb246MTphQmNE",
+      "created_at": "2024-01-01T12:00:00Z",
+      "updated_at": "2024-01-02T12:00:00Z",
+      "integration_id": null
+    },
+    "delete_experiment": null,
+    "list_experiment_runs": {
+      "experiment_runs": [
+        {
+          "id": "run_001",
+          "example_id": "550e8400-e29b-41d4-a716-446655440000",
+          "output": "4",
+          "latency_ms": 120,
+          "model": "gpt-4"
+        },
+        {
+          "id": "run_002",
+          "example_id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+          "output": "4",
+          "latency_ms": 150,
+          "model": "gpt-4"
+        },
+        {
+          "id": "run_003",
+          "example_id": "9c7f6b2e-4a3d-11e9-8bad-f5b7b8c1ae7e",
+          "output": "3",
+          "latency_ms": 130,
+          "model": "gpt-4"
+        }
+      ],
+      "pagination": {
+        "next_cursor": "cursor_12345",
+        "has_more": true
+      }
+    },
+    "insert_experiment_runs": {
+      "id": "RXhwZXJpbWVudDoxOmFCY0Q=",
+      "space_id": "U3BhY2U6MTphQmNE",
+      "name": "Experiment 1",
+      "dataset_id": "RGF0YXNldDoxOmFCY0Q=",
+      "dataset_version_id": "RGF0YXNldFZlcnNpb246MTphQmNE",
+      "created_at": "2024-01-01T12:00:00Z",
+      "updated_at": "2024-01-02T12:00:00Z",
+      "integration_id": null,
+      "run_ids": [
+        "run_001",
+        "run_002"
+      ]
+    },
+    "list_prompts": {
+      "prompts": [
+        {
+          "id": "prompt_001",
+          "name": "My Prompt",
+          "description": "A prompt for customer support",
+          "space_id": "space_12345",
+          "created_at": "2024-01-01T12:00:00Z",
+          "updated_at": "2024-01-02T12:00:00Z",
+          "created_by_user_id": "user_12345"
+        }
+      ],
+      "pagination": {
+        "next_cursor": "cursor_12345",
+        "has_more": true
+      }
+    },
+    "create_prompt": {
+      "id": "prompt_001",
+      "name": "My Prompt",
+      "description": "A prompt for customer support",
+      "space_id": "space_12345",
+      "created_at": "2024-01-01T12:00:00Z",
+      "updated_at": "2024-01-02T12:00:00Z",
+      "created_by_user_id": "user_12345",
+      "version": {
+        "id": "pv_001",
+        "prompt_id": "prompt_001",
+        "commit_hash": "abc123def456",
+        "commit_message": "Initial version",
+        "messages": [
+          {
+            "role": "SYSTEM",
+            "content": "You are a helpful assistant."
+          },
+          {
+            "role": "USER",
+            "content": "Hello, {name}!"
+          }
+        ],
+        "input_variable_format": "F_STRING",
+        "provider": "OPEN_AI",
+        "model": "gpt-4",
+        "invocation_params": {},
+        "provider_params": {},
+        "created_at": "2024-01-01T12:00:00Z",
+        "created_by_user_id": "user_12345",
+        "labels": []
+      }
+    },
+    "get_prompt": {
+      "id": "prompt_001",
+      "name": "My Prompt",
+      "description": "A prompt for customer support",
+      "space_id": "space_12345",
+      "created_at": "2024-01-01T12:00:00Z",
+      "updated_at": "2024-01-02T12:00:00Z",
+      "created_by_user_id": "user_12345",
+      "version": {
+        "id": "pv_001",
+        "prompt_id": "prompt_001",
+        "commit_hash": "abc123def456",
+        "commit_message": "Initial version",
+        "messages": [
+          {
+            "role": "SYSTEM",
+            "content": "You are a helpful assistant."
+          },
+          {
+            "role": "USER",
+            "content": "Hello, {name}!"
+          }
+        ],
+        "input_variable_format": "F_STRING",
+        "provider": "OPEN_AI",
+        "model": "gpt-4",
+        "invocation_params": {},
+        "provider_params": {},
+        "created_at": "2024-01-01T12:00:00Z",
+        "created_by_user_id": "user_12345",
+        "labels": []
+      }
+    },
+    "update_prompt": {
+      "id": "prompt_001",
+      "name": "My Prompt",
+      "description": "A prompt for customer support",
+      "space_id": "space_12345",
+      "created_at": "2024-01-01T12:00:00Z",
+      "updated_at": "2024-01-02T12:00:00Z",
+      "created_by_user_id": "user_12345"
+    },
+    "delete_prompt": null,
+    "list_prompt_versions": {
+      "prompt_versions": [
+        {
+          "id": "pv_002",
+          "prompt_id": "prompt_001",
+          "commit_hash": "def789ghi012",
+          "commit_message": "Updated system prompt",
+          "messages": [
+            {
+              "role": "SYSTEM",
+              "content": "You are a helpful assistant."
+            }
+          ],
+          "input_variable_format": "F_STRING",
+          "provider": "OPEN_AI",
+          "model": "gpt-4",
+          "created_at": "2024-01-02T12:00:00Z",
+          "created_by_user_id": "user_12345"
+        },
+        {
+          "id": "pv_001",
+          "prompt_id": "prompt_001",
+          "commit_hash": "abc123def456",
+          "commit_message": "Initial version",
+          "messages": [
+            {
+              "role": "SYSTEM",
+              "content": "You are an assistant."
+            }
+          ],
+          "input_variable_format": "F_STRING",
+          "provider": "OPEN_AI",
+          "model": "gpt-4",
+          "created_at": "2024-01-01T12:00:00Z",
+          "created_by_user_id": "user_12345"
+        }
+      ],
+      "pagination": {
+        "next_cursor": "cursor_12345",
+        "has_more": true
+      }
+    },
+    "create_prompt_version": {
+      "id": "pv_001",
+      "prompt_id": "prompt_001",
+      "commit_hash": "abc123def456",
+      "commit_message": "Updated system prompt",
+      "messages": [
+        {
+          "role": "SYSTEM",
+          "content": "You are a helpful assistant."
+        },
+        {
+          "role": "USER",
+          "content": "Hello, {name}!"
+        }
+      ],
+      "input_variable_format": "F_STRING",
+      "provider": "OPEN_AI",
+      "model": "gpt-4",
+      "invocation_params": {
+        "temperature": 0.7,
+        "max_tokens": 1000
+      },
+      "provider_params": {},
+      "created_at": "2024-01-02T12:00:00Z",
+      "created_by_user_id": "user_12345",
+      "labels": [
+        "production",
+        "staging"
+      ]
+    }
+  }
+}
