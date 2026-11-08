@@ -1,0 +1,253 @@
+[
+  {
+    "config": {
+      "operation": "get_current_user"
+    },
+    "method": "GET",
+    "path": "/api/v1/users/me",
+    "body": null,
+    "query": []
+  },
+  {
+    "config": {
+      "operation": "list_stores"
+    },
+    "method": "GET",
+    "path": "/api/v1/stores",
+    "body": null,
+    "query": []
+  },
+  {
+    "config": {
+      "operation": "get_store",
+      "store_id": "store-1"
+    },
+    "method": "GET",
+    "path": "/api/v1/stores/store-1",
+    "body": null,
+    "query": []
+  },
+  {
+    "config": {
+      "operation": "list_invoices",
+      "store_id": "store-1"
+    },
+    "method": "GET",
+    "path": "/api/v1/stores/store-1/invoices",
+    "body": null,
+    "query": [
+      [
+        "take",
+        "50"
+      ],
+      [
+        "skip",
+        "0"
+      ]
+    ]
+  },
+  {
+    "config": {
+      "operation": "get_invoice",
+      "invoice_id": "invoice-1"
+    },
+    "method": "GET",
+    "path": "/api/v1/invoices/invoice-1",
+    "body": null,
+    "query": [
+      [
+        "includePaymentMethods",
+        "false"
+      ]
+    ]
+  },
+  {
+    "config": {
+      "operation": "create_invoice",
+      "store_id": "store-1",
+      "amount": "5.00",
+      "currency": "USD",
+      "metadata": {
+        "orderId": "1000"
+      }
+    },
+    "method": "POST",
+    "path": "/api/v1/stores/store-1/invoices",
+    "body": {
+      "amount": "5.00",
+      "currency": "USD",
+      "metadata": {
+        "orderId": "1000"
+      }
+    },
+    "query": []
+  },
+  {
+    "config": {
+      "operation": "update_invoice",
+      "invoice_id": "invoice-1",
+      "metadata": {
+        "orderId": "1000"
+      }
+    },
+    "method": "PUT",
+    "path": "/api/v1/invoices/invoice-1",
+    "body": {
+      "metadata": {
+        "orderId": "1000"
+      }
+    },
+    "query": []
+  },
+  {
+    "config": {
+      "operation": "archive_invoice",
+      "invoice_id": "invoice-1"
+    },
+    "method": "DELETE",
+    "path": "/api/v1/invoices/invoice-1",
+    "body": null,
+    "query": []
+  },
+  {
+    "config": {
+      "operation": "unarchive_invoice",
+      "invoice_id": "invoice-1"
+    },
+    "method": "POST",
+    "path": "/api/v1/invoices/invoice-1/unarchive",
+    "body": null,
+    "query": []
+  },
+  {
+    "config": {
+      "operation": "mark_invoice_status",
+      "invoice_id": "invoice-1",
+      "status": "Invalid"
+    },
+    "method": "POST",
+    "path": "/api/v1/invoices/invoice-1/status",
+    "body": {
+      "status": "Invalid"
+    },
+    "query": []
+  },
+  {
+    "config": {
+      "operation": "get_invoice_payment_methods",
+      "invoice_id": "invoice-1"
+    },
+    "method": "GET",
+    "path": "/api/v1/invoices/invoice-1/payment-methods",
+    "body": null,
+    "query": [
+      [
+        "includeSensitive",
+        "false"
+      ],
+      [
+        "onlyAccountedPayments",
+        "true"
+      ]
+    ]
+  },
+  {
+    "config": {
+      "operation": "list_payment_requests",
+      "store_id": "store-1"
+    },
+    "method": "GET",
+    "path": "/api/v1/stores/store-1/payment-requests",
+    "body": null,
+    "query": []
+  },
+  {
+    "config": {
+      "operation": "create_payment_request",
+      "store_id": "store-1",
+      "amount": "5.00",
+      "currency": "USD",
+      "title": "Order"
+    },
+    "method": "POST",
+    "path": "/api/v1/stores/store-1/payment-requests",
+    "body": {
+      "amount": "5.00",
+      "currency": "USD",
+      "title": "Order",
+      "allowCustomPaymentAmounts": false
+    },
+    "query": []
+  },
+  {
+    "config": {
+      "operation": "get_payment_request",
+      "payment_request_id": "request-1"
+    },
+    "method": "GET",
+    "path": "/api/v1/payment-requests/request-1",
+    "body": null,
+    "query": []
+  },
+  {
+    "config": {
+      "operation": "archive_payment_request",
+      "payment_request_id": "request-1"
+    },
+    "method": "DELETE",
+    "path": "/api/v1/payment-requests/request-1",
+    "body": null,
+    "query": []
+  },
+  {
+    "config": {
+      "operation": "list_pull_payments",
+      "store_id": "store-1"
+    },
+    "method": "GET",
+    "path": "/api/v1/stores/store-1/pull-payments",
+    "body": null,
+    "query": [
+      [
+        "includeArchived",
+        "false"
+      ]
+    ]
+  },
+  {
+    "config": {
+      "operation": "create_pull_payment",
+      "store_id": "store-1",
+      "amount": "0.1",
+      "currency": "BTC"
+    },
+    "method": "POST",
+    "path": "/api/v1/stores/store-1/pull-payments",
+    "body": {
+      "amount": "0.1",
+      "currency": "BTC",
+      "autoApproveClaims": false
+    },
+    "query": []
+  },
+  {
+    "config": {
+      "operation": "get_pull_payment",
+      "pull_payment_id": "pull-1"
+    },
+    "method": "GET",
+    "path": "/api/v1/pull-payments/pull-1",
+    "body": null,
+    "query": []
+  },
+  {
+    "config": {
+      "operation": "archive_pull_payment",
+      "pull_payment_id": "pull-1"
+    },
+    "method": "DELETE",
+    "path": "/api/v1/pull-payments/pull-1",
+    "body": null,
+    "query": []
+  }
+]

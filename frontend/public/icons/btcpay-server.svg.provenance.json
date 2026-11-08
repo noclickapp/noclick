@@ -1,0 +1,6 @@
+{
+  "path": "frontend/public/icons/btcpay-server.svg",
+  "source": "https://raw.githubusercontent.com/btcpayserver/btcpayserver/master/BTCPayServer/wwwroot/img/logo.svg",
+  "license": "MIT; BTCPay Server project logo used to identify the integration (https://github.com/btcpayserver/btcpayserver/blob/master/LICENSE)",
+  "sha256": "77bb7df5cb77328dd710053ed18a3a92228f8fe0c39fddf0a91c016703a9d019"
+}
