@@ -1,0 +1,1064 @@
+{
+  "$defs": {
+    "ContactDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "E",
+            "A",
+            "PH",
+            "WAPH"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "value"
+      ],
+      "title": "ContactDetail",
+      "type": "object"
+    },
+    "TwoChatAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "2chat_api_key",
+          "default": "2chat_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "2Chat API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your 2Chat API key from Developers \u2192 API access. NoClick sends it in the X-User-API-Key header to api.p.2chat.io. The account read verifies which account accepts the key.",
+      "x-credential-url": "https://app.2chat.io/developers?tab=api-access"
+    },
+    "TwoChatAddConversationTagConfig": {
+      "additionalProperties": false,
+      "description": "Add Tag To Conversation.",
+      "properties": {
+        "operation": {
+          "const": "add_conversation_tag",
+          "default": "add_conversation_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag_uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Tag Uuid",
+          "type": "string"
+        },
+        "session_key": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Session Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_uuid",
+        "session_key"
+      ],
+      "title": "TwoChatAddConversationTagConfig",
+      "type": "object"
+    },
+    "TwoChatCreateContactConfig": {
+      "additionalProperties": false,
+      "description": "Create Contact.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "first_name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "channel_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Channel Uuid"
+        },
+        "contact_detail": {
+          "description": "Published request-body spelling: contact_detail (singular).",
+          "items": {
+            "$ref": "#/$defs/ContactDetail"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Contact Detail",
+          "type": "array"
+        }
+      },
+      "required": [
+        "first_name",
+        "contact_detail"
+      ],
+      "title": "TwoChatCreateContactConfig",
+      "type": "object"
+    },
+    "TwoChatCreateTagConfig": {
+      "additionalProperties": false,
+      "description": "Create Tag.",
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "session_key": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Key"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "TwoChatCreateTagConfig",
+      "type": "object"
+    },
+    "TwoChatDeleteContactConfig": {
+      "additionalProperties": false,
+      "description": "Delete Contact.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Contact Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_uuid"
+      ],
+      "title": "TwoChatDeleteContactConfig",
+      "type": "object"
+    },
+    "TwoChatDeleteTagConfig": {
+      "additionalProperties": false,
+      "description": "Delete Tag.",
+      "properties": {
+        "operation": {
+          "const": "delete_tag",
+          "default": "delete_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag_uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Tag Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_uuid"
+      ],
+      "title": "TwoChatDeleteTagConfig",
+      "type": "object"
+    },
+    "TwoChatGetAccountConfig": {
+      "additionalProperties": false,
+      "description": "Get Account Information.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TwoChatGetAccountConfig",
+      "type": "object"
+    },
+    "TwoChatGetContactConfig": {
+      "additionalProperties": false,
+      "description": "Get Contact.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Contact Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_uuid"
+      ],
+      "title": "TwoChatGetContactConfig",
+      "type": "object"
+    },
+    "TwoChatGetConversationTagsConfig": {
+      "additionalProperties": false,
+      "description": "Get Conversation Tags.",
+      "properties": {
+        "operation": {
+          "const": "get_conversation_tags",
+          "default": "get_conversation_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_key": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Session Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_key"
+      ],
+      "title": "TwoChatGetConversationTagsConfig",
+      "type": "object"
+    },
+    "TwoChatGetGroupConfig": {
+      "additionalProperties": false,
+      "description": "List WhatsApp Group Participants.",
+      "properties": {
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "whatsapp_group_uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Whatsapp Group Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "whatsapp_group_uuid"
+      ],
+      "title": "TwoChatGetGroupConfig",
+      "type": "object"
+    },
+    "TwoChatGetMessageConfig": {
+      "additionalProperties": false,
+      "description": "Get Single Message.",
+      "properties": {
+        "operation": {
+          "const": "get_message",
+          "default": "get_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_key": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Session Key",
+          "type": "string"
+        },
+        "message_uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Message Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_key",
+        "message_uuid"
+      ],
+      "title": "TwoChatGetMessageConfig",
+      "type": "object"
+    },
+    "TwoChatGetMessagesConfig": {
+      "additionalProperties": false,
+      "description": "Get Messages.",
+      "properties": {
+        "operation": {
+          "const": "get_messages",
+          "default": "get_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "connected_number": {
+          "description": "Your connected WhatsApp number in E.164 format.",
+          "pattern": "^\\+[1-9][0-9]{6,14}$",
+          "title": "Connected Number",
+          "type": "string"
+        },
+        "to_number": {
+          "description": "Recipient in E.164 format.",
+          "pattern": "^\\+[1-9][0-9]{6,14}$",
+          "title": "To Number",
+          "type": "string"
+        },
+        "page_number": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zero-based result page; each call returns one page.",
+          "title": "Page Number"
+        }
+      },
+      "required": [
+        "connected_number",
+        "to_number"
+      ],
+      "title": "TwoChatGetMessagesConfig",
+      "type": "object"
+    },
+    "TwoChatGetNumberConfig": {
+      "additionalProperties": false,
+      "description": "Get Number.",
+      "properties": {
+        "operation": {
+          "const": "get_number",
+          "default": "get_number",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Channel Uuid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_uuid"
+      ],
+      "title": "TwoChatGetNumberConfig",
+      "type": "object"
+    },
+    "TwoChatListContactsConfig": {
+      "additionalProperties": false,
+      "description": "List Contacts.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "results_per_page": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results Per Page",
+          "type": "integer"
+        },
+        "page_number": {
+          "default": 0,
+          "description": "Zero-based result page; each call returns one page.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "channel_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Channel Uuid"
+        }
+      },
+      "title": "TwoChatListContactsConfig",
+      "type": "object"
+    },
+    "TwoChatListConversationsConfig": {
+      "additionalProperties": false,
+      "description": "List Conversations.",
+      "properties": {
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "channel_uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Channel Uuid",
+          "type": "string"
+        },
+        "page_number": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zero-based result page; each call returns one page.",
+          "title": "Page Number"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{3,20}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        }
+      },
+      "required": [
+        "channel_uuid"
+      ],
+      "title": "TwoChatListConversationsConfig",
+      "type": "object"
+    },
+    "TwoChatListGroupsConfig": {
+      "additionalProperties": false,
+      "description": "List WhatsApp Groups.",
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "connected_number": {
+          "description": "Your connected WhatsApp number in E.164 format.",
+          "pattern": "^\\+[1-9][0-9]{6,14}$",
+          "title": "Connected Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "connected_number"
+      ],
+      "title": "TwoChatListGroupsConfig",
+      "type": "object"
+    },
+    "TwoChatListNumbersConfig": {
+      "additionalProperties": false,
+      "description": "List Numbers.",
+      "properties": {
+        "operation": {
+          "const": "list_numbers",
+          "default": "list_numbers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page_number": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zero-based result page; each call returns one page.",
+          "title": "Page Number"
+        },
+        "results_per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Results Per Page"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "connected",
+                "disconnected",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "connected",
+            "disconnected",
+            "all"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "TwoChatListNumbersConfig",
+      "type": "object"
+    },
+    "TwoChatListTagsConfig": {
+      "additionalProperties": false,
+      "description": "List Tags.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-based result page; each call returns one page.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 20,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "TwoChatListTagsConfig",
+      "type": "object"
+    },
+    "TwoChatListUsersConfig": {
+      "additionalProperties": false,
+      "description": "List Users.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TwoChatListUsersConfig",
+      "type": "object"
+    },
+    "TwoChatListWebhooksConfig": {
+      "additionalProperties": false,
+      "description": "List All Webhooks.",
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TwoChatListWebhooksConfig",
+      "type": "object"
+    },
+    "TwoChatRemoveConversationTagConfig": {
+      "additionalProperties": false,
+      "description": "Remove Tag From Conversation.",
+      "properties": {
+        "operation": {
+          "const": "remove_conversation_tag",
+          "default": "remove_conversation_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag_uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Tag Uuid",
+          "type": "string"
+        },
+        "session_key": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Session Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_uuid",
+        "session_key"
+      ],
+      "title": "TwoChatRemoveConversationTagConfig",
+      "type": "object"
+    },
+    "TwoChatSearchContactsConfig": {
+      "additionalProperties": false,
+      "description": "Search Contacts.",
+      "properties": {
+        "operation": {
+          "const": "search_contacts",
+          "default": "search_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "results_per_page": {
+          "default": 30,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Results Per Page",
+          "type": "integer"
+        },
+        "page_number": {
+          "default": 0,
+          "description": "Zero-based result page; each call returns one page.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "channel_uuid": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Channel Uuid"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "TwoChatSearchContactsConfig",
+      "type": "object"
+    },
+    "TwoChatSendMessageConfig": {
+      "additionalProperties": false,
+      "description": "Send Text / Media Message.",
+      "properties": {
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from_number": {
+          "description": "Your connected sending number in E.164 format.",
+          "pattern": "^\\+[1-9][0-9]{6,14}$",
+          "title": "From Number",
+          "type": "string"
+        },
+        "to_number": {
+          "description": "Recipient in E.164 format.",
+          "pattern": "^\\+[1-9][0-9]{6,14}$",
+          "title": "To Number",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 65536,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "pattern": "^https://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Public media URL, maximum 16 MB; omit for text only.",
+          "title": "Url"
+        }
+      },
+      "required": [
+        "from_number",
+        "to_number",
+        "text"
+      ],
+      "title": "TwoChatSendMessageConfig",
+      "type": "object"
+    },
+    "TwoChatSendSmsConfig": {
+      "additionalProperties": false,
+      "description": "Send An SMS Message.",
+      "properties": {
+        "operation": {
+          "const": "send_sms",
+          "default": "send_sms",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from_number": {
+          "description": "Your connected sending number in E.164 format.",
+          "pattern": "^\\+[1-9][0-9]{6,14}$",
+          "title": "From Number",
+          "type": "string"
+        },
+        "to_number": {
+          "description": "Recipient in E.164 format.",
+          "pattern": "^\\+[1-9][0-9]{6,14}$",
+          "title": "To Number",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 65536,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "from_number",
+        "to_number",
+        "text"
+      ],
+      "title": "TwoChatSendSmsConfig",
+      "type": "object"
+    },
+    "TwoChatUpdateContactConfig": {
+      "additionalProperties": false,
+      "description": "Update Contact.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Contact Uuid",
+          "type": "string"
+        },
+        "first_name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        }
+      },
+      "required": [
+        "contact_uuid",
+        "first_name"
+      ],
+      "title": "TwoChatUpdateContactConfig",
+      "type": "object"
+    },
+    "TwoChatUpdateTagConfig": {
+      "additionalProperties": false,
+      "description": "Update Tag.",
+      "properties": {
+        "operation": {
+          "const": "update_tag",
+          "default": "update_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tag_uuid": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Tag Uuid",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "pattern": "^#[0-9A-Fa-f]{6}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        }
+      },
+      "required": [
+        "tag_uuid",
+        "name"
+      ],
+      "title": "TwoChatUpdateTagConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_conversation_tag": "#/$defs/TwoChatAddConversationTagConfig",
+          "create_contact": "#/$defs/TwoChatCreateContactConfig",
+          "create_tag": "#/$defs/TwoChatCreateTagConfig",
+          "delete_contact": "#/$defs/TwoChatDeleteContactConfig",
+          "delete_tag": "#/$defs/TwoChatDeleteTagConfig",
+          "get_account": "#/$defs/TwoChatGetAccountConfig",
+          "get_contact": "#/$defs/TwoChatGetContactConfig",
+          "get_conversation_tags": "#/$defs/TwoChatGetConversationTagsConfig",
+          "get_group": "#/$defs/TwoChatGetGroupConfig",
+          "get_message": "#/$defs/TwoChatGetMessageConfig",
+          "get_messages": "#/$defs/TwoChatGetMessagesConfig",
+          "get_number": "#/$defs/TwoChatGetNumberConfig",
+          "list_contacts": "#/$defs/TwoChatListContactsConfig",
+          "list_conversations": "#/$defs/TwoChatListConversationsConfig",
+          "list_groups": "#/$defs/TwoChatListGroupsConfig",
+          "list_numbers": "#/$defs/TwoChatListNumbersConfig",
+          "list_tags": "#/$defs/TwoChatListTagsConfig",
+          "list_users": "#/$defs/TwoChatListUsersConfig",
+          "list_webhooks": "#/$defs/TwoChatListWebhooksConfig",
+          "remove_conversation_tag": "#/$defs/TwoChatRemoveConversationTagConfig",
+          "search_contacts": "#/$defs/TwoChatSearchContactsConfig",
+          "send_message": "#/$defs/TwoChatSendMessageConfig",
+          "send_sms": "#/$defs/TwoChatSendSmsConfig",
+          "update_contact": "#/$defs/TwoChatUpdateContactConfig",
+          "update_tag": "#/$defs/TwoChatUpdateTagConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TwoChatGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatSearchContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatListNumbersConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatGetNumberConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatSendMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatGetMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatGetMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatListConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatGetGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatSendSmsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatUpdateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatDeleteTagConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatGetConversationTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatAddConversationTagConfig"
+        },
+        {
+          "$ref": "#/$defs/TwoChatRemoveConversationTagConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TwoChatAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "2chat Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
