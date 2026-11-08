@@ -1,0 +1,1404 @@
+{
+  "$defs": {
+    "AddRows": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "add_rows",
+          "default": "add_rows",
+          "title": "Add Rows",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "rows": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "items": {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "description": "Rows keyed by your list column names; sent as a JSON array.",
+          "title": "Rows",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "list_id",
+        "rows"
+      ],
+      "title": "AddRows",
+      "type": "object"
+    },
+    "AgentInput": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "agent",
+          "default": "agent",
+          "title": "Type",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "field": {
+          "minLength": 1,
+          "title": "Field",
+          "type": "string"
+        },
+        "collection": {
+          "default": 1,
+          "title": "Collection",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "field"
+      ],
+      "title": "AgentInput",
+      "type": "object"
+    },
+    "AgentyAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "agenty_api_key",
+          "default": "agenty_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Agenty API Key",
+      "type": "object",
+      "x-credential-instructions": "In Agenty, open Settings, then API keys. Copy your API key and paste it here without the Bearer prefix. NoClick verifies the key by listing your agents.",
+      "x-credential-url": "https://cloud.agenty.com/settings/api-keys"
+    },
+    "CreateList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Create List",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateList",
+      "type": "object"
+    },
+    "DeleteList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_list",
+          "default": "delete_list",
+          "title": "Delete List",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "List ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteList",
+      "type": "object"
+    },
+    "DeleteRow": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_row",
+          "default": "delete_row",
+          "title": "Delete Row",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Row ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "id"
+      ],
+      "title": "DeleteRow",
+      "type": "object"
+    },
+    "DeleteSchedule": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_schedule",
+          "default": "delete_schedule",
+          "title": "Delete Schedule",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Agent Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "DeleteSchedule",
+      "type": "object"
+    },
+    "GetInput": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_input",
+          "default": "get_input",
+          "title": "Get Input",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Agent Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "GetInput",
+      "type": "object"
+    },
+    "GetJob": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Get Job",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "exclusiveMinimum": 0,
+          "title": "Job Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJob",
+      "type": "object"
+    },
+    "GetJobLogs": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Each call returns one provider page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider field to sort by.",
+          "title": "Sort"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "get_job_logs",
+          "default": "get_job_logs",
+          "title": "Get Job Logs",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "exclusiveMinimum": 0,
+          "title": "Job Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJobLogs",
+      "type": "object"
+    },
+    "GetJobResult": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Each call returns one provider page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider field to sort by.",
+          "title": "Sort"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "get_job_result",
+          "default": "get_job_result",
+          "title": "Get Job Result",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "exclusiveMinimum": 0,
+          "title": "Job Id",
+          "type": "integer"
+        },
+        "collection": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Collection",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetJobResult",
+      "type": "object"
+    },
+    "GetList": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Each call returns one provider page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider field to sort by.",
+          "title": "Sort"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Get List",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "List Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "GetList",
+      "type": "object"
+    },
+    "GetRow": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_row",
+          "default": "get_row",
+          "title": "Get Row",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Row ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "id"
+      ],
+      "title": "GetRow",
+      "type": "object"
+    },
+    "GetSchedule": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_schedule",
+          "default": "get_schedule",
+          "title": "Get Schedule",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Agent Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "GetSchedule",
+      "type": "object"
+    },
+    "ListAgents": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Each call returns one provider page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider field to sort by.",
+          "title": "Sort"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_agents",
+          "default": "list_agents",
+          "title": "List Agents",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListAgents",
+      "type": "object"
+    },
+    "ListInput": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "list",
+          "default": "list",
+          "title": "Type",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "field": {
+          "minLength": 1,
+          "title": "Field",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "field"
+      ],
+      "title": "ListInput",
+      "type": "object"
+    },
+    "ListJobs": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Each call returns one provider page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider field to sort by.",
+          "title": "Sort"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "List Jobs",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Agent Id"
+        }
+      },
+      "title": "ListJobs",
+      "type": "object"
+    },
+    "ListLists": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Each call returns one provider page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider field to sort by.",
+          "title": "Sort"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "List Lists",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListLists",
+      "type": "object"
+    },
+    "ListRows": {
+      "additionalProperties": false,
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Records to skip. Each call returns one provider page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider field to sort by.",
+          "title": "Sort"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_rows",
+          "default": "list_rows",
+          "title": "List Rows",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "List Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "ListRows",
+      "type": "object"
+    },
+    "ManualInput": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "manual",
+          "default": "manual",
+          "title": "Type",
+          "type": "string"
+        },
+        "data": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 50000,
+          "minItems": 1,
+          "title": "Data",
+          "type": "array"
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "title": "ManualInput",
+      "type": "object"
+    },
+    "SetSchedule": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "set_schedule",
+          "default": "set_schedule",
+          "title": "Set Schedule",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Agent Id",
+          "type": "string"
+        },
+        "type": {
+          "default": "cron",
+          "enum": [
+            "cron",
+            "interval"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "expression": {
+          "description": "Agenty cron or interval expression.",
+          "minLength": 1,
+          "title": "Expression",
+          "type": "string"
+        },
+        "frequency": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Frequency"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "is_enabled": {
+          "default": true,
+          "title": "Is Enabled",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "agent_id",
+        "expression"
+      ],
+      "title": "SetSchedule",
+      "type": "object"
+    },
+    "StartJob": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "start_job",
+          "default": "start_job",
+          "title": "Start Job",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Agent Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "StartJob",
+      "type": "object"
+    },
+    "StopJob": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "stop_job",
+          "default": "stop_job",
+          "title": "Stop Job",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "job_id": {
+          "exclusiveMinimum": 0,
+          "title": "Job Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "StopJob",
+      "type": "object"
+    },
+    "ToggleSchedule": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "toggle_schedule",
+          "default": "toggle_schedule",
+          "title": "Toggle Schedule",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Agent Id",
+          "type": "string"
+        },
+        "is_enabled": {
+          "title": "Is Enabled",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "agent_id",
+        "is_enabled"
+      ],
+      "title": "ToggleSchedule",
+      "type": "object"
+    },
+    "URLInput": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "const": "url",
+          "default": "url",
+          "title": "Type",
+          "type": "string"
+        },
+        "data": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Data",
+          "type": "array"
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "title": "URLInput",
+      "type": "object"
+    },
+    "UpdateInput": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_input",
+          "default": "update_input",
+          "title": "Update Input",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "agent_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Agent Id",
+          "type": "string"
+        },
+        "input_source": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "discriminator": {
+              "mapping": {
+                "agent": "#/$defs/AgentInput",
+                "list": "#/$defs/ListInput",
+                "manual": "#/$defs/ManualInput",
+                "url": "#/$defs/URLInput"
+              },
+              "propertyName": "type"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/ManualInput"
+              },
+              {
+                "$ref": "#/$defs/URLInput"
+              },
+              {
+                "$ref": "#/$defs/ListInput"
+              },
+              {
+                "$ref": "#/$defs/AgentInput"
+              }
+            ]
+          },
+          "description": "Agenty input source JSON, for example {\"type\":\"manual\",\"data\":[\"https://example.com/page-1\"]}.",
+          "title": "Input Source",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "agent_id",
+        "input_source"
+      ],
+      "title": "UpdateInput",
+      "type": "object"
+    },
+    "UpdateList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_list",
+          "default": "update_list",
+          "title": "Update List",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "list_id",
+        "name"
+      ],
+      "title": "UpdateList",
+      "type": "object"
+    },
+    "UpdateRow": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_row",
+          "default": "update_row",
+          "title": "Update Row",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "list_id": {
+          "exclusiveMinimum": 0,
+          "title": "List Id",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Row ID",
+          "type": "string"
+        },
+        "row": {
+          "contentMediaType": "application/json",
+          "contentSchema": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "minProperties": 1,
+            "type": "object"
+          },
+          "description": "Values keyed by your list column names.",
+          "title": "Row",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "list_id",
+        "id",
+        "row"
+      ],
+      "title": "UpdateRow",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_rows": "#/$defs/AddRows",
+          "create_list": "#/$defs/CreateList",
+          "delete_list": "#/$defs/DeleteList",
+          "delete_row": "#/$defs/DeleteRow",
+          "delete_schedule": "#/$defs/DeleteSchedule",
+          "get_input": "#/$defs/GetInput",
+          "get_job": "#/$defs/GetJob",
+          "get_job_logs": "#/$defs/GetJobLogs",
+          "get_job_result": "#/$defs/GetJobResult",
+          "get_list": "#/$defs/GetList",
+          "get_row": "#/$defs/GetRow",
+          "get_schedule": "#/$defs/GetSchedule",
+          "list_agents": "#/$defs/ListAgents",
+          "list_jobs": "#/$defs/ListJobs",
+          "list_lists": "#/$defs/ListLists",
+          "list_rows": "#/$defs/ListRows",
+          "set_schedule": "#/$defs/SetSchedule",
+          "start_job": "#/$defs/StartJob",
+          "stop_job": "#/$defs/StopJob",
+          "toggle_schedule": "#/$defs/ToggleSchedule",
+          "update_input": "#/$defs/UpdateInput",
+          "update_list": "#/$defs/UpdateList",
+          "update_row": "#/$defs/UpdateRow"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListAgents"
+        },
+        {
+          "$ref": "#/$defs/ListJobs"
+        },
+        {
+          "$ref": "#/$defs/GetJob"
+        },
+        {
+          "$ref": "#/$defs/StartJob"
+        },
+        {
+          "$ref": "#/$defs/StopJob"
+        },
+        {
+          "$ref": "#/$defs/GetJobResult"
+        },
+        {
+          "$ref": "#/$defs/GetJobLogs"
+        },
+        {
+          "$ref": "#/$defs/GetInput"
+        },
+        {
+          "$ref": "#/$defs/UpdateInput"
+        },
+        {
+          "$ref": "#/$defs/ListLists"
+        },
+        {
+          "$ref": "#/$defs/GetList"
+        },
+        {
+          "$ref": "#/$defs/CreateList"
+        },
+        {
+          "$ref": "#/$defs/UpdateList"
+        },
+        {
+          "$ref": "#/$defs/DeleteList"
+        },
+        {
+          "$ref": "#/$defs/ListRows"
+        },
+        {
+          "$ref": "#/$defs/GetRow"
+        },
+        {
+          "$ref": "#/$defs/AddRows"
+        },
+        {
+          "$ref": "#/$defs/UpdateRow"
+        },
+        {
+          "$ref": "#/$defs/DeleteRow"
+        },
+        {
+          "$ref": "#/$defs/GetSchedule"
+        },
+        {
+          "$ref": "#/$defs/SetSchedule"
+        },
+        {
+          "$ref": "#/$defs/ToggleSchedule"
+        },
+        {
+          "$ref": "#/$defs/DeleteSchedule"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AgentyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Agenty Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

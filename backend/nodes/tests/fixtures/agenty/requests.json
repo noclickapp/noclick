@@ -1,0 +1,302 @@
+[
+  [
+    {
+      "operation": "list_agents",
+      "offset": 20,
+      "limit": 10,
+      "search": "Products",
+      "order": "desc",
+      "sort": "name"
+    },
+    "GET",
+    "/v2/agents",
+    {
+      "offset": "20",
+      "limit": "10",
+      "search": "Products",
+      "order": "desc",
+      "sort": "name"
+    },
+    null
+  ],
+  [
+    {
+      "operation": "list_jobs",
+      "agent_id": "abcd123456"
+    },
+    "GET",
+    "/v2/jobs",
+    {
+      "offset": "0",
+      "limit": "100",
+      "agent_id": "abcd123456"
+    },
+    null
+  ],
+  [
+    {
+      "operation": "get_job",
+      "job_id": 123
+    },
+    "GET",
+    "/v2/jobs/123",
+    {},
+    null
+  ],
+  [
+    {
+      "operation": "start_job",
+      "agent_id": "abcd123456"
+    },
+    "POST",
+    "/v2/jobs/start",
+    {},
+    {
+      "agent_id": "abcd123456"
+    }
+  ],
+  [
+    {
+      "operation": "stop_job",
+      "job_id": 123
+    },
+    "GET",
+    "/v2/jobs/123/stop",
+    {},
+    null
+  ],
+  [
+    {
+      "operation": "get_job_result",
+      "job_id": 123,
+      "collection": 2
+    },
+    "GET",
+    "/v2/jobs/123/result",
+    {
+      "offset": "0",
+      "limit": "100",
+      "collection": "2"
+    },
+    null
+  ],
+  [
+    {
+      "operation": "get_job_logs",
+      "job_id": 123
+    },
+    "GET",
+    "/v2/jobs/123/logs",
+    {
+      "offset": "0",
+      "limit": "100"
+    },
+    null
+  ],
+  [
+    {
+      "operation": "get_input",
+      "agent_id": "abcd123456"
+    },
+    "GET",
+    "/v2/inputs/abcd123456",
+    {},
+    null
+  ],
+  [
+    {
+      "operation": "update_input",
+      "agent_id": "abcd123456",
+      "input_source": "{\"type\": \"manual\", \"data\": [\"https://example.com/page-1\", \"https://example.com/page-2\"]}"
+    },
+    "PUT",
+    "/v2/inputs/abcd123456",
+    {},
+    {
+      "type": "manual",
+      "data": [
+        "https://example.com/page-1",
+        "https://example.com/page-2"
+      ]
+    }
+  ],
+  [
+    {
+      "operation": "list_lists"
+    },
+    "GET",
+    "/v2/lists",
+    {
+      "offset": "0",
+      "limit": "100"
+    },
+    null
+  ],
+  [
+    {
+      "operation": "get_list",
+      "list_id": 123
+    },
+    "GET",
+    "/v2/lists/123",
+    {
+      "offset": "0",
+      "limit": "100"
+    },
+    null
+  ],
+  [
+    {
+      "operation": "create_list",
+      "name": "Product URLs",
+      "description": "List of product URLs to scrape"
+    },
+    "POST",
+    "/v2/lists",
+    {},
+    {
+      "name": "Product URLs",
+      "description": "List of product URLs to scrape"
+    }
+  ],
+  [
+    {
+      "operation": "update_list",
+      "list_id": 123,
+      "name": "Product URLs"
+    },
+    "PUT",
+    "/v2/lists/123",
+    {},
+    {
+      "name": "Product URLs"
+    }
+  ],
+  [
+    {
+      "operation": "delete_list",
+      "id": 123
+    },
+    "DELETE",
+    "/v2/lists/123",
+    {},
+    null
+  ],
+  [
+    {
+      "operation": "list_rows",
+      "list_id": 123
+    },
+    "GET",
+    "/v2/lists/123/rows",
+    {
+      "offset": "0",
+      "limit": "100"
+    },
+    null
+  ],
+  [
+    {
+      "operation": "get_row",
+      "list_id": 123,
+      "id": "row-1"
+    },
+    "GET",
+    "/v2/lists/123/rows/row-1",
+    {},
+    null
+  ],
+  [
+    {
+      "operation": "add_rows",
+      "list_id": 123,
+      "rows": "[{\"url\": \"https://example.com/page-1\"}, {\"url\": \"https://example.com/page-2\"}]"
+    },
+    "POST",
+    "/v2/lists/123/rows",
+    {},
+    [
+      {
+        "url": "https://example.com/page-1"
+      },
+      {
+        "url": "https://example.com/page-2"
+      }
+    ]
+  ],
+  [
+    {
+      "operation": "update_row",
+      "list_id": 123,
+      "id": "row-1",
+      "row": "{\"url\": \"https://example.com/page-1\"}"
+    },
+    "PUT",
+    "/v2/lists/123/rows/row-1",
+    {},
+    {
+      "url": "https://example.com/page-1"
+    }
+  ],
+  [
+    {
+      "operation": "delete_row",
+      "list_id": 123,
+      "id": "row-1"
+    },
+    "DELETE",
+    "/v2/lists/123/rows/row-1",
+    {},
+    null
+  ],
+  [
+    {
+      "operation": "get_schedule",
+      "agent_id": "abcd123456"
+    },
+    "GET",
+    "/v2/scheduler/abcd123456",
+    {},
+    null
+  ],
+  [
+    {
+      "operation": "set_schedule",
+      "agent_id": "abcd123456",
+      "expression": "0 9 * * *",
+      "description": "Every day at 9 AM"
+    },
+    "PUT",
+    "/v2/scheduler/abcd123456",
+    {},
+    {
+      "type": "cron",
+      "expression": "0 9 * * *",
+      "description": "Every day at 9 AM",
+      "is_enabled": true
+    }
+  ],
+  [
+    {
+      "operation": "toggle_schedule",
+      "agent_id": "abcd123456",
+      "is_enabled": false
+    },
+    "PATCH",
+    "/v2/scheduler/abcd123456",
+    {},
+    {
+      "is_enabled": false
+    }
+  ],
+  [
+    {
+      "operation": "delete_schedule",
+      "agent_id": "abcd123456"
+    },
+    "DELETE",
+    "/v2/scheduler/abcd123456",
+    {},
+    null
+  ]
+]
