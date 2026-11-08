@@ -1,0 +1,93 @@
+{
+  "get_account": {
+    "operation": "get_account"
+  },
+  "list_products": {
+    "operation": "list_products"
+  },
+  "get_product": {
+    "operation": "get_product",
+    "id": "prod_xxxxxxxxxxxxxx"
+  },
+  "list_memberships": {
+    "operation": "list_memberships"
+  },
+  "get_membership": {
+    "operation": "get_membership",
+    "id": "mem_xxxxxxxxxxxxxx"
+  },
+  "list_payments": {
+    "operation": "list_payments"
+  },
+  "get_payment": {
+    "operation": "get_payment",
+    "id": "pay_xxxxxxxxxxxxxx"
+  },
+  "list_refunds": {
+    "operation": "list_refunds"
+  },
+  "get_refund": {
+    "operation": "get_refund",
+    "id": "ref_xxxxxxxxxxxxxx"
+  },
+  "list_promo_codes": {
+    "operation": "list_promo_codes",
+    "account_id": "value"
+  },
+  "get_promo_code": {
+    "operation": "get_promo_code",
+    "id": "promo_xxxxxxxxxxxxxx"
+  },
+  "create_product": {
+    "operation": "create_product",
+    "title": "Interior Deep Clean"
+  },
+  "update_product": {
+    "operation": "update_product",
+    "id": "prod_xxxxxxxxxxxxxx",
+    "title": "Interior Deep Clean"
+  },
+  "delete_product": {
+    "operation": "delete_product",
+    "id": "prod_xxxxxxxxxxxxxx"
+  },
+  "publish_product": {
+    "operation": "publish_product",
+    "id": "prod_xxxxxxxxxxxxxx"
+  },
+  "unpublish_product": {
+    "operation": "unpublish_product",
+    "id": "prod_xxxxxxxxxxxxxx"
+  },
+  "update_membership": {
+    "operation": "update_membership",
+    "id": "mem_xxxxxxxxxxxxxx",
+    "cancel_at_period_end": true
+  },
+  "cancel_membership": {
+    "operation": "cancel_membership",
+    "id": "mem_xxxxxxxxxxxxxx"
+  },
+  "refund_payment": {
+    "operation": "refund_payment",
+    "id": "pay_xxxxxxxxxxxxxx"
+  },
+  "create_promo_code": {
+    "operation": "create_promo_code",
+    "account_id": "biz_xxxxxxxxxxxxxx",
+    "amount_off": 25,
+    "base_currency": "usd",
+    "code": "AFFILIATE25",
+    "new_users_only": true,
+    "promo_duration_months": 3,
+    "promo_type": "percentage"
+  },
+  "activate_promo_code": {
+    "operation": "activate_promo_code",
+    "id": "promo_xxxxxxxxxxxxxx"
+  },
+  "deactivate_promo_code": {
+    "operation": "deactivate_promo_code",
+    "id": "promo_xxxxxxxxxxxxxx"
+  }
+}
