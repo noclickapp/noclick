@@ -5534,7 +5534,6 @@
         "data_control:write",
         "emails:read",
         "emails:write",
-        "external_emails:create",
         "external_emails:write",
         "external_id:delete",
         "external_id:read",
