@@ -1,0 +1,37 @@
+{
+ "provider": "talenthr",
+ "ready": false,
+ "blocking": [],
+ "advisory": [],
+ "stats": {
+  "operations": 44,
+  "skipped": 0,
+  "request_ok": 44,
+  "authored_parser_ok": 44,
+  "generated_only": 0,
+  "local_ok": 0
+ },
+ "state": "postman-checked",
+ "operation_states": {
+  "list_employees": "postman-checked",
+  "get_employee": "postman-checked",
+  "hire_employee": "postman-checked",
+  "update_employee": "postman-checked",
+  "terminate_employee": "postman-checked",
+  "list_departments": "postman-checked",
+  "get_department": "postman-checked",
+  "create_department": "postman-checked",
+  "update_department": "postman-checked",
+  "delete_department": "postman-checked",
+  "list_locations": "postman-checked",
+  "get_location": "postman-checked",
+  "delete_location": "postman-checked",
+  "list_time_off_types": "postman-checked",
+  "list_time_off_requests": "postman-checked",
+  "reply_time_off_request": "postman-checked",
+  "cancel_time_off_request": "postman-checked",
+  "list_employee_job_records": "postman-checked",
+  "get_employee_job": "postman-checked",
+  "list_time_off_budgets": "postman-checked"
+ }
+}

@@ -1,0 +1,846 @@
+{
+  "$defs": {
+    "EmploymentStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "employment_status_id": {
+          "exclusiveMinimum": 0,
+          "title": "Employment Status Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "employment_status_id"
+      ],
+      "title": "EmploymentStatus",
+      "type": "object"
+    },
+    "TalenthrApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "talenthr_api_key",
+          "default": "talenthr_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "TalentHR API Key",
+      "type": "object",
+      "x-credential-instructions": "In TalentHR, open Settings \u2192 Domain settings \u2192 API and copy an API key. Paste the key alone. NoClick sends it as the Basic username with an empty password. A read-only key supports reads; writes require a full key and the appropriate permissions.",
+      "x-credential-url": "https://help.talenthr.io/hc/en-us/articles/17627841146909-Can-I-integrate-my-site-with-TalentHR-Do-you-offer-an-API"
+    },
+    "TalenthrCancelTimeOffRequestConfig": {
+      "additionalProperties": false,
+      "description": "Cancel time off request.",
+      "properties": {
+        "employee_id": {
+          "description": "TalentHR employee ID.",
+          "exclusiveMinimum": 0,
+          "title": "Employee Id",
+          "type": "integer"
+        },
+        "request_id": {
+          "exclusiveMinimum": 0,
+          "title": "Request Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "cancel_time_off_request",
+          "default": "cancel_time_off_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "employee_id",
+        "request_id"
+      ],
+      "title": "TalenthrCancelTimeOffRequestConfig",
+      "type": "object"
+    },
+    "TalenthrCreateDepartmentConfig": {
+      "additionalProperties": false,
+      "description": "Create a department.",
+      "properties": {
+        "operation": {
+          "const": "create_department",
+          "default": "create_department",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "TalenthrCreateDepartmentConfig",
+      "type": "object"
+    },
+    "TalenthrDeleteDepartmentConfig": {
+      "additionalProperties": false,
+      "description": "Delete a department.",
+      "properties": {
+        "department_id": {
+          "exclusiveMinimum": 0,
+          "title": "Department Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_department",
+          "default": "delete_department",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "department_id"
+      ],
+      "title": "TalenthrDeleteDepartmentConfig",
+      "type": "object"
+    },
+    "TalenthrDeleteLocationConfig": {
+      "additionalProperties": false,
+      "description": "Delete a location.",
+      "properties": {
+        "location_id": {
+          "exclusiveMinimum": 0,
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "delete_location",
+          "default": "delete_location",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "TalenthrDeleteLocationConfig",
+      "type": "object"
+    },
+    "TalenthrGetDepartmentConfig": {
+      "additionalProperties": false,
+      "description": "Get  a department.",
+      "properties": {
+        "department_id": {
+          "exclusiveMinimum": 0,
+          "title": "Department Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_department",
+          "default": "get_department",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "department_id"
+      ],
+      "title": "TalenthrGetDepartmentConfig",
+      "type": "object"
+    },
+    "TalenthrGetEmployeeConfig": {
+      "additionalProperties": false,
+      "description": "Get an employee.",
+      "properties": {
+        "employee_id": {
+          "description": "TalentHR employee ID.",
+          "exclusiveMinimum": 0,
+          "title": "Employee Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_employee",
+          "default": "get_employee",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "employee_id"
+      ],
+      "title": "TalenthrGetEmployeeConfig",
+      "type": "object"
+    },
+    "TalenthrGetEmployeeJobConfig": {
+      "additionalProperties": false,
+      "description": "Get employee job info.",
+      "properties": {
+        "employee_id": {
+          "description": "TalentHR employee ID.",
+          "exclusiveMinimum": 0,
+          "title": "Employee Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_employee_job",
+          "default": "get_employee_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "employee_id"
+      ],
+      "title": "TalenthrGetEmployeeJobConfig",
+      "type": "object"
+    },
+    "TalenthrGetLocationConfig": {
+      "additionalProperties": false,
+      "description": "Get  a location.",
+      "properties": {
+        "location_id": {
+          "exclusiveMinimum": 0,
+          "title": "Location Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "get_location",
+          "default": "get_location",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "TalenthrGetLocationConfig",
+      "type": "object"
+    },
+    "TalenthrHireEmployeeConfig": {
+      "additionalProperties": false,
+      "description": "Hire an employee. TalentHR sends invitation emails and starts onboarding tasks, which can notify task owners.",
+      "properties": {
+        "hire_date": {
+          "format": "date",
+          "title": "Hire Date",
+          "type": "string"
+        },
+        "reports_to_employee_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Manager ID; null makes a new hire the company head.",
+          "title": "Reports To Employee Id"
+        },
+        "employment_status": {
+          "$ref": "#/$defs/EmploymentStatus"
+        },
+        "first_name": {
+          "maxLength": 191,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 191,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 191,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "operation": {
+          "const": "hire_employee",
+          "default": "hire_employee",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "hire_date",
+        "reports_to_employee_id",
+        "employment_status",
+        "first_name",
+        "last_name",
+        "email"
+      ],
+      "title": "TalenthrHireEmployeeConfig",
+      "type": "object"
+    },
+    "TalenthrListDepartmentsConfig": {
+      "additionalProperties": false,
+      "description": "Get all the departments.",
+      "properties": {
+        "operation": {
+          "const": "list_departments",
+          "default": "list_departments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TalenthrListDepartmentsConfig",
+      "type": "object"
+    },
+    "TalenthrListEmployeeJobRecordsConfig": {
+      "additionalProperties": false,
+      "description": "Get employee's job-records.",
+      "properties": {
+        "employee_id": {
+          "description": "TalentHR employee ID.",
+          "exclusiveMinimum": 0,
+          "title": "Employee Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_employee_job_records",
+          "default": "list_employee_job_records",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "employee_id"
+      ],
+      "title": "TalenthrListEmployeeJobRecordsConfig",
+      "type": "object"
+    },
+    "TalenthrListEmployeesConfig": {
+      "additionalProperties": false,
+      "description": "Get directory's info.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Rows per page; this operation returns one page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start at 0; add limit to request the next page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_employees",
+          "default": "list_employees",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Directory filter expression, for example location=36;emp_state=1,2,3,5;",
+          "title": "Filter"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated enabled custom field slugs.",
+          "title": "Custom Fields"
+        }
+      },
+      "title": "TalenthrListEmployeesConfig",
+      "type": "object"
+    },
+    "TalenthrListLocationsConfig": {
+      "additionalProperties": false,
+      "description": "Get all the locations.",
+      "properties": {
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TalenthrListLocationsConfig",
+      "type": "object"
+    },
+    "TalenthrListTimeOffBudgetsConfig": {
+      "additionalProperties": false,
+      "description": "Get employee's time off budgets.",
+      "properties": {
+        "employee_id": {
+          "description": "TalentHR employee ID.",
+          "exclusiveMinimum": 0,
+          "title": "Employee Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_time_off_budgets",
+          "default": "list_time_off_budgets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "employee_id"
+      ],
+      "title": "TalenthrListTimeOffBudgetsConfig",
+      "type": "object"
+    },
+    "TalenthrListTimeOffRequestsConfig": {
+      "additionalProperties": false,
+      "description": "Get employee's time off requests.",
+      "properties": {
+        "limit": {
+          "default": 10,
+          "description": "Rows per page; this operation returns one page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Start at 0; add limit to request the next page.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "employee_id": {
+          "description": "TalentHR employee ID.",
+          "exclusiveMinimum": 0,
+          "title": "Employee Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_time_off_requests",
+          "default": "list_time_off_requests",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort"
+        }
+      },
+      "required": [
+        "employee_id"
+      ],
+      "title": "TalenthrListTimeOffRequestsConfig",
+      "type": "object"
+    },
+    "TalenthrListTimeOffTypesConfig": {
+      "additionalProperties": false,
+      "description": "Get time off types.",
+      "properties": {
+        "operation": {
+          "const": "list_time_off_types",
+          "default": "list_time_off_types",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "TalenthrListTimeOffTypesConfig",
+      "type": "object"
+    },
+    "TalenthrReplyTimeOffRequestConfig": {
+      "additionalProperties": false,
+      "description": "Approve or reject time off request.",
+      "properties": {
+        "employee_id": {
+          "description": "TalentHR employee ID.",
+          "exclusiveMinimum": 0,
+          "title": "Employee Id",
+          "type": "integer"
+        },
+        "request_id": {
+          "exclusiveMinimum": 0,
+          "title": "Request Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "reply_time_off_request",
+          "default": "reply_time_off_request",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "accept": {
+          "description": "True approves; false rejects. TalentHR emails the decision to the employee.",
+          "title": "Accept",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "employee_id",
+        "request_id",
+        "accept"
+      ],
+      "title": "TalenthrReplyTimeOffRequestConfig",
+      "type": "object"
+    },
+    "TalenthrTerminateEmployeeConfig": {
+      "additionalProperties": false,
+      "description": "Terminate an employee.",
+      "properties": {
+        "employee_id": {
+          "description": "TalentHR employee ID.",
+          "exclusiveMinimum": 0,
+          "title": "Employee Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "terminate_employee",
+          "default": "terminate_employee",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "effective_date": {
+          "description": "Termination date. Starts offboarding, emails task owners, reassigns reports and tasks, and removes future records and unanswered/rejected leave requests. Same-day termination revokes access immediately.",
+          "format": "date",
+          "title": "Effective Date",
+          "type": "string"
+        },
+        "termination_reason": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Termination Reason"
+        },
+        "termination_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "termination",
+                "resignation"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Termination Type",
+          "enum": [
+            "termination",
+            "resignation"
+          ],
+          "x-enum-searchable": true
+        },
+        "regrettable_status": {
+          "anyOf": [
+            {
+              "const": "regrettable",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Regrettable Status"
+        }
+      },
+      "required": [
+        "employee_id",
+        "effective_date"
+      ],
+      "title": "TalenthrTerminateEmployeeConfig",
+      "type": "object"
+    },
+    "TalenthrUpdateDepartmentConfig": {
+      "additionalProperties": false,
+      "description": "Update a department.",
+      "properties": {
+        "department_id": {
+          "exclusiveMinimum": 0,
+          "title": "Department Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_department",
+          "default": "update_department",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "department_id",
+        "name"
+      ],
+      "title": "TalenthrUpdateDepartmentConfig",
+      "type": "object"
+    },
+    "TalenthrUpdateEmployeeConfig": {
+      "additionalProperties": false,
+      "description": "Update an employee.",
+      "properties": {
+        "first_name": {
+          "maxLength": 191,
+          "minLength": 1,
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "maxLength": 191,
+          "minLength": 1,
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 191,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "employee_id": {
+          "description": "TalentHR employee ID.",
+          "exclusiveMinimum": 0,
+          "title": "Employee Id",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "update_employee",
+          "default": "update_employee",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "work_phone": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Work Phone"
+        },
+        "mobile_phone": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile Phone"
+        },
+        "employee_number": {
+          "anyOf": [
+            {
+              "maxLength": 191,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Employee Number"
+        },
+        "prevent_email": {
+          "default": true,
+          "description": "Suppress the profile update email where supported.",
+          "title": "Prevent Email",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name",
+        "email",
+        "employee_id"
+      ],
+      "title": "TalenthrUpdateEmployeeConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_time_off_request": "#/$defs/TalenthrCancelTimeOffRequestConfig",
+          "create_department": "#/$defs/TalenthrCreateDepartmentConfig",
+          "delete_department": "#/$defs/TalenthrDeleteDepartmentConfig",
+          "delete_location": "#/$defs/TalenthrDeleteLocationConfig",
+          "get_department": "#/$defs/TalenthrGetDepartmentConfig",
+          "get_employee": "#/$defs/TalenthrGetEmployeeConfig",
+          "get_employee_job": "#/$defs/TalenthrGetEmployeeJobConfig",
+          "get_location": "#/$defs/TalenthrGetLocationConfig",
+          "hire_employee": "#/$defs/TalenthrHireEmployeeConfig",
+          "list_departments": "#/$defs/TalenthrListDepartmentsConfig",
+          "list_employee_job_records": "#/$defs/TalenthrListEmployeeJobRecordsConfig",
+          "list_employees": "#/$defs/TalenthrListEmployeesConfig",
+          "list_locations": "#/$defs/TalenthrListLocationsConfig",
+          "list_time_off_budgets": "#/$defs/TalenthrListTimeOffBudgetsConfig",
+          "list_time_off_requests": "#/$defs/TalenthrListTimeOffRequestsConfig",
+          "list_time_off_types": "#/$defs/TalenthrListTimeOffTypesConfig",
+          "reply_time_off_request": "#/$defs/TalenthrReplyTimeOffRequestConfig",
+          "terminate_employee": "#/$defs/TalenthrTerminateEmployeeConfig",
+          "update_department": "#/$defs/TalenthrUpdateDepartmentConfig",
+          "update_employee": "#/$defs/TalenthrUpdateEmployeeConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TalenthrListEmployeesConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrGetEmployeeConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrHireEmployeeConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrUpdateEmployeeConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrTerminateEmployeeConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrListDepartmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrGetDepartmentConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrCreateDepartmentConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrUpdateDepartmentConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrDeleteDepartmentConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrListLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrGetLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrDeleteLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrListTimeOffTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrListTimeOffRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrReplyTimeOffRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrCancelTimeOffRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrListEmployeeJobRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrGetEmployeeJobConfig"
+        },
+        {
+          "$ref": "#/$defs/TalenthrListTimeOffBudgetsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TalenthrApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Talenthr Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
