@@ -1,0 +1,477 @@
+{
+  "create_account_setting": {
+    "body_json": "{\"type\": \"business-hours\"}",
+    "operation": "create_account_setting"
+  },
+  "get_account": {
+    "operation": "get_account"
+  },
+  "list_account_settings": {
+    "operation": "list_account_settings",
+    "query_type": "1"
+  },
+  "update_account_setting": {
+    "path_id": "123",
+    "body_json": "{\"type\": \"business-hours\"}",
+    "operation": "update_account_setting"
+  },
+  "create_custom_field": {
+    "body_json": "{\"object_type\": \"Ticket\", \"label\": \"Test field\", \"definition\": {\"data_type\": \"text\", \"input_settings\": {\"input_type\": \"input\", \"placeholder\": \"Enter this here...\"}}}",
+    "operation": "create_custom_field"
+  },
+  "get_custom_field": {
+    "operation": "get_custom_field",
+    "path_id": "1"
+  },
+  "list_custom_fields": {
+    "query_object_type": "Ticket",
+    "operation": "list_custom_fields"
+  },
+  "update_custom_field": {
+    "operation": "update_custom_field",
+    "path_id": "1",
+    "body_json": "{}"
+  },
+  "update_custom_fields": {
+    "body_json": "[{\"id\": 123, \"label\": \"Test field\"}]",
+    "operation": "update_custom_fields"
+  },
+  "create_customer": {
+    "body_json": "{\"channels\": [{\"address\": \"john@example.com\", \"preferred\": true, \"type\": \"email\"}]}",
+    "operation": "create_customer"
+  },
+  "delete_customer": {
+    "operation": "delete_customer",
+    "path_id": "1"
+  },
+  "delete_customer_custom_field_value": {
+    "operation": "delete_customer_custom_field_value",
+    "path_customer_id": "1",
+    "path_id": "1"
+  },
+  "delete_customers": {
+    "body_json": "{\"ids\": [123]}",
+    "operation": "delete_customers"
+  },
+  "get_customer": {
+    "path_id": "123",
+    "operation": "get_customer"
+  },
+  "list_customer_custom_fields_values": {
+    "operation": "list_customer_custom_fields_values",
+    "path_customer_id": "1"
+  },
+  "list_customers": {
+    "operation": "list_customers"
+  },
+  "merge_customers": {
+    "operation": "merge_customers",
+    "query_source_id": "1",
+    "query_target_id": "1",
+    "body_json": "{}"
+  },
+  "update_customer": {
+    "operation": "update_customer",
+    "path_id": "1",
+    "body_json": "{}"
+  },
+  "update_customer_custom_field_value": {
+    "path_customer_id": "123",
+    "path_id": "123",
+    "body_json": "\"VIP\"",
+    "operation": "update_customer_custom_field_value"
+  },
+  "update_customer_custom_field_values": {
+    "path_customer_id": "123",
+    "body_json": "[{\"id\": 123, \"value\": \"VIP\"}]",
+    "operation": "update_customer_custom_field_values"
+  },
+  "update_customer_data": {
+    "path_customer_id": "123",
+    "body_json": "{\"data\": {\"key\": \"value\"}}",
+    "operation": "update_customer_data"
+  },
+  "get_event": {
+    "operation": "get_event",
+    "path_id": "1"
+  },
+  "list_events": {
+    "operation": "list_events"
+  },
+  "download_file": {
+    "path_file_type": "attachment",
+    "path_domain_hash": "Hna8kldnmlal",
+    "path_resource_name": "image-test-c9f158fc-062d-4b00-a826-e29b36852c9b.png",
+    "operation": "download_file"
+  },
+  "post_api_upload": {
+    "operation": "post_api_upload",
+    "content_type": "image/png",
+    "filename": "minimal.png",
+    "file_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4nGNgAAIAAAUAAXpeqz8AAAAASUVORK5CYII="
+  },
+  "create_integration": {
+    "body_json": "{\"name\": \"My HTTP integration\", \"type\": \"http\"}",
+    "operation": "create_integration"
+  },
+  "delete_integration": {
+    "operation": "delete_integration",
+    "path_id": "1"
+  },
+  "get_integration": {
+    "operation": "get_integration",
+    "path_id": "1"
+  },
+  "list_integrations": {
+    "operation": "list_integrations"
+  },
+  "update_integration": {
+    "path_id": "123",
+    "body_json": "{\"name\": \"My HTTP integration\"}",
+    "operation": "update_integration"
+  },
+  "cancel_job": {
+    "operation": "cancel_job",
+    "path_id": "1"
+  },
+  "create_job": {
+    "body_json": "{\"params\": {\"ticket_ids\": [1, 2, 3], \"updates\": {\"status\": \"open\"}}, \"type\": \"updateTicket\"}",
+    "operation": "create_job"
+  },
+  "get_job": {
+    "operation": "get_job",
+    "path_id": "1"
+  },
+  "list_jobs": {
+    "operation": "list_jobs"
+  },
+  "update_job": {
+    "operation": "update_job",
+    "path_id": "1",
+    "body_json": "{}"
+  },
+  "bulk_archive_macros": {
+    "body_json": "{\"ids\": [123]}",
+    "operation": "bulk_archive_macros"
+  },
+  "bulk_unarchive_macros": {
+    "body_json": "{\"ids\": [123]}",
+    "operation": "bulk_unarchive_macros"
+  },
+  "create_macro": {
+    "body_json": "{\"name\": \"Order status inquiry\"}",
+    "operation": "create_macro"
+  },
+  "delete_macro": {
+    "operation": "delete_macro",
+    "path_id": "1"
+  },
+  "get_macro": {
+    "operation": "get_macro",
+    "path_id": "1"
+  },
+  "list_macros": {
+    "operation": "list_macros"
+  },
+  "update_macro": {
+    "operation": "update_macro",
+    "path_id": "1",
+    "body_json": "{}"
+  },
+  "create_metric_card_feedback": {
+    "path_slug": "first-response-time",
+    "body_json": "{\"disagreement_type\": \"definition_unclear\", \"metric_category\": \"tickets\"}",
+    "operation": "create_metric_card_feedback"
+  },
+  "get_metric_card": {
+    "operation": "get_metric_card",
+    "path_slug": "1"
+  },
+  "search_metric_cards": {
+    "operation": "search_metric_cards"
+  },
+  "get_statistic": {
+    "body_json": "{\"query\": {\"scope\": \"tickets-closed\", \"filters\": [{\"member\": \"agentId\", \"operator\": \"one-of\", \"values\": [\"1\", \"2\"]}], \"timezone\": \"UTC\"}}",
+    "operation": "get_statistic"
+  },
+  "create_rule": {
+    "body_json": "{\"code\": \"\\nif (eq(ticket.from_agent, false) && eq(ticket.status, 'open')) {\\n    if (containsAny(message.intents.name, ['other/no_reply']) || containsAny(ticket.customer.email, [\\n            'noreply@',\\n            '@noreply'\\n        ])) {\\n        Action('addTags', { tags: 'auto-close' });\\n        Action('setStatus', { status: 'closed' })\\n    }\\n}\\n\", \"name\": \"Auto-close all tickets from Amazon\"}",
+    "operation": "create_rule"
+  },
+  "delete_rule": {
+    "operation": "delete_rule",
+    "path_id": "1"
+  },
+  "get_rule": {
+    "operation": "get_rule",
+    "path_id": "1"
+  },
+  "list_rules": {
+    "operation": "list_rules"
+  },
+  "update_rule": {
+    "operation": "update_rule",
+    "path_id": "1",
+    "body_json": "{}"
+  },
+  "update_rules_priorities": {
+    "body_json": "{\"priorities\": [{\"id\": 1234, \"priority\": 100}]}",
+    "operation": "update_rules_priorities"
+  },
+  "create_satisfaction_survey": {
+    "body_json": "{\"customer_id\": 120, \"ticket_id\": 12}",
+    "operation": "create_satisfaction_survey"
+  },
+  "get_satisfaction_survey": {
+    "operation": "get_satisfaction_survey",
+    "path_id": "1"
+  },
+  "list_satisfaction_surveys": {
+    "operation": "list_satisfaction_surveys"
+  },
+  "update_satisfaction_survey": {
+    "operation": "update_satisfaction_survey",
+    "path_id": "1",
+    "body_json": "{}"
+  },
+  "search": {
+    "body_json": "{\"type\": \"agent\"}",
+    "operation": "search"
+  },
+  "download_legacy_statistic": {
+    "path_name": "overview",
+    "body_json": "{\"filters\": {\"period\": {\"start_datetime\": \"2020-06-10T00:00:00-05:00\", \"end_datetime\": \"2020-06-16T23:59:59-05:00\"}, \"agents\": [12345, 67890], \"channels\": [\"chat\", \"email\"], \"campaigns\": [\"123\", \"234\"], \"tags\": [321, 654, 987], \"integrations\": [555, 777], \"score\": [3, 4]}}",
+    "operation": "download_legacy_statistic"
+  },
+  "get_legacy_statistic": {
+    "path_name": "overview",
+    "body_json": "{\"filters\": {\"period\": {\"start_datetime\": \"2020-06-10T00:00:00-05:00\", \"end_datetime\": \"2020-06-16T23:59:59-05:00\"}, \"agents\": [12345, 67890], \"channels\": [\"chat\", \"email\"], \"campaigns\": [\"123\", \"234\"], \"tags\": [321, 654, 987], \"integrations\": [555, 777], \"score\": [3, 4]}}",
+    "operation": "get_legacy_statistic"
+  },
+  "create_tag": {
+    "body_json": "{\"name\": \"urgent\"}",
+    "operation": "create_tag"
+  },
+  "delete_tag": {
+    "operation": "delete_tag",
+    "path_id": "1"
+  },
+  "delete_tags": {
+    "body_json": "{\"ids\": [123, 456, 789]}",
+    "operation": "delete_tags"
+  },
+  "get_tag": {
+    "operation": "get_tag",
+    "path_id": "1"
+  },
+  "list_tags": {
+    "operation": "list_tags"
+  },
+  "merge_tags": {
+    "path_destination_tag_id": "123",
+    "body_json": "{\"source_tags_ids\": [123, 456, 789]}",
+    "operation": "merge_tags"
+  },
+  "update_tag": {
+    "operation": "update_tag",
+    "path_id": "1",
+    "body_json": "{}"
+  },
+  "create_team": {
+    "body_json": "{\"name\": \"Warehouse team\"}",
+    "operation": "create_team"
+  },
+  "delete_team": {
+    "operation": "delete_team",
+    "path_id": "1"
+  },
+  "get_team": {
+    "operation": "get_team",
+    "path_id": "1"
+  },
+  "list_teams": {
+    "operation": "list_teams"
+  },
+  "update_team": {
+    "operation": "update_team",
+    "path_id": "1",
+    "body_json": "{}"
+  },
+  "create_ticket_message": {
+    "path_ticket_id": "123",
+    "body_json": "{\"channel\": \"email\", \"from_agent\": true}",
+    "operation": "create_ticket_message"
+  },
+  "delete_ticket_message": {
+    "operation": "delete_ticket_message",
+    "path_ticket_id": "1",
+    "path_id": "1"
+  },
+  "get_ticket_message": {
+    "operation": "get_ticket_message",
+    "path_ticket_id": "1",
+    "path_id": "1"
+  },
+  "list_messages": {
+    "operation": "list_messages"
+  },
+  "list_ticket_messages": {
+    "operation": "list_ticket_messages",
+    "path_ticket_id": "1"
+  },
+  "update_ticket_message": {
+    "path_ticket_id": "123",
+    "path_id": "123",
+    "body_json": "{\"channel\": \"email\", \"from_agent\": true}",
+    "operation": "update_ticket_message"
+  },
+  "create_ticket_tags": {
+    "operation": "create_ticket_tags",
+    "path_ticket_id": "1",
+    "body_json": "{}"
+  },
+  "delete_ticket": {
+    "operation": "delete_ticket",
+    "path_id": "1"
+  },
+  "delete_ticket_custom_field": {
+    "operation": "delete_ticket_custom_field",
+    "path_ticket_id": "1",
+    "path_id": "1"
+  },
+  "delete_ticket_tags": {
+    "operation": "delete_ticket_tags",
+    "path_ticket_id": "1",
+    "body_json": "{}"
+  },
+  "list_ticket_custom_fields": {
+    "operation": "list_ticket_custom_fields",
+    "path_ticket_id": "1"
+  },
+  "list_ticket_tags": {
+    "operation": "list_ticket_tags",
+    "path_ticket_id": "1"
+  },
+  "list_tickets": {
+    "operation": "list_tickets"
+  },
+  "update_ticket_custom_field": {
+    "path_ticket_id": "123",
+    "path_id": "123",
+    "body_json": "\"VIP\"",
+    "operation": "update_ticket_custom_field"
+  },
+  "update_ticket_custom_fields": {
+    "path_ticket_id": "123",
+    "body_json": "[{\"id\": 123, \"value\": \"VIP\"}]",
+    "operation": "update_ticket_custom_fields"
+  },
+  "update_ticket_tags": {
+    "operation": "update_ticket_tags",
+    "path_ticket_id": "1",
+    "body_json": "{}"
+  },
+  "create_user": {
+    "body_json": "{\"email\": \"steve@company.com\", \"name\": \"Steve Frazelli\", \"role\": {\"name\": \"admin\"}}",
+    "operation": "create_user"
+  },
+  "delete_user": {
+    "operation": "delete_user",
+    "path_id": "1"
+  },
+  "get_user": {
+    "operation": "get_user",
+    "path_id": "1"
+  },
+  "list_users": {
+    "operation": "list_users"
+  },
+  "update_user": {
+    "operation": "update_user",
+    "path_id": "1",
+    "body_json": "{}"
+  },
+  "create_view": {
+    "body_json": "{\"slug\": \"my-tickets\"}",
+    "operation": "create_view"
+  },
+  "delete_view": {
+    "operation": "delete_view",
+    "path_id": "1"
+  },
+  "get_view": {
+    "operation": "get_view",
+    "path_id": "1"
+  },
+  "list_view_items": {
+    "path_view_id": "123",
+    "operation": "list_view_items"
+  },
+  "list_views": {
+    "operation": "list_views"
+  },
+  "update_view": {
+    "operation": "update_view",
+    "path_id": "1",
+    "body_json": "{}"
+  },
+  "update_view_items": {
+    "path_view_id": "0",
+    "body_json": "{\"view\": {\"id\": 123, \"category\": \"user\", \"created_datetime\": \"2019-11-23T15:59:41.966927\", \"deactivated_datetime\": \"2020-01-30T11:04:34.345123\", \"decoration\": {\"emoji\": \"\\ud83d\\ude4f\"}, \"fields\": [\"id\", \"details\", \"tags\"], \"filters\": \"eq(ticket.assignee_user.id, '{{current_user.id}}') && eq(ticket.status, 'open')\", \"name\": \"My view\", \"order_by\": \"updated_datetime\", \"order_dir\": \"desc\", \"search\": \"where is my order?\", \"slug\": \"my-tickets\", \"type\": \"ticket-list\"}}",
+    "operation": "update_view_items"
+  },
+  "get_voice_call_event": {
+    "operation": "get_voice_call_event",
+    "path_id": "1"
+  },
+  "list_voice_call_events": {
+    "operation": "list_voice_call_events",
+    "query_cursor": "1",
+    "query_limit": "1",
+    "query_call_id": "1"
+  },
+  "delete_voice_call_recording": {
+    "operation": "delete_voice_call_recording",
+    "path_id": "1"
+  },
+  "get_voice_call_recording": {
+    "operation": "get_voice_call_recording",
+    "path_id": "1"
+  },
+  "list_voice_call_recordings": {
+    "operation": "list_voice_call_recordings",
+    "query_cursor": "1",
+    "query_limit": "1",
+    "query_call_id": "1"
+  },
+  "get_voice_call": {
+    "operation": "get_voice_call",
+    "path_id": "1"
+  },
+  "list_voice_calls": {
+    "operation": "list_voice_calls",
+    "query_cursor": "1",
+    "query_limit": "1",
+    "query_ticket_id": "1"
+  },
+  "create_widget": {
+    "body_json": "{\"template\": {\"type\": \"wrapper\", \"widgets\": [{\"path\": \"account_info\", \"type\": \"card\", \"title\": \"account  info\", \"widgets\": [{\"path\": \"account_id\", \"type\": \"text\", \"title\": \"account id\"}]}]}, \"type\": \"http\"}",
+    "operation": "create_widget"
+  },
+  "delete_widget": {
+    "operation": "delete_widget",
+    "path_id": "1"
+  },
+  "get_widget": {
+    "operation": "get_widget",
+    "path_id": "1"
+  },
+  "list_widgets": {
+    "operation": "list_widgets"
+  },
+  "update_widget": {
+    "operation": "update_widget",
+    "path_id": "1",
+    "body_json": "{}"
+  }
+}
