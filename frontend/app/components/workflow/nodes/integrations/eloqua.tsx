@@ -13,6 +13,6 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const EloquaNode: NodeDefinition = {
-    type: 'automation-eloqua', label: 'Oracle Eloqua', description: 'Authenticated site and user, contact/account metadata and custom object management.',
+    type: 'automation-eloqua', category: 'marketing', label: 'Oracle Eloqua', description: 'Authenticated site and user, contact/account metadata and custom object management.',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 110, height: 90, iconSize: 48 }, component: memo(Component),
 };

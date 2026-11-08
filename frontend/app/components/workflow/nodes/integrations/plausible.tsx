@@ -16,6 +16,7 @@ export const PlausibleNode: NodeDefinition = {
     type: 'automation-plausible',
     label: 'Plausible Analytics',
     description: 'Query analytics, record events, and manage Plausible sites',
+    category: 'analytics-bi',
     Icon: PlausibleIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

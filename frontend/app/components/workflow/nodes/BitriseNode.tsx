@@ -11,7 +11,7 @@ export const BitriseIcon = ({ style, ...props }: ImgHTMLAttributes<HTMLImageElem
 );
 const BitriseNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={BitriseIcon} iconColor="" />;
 export const BitriseNode: NodeDefinition = {
-    type: 'automation-bitrise', label: 'Bitrise', description: 'Read protected apps, branches and build metadata',
+    type: 'automation-bitrise', category: 'developer-tools', label: 'Bitrise', description: 'Read protected apps, branches and build metadata',
     Icon: BitriseIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: BitriseNodeComponent,
 };

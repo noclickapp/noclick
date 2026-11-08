@@ -22,6 +22,7 @@ export const BloomerangNode: NodeDefinition = {
     type: 'automation-bloomerang',
     label: 'Bloomerang',
     description: 'Constituents, households, interaction records and plain notes',
+    category: 'nonprofit',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

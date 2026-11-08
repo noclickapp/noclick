@@ -22,6 +22,7 @@ export const NeonNode: NodeDefinition = {
     type: 'automation-neon',
     label: 'Neon',
     description: 'Manage Neon projects, branches, databases, computes, and backend services',
+    category: 'databases-storage',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -17,6 +17,7 @@ export const DeelNode: NodeDefinition = {
     type: 'automation-deel',
     label: 'Deel',
     description: 'Sync employee and contractor records, departments, and reporting relationships',
+    category: 'hr-recruiting',
     keywords: ['HRIS', 'employees', 'contractors', 'departments', 'organization'],
     Icon: DeelIcon,
     iconColor: '',

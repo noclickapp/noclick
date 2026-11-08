@@ -12,7 +12,7 @@ const HeartbeatIcon = ({ className, style }: { className?: string; style?: CSSPr
 );
 
 export const HeartbeatNode: NodeDefinition = {
-    type: 'automation-heartbeat', label: 'Heartbeat',
+    type: 'automation-heartbeat', category: 'courses', label: 'Heartbeat',
     description: 'Manage community members, groups, invitations, discussions and events',
     Icon: HeartbeatIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -14,7 +14,7 @@ const BigCommerceNodeComponent = (props: NodeProps) => (
     <AutomationNode {...props} Icon={BigCommerceIcon} iconColor="" />
 );
 export const BigCommerceNode: NodeDefinition = {
-    type: 'automation-bigcommerce', label: 'BigCommerce',
+    type: 'automation-bigcommerce', category: 'ecommerce', label: 'BigCommerce',
     description: 'Automate store orders, products, customers and inventory',
     keywords: ['ecommerce', 'store', 'stock', 'shipping'],
     Icon: BigCommerceIcon, iconColor: '',

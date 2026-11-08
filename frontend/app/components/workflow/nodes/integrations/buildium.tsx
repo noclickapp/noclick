@@ -28,6 +28,7 @@ export const BuildiumNode: NodeDefinition = {
     type: 'automation-buildium',
     label: 'Buildium',
     description: 'Buildium property metadata, notes and task categories',
+    category: 'industry',
     Icon: BuildiumIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

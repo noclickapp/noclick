@@ -30,6 +30,7 @@ export const SoftrNode: NodeDefinition = {
     type: 'automation-softr',
     label: 'Softr',
     description: 'Manage Softr databases, tables, fields and records',
+    category: 'databases-storage',
     Icon: SoftrIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -21,6 +21,7 @@ export const CentralStationCRMNode: NodeDefinition = {
     type: 'automation-centralstationcrm',
     label: 'CentralStationCRM',
     description: 'Contacts, companies, deals, projects, and tasks',
+    category: 'crm-sales',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

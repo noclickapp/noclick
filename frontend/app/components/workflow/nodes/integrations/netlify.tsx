@@ -34,6 +34,7 @@ const NetlifyNodeComponent = (props: NodeProps) => (
 
 export const NetlifyNode: NodeDefinition = {
     type: 'automation-netlify',
+    category: 'cloud-hosting',
     label: 'Netlify',
     description:
         'Manage sites, deploys, builds, forms, DNS, hooks, and environment variables',

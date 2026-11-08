@@ -19,7 +19,7 @@ ApphudIcon.displayName = 'ApphudIcon';
 const ApphudNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 
 export const ApphudNode: NodeDefinition = {
-    type: 'automation-apphud', label: 'Apphud',
+    type: 'automation-apphud', category: 'finance-accounting', label: 'Apphud',
     description: 'Read protected application charts and query subscription analytics',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo(ApphudNodeComponent),

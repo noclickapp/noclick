@@ -20,6 +20,7 @@ export const PowerDNSNode: NodeDefinition = {
   type: 'automation-powerdns',
   label: 'PowerDNS Authoritative',
   description: 'Read authoritative server, zone and RRset metadata',
+  category: 'cloud-hosting',
   Icon: OfficialBrandIcon,
   iconColor: '',
   dimensions: { width: 90, height: 90, iconSize: 48 },

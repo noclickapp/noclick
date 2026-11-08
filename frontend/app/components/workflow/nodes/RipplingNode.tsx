@@ -14,6 +14,7 @@ export const RipplingNode: NodeDefinition = {
     type: 'automation-rippling',
     label: 'Rippling',
     description: 'Employees, departments, leave and supergroups',
+    category: 'hr-recruiting',
     keywords: ['HR', 'HRIS', 'employees', 'workers', 'PTO', 'time off', 'groups'],
     Icon: RipplingIcon,
     iconColor: '',

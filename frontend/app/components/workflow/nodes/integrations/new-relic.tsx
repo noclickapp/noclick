@@ -21,6 +21,7 @@ export const NewRelicNode: NodeDefinition = {
     type: 'automation-new-relic',
     label: 'New Relic',
     description: 'Query telemetry and manage alerts in New Relic',
+    category: 'monitoring',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

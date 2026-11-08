@@ -21,6 +21,7 @@ export const OneSignalNode: NodeDefinition = {
     type: 'automation-onesignal',
     label: 'OneSignal',
     description: 'Send messages and manage audiences, templates, and journeys',
+    category: 'marketing',
     Icon: OfficialBrandIcon,
     iconColor: 'text-red-500',
     dimensions: DIMENSIONS,

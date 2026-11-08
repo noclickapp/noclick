@@ -21,6 +21,7 @@ export const ActiveCampaignNode: NodeDefinition = {
     type: 'automation-activecampaign',
     label: 'ActiveCampaign',
     description: 'Contacts, automations, deals, and campaigns',
+    category: 'marketing',
     Icon: PreferredBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

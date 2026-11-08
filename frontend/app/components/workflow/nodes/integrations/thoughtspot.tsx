@@ -18,6 +18,7 @@ export const ThoughtSpotNode: NodeDefinition = {
     type: 'automation-thoughtspot',
     label: 'ThoughtSpot',
     description: 'Liveboards, saved Answers, bounded analytics data and reports',
+    category: 'analytics-bi',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -10,7 +10,7 @@ const LapostaIcon = ({ className, style }: { className?: string; style?: CSSProp
 );
 
 export const LapostaNode: NodeDefinition = {
-    type: 'automation-laposta', label: 'Laposta',
+    type: 'automation-laposta', category: 'marketing', label: 'Laposta',
     description: 'Manage mailing lists, subscribers, custom fields, campaign content and reports',
     keywords: ['email marketing', 'newsletter', 'subscribers'],
     Icon: LapostaIcon, iconColor: '',

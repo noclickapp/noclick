@@ -14,7 +14,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 );
 
 export const OracleFieldServiceNode: NodeDefinition = {
-    type: 'automation-oracle-field-service', label: 'Oracle Field Service',
+    type: 'automation-oracle-field-service', category: 'industry', label: 'Oracle Field Service',
     description: 'Resource, activity, property, type and capacity metadata with bucket activity management',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />),

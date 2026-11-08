@@ -28,6 +28,7 @@ export const PostmarkNode: NodeDefinition = {
     type: 'automation-postmark',
     label: 'Postmark',
     description: 'Send and track email, manage templates, streams, suppressions, and webhooks',
+    category: 'communication',
     Icon: PostmarkIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

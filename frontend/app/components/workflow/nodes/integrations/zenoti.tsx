@@ -8,7 +8,7 @@ const ZenotiIcon = ({ className, style }: { className?: string; style?: React.CS
 );
 const ZenotiNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={ZenotiIcon} iconColor="" />;
 export const ZenotiNode: NodeDefinition = {
-    type: 'automation-zenoti', label: 'Zenoti',
+    type: 'automation-zenoti', category: 'bookings', label: 'Zenoti',
     description: 'Read center, service and guest metadata or update scoped guest CRM fields',
     Icon: ZenotiIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo(ZenotiNodeComponent),

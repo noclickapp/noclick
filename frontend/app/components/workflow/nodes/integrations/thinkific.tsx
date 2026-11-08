@@ -31,6 +31,7 @@ ThinkificIcon.displayName = 'ThinkificIcon';
 
 export const ThinkificNode: NodeDefinition = {
     type: 'automation-thinkific',
+    category: 'courses',
     label: 'Thinkific',
     description:
         'Create and update students, enroll in courses and bundles, and sync orders and purchases',

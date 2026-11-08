@@ -10,7 +10,7 @@ const BookwhenIcon = ({ className, style }: { className?: string; style?: CSSPro
 );
 
 export const BookwhenNode: NodeDefinition = {
-    type: 'automation-bookwhen', label: 'Bookwhen',
+    type: 'automation-bookwhen', category: 'bookings', label: 'Bookwhen',
     description: 'Read events, tickets, locations, attachments and class passes',
     Icon: BookwhenIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

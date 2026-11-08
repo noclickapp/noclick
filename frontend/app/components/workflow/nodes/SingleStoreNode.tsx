@@ -25,6 +25,7 @@ export const SingleStoreNode: NodeDefinition = {
     type: 'automation-singlestore',
     label: 'SingleStore',
     description: 'Organization, project, cluster status and Stage metadata',
+    category: 'databases-storage',
     keywords: ['SingleStore', 'Helios', 'workspace', 'cluster', 'project', 'Stage', 'metadata'],
     Icon: OfficialBrandIcon,
     iconColor: '',

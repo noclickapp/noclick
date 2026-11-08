@@ -16,6 +16,7 @@ export const WorkvivoNode: NodeDefinition = {
     type: 'automation-workvivo',
     label: 'Workvivo',
     description: 'User, space, content and event metadata with draft page management',
+    category: 'communication',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

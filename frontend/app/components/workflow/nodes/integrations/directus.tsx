@@ -21,6 +21,7 @@ export const DirectusNode: NodeDefinition = {
     type: 'automation-directus',
     label: 'Directus',
     description: 'Manage content, collections, files, and folders in Directus',
+    category: 'content-research',
     Icon: DirectusIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

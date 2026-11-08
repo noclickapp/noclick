@@ -12,7 +12,7 @@ const RentmanIcon = ({ className, style }: { className?: string; style?: CSSProp
 );
 
 export const RentmanNode: NodeDefinition = {
-    type: 'automation-rentman', label: 'Rentman',
+    type: 'automation-rentman', category: 'industry', label: 'Rentman',
     description: 'Manage rental contacts, projects, equipment, crew, tasks and invoices',
     keywords: ['rental', 'event production', 'equipment planning'],
     Icon: RentmanIcon, iconColor: '',

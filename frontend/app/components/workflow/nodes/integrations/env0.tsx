@@ -12,7 +12,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 );
 
 export const Env0Node: NodeDefinition = {
-    type: 'automation-env0', label: 'env zero',
+    type: 'automation-env0', category: 'cloud-hosting', label: 'env zero',
     description: 'Read scoped infrastructure deployment metadata',
     keywords: ['env0', 'env zero', 'projects', 'environments', 'deployments'],
     Icon: OfficialBrandIcon, iconColor: '',

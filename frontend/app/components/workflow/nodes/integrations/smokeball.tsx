@@ -10,7 +10,7 @@ const SmokeballIcon = ({ className, style }: { className?: string; style?: CSSPr
 );
 
 export const SmokeballNode: NodeDefinition = {
-    type: 'automation-smokeball', label: 'Smokeball',
+    type: 'automation-smokeball', category: 'industry', label: 'Smokeball',
     description: 'Manage contacts, matters, tasks, events and matter memos',
     Icon: SmokeballIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

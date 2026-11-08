@@ -16,7 +16,7 @@ NorthflankIcon.displayName = 'NorthflankIcon';
 
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={NorthflankIcon} iconColor="" />;
 export const NorthflankNode: NodeDefinition = {
-    type: 'automation-northflank', label: 'Northflank',
+    type: 'automation-northflank', category: 'cloud-hosting', label: 'Northflank',
     description: 'Project, service, deployment, job and addon metadata with empty-project management',
     Icon: NorthflankIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo(Component),

@@ -18,6 +18,7 @@ export const EverflowNode: NodeDefinition = {
     type: 'automation-everflow',
     label: 'Everflow',
     description: 'Everflow offers, partner metadata, reports and channels',
+    category: 'marketing',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

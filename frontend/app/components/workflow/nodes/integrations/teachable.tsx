@@ -20,7 +20,7 @@ export const TeachableIcon: SvgIconComponent = forwardRef<
 TeachableIcon.displayName = 'TeachableIcon';
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const TeachableNode: NodeDefinition = {
-    type: 'automation-teachable', label: 'Teachable',
+    type: 'automation-teachable', category: 'courses', label: 'Teachable',
     description: 'Course, student, enrollment and progress metadata with distinct Admin and user OAuth access',
     Icon: OfficialBrandIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 }, component: Component,

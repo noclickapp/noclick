@@ -10,7 +10,7 @@ const TimelyIcon = ({ className, style }: { className?: string; style?: CSSPrope
 );
 
 export const TimelyNode: NodeDefinition = {
-    type: 'automation-timely', label: 'Timely',
+    type: 'automation-timely', category: 'productivity', label: 'Timely',
     description: 'Manage clients, projects, time entries and timers',
     Icon: TimelyIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

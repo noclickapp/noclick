@@ -38,6 +38,7 @@ export const NocoDBNode: NodeDefinition = {
     type: 'automation-nocodb',
     label: 'NocoDB',
     description: 'NocoDB database automation',
+    category: 'databases-storage',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

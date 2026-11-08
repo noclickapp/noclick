@@ -29,6 +29,7 @@ export const AxonautNode: NodeDefinition = {
     type: 'automation-axonaut',
     label: 'Axonaut',
     description: 'Axonaut CRM, contacts, tasks and projects',
+    category: 'crm-sales',
     Icon: AxonautIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

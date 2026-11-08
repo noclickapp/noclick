@@ -14,6 +14,7 @@ export const RampNode: NodeDefinition = {
     type: 'automation-ramp',
     label: 'Ramp',
     description: 'Manage cards, transactions, reimbursements and bills in Ramp',
+    category: 'finance-accounting',
     Icon: RampIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

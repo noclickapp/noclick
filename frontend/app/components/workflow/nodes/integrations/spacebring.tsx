@@ -17,6 +17,7 @@ export const SpacebringNode: NodeDefinition = {
     type: 'automation-spacebring',
     label: 'Spacebring',
     description: 'Read network, location, resource and membership metadata; update resource and booking descriptions',
+    category: 'bookings',
     keywords: ['Spacebring', 'andcards', 'coworking', 'location', 'resource', 'membership', 'booking', 'availability'],
     Icon: OfficialBrandIcon,
     iconColor: '',

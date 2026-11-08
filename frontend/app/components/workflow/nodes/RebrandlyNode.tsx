@@ -16,6 +16,7 @@ export const RebrandlyNode: NodeDefinition = {
     type: 'automation-rebrandly',
     label: 'Rebrandly',
     description: 'Read scoped workspace, domain and link metadata',
+    category: 'marketing',
     Icon: RebrandlyIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

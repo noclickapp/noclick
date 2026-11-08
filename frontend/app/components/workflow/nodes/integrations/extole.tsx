@@ -12,6 +12,7 @@ export const ExtoleNode: NodeDefinition = {
     type: 'automation-extole',
     label: 'Extole',
     description: 'Participants, referral relationships, campaign drafts, reports and event receipts',
+    category: 'marketing',
     Icon: ExtoleIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo(ExtoleNodeComponent),

@@ -16,6 +16,7 @@ export const SAPConcurNode: NodeDefinition = {
     type: 'automation-sap-concur',
     label: 'SAP Concur',
     description: 'SAP Concur profile, configuration lists and expense report metadata',
+    category: 'finance-accounting',
     keywords: ['SAP Concur', 'lists', 'profiles', 'expense reports', 'configuration'],
     Icon: OfficialBrandIcon,
     iconColor: '',

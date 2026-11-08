@@ -22,6 +22,7 @@ export const WorkableNode: NodeDefinition = {
     type: 'automation-workable',
     label: 'Workable',
     description: 'Hiring, candidates, employees, and time off',
+    category: 'hr-recruiting',
     Icon: WorkableIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

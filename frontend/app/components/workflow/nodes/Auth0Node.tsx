@@ -13,6 +13,7 @@ export const Auth0Node: NodeDefinition = {
     type: 'automation-auth0',
     label: 'Auth0',
     description: 'Manage Auth0 users, roles, organizations and logs',
+    category: 'developer-tools',
     keywords: ['identity', 'access management', 'tenant', 'authentication'],
     Icon: Auth0Icon,
     iconColor: '',

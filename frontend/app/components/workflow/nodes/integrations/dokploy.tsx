@@ -15,6 +15,7 @@ export const DokployNode: NodeDefinition = {
     type: 'automation-dokploy',
     label: 'Dokploy',
     description: 'Project, environment and service status; existing deployment metadata',
+    category: 'cloud-hosting',
     keywords: ['project', 'environment', 'application', 'compose', 'deployment status', 'self hosted'],
     Icon: OfficialBrandIcon,
     iconColor: '',

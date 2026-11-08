@@ -12,6 +12,7 @@ export const SirvNode: NodeDefinition = {
     type: 'automation-sirv',
     label: 'Sirv',
     description: 'Current folder and file metadata without media downloads',
+    category: 'media',
     keywords: ['files', 'folders', 'catalog', 'file size', 'approval', 'digital assets'],
     Icon: OfficialBrandIcon,
     iconColor: '',

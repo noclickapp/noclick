@@ -14,6 +14,7 @@ export const QwilrNode: NodeDefinition = {
     type: 'automation-qwilr',
     label: 'Qwilr',
     description: 'Proposal page metadata and unpublished draft workflows',
+    category: 'documents',
     keywords: ['proposal', 'quote', 'sales document', 'saved block', 'template', 'draft'],
     Icon: QwilrIcon,
     iconColor: '',

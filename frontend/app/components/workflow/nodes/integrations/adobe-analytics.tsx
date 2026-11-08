@@ -12,7 +12,7 @@ const AdobeAnalyticsIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.
 AdobeAnalyticsIcon.displayName = 'AdobeAnalyticsIcon';
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={AdobeAnalyticsIcon} iconColor="" />;
 export const AdobeAnalyticsNode: NodeDefinition = {
-    type: 'automation-adobe-analytics', label: 'Adobe Analytics',
+    type: 'automation-adobe-analytics', category: 'analytics-bi', label: 'Adobe Analytics',
     description: 'Analytics 2.0 discovery, suite metadata, reports and owned calculated metrics',
     Icon: AdobeAnalyticsIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo(Component),

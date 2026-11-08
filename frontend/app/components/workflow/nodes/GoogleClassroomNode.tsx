@@ -24,6 +24,7 @@ export const GoogleClassroomNode: NodeDefinition = {
     type: 'automation-google-classroom',
     label: 'Google Classroom',
     description: 'Manage courses, assignments, announcements, topics and rosters',
+    category: 'google',
     Icon: PreferredBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 46 },

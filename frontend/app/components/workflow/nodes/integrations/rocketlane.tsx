@@ -10,7 +10,7 @@ const RocketlaneIcon = ({ className, style }: { className?: string; style?: CSSP
 );
 
 export const RocketlaneNode: NodeDefinition = {
-    type: 'automation-rocketlane', label: 'Rocketlane',
+    type: 'automation-rocketlane', category: 'productivity', label: 'Rocketlane',
     description: 'Manage projects, tasks, companies, phases and time entries',
     Icon: RocketlaneIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

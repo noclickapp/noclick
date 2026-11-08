@@ -12,6 +12,7 @@ export const LeadfeederNode: NodeDefinition = {
     type: 'automation-leadfeeder',
     label: 'Leadfeeder (Dealfront)',
     description: 'Read accessible accounts, company intelligence and company workflow metadata',
+    category: 'crm-sales',
     Icon: LeadfeederIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

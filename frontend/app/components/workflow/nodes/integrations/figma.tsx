@@ -28,6 +28,7 @@ export const FigmaNode: NodeDefinition = {
     type: 'automation-figma',
     label: 'Figma',
     description: 'Figma files, comments, libraries, dev resources and webhooks',
+    category: 'productivity',
     Icon: FigmaIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

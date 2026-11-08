@@ -22,6 +22,7 @@ export const FormbricksNode: NodeDefinition = {
     type: 'automation-formbricks',
     label: 'Formbricks',
     description: 'Manage surveys, responses, contacts, actions, and webhooks',
+    category: 'forms',
     Icon: PreferredBrandIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

@@ -17,7 +17,7 @@ const MediaSiloIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHT
 MediaSiloIcon.displayName = 'MediaSiloIcon';
 const MediaSiloNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const MediaSiloNode: NodeDefinition = {
-    type: 'automation-mediasilo', label: 'MediaSilo',
+    type: 'automation-mediasilo', category: 'media', label: 'MediaSilo',
     description: 'MediaSilo protected project and folder metadata reads',
     Icon: OfficialBrandIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

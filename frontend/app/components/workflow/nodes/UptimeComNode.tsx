@@ -13,7 +13,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 );
 
 export const UptimeComNode = {
-    type: 'automation-uptimecom', label: 'Uptime.com',
+    type: 'automation-uptimecom', category: 'monitoring', label: 'Uptime.com',
     description: 'Read scoped check, tag, outage, status-page and statistics metadata',
     keywords: ['Uptime.com', 'checks', 'monitoring', 'outages', 'status pages', 'statistics'],
     Icon: OfficialBrandIcon, iconColor: '',

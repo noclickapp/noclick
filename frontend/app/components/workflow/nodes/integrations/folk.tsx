@@ -10,7 +10,7 @@ const FolkIcon = ({ className, style }: { className?: string; style?: CSSPropert
 );
 
 export const FolkNode: NodeDefinition = {
-    type: 'automation-folk', label: 'Folk',
+    type: 'automation-folk', category: 'crm-sales', label: 'Folk',
     description: 'Manage contacts, companies, groups, notes and reminders',
     Icon: FolkIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

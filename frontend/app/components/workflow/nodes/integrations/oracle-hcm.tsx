@@ -22,6 +22,7 @@ export const OracleHCMNode: NodeDefinition = {
     type: 'automation-oracle-hcm',
     label: 'Oracle Fusion Cloud HCM',
     description: 'HCM jobs, departments, locations and worker directory identifiers',
+    category: 'hr-recruiting',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

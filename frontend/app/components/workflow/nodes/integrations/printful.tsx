@@ -19,6 +19,6 @@ export const PrintfulIcon: SvgIconComponent = forwardRef<HTMLImageElement, React
 PrintfulIcon.displayName = 'PrintfulIcon';
 const PrintfulNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const PrintfulNode: NodeDefinition = {
-    type: 'automation-printful', label: 'Printful', description: 'Traditional Printful catalog, store and draft order metadata',
+    type: 'automation-printful', category: 'ecommerce', label: 'Printful', description: 'Traditional Printful catalog, store and draft order metadata',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: memo(PrintfulNodeComponent),
 };

@@ -16,7 +16,7 @@ const PulumiNodeComponent = (props: NodeProps) => (
     <AutomationNode {...props} Icon={PulumiIcon} iconColor="" />
 );
 export const PulumiNode: NodeDefinition = {
-    type: 'automation-pulumi', label: 'Pulumi Cloud',
+    type: 'automation-pulumi', category: 'cloud-hosting', label: 'Pulumi Cloud',
     description: 'Protected stack metadata, resource counts and downstream references without state, config or deployment control',
     keywords: ['Pulumi Cloud', 'stack metadata', 'resource counts', 'downstream references'],
     Icon: PulumiIcon, iconColor: '',

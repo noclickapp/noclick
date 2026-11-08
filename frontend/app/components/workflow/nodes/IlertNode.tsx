@@ -21,7 +21,7 @@ export const IlertIcon = ({ style, ...props }: ImgHTMLAttributes<HTMLImageElemen
 );
 const IlertNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={PreferredBrandIcon} iconColor="" />;
 export const IlertNode: NodeDefinition = {
-    type: 'automation-ilert', label: 'ilert',
+    type: 'automation-ilert', category: 'monitoring', label: 'ilert',
     description: 'Read current-user, team, service, incident and status-page metadata',
     Icon: PreferredBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: IlertNodeComponent,

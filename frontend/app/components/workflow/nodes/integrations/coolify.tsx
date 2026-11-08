@@ -9,7 +9,7 @@ const CoolifyIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTML
 CoolifyIcon.displayName = 'CoolifyIcon';
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={CoolifyIcon} iconColor="" />;
 export const CoolifyNode: NodeDefinition = {
-    type: 'automation-coolify', label: 'Coolify',
+    type: 'automation-coolify', category: 'cloud-hosting', label: 'Coolify',
     description: 'Coolify team, project, environment and deployment metadata',
     Icon: CoolifyIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: Component,
 };

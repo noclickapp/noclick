@@ -10,7 +10,7 @@ const VimeoIcon = ({ className, style }: { className?: string; style?: CSSProper
 );
 
 export const VimeoNode: NodeDefinition = {
-    type: 'automation-vimeo', label: 'Vimeo',
+    type: 'automation-vimeo', category: 'media', label: 'Vimeo',
     description: 'Manage videos, comments, likes and folders',
     Icon: VimeoIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

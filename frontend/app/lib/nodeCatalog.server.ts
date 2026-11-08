@@ -112,6 +112,7 @@ function serialize(type: string): SerializedNodeMeta | undefined {
             iconSize: node.dimensions?.iconSize ?? 0,
         },
     };
+    if (node.category) meta.category = node.category;
     const triggerOps = extractNodeOperations(type)
         .filter((o) => o.isTrigger)
         .map((o) => o.value);
@@ -265,6 +266,16 @@ export function listIntegrationNodeTypes(): string[] {
             // integrations page (slug 'form-input') listed.
             node.type === 'interface-form'
     ).map((node) => node.type);
+}
+
+let _declaredCategories: Record<string, string | undefined> | null = null;
+
+/** Every listed integration's slug → the category its definition declares (undefined when it declares none). */
+export function getDeclaredIntegrationCategories(): Readonly<Record<string, string | undefined>> {
+    _declaredCategories ??= Object.fromEntries(
+        listIntegrationNodeTypes().map((type) => [typeToSlug(type), getNodeMetadata(type)?.category])
+    );
+    return _declaredCategories;
 }
 
 /** Operation count for an integration node, derived from its JSON schema. */

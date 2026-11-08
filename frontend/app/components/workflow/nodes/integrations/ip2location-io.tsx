@@ -10,7 +10,7 @@ const Ip2LocationIoIcon = ({ className, style }: { className?: string; style?: C
 );
 
 export const Ip2LocationIoNode: NodeDefinition = {
-    type: 'automation-ip2location-io', label: 'IP2Location.io',
+    type: 'automation-ip2location-io', category: 'content-research', label: 'IP2Location.io',
     description: 'Look up IPv4 and IPv6 geolocation and proxy data',
     Icon: Ip2LocationIoIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

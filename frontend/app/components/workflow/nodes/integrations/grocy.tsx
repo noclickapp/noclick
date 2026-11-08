@@ -13,7 +13,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 
 const GrocyNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const GrocyNode: NodeDefinition = {
-    type: 'automation-grocy', label: 'Grocy',
+    type: 'automation-grocy', category: 'productivity', label: 'Grocy',
     description: 'Current location and quantity-unit metadata without stock, conversions or userfields',
     keywords: ['Grocy', 'location metadata', 'quantity units', 'catalog'],
     Icon: OfficialBrandIcon, iconColor: '',

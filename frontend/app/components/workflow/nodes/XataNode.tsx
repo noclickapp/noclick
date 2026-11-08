@@ -8,6 +8,6 @@ export const XataIcon = ({ style, ...props }: ImgHTMLAttributes<HTMLImageElement
 );
 const XataNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={XataIcon} iconColor="" />;
 export const XataNode: NodeDefinition = {
-    type: 'automation-xata', label: 'Xata', description: 'Read organization, project, branch and backup metadata',
+    type: 'automation-xata', category: 'databases-storage', label: 'Xata', description: 'Read organization, project, branch and backup metadata',
     Icon: XataIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: XataNodeComponent,
 };

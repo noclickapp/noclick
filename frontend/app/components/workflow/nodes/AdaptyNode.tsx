@@ -19,6 +19,7 @@ export const AdaptyNode: NodeDefinition = {
     type: 'automation-adapty',
     label: 'Adapty',
     description: 'Manage app profiles and read or change profile access levels',
+    category: 'finance-accounting',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 60 },

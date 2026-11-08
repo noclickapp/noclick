@@ -14,6 +14,7 @@ export const VervoeNode: NodeDefinition = {
     type: 'automation-vervoe',
     label: 'Vervoe',
     description: 'Vervoe assessment and application metadata with internal folder management',
+    category: 'hr-recruiting',
     keywords: ['Vervoe', 'assessments', 'applications', 'folders', 'recruiting'],
     Icon: VervoeIcon,
     iconColor: '',

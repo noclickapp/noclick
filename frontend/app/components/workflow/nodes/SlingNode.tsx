@@ -19,6 +19,7 @@ export const SlingNode: NodeDefinition = {
   type: 'automation-sling',
   label: 'Sling',
   description: 'Organization, workforce and calendar metadata',
+  category: 'hr-recruiting',
   Icon: OfficialBrandIcon,
   iconColor: '',
   dimensions: { width: 90, height: 90, iconSize: 48 },

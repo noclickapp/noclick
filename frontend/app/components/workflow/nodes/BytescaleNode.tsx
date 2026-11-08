@@ -21,6 +21,7 @@ export const BytescaleNode: NodeDefinition = {
     type: 'automation-bytescale',
     label: 'Bytescale',
     description: 'Read scoped folder contents and file metadata',
+    category: 'databases-storage',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

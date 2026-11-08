@@ -15,6 +15,7 @@ export const KommoNode: NodeDefinition = {
     type: 'automation-kommo',
     label: 'Kommo',
     description: 'Kommo CRM automation',
+    category: 'crm-sales',
     Icon: KommoIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

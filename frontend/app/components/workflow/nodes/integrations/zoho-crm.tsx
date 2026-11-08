@@ -35,6 +35,7 @@ export const ZohoCRMNode: NodeDefinition = {
     type: 'automation-zoho-crm',
     label: 'Zoho CRM',
     description: 'Zoho CRM records and metadata',
+    category: 'crm-sales',
     Icon: ZohoCRMIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

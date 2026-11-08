@@ -10,7 +10,7 @@ const GorillaDeskIcon = ({ className, style }: { className?: string; style?: CSS
 );
 
 export const GorillaDeskNode: NodeDefinition = {
-    type: 'automation-gorilladesk', label: 'GorillaDesk',
+    type: 'automation-gorilladesk', category: 'industry', label: 'GorillaDesk',
     description: 'Manage customers and read jobs, invoices, estimates and payments',
     Icon: GorillaDeskIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

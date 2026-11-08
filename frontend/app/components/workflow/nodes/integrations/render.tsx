@@ -19,6 +19,7 @@ export const RenderNode: NodeDefinition = {
     type: 'automation-render',
     label: 'Render',
     description: 'Manage services, deploys, databases, and infrastructure',
+    category: 'cloud-hosting',
     keywords: [
         'render',
         'cloud',

@@ -16,6 +16,7 @@ export const CircleCINode: NodeDefinition = {
     type: 'automation-circleci',
     label: 'CircleCI',
     description: 'Pipelines, workflows, jobs, projects, contexts, and insights',
+    category: 'developer-tools',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

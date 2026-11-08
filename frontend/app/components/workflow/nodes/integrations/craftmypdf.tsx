@@ -18,6 +18,7 @@ export const CraftmypdfNode: NodeDefinition = {
     type: 'automation-craftmypdf',
     label: 'CraftMyPDF',
     description: 'Generate PDFs and images, manage templates and edit PDF files',
+    category: 'documents',
     Icon: CraftmypdfIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

@@ -12,6 +12,7 @@ export const ChatwootNode: NodeDefinition = {
     type: 'automation-chatwoot',
     label: 'Chatwoot',
     description: 'Manage support contacts, route conversations, send replies and private notes',
+    category: 'support',
     keywords: ['support', 'helpdesk', 'customer service', 'live chat'],
     Icon: ChatwootIcon,
     iconColor: '',

@@ -14,7 +14,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const ExoscaleNode: NodeDefinition = {
-  type: 'automation-exoscale', label: 'Exoscale',
+  type: 'automation-exoscale', category: 'cloud-hosting', label: 'Exoscale',
   description: 'Read signed APIv2 zone-local instance, capacity and anti-affinity metadata',
   keywords: ['Exoscale', 'cloud', 'compute', 'instance', 'capacity', 'anti-affinity', 'metadata'],
   Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: memo(Component),

@@ -9,7 +9,7 @@ const RagicIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAt
 RagicIcon.displayName = 'RagicIcon';
 const RagicNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={RagicIcon} iconColor="#19191b" />;
 export const RagicNode: NodeDefinition = {
-    type: 'automation-ragic', label: 'Ragic',
+    type: 'automation-ragic', category: 'databases-storage', label: 'Ragic',
     description: 'Read and search explicitly projected sheet records',
     Icon: RagicIcon, iconColor: '#19191b', dimensions: { width: 90, height: 90, iconSize: 48 }, component: memo(RagicNodeComponent),
 };

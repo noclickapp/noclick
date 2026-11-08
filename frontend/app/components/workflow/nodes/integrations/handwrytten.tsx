@@ -12,7 +12,7 @@ const HandwryttenIcon = ({ className, style }: { className?: string; style?: CSS
 );
 
 export const HandwryttenNode: NodeDefinition = {
-    type: 'automation-handwrytten', label: 'Handwrytten',
+    type: 'automation-handwrytten', category: 'marketing', label: 'Handwrytten',
     description: 'Send handwritten cards and manage recipients, templates and custom card designs with the v1 API',
     keywords: ['handwritten', 'thank you', 'direct mail', 'greeting cards'],
     Icon: HandwryttenIcon, iconColor: '',

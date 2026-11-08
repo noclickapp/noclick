@@ -23,6 +23,7 @@ export const LandbotNode: NodeDefinition = {
   type: 'automation-landbot',
   label: 'Landbot',
   description: 'Platform channel/customer metadata and customer-field management',
+  category: 'support',
   Icon: OfficialBrandIcon,
   iconColor: '',
   dimensions: { width: 90, height: 90, iconSize: 48 },

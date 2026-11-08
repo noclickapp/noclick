@@ -10,7 +10,7 @@ const TelnyxIcon = ({ className, style }: { className?: string; style?: CSSPrope
 );
 
 export const TelnyxNode: NodeDefinition = {
-    type: 'automation-telnyx', label: 'Telnyx',
+    type: 'automation-telnyx', category: 'communication', label: 'Telnyx',
     description: 'Send messages, manage messaging profiles and phone numbers, and read account balance',
     Icon: TelnyxIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

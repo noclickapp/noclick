@@ -12,7 +12,7 @@ const CompanycamIcon = ({ className, style }: { className?: string; style?: CSSP
 );
 
 export const CompanycamNode: NodeDefinition = {
-    type: 'automation-companycam', label: 'CompanyCam',
+    type: 'automation-companycam', category: 'industry', label: 'CompanyCam',
     description: 'Manage projects, photos, comments, customers and tags',
     keywords: ['companycam', 'construction', 'jobsite', 'photos'],
     Icon: CompanycamIcon, iconColor: '',

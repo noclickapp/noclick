@@ -10,7 +10,7 @@ const SplitwiseIcon = ({ className, style }: { className?: string; style?: CSSPr
 );
 
 export const SplitwiseNode: NodeDefinition = {
-    type: 'automation-splitwise', label: 'Splitwise',
+    type: 'automation-splitwise', category: 'finance-accounting', label: 'Splitwise',
     description: 'Manage shared expenses, groups, friends and comments',
     Icon: SplitwiseIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

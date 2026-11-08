@@ -19,6 +19,7 @@ export const FormBuilder123Node: NodeDefinition = {
     type: 'automation-123formbuilder',
     label: '123FormBuilder',
     description: 'Read form, field and submission metadata; organize forms and folders',
+    category: 'forms',
     keywords: ['123', 'forms', 'surveys', 'submissions', 'folders'],
     Icon: OfficialBrandIcon,
     iconColor: '',

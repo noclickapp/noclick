@@ -13,7 +13,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 );
 
 export const ChurchToolsNode: NodeDefinition = {
-    type: 'automation-churchtools', label: 'ChurchTools',
+    type: 'automation-churchtools', category: 'nonprofit', label: 'ChurchTools',
     description: 'ChurchTools people, group, calendar and wiki metadata',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />),

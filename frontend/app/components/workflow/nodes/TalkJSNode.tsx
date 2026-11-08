@@ -17,6 +17,6 @@ const TalkJSIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLA
 TalkJSIcon.displayName = 'TalkJSIcon';
 const TalkJSNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const TalkJSNode: NodeDefinition = {
-  type: 'automation-talkjs', label: 'TalkJS', description: 'App user metadata, scoped conversations and explicit message workflows',
+  type: 'automation-talkjs', category: 'communication', label: 'TalkJS', description: 'App user metadata, scoped conversations and explicit message workflows',
   Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: TalkJSNodeComponent,
 };

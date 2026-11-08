@@ -32,6 +32,7 @@ const QuoNodeComponent = (props: NodeProps) => (
 
 export const QuoNode: NodeDefinition = {
     type: 'automation-quo',
+    category: 'communication',
     label: 'Quo',
     keywords: ['OpenPhone', 'SMS', 'CRM', 'call recording', 'transcript'],
     description:

@@ -16,6 +16,7 @@ export const VoiceflowNode: NodeDefinition = {
     type: 'automation-voiceflow',
     label: 'Voiceflow',
     description: 'Project, environment and knowledge base metadata',
+    category: 'ai',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

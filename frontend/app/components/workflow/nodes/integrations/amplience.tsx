@@ -22,6 +22,7 @@ export const AmplienceNode: NodeDefinition = {
     type: 'automation-amplience',
     label: 'Amplience',
     description: 'Bound Content Management catalog and content metadata reads',
+    category: 'content-research',
     Icon: AmplienceIcon as any,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

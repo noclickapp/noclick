@@ -10,7 +10,7 @@ const RecruiteeIcon = ({ className, style }: { className?: string; style?: CSSPr
 );
 
 export const RecruiteeNode: NodeDefinition = {
-    type: 'automation-recruitee', label: 'Recruitee',
+    type: 'automation-recruitee', category: 'hr-recruiting', label: 'Recruitee',
     description: 'Manage candidates and jobs; read notes, departments, members and locations',
     Icon: RecruiteeIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

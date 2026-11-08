@@ -12,7 +12,7 @@ const RazorpayIcon = ({ className, style }: { className?: string; style?: CSSPro
 );
 
 export const RazorpayNode: NodeDefinition = {
-    type: 'automation-razorpay', label: 'Razorpay',
+    type: 'automation-razorpay', category: 'finance-accounting', label: 'Razorpay',
     description: 'Automate customers, orders, payments, invoices, items, plans, subscriptions and payment links',
     Icon: RazorpayIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

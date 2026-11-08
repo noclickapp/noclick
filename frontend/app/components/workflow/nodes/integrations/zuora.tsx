@@ -9,6 +9,6 @@ const ZuoraIcon = ({ className, style }: { className?: string; style?: CSSProper
 );
 const ZuoraComponent = (props: NodeProps) => <AutomationNode {...props} Icon={ZuoraIcon} iconColor="" />;
 export const ZuoraNode: NodeDefinition = {
-    type: 'automation-zuora', label: 'Zuora', description: 'Read tenant metadata and update account, contact, product and subscription metadata',
+    type: 'automation-zuora', category: 'finance-accounting', label: 'Zuora', description: 'Read tenant metadata and update account, contact, product and subscription metadata',
     Icon: ZuoraIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: ZuoraComponent,
 };

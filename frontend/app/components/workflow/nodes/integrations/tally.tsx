@@ -28,6 +28,7 @@ const TallyNodeComponent = (props: NodeProps) => {
 
 export const TallyNode: NodeDefinition = {
     type: 'automation-tally',
+    category: 'forms',
     label: 'Tally',
     description:
         'Create forms, manage submissions, inspect analytics, and configure webhooks',

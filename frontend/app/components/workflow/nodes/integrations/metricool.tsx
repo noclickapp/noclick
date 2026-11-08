@@ -21,6 +21,7 @@ export const MetricoolNode: NodeDefinition = {
     type: 'automation-metricool',
     label: 'Metricool',
     description: 'Accessible brand analytics, scheduler metadata and unpublished Facebook text drafts',
+    category: 'social-media',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

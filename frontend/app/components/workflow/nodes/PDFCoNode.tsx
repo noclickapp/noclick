@@ -13,6 +13,7 @@ export const PDFCoNode: NodeDefinition = {
     type: 'automation-pdfco',
     label: 'PDF.co',
     description: 'Extract invoice data, convert documents, generate and edit PDFs',
+    category: 'documents',
     keywords: ['pdfco', 'invoice', 'OCR', 'spreadsheet', 'document parser'],
     Icon: PDFCoIcon,
     iconColor: '',

@@ -16,6 +16,7 @@ export const StreamtimeNode: NodeDefinition = {
     type: 'automation-streamtime',
     label: 'Streamtime',
     description: 'Jobs, companies, contacts, time entries and search',
+    category: 'productivity',
     Icon: StreamtimeIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

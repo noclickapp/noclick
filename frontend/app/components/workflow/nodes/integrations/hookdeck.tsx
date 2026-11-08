@@ -18,6 +18,7 @@ export const HookdeckNode: NodeDefinition = {
     type: 'automation-hookdeck',
     label: 'Hookdeck',
     description: 'Manage webhook sources, destinations, connections, events, and issues',
+    category: 'developer-tools',
     Icon: HookdeckIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

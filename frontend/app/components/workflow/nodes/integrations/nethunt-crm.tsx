@@ -10,7 +10,7 @@ const NetHuntCrmIcon = ({ className, style }: { className?: string; style?: CSSP
 );
 
 export const NetHuntCrmNode: NodeDefinition = {
-    type: 'automation-nethunt-crm', label: 'NetHunt CRM',
+    type: 'automation-nethunt-crm', category: 'crm-sales', label: 'NetHunt CRM',
     description: 'Manage folders, records, comments, calls and timelines',
     Icon: NetHuntCrmIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

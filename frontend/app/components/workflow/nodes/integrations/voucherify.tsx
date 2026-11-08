@@ -20,6 +20,7 @@ export const VoucherifyNode: NodeDefinition = {
     type: 'automation-voucherify',
     label: 'Voucherify',
     description: 'Customer, catalog and campaign metadata, with discount validation',
+    category: 'marketing',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

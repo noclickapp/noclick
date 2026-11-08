@@ -14,6 +14,7 @@ export const JiraServiceManagementNode: NodeDefinition = {
     type: 'automation-jiraservicemanagement',
     label: 'Jira Service Management',
     description: 'Automate service requests, customers, queues and SLAs',
+    category: 'support',
     keywords: ['JSM', 'service desk', 'help desk', 'ITSM', 'Atlassian'],
     Icon: JiraServiceManagementIcon,
     iconColor: '',

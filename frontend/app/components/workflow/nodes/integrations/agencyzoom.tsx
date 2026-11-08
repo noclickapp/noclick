@@ -12,7 +12,7 @@ const AgencyZoomIcon = ({ className, style }: { className?: string; style?: CSSP
 );
 
 export const AgencyZoomNode: NodeDefinition = {
-    type: 'automation-agencyzoom', label: 'AgencyZoom',
+    type: 'automation-agencyzoom', category: 'industry', label: 'AgencyZoom',
     description: 'Manage insurance leads, customers, policies, notes and tasks',
     keywords: ['agencyzoom', 'agency zoom', 'insurance', 'CRM', 'sales'],
     Icon: AgencyZoomIcon, iconColor: '',

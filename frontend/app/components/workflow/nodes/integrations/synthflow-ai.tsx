@@ -12,7 +12,7 @@ const SynthflowAiIcon = ({ className, style }: { className?: string; style?: CSS
 );
 
 export const SynthflowAiNode: NodeDefinition = {
-    type: 'automation-synthflow-ai', label: 'Synthflow AI',
+    type: 'automation-synthflow-ai', category: 'ai', label: 'Synthflow AI',
     description: 'Make calls and manage agents, contacts, knowledge bases, actions and phone numbers',
     keywords: ['synthflow', 'voice', 'outbound calls', 'AI calling'],
     Icon: SynthflowAiIcon, iconColor: '',

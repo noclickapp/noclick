@@ -29,6 +29,7 @@ export const OneNoteNode: NodeDefinition = {
     type: 'automation-microsoft-onenote',
     label: 'OneNote',
     description: 'Microsoft OneNote notebooks and pages',
+    category: 'microsoft',
     Icon: OneNoteIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

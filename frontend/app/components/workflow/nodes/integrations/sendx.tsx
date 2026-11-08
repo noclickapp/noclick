@@ -13,7 +13,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 );
 
 export const SendXNode: NodeDefinition = {
-    type: 'automation-sendx', label: 'SendX',
+    type: 'automation-sendx', category: 'marketing', label: 'SendX',
     description: 'Read audience metadata and manage owned contacts, lists and tags',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 72 },
     component: (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />,

@@ -10,6 +10,6 @@ const CodaIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAtt
 CodaIcon.displayName = 'CodaIcon';
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={CodaIcon} iconColor="" />;
 export const CodaNode: NodeDefinition = {
-    type: 'automation-coda', label: 'Coda', description: 'Manage Coda docs, pages, tables, rows, formulas, controls, folders and sharing.',
+    type: 'automation-coda', category: 'productivity', label: 'Coda', description: 'Manage Coda docs, pages, tables, rows, formulas, controls, folders and sharing.',
     Icon: CodaIcon, iconColor: '', dimensions: { width: 110, height: 90, iconSize: 48 }, component: Component,
 };

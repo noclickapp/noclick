@@ -10,7 +10,7 @@ const BonsaiIcon = ({ className, style }: { className?: string; style?: CSSPrope
 );
 
 export const BonsaiNode: NodeDefinition = {
-    type: 'automation-bonsai', label: 'Bonsai',
+    type: 'automation-bonsai', category: 'crm-sales', label: 'Bonsai',
     description: 'Manage companies, contacts, deals, projects, tasks, time entries and invoices',
     Icon: BonsaiIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

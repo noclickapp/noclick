@@ -13,6 +13,6 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 
 const SimplyBookNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const SimplyBookNode: NodeDefinition = {
-    type: 'automation-simplybook', label: 'SimplyBook.me', description: 'Company services, providers, availability and admin booking/client metadata',
+    type: 'automation-simplybook', category: 'bookings', label: 'SimplyBook.me', description: 'Company services, providers, availability and admin booking/client metadata',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: memo(SimplyBookNodeComponent),
 };

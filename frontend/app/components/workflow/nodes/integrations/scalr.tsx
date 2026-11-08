@@ -13,7 +13,7 @@ const ScalrNodeComponent = (props: NodeProps) => (
     <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />
 );
 export const ScalrNode: NodeDefinition = {
-    type: 'automation-scalr', label: 'Scalr',
+    type: 'automation-scalr', category: 'cloud-hosting', label: 'Scalr',
     description: 'Selected account, environment, workspace and run status metadata without inputs or logs',
     Icon: OfficialBrandIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

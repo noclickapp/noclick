@@ -19,6 +19,7 @@ export const SanityNode: NodeDefinition = {
     type: 'automation-sanity',
     label: 'Sanity',
     description: 'Query and manage Sanity Content Lake',
+    category: 'content-research',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

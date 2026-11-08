@@ -10,7 +10,7 @@ const ParseurIcon = ({ className, style }: { className?: string; style?: CSSProp
 );
 
 export const ParseurNode: NodeDefinition = {
-    type: 'automation-parseur', label: 'Parseur',
+    type: 'automation-parseur', category: 'documents', label: 'Parseur',
     description: 'Automate document parsing, mailboxes, templates and custom downloads',
     Icon: ParseurIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

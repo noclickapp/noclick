@@ -16,7 +16,7 @@ const DNSimpleNodeComponent = (props: NodeProps) => (
     <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />
 );
 export const DNSimpleNode: NodeDefinition = {
-    type: 'automation-dnsimple', label: 'DNSimple',
+    type: 'automation-dnsimple', category: 'cloud-hosting', label: 'DNSimple',
     description: 'Account-scoped domain and zone metadata without DNS records or control',
     keywords: ['DNSimple', 'domain state', 'zone metadata', 'expiry', 'DNS account'],
     Icon: OfficialBrandIcon, iconColor: '',

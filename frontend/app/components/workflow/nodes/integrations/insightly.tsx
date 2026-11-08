@@ -15,6 +15,7 @@ export const InsightlyNode: NodeDefinition = {
     type: 'automation-insightly',
     label: 'Insightly',
     description: 'Insightly CRM contacts, leads, opportunities, projects and tasks',
+    category: 'crm-sales',
     Icon: InsightlyIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

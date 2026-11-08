@@ -10,7 +10,7 @@ const ThanksIoIcon = ({ className, style }: { className?: string; style?: CSSPro
 );
 
 export const ThanksIoNode: NodeDefinition = {
-    type: 'automation-thanks-io', label: 'Thanks Io',
+    type: 'automation-thanks-io', category: 'marketing', label: 'Thanks Io',
     description: 'Manage mailing lists, recipients, templates and postcard orders',
     Icon: ThanksIoIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

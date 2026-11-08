@@ -10,7 +10,7 @@ const TimelinesAIIcon = ({ className, style }: { className?: string; style?: CSS
 );
 
 export const TimelinesAINode: NodeDefinition = {
-    type: 'automation-timelinesai', label: 'TimelinesAI',
+    type: 'automation-timelinesai', category: 'communication', label: 'TimelinesAI',
     description: 'Automate WhatsApp chats, messages, labels, files and templates',
     Icon: TimelinesAIIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

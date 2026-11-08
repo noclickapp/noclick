@@ -10,7 +10,7 @@ const DocupilotIcon = ({ className, style }: { className?: string; style?: CSSPr
 );
 
 export const DocupilotNode: NodeDefinition = {
-    type: 'automation-docupilot', label: 'Docupilot',
+    type: 'automation-docupilot', category: 'documents', label: 'Docupilot',
     description: 'Generate documents and manage templates, folders and content blocks',
     Icon: DocupilotIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

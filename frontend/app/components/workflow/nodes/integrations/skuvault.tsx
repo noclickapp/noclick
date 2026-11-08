@@ -13,6 +13,7 @@ export const SkuVaultNode: NodeDefinition = {
     type: 'automation-skuvault',
     label: 'SkuVault',
     description: 'Product, kit, warehouse and inventory metadata; selected catalog changes',
+    category: 'ecommerce',
     Icon: SkuVaultIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

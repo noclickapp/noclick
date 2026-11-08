@@ -15,6 +15,7 @@ export const PolarNode: NodeDefinition = {
     type: 'automation-polar',
     label: 'Polar',
     description: 'Organization product, customer and benefit metadata workflows',
+    category: 'finance-accounting',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

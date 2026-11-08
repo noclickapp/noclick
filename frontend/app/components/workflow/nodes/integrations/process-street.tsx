@@ -12,7 +12,7 @@ const ProcessStreetIcon = ({ className, style }: { className?: string; style?: C
 );
 
 export const ProcessStreetNode: NodeDefinition = {
-    type: 'automation-process-street', label: 'Process Street',
+    type: 'automation-process-street', category: 'productivity', label: 'Process Street',
     description: 'Automate workflow runs, tasks, assignments, form fields and comments',
     keywords: ['Process Street', 'checklists', 'workflow runs', 'process management'],
     Icon: ProcessStreetIcon, iconColor: '',

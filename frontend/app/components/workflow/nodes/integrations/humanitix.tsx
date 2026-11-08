@@ -10,7 +10,7 @@ const HumanitixIcon = ({ className, style }: { className?: string; style?: CSSPr
 );
 
 export const HumanitixNode: NodeDefinition = {
-    type: 'automation-humanitix', label: 'Humanitix',
+    type: 'automation-humanitix', category: 'bookings', label: 'Humanitix',
     description: 'Manage event attendance, orders, tickets and tags',
     Icon: HumanitixIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

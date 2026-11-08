@@ -26,6 +26,7 @@ export const NeonCRMNode: NodeDefinition = {
     type: 'automation-neoncrm',
     label: 'Neon CRM',
     description: 'Neon CRM accounts, company contacts, legacy events and activities',
+    category: 'nonprofit',
     keywords: ['neon', 'neoncrm', 'constituent', 'nonprofit', 'activity', 'report'],
     Icon: OfficialBrandIcon,
     iconColor: '',

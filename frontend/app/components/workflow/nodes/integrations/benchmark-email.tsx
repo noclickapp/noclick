@@ -19,6 +19,7 @@ export const BenchmarkEmailNode: NodeDefinition = {
     type: 'automation-benchmark-email',
     label: 'Benchmark Email',
     description: 'Contacts, lists, campaign drafts and email reports',
+    category: 'marketing',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

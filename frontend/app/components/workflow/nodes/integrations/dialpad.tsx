@@ -17,6 +17,7 @@ export const DialpadNode: NodeDefinition = {
     type: 'automation-dialpad',
     label: 'Dialpad',
     description: 'Manage calls, send SMS, sync contacts, and update users in Dialpad',
+    category: 'communication',
     keywords: ['phone', 'calling', 'sms', 'text message', 'contacts', 'users', 'dnd'],
     Icon: DialpadIcon,
     iconColor: '',

@@ -24,6 +24,7 @@ export const VoluumNode: NodeDefinition = {
   type: 'automation-voluum',
   label: 'Voluum',
   description: 'Manage campaign, offer, lander and traffic source metadata; read aggregate reports',
+  category: 'marketing',
   Icon: OfficialBrandIcon,
   iconColor: '',
   dimensions: { width: 110, height: 90, iconSize: 72 },

@@ -12,7 +12,7 @@ const RepairshoprIcon = ({ className, style }: { className?: string; style?: CSS
 );
 
 export const RepairshoprNode: NodeDefinition = {
-    type: 'automation-repairshopr', label: 'RepairShopr',
+    type: 'automation-repairshopr', category: 'industry', label: 'RepairShopr',
     description: 'Manage customers, tickets, contacts and leads; read invoices, estimates and products',
     Icon: RepairshoprIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

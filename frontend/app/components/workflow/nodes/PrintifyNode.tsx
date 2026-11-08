@@ -22,6 +22,7 @@ export const PrintifyNode: NodeDefinition = {
   type: 'automation-printify',
   label: 'Printify',
   description: 'Shop and catalog metadata, products, and product descriptions; also supports the shared Printful Enterprise API',
+  category: 'ecommerce',
   Icon: OfficialBrandIcon,
   iconColor: '',
   dimensions: { width: 90, height: 90, iconSize: 48 },

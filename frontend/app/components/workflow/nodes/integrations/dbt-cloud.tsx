@@ -14,7 +14,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 );
 
 export const DbtCloudNode: NodeDefinition = {
-    type: 'automation-dbt-cloud', label: 'dbt Cloud',
+    type: 'automation-dbt-cloud', category: 'analytics-bi', label: 'dbt Cloud',
     description: 'Read account, project, environment, job and run metadata; summarize JSON artifacts',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />),

@@ -15,6 +15,7 @@ export const LangflowNode: NodeDefinition = {
     type: 'automation-langflow',
     label: 'Langflow',
     description: 'Manage project, flow and file metadata without executing models.',
+    category: 'ai',
     Icon: LangflowIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

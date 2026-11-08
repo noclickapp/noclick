@@ -17,7 +17,7 @@ const SematextIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTM
 );
 SematextIcon.displayName = 'SematextIcon';
 export const SematextNode: NodeDefinition = {
-    type: 'automation-sematext', label: 'Sematext Cloud',
+    type: 'automation-sematext', category: 'monitoring', label: 'Sematext Cloud',
     description: 'Read scoped app and alert-rule metadata',
     keywords: ['sematext', 'observability', 'apps', 'alert rules'],
     Icon: OfficialBrandIcon, iconColor: '',

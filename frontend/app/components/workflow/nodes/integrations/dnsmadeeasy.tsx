@@ -15,7 +15,7 @@ const DNSMadeEasyNodeComponent = (props: NodeProps) => (
     <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />
 );
 export const DNSMadeEasyNode: NodeDefinition = {
-    type: 'automation-dnsmadeeasy', label: 'DNS Made Easy',
+    type: 'automation-dnsmadeeasy', category: 'cloud-hosting', label: 'DNS Made Easy',
     description: 'Managed domain and record ID, type and TTL metadata without DNS values or configuration',
     keywords: ['DNS Made Easy', 'DNSME', 'DNS records', 'DNS TTL'],
     Icon: OfficialBrandIcon, iconColor: '',

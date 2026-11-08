@@ -16,7 +16,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 const DIMENSIONS = { width: 90, height: 90, iconSize: 48 };
 const QonversionNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="#19191b" />;
 export const QonversionNode: NodeDefinition = {
-    type: 'automation-qonversion', label: 'Qonversion',
+    type: 'automation-qonversion', category: 'finance-accounting', label: 'Qonversion',
     description: 'Read product, entitlement definition, configuration and safe user metadata',
     Icon: OfficialBrandIcon, iconColor: '#19191b', dimensions: DIMENSIONS, component: memo(QonversionNodeComponent),
 };

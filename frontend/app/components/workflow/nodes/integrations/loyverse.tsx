@@ -10,7 +10,7 @@ const LoyverseIcon = ({ className, style }: { className?: string; style?: CSSPro
 );
 
 export const LoyverseNode: NodeDefinition = {
-    type: 'automation-loyverse', label: 'Loyverse',
+    type: 'automation-loyverse', category: 'ecommerce', label: 'Loyverse',
     description: 'Sync customers, catalog, inventory and sales with Loyverse',
     Icon: LoyverseIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

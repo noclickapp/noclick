@@ -16,6 +16,7 @@ export const NationBuilderNode: NodeDefinition = {
     type: 'automation-nationbuilder',
     label: 'NationBuilder',
     description: 'Manage nation signups, tags, custom lists and membership metadata',
+    category: 'nonprofit',
     Icon: NationBuilderIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

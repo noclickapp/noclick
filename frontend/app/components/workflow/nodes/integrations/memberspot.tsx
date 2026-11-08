@@ -16,6 +16,7 @@ export const MemberspotNode: NodeDefinition = {
     type: 'automation-memberspot',
     label: 'Memberspot',
     description: 'Members, course access, learning progress and exams',
+    category: 'courses',
     Icon: MemberspotIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

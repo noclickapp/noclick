@@ -24,6 +24,7 @@ export const DataForSEONode: NodeDefinition = {
     type: 'automation-dataforseo',
     label: 'DataForSEO',
     description: 'Query keyword, domain and backlink data, submit SERP tasks, and collect existing task results. Queries may consume provider credits.',
+    category: 'marketing',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

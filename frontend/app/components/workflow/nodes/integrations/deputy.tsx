@@ -14,6 +14,7 @@ DeputyIcon.displayName = 'DeputyIcon';
 // Exact publisher asset; provenance is recorded beside the SVG.
 export const DeputyNode: NodeDefinition = {
     type: 'automation-deputy',
+    category: 'hr-recruiting',
     label: 'Deputy',
     keywords: ['workforce', 'scheduling', 'roster', 'shifts', 'clock in', 'clock out', 'leave'],
     description: 'Automate employees, locations, shifts, timesheets, leave and tasks',

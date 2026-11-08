@@ -8,7 +8,7 @@ export function HumanitecIcon({ className, style }: { className?: string; style?
         style={{ ...style, '--brand-invert': 0, objectFit: 'contain' } as CSSProperties} draggable={false} />;
 }
 export const HumanitecNode: NodeDefinition = {
-    type: 'automation-humanitec', label: 'Humanitec',
+    type: 'automation-humanitec', category: 'cloud-hosting', label: 'Humanitec',
     description: 'Organization, application, environment, deployment and pipeline metadata, with confirmed application creation and name updates.',
     Icon: HumanitecIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

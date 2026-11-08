@@ -37,6 +37,7 @@ export const PinterestNode: NodeDefinition = {
     type: 'automation-pinterest',
     label: 'Pinterest',
     description: 'Pinterest pins, boards, ads, catalogs, and analytics',
+    category: 'social-media',
     Icon: PinterestIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -13,6 +13,7 @@ export const ClickFunnelsNode: NodeDefinition = {
     type: 'automation-clickfunnels',
     label: 'ClickFunnels',
     description: 'Create and tag leads, sync purchases, and enroll customers in courses',
+    category: 'marketing',
     Icon: ClickFunnelsIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

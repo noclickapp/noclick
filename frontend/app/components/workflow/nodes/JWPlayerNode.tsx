@@ -15,6 +15,7 @@ export const JWPlayerNode: NodeDefinition = {
     type: 'automation-jwplayer',
     label: 'JWX (JW Player)',
     description: 'Read property media, playlist and content-type metadata',
+    category: 'media',
     keywords: ['jwplayer', 'jwp', 'jwx', 'video', 'media', 'playlist', 'dam'],
     Icon: JWPlayerIcon,
     iconColor: '',

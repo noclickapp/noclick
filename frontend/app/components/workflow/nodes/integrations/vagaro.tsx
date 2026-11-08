@@ -17,6 +17,7 @@ const VagaroNodeComponent = (props: NodeProps) => <AutomationNode {...props} Ico
 
 export const VagaroNode: NodeDefinition = {
     type: 'automation-vagaro',
+    category: 'bookings',
     label: 'Vagaro',
     keywords: ['salon', 'spa', 'customers', 'employees', 'appointments'],
     description: 'Vagaro business metadata and profile updates',

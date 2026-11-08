@@ -10,7 +10,7 @@ const CleverreachIcon = ({ className, style }: { className?: string; style?: CSS
 );
 
 export const CleverreachNode: NodeDefinition = {
-    type: 'automation-cleverreach', label: 'CleverReach',
+    type: 'automation-cleverreach', category: 'marketing', label: 'CleverReach',
     description: 'Manage receiver lists, subscribers, tags, mailings and reports',
     Icon: CleverreachIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

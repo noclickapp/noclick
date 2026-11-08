@@ -23,6 +23,7 @@ export const ClockifyNode: NodeDefinition = {
     type: 'automation-clockify',
     label: 'Clockify',
     description: 'Track time and manage projects, clients, tags and tasks',
+    category: 'productivity',
     Icon: ClockifyIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

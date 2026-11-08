@@ -12,6 +12,7 @@ export const VeryfiNode: NodeDefinition = {
     type: 'automation-veryfi',
     label: 'Veryfi',
     description: 'Receipt and invoice processing, document summaries and tags',
+    category: 'documents',
     Icon: VeryfiIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

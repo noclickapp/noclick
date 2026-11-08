@@ -10,7 +10,7 @@ const SignwellIcon = ({ className, style }: { className?: string; style?: CSSPro
 );
 
 export const SignwellNode: NodeDefinition = {
-    type: 'automation-signwell', label: 'SignWell',
+    type: 'automation-signwell', category: 'documents', label: 'SignWell',
     description: 'Create and send documents, manage templates and webhooks, and track bulk sends',
     keywords: ['esignature', 'electronic signature', 'Signwell', 'document signing'],
     Icon: SignwellIcon, iconColor: '',

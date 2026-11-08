@@ -12,7 +12,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 
 const AvazaNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const AvazaNode: NodeDefinition = {
-    type: 'automation-avaza', label: 'Avaza',
+    type: 'automation-avaza', category: 'productivity', label: 'Avaza',
     description: 'Avaza account-bound company, project, task and time metadata reads',
     Icon: OfficialBrandIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

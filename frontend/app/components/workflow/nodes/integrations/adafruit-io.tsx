@@ -12,7 +12,7 @@ const AdafruitIOIcon = ({ className, style }: { className?: string; style?: CSSP
 );
 
 export const AdafruitIONode: NodeDefinition = {
-    type: 'automation-adafruit-io', label: 'Adafruit IO',
+    type: 'automation-adafruit-io', category: 'developer-tools', label: 'Adafruit IO',
     description: 'Read and write IoT feed data, manage feeds and organize groups',
     keywords: ['adafruit', 'iot', 'sensors', 'telemetry'],
     Icon: AdafruitIOIcon, iconColor: '',

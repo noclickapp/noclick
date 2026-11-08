@@ -12,7 +12,7 @@ const CertifierIcon = ({ className, style }: { className?: string; style?: CSSPr
 );
 
 export const CertifierNode: NodeDefinition = {
-    type: 'automation-certifier', label: 'Certifier',
+    type: 'automation-certifier', category: 'courses', label: 'Certifier',
     description: 'Create, issue and send credentials; manage templates and designs',
     Icon: CertifierIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

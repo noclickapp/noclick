@@ -15,6 +15,7 @@ export const BaserowNode: NodeDefinition = {
     type: 'automation-baserow',
     label: 'Baserow',
     description: 'Read and write Baserow database rows',
+    category: 'databases-storage',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

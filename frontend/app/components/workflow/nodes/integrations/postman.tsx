@@ -15,6 +15,7 @@ export const PostmanNode: NodeDefinition = {
     type: 'automation-postman',
     label: 'Postman',
     description: 'Collections, workspaces, APIs, specifications, mocks, and monitors',
+    category: 'developer-tools',
     Icon: OfficialBrandIcon,
     iconColor: 'text-orange-500',
     dimensions: { width: 90, height: 90, iconSize: 48 },

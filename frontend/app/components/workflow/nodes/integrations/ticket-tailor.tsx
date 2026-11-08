@@ -16,7 +16,7 @@ export const TicketTailorIcon: SvgIconComponent = forwardRef<HTMLImageElement, R
 );
 TicketTailorIcon.displayName = 'TicketTailorIcon';
 export const TicketTailorNode: NodeDefinition = {
-    type: 'automation-ticket-tailor', label: 'Ticket Tailor',
+    type: 'automation-ticket-tailor', category: 'bookings', label: 'Ticket Tailor',
     description: 'Report on events, tickets and orders; edit existing draft event metadata',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />,

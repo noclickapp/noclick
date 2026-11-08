@@ -25,6 +25,7 @@ export const AccuLynxNode: NodeDefinition = {
     type: 'automation-acculynx',
     label: 'AccuLynx',
     description: 'AccuLynx contacts, leads, jobs and company CRM metadata',
+    category: 'industry',
     Icon: PreferredBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

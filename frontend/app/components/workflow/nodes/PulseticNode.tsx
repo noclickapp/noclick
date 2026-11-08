@@ -15,6 +15,7 @@ export const PulseticNode: NodeDefinition = {
     type: 'automation-pulsetic',
     label: 'Pulsetic',
     description: 'Read monitor, uptime/history, heartbeat and status-page metadata',
+    category: 'monitoring',
     keywords: ['pulsetic', 'monitoring', 'uptime', 'downtime', 'heartbeat', 'status page'],
     Icon: PulseticIcon,
     iconColor: '',

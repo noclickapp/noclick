@@ -18,6 +18,7 @@ export const GoogleChatNode: NodeDefinition = {
     type: 'automation-google-chat',
     label: 'Google Chat',
     description: 'Manage spaces, messages, members, reactions, and pins',
+    category: 'google',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

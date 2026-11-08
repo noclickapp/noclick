@@ -11,7 +11,7 @@ const SendPulseIcon = ({ className, style }: { className?: string; style?: CSSPr
 );
 
 export const SendPulseNode: NodeDefinition = {
-    type: 'automation-send-pulse', label: 'SendPulse',
+    type: 'automation-send-pulse', category: 'marketing', label: 'SendPulse',
     description: 'Manage mailing lists, subscribers, campaigns and tags',
     Icon: SendPulseIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

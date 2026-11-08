@@ -31,6 +31,7 @@ export const DocusignNode: NodeDefinition = {
     type: 'automation-docusign',
     label: 'Docusign',
     description: 'Docusign templates, envelopes, and signed documents',
+    category: 'documents',
     Icon: DocusignIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

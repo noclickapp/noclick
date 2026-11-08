@@ -9,6 +9,6 @@ const CoveoIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAt
 CoveoIcon.displayName = 'CoveoIcon';
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={CoveoIcon} iconColor="" />;
 export const CoveoNode: NodeDefinition = {
-    type: 'automation-coveo', label: 'Coveo', description: 'Search indexed metadata, inspect fields and sources, and manage source refresh jobs.',
+    type: 'automation-coveo', category: 'databases-storage', label: 'Coveo', description: 'Search indexed metadata, inspect fields and sources, and manage source refresh jobs.',
     Icon: CoveoIcon, iconColor: '', dimensions: { width: 110, height: 90, iconSize: 48 }, component: Component,
 };

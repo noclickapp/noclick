@@ -14,7 +14,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 );
 
 export const FundraiseUpNode: NodeDefinition = {
-    type: 'automation-fundraise-up', label: 'Fundraise Up',
+    type: 'automation-fundraise-up', category: 'nonprofit', label: 'Fundraise Up',
     description: 'Read fundraising metadata and manage designations',
     Icon: OfficialBrandIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -21,6 +21,7 @@ export const SendGridNode: NodeDefinition = {
     type: 'automation-sendgrid',
     label: 'SendGrid',
     description: 'Send email, manage contacts and templates, and inspect delivery activity',
+    category: 'communication',
     Icon: OfficialBrandIcon,
     iconColor: 'text-blue-500',
     dimensions: DIMENSIONS,

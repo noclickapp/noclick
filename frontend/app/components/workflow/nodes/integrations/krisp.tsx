@@ -23,6 +23,7 @@ export const KrispNode: NodeDefinition = {
     type: 'automation-krisp',
     label: 'Krisp',
     description: 'Read processed meetings, existing notes, transcripts and action items',
+    category: 'meetings',
     Icon: PreferredBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 60 },

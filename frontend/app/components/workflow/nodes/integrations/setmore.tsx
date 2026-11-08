@@ -18,6 +18,7 @@ export const SetmoreNode: NodeDefinition = {
     type: 'automation-setmore',
     label: 'Setmore',
     description: 'Find services and available slots, manage customer profiles and appointments',
+    category: 'bookings',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

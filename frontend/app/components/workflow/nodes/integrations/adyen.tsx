@@ -13,6 +13,6 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const AdyenNode: NodeDefinition = {
-    type: 'automation-adyen', label: 'Adyen', description: 'API credential, company, merchant and store metadata, store description updates and payment link status.',
+    type: 'automation-adyen', category: 'finance-accounting', label: 'Adyen', description: 'API credential, company, merchant and store metadata, store description updates and payment link status.',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 110, height: 90, iconSize: 48 }, component: memo(Component),
 };

@@ -16,6 +16,7 @@ export const KitNode: NodeDefinition = {
     type: 'automation-kit',
     label: 'Kit',
     description: 'Manage subscribers, tags, forms, sequences, broadcasts and webhooks',
+    category: 'marketing',
     Icon: PreferredBrandIcon,
     iconColor: 'text-violet-500',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -25,6 +25,7 @@ export const CyclrNode: NodeDefinition = {
   type: 'automation-cyclr',
   label: 'Cyclr',
   description: 'Selected-account cycle, template and catalog metadata',
+  category: 'developer-tools',
   Icon: OfficialBrandIcon,
   iconColor: '',
   dimensions: { width: 90, height: 90, iconSize: 48 },

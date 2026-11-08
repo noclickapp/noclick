@@ -13,6 +13,7 @@ export const BannerbearNode: NodeDefinition = {
     type: 'automation-bannerbear',
     label: 'Bannerbear',
     description: 'Render personalized images, animations, and campaign batches',
+    category: 'media',
     keywords: ['marketing', 'image', 'animation', 'template', 'batch', 'campaign'],
     Icon: BannerbearIcon,
     iconColor: '',

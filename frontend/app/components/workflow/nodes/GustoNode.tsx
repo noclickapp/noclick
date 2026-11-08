@@ -15,6 +15,7 @@ export const GustoNode: NodeDefinition = {
     type: 'automation-gusto',
     label: 'Gusto',
     description: 'Manage Gusto companies, employees, payrolls and time off',
+    category: 'hr-recruiting',
     keywords: ['payroll', 'employees', 'HR', 'PTO', 'time off'],
     Icon: GustoIcon,
     iconColor: '',

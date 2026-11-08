@@ -17,6 +17,7 @@ export const UptimeRobotNode: NodeDefinition = {
     type: 'automation-uptimerobot',
     label: 'UptimeRobot',
     description: 'Monitor uptime, incidents, maintenance windows, and status pages',
+    category: 'monitoring',
     Icon: UptimeRobotIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

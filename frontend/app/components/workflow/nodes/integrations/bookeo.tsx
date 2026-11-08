@@ -29,6 +29,7 @@ export const BookeoNode: NodeDefinition = {
     type: 'automation-bookeo',
     label: 'Bookeo',
     description: 'Bookeo bookings, customers and availability',
+    category: 'bookings',
     Icon: BookeoIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

@@ -14,7 +14,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const ProposifyNode: NodeDefinition = {
-    type: 'automation-proposify', label: 'Proposify',
+    type: 'automation-proposify', category: 'documents', label: 'Proposify',
     description: 'Proposify Connect metadata and V3 draft-document workflows with issued OAuth',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo(Component),

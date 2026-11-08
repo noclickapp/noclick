@@ -27,6 +27,7 @@ const NgrokNodeComponent = (props: NodeProps) => (
 
 export const NgrokNode: NodeDefinition = {
     type: 'automation-ngrok',
+    category: 'developer-tools',
     label: 'ngrok',
     description:
         'Manage ngrok endpoints, tunnels, domains, vaults and account resources',

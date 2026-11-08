@@ -16,6 +16,7 @@ export const AudiobookshelfNode: NodeDefinition = {
     type: 'automation-audiobookshelf',
     label: 'Audiobookshelf',
     description: 'Read scoped library and author metadata',
+    category: 'media',
     Icon: AudiobookshelfIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

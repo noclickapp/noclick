@@ -37,6 +37,7 @@ export const AssetPandaNode: NodeDefinition = {
     type: 'automation-asset-panda',
     label: 'Asset Panda',
     description: 'Read account, module, collection, column and record metadata',
+    category: 'industry',
     Icon: AssetPandaIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

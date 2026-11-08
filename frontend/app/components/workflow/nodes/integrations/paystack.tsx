@@ -28,6 +28,7 @@ const PaystackIcon = ({
 
 export const PaystackNode: NodeDefinition = {
     type: 'automation-paystack',
+    category: 'finance-accounting',
     label: 'Paystack',
     description:
         'Automate transactions, customers, plans, subscriptions, refunds and balances',

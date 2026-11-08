@@ -18,6 +18,7 @@ export const WhopNode: NodeDefinition = {
     type: 'automation-whop',
     label: 'Whop',
     description: 'Manage Whop products, memberships, payments and promo codes',
+    category: 'ecommerce',
     Icon: WhopIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

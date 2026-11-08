@@ -14,6 +14,7 @@ export const DopplerNode: NodeDefinition = {
     type: 'automation-doppler',
     label: 'Doppler',
     description: 'Manage projects, configs, environments, and secrets in Doppler',
+    category: 'developer-tools',
     Icon: DopplerIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

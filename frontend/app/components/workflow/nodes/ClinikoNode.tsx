@@ -22,6 +22,7 @@ export const ClinikoNode: NodeDefinition = {
   type: 'automation-cliniko',
   label: 'Cliniko',
   description: 'Business, practitioner and availability metadata; external contacts',
+  category: 'bookings',
   Icon: OfficialBrandIcon,
   iconColor: '',
   dimensions: { width: 90, height: 90, iconSize: 48 },

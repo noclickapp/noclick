@@ -20,6 +20,7 @@ const LemlistNodeComponent = (props: NodeProps) => <AutomationNode {...props} Ic
 
 export const LemlistNode: NodeDefinition = {
     type: 'automation-lemlist',
+    category: 'crm-sales',
     label: 'Lemlist',
     description: 'Lemlist sales outreach automation', Icon: OfficialBrandIcon,
     iconColor: '', dimensions: DIMENSIONS, component: memo(LemlistNodeComponent),

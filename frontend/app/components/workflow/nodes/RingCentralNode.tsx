@@ -16,6 +16,7 @@ export const RingCentralNode: NodeDefinition = {
     type: 'automation-ringcentral',
     label: 'RingCentral',
     description: 'Calls, SMS, faxes, call logs and contacts',
+    category: 'communication',
     Icon: RingCentralIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

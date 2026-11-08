@@ -15,6 +15,7 @@ export const ClayNode: NodeDefinition = {
     type: 'automation-clay',
     label: 'Clay',
     description: 'Search GTM data, run enrichments, and query Clay tables',
+    category: 'crm-sales',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

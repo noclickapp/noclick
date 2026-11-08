@@ -10,7 +10,7 @@ const FrameIoV4Icon = ({ className, style }: { className?: string; style?: CSSPr
 );
 
 export const FrameIoV4Node: NodeDefinition = {
-    type: 'automation-frame-io-v4', label: 'Frame.io V4',
+    type: 'automation-frame-io-v4', category: 'media', label: 'Frame.io V4',
     description: 'Manage projects, folders, files, comments and review shares',
     Icon: FrameIoV4Icon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

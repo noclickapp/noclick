@@ -19,7 +19,7 @@ const CloudZeroIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHT
 CloudZeroIcon.displayName = 'CloudZeroIcon';
 const CloudZeroNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={PreferredBrandIcon} iconColor="" />;
 export const CloudZeroNode: NodeDefinition = {
-    type: 'automation-cloudzero', label: 'CloudZero',
+    type: 'automation-cloudzero', category: 'cloud-hosting', label: 'CloudZero',
     description: 'CloudZero cost, dimension and saved-view metadata reads',
     Icon: PreferredBrandIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -24,6 +24,7 @@ export const ImmichNode: NodeDefinition = {
     type: 'automation-immich',
     label: 'Immich',
     description: 'Read scoped album metadata',
+    category: 'media',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -10,7 +10,7 @@ const MatillionIcon = ({ className, style }: { className?: string; style?: CSSPr
 const MatillionNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={MatillionIcon} iconColor="" />;
 
 export const MatillionNode: NodeDefinition = {
-    type: 'automation-matillion', label: 'Maia (Matillion)',
+    type: 'automation-matillion', category: 'analytics-bi', label: 'Maia (Matillion)',
     description: 'Read scoped pipeline metadata and manage confirmed execution lifecycle',
     Icon: MatillionIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

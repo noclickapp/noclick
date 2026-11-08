@@ -15,6 +15,7 @@ export const MeilisearchNode: NodeDefinition = {
     type: 'automation-meilisearch',
     label: 'Meilisearch',
     description: 'Search and indexing',
+    category: 'databases-storage',
     keywords: ['search', 'index', 'documents', 'full-text search', 'Meilisearch'],
     Icon: OfficialBrandIcon,
     iconColor: '',

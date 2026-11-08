@@ -37,6 +37,7 @@ export const VendastaNode: NodeDefinition = {
     type: 'automation-vendasta',
     label: 'Vendasta',
     description: 'Manage CRM contacts, companies, opportunities and schemas',
+    category: 'crm-sales',
     keywords: ['CRM', 'contacts', 'companies', 'opportunities'],
     Icon: VendastaIcon,
     iconColor: '',

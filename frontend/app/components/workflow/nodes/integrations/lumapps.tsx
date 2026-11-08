@@ -16,6 +16,7 @@ export const LumAppsNode: NodeDefinition = {
   type: 'automation-lumapps',
   label: 'LumApps',
   description: 'Employee intranet metadata and unpublished content drafts',
+  category: 'communication',
   Icon: OfficialBrandIcon,
   iconColor: '',
   dimensions: { width: 90, height: 90, iconSize: 48 },

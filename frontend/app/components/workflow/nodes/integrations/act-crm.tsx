@@ -13,6 +13,7 @@ export const ActCRMNode: NodeDefinition = {
     type: 'automation-act-crm',
     label: 'Act CRM',
     description: 'Act! Web API contacts, companies, groups, opportunities, activity metadata and linked notes',
+    category: 'crm-sales',
     keywords: ['Act', 'CRM', 'contacts', 'companies', 'opportunities', 'notes'],
     Icon: OfficialBrandIcon,
     iconColor: '',

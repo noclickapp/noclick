@@ -16,6 +16,7 @@ export const PipelineCrmNode: NodeDefinition = {
     type: 'automation-pipeline-crm',
     label: 'Pipeline CRM',
     description: 'Deals, people, companies, activities and tasks',
+    category: 'crm-sales',
     Icon: PipelineCrmIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

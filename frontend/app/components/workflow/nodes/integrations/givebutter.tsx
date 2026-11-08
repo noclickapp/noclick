@@ -10,7 +10,7 @@ const GivebutterIcon = ({ className, style }: { className?: string; style?: CSSP
 );
 
 export const GivebutterNode: NodeDefinition = {
-    type: 'automation-givebutter', label: 'Givebutter',
+    type: 'automation-givebutter', category: 'nonprofit', label: 'Givebutter',
     description: 'Manage donor contacts, campaigns, activities, tags and funds; read donations and recurring plans',
     keywords: ['fundraising', 'donations', 'donors', 'nonprofit', 'CRM'],
     Icon: GivebutterIcon, iconColor: '',

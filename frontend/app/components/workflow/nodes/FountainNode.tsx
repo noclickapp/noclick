@@ -27,6 +27,7 @@ export const FountainNode: NodeDefinition = {
     type: 'automation-fountain',
     label: 'Fountain',
     description: 'Fountain Private Hire openings, stages and applicant records',
+    category: 'hr-recruiting',
     Icon: PreferredBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

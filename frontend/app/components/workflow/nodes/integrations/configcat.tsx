@@ -17,6 +17,7 @@ export const ConfigCatNode: NodeDefinition = {
     type: 'automation-configcat',
     label: 'ConfigCat',
     description: 'Manage ConfigCat feature flags, products, configurations and environments',
+    category: 'developer-tools',
     keywords: ['feature flags', 'settings', 'configuration', 'environments'],
     Icon: ConfigCatIcon,
     iconColor: '',

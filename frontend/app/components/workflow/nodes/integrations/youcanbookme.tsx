@@ -14,6 +14,7 @@ export const YouCanBookMeNode: NodeDefinition = {
     type: 'automation-youcanbookme',
     label: 'YouCanBookMe',
     description: 'Account profiles, team members, appointment types and bounded booking metadata queries.',
+    category: 'bookings',
     Icon: YouCanBookMeIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

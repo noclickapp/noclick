@@ -12,7 +12,7 @@ const LagrowthmachineIcon = ({ className, style }: { className?: string; style?:
 );
 
 export const LagrowthmachineNode: NodeDefinition = {
-    type: 'automation-lagrowthmachine', label: 'La Growth Machine',
+    type: 'automation-lagrowthmachine', category: 'crm-sales', label: 'La Growth Machine',
     description: 'Manage outreach audiences, leads, campaigns and conversation replies',
     keywords: ['lagrowthmachine', 'LGM', 'sales', 'outreach', 'LinkedIn'],
     Icon: LagrowthmachineIcon, iconColor: '',

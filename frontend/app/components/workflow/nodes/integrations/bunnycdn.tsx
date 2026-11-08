@@ -30,6 +30,7 @@ export const BunnyCDNNode: NodeDefinition = {
     type: 'automation-bunnycdn',
     label: 'Bunny.net',
     description: 'CDN, DNS, Shield, Stream, and edge automation',
+    category: 'cloud-hosting',
     Icon: BunnyIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

@@ -10,7 +10,7 @@ const GiphyIcon = ({ className, style }: { className?: string; style?: CSSProper
 );
 
 export const GiphyNode: NodeDefinition = {
-    type: 'automation-giphy', label: 'GIPHY',
+    type: 'automation-giphy', category: 'media', label: 'GIPHY',
     description: 'Search, find trending content and retrieve GIFs and stickers',
     Icon: GiphyIcon, keywords: ['gif', 'gifs', 'stickers', 'giphy'], iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

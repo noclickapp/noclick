@@ -8,6 +8,6 @@ export const BambooCIIcon = ({ style, ...props }: ImgHTMLAttributes<HTMLImageEle
 );
 const BambooCINodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={BambooCIIcon} iconColor="" />;
 export const BambooCINode: NodeDefinition = {
-    type: 'automation-bambooci', label: 'Bamboo CI', description: 'Read bound Bamboo project and plan metadata',
+    type: 'automation-bambooci', category: 'developer-tools', label: 'Bamboo CI', description: 'Read bound Bamboo project and plan metadata',
     Icon: BambooCIIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: BambooCINodeComponent,
 };

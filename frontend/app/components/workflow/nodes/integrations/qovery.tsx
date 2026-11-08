@@ -14,6 +14,7 @@ export const QoveryNode: NodeDefinition = {
     type: 'automation-qovery',
     label: 'Qovery',
     description: 'Organization, project, environment, cluster and deployment metadata',
+    category: 'cloud-hosting',
     Icon: QoveryIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

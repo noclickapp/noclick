@@ -23,6 +23,7 @@ export const TableNode: NodeDefinition = {
     type: 'automation-table',
     label: 'Table',
     description: 'Add, read, update and delete rows',
+    category: 'databases-storage',
     keywords: [
         'rows',
         'database',

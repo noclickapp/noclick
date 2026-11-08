@@ -9,7 +9,7 @@ const IONOSCloudIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgH
 );
 IONOSCloudIcon.displayName = 'IONOSCloudIcon';
 export const IONOSCloudNode: NodeDefinition = {
-    type: 'automation-ionoscloud', label: 'IONOS Cloud',
+    type: 'automation-ionoscloud', category: 'cloud-hosting', label: 'IONOS Cloud',
     description: 'Read scoped datacenter and server metadata',
     keywords: ['ionoscloud', 'cloud', 'datacenters', 'servers'],
     Icon: IONOSCloudIcon, iconColor: '',

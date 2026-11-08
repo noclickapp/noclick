@@ -10,7 +10,7 @@ const MailerSendIcon = ({ className, style }: { className?: string; style?: CSSP
 );
 
 export const MailerSendNode: NodeDefinition = {
-    type: 'automation-mailersend', label: 'MailerSend',
+    type: 'automation-mailersend', category: 'communication', label: 'MailerSend',
     description: 'Send email and manage messages, recipients and suppressions',
     Icon: MailerSendIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -19,6 +19,7 @@ const DockerHubNodeComponent = (props: NodeProps) => (
 
 export const DockerHubNode: NodeDefinition = {
     type: 'automation-docker-hub',
+    category: 'developer-tools',
     label: 'Docker Hub',
     description:
         'Manage Docker Hub repositories, tags, teams, members, and tokens',

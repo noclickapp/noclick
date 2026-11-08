@@ -10,7 +10,7 @@ const ReplyIoIcon = ({ className, style }: { className?: string; style?: CSSProp
 );
 
 export const ReplyIoNode: NodeDefinition = {
-    type: 'automation-reply-io', label: 'Reply Io',
+    type: 'automation-reply-io', category: 'crm-sales', label: 'Reply Io',
     description: 'Manage contacts, contact lists, outreach sequences and tasks',
     Icon: ReplyIoIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -23,6 +23,7 @@ export const BasetenNode: NodeDefinition = {
     type: 'automation-baseten',
     label: 'Baseten',
     description: 'Run Baseten model inference and inspect deployments',
+    category: 'ai',
     keywords: ['baseten', 'AI', 'LLM', 'model', 'deployment', 'inference'],
     Icon: BasetenIcon,
     iconColor: '',

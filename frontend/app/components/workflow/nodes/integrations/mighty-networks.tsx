@@ -22,7 +22,7 @@ export const MightyNetworksIcon: SvgIconComponent = forwardRef<
 MightyNetworksIcon.displayName = 'MightyNetworksIcon';
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const MightyNetworksNode: NodeDefinition = {
-    type: 'automation-mighty-networks', label: 'Mighty Networks',
+    type: 'automation-mighty-networks', category: 'courses', label: 'Mighty Networks',
     description: 'Network, Space, collection, tag and owned draft post workflows',
     keywords: ['Mighty API', 'community', 'spaces', 'drafts', 'Mighty Networks'],
     Icon: OfficialBrandIcon, iconColor: '',

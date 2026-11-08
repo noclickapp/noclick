@@ -17,6 +17,7 @@ export const SmartsheetNode: NodeDefinition = {
     type: 'automation-smartsheet',
     label: 'Smartsheet',
     description: 'Manage sheets, workspaces, rows, columns, and discussions',
+    category: 'productivity',
     Icon: PreferredBrandIcon,
     iconColor: 'text-blue-500',
     dimensions: { width: 90, height: 90, iconSize: 48 },

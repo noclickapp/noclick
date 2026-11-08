@@ -10,7 +10,7 @@ const KintoneIcon = ({ className, style }: { className?: string; style?: CSSProp
 );
 
 export const KintoneNode: NodeDefinition = {
-    type: 'automation-kintone', label: 'Kintone',
+    type: 'automation-kintone', category: 'databases-storage', label: 'Kintone',
     description: 'Automate app records, comments, process actions and cursor exports',
     Icon: KintoneIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

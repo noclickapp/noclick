@@ -10,7 +10,7 @@ const WistiaIcon = ({ className, style }: { className?: string; style?: CSSPrope
 );
 
 export const WistiaNode: NodeDefinition = {
-    type: 'automation-wistia', label: 'Wistia',
+    type: 'automation-wistia', category: 'media', label: 'Wistia',
     description: 'Manage Wistia media, folders, tags and captions; import videos and read statistics',
     Icon: WistiaIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

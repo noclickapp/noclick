@@ -10,7 +10,7 @@ const AccredibleCertificatesIcon = ({ className, style }: { className?: string; 
 );
 
 export const AccredibleCertificatesNode: NodeDefinition = {
-    type: 'automation-accredible-certificates', label: 'Accredible Certificates',
+    type: 'automation-accredible-certificates', category: 'courses', label: 'Accredible Certificates',
     description: 'Issue and manage certificates, badges, recipients and achievement groups',
     keywords: ['accredible', 'certificate', 'badge', 'credential', 'certification'],
     Icon: AccredibleCertificatesIcon, iconColor: '',

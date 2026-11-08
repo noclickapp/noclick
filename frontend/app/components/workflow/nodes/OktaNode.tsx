@@ -13,6 +13,7 @@ export const OktaNode: NodeDefinition = {
     type: 'automation-okta',
     label: 'Okta',
     description: 'Manage Okta users, groups, app assignments and lifecycle',
+    category: 'developer-tools',
     keywords: ['identity', 'access', 'onboarding', 'offboarding', 'SSO'],
     Icon: OktaIcon,
     iconColor: '',

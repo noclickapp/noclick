@@ -10,7 +10,7 @@ const WacheteIcon = ({ className, style }: { className?: string; style?: CSSProp
 );
 
 export const WacheteNode: NodeDefinition = {
-    type: 'automation-wachete', label: 'Wachete',
+    type: 'automation-wachete', category: 'content-research', label: 'Wachete',
     description: 'Monitor pages and manage folders, change history and notifications',
     Icon: WacheteIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

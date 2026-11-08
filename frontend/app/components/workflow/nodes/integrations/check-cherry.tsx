@@ -12,7 +12,7 @@ const CheckCherryIcon = ({ className, style }: { className?: string; style?: CSS
 );
 
 export const CheckCherryNode: NodeDefinition = {
-    type: 'automation-check-cherry', label: 'Check Cherry',
+    type: 'automation-check-cherry', category: 'bookings', label: 'Check Cherry',
     description: 'Manage leads, bookings, proposals, appointments, payments and packages',
     keywords: ['CheckCherry', 'events', 'booking', 'CRM'],
     Icon: CheckCherryIcon, iconColor: '',

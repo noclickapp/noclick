@@ -89,6 +89,9 @@ export interface NodeDefinition {
     // Extra search aliases so a node surfaces in node search for terms that
     // aren't in its label/description (e.g. ["RAG", "vector search", "retrieval"]).
     keywords?: string[];
+    /** The section an integration lists under on a deployment's integrations page (hosted: a key of
+     *  `CATEGORY_LABELS`, e.g. 'crm-sales'). A plain string, so this type names no deployment's list. */
+    category?: string;
     Icon: IconType | LucideIcon | SvgIconComponent;
     iconColor: string;
     /** Optional background override for the node card (canvas + sidebar preview). Defaults to dark gradient. */

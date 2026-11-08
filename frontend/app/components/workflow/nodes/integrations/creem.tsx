@@ -11,7 +11,7 @@ export const CreemIcon = forwardRef<HTMLImageElement, Pick<ImgHTMLAttributes<HTM
 CreemIcon.displayName = 'CreemIcon';
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={CreemIcon} iconColor="" />;
 export const CreemNode: NodeDefinition = {
-    type: 'automation-creem', label: 'Creem',
+    type: 'automation-creem', category: 'finance-accounting', label: 'Creem',
     description: 'Manage product and customer records and read subscription, order and license metadata',
     Icon: CreemIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo(Component),

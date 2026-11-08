@@ -17,6 +17,7 @@ export const CrelateNode: NodeDefinition = {
     type: 'automation-crelate',
     label: 'Crelate',
     description: 'Recruiting CRM records, field and organization metadata',
+    category: 'hr-recruiting',
     Icon: CrelateIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

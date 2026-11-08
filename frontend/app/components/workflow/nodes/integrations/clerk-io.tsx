@@ -17,6 +17,7 @@ export const ClerkIONode: NodeDefinition = {
     type: 'automation-clerk-io',
     label: 'Clerk.io',
     description: 'Manage ecommerce catalogs and retrieve product recommendations',
+    category: 'ecommerce',
     Icon: ClerkIOIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

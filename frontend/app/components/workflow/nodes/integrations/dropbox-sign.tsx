@@ -28,6 +28,7 @@ const DropboxSignIcon = ({
 
 export const DropboxSignNode: NodeDefinition = {
     type: 'automation-dropbox-sign',
+    category: 'documents',
     label: 'Dropbox Sign',
     description:
         'Send and manage signature requests, templates and signed document links',

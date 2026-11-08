@@ -16,6 +16,7 @@ export const StaffbaseNode: NodeDefinition = {
     type: 'automation-staffbase',
     label: 'Staffbase',
     description: 'Tenant users, groups, news and draft pages',
+    category: 'communication',
     Icon: StaffbaseIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

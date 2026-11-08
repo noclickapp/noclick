@@ -12,7 +12,7 @@ const VectaraIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTML
 VectaraIcon.displayName = 'VectaraIcon';
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={VectaraIcon} iconColor="" />;
 export const VectaraNode: NodeDefinition = {
-    type: 'automation-vectara', label: 'Vectara',
+    type: 'automation-vectara', category: 'vector-db', label: 'Vectara',
     description: 'Corpus documents, indexing, metadata, jobs and search without generation',
     Icon: VectaraIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo(Component),

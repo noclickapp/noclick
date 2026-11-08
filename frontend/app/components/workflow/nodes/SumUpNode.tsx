@@ -16,6 +16,7 @@ export const SumUpNode: NodeDefinition = {
     type: 'automation-sumup',
     label: 'SumUp',
     description: 'Create payment checkouts, sync customers, retrieve transactions and refund payments',
+    category: 'finance-accounting',
     keywords: ['payments', 'checkout', 'refund', 'customers', 'payouts', 'reconciliation'],
     Icon: SumUpIcon,
     iconColor: '',

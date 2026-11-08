@@ -17,6 +17,7 @@ export const AdobeCampaignNode: NodeDefinition = {
     type: 'automation-adobe-campaign',
     label: 'Adobe Campaign',
     description: 'Campaign profiles, services and custom-resource metadata',
+    category: 'marketing',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

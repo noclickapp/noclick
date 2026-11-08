@@ -31,6 +31,7 @@ export const FilloutNode: NodeDefinition = {
     type: 'automation-fillout',
     label: 'Fillout',
     description: 'Fillout forms, submissions, and Zite databases',
+    category: 'forms',
     Icon: PreferredBrandIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

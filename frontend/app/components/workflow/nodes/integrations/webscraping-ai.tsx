@@ -16,6 +16,7 @@ export const WebscrapingAiNode: NodeDefinition = {
     type: 'automation-webscraping-ai',
     label: 'WebScraping.AI',
     description: 'Scrape HTML and Markdown, extract fields with AI, search Google and read account credits',
+    category: 'content-research',
     Icon: WebscrapingAiIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

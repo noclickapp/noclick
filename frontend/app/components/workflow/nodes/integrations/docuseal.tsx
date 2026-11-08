@@ -10,7 +10,7 @@ const DocusealIcon = ({ className, style }: { className?: string; style?: CSSPro
 );
 
 export const DocusealNode: NodeDefinition = {
-    type: 'automation-docuseal', label: 'DocuSeal',
+    type: 'automation-docuseal', category: 'documents', label: 'DocuSeal',
     description: 'Manage document templates, signature submissions and signers',
     Icon: DocusealIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

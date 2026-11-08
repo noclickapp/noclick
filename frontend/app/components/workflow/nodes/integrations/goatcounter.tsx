@@ -16,7 +16,7 @@ const GoatCounterNodeComponent = (props: NodeProps) => (
     <AutomationNode {...props} Icon={GoatCounterIcon} iconColor="" />
 );
 export const GoatCounterNode: NodeDefinition = {
-    type: 'automation-goatcounter', label: 'GoatCounter',
+    type: 'automation-goatcounter', category: 'analytics-bi', label: 'GoatCounter',
     description: 'GoatCounter site metadata and bounded aggregated count reads',
     keywords: ['GoatCounter', 'web analytics', 'site metadata', 'visitor counts'],
     Icon: GoatCounterIcon, iconColor: '',

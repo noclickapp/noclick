@@ -9,7 +9,7 @@ const SuperwallIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHT
 );
 SuperwallIcon.displayName = 'SuperwallIcon';
 export const SuperwallNode: NodeDefinition = {
-    type: 'automation-superwall', label: 'Superwall',
+    type: 'automation-superwall', category: 'finance-accounting', label: 'Superwall',
     description: 'Read scoped organization, project, product, entitlement and aggregate chart metadata',
     keywords: ['Superwall', 'projects', 'applications', 'products', 'entitlements', 'charts', 'subscriptions'],
     Icon: SuperwallIcon, iconColor: '',

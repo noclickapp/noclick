@@ -10,7 +10,7 @@ const Ip2WhoisIcon = ({ className, style }: { className?: string; style?: CSSPro
 );
 
 export const Ip2WhoisNode: NodeDefinition = {
-    type: 'automation-ip2whois', label: 'IP2WHOIS',
+    type: 'automation-ip2whois', category: 'content-research', label: 'IP2WHOIS',
     description: 'Look up domain WHOIS records, contacts, registrar and nameservers',
     keywords: ['whois', 'domain', 'registrar', 'ip2whois'],
     Icon: Ip2WhoisIcon, iconColor: '',

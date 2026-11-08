@@ -9,7 +9,7 @@ export const ESputnikIcon = forwardRef<HTMLImageElement, Pick<ImgHTMLAttributes<
 ESputnikIcon.displayName = 'ESputnikIcon';
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={ESputnikIcon} iconColor="" />;
 export const ESputnikNode: NodeDefinition = {
-    type: 'automation-esputnik', label: 'eSputnik (Yespo)',
+    type: 'automation-esputnik', category: 'marketing', label: 'eSputnik (Yespo)',
     description: 'Read account, contact field schema, contact cards and broadcast metadata',
     keywords: ['eSputnik', 'Yespo', 'contacts', 'audience', 'broadcast', 'reporting'],
     Icon: ESputnikIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: memo(Component),

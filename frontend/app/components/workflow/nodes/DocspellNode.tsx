@@ -17,6 +17,7 @@ export const DocspellNode: NodeDefinition = {
     type: 'automation-docspell',
     label: 'Docspell',
     description: 'Read scoped folder and tag metadata',
+    category: 'documents',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

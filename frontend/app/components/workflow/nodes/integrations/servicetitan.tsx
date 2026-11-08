@@ -11,7 +11,7 @@ const ServiceTitanIcon = ({ className, style }: { className?: string; style?: CS
 );
 
 export const ServiceTitanNode: NodeDefinition = {
-    type: 'automation-servicetitan', label: 'ServiceTitan',
+    type: 'automation-servicetitan', category: 'industry', label: 'ServiceTitan',
     description: 'Read and update CRM customers, locations, leads, contacts and notes',
     Icon: ServiceTitanIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

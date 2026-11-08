@@ -11,7 +11,7 @@ const ResponsysIcon = ({ className, style }: { className?: string; style?: CSSPr
 );
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={ResponsysIcon} iconColor="" />;
 export const ResponsysNode: NodeDefinition = {
-    type: 'automation-responsys', label: 'Oracle Responsys',
+    type: 'automation-responsys', category: 'marketing', label: 'Oracle Responsys',
     description: 'Account, folder, list, table and campaign metadata',
     keywords: ['Oracle', 'Responsys', 'folder', 'profile list', 'supplemental table', 'campaign metadata', 'organization'],
     Icon: ResponsysIcon, iconColor: '',

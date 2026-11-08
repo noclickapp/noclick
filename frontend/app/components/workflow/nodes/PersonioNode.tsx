@@ -25,6 +25,7 @@ export const PersonioNode: NodeDefinition = {
     type: 'automation-personio',
     label: 'Personio',
     description: 'Sync employees, time off and attendance with Personio',
+    category: 'hr-recruiting',
     keywords: [
         'HR',
         'HRIS',

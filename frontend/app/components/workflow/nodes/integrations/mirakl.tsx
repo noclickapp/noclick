@@ -13,7 +13,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 
 const MiraklNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const MiraklNode: NodeDefinition = {
-    type: 'automation-mirakl', label: 'Mirakl',
+    type: 'automation-mirakl', category: 'ecommerce', label: 'Mirakl',
     description: 'Marketplace catalog, scoped shop/order metadata and explicit offer imports',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo(MiraklNodeComponent),

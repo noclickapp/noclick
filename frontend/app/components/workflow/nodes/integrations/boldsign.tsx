@@ -20,7 +20,7 @@ const BoldSignIcon: SvgIconComponent = forwardRef<HTMLImageElement, ImgHTMLAttri
 BoldSignIcon.displayName = 'BoldSignIcon';
 
 export const BoldSignNode: NodeDefinition = {
-    type: 'automation-boldsign', label: 'BoldSign',
+    type: 'automation-boldsign', category: 'documents', label: 'BoldSign',
     description: 'Read scoped document and template metadata; manage owned contacts and tags',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />),

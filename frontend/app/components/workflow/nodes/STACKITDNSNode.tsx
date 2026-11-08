@@ -13,7 +13,7 @@ const STACKITDNSNodeComponent = (props: NodeProps) => (
     <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />
 );
 export const STACKITDNSNode: NodeDefinition = {
-    type: 'automation-stackitdns', label: 'STACKIT DNS',
+    type: 'automation-stackitdns', category: 'cloud-hosting', label: 'STACKIT DNS',
     description: 'Protected zone and RRset metadata without DNS record values or changes',
     keywords: ['STACKIT DNS', 'zone metadata', 'RRset status', 'DNS metadata'],
     Icon: OfficialBrandIcon, iconColor: '',

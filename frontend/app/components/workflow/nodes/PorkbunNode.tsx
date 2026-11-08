@@ -12,6 +12,7 @@ export const PorkbunNode: NodeDefinition = {
   type: 'automation-porkbun',
   label: 'Porkbun',
   description: 'Read protected domain and DNS record metadata without DNS values',
+  category: 'cloud-hosting',
   Icon: OfficialBrandIcon,
   iconColor: '',
   dimensions: { width: 90, height: 90, iconSize: 48 },

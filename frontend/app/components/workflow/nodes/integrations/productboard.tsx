@@ -30,6 +30,7 @@ export const ProductboardNode: NodeDefinition = {
     type: 'automation-productboard',
     label: 'Productboard',
     description: 'Feedback, features, teams, and roadmap automation',
+    category: 'productivity',
     Icon: ProductboardIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

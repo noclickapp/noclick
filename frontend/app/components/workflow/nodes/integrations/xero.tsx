@@ -16,6 +16,7 @@ export const XeroNode: NodeDefinition = {
     type: 'automation-xero',
     label: 'Xero',
     description: 'Accounting, invoices, contacts, reports, and projects',
+    category: 'finance-accounting',
     Icon: PreferredBrandIcon,
     iconColor: 'text-cyan-500',
     dimensions: DIMENSIONS,

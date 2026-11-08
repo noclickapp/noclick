@@ -23,6 +23,7 @@ export const NylasNode: NodeDefinition = {
     type: 'automation-nylas',
     label: 'Nylas',
     description: 'Connected mail, calendar and contact metadata; unsent drafts and ordinary contact/calendar operations',
+    category: 'communication',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

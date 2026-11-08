@@ -13,6 +13,7 @@ export const InvoiceNinjaNode: NodeDefinition = {
     type: 'automation-invoiceninja',
     label: 'Invoice Ninja',
     description: 'Create clients and invoices, convert quotes, record payments, and sync products',
+    category: 'finance-accounting',
     Icon: InvoiceNinjaIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

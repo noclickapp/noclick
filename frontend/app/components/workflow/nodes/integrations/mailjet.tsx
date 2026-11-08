@@ -21,6 +21,7 @@ export const MailjetNode: NodeDefinition = {
     type: 'automation-mailjet',
     label: 'Mailjet',
     description: 'Manage Mailjet contacts, campaigns, templates, and email',
+    category: 'marketing',
     Icon: PreferredBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

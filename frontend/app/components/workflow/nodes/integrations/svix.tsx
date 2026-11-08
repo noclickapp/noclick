@@ -23,6 +23,7 @@ export const SvixNode: NodeDefinition = {
     type: 'automation-svix',
     label: 'Svix',
     description: 'Application and event-type metadata with scoped delivery status',
+    category: 'developer-tools',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

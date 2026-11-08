@@ -12,7 +12,7 @@ const YnabIcon = ({ className, style }: { className?: string; style?: CSSPropert
 );
 
 export const YnabNode: NodeDefinition = {
-    type: 'automation-ynab', label: 'YNAB',
+    type: 'automation-ynab', category: 'finance-accounting', label: 'YNAB',
     description: 'Manage plans, accounts, categories, payees and transactions',
     keywords: ['You Need A Budget', 'budget', 'personal finance', 'recurring transactions'],
     Icon: YnabIcon, iconColor: '',

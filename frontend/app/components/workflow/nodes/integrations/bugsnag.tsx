@@ -19,6 +19,7 @@ export const BugsnagNode: NodeDefinition = {
     type: 'automation-bugsnag',
     label: 'BugSnag',
     description: 'Monitor errors and manage projects in BugSnag',
+    category: 'monitoring',
     Icon: BugsnagIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

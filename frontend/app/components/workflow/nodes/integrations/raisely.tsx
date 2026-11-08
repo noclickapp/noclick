@@ -10,7 +10,7 @@ const RaiselyIcon = ({ className, style }: { className?: string; style?: CSSProp
 );
 
 export const RaiselyNode: NodeDefinition = {
-    type: 'automation-raisely', label: 'Raisely',
+    type: 'automation-raisely', category: 'nonprofit', label: 'Raisely',
     description: 'Manage fundraising campaigns, supporters, donations, profiles and tags',
     Icon: RaiselyIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

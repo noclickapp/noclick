@@ -20,6 +20,7 @@ const PaddleNodeComponent = (props: NodeProps) => (
 
 export const PaddleNode: NodeDefinition = {
     type: 'automation-paddle',
+    category: 'finance-accounting',
     label: 'Paddle',
     description:
         'Paddle Billing products, customers, subscriptions, and transactions',

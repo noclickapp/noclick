@@ -16,6 +16,7 @@ export const HoldedNode: NodeDefinition = {
     type: 'automation-holded',
     label: 'Holded',
     description: 'Contacts, invoices, products, projects and tasks',
+    category: 'finance-accounting',
     Icon: HoldedIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

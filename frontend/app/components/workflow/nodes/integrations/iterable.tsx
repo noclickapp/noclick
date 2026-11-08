@@ -15,6 +15,7 @@ export const IterableNode: NodeDefinition = {
     type: 'automation-iterable',
     label: 'Iterable',
     description: 'Iterable users, lists, events, campaigns, templates, and journeys',
+    category: 'marketing',
     Icon: IterableIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

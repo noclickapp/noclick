@@ -21,6 +21,7 @@ export const OmnisendNode: NodeDefinition = {
     type: 'automation-omnisend',
     label: 'Omnisend',
     description: 'Contacts, campaigns, automations, products, and analytics',
+    category: 'marketing',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

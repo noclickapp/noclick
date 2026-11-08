@@ -15,6 +15,7 @@ export const HevoNode: NodeDefinition = {
     type: 'automation-hevo',
     label: 'Hevo',
     description: 'Regional pipeline, source and destination metadata, scheduling and workflow status',
+    category: 'analytics-bi',
     Icon: HevoIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

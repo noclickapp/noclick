@@ -10,7 +10,7 @@ const CrunchbaseIcon = ({ className, style }: { className?: string; style?: CSSP
 );
 
 export const CrunchbaseNode: NodeDefinition = {
-    type: 'automation-crunchbase', label: 'Crunchbase',
+    type: 'automation-crunchbase', category: 'content-research', label: 'Crunchbase',
     description: 'Look up and search companies, people, funding rounds, acquisitions and investments',
     Icon: CrunchbaseIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

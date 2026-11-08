@@ -8,7 +8,7 @@ import { SupernormalIcon } from '~/components/icons/SupernormalIcon';
 
 const SupernormalNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={SupernormalIcon} iconColor="" />;
 export const SupernormalNode: NodeDefinition = {
-    type: 'automation-supernormal', label: 'Supernormal',
+    type: 'automation-supernormal', category: 'meetings', label: 'Supernormal',
     description: 'Meeting-service identity, calendar and recording metadata with selected transcript text',
     Icon: SupernormalIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo(SupernormalNodeComponent),

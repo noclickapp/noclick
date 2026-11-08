@@ -18,7 +18,7 @@ const HetrixToolsIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.Img
 HetrixToolsIcon.displayName = 'HetrixToolsIcon';
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const HetrixToolsNode: NodeDefinition = {
-  type: 'automation-hetrixtools', label: 'HetrixTools',
+  type: 'automation-hetrixtools', category: 'monitoring', label: 'HetrixTools',
   description: 'Read protected v3 scope, uptime, downtime, status-page and maintenance metadata',
   keywords: ['HetrixTools', 'uptime', 'monitor', 'downtime', 'status page', 'maintenance', 'metadata'],
   Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: memo(Component),

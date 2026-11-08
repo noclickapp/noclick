@@ -11,6 +11,6 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const HomebaseNode: NodeDefinition = {
-    type: 'automation-homebase', label: 'Homebase', description: 'Protected company, configured locations and scoped employee metadata reads.',
+    type: 'automation-homebase', category: 'hr-recruiting', label: 'Homebase', description: 'Protected company, configured locations and scoped employee metadata reads.',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 110, height: 90, iconSize: 48 }, component: Component,
 };

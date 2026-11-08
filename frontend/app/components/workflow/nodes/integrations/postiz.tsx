@@ -15,7 +15,7 @@ const PostizNodeComponent = (props: NodeProps) => (
 );
 
 export const PostizNode: NodeDefinition = {
-    type: 'automation-postiz', label: 'Postiz',
+    type: 'automation-postiz', category: 'social-media', label: 'Postiz',
     description: 'Social channels, scheduling, analytics, media and video', Icon: PostizIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo(PostizNodeComponent),

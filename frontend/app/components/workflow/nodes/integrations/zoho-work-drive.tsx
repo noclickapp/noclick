@@ -34,6 +34,7 @@ export const ZohoWorkDriveNode: NodeDefinition = {
     type: 'automation-zoho-work-drive',
     label: 'Zoho WorkDrive',
     description: 'Manage files, folders, comments and share links',
+    category: 'databases-storage',
     Icon: ZohoWorkDriveIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -37,6 +37,7 @@ export const BrexNode: NodeDefinition = {
     type: 'automation-brex',
     label: 'Brex',
     description: 'Manage expenses, cards, transactions and transfers',
+    category: 'finance-accounting',
     keywords: [
         'expenses',
         'corporate cards',

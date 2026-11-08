@@ -20,6 +20,7 @@ export const AlgoliaNode: NodeDefinition = {
     type: 'automation-algolia',
     label: 'Algolia',
     description: 'Search, indexing, analytics, insights, and ingestion',
+    category: 'databases-storage',
     Icon: PreferredBrandIcon,
     iconColor: 'text-blue-500',
     dimensions: DIMENSIONS,

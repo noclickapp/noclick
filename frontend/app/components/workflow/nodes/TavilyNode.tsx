@@ -35,6 +35,7 @@ export const TavilyNode: NodeDefinition = {
     type: 'automation-tavily',
     label: 'Tavily',
     description: 'Web search, extraction, crawling, mapping, and research',
+    category: 'ai',
     keywords: ['web search', 'web research', 'crawl', 'extract'],
     Icon: OfficialBrandIcon,
     iconColor: '',

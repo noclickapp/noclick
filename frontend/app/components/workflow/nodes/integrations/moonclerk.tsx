@@ -12,7 +12,7 @@ const MoonclerkIcon = ({ className, style }: { className?: string; style?: CSSPr
 );
 
 export const MoonclerkNode: NodeDefinition = {
-    type: 'automation-moonclerk', label: 'MoonClerk',
+    type: 'automation-moonclerk', category: 'finance-accounting', label: 'MoonClerk',
     description: 'Read payment forms, customers, subscriptions and payments',
     Icon: MoonclerkIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -10,7 +10,7 @@ const Icon = ({ className, style }: { className?: string; style?: CSSProperties 
 );
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={Icon} iconColor="" />;
 export const ClickSendNode: NodeDefinition = {
-  type: 'automation-clicksend', label: 'ClickSend',
+  type: 'automation-clicksend', category: 'communication', label: 'ClickSend',
   description: 'SMS, MMS, email, contacts, campaigns, and messaging reports',
   Icon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: Component,
 };

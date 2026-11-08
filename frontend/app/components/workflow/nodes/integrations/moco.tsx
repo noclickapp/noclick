@@ -16,6 +16,7 @@ export const MocoNode: NodeDefinition = {
     type: 'automation-moco',
     label: 'MOCO',
     description: 'Manage customers, contacts, projects, time entries, deals and invoices',
+    category: 'productivity',
     keywords: ['moco', 'mocoapp', 'crm', 'time tracking', 'agency'],
     Icon: MocoIcon,
     iconColor: '',

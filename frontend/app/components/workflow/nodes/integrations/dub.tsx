@@ -12,6 +12,7 @@ export const DubNode: NodeDefinition = {
   type: 'automation-dub',
   label: 'Dub',
   description: 'Protected domain and link metadata with destination URLs omitted',
+  category: 'marketing',
   Icon: DubIcon,
   iconColor: '',
   dimensions: { width: 90, height: 90, iconSize: 48 },

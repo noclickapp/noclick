@@ -14,6 +14,7 @@ export const ParcelLabNode: NodeDefinition = {
     type: 'automation-parcellab',
     label: 'parcelLab',
     description: 'Order delivery, returns, pickup locations, promises and survey workflows',
+    category: 'ecommerce',
     keywords: ['parcelLab', 'parcel', 'shipping', 'tracking', 'returns', 'PUDO', 'delivery'],
     Icon: OfficialBrandIcon,
     iconColor: '',

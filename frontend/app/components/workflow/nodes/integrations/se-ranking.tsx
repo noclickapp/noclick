@@ -9,6 +9,6 @@ const SERankingIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHT
 SERankingIcon.displayName = 'SERankingIcon';
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={SERankingIcon} iconColor="" />;
 export const SERankingNode: NodeDefinition = {
-    type: 'automation-se-ranking', label: 'SE Ranking', description: 'Project-bound search engines, keywords, rankings, groups, competitors and existing audit metadata.',
+    type: 'automation-se-ranking', category: 'marketing', label: 'SE Ranking', description: 'Project-bound search engines, keywords, rankings, groups, competitors and existing audit metadata.',
     Icon: SERankingIcon, iconColor: '', dimensions: { width: 110, height: 90, iconSize: 48 }, component: Component,
 };

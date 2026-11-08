@@ -24,6 +24,7 @@ export const DocumensoNode: NodeDefinition = {
     type: 'automation-documenso',
     label: 'Documenso',
     description: 'Prepare, send, and track signature envelopes',
+    category: 'documents',
     Icon: DocumensoIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

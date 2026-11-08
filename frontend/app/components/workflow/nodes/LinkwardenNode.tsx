@@ -24,6 +24,7 @@ export const LinkwardenNode: NodeDefinition = {
     type: 'automation-linkwarden',
     label: 'Linkwarden',
     description: 'Read scoped collection and tag metadata',
+    category: 'productivity',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -18,7 +18,7 @@ const PredictLeadsIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.Im
 PredictLeadsIcon.displayName = 'PredictLeadsIcon';
 
 export const PredictLeadsNode: NodeDefinition = {
-    type: 'automation-predictleads', label: 'PredictLeads',
+    type: 'automation-predictleads', category: 'crm-sales', label: 'PredictLeads',
     description: 'Read subscription, company, job, news and technology signals with explicit credit limits',
     keywords: ['PredictLeads', 'company', 'job openings', 'news events', 'technologies', 'subscription'],
     Icon: PreferredBrandIcon, iconColor: '',

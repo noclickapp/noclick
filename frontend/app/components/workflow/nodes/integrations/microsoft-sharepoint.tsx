@@ -19,6 +19,7 @@ export const SharePointNode: NodeDefinition = {
     type: 'automation-microsoft-sharepoint',
     label: 'SharePoint',
     description: 'Work with SharePoint sites, lists, and document libraries',
+    category: 'microsoft',
     Icon: OfficialBrandIcon,
     iconColor: 'text-[#038387]',
     dimensions: DIMENSIONS,

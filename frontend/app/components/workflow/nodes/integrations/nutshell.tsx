@@ -17,6 +17,7 @@ export const NutshellNode: NodeDefinition = {
     type: 'automation-nutshell',
     label: 'Nutshell',
     description: 'Nutshell CRM automation',
+    category: 'crm-sales',
     Icon: NutshellIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

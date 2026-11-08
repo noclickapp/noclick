@@ -12,6 +12,6 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const LeanIXNode: NodeDefinition = {
-    type: 'automation-leanix', label: 'SAP LeanIX', description: 'Protected fact-sheet metadata, current type facets and technical-fit filtered application reads.',
+    type: 'automation-leanix', category: 'developer-tools', label: 'SAP LeanIX', description: 'Protected fact-sheet metadata, current type facets and technical-fit filtered application reads.',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 110, height: 90, iconSize: 48 }, component: Component,
 };

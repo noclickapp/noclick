@@ -23,6 +23,7 @@ const KajabiIcon = ({
 
 export const KajabiNode: NodeDefinition = {
     type: 'automation-kajabi',
+    category: 'courses',
     label: 'Kajabi',
     description:
         'Create and tag contacts, manage offer access, and sync customers and purchases',

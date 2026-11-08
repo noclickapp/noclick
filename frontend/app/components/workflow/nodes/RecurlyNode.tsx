@@ -25,6 +25,7 @@ export const RecurlyNode: NodeDefinition = {
     type: 'automation-recurly',
     label: 'Recurly',
     description: 'Manage subscription billing in Recurly',
+    category: 'finance-accounting',
     Icon: PreferredBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

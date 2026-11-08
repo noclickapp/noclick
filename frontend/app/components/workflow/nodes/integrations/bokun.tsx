@@ -18,6 +18,7 @@ export const BokunNode: NodeDefinition = {
     type: 'automation-bokun',
     label: 'Bókun',
     description: 'Read experiences, availability and booking status; manage ordinary product metadata',
+    category: 'bookings',
     keywords: ['Bokun', 'tour operator', 'experiences', 'product list', 'activity availability', 'booking status'],
     Icon: NativeSourceBrandIcon,
     iconColor: '',

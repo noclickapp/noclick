@@ -13,7 +13,7 @@ const AprimoIcon: SvgIconComponent = forwardRef<HTMLImageElement, ImgHTMLAttribu
 AprimoIcon.displayName = 'AprimoIcon';
 
 export const AprimoNode: NodeDefinition = {
-    type: 'automation-aprimo', label: 'Aprimo DAM',
+    type: 'automation-aprimo', category: 'media', label: 'Aprimo DAM',
     description: 'Classification-bound digital asset and schema metadata reads',
     keywords: ['Aprimo', 'DAM', 'digital asset management', 'content metadata', 'classification'],
     Icon: AprimoIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },

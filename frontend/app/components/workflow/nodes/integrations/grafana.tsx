@@ -20,6 +20,7 @@ export const GrafanaNode: NodeDefinition = {
     type: 'automation-grafana',
     label: 'Grafana',
     description: 'Dashboards and observability',
+    category: 'monitoring',
     keywords: ['dashboard', 'observability', 'monitoring', 'alerting', 'data source', 'annotation', 'metrics'],
     Icon: GrafanaIcon,
     iconColor: '',

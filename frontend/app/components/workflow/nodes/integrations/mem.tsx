@@ -10,7 +10,7 @@ const MemIcon = ({ className, style }: { className?: string; style?: CSSProperti
 );
 
 export const MemNode: NodeDefinition = {
-    type: 'automation-mem', label: 'Mem',
+    type: 'automation-mem', category: 'productivity', label: 'Mem',
     description: 'Create, search and organize Mem notes and collections',
     Icon: MemIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

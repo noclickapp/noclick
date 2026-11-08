@@ -10,7 +10,7 @@ const SimpleroIcon = ({ className, style }: { className?: string; style?: CSSPro
 );
 
 export const SimpleroNode: NodeDefinition = {
-    type: 'automation-simplero', label: 'Simplero',
+    type: 'automation-simplero', category: 'courses', label: 'Simplero',
     description: 'Manage contacts, tags, automations and list subscriptions; read products and purchases',
     Icon: SimpleroIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

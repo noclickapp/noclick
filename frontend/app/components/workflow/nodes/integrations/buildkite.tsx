@@ -21,6 +21,7 @@ export const BuildkiteNode: NodeDefinition = {
     type: 'automation-buildkite',
     label: 'Buildkite',
     description: 'Run pipelines and inspect CI builds',
+    category: 'developer-tools',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

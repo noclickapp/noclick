@@ -16,7 +16,7 @@ const PreferredBrandIcon = ({ className, style }: { className?: string; style?: 
 );
 
 export const SkyviaNode: NodeDefinition = {
-    type: 'automation-skyvia', label: 'Skyvia',
+    type: 'automation-skyvia', category: 'analytics-bi', label: 'Skyvia',
     description: 'Read workspace, connection, integration, backup and automation metadata',
     Icon: PreferredBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 64 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={PreferredBrandIcon} iconColor="" />),

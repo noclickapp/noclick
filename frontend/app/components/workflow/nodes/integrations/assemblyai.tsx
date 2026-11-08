@@ -24,6 +24,7 @@ export const AssemblyAINode: NodeDefinition = {
     type: 'automation-assemblyai',
     label: 'AssemblyAI',
     description: 'Transcribe, search, and export audio with AssemblyAI',
+    category: 'ai',
     Icon: PreferredBrandIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

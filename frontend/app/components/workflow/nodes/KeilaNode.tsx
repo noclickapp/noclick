@@ -19,7 +19,7 @@ const KeilaIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHTMLAt
 KeilaIcon.displayName = 'KeilaIcon';
 const KeilaNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const KeilaNode: NodeDefinition = {
-    type: 'automation-keila', label: 'Keila',
+    type: 'automation-keila', category: 'marketing', label: 'Keila',
     description: 'Keila campaign and template metadata reads',
     Icon: OfficialBrandIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

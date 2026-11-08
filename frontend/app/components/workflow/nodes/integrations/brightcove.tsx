@@ -16,6 +16,7 @@ export const BrightcoveNode: NodeDefinition = {
     type: 'automation-brightcove',
     label: 'Brightcove',
     description: 'Manage Video Cloud video, playlist, folder and label metadata',
+    category: 'media',
     Icon: BrightcoveIcon,
     iconColor: '#2563EB',
     dimensions: { width: 90, height: 90, iconSize: 60 },

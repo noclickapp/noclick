@@ -28,6 +28,7 @@ export const AblyNode: NodeDefinition = {
     type: 'automation-ably',
     label: 'Ably',
     description: 'Ably realtime messaging and push automation',
+    category: 'communication',
     Icon: AblyIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

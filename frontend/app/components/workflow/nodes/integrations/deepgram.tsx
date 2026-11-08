@@ -15,6 +15,7 @@ export const DeepgramNode: NodeDefinition = {
     type: 'automation-deepgram',
     label: 'Deepgram',
     description: 'Transcribe audio, generate speech, analyze text, and inspect projects',
+    category: 'ai',
     Icon: DeepgramIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -16,7 +16,7 @@ const HivelocityNodeComponent = (props: NodeProps) => (
     <AutomationNode {...props} Icon={PreferredBrandIcon} iconColor="" />
 );
 export const HivelocityNode: NodeDefinition = {
-    type: 'automation-hivelocity', label: 'Hivelocity',
+    type: 'automation-hivelocity', category: 'cloud-hosting', label: 'Hivelocity',
     description: 'Protected device status, type, provisioning flags and monitor count metadata',
     Icon: PreferredBrandIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

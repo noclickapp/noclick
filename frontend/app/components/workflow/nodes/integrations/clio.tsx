@@ -17,6 +17,7 @@ export const ClioNode: NodeDefinition = {
     type: 'automation-clio',
     label: 'Clio',
     description: 'Clio Manage matters, contacts, documents, activities, and billing',
+    category: 'industry',
     Icon: ClioIcon,
     iconColor: '#0B5CAD',
     dimensions: { width: 90, height: 90, iconSize: 48 },

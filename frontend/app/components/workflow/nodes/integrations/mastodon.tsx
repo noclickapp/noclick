@@ -10,6 +10,7 @@ export const MastodonNode: NodeDefinition = {
   type: 'automation-mastodon',
   label: 'Mastodon',
   description: 'Read your verified account and authored status metadata without post content',
+  category: 'social-media',
   Icon: Icon as NodeDefinition['Icon'],
   iconColor: '',
   dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -16,6 +16,7 @@ export const MicrosoftEntraIdNode: NodeDefinition = {
     type: 'automation-microsoft-entra-id',
     label: 'Microsoft Entra ID',
     description: 'Manage directory users, security groups, memberships and tenant inventory',
+    category: 'microsoft',
     Icon: EntraIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

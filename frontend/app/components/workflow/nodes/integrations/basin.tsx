@@ -10,7 +10,7 @@ const BasinIcon = ({ className, style }: { className?: string; style?: CSSProper
 );
 
 export const BasinNode: NodeDefinition = {
-    type: 'automation-basin', label: 'Basin',
+    type: 'automation-basin', category: 'forms', label: 'Basin',
     description: 'Manage forms, submissions, projects and webhooks',
     Icon: BasinIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

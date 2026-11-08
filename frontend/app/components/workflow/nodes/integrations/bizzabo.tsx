@@ -15,6 +15,7 @@ export const BizzaboNode: NodeDefinition = {
     type: 'automation-bizzabo',
     label: 'Bizzabo',
     description: 'Account events, sessions, speakers and scoped contact metadata',
+    category: 'bookings',
     keywords: ['events', 'contacts', 'sessions', 'speakers', 'partners', 'registrations'],
     Icon: OfficialBrandIcon,
     iconColor: '',

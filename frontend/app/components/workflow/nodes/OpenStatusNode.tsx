@@ -18,7 +18,7 @@ export const OpenStatusIcon: SvgIconComponent = forwardRef<HTMLImageElement, Rea
 );
 OpenStatusIcon.displayName = 'OpenStatusIcon';
 export const OpenStatusNode: NodeDefinition = {
-    type: 'automation-openstatus', label: 'OpenStatus', description: 'Protected monitoring and status-page metadata reads',
+    type: 'automation-openstatus', category: 'monitoring', label: 'OpenStatus', description: 'Protected monitoring and status-page metadata reads',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />,
 };

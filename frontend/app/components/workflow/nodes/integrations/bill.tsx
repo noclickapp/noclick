@@ -12,6 +12,7 @@ export const BillNode: NodeDefinition = {
     type: 'automation-bill',
     label: 'BILL',
     description: 'Manage vendors, bills, approvals, payments, and customers',
+    category: 'finance-accounting',
     keywords: ['bill.com', 'accounts payable', 'accounts receivable', 'vendor payments'],
     Icon: BillIcon,
     iconColor: '',

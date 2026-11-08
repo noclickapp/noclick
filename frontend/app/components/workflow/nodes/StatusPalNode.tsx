@@ -16,7 +16,7 @@ const StatusPalIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.ImgHT
 StatusPalIcon.displayName = 'StatusPalIcon';
 const StatusPalNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const StatusPalNode: NodeDefinition = {
-    type: 'automation-statuspal', label: 'StatusPal',
+    type: 'automation-statuspal', category: 'monitoring', label: 'StatusPal',
     description: 'StatusPal protected status-page and service metadata reads',
     Icon: OfficialBrandIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

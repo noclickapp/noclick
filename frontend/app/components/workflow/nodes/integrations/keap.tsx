@@ -37,6 +37,7 @@ export const KeapNode: NodeDefinition = {
     type: 'automation-keap',
     label: 'Keap',
     description: 'Contacts, opportunities, orders, campaigns, tasks, and automations',
+    category: 'crm-sales',
     Icon: KeapIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

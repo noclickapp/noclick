@@ -15,7 +15,7 @@ export const FreshteamIcon = forwardRef<HTMLImageElement, ImgHTMLAttributes<HTML
 FreshteamIcon.displayName = 'FreshteamIcon';
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={FreshteamIcon} iconColor="" />;
 export const FreshteamNode: NodeDefinition = {
-    type: 'automation-freshteam', label: 'Freshteam',
+    type: 'automation-freshteam', category: 'hr-recruiting', label: 'Freshteam',
     description: 'Organization, job, applicant and employee metadata',
     Icon: FreshteamIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: Component,
 };

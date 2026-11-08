@@ -10,7 +10,7 @@ const SendfoxIcon = ({ className, style }: { className?: string; style?: CSSProp
 );
 
 export const SendfoxNode: NodeDefinition = {
-    type: 'automation-sendfox', label: 'Sendfox',
+    type: 'automation-sendfox', category: 'marketing', label: 'Sendfox',
     description: 'Manage SendFox contacts, lists and tags; read campaigns and statistics',
     Icon: SendfoxIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

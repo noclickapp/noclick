@@ -30,6 +30,7 @@ export const GorgiasNode: NodeDefinition = {
     type: 'automation-gorgias',
     label: 'Gorgias',
     description: 'Tickets, customers, messages, tags, and settings',
+    category: 'support',
     Icon: GorgiasIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

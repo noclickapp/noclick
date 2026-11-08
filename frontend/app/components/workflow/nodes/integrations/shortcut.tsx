@@ -15,6 +15,7 @@ export const ShortcutNode: NodeDefinition = {
     type: 'automation-shortcut',
     label: 'Shortcut',
     description: 'Stories, Epics, iterations and project management',
+    category: 'developer-tools',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

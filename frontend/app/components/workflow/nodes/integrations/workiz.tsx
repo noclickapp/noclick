@@ -16,6 +16,7 @@ export const WorkizNode: NodeDefinition = {
     type: 'automation-workiz',
     label: 'Workiz',
     description: 'Manage jobs, leads, clients, notes and invoices',
+    category: 'industry',
     Icon: WorkizIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 64 },

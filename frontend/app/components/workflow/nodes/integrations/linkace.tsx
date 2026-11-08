@@ -8,7 +8,7 @@ const LinkAceIcon = ({ className, style }: { className?: string; style?: CSSProp
         style={{ ...style, objectFit: 'contain' }} />
 );
 export const LinkAceNode: NodeDefinition = {
-    type: 'automation-linkace', label: 'LinkAce',
+    type: 'automation-linkace', category: 'productivity', label: 'LinkAce',
     description: 'Read current list and tag metadata',
     keywords: ['LinkAce', 'list metadata', 'tag metadata', 'visibility', 'catalog'],
     Icon: LinkAceIcon, iconColor: '',

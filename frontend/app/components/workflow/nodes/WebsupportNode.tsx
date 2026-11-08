@@ -20,6 +20,6 @@ export const WebsupportIcon = ({ style, ...props }: ImgHTMLAttributes<HTMLImageE
 );
 const WebsupportNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={PreferredBrandIcon} iconColor="" />;
 export const WebsupportNode: NodeDefinition = {
-    type: 'automation-websupport', label: 'Websupport DNS', description: 'Read signed service-bound DNS metadata',
+    type: 'automation-websupport', category: 'cloud-hosting', label: 'Websupport DNS', description: 'Read signed service-bound DNS metadata',
     Icon: PreferredBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: WebsupportNodeComponent,
 };

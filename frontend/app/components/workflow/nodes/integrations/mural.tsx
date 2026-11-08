@@ -29,6 +29,7 @@ export const MuralNode: NodeDefinition = {
     type: 'automation-mural',
     label: 'Mural',
     description: 'Mural workspaces, rooms, murals, templates and widgets',
+    category: 'productivity',
     Icon: MuralIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

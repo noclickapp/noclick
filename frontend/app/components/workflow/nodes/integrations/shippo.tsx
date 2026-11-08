@@ -21,6 +21,7 @@ export const ShippoNode: NodeDefinition = {
     type: 'automation-shippo',
     label: 'Shippo',
     description: 'Shipping labels, rates, shipments, tracking, and orders',
+    category: 'ecommerce',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: DIMENSIONS,

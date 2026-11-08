@@ -22,6 +22,7 @@ export const StreamChatNode: NodeDefinition = {
     type: 'automation-stream-chat',
     label: 'Stream Chat',
     description: 'Manage chat users and channels; read bounded message metadata',
+    category: 'communication',
     Icon: OfficialBrandIcon,
     iconColor: '#005FFF',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -17,7 +17,7 @@ const DropcontactIcon: SvgIconComponent = forwardRef<HTMLImageElement, React.Img
 DropcontactIcon.displayName = 'DropcontactIcon';
 const DropcontactNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const DropcontactNode: NodeDefinition = {
-    type: 'automation-dropcontact', label: 'Dropcontact',
+    type: 'automation-dropcontact', category: 'crm-sales', label: 'Dropcontact',
     description: 'Dropcontact asynchronous B2B enrichment and credit metadata',
     Icon: OfficialBrandIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

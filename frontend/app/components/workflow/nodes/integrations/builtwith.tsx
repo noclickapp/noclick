@@ -18,6 +18,7 @@ export const BuiltWithNode: NodeDefinition = {
     type: 'automation-builtwith',
     label: 'BuiltWith',
     description: 'Look up technologies used by public root domains',
+    category: 'content-research',
     keywords: ['website', 'technology', 'domain', 'stack', 'BuiltWith'],
     Icon: OfficialBrandIcon,
     iconColor: '',

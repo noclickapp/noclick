@@ -10,7 +10,7 @@ const ReplyIcon = ({ className, style }: { className?: string; style?: CSSProper
 );
 
 export const ReplyNode: NodeDefinition = {
-    type: 'automation-reply', label: 'Reply',
+    type: 'automation-reply', category: 'crm-sales', label: 'Reply',
     description: 'Manage contacts, contact lists, sequences and tasks',
     keywords: ['reply.io', 'sales engagement', 'outreach', 'prospects'],
     Icon: ReplyIcon, iconColor: '',

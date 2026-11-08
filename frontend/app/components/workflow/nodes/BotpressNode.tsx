@@ -25,6 +25,7 @@ export const BotpressNode: NodeDefinition = {
     type: 'automation-botpress',
     label: 'Botpress',
     description: 'Botpress workspace, bot, table data and file metadata workflows',
+    category: 'ai',
     keywords: ['administration', 'workspace', 'bots', 'tables', 'rows', 'files'],
     Icon: OfficialBrandIcon,
     iconColor: '',

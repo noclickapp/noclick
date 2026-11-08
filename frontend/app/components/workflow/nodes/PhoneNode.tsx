@@ -17,6 +17,7 @@ export const PhoneNode: NodeDefinition = {
     type: 'automation-phone',
     label: 'Phone',
     description: 'A phone number your agent answers and calls from',
+    category: 'communication',
     keywords: ['phone number', 'call', 'voice', 'dial', 'answer calls'],
     Icon: Phone,
     iconColor: 'text-emerald-500',

@@ -30,6 +30,7 @@ export const ConnecteamNode: NodeDefinition = {
     type: 'automation-connecteam',
     label: 'Connecteam',
     description: 'Workforce scheduling, time tracking, tasks, forms, and users',
+    category: 'hr-recruiting',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

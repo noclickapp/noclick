@@ -14,6 +14,7 @@ export const PaperformNode: NodeDefinition = {
     type: 'automation-paperform',
     label: 'Paperform',
     description: 'Manage forms, submissions, products, coupons and webhooks',
+    category: 'forms',
     keywords: ['forms', 'survey', 'submission', 'partial submission', 'coupon', 'product', 'webhook'],
     Icon: PaperformIcon,
     iconColor: '',

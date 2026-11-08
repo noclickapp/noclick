@@ -14,6 +14,7 @@ export const VdoCipherNode: NodeDefinition = {
     type: 'automation-vdocipher',
     label: 'VdoCipher',
     description: 'Video metadata, tags, upload policies and playback authorization',
+    category: 'media',
     Icon: VdoCipherIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

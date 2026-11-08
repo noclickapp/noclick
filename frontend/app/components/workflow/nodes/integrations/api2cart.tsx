@@ -11,7 +11,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 
 const API2CartNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const API2CartNode: NodeDefinition = {
-    type: 'automation-api2cart', label: 'API2Cart',
+    type: 'automation-api2cart', category: 'ecommerce', label: 'API2Cart',
     description: 'Connected-store catalog, customer and order metadata with disposable catalog management',
     Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 110, height: 90, iconSize: 72 },
     component: API2CartNodeComponent,

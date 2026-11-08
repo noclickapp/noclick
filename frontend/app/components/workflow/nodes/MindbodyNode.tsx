@@ -26,6 +26,7 @@ export const MindbodyNode: NodeDefinition = {
   type: 'automation-mindbody',
   label: 'Mindbody',
   description: 'Read business metadata and manage client profiles and preferences',
+  category: 'bookings',
   keywords: ['fitness', 'wellness', 'staff', 'clients', 'classes', 'appointments'],
   Icon: OfficialBrandIcon,
   iconColor: '',

@@ -14,6 +14,6 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 
 const SerpstatNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 export const SerpstatNode: NodeDefinition = {
-  type: 'automation-serpstat', label: 'Serpstat', description: 'Domain and keyword analytics, backlink metrics and existing rank/audit results',
+  type: 'automation-serpstat', category: 'marketing', label: 'Serpstat', description: 'Domain and keyword analytics, backlink metrics and existing rank/audit results',
   Icon: OfficialBrandIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: SerpstatNodeComponent,
 };

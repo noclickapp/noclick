@@ -15,7 +15,7 @@ const OfficialBrandIcon = ({ className, style }: { className?: string; style?: B
 const ProductPlanNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={OfficialBrandIcon} iconColor="" />;
 
 export const ProductPlanNode: NodeDefinition = {
-  type: 'automation-productplan', label: 'ProductPlan',
+  type: 'automation-productplan', category: 'productivity', label: 'ProductPlan',
   description: 'Read roadmap, strategy and launch metadata; manage parked bars',
   Icon: OfficialBrandIcon, iconColor: '',
   dimensions: { width: 90, height: 90, iconSize: 48 },

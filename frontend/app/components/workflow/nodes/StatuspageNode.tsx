@@ -13,6 +13,7 @@ export const StatuspageNode: NodeDefinition = {
     type: 'automation-statuspage',
     label: 'Statuspage',
     description: 'Manage incidents, components, subscribers and scheduled maintenance',
+    category: 'monitoring',
     keywords: ['Atlassian', 'status page', 'outage', 'maintenance'],
     Icon: StatuspageIcon,
     iconColor: '',

@@ -14,7 +14,7 @@ export { ShlinkIcon };
 
 const ShlinkNodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={ShlinkIcon as any} iconColor="" />;
 export const ShlinkNode: NodeDefinition = {
-    type: 'automation-shlink', label: 'Shlink',
+    type: 'automation-shlink', category: 'marketing', label: 'Shlink',
     description: 'Current domain, tag and short URL metadata without redirect targets or tracking',
     keywords: ['Shlink', 'short URL metadata', 'domain', 'tag', 'validity', 'aggregate visits'],
     Icon: ShlinkIcon as any, iconColor: '',

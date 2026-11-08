@@ -10,7 +10,7 @@ const UplistingIcon = ({ className, style }: { className?: string; style?: CSSPr
 );
 
 export const UplistingNode: NodeDefinition = {
-    type: 'automation-uplisting', label: 'Uplisting',
+    type: 'automation-uplisting', category: 'bookings', label: 'Uplisting',
     description: 'Manage properties, availability, calendars, bookings, custom attributes and webhooks',
     Icon: UplistingIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -20,6 +20,7 @@ export const FulcrumNode: NodeDefinition = {
     type: 'automation-fulcrum',
     label: 'Fulcrum',
     description: 'Read forms and manage field records, projects and choice lists',
+    category: 'industry',
     Icon: OfficialBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 60 },

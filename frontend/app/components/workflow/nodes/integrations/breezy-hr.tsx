@@ -10,7 +10,7 @@ const BreezyHRIcon = ({ className, style }: { className?: string; style?: CSSPro
 );
 
 export const BreezyHRNode: NodeDefinition = {
-    type: 'automation-breezy-hr', label: 'Breezy HR',
+    type: 'automation-breezy-hr', category: 'hr-recruiting', label: 'Breezy HR',
     description: 'Manage recruiting companies, positions, candidates, pipeline stages and notes',
     Icon: BreezyHRIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

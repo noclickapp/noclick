@@ -14,6 +14,7 @@ export const PeopleDataLabsNode: NodeDefinition = {
     type: 'automation-people-data-labs',
     label: 'People Data Labs',
     description: 'Explicit company enrichment and bounded company search using provider credits',
+    category: 'crm-sales',
     keywords: ['People Data Labs', 'PDL', 'company', 'firmographics', 'enrichment', 'search'],
     Icon: PeopleDataLabsIcon,
     iconColor: '#34344e',

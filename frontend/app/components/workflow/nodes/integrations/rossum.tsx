@@ -11,7 +11,7 @@ const RossumIcon = ({ className, style }: { className?: string; style?: CSSPrope
 );
 const Component = (props: NodeProps) => <AutomationNode {...props} Icon={RossumIcon} iconColor="" />;
 export const RossumNode: NodeDefinition = {
-    type: 'automation-rossum', label: 'Rossum',
+    type: 'automation-rossum', category: 'documents', label: 'Rossum',
     description: 'Rossum organization, queue and private document workflows',
     Icon: RossumIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 }, component: memo(Component),
 };

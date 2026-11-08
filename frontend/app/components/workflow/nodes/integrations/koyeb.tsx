@@ -23,6 +23,7 @@ export const KoyebNode: NodeDefinition = {
     type: 'automation-koyeb',
     label: 'Koyeb',
     description: 'Read cloud inventory and status; manage empty app metadata',
+    category: 'cloud-hosting',
     Icon: PreferredBrandIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 60 },

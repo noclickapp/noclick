@@ -14,6 +14,7 @@ export const BrazeNode: NodeDefinition = {
     type: 'automation-braze',
     label: 'Braze',
     description: 'Manage customer engagement, campaigns, Canvases, users, catalogs, and analytics',
+    category: 'marketing',
     Icon: PreferredBrandIcon,
     iconColor: 'text-orange-500',
     dimensions: { width: 90, height: 90, iconSize: 48 },

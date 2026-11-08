@@ -17,6 +17,7 @@ export const SignalWireNode: NodeDefinition = {
     type: 'automation-signalwire',
     label: 'SignalWire',
     description: 'Project metadata, message and call logs, SMS and owned numbers',
+    category: 'communication',
     Icon: SignalWireIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

@@ -22,7 +22,7 @@ const GranolaNodeComponent = (props: NodeProps) => (
 );
 
 export const GranolaNode: NodeDefinition = {
-    type: 'automation-granola', label: 'Granola',
+    type: 'automation-granola', category: 'meetings', label: 'Granola',
     description: 'Meeting notes, transcripts, folders and workspace administration', Icon: PreferredBrandIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo(GranolaNodeComponent),

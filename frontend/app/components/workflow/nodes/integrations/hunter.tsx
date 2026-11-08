@@ -16,6 +16,7 @@ export const HunterNode: NodeDefinition = {
     type: 'automation-hunter',
     label: 'Hunter',
     description: 'Hunter email discovery, verification, and outreach',
+    category: 'crm-sales',
     Icon: HunterIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

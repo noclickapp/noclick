@@ -14,6 +14,7 @@ export const EtsyNode: NodeDefinition = {
     type: 'automation-etsy',
     label: 'Etsy',
     description: 'Manage Etsy listings, inventory, orders and shop settings',
+    category: 'ecommerce',
     keywords: ['marketplace', 'handmade', 'receipts', 'shipping', 'stock'],
     Icon: EtsyIcon,
     iconColor: '',

@@ -16,6 +16,7 @@ export const BugHerdNode: NodeDefinition = {
     type: 'automation-bugherd',
     label: 'BugHerd',
     description: 'Read organization, projects, feedback tasks, comments and memberships',
+    category: 'developer-tools',
     keywords: ['bugherd', 'feedback', 'bugs', 'tasks', 'projects', 'comments'],
     Icon: OfficialBrandIcon,
     iconColor: '',

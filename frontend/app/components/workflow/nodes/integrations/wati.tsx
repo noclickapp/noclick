@@ -10,7 +10,7 @@ const WATIIcon = ({ className, style }: { className?: string; style?: CSSPropert
 );
 const WATINodeComponent = (props: NodeProps) => <AutomationNode {...props} Icon={WATIIcon} iconColor="" />;
 export const WATINode: NodeDefinition = {
-    type: 'automation-wati', label: 'WATI',
+    type: 'automation-wati', category: 'communication', label: 'WATI',
     description: 'WATI V3 contacts and protected service metadata',
     Icon: WATIIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },

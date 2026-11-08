@@ -34,6 +34,7 @@ export const ZohoProjectsNode: NodeDefinition = {
     type: 'automation-zoho-projects',
     label: 'Zoho Projects',
     description: 'Manage projects, task lists and tasks',
+    category: 'productivity',
     Icon: ZohoProjectsIcon,
     iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
