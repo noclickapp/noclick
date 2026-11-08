@@ -1,0 +1,43 @@
+{
+  "GET /templates/categories": {
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "name": "folder1"
+        },
+        {
+          "name": "customer2"
+        }
+      ]
+    },
+    "source": "https://carbone.io/documentation/developer/http-api/manage-templates.html#list-categories"
+  },
+  "GET /templates/tags": {
+    "body": {
+      "success": true,
+      "data": [
+        {
+          "name": "contract"
+        },
+        {
+          "name": "invoice"
+        },
+        {
+          "name": "tag3"
+        },
+        {
+          "name": "v8.2.1"
+        }
+      ]
+    },
+    "source": "https://carbone.io/documentation/developer/http-api/manage-templates.html#list-tags"
+  },
+  "DELETE /template/{templateId-or-versionId}": {
+    "body": {
+      "success": true,
+      "message": "Template deleted"
+    },
+    "source": "https://carbone.io/documentation/developer/http-api/manage-templates.html#delete-a-template"
+  }
+}
