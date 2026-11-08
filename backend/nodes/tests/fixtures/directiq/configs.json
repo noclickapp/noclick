@@ -1,0 +1,99 @@
+{
+  "list_contacts": {
+    "operation": "list_contacts"
+  },
+  "count_contacts": {
+    "operation": "count_contacts"
+  },
+  "update_contact": {
+    "operation": "update_contact",
+    "id": 42
+  },
+  "delete_contact": {
+    "operation": "delete_contact",
+    "id": 42
+  },
+  "list_contact_activity": {
+    "operation": "list_contact_activity",
+    "id": 42
+  },
+  "add_contact_note": {
+    "operation": "add_contact_note",
+    "id": 42,
+    "note": "Follow up next week"
+  },
+  "update_contact_note": {
+    "operation": "update_contact_note",
+    "id": 42,
+    "note_id": 42,
+    "note": "Follow up next week"
+  },
+  "delete_contact_note": {
+    "operation": "delete_contact_note",
+    "id": 42,
+    "note_id": 42
+  },
+  "list_lists": {
+    "operation": "list_lists"
+  },
+  "create_list": {
+    "operation": "create_list",
+    "name": "Newsletter"
+  },
+  "get_list": {
+    "operation": "get_list",
+    "id": 42
+  },
+  "delete_list": {
+    "operation": "delete_list",
+    "id": 42
+  },
+  "list_list_contacts": {
+    "operation": "list_list_contacts",
+    "id": 42
+  },
+  "import_contacts": {
+    "operation": "import_contacts",
+    "id": 42,
+    "email": "person@example.com"
+  },
+  "list_campaigns": {
+    "operation": "list_campaigns"
+  },
+  "get_campaign": {
+    "operation": "get_campaign",
+    "id": 42
+  },
+  "list_campaign_report": {
+    "operation": "list_campaign_report",
+    "id": 42,
+    "type": "recipients"
+  },
+  "get_campaign_breakdown": {
+    "operation": "get_campaign_breakdown",
+    "id": 42,
+    "by": "domain"
+  },
+  "create_tag": {
+    "operation": "create_tag",
+    "name": "Newsletter"
+  },
+  "list_templates": {
+    "operation": "list_templates"
+  },
+  "create_template": {
+    "operation": "create_template",
+    "name": "Newsletter",
+    "subject": "Monthly news",
+    "html": "<p>Hello</p>"
+  },
+  "get_template": {
+    "operation": "get_template",
+    "id": 42
+  },
+  "add_template_tag": {
+    "operation": "add_template_tag",
+    "id": 42,
+    "name": "Newsletter"
+  }
+}

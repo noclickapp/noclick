@@ -1,0 +1,1284 @@
+{
+  "$defs": {
+    "AddContactNote": {
+      "additionalProperties": false,
+      "description": "Add a note.",
+      "properties": {
+        "operation": {
+          "const": "add_contact_note",
+          "default": "add_contact_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "note": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "note"
+      ],
+      "title": "AddContactNote",
+      "type": "object"
+    },
+    "AddTemplateTag": {
+      "additionalProperties": false,
+      "description": "Add a tag to a template.",
+      "properties": {
+        "operation": {
+          "const": "add_template_tag",
+          "default": "add_template_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "name": {
+          "description": "The tag's name; created when the account has no tag with this name.",
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "AddTemplateTag",
+      "type": "object"
+    },
+    "CountContacts": {
+      "additionalProperties": false,
+      "description": "Count contacts.",
+      "properties": {
+        "operation": {
+          "const": "count_contacts",
+          "default": "count_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "created_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created From"
+        },
+        "created_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created To"
+        }
+      },
+      "title": "CountContacts",
+      "type": "object"
+    },
+    "CreateList": {
+      "additionalProperties": false,
+      "description": "Create a list.",
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateList",
+      "type": "object"
+    },
+    "CreateTag": {
+      "additionalProperties": false,
+      "description": "Create a tag.",
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 50,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateTag",
+      "type": "object"
+    },
+    "CreateTemplate": {
+      "additionalProperties": false,
+      "description": "Create a template.",
+      "properties": {
+        "operation": {
+          "const": "create_template",
+          "default": "create_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "subject": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Subject",
+          "type": "string"
+        },
+        "html": {
+          "description": "The HTML body, as made in the HTML editor.",
+          "minLength": 1,
+          "title": "Html",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "subject",
+        "html"
+      ],
+      "title": "CreateTemplate",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "description": "Delete a contact.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "DeleteContactNote": {
+      "additionalProperties": false,
+      "description": "Delete a note.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact_note",
+          "default": "delete_contact_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "note_id": {
+          "minimum": 1,
+          "title": "Note Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "note_id"
+      ],
+      "title": "DeleteContactNote",
+      "type": "object"
+    },
+    "DeleteList": {
+      "additionalProperties": false,
+      "description": "Delete a list. Returns an acknowledgement; deletion completes in the background.",
+      "properties": {
+        "operation": {
+          "const": "delete_list",
+          "default": "delete_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteList",
+      "type": "object"
+    },
+    "DirectIQAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "directiq_api_key",
+          "default": "directiq_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "DirectIQ API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your DirectIQ API key. NoClick sends it in the X-API-Key header to api.directiq.com. Connecting reads your contact lists. List operations return one page; pass next_page_token to continue. Deleting a list starts a background deletion and may also delete contacts that belong to no other list.",
+      "x-credential-url": "https://rest.directiq.com/core/index.html"
+    },
+    "GetCampaign": {
+      "additionalProperties": false,
+      "description": "Retrieve a campaign.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCampaign",
+      "type": "object"
+    },
+    "GetCampaignBreakdown": {
+      "additionalProperties": false,
+      "description": "Count a campaign's opens or clicks.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign_breakdown",
+          "default": "get_campaign_breakdown",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "by": {
+          "description": "The detail `GET /v2/campaigns/{id}/reports/breakdown` groups by.",
+          "enum": [
+            "domain",
+            "link",
+            "mail_client",
+            "device",
+            "country"
+          ],
+          "title": "By",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "opens",
+                "clicks"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What `GET /v2/campaigns/{id}/reports/breakdown` counts.",
+          "title": "Type",
+          "enum": [
+            "opens",
+            "clicks"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "id",
+        "by"
+      ],
+      "title": "GetCampaignBreakdown",
+      "type": "object"
+    },
+    "GetList": {
+      "additionalProperties": false,
+      "description": "Retrieve a list.",
+      "properties": {
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetList",
+      "type": "object"
+    },
+    "GetTemplate": {
+      "additionalProperties": false,
+      "description": "Retrieve a template.",
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetTemplate",
+      "type": "object"
+    },
+    "ImportContacts": {
+      "additionalProperties": false,
+      "description": "Import one contact into a list, optionally updating existing names.\n\nUse workflow iteration for multiple contacts. The API receives a singleton contacts array.",
+      "properties": {
+        "operation": {
+          "const": "import_contacts",
+          "default": "import_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Destination contact list ID.",
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "email": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "update_existing": {
+          "default": false,
+          "description": "Update names for an existing contact; otherwise only add it to the list.",
+          "title": "Update Existing",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "email"
+      ],
+      "title": "ImportContacts",
+      "type": "object"
+    },
+    "ListCampaignReport": {
+      "additionalProperties": false,
+      "description": "List a campaign report.",
+      "properties": {
+        "operation": {
+          "const": "list_campaign_report",
+          "default": "list_campaign_report",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "type": {
+          "description": "What `GET /v2/campaigns/{id}/reports` lists.",
+          "enum": [
+            "recipients",
+            "opens",
+            "clicks",
+            "bounces",
+            "unsubscribes",
+            "spam_complaints"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "link": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Link"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain"
+        },
+        "bounce_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "hard",
+                "soft"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bounce Type",
+          "enum": [
+            "hard",
+            "soft"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "id",
+        "type"
+      ],
+      "title": "ListCampaignReport",
+      "type": "object"
+    },
+    "ListCampaigns": {
+      "additionalProperties": false,
+      "description": "List campaigns.",
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "title": "ListCampaigns",
+      "type": "object"
+    },
+    "ListContactActivity": {
+      "additionalProperties": false,
+      "description": "List a contact's activity.",
+      "properties": {
+        "operation": {
+          "const": "list_contact_activity",
+          "default": "list_contact_activity",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "created",
+                "updated",
+                "deleted",
+                "added_to_list",
+                "removed_from_list",
+                "added_to_tag",
+                "removed_from_tag",
+                "sent_email",
+                "opened_email",
+                "clicked_link",
+                "soft_bounced",
+                "hard_bounced",
+                "activated",
+                "passive",
+                "awaiting_activation",
+                "manually_disabled",
+                "unsubscribed",
+                "spam_complaint"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "created",
+            "updated",
+            "deleted",
+            "added_to_list",
+            "removed_from_list",
+            "added_to_tag",
+            "removed_from_tag",
+            "sent_email",
+            "opened_email",
+            "clicked_link",
+            "soft_bounced",
+            "hard_bounced",
+            "activated",
+            "passive",
+            "awaiting_activation",
+            "manually_disabled",
+            "unsubscribed",
+            "spam_complaint"
+          ],
+          "x-enum-searchable": true
+        },
+        "occurred_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Occurred From"
+        },
+        "occurred_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Occurred To"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ListContactActivity",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "description": "List contacts.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "awaiting_activation",
+                "passive",
+                "manually_disabled",
+                "unsubscribed",
+                "spam_complaint",
+                "bounced"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "awaiting_activation",
+            "passive",
+            "manually_disabled",
+            "unsubscribed",
+            "spam_complaint",
+            "bounced"
+          ],
+          "x-enum-searchable": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListListContacts": {
+      "additionalProperties": false,
+      "description": "List the contacts of a list.",
+      "properties": {
+        "operation": {
+          "const": "list_list_contacts",
+          "default": "list_list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "awaiting_activation",
+                "passive",
+                "manually_disabled",
+                "unsubscribed",
+                "spam_complaint",
+                "bounced"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "awaiting_activation",
+            "passive",
+            "manually_disabled",
+            "unsubscribed",
+            "spam_complaint",
+            "bounced"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ListListContacts",
+      "type": "object"
+    },
+    "ListLists": {
+      "additionalProperties": false,
+      "description": "List lists.",
+      "properties": {
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "title": "ListLists",
+      "type": "object"
+    },
+    "ListTemplates": {
+      "additionalProperties": false,
+      "description": "List templates.",
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Limit"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "title": "ListTemplates",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "description": "Update a contact.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "awaiting_activation",
+                "passive",
+                "manually_disabled",
+                "unsubscribed",
+                "spam_complaint",
+                "bounced"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "active",
+            "awaiting_activation",
+            "passive",
+            "manually_disabled",
+            "unsubscribed",
+            "spam_complaint",
+            "bounced"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateContactNote": {
+      "additionalProperties": false,
+      "description": "Update a note.",
+      "properties": {
+        "operation": {
+          "const": "update_contact_note",
+          "default": "update_contact_note",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "minimum": 1,
+          "title": "Id",
+          "type": "integer"
+        },
+        "note_id": {
+          "minimum": 1,
+          "title": "Note Id",
+          "type": "integer"
+        },
+        "note": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "note_id",
+        "note"
+      ],
+      "title": "UpdateContactNote",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contact_note": "#/$defs/AddContactNote",
+          "add_template_tag": "#/$defs/AddTemplateTag",
+          "count_contacts": "#/$defs/CountContacts",
+          "create_list": "#/$defs/CreateList",
+          "create_tag": "#/$defs/CreateTag",
+          "create_template": "#/$defs/CreateTemplate",
+          "delete_contact": "#/$defs/DeleteContact",
+          "delete_contact_note": "#/$defs/DeleteContactNote",
+          "delete_list": "#/$defs/DeleteList",
+          "get_campaign": "#/$defs/GetCampaign",
+          "get_campaign_breakdown": "#/$defs/GetCampaignBreakdown",
+          "get_list": "#/$defs/GetList",
+          "get_template": "#/$defs/GetTemplate",
+          "import_contacts": "#/$defs/ImportContacts",
+          "list_campaign_report": "#/$defs/ListCampaignReport",
+          "list_campaigns": "#/$defs/ListCampaigns",
+          "list_contact_activity": "#/$defs/ListContactActivity",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_list_contacts": "#/$defs/ListListContacts",
+          "list_lists": "#/$defs/ListLists",
+          "list_templates": "#/$defs/ListTemplates",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_contact_note": "#/$defs/UpdateContactNote"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/CountContacts"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/ListContactActivity"
+        },
+        {
+          "$ref": "#/$defs/AddContactNote"
+        },
+        {
+          "$ref": "#/$defs/UpdateContactNote"
+        },
+        {
+          "$ref": "#/$defs/DeleteContactNote"
+        },
+        {
+          "$ref": "#/$defs/ListLists"
+        },
+        {
+          "$ref": "#/$defs/CreateList"
+        },
+        {
+          "$ref": "#/$defs/GetList"
+        },
+        {
+          "$ref": "#/$defs/DeleteList"
+        },
+        {
+          "$ref": "#/$defs/ListListContacts"
+        },
+        {
+          "$ref": "#/$defs/ImportContacts"
+        },
+        {
+          "$ref": "#/$defs/ListCampaigns"
+        },
+        {
+          "$ref": "#/$defs/GetCampaign"
+        },
+        {
+          "$ref": "#/$defs/ListCampaignReport"
+        },
+        {
+          "$ref": "#/$defs/GetCampaignBreakdown"
+        },
+        {
+          "$ref": "#/$defs/CreateTag"
+        },
+        {
+          "$ref": "#/$defs/ListTemplates"
+        },
+        {
+          "$ref": "#/$defs/CreateTemplate"
+        },
+        {
+          "$ref": "#/$defs/GetTemplate"
+        },
+        {
+          "$ref": "#/$defs/AddTemplateTag"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DirectIQAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Directiq Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

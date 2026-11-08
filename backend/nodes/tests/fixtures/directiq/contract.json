@@ -1,0 +1,4474 @@
+{
+  "operations": {
+    "list_contacts": {
+      "method": "GET",
+      "path": "/v2/contacts",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "page_token",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "description": "Only contacts with this status.",
+          "schema": {
+            "$ref": "#/components/schemas/ContactStatus"
+          }
+        },
+        {
+          "name": "email",
+          "in": "query",
+          "description": "Only the contact with this email address (letter case aside).",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactResourceListResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/contacts/swagger/v2/swagger.json"
+    },
+    "count_contacts": {
+      "method": "GET",
+      "path": "/v2/contacts/count",
+      "parameters": [
+        {
+          "name": "created_from",
+          "in": "query",
+          "description": "Only contacts created on or after this day, e.g. 2026-10-01.",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "created_to",
+          "in": "query",
+          "description": "Only contacts created on or before this day, e.g. 2026-10-31.",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactCount"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/contacts/swagger/v2/swagger.json"
+    },
+    "update_contact": {
+      "method": "PATCH",
+      "path": "/v2/contacts/{id}",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      ],
+      "request_body": {
+        "$ref": "#/components/schemas/UpdateContactRequest"
+      },
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactResource"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/not_found",
+                "title": "Not found",
+                "status": 404,
+                "detail": "No resource with id 42 was found.",
+                "code": "not_found",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/conflict",
+                "title": "Conflict",
+                "status": 409,
+                "code": "conflict",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Unprocessable Content",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/unprocessable",
+                "title": "Request could not be processed",
+                "status": 422,
+                "detail": "The request is valid but could not be carried out.",
+                "code": "unprocessable",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/contacts/swagger/v2/swagger.json"
+    },
+    "delete_contact": {
+      "method": "DELETE",
+      "path": "/v2/contacts/{id}",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": {
+        "204": {
+          "description": "No Content"
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/not_found",
+                "title": "Not found",
+                "status": 404,
+                "detail": "No resource with id 42 was found.",
+                "code": "not_found",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        },
+        "409": {
+          "description": "Conflict",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/conflict",
+                "title": "Conflict",
+                "status": 409,
+                "code": "conflict",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/contacts/swagger/v2/swagger.json"
+    },
+    "list_contact_activity": {
+      "method": "GET",
+      "path": "/v2/contacts/{id}/activity",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "The contact.",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "page_token",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "description": "Only activity of this type.",
+          "schema": {
+            "$ref": "#/components/schemas/ContactActivityType"
+          }
+        },
+        {
+          "name": "occurred_from",
+          "in": "query",
+          "description": "Only activity on or after this day (UTC); defaults to 365 days ago.",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        {
+          "name": "occurred_to",
+          "in": "query",
+          "description": "Only activity on or before this day (UTC).",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactActivityResourceListResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/not_found",
+                "title": "Not found",
+                "status": 404,
+                "detail": "No resource with id 42 was found.",
+                "code": "not_found",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/contacts/swagger/v2/swagger.json"
+    },
+    "add_contact_note": {
+      "method": "POST",
+      "path": "/v2/contacts/{id}/notes",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      ],
+      "request_body": {
+        "$ref": "#/components/schemas/ContactNoteRequest"
+      },
+      "responses": {
+        "201": {
+          "description": "Created",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactNoteResource"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/not_found",
+                "title": "Not found",
+                "status": 404,
+                "detail": "No resource with id 42 was found.",
+                "code": "not_found",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/contacts/swagger/v2/swagger.json"
+    },
+    "update_contact_note": {
+      "method": "PATCH",
+      "path": "/v2/contacts/{id}/notes/{note_id}",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        {
+          "name": "note_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      ],
+      "request_body": {
+        "$ref": "#/components/schemas/ContactNoteRequest"
+      },
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactNoteResource"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/not_found",
+                "title": "Not found",
+                "status": 404,
+                "detail": "No resource with id 42 was found.",
+                "code": "not_found",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/contacts/swagger/v2/swagger.json"
+    },
+    "delete_contact_note": {
+      "method": "DELETE",
+      "path": "/v2/contacts/{id}/notes/{note_id}",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        {
+          "name": "note_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": {
+        "204": {
+          "description": "No Content"
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/not_found",
+                "title": "Not found",
+                "status": 404,
+                "detail": "No resource with id 42 was found.",
+                "code": "not_found",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/contacts/swagger/v2/swagger.json"
+    },
+    "list_lists": {
+      "method": "GET",
+      "path": "/v2/lists",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "page_token",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListResourceListResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/contacts/swagger/v2/swagger.json"
+    },
+    "create_list": {
+      "method": "POST",
+      "path": "/v2/lists",
+      "parameters": [],
+      "request_body": {
+        "$ref": "#/components/schemas/CreateListRequest"
+      },
+      "responses": {
+        "201": {
+          "description": "Created",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListResource"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListResource"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/forbidden",
+                "title": "Forbidden",
+                "status": 403,
+                "code": "forbidden",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/contacts/swagger/v2/swagger.json"
+    },
+    "get_list": {
+      "method": "GET",
+      "path": "/v2/lists/{id}",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListResource"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/not_found",
+                "title": "Not found",
+                "status": 404,
+                "detail": "No resource with id 42 was found.",
+                "code": "not_found",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/contacts/swagger/v2/swagger.json"
+    },
+    "delete_list": {
+      "method": "DELETE",
+      "path": "/v2/lists/{id}",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": {
+        "202": {
+          "description": "Accepted"
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/not_found",
+                "title": "Not found",
+                "status": 404,
+                "detail": "No resource with id 42 was found.",
+                "code": "not_found",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/contacts/swagger/v2/swagger.json"
+    },
+    "list_list_contacts": {
+      "method": "GET",
+      "path": "/v2/lists/{id}/contacts",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "page_token",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "description": "Only contacts with this status.",
+          "schema": {
+            "$ref": "#/components/schemas/ContactStatus"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactResourceListResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/not_found",
+                "title": "Not found",
+                "status": 404,
+                "detail": "No resource with id 42 was found.",
+                "code": "not_found",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/contacts/swagger/v2/swagger.json"
+    },
+    "import_contacts": {
+      "method": "POST",
+      "path": "/v2/lists/{id}/import",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      ],
+      "request_body": {
+        "$ref": "#/components/schemas/ImportContactsRequest"
+      },
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportResultResource"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/forbidden",
+                "title": "Forbidden",
+                "status": 403,
+                "code": "forbidden",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/not_found",
+                "title": "Not found",
+                "status": 404,
+                "detail": "No resource with id 42 was found.",
+                "code": "not_found",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/contacts/swagger/v2/swagger.json"
+    },
+    "list_campaigns": {
+      "method": "GET",
+      "path": "/v2/campaigns",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "page_token",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "EffectiveLimit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampaignResourceListResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/core/swagger/v2/swagger.json"
+    },
+    "get_campaign": {
+      "method": "GET",
+      "path": "/v2/campaigns/{id}",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampaignResource"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/not_found",
+                "title": "Not found",
+                "status": 404,
+                "detail": "No resource with id 42 was found.",
+                "code": "not_found",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/core/swagger/v2/swagger.json"
+    },
+    "list_campaign_report": {
+      "method": "GET",
+      "path": "/v2/campaigns/{id}/reports",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "The campaign.",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "description": "What to list.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/CampaignReportType"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "page_token",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "EffectiveLimit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "email",
+          "in": "query",
+          "description": "Only the rows of this email address (letter case aside).",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "link",
+          "in": "query",
+          "description": "Only clicks on this exact URL (`type=clicks` only).",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "domain",
+          "in": "query",
+          "description": "Only opens by addresses of this email domain, e.g. `gmail.com` (`type=opens` only).",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "bounce_type",
+          "in": "query",
+          "description": "Only hard or only soft bounces (`type=bounces` only).",
+          "schema": {
+            "$ref": "#/components/schemas/BounceType"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "items": {
+                      "oneOf": [
+                        {
+                          "$ref": "#/components/schemas/RecipientResource"
+                        },
+                        {
+                          "$ref": "#/components/schemas/OpenResource"
+                        },
+                        {
+                          "$ref": "#/components/schemas/ClickResource"
+                        },
+                        {
+                          "$ref": "#/components/schemas/BounceResource"
+                        },
+                        {
+                          "$ref": "#/components/schemas/UnsubscribeResource"
+                        },
+                        {
+                          "$ref": "#/components/schemas/SpamComplaintResource"
+                        }
+                      ]
+                    }
+                  },
+                  "has_more": {
+                    "type": "boolean"
+                  },
+                  "next_page_token": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              },
+              "examples": {
+                "recipients": {
+                  "summary": "type=recipients",
+                  "value": {
+                    "data": [
+                      {
+                        "id": 1043,
+                        "contact_id": 5821,
+                        "email": "jane@example.com",
+                        "first_name": "Jane",
+                        "last_name": "Doe",
+                        "quality": 4,
+                        "sent_at": "2026-10-20T09:00:00Z"
+                      }
+                    ],
+                    "has_more": true,
+                    "next_page_token": "aWQ6MTA0Mg"
+                  }
+                },
+                "opens": {
+                  "summary": "type=opens",
+                  "value": {
+                    "data": [
+                      {
+                        "id": 1043,
+                        "contact_id": 5821,
+                        "email": "jane@example.com",
+                        "first_name": "Jane",
+                        "last_name": "Doe",
+                        "opened_at": "2026-10-20T09:42:00Z",
+                        "device": "Mobile",
+                        "mail_client": "Gmail",
+                        "domain": "example.com",
+                        "city": "Berlin",
+                        "country_code": "DE"
+                      }
+                    ],
+                    "has_more": true,
+                    "next_page_token": "aWQ6MTA0Mg"
+                  }
+                },
+                "clicks": {
+                  "summary": "type=clicks",
+                  "value": {
+                    "data": [
+                      {
+                        "id": 1043,
+                        "contact_id": 5821,
+                        "email": "jane@example.com",
+                        "first_name": "Jane",
+                        "last_name": "Doe",
+                        "clicked_at": "2026-10-20T09:44:00Z",
+                        "link": "https://example.com/pricing",
+                        "device": "Mobile",
+                        "mail_client": "Gmail",
+                        "city": "Berlin",
+                        "country_code": "DE"
+                      }
+                    ],
+                    "has_more": true,
+                    "next_page_token": "aWQ6MTA0Mg"
+                  }
+                },
+                "bounces": {
+                  "summary": "type=bounces",
+                  "value": {
+                    "data": [
+                      {
+                        "id": 1043,
+                        "contact_id": 5822,
+                        "email": "john@example.org",
+                        "first_name": "John",
+                        "last_name": "Smith",
+                        "bounced_at": "2026-10-20T09:01:00Z",
+                        "type": "hard",
+                        "reason": "bad_mailbox"
+                      }
+                    ],
+                    "has_more": true,
+                    "next_page_token": "aWQ6MTA0Mg"
+                  }
+                },
+                "unsubscribes": {
+                  "summary": "type=unsubscribes",
+                  "value": {
+                    "data": [
+                      {
+                        "id": 1043,
+                        "contact_id": 5821,
+                        "email": "jane@example.com",
+                        "first_name": "Jane",
+                        "last_name": "Doe",
+                        "unsubscribed_at": "2026-10-20T12:00:00Z",
+                        "source": "footer_link"
+                      }
+                    ],
+                    "has_more": true,
+                    "next_page_token": "aWQ6MTA0Mg"
+                  }
+                },
+                "spam_complaints": {
+                  "summary": "type=spam_complaints",
+                  "value": {
+                    "data": [
+                      {
+                        "id": 1043,
+                        "contact_id": 5821,
+                        "email": "jane@example.com",
+                        "first_name": "Jane",
+                        "last_name": "Doe",
+                        "complained_at": "2026-10-20T14:00:00Z",
+                        "source": "feedback_loop"
+                      }
+                    ],
+                    "has_more": true,
+                    "next_page_token": "aWQ6MTA0Mg"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/not_found",
+                "title": "Not found",
+                "status": 404,
+                "detail": "No resource with id 42 was found.",
+                "code": "not_found",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/core/swagger/v2/swagger.json"
+    },
+    "get_campaign_breakdown": {
+      "method": "GET",
+      "path": "/v2/campaigns/{id}/reports/breakdown",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "The campaign.",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        {
+          "name": "by",
+          "in": "query",
+          "description": "The detail to group by. `domain` is recorded for opens only, `link` for clicks only.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/ReportBreakdownDimension"
+          }
+        },
+        {
+          "name": "type",
+          "in": "query",
+          "description": "Count opens or clicks: clicks when grouping by link, opens otherwise when left out.",
+          "schema": {
+            "$ref": "#/components/schemas/BreakdownReportType"
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "description": "How many values to return, from 1 to 100; 25 when left out.",
+          "schema": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportBreakdownEntryListResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/not_found",
+                "title": "Not found",
+                "status": 404,
+                "detail": "No resource with id 42 was found.",
+                "code": "not_found",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/core/swagger/v2/swagger.json"
+    },
+    "create_tag": {
+      "method": "POST",
+      "path": "/v2/tags",
+      "parameters": [],
+      "request_body": {
+        "$ref": "#/components/schemas/CreateTagRequest"
+      },
+      "responses": {
+        "201": {
+          "description": "Created",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagReference"
+              }
+            }
+          }
+        },
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagReference"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/core/swagger/v2/swagger.json"
+    },
+    "list_templates": {
+      "method": "GET",
+      "path": "/v2/templates",
+      "parameters": [
+        {
+          "name": "limit",
+          "in": "query",
+          "schema": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        {
+          "name": "page_token",
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "EffectiveLimit",
+          "in": "query",
+          "schema": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateSummaryListResponse"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/core/swagger/v2/swagger.json"
+    },
+    "create_template": {
+      "method": "POST",
+      "path": "/v2/templates",
+      "parameters": [],
+      "request_body": {
+        "$ref": "#/components/schemas/CreateTemplateRequest"
+      },
+      "responses": {
+        "201": {
+          "description": "Created",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateDetails"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Unprocessable Content",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/unprocessable",
+                "title": "Request could not be processed",
+                "status": 422,
+                "detail": "The request is valid but could not be carried out.",
+                "code": "unprocessable",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/core/swagger/v2/swagger.json"
+    },
+    "get_template": {
+      "method": "GET",
+      "path": "/v2/templates/{id}",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      ],
+      "request_body": null,
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/not_found",
+                "title": "Not found",
+                "status": 404,
+                "detail": "No resource with id 42 was found.",
+                "code": "not_found",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/core/swagger/v2/swagger.json"
+    },
+    "add_template_tag": {
+      "method": "POST",
+      "path": "/v2/templates/{id}/tags",
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      ],
+      "request_body": {
+        "$ref": "#/components/schemas/AddTemplateTagRequest"
+      },
+      "responses": {
+        "200": {
+          "description": "OK",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TagReference"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad Request",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/validation_failed",
+                "title": "Validation failed",
+                "status": 400,
+                "detail": "One or more fields are invalid.",
+                "code": "validation_failed",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a",
+                "errors": {
+                  "name": [
+                    "The Name field is required."
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Not Found",
+          "content": {
+            "application/problem+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiProblem"
+              },
+              "example": {
+                "type": "https://docs.directiq.com/errors/not_found",
+                "title": "Not found",
+                "status": 404,
+                "detail": "No resource with id 42 was found.",
+                "code": "not_found",
+                "request_id": "Root=1-6716a3f2-4b1c2d3e4f5a6b7c8d9e0f1a"
+              }
+            }
+          }
+        }
+      },
+      "source": "https://rest.directiq.com/core/swagger/v2/swagger.json"
+    }
+  },
+  "schemas": {
+    "contacts": {
+      "AddSuppressionEmailsRequest": {
+        "required": [
+          "emails"
+        ],
+        "type": "object",
+        "properties": {
+          "emails": {
+            "maxItems": 1000,
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "1 to 1,000 addresses. The same address more than once (letter case aside) is added once."
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `POST /v2/suppression_lists/{id}/emails`."
+      },
+      "AddSuppressionEmailsResource": {
+        "type": "object",
+        "properties": {
+          "received": {
+            "type": "integer",
+            "description": "How many addresses the request had.",
+            "format": "int32"
+          },
+          "duplicates": {
+            "type": "integer",
+            "description": "Addresses sent more than once in the request, counted once.",
+            "format": "int32"
+          },
+          "added": {
+            "type": "integer",
+            "description": "Addresses added to the list.",
+            "format": "int32"
+          },
+          "already_on_list": {
+            "type": "integer",
+            "description": "Addresses the list already had; they are left as they are.",
+            "format": "int32"
+          },
+          "suppression_list": {
+            "$ref": "#/components/schemas/SuppressionListResource"
+          }
+        },
+        "additionalProperties": false,
+        "description": "What `POST /v2/suppression_lists/{id}/emails` did with the addresses sent."
+      },
+      "ApiProblem": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "request_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "description": "Field name (snake_case, as in the request) to its messages; only on validation errors.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of every resource API error response (RFC 9457 Problem Details, served as application/problem+json),\r\nextended with our stable `code` and the `request_id` support can look up in the logs."
+      },
+      "CampaignReference": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A campaign, by the name it had when the activity was recorded."
+      },
+      "ContactActivityResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ContactActivityType"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/CampaignReference"
+          },
+          "flow_email": {
+            "$ref": "#/components/schemas/FlowEmailReference"
+          },
+          "list": {
+            "$ref": "#/components/schemas/ListReference"
+          },
+          "tag": {
+            "$ref": "#/components/schemas/TagReference"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Something that happened to a contact, as returned by `GET /v2/contacts/{id}/activity`. At most one of\r\n`campaign`, `flow_email`, `list` and `tag` is set: the one the activity is about."
+      },
+      "ContactActivityResourceListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContactActivityResource"
+            },
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_page_token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of every resource API list response."
+      },
+      "ContactActivityType": {
+        "enum": [
+          "created",
+          "updated",
+          "deleted",
+          "added_to_list",
+          "removed_from_list",
+          "added_to_tag",
+          "removed_from_tag",
+          "sent_email",
+          "opened_email",
+          "clicked_link",
+          "soft_bounced",
+          "hard_bounced",
+          "activated",
+          "passive",
+          "awaiting_activation",
+          "manually_disabled",
+          "unsubscribed",
+          "spam_complaint"
+        ],
+        "type": "string"
+      },
+      "ContactCount": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "by_status": {
+            "$ref": "#/components/schemas/ContactStatusCounts"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `GET /v2/contacts/count`."
+      },
+      "ContactNoteRequest": {
+        "required": [
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "note": {
+            "maxLength": 500,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `POST /v2/contacts/{id}/notes` and `PATCH /v2/contacts/{id}/notes/{note_id}`."
+      },
+      "ContactNoteResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A note on a contact, as returned by `/v2/contacts/{id}/notes`."
+      },
+      "ContactPropertyResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/ContactPropertyType"
+          },
+          "short_code": {
+            "type": "string",
+            "description": "The name merge tags use, made from `name`: lower case, with `_` for spaces and symbols.",
+            "nullable": true
+          },
+          "date_format": {
+            "type": "string",
+            "description": "For date properties, how the Dashboard shows the dates and reads them from imported files (e.g. `MM/dd/yyyy`);\r\nnull for the other types. The API always takes and returns ISO dates.",
+            "nullable": true
+          },
+          "is_public": {
+            "type": "boolean",
+            "description": "The Dashboard's \"Make this field public\" setting."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A contact property the account defined, as returned by `/v2/contacts/properties`. Contacts hold a value per\r\nproperty in `properties`, where `id` is this property's id."
+      },
+      "ContactPropertyResourceListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContactPropertyResource"
+            },
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_page_token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of every resource API list response."
+      },
+      "ContactPropertyType": {
+        "enum": [
+          "text",
+          "number",
+          "date"
+        ],
+        "type": "string"
+      },
+      "ContactPropertyUpdate": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The account's contact property, as in `properties[].id` of a contact.",
+            "format": "int64"
+          },
+          "value": {
+            "type": "string",
+            "description": "The new value, written as in responses; null or `\"\"` removes the contact's value.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContactPropertyValue": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/ContactPropertyType"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A contact property value: `id`, `name` and `type` are the account's field, `value` is this contact's.\r\nNumbers are written like `12.5` and dates like `2026-10-21T00:00:00Z`, whatever the field's display format."
+      },
+      "ContactResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "first_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "last_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/ContactStatus"
+          },
+          "status_changed_at": {
+            "type": "string",
+            "description": "When the contact last changed status.",
+            "format": "date-time"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagReference"
+            },
+            "nullable": true
+          },
+          "lists": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListReference"
+            },
+            "nullable": true
+          },
+          "properties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContactPropertyValue"
+            },
+            "description": "The contact's values for the account's contact properties.",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A contact as returned by `/v2/contacts`."
+      },
+      "ContactResourceListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContactResource"
+            },
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_page_token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of every resource API list response."
+      },
+      "ContactStatus": {
+        "enum": [
+          "active",
+          "awaiting_activation",
+          "passive",
+          "manually_disabled",
+          "unsubscribed",
+          "spam_complaint",
+          "bounced"
+        ],
+        "type": "string"
+      },
+      "ContactStatusCounts": {
+        "type": "object",
+        "properties": {
+          "active": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "awaiting_activation": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "passive": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "manually_disabled": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "unsubscribed": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "spam_complaint": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "bounced": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One count per DirectIQ.Contacts.API.Dtos.V2.ContactStatus value."
+      },
+      "CreateContactPropertyRequest": {
+        "required": [
+          "name",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ContactPropertyType"
+          },
+          "date_format": {
+            "maxLength": 50,
+            "type": "string",
+            "description": "Required for date properties, one of the formats the Dashboard offers; not allowed for the other types.",
+            "nullable": true
+          },
+          "is_public": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `POST /v2/contacts/properties`."
+      },
+      "CreateListRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `POST /v2/lists`."
+      },
+      "CreateSegmentRequest": {
+        "required": [
+          "name",
+          "rules"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "rules": {
+            "maxItems": 50,
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SegmentRule"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `POST /v2/segments`."
+      },
+      "FlowEmailReference": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "subject": {
+            "type": "string",
+            "nullable": true
+          },
+          "flow_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "flow_name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "An email of a flow, as it was when the activity was recorded."
+      },
+      "ImportContact": {
+        "required": [
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "first_name": {
+            "maxLength": 50,
+            "type": "string",
+            "nullable": true
+          },
+          "last_name": {
+            "maxLength": 50,
+            "type": "string",
+            "nullable": true
+          },
+          "properties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContactPropertyUpdate"
+            },
+            "description": "Values for the account's contact properties, written as in responses (numbers like 12.5, dates like 2026-10-21).",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ImportContactsRequest": {
+        "required": [
+          "contacts"
+        ],
+        "type": "object",
+        "properties": {
+          "contacts": {
+            "maxItems": 1000,
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImportContact"
+            },
+            "description": "1 to 1,000 contacts. The same email more than once (letter case aside) is imported once."
+          },
+          "tags": {
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tag names added to every imported contact; tags the account does not have are created.",
+            "nullable": true
+          },
+          "update_existing": {
+            "type": "boolean",
+            "description": "When true, contacts that already exist get the names and contact property values sent. When false (the default),\r\nthey are only added to the list and keep their data."
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `POST /v2/lists/{id}/import`."
+      },
+      "ImportResultResource": {
+        "type": "object",
+        "properties": {
+          "batch_id": {
+            "type": "string",
+            "description": "The import, as it appears in the account's change log.",
+            "format": "uuid"
+          },
+          "received": {
+            "type": "integer",
+            "description": "The contacts in the request.",
+            "format": "int32"
+          },
+          "duplicates": {
+            "type": "integer",
+            "description": "Contacts sent more than once in the request; each was imported once.",
+            "format": "int32"
+          },
+          "excluded": {
+            "type": "integer",
+            "description": "Contacts not imported because the address unsubscribed, complained or bounced in an account linked to this one,\r\nor is on the account's blocklist.",
+            "format": "int32"
+          },
+          "created": {
+            "type": "integer",
+            "description": "New contacts.",
+            "format": "int32"
+          },
+          "already_existing": {
+            "type": "integer",
+            "description": "Contacts the account already had; updated when `update_existing` was true.",
+            "format": "int32"
+          },
+          "added_to_list": {
+            "type": "integer",
+            "description": "Contacts that were not on the list before this import.",
+            "format": "int32"
+          },
+          "found_bounced": {
+            "type": "integer",
+            "description": "Imported contacts whose address is known to bounce.",
+            "format": "int32"
+          },
+          "found_in_suppression_list": {
+            "type": "integer",
+            "description": "Imported contacts whose address is on a suppression list.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "What `POST /v2/lists/{id}/import` did."
+      },
+      "ListContactCounts": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "active": {
+            "type": "integer",
+            "description": "The contacts campaigns are sent to.",
+            "format": "int64"
+          },
+          "inactive": {
+            "type": "integer",
+            "description": "Every other contact: unsubscribed, bounced, disabled, not yet confirmed.",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListReference": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ListResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "contacts": {
+            "$ref": "#/components/schemas/ListContactCounts"
+          },
+          "counts_updated_at": {
+            "type": "string",
+            "description": "When `contacts` was last counted; the counts are refreshed in the background after imports, deletes and\r\nstatus changes. Null when the list was never counted.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "bounce_estimate": {
+            "type": "number",
+            "description": "The estimated bounce rate of the list's addresses, when it was estimated.",
+            "format": "double",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A contact list, as returned by `/v2/lists`."
+      },
+      "ListResourceListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListResource"
+            },
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_page_token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of every resource API list response."
+      },
+      "SegmentField": {
+        "enum": [
+          "email",
+          "first_name",
+          "last_name",
+          "property",
+          "list",
+          "tag",
+          "quality",
+          "status"
+        ],
+        "type": "string"
+      },
+      "SegmentJoin": {
+        "enum": [
+          "and",
+          "or"
+        ],
+        "type": "string"
+      },
+      "SegmentOperator": {
+        "enum": [
+          "contains",
+          "not_contains",
+          "equal_to",
+          "not_equal_to",
+          "is_empty",
+          "is_not_empty",
+          "less_than",
+          "greater_than"
+        ],
+        "type": "string"
+      },
+      "SegmentReference": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SegmentReferenceListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SegmentReference"
+            },
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_page_token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of every resource API list response."
+      },
+      "SegmentResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SegmentRule"
+            },
+            "description": "Evaluated left to right without precedence: `a and b or c` means `(a and b) or c`.",
+            "nullable": true
+          },
+          "contact_count": {
+            "type": "integer",
+            "description": "How many contacts match now; only counted by `GET /v2/segments/{id}`, otherwise null.",
+            "format": "int64",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A segment: the contacts matching its rules, worked out whenever it is used (campaigns, `/v2/segments/{id}/contacts`)."
+      },
+      "SegmentResourceListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SegmentResource"
+            },
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_page_token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of every resource API list response."
+      },
+      "SegmentRule": {
+        "required": [
+          "field",
+          "operator"
+        ],
+        "type": "object",
+        "properties": {
+          "join": {
+            "$ref": "#/components/schemas/SegmentJoin"
+          },
+          "field": {
+            "$ref": "#/components/schemas/SegmentField"
+          },
+          "property_id": {
+            "type": "integer",
+            "description": "The contact property, when `field` is `property`.",
+            "format": "int64",
+            "nullable": true
+          },
+          "operator": {
+            "$ref": "#/components/schemas/SegmentOperator"
+          },
+          "value": {
+            "maxLength": 200,
+            "type": "string",
+            "description": "What to compare with; not used by is_empty and is_not_empty.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "One condition of a segment. Which operators and values a rule takes depends on `field`:\r\n<list type=\"bullet\"><item>`email`: contains, not_contains, equal_to, not_equal_to.</item><item>`first_name`, `last_name` and text properties: those, plus is_empty and is_not_empty.</item><item>Number and date properties: equal_to, not_equal_to, less_than, greater_than, is_empty, is_not_empty. Numbers are\r\nwhole numbers, dates ISO (2026-10-21). For properties, less_than includes the value itself.</item><item>`list` and `tag`: equal_to (is on the list, has the tag) and not_equal_to, with the list or tag id as value.</item></list>`quality` and `status` appear only in segments made in the Dashboard before; they can't be used in new rules."
+      },
+      "SuppressionEmailResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "email": {
+            "type": "string",
+            "description": "The address, trimmed and lower case.",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "An email address on a suppression list, as returned by `/v2/suppression_lists/{id}/emails`."
+      },
+      "SuppressionEmailResourceListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuppressionEmailResource"
+            },
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_page_token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of every resource API list response."
+      },
+      "SuppressionListRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `POST /v2/suppression_lists` and `PATCH /v2/suppression_lists/{id}`."
+      },
+      "SuppressionListResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email_count": {
+            "type": "integer",
+            "description": "How many email addresses the list has.",
+            "format": "int32"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A suppression list, as returned by `/v2/suppression_lists`."
+      },
+      "SuppressionListResourceListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuppressionListResource"
+            },
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_page_token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of every resource API list response."
+      },
+      "TagReference": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateContactPropertyRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 50,
+            "type": "string",
+            "description": "Renaming also changes `short_code`, so merge tags using the old one stop matching.",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/ContactPropertyType"
+          },
+          "date_format": {
+            "maxLength": 50,
+            "type": "string",
+            "nullable": true
+          },
+          "is_public": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `PATCH /v2/contacts/properties/{id}`: only the fields sent are changed."
+      },
+      "UpdateContactRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "maxLength": 100,
+            "type": "string",
+            "nullable": true
+          },
+          "first_name": {
+            "maxLength": 50,
+            "type": "string",
+            "nullable": true
+          },
+          "last_name": {
+            "maxLength": 50,
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/ContactStatus"
+          },
+          "properties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContactPropertyUpdate"
+            },
+            "description": "The contact properties to set; fields not listed keep their value.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `PATCH /v2/contacts/{id}`. Only the fields sent are changed; a field left out or sent as null\r\nkeeps its value. Send `\"\"` to clear a name."
+      },
+      "UpdateSegmentRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 200,
+            "type": "string",
+            "nullable": true
+          },
+          "rules": {
+            "maxItems": 50,
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SegmentRule"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `PATCH /v2/segments/{id}`: only the fields sent are changed; `rules` replaces all rules."
+      }
+    },
+    "core": {
+      "AddTemplateTagRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string",
+            "description": "The tag's name; created when the account has no tag with this name."
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `POST /v2/templates/{id}/tags`."
+      },
+      "ApiProblem": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "request_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "nullable": true
+            },
+            "description": "Field name (snake_case, as in the request) to its messages; only on validation errors.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of every resource API error response (RFC 9457 Problem Details, served as application/problem+json),\r\nextended with our stable `code` and the `request_id` support can look up in the logs."
+      },
+      "BounceReason": {
+        "enum": [
+          "unknown",
+          "bad_domain",
+          "bad_mailbox",
+          "inactive_mailbox",
+          "sender_blocked",
+          "quota_issues",
+          "no_answer_from_host",
+          "relaying_issues",
+          "routing_errors",
+          "bad_connection",
+          "invalid_sender",
+          "spam_related",
+          "virus_related",
+          "content_related",
+          "policy_related",
+          "bad_configuration",
+          "protocol_errors",
+          "message_expired",
+          "other"
+        ],
+        "type": "string"
+      },
+      "BounceResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "contact_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "first_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "last_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "bounced_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "$ref": "#/components/schemas/BounceType"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/BounceReason"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A recipient whose email bounced, as listed by `GET /v2/campaigns/{id}/reports?type=bounces`."
+      },
+      "BounceType": {
+        "enum": [
+          "hard",
+          "soft"
+        ],
+        "type": "string"
+      },
+      "BreakdownReportType": {
+        "enum": [
+          "opens",
+          "clicks"
+        ],
+        "type": "string",
+        "description": "What `GET /v2/campaigns/{id}/reports/breakdown` counts."
+      },
+      "CampaignContent": {
+        "required": [
+          "subject",
+          "template_id"
+        ],
+        "type": "object",
+        "properties": {
+          "template_id": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "The template whose design is sent.",
+            "format": "int64"
+          },
+          "subject": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "preheader": {
+            "maxLength": 256,
+            "type": "string",
+            "description": "The preview text shown after the subject in most inboxes.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CampaignRecipients": {
+        "type": "object",
+        "properties": {
+          "list_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "nullable": true
+          },
+          "segment_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "nullable": true
+          },
+          "contact_tag_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "nullable": true
+          },
+          "excluded_list_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "nullable": true
+          },
+          "excluded_segment_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "nullable": true
+          },
+          "excluded_contact_tag_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "nullable": true
+          },
+          "excluded_domain_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "nullable": true
+          },
+          "hashed_suppression_list_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Who receives the campaign: at least one list, segment or contact tag, minus the exclusions."
+      },
+      "CampaignReportType": {
+        "enum": [
+          "recipients",
+          "opens",
+          "clicks",
+          "bounces",
+          "unsubscribes",
+          "spam_complaints"
+        ],
+        "type": "string",
+        "description": "What `GET /v2/campaigns/{id}/reports` lists."
+      },
+      "CampaignResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/CampaignType"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CampaignStatus"
+          },
+          "is_archived": {
+            "type": "boolean"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagReference"
+            },
+            "nullable": true
+          },
+          "from": {
+            "$ref": "#/components/schemas/CampaignSender"
+          },
+          "recipients": {
+            "$ref": "#/components/schemas/CampaignRecipients"
+          },
+          "total_recipients": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "$ref": "#/components/schemas/CampaignContent"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language of the unsubscribe footer.",
+            "nullable": true
+          },
+          "send_at": {
+            "type": "string",
+            "description": "When the campaign is (or was) sent, in UTC.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "time_zone": {
+            "type": "string",
+            "description": "The time zone taken from the offset of the requested send time.",
+            "nullable": true
+          },
+          "settings": {
+            "$ref": "#/components/schemas/CampaignSettings"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/CampaignStatistics"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A campaign as returned by `GET /v2/campaigns` and `GET /v2/campaigns/{id}`."
+      },
+      "CampaignResourceListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CampaignResource"
+            },
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_page_token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of every resource API list response."
+      },
+      "CampaignSender": {
+        "required": [
+          "email",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "email": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string",
+            "description": "A confirmed sender address of the account."
+          }
+        },
+        "additionalProperties": false
+      },
+      "CampaignSettings": {
+        "type": "object",
+        "properties": {
+          "gradual_send": {
+            "type": "boolean",
+            "description": "Spread the send over time (paid plans, larger audiences only)."
+          },
+          "google_analytics": {
+            "type": "boolean",
+            "description": "Add Google Analytics parameters to links."
+          }
+        },
+        "additionalProperties": false
+      },
+      "CampaignStatistics": {
+        "type": "object",
+        "properties": {
+          "recipients": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "delivered": {
+            "type": "integer",
+            "description": "Every recipient whose email did not bounce.",
+            "format": "int32"
+          },
+          "unique_opens": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "total_opens": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unique_clicks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "total_clicks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bounces": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hard_bounces": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "soft_bounces": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unsubscribes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "complaints": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "forwards": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "open_rate": {
+            "type": "number",
+            "format": "double"
+          },
+          "click_rate": {
+            "type": "number",
+            "format": "double"
+          },
+          "bounce_rate": {
+            "type": "number",
+            "format": "double"
+          },
+          "unsubscribe_rate": {
+            "type": "number",
+            "format": "double"
+          },
+          "complaint_rate": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A campaign's totals, the `stats` of every campaign resource; null until the campaign starts sending. Rates are\r\nfractions from 0 to 1, of the delivered emails (bounces: of the recipients), rounded to 4 decimals."
+      },
+      "CampaignStatus": {
+        "enum": [
+          "draft",
+          "ready",
+          "waiting_inspection",
+          "manually_approved",
+          "rejected",
+          "canceled",
+          "paused",
+          "scheduling",
+          "schedule_error",
+          "scheduled",
+          "pending_tests",
+          "sending",
+          "sent_batch",
+          "sent",
+          "send_error",
+          "automation_running"
+        ],
+        "type": "string"
+      },
+      "CampaignType": {
+        "enum": [
+          "regular",
+          "ab",
+          "automation",
+          "test",
+          "automation_trigger",
+          "all",
+          "flow"
+        ],
+        "type": "string"
+      },
+      "ClickResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "contact_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "first_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "last_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "clicked_at": {
+            "type": "string",
+            "description": "When the recipient first clicked a link of the campaign.",
+            "format": "date-time"
+          },
+          "link": {
+            "type": "string",
+            "nullable": true
+          },
+          "device": {
+            "type": "string",
+            "nullable": true
+          },
+          "mail_client": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "country_code": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 code of the country the link was clicked in.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A link of a campaign a recipient clicked, as listed by `GET /v2/campaigns/{id}/reports?type=clicks`: one per\r\nrecipient and link."
+      },
+      "ComplaintSource": {
+        "enum": [
+          "footer_link",
+          "feedback_loop"
+        ],
+        "type": "string"
+      },
+      "ConfirmSenderRequest": {
+        "required": [
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string",
+            "description": "The code from the confirmation email."
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `POST /v2/senders/{id}/confirm`."
+      },
+      "CreateCampaignRequest": {
+        "required": [
+          "content",
+          "from",
+          "language",
+          "name",
+          "recipients"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Campaign tag names; tags the account does not have yet are created.",
+            "nullable": true
+          },
+          "from": {
+            "$ref": "#/components/schemas/CampaignSender"
+          },
+          "recipients": {
+            "$ref": "#/components/schemas/CampaignRecipients"
+          },
+          "content": {
+            "$ref": "#/components/schemas/CampaignContent"
+          },
+          "language": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Language of the unsubscribe footer, e.g. \"en\"."
+          },
+          "send_at": {
+            "type": "string",
+            "description": "When to send, with its offset (e.g. 2026-11-03T09:00:00+01:00); the offset sets the campaign's time zone.\r\nLeave it out to send now.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "settings": {
+            "$ref": "#/components/schemas/CampaignSettings"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `POST /v2/campaigns`, which creates and schedules a regular campaign."
+      },
+      "CreateDomainRequest": {
+        "required": [
+          "domain"
+        ],
+        "type": "object",
+        "properties": {
+          "domain": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string",
+            "description": "The domain name only, without scheme or `www.`, e.g. `example.com`."
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `POST /v2/domains`."
+      },
+      "CreateSenderRequest": {
+        "required": [
+          "email",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string",
+            "description": "The name recipients see, e.g. `Acme Store`."
+          },
+          "email": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "reply_to": {
+            "maxLength": 200,
+            "type": "string",
+            "description": "Where replies go: `email` itself (the default) or one of the account's confirmed senders.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `POST /v2/senders`."
+      },
+      "CreateTagRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `POST /v2/tags`."
+      },
+      "CreateTemplateRequest": {
+        "required": [
+          "html",
+          "name",
+          "subject"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "subject": {
+            "maxLength": 300,
+            "minLength": 1,
+            "type": "string"
+          },
+          "html": {
+            "minLength": 1,
+            "type": "string",
+            "description": "The HTML body, as made in the HTML editor."
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `POST /v2/templates`."
+      },
+      "DnsRecord": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "`CNAME` or `TXT`.",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          },
+          "purpose": {
+            "type": "string",
+            "description": "What the record is for: `spf`, `link`, `dkim` or `dmarc`.",
+            "nullable": true
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "Whether the last check found the record."
+          }
+        },
+        "additionalProperties": false,
+        "description": "One DNS record a sending domain needs."
+      },
+      "DomainResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "domain": {
+            "type": "string",
+            "description": "The domain name, e.g. `example.com`.",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/DomainStatus"
+          },
+          "dns_records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DnsRecord"
+            },
+            "description": "The records to add at the domain's DNS provider, with whether the last check found each one.",
+            "nullable": true
+          },
+          "last_checked_at": {
+            "type": "string",
+            "description": "When the DNS records were last checked; null until the first check.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A sending domain, as returned by `/v2/domains`."
+      },
+      "DomainResourceListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DomainResource"
+            },
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_page_token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of every resource API list response."
+      },
+      "DomainStatus": {
+        "enum": [
+          "verified",
+          "pending"
+        ],
+        "type": "string"
+      },
+      "OpenResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "contact_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "first_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "last_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "opened_at": {
+            "type": "string",
+            "description": "When the recipient first opened the campaign.",
+            "format": "date-time"
+          },
+          "device": {
+            "type": "string",
+            "nullable": true
+          },
+          "mail_client": {
+            "type": "string",
+            "nullable": true
+          },
+          "domain": {
+            "type": "string",
+            "description": "The domain of the recipient's email address.",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "country_code": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 code of the country the email was opened in.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A recipient who opened a campaign, as listed by `GET /v2/campaigns/{id}/reports?type=opens`."
+      },
+      "RecipientResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "contact_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "first_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "last_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "quality": {
+            "type": "integer",
+            "description": "The contact's quality score, from 1 to 5, when the campaign was sent.",
+            "format": "int32"
+          },
+          "sent_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A contact a campaign was sent to, as listed by `GET /v2/campaigns/{id}/reports?type=recipients`."
+      },
+      "ReportBreakdownDimension": {
+        "enum": [
+          "domain",
+          "link",
+          "mail_client",
+          "device",
+          "country"
+        ],
+        "type": "string",
+        "description": "The detail `GET /v2/campaigns/{id}/reports/breakdown` groups by."
+      },
+      "ReportBreakdownEntry": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "The value; null for opens or clicks it was not recorded for.",
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "How many opens or clicks share one value, e.g. `{ \"value\": \"gmail.com\", \"count\": 120 }`."
+      },
+      "ReportBreakdownEntryListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportBreakdownEntry"
+            },
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_page_token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of every resource API list response."
+      },
+      "SendTransactionalAttachment": {
+        "required": [
+          "content",
+          "content_type",
+          "filename"
+        ],
+        "type": "object",
+        "properties": {
+          "filename": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique within the email."
+          },
+          "content_type": {
+            "maxLength": 25,
+            "minLength": 1,
+            "type": "string"
+          },
+          "content": {
+            "minLength": 1,
+            "type": "string",
+            "description": "The file, base64 encoded."
+          }
+        },
+        "additionalProperties": false
+      },
+      "SendTransactionalRequest": {
+        "required": [
+          "from",
+          "html",
+          "subject",
+          "to"
+        ],
+        "type": "object",
+        "properties": {
+          "from": {
+            "$ref": "#/components/schemas/TransactionalSender"
+          },
+          "to": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "cc": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "bcc": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "subject": {
+            "maxLength": 100,
+            "minLength": 2,
+            "type": "string"
+          },
+          "html": {
+            "minLength": 2,
+            "type": "string"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SendTransactionalAttachment"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `POST /v2/transactionals`."
+      },
+      "SenderResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "reply_to": {
+            "type": "string",
+            "description": "Where replies go; null when replies go to `email`.",
+            "nullable": true
+          },
+          "is_default": {
+            "type": "boolean",
+            "description": "The sender preselected when a campaign is created in the Dashboard."
+          },
+          "status": {
+            "$ref": "#/components/schemas/SenderStatus"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A sender address campaigns can be sent from, as returned by `/v2/senders`."
+      },
+      "SenderResourceListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SenderResource"
+            },
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_page_token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of every resource API list response."
+      },
+      "SenderStatus": {
+        "enum": [
+          "confirmed",
+          "pending"
+        ],
+        "type": "string"
+      },
+      "SpamComplaintResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "contact_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "first_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "last_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "complained_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source": {
+            "$ref": "#/components/schemas/ComplaintSource"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A recipient who reported a campaign as spam, as listed by `GET /v2/campaigns/{id}/reports?type=spam_complaints`."
+      },
+      "TagReference": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TemplateDetails": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "subject": {
+            "type": "string",
+            "nullable": true
+          },
+          "is_favorite": {
+            "type": "boolean"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagReference"
+            },
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "html": {
+            "type": "string",
+            "description": "The rendered HTML body.",
+            "nullable": true
+          },
+          "design_json": {
+            "type": "string",
+            "description": "The drag-and-drop editor design; null for templates made in the HTML or plain-text editor.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A template as returned by `GET /v2/templates/{id}`."
+      },
+      "TemplateSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "subject": {
+            "type": "string",
+            "nullable": true
+          },
+          "is_favorite": {
+            "type": "boolean"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagReference"
+            },
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A template as listed by `GET /v2/templates`: metadata only, the content is on the single template."
+      },
+      "TemplateSummaryListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TemplateSummary"
+            },
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_page_token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of every resource API list response."
+      },
+      "TransactionalAttachmentSummary": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string",
+            "nullable": true
+          },
+          "content_type": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TransactionalBounceResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "bounced_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "$ref": "#/components/schemas/BounceType"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/BounceReason"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The bounce of a transactional email."
+      },
+      "TransactionalClickResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "clicked_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "link": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "One click on a tracked link of a transactional email."
+      },
+      "TransactionalComplaintResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "complained_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source": {
+            "$ref": "#/components/schemas/ComplaintSource"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A spam complaint about a transactional email."
+      },
+      "TransactionalDelivery": {
+        "type": "object",
+        "properties": {
+          "opens": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "first_opened_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "clicks": {
+            "type": "integer",
+            "description": "Clicks on tracked links.",
+            "format": "int32"
+          },
+          "first_clicked_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "bounced_at": {
+            "type": "string",
+            "description": "When the receiving server rejected the email; null when it did not.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "bounce_type": {
+            "$ref": "#/components/schemas/BounceType"
+          },
+          "bounce_reason": {
+            "$ref": "#/components/schemas/BounceReason"
+          },
+          "complained_at": {
+            "type": "string",
+            "description": "When the recipient reported the email as spam; null when they did not.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "complaint_source": {
+            "$ref": "#/components/schemas/ComplaintSource"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TransactionalDeliveryStatus": {
+        "enum": [
+          "queued",
+          "sent",
+          "failed",
+          "blocked"
+        ],
+        "type": "string"
+      },
+      "TransactionalEventType": {
+        "enum": [
+          "opened",
+          "clicked",
+          "bounced",
+          "complained"
+        ],
+        "type": "string",
+        "description": "What `GET /v2/transactionals/{id}/events` lists; each type has its own resource."
+      },
+      "TransactionalOpenResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Ids grow in the order the events were recorded.",
+            "format": "int64"
+          },
+          "opened_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One open of a transactional email."
+      },
+      "TransactionalResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "from": {
+            "$ref": "#/components/schemas/TransactionalSender"
+          },
+          "to": {
+            "type": "string",
+            "nullable": true
+          },
+          "cc": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "bcc": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "subject": {
+            "type": "string",
+            "nullable": true
+          },
+          "html": {
+            "type": "string",
+            "nullable": true
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TransactionalAttachmentSummary"
+            },
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/TransactionalDeliveryStatus"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sent_at": {
+            "type": "string",
+            "description": "When the email was handed to the mail server; null until then.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "delivery": {
+            "$ref": "#/components/schemas/TransactionalDelivery"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A transactional email, as returned by `/v2/transactionals`."
+      },
+      "TransactionalSender": {
+        "required": [
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "A confirmed sender address of the account."
+          },
+          "name": {
+            "maxLength": 200,
+            "type": "string",
+            "description": "Defaults to the sender's name.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UnsubscribeResource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "contact_id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "first_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "last_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "unsubscribed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source": {
+            "$ref": "#/components/schemas/UnsubscribeSource"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A recipient who unsubscribed from a campaign, as listed by `GET /v2/campaigns/{id}/reports?type=unsubscribes`."
+      },
+      "UnsubscribeSource": {
+        "enum": [
+          "footer_link",
+          "list_unsubscribe"
+        ],
+        "type": "string"
+      },
+      "UpdateSenderRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 200,
+            "type": "string",
+            "nullable": true
+          },
+          "reply_to": {
+            "maxLength": 200,
+            "type": "string",
+            "description": "The sender's own address or one of the account's confirmed senders.",
+            "nullable": true
+          },
+          "is_default": {
+            "type": "boolean",
+            "description": "Only `true`: makes this confirmed sender the default instead of the current one.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The body of `PATCH /v2/senders/{id}`. Fields left out (or null) are not changed."
+      }
+    }
+  }
+}
