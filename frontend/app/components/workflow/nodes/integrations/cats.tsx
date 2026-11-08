@@ -29,6 +29,7 @@ const CatsIcon = ({
 export const CatsNode: NodeDefinition = {
     type: 'automation-cats',
     label: 'CATS',
+    category: 'hr-recruiting',
     description:
         'Manage recruiting candidates, companies, contacts, jobs, pipelines and tasks',
     keywords: ['catsone', 'recruiting', 'applicant tracking'],
