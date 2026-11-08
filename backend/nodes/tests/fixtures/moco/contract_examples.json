@@ -1,0 +1,1803 @@
+{
+  "list_companies": {
+    "config": {
+      "operation": "list_companies"
+    },
+    "method": "GET",
+    "path": "/companies",
+    "response": [
+      {
+        "id": 1233434,
+        "type": "customer",
+        "identifier": "C-1001",
+        "name": "Beispiel AG",
+        "website": "https://beispiel.ch",
+        "email": "billing@beispiel.ch",
+        "billing_email_cc": "accounting@beispiel.ch",
+        "phone": "+41 44 123 45 67",
+        "fax": null,
+        "address": "Beispiel AG\nBeispielstrasse 1\n8000 Zuerich",
+        "country_code": "CH",
+        "vat_identifier": "CHE-123.456.789 MWST",
+        "alternative_correspondence_language": false,
+        "english_correspondence_language": false,
+        "tags": [
+          "A-Kunde",
+          "Enterprise"
+        ],
+        "labels": [
+          "A-Kunde",
+          "Enterprise"
+        ],
+        "user": {
+          "id": 933590696,
+          "firstname": "Michael",
+          "lastname": "Mustermann"
+        },
+        "info": "Main strategic customer",
+        "footer": "Vielen Dank fuer die Zusammenarbeit.",
+        "custom_properties": {
+          "CRM_ID": "SF-4552"
+        },
+        "active": true,
+        "archived_on": null,
+        "currency": "CHF",
+        "customer_vat": {
+          "id": 1,
+          "tax": 8.1
+        },
+        "supplier_vat": null,
+        "default_invoice_due_days": 30,
+        "invoice_format": "regular_pdf",
+        "default_payment_means": "credit_transfer",
+        "projects": [
+          {
+            "id": 1234567,
+            "identifier": "P001",
+            "name": "Website Support",
+            "active": true,
+            "billable": true
+          }
+        ],
+        "iban": null,
+        "bank_bic": null,
+        "bank_owner": null,
+        "debit_number": 1100,
+        "credit_number": null,
+        "created_at": "2024-01-10T09:00:00Z",
+        "updated_at": "2024-03-12T10:15:00Z"
+      }
+    ],
+    "status": 200,
+    "expected_body": null,
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "get_company": {
+    "config": {
+      "operation": "get_company",
+      "company_id": 1234567
+    },
+    "method": "GET",
+    "path": "/companies/{company_id}",
+    "response": {
+      "id": 1233434,
+      "type": "customer",
+      "identifier": "C-1001",
+      "name": "Beispiel AG",
+      "website": "https://beispiel.ch",
+      "email": "billing@beispiel.ch",
+      "billing_email_cc": "accounting@beispiel.ch",
+      "phone": "+41 44 123 45 67",
+      "fax": null,
+      "address": "Beispiel AG\nBeispielstrasse 1\n8000 Zuerich",
+      "country_code": "CH",
+      "vat_identifier": "CHE-123.456.789 MWST",
+      "alternative_correspondence_language": false,
+      "english_correspondence_language": false,
+      "tags": [
+        "A-Kunde",
+        "Enterprise"
+      ],
+      "labels": [
+        "A-Kunde",
+        "Enterprise"
+      ],
+      "user": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "info": "Main strategic customer",
+      "footer": "Vielen Dank fuer die Zusammenarbeit.",
+      "custom_properties": {
+        "CRM_ID": "SF-4552"
+      },
+      "active": true,
+      "archived_on": null,
+      "currency": "CHF",
+      "customer_vat": {
+        "id": 1,
+        "tax": 8.1
+      },
+      "supplier_vat": null,
+      "default_invoice_due_days": 30,
+      "invoice_format": "regular_pdf",
+      "default_payment_means": "credit_transfer",
+      "projects": [
+        {
+          "id": 1234567,
+          "identifier": "P001",
+          "name": "Website Support",
+          "active": true,
+          "billable": true
+        }
+      ],
+      "iban": null,
+      "bank_bic": null,
+      "bank_owner": null,
+      "debit_number": 1100,
+      "credit_number": null,
+      "created_at": "2024-01-10T09:00:00Z",
+      "updated_at": "2024-03-12T10:15:00Z"
+    },
+    "status": 200,
+    "expected_body": null,
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "create_company": {
+    "config": {
+      "operation": "create_company",
+      "type": "customer",
+      "identifier": "C-1001",
+      "name": "Beispiel AG",
+      "email": "billing@beispiel.ch",
+      "address": "Beispiel AG\nBeispielstrasse 1\n8000 Zuerich",
+      "country_code": "CH",
+      "currency": "CHF",
+      "customer_vat_code_id": 1,
+      "default_invoice_due_days": 30,
+      "tags_json": "[\"A-Kunde\", \"Enterprise\"]",
+      "custom_properties_json": "{\"CRM_ID\": \"SF-4552\"}"
+    },
+    "method": "POST",
+    "path": "/companies",
+    "response": {
+      "id": 1233434,
+      "type": "customer",
+      "identifier": "C-1001",
+      "name": "Beispiel AG",
+      "website": "https://beispiel.ch",
+      "email": "billing@beispiel.ch",
+      "billing_email_cc": "accounting@beispiel.ch",
+      "phone": "+41 44 123 45 67",
+      "fax": null,
+      "address": "Beispiel AG\nBeispielstrasse 1\n8000 Zuerich",
+      "country_code": "CH",
+      "vat_identifier": "CHE-123.456.789 MWST",
+      "alternative_correspondence_language": false,
+      "english_correspondence_language": false,
+      "tags": [
+        "A-Kunde",
+        "Enterprise"
+      ],
+      "labels": [
+        "A-Kunde",
+        "Enterprise"
+      ],
+      "user": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "info": "Main strategic customer",
+      "footer": "Vielen Dank fuer die Zusammenarbeit.",
+      "custom_properties": {
+        "CRM_ID": "SF-4552"
+      },
+      "active": true,
+      "archived_on": null,
+      "currency": "CHF",
+      "customer_vat": {
+        "id": 1,
+        "tax": 8.1
+      },
+      "supplier_vat": null,
+      "default_invoice_due_days": 30,
+      "invoice_format": "regular_pdf",
+      "default_payment_means": "credit_transfer",
+      "projects": [
+        {
+          "id": 1234567,
+          "identifier": "P001",
+          "name": "Website Support",
+          "active": true,
+          "billable": true
+        }
+      ],
+      "iban": null,
+      "bank_bic": null,
+      "bank_owner": null,
+      "debit_number": 1100,
+      "credit_number": null,
+      "created_at": "2024-01-10T09:00:00Z",
+      "updated_at": "2024-03-12T10:15:00Z"
+    },
+    "status": 200,
+    "expected_body": {
+      "type": "customer",
+      "identifier": "C-1001",
+      "name": "Beispiel AG",
+      "email": "billing@beispiel.ch",
+      "address": "Beispiel AG\nBeispielstrasse 1\n8000 Zuerich",
+      "country_code": "CH",
+      "currency": "CHF",
+      "customer_vat_code_id": 1,
+      "default_invoice_due_days": 30,
+      "tags": [
+        "A-Kunde",
+        "Enterprise"
+      ],
+      "custom_properties": {
+        "CRM_ID": "SF-4552"
+      }
+    },
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "update_company": {
+    "config": {
+      "operation": "update_company",
+      "company_id": 1234567,
+      "type": "customer",
+      "identifier": "C-1001",
+      "name": "Beispiel AG",
+      "email": "billing@beispiel.ch",
+      "address": "Beispiel AG\nBeispielstrasse 1\n8000 Zuerich",
+      "country_code": "CH",
+      "currency": "CHF",
+      "customer_vat_code_id": 1,
+      "default_invoice_due_days": 30,
+      "tags_json": "[\"A-Kunde\", \"Enterprise\"]",
+      "custom_properties_json": "{\"CRM_ID\": \"SF-4552\"}"
+    },
+    "method": "PUT",
+    "path": "/companies/{company_id}",
+    "response": {
+      "id": 1233434,
+      "type": "customer",
+      "identifier": "C-1001",
+      "name": "Beispiel AG",
+      "website": "https://beispiel.ch",
+      "email": "billing@beispiel.ch",
+      "billing_email_cc": "accounting@beispiel.ch",
+      "phone": "+41 44 123 45 67",
+      "fax": null,
+      "address": "Beispiel AG\nBeispielstrasse 1\n8000 Zuerich",
+      "country_code": "CH",
+      "vat_identifier": "CHE-123.456.789 MWST",
+      "alternative_correspondence_language": false,
+      "english_correspondence_language": false,
+      "tags": [
+        "A-Kunde",
+        "Enterprise"
+      ],
+      "labels": [
+        "A-Kunde",
+        "Enterprise"
+      ],
+      "user": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "info": "Main strategic customer",
+      "footer": "Vielen Dank fuer die Zusammenarbeit.",
+      "custom_properties": {
+        "CRM_ID": "SF-4552"
+      },
+      "active": true,
+      "archived_on": null,
+      "currency": "CHF",
+      "customer_vat": {
+        "id": 1,
+        "tax": 8.1
+      },
+      "supplier_vat": null,
+      "default_invoice_due_days": 30,
+      "invoice_format": "regular_pdf",
+      "default_payment_means": "credit_transfer",
+      "projects": [
+        {
+          "id": 1234567,
+          "identifier": "P001",
+          "name": "Website Support",
+          "active": true,
+          "billable": true
+        }
+      ],
+      "iban": null,
+      "bank_bic": null,
+      "bank_owner": null,
+      "debit_number": 1100,
+      "credit_number": null,
+      "created_at": "2024-01-10T09:00:00Z",
+      "updated_at": "2024-03-12T10:15:00Z"
+    },
+    "status": 200,
+    "expected_body": {
+      "type": "customer",
+      "identifier": "C-1001",
+      "name": "Beispiel AG",
+      "email": "billing@beispiel.ch",
+      "address": "Beispiel AG\nBeispielstrasse 1\n8000 Zuerich",
+      "country_code": "CH",
+      "currency": "CHF",
+      "customer_vat_code_id": 1,
+      "default_invoice_due_days": 30,
+      "tags": [
+        "A-Kunde",
+        "Enterprise"
+      ],
+      "custom_properties": {
+        "CRM_ID": "SF-4552"
+      }
+    },
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "list_contacts": {
+    "config": {
+      "operation": "list_contacts"
+    },
+    "method": "GET",
+    "path": "/contacts/people",
+    "response": [
+      {
+        "id": 774411,
+        "gender": "M",
+        "firstname": "Max",
+        "lastname": "Muster",
+        "title": "Dr.",
+        "job_position": "Head of Procurement",
+        "mobile_phone": "+41 79 123 45 67",
+        "work_fax": null,
+        "work_phone": "+41 44 987 65 43",
+        "work_email": "max.muster@beispiel.ch",
+        "work_address": "Beispiel AG\nBeispielstrasse 1\n8000 Zuerich",
+        "home_email": null,
+        "home_address": null,
+        "birthday": "1988-06-11",
+        "salutation": "Guten Tag Herr Muster",
+        "info": "Prefers communication by email.",
+        "avatar_url": "https://mycompany.mocoapp.com/uploads/avatar.png",
+        "tags": [
+          "VIP"
+        ],
+        "custom_properties": {
+          "LinkedIn": "https://linkedin.com/in/maxmuster"
+        },
+        "company": {
+          "id": 1233434,
+          "type": "customer",
+          "name": "Beispiel AG"
+        },
+        "user": {
+          "id": 933590696,
+          "firstname": "Michael",
+          "lastname": "Mustermann"
+        },
+        "created_at": "2024-01-15T08:00:00Z",
+        "updated_at": "2024-03-02T11:30:00Z"
+      }
+    ],
+    "status": 200,
+    "expected_body": null,
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "get_contact": {
+    "config": {
+      "operation": "get_contact",
+      "contact_id": 1234567
+    },
+    "method": "GET",
+    "path": "/contacts/people/{contact_id}",
+    "response": {
+      "id": 774411,
+      "gender": "M",
+      "firstname": "Max",
+      "lastname": "Muster",
+      "title": "Dr.",
+      "job_position": "Head of Procurement",
+      "mobile_phone": "+41 79 123 45 67",
+      "work_fax": null,
+      "work_phone": "+41 44 987 65 43",
+      "work_email": "max.muster@beispiel.ch",
+      "work_address": "Beispiel AG\nBeispielstrasse 1\n8000 Zuerich",
+      "home_email": null,
+      "home_address": null,
+      "birthday": "1988-06-11",
+      "salutation": "Guten Tag Herr Muster",
+      "info": "Prefers communication by email.",
+      "avatar_url": "https://mycompany.mocoapp.com/uploads/avatar.png",
+      "tags": [
+        "VIP"
+      ],
+      "custom_properties": {
+        "LinkedIn": "https://linkedin.com/in/maxmuster"
+      },
+      "company": {
+        "id": 1233434,
+        "type": "customer",
+        "name": "Beispiel AG"
+      },
+      "user": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "created_at": "2024-01-15T08:00:00Z",
+      "updated_at": "2024-03-02T11:30:00Z"
+    },
+    "status": 200,
+    "expected_body": null,
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "create_contact": {
+    "config": {
+      "operation": "create_contact",
+      "firstname": "Max",
+      "lastname": "Muster",
+      "work_email": "max.muster@beispiel.ch",
+      "company_id": 1233434,
+      "tags_json": "[\"VIP\"]",
+      "custom_properties_json": "{\"LinkedIn\": \"https://linkedin.com/in/maxmuster\"}"
+    },
+    "method": "POST",
+    "path": "/contacts/people",
+    "response": {
+      "id": 774411,
+      "gender": "M",
+      "firstname": "Max",
+      "lastname": "Muster",
+      "title": "Dr.",
+      "job_position": "Head of Procurement",
+      "mobile_phone": "+41 79 123 45 67",
+      "work_fax": null,
+      "work_phone": "+41 44 987 65 43",
+      "work_email": "max.muster@beispiel.ch",
+      "work_address": "Beispiel AG\nBeispielstrasse 1\n8000 Zuerich",
+      "home_email": null,
+      "home_address": null,
+      "birthday": "1988-06-11",
+      "salutation": "Guten Tag Herr Muster",
+      "info": "Prefers communication by email.",
+      "avatar_url": "https://mycompany.mocoapp.com/uploads/avatar.png",
+      "tags": [
+        "VIP"
+      ],
+      "custom_properties": {
+        "LinkedIn": "https://linkedin.com/in/maxmuster"
+      },
+      "company": {
+        "id": 1233434,
+        "type": "customer",
+        "name": "Beispiel AG"
+      },
+      "user": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "created_at": "2024-01-15T08:00:00Z",
+      "updated_at": "2024-03-02T11:30:00Z"
+    },
+    "status": 200,
+    "expected_body": {
+      "firstname": "Max",
+      "lastname": "Muster",
+      "work_email": "max.muster@beispiel.ch",
+      "company_id": 1233434,
+      "tags": [
+        "VIP"
+      ],
+      "custom_properties": {
+        "LinkedIn": "https://linkedin.com/in/maxmuster"
+      }
+    },
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "update_contact": {
+    "config": {
+      "operation": "update_contact",
+      "contact_id": 1234567,
+      "firstname": "Max",
+      "lastname": "Muster",
+      "work_email": "max.muster@beispiel.ch",
+      "company_id": 1233434,
+      "tags_json": "[\"VIP\"]",
+      "custom_properties_json": "{\"LinkedIn\": \"https://linkedin.com/in/maxmuster\"}"
+    },
+    "method": "PUT",
+    "path": "/contacts/people/{contact_id}",
+    "response": {
+      "id": 774411,
+      "gender": "M",
+      "firstname": "Max",
+      "lastname": "Muster",
+      "title": "Dr.",
+      "job_position": "Head of Procurement",
+      "mobile_phone": "+41 79 123 45 67",
+      "work_fax": null,
+      "work_phone": "+41 44 987 65 43",
+      "work_email": "max.muster@beispiel.ch",
+      "work_address": "Beispiel AG\nBeispielstrasse 1\n8000 Zuerich",
+      "home_email": null,
+      "home_address": null,
+      "birthday": "1988-06-11",
+      "salutation": "Guten Tag Herr Muster",
+      "info": "Prefers communication by email.",
+      "avatar_url": "https://mycompany.mocoapp.com/uploads/avatar.png",
+      "tags": [
+        "VIP"
+      ],
+      "custom_properties": {
+        "LinkedIn": "https://linkedin.com/in/maxmuster"
+      },
+      "company": {
+        "id": 1233434,
+        "type": "customer",
+        "name": "Beispiel AG"
+      },
+      "user": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "created_at": "2024-01-15T08:00:00Z",
+      "updated_at": "2024-03-02T11:30:00Z"
+    },
+    "status": 200,
+    "expected_body": {
+      "firstname": "Max",
+      "lastname": "Muster",
+      "work_email": "max.muster@beispiel.ch",
+      "company_id": 1233434,
+      "tags": [
+        "VIP"
+      ],
+      "custom_properties": {
+        "LinkedIn": "https://linkedin.com/in/maxmuster"
+      }
+    },
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "list_projects": {
+    "config": {
+      "operation": "list_projects"
+    },
+    "method": "GET",
+    "path": "/projects",
+    "response": [
+      {
+        "id": 1234567,
+        "identifier": "P001",
+        "name": "Website Support",
+        "active": true,
+        "billable": true,
+        "fixed_price": true,
+        "retainer": false,
+        "start_date": null,
+        "finish_date": "2018-12-31",
+        "currency": "EUR",
+        "billing_variant": "project",
+        "billing_address": "Beispiel AG\nHerr Maier\nBeispielstrasse...",
+        "billing_email_to": "project@beispiel.co",
+        "billing_email_cc": "project-cc@beispiel.co",
+        "billing_notes": "Billing notes text",
+        "setting_include_time_report": true,
+        "budget": 18200,
+        "budget_monthly": null,
+        "budget_expenses": 8200,
+        "hourly_rate": 150,
+        "info": "Abrechnung jaehrlich",
+        "retainer_billing_date": null,
+        "retainer_billing_title": null,
+        "retainer_billing_description": null,
+        "color": "#CCCC00",
+        "customer_report_url": "https://mycompany.mocoapp.com/projects/1234567/customer_report/token",
+        "tags": [
+          "Print",
+          "Digital"
+        ],
+        "labels": [
+          "Print",
+          "Digital"
+        ],
+        "custom_properties": {
+          "Project Management": "https://basecamp.com/123456"
+        },
+        "leader": {
+          "id": 933590696,
+          "firstname": "Michael",
+          "lastname": "Mustermann"
+        },
+        "co_leader": null,
+        "customer": {
+          "id": 1233434,
+          "name": "Beispiel AG"
+        },
+        "tasks": [
+          {
+            "id": 125112,
+            "name": "Project Management",
+            "billable": true,
+            "active": true,
+            "budget": null,
+            "hourly_rate": 0,
+            "description": "A task description"
+          }
+        ],
+        "contracts": [
+          {
+            "id": 458639048,
+            "user_id": 933590696,
+            "firstname": "Michael",
+            "lastname": "Mustermann",
+            "billable": true,
+            "active": true,
+            "budget": null,
+            "hourly_rate": 0
+          }
+        ],
+        "deal": {
+          "id": 5635453,
+          "name": "Website Relaunch"
+        },
+        "project_group": {
+          "id": 456687,
+          "name": "Webpages"
+        },
+        "billing_contact": {
+          "id": 1234,
+          "firstname": "Maxine",
+          "lastname": "Muster"
+        },
+        "contact": {
+          "id": 2345,
+          "firstname": "Max",
+          "lastname": "Muster"
+        },
+        "secondary_contact": {
+          "id": 3456,
+          "firstname": "Meike",
+          "lastname": "Muster"
+        },
+        "archived_on": null,
+        "created_at": "2018-10-17T09:33:46Z",
+        "updated_at": "2018-10-17T09:33:46Z"
+      }
+    ],
+    "status": 200,
+    "expected_body": null,
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "get_project": {
+    "config": {
+      "operation": "get_project",
+      "project_id": 1234567
+    },
+    "method": "GET",
+    "path": "/projects/{project_id}",
+    "response": {
+      "id": 1234567,
+      "identifier": "P001",
+      "name": "Website Support",
+      "active": true,
+      "billable": true,
+      "fixed_price": true,
+      "retainer": false,
+      "start_date": null,
+      "finish_date": "2018-12-31",
+      "currency": "EUR",
+      "billing_variant": "project",
+      "billing_address": "Beispiel AG\nHerr Maier\nBeispielstrasse...",
+      "billing_email_to": "project@beispiel.co",
+      "billing_email_cc": "project-cc@beispiel.co",
+      "billing_notes": "Billing notes text",
+      "setting_include_time_report": true,
+      "budget": 18200,
+      "budget_monthly": null,
+      "budget_expenses": 8200,
+      "hourly_rate": 150,
+      "info": "Abrechnung jaehrlich",
+      "retainer_billing_date": null,
+      "retainer_billing_title": null,
+      "retainer_billing_description": null,
+      "color": "#CCCC00",
+      "customer_report_url": "https://mycompany.mocoapp.com/projects/1234567/customer_report/token",
+      "tags": [
+        "Print",
+        "Digital"
+      ],
+      "labels": [
+        "Print",
+        "Digital"
+      ],
+      "custom_properties": {
+        "Project Management": "https://basecamp.com/123456"
+      },
+      "leader": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "co_leader": null,
+      "customer": {
+        "id": 1233434,
+        "name": "Beispiel AG"
+      },
+      "tasks": [
+        {
+          "id": 125112,
+          "name": "Project Management",
+          "billable": true,
+          "active": true,
+          "budget": null,
+          "hourly_rate": 0,
+          "description": "A task description"
+        }
+      ],
+      "contracts": [
+        {
+          "id": 458639048,
+          "user_id": 933590696,
+          "firstname": "Michael",
+          "lastname": "Mustermann",
+          "billable": true,
+          "active": true,
+          "budget": null,
+          "hourly_rate": 0
+        }
+      ],
+      "deal": {
+        "id": 5635453,
+        "name": "Website Relaunch"
+      },
+      "project_group": {
+        "id": 456687,
+        "name": "Webpages"
+      },
+      "billing_contact": {
+        "id": 1234,
+        "firstname": "Maxine",
+        "lastname": "Muster"
+      },
+      "contact": {
+        "id": 2345,
+        "firstname": "Max",
+        "lastname": "Muster"
+      },
+      "secondary_contact": {
+        "id": 3456,
+        "firstname": "Meike",
+        "lastname": "Muster"
+      },
+      "archived_on": null,
+      "created_at": "2018-10-17T09:33:46Z",
+      "updated_at": "2018-10-17T09:33:46Z"
+    },
+    "status": 200,
+    "expected_body": null,
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "create_project": {
+    "config": {
+      "operation": "create_project",
+      "name": "Website Relaunch",
+      "currency": "EUR",
+      "leader_id": 1234,
+      "company_id": 5678,
+      "billing_variant": "project",
+      "hourly_rate": 150,
+      "tags_json": "[\"Print\", \"Digital\"]"
+    },
+    "method": "POST",
+    "path": "/projects",
+    "response": {
+      "id": 1234567,
+      "identifier": "P001",
+      "name": "Website Support",
+      "active": true,
+      "billable": true,
+      "fixed_price": true,
+      "retainer": false,
+      "start_date": null,
+      "finish_date": "2018-12-31",
+      "currency": "EUR",
+      "billing_variant": "project",
+      "billing_address": "Beispiel AG\nHerr Maier\nBeispielstrasse...",
+      "billing_email_to": "project@beispiel.co",
+      "billing_email_cc": "project-cc@beispiel.co",
+      "billing_notes": "Billing notes text",
+      "setting_include_time_report": true,
+      "budget": 18200,
+      "budget_monthly": null,
+      "budget_expenses": 8200,
+      "hourly_rate": 150,
+      "info": "Abrechnung jaehrlich",
+      "retainer_billing_date": null,
+      "retainer_billing_title": null,
+      "retainer_billing_description": null,
+      "color": "#CCCC00",
+      "customer_report_url": "https://mycompany.mocoapp.com/projects/1234567/customer_report/token",
+      "tags": [
+        "Print",
+        "Digital"
+      ],
+      "labels": [
+        "Print",
+        "Digital"
+      ],
+      "custom_properties": {
+        "Project Management": "https://basecamp.com/123456"
+      },
+      "leader": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "co_leader": null,
+      "customer": {
+        "id": 1233434,
+        "name": "Beispiel AG"
+      },
+      "tasks": [
+        {
+          "id": 125112,
+          "name": "Project Management",
+          "billable": true,
+          "active": true,
+          "budget": null,
+          "hourly_rate": 0,
+          "description": "A task description"
+        }
+      ],
+      "contracts": [
+        {
+          "id": 458639048,
+          "user_id": 933590696,
+          "firstname": "Michael",
+          "lastname": "Mustermann",
+          "billable": true,
+          "active": true,
+          "budget": null,
+          "hourly_rate": 0
+        }
+      ],
+      "deal": {
+        "id": 5635453,
+        "name": "Website Relaunch"
+      },
+      "project_group": {
+        "id": 456687,
+        "name": "Webpages"
+      },
+      "billing_contact": {
+        "id": 1234,
+        "firstname": "Maxine",
+        "lastname": "Muster"
+      },
+      "contact": {
+        "id": 2345,
+        "firstname": "Max",
+        "lastname": "Muster"
+      },
+      "secondary_contact": {
+        "id": 3456,
+        "firstname": "Meike",
+        "lastname": "Muster"
+      },
+      "archived_on": null,
+      "created_at": "2018-10-17T09:33:46Z",
+      "updated_at": "2018-10-17T09:33:46Z"
+    },
+    "status": 200,
+    "expected_body": {
+      "name": "Website Relaunch",
+      "currency": "EUR",
+      "leader_id": 1234,
+      "company_id": 5678,
+      "tags": [
+        "Print",
+        "Digital"
+      ],
+      "billing_variant": "project",
+      "hourly_rate": 150
+    },
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "update_project": {
+    "config": {
+      "operation": "update_project",
+      "project_id": 1234567,
+      "name": "Website Relaunch",
+      "currency": "EUR",
+      "leader_id": 1234,
+      "company_id": 5678,
+      "billing_variant": "project",
+      "hourly_rate": 150,
+      "tags_json": "[\"Print\", \"Digital\"]"
+    },
+    "method": "PUT",
+    "path": "/projects/{project_id}",
+    "response": {
+      "id": 1234567,
+      "identifier": "P001",
+      "name": "Website Support",
+      "active": true,
+      "billable": true,
+      "fixed_price": true,
+      "retainer": false,
+      "start_date": null,
+      "finish_date": "2018-12-31",
+      "currency": "EUR",
+      "billing_variant": "project",
+      "billing_address": "Beispiel AG\nHerr Maier\nBeispielstrasse...",
+      "billing_email_to": "project@beispiel.co",
+      "billing_email_cc": "project-cc@beispiel.co",
+      "billing_notes": "Billing notes text",
+      "setting_include_time_report": true,
+      "budget": 18200,
+      "budget_monthly": null,
+      "budget_expenses": 8200,
+      "hourly_rate": 150,
+      "info": "Abrechnung jaehrlich",
+      "retainer_billing_date": null,
+      "retainer_billing_title": null,
+      "retainer_billing_description": null,
+      "color": "#CCCC00",
+      "customer_report_url": "https://mycompany.mocoapp.com/projects/1234567/customer_report/token",
+      "tags": [
+        "Print",
+        "Digital"
+      ],
+      "labels": [
+        "Print",
+        "Digital"
+      ],
+      "custom_properties": {
+        "Project Management": "https://basecamp.com/123456"
+      },
+      "leader": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "co_leader": null,
+      "customer": {
+        "id": 1233434,
+        "name": "Beispiel AG"
+      },
+      "tasks": [
+        {
+          "id": 125112,
+          "name": "Project Management",
+          "billable": true,
+          "active": true,
+          "budget": null,
+          "hourly_rate": 0,
+          "description": "A task description"
+        }
+      ],
+      "contracts": [
+        {
+          "id": 458639048,
+          "user_id": 933590696,
+          "firstname": "Michael",
+          "lastname": "Mustermann",
+          "billable": true,
+          "active": true,
+          "budget": null,
+          "hourly_rate": 0
+        }
+      ],
+      "deal": {
+        "id": 5635453,
+        "name": "Website Relaunch"
+      },
+      "project_group": {
+        "id": 456687,
+        "name": "Webpages"
+      },
+      "billing_contact": {
+        "id": 1234,
+        "firstname": "Maxine",
+        "lastname": "Muster"
+      },
+      "contact": {
+        "id": 2345,
+        "firstname": "Max",
+        "lastname": "Muster"
+      },
+      "secondary_contact": {
+        "id": 3456,
+        "firstname": "Meike",
+        "lastname": "Muster"
+      },
+      "archived_on": null,
+      "created_at": "2018-10-17T09:33:46Z",
+      "updated_at": "2018-10-17T09:33:46Z"
+    },
+    "status": 200,
+    "expected_body": {
+      "name": "Website Relaunch",
+      "currency": "EUR",
+      "leader_id": 1234,
+      "company_id": 5678,
+      "tags": [
+        "Print",
+        "Digital"
+      ],
+      "billing_variant": "project",
+      "hourly_rate": 150
+    },
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "list_activities": {
+    "config": {
+      "operation": "list_activities"
+    },
+    "method": "GET",
+    "path": "/activities",
+    "response": [
+      {
+        "id": 7770001,
+        "date": "2024-03-21",
+        "hours": 2.5,
+        "description": "Workshop preparation",
+        "billed": false,
+        "billable": true,
+        "invoice_id": null,
+        "tag": "consulting",
+        "remote_service": "jira",
+        "remote_id": "PROJ-123",
+        "remote_url": "https://jira.example.com/browse/PROJ-123",
+        "project": {
+          "id": 1234567,
+          "name": "Website Support",
+          "billable": true
+        },
+        "task": {
+          "id": 125112,
+          "name": "Project Management",
+          "billable": true
+        },
+        "customer": {
+          "id": 1233434,
+          "name": "Beispiel AG"
+        },
+        "user": {
+          "id": 933590696,
+          "firstname": "Michael",
+          "lastname": "Mustermann"
+        },
+        "hourly_rate": 150,
+        "seconds": 9000,
+        "worked_seconds": 9000,
+        "timer_started_at": null,
+        "created_at": "2024-03-21T09:00:00Z",
+        "updated_at": "2024-03-21T12:00:00Z"
+      }
+    ],
+    "status": 200,
+    "expected_body": null,
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "get_activity": {
+    "config": {
+      "operation": "get_activity",
+      "activity_id": 1234567
+    },
+    "method": "GET",
+    "path": "/activities/{activity_id}",
+    "response": {
+      "id": 7770001,
+      "date": "2024-03-21",
+      "hours": 2.5,
+      "description": "Workshop preparation",
+      "billed": false,
+      "billable": true,
+      "invoice_id": null,
+      "tag": "consulting",
+      "remote_service": "jira",
+      "remote_id": "PROJ-123",
+      "remote_url": "https://jira.example.com/browse/PROJ-123",
+      "project": {
+        "id": 1234567,
+        "name": "Website Support",
+        "billable": true
+      },
+      "task": {
+        "id": 125112,
+        "name": "Project Management",
+        "billable": true
+      },
+      "customer": {
+        "id": 1233434,
+        "name": "Beispiel AG"
+      },
+      "user": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "hourly_rate": 150,
+      "seconds": 9000,
+      "worked_seconds": 9000,
+      "timer_started_at": null,
+      "created_at": "2024-03-21T09:00:00Z",
+      "updated_at": "2024-03-21T12:00:00Z"
+    },
+    "status": 200,
+    "expected_body": null,
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "create_activity": {
+    "config": {
+      "operation": "create_activity",
+      "date": "2024-03-21",
+      "task_id": 125112,
+      "project_id": 1234567,
+      "description": "Workshop preparation",
+      "seconds": 9000,
+      "billable": true,
+      "tag": "consulting"
+    },
+    "method": "POST",
+    "path": "/activities",
+    "response": {
+      "id": 7770001,
+      "date": "2024-03-21",
+      "hours": 2.5,
+      "description": "Workshop preparation",
+      "billed": false,
+      "billable": true,
+      "invoice_id": null,
+      "tag": "consulting",
+      "remote_service": "jira",
+      "remote_id": "PROJ-123",
+      "remote_url": "https://jira.example.com/browse/PROJ-123",
+      "project": {
+        "id": 1234567,
+        "name": "Website Support",
+        "billable": true
+      },
+      "task": {
+        "id": 125112,
+        "name": "Project Management",
+        "billable": true
+      },
+      "customer": {
+        "id": 1233434,
+        "name": "Beispiel AG"
+      },
+      "user": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "hourly_rate": 150,
+      "seconds": 9000,
+      "worked_seconds": 9000,
+      "timer_started_at": null,
+      "created_at": "2024-03-21T09:00:00Z",
+      "updated_at": "2024-03-21T12:00:00Z"
+    },
+    "status": 200,
+    "expected_body": {
+      "date": "2024-03-21",
+      "task_id": 125112,
+      "project_id": 1234567,
+      "description": "Workshop preparation",
+      "seconds": 9000,
+      "billable": true,
+      "tag": "consulting"
+    },
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "update_activity": {
+    "config": {
+      "operation": "update_activity",
+      "activity_id": 1234567,
+      "date": "2024-03-21",
+      "task_id": 125112,
+      "project_id": 1234567,
+      "description": "Workshop preparation",
+      "seconds": 9000,
+      "billable": true,
+      "tag": "consulting"
+    },
+    "method": "PUT",
+    "path": "/activities/{activity_id}",
+    "response": {
+      "id": 7770001,
+      "date": "2024-03-21",
+      "hours": 2.5,
+      "description": "Workshop preparation",
+      "billed": false,
+      "billable": true,
+      "invoice_id": null,
+      "tag": "consulting",
+      "remote_service": "jira",
+      "remote_id": "PROJ-123",
+      "remote_url": "https://jira.example.com/browse/PROJ-123",
+      "project": {
+        "id": 1234567,
+        "name": "Website Support",
+        "billable": true
+      },
+      "task": {
+        "id": 125112,
+        "name": "Project Management",
+        "billable": true
+      },
+      "customer": {
+        "id": 1233434,
+        "name": "Beispiel AG"
+      },
+      "user": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "hourly_rate": 150,
+      "seconds": 9000,
+      "worked_seconds": 9000,
+      "timer_started_at": null,
+      "created_at": "2024-03-21T09:00:00Z",
+      "updated_at": "2024-03-21T12:00:00Z"
+    },
+    "status": 200,
+    "expected_body": {
+      "date": "2024-03-21",
+      "task_id": 125112,
+      "project_id": 1234567,
+      "description": "Workshop preparation",
+      "seconds": 9000,
+      "billable": true,
+      "tag": "consulting"
+    },
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "delete_activity": {
+    "config": {
+      "operation": "delete_activity",
+      "activity_id": 1234567
+    },
+    "method": "DELETE",
+    "path": "/activities/{activity_id}",
+    "response": {
+      "id": 7770001,
+      "date": "2024-03-21",
+      "hours": 2.5,
+      "description": "Workshop preparation",
+      "billed": false,
+      "billable": true,
+      "invoice_id": null,
+      "tag": "consulting",
+      "remote_service": "jira",
+      "remote_id": "PROJ-123",
+      "remote_url": "https://jira.example.com/browse/PROJ-123",
+      "project": {
+        "id": 1234567,
+        "name": "Website Support",
+        "billable": true
+      },
+      "task": {
+        "id": 125112,
+        "name": "Project Management",
+        "billable": true
+      },
+      "customer": {
+        "id": 1233434,
+        "name": "Beispiel AG"
+      },
+      "user": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "hourly_rate": 150,
+      "seconds": 9000,
+      "worked_seconds": 9000,
+      "timer_started_at": null,
+      "created_at": "2024-03-21T09:00:00Z",
+      "updated_at": "2024-03-21T12:00:00Z"
+    },
+    "status": 200,
+    "expected_body": null,
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "list_deals": {
+    "config": {
+      "operation": "list_deals"
+    },
+    "method": "GET",
+    "path": "/deals",
+    "response": [
+      {
+        "id": 5635453,
+        "name": "Website Relaunch",
+        "status": "pending",
+        "reminder_date": "2024-04-05",
+        "closed_on": null,
+        "money": 45000,
+        "currency": "CHF",
+        "info": "Proposal sent, waiting for legal review.",
+        "tags": [
+          "Relaunch",
+          "Enterprise"
+        ],
+        "custom_properties": {
+          "Source": "Event"
+        },
+        "user": {
+          "id": 933590696,
+          "firstname": "Michael",
+          "lastname": "Mustermann"
+        },
+        "person": {
+          "id": 774411,
+          "name": "Max Muster"
+        },
+        "customer": {
+          "id": 1233434,
+          "name": "Beispiel AG"
+        },
+        "company": {
+          "id": 1233434,
+          "type": "customer",
+          "name": "Beispiel AG"
+        },
+        "category": {
+          "id": 12,
+          "name": "Offer sent",
+          "probability": 60
+        },
+        "service_period_from": "2024-04-01",
+        "service_period_to": "2024-06-30",
+        "inbox_email_address": "deal+5635453@inbox.mocoapp.com",
+        "created_at": "2024-03-01T09:00:00Z",
+        "updated_at": "2024-03-20T12:15:00Z"
+      }
+    ],
+    "status": 200,
+    "expected_body": null,
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "get_deal": {
+    "config": {
+      "operation": "get_deal",
+      "deal_id": 1234567
+    },
+    "method": "GET",
+    "path": "/deals/{deal_id}",
+    "response": {
+      "id": 5635453,
+      "name": "Website Relaunch",
+      "status": "pending",
+      "reminder_date": "2024-04-05",
+      "closed_on": null,
+      "money": 45000,
+      "currency": "CHF",
+      "info": "Proposal sent, waiting for legal review.",
+      "tags": [
+        "Relaunch",
+        "Enterprise"
+      ],
+      "custom_properties": {
+        "Source": "Event"
+      },
+      "user": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "person": {
+        "id": 774411,
+        "name": "Max Muster"
+      },
+      "customer": {
+        "id": 1233434,
+        "name": "Beispiel AG"
+      },
+      "company": {
+        "id": 1233434,
+        "type": "customer",
+        "name": "Beispiel AG"
+      },
+      "category": {
+        "id": 12,
+        "name": "Offer sent",
+        "probability": 60
+      },
+      "service_period_from": "2024-04-01",
+      "service_period_to": "2024-06-30",
+      "inbox_email_address": "deal+5635453@inbox.mocoapp.com",
+      "created_at": "2024-03-01T09:00:00Z",
+      "updated_at": "2024-03-20T12:15:00Z"
+    },
+    "status": 200,
+    "expected_body": null,
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "create_deal": {
+    "config": {
+      "operation": "create_deal",
+      "deal_category_id": 12,
+      "name": "Website Relaunch",
+      "money": 45000,
+      "currency": "CHF",
+      "company_id": 1233434,
+      "person_id": 774411,
+      "user_id": 933590696,
+      "status": "pending",
+      "reminder_date": "2024-04-05",
+      "tags_json": "[\"Relaunch\", \"Enterprise\"]",
+      "custom_properties_json": "{\"Source\": \"Event\"}"
+    },
+    "method": "POST",
+    "path": "/deals",
+    "response": {
+      "id": 5635453,
+      "name": "Website Relaunch",
+      "status": "pending",
+      "reminder_date": "2024-04-05",
+      "closed_on": null,
+      "money": 45000,
+      "currency": "CHF",
+      "info": "Proposal sent, waiting for legal review.",
+      "tags": [
+        "Relaunch",
+        "Enterprise"
+      ],
+      "custom_properties": {
+        "Source": "Event"
+      },
+      "user": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "person": {
+        "id": 774411,
+        "name": "Max Muster"
+      },
+      "customer": {
+        "id": 1233434,
+        "name": "Beispiel AG"
+      },
+      "company": {
+        "id": 1233434,
+        "type": "customer",
+        "name": "Beispiel AG"
+      },
+      "category": {
+        "id": 12,
+        "name": "Offer sent",
+        "probability": 60
+      },
+      "service_period_from": "2024-04-01",
+      "service_period_to": "2024-06-30",
+      "inbox_email_address": "deal+5635453@inbox.mocoapp.com",
+      "created_at": "2024-03-01T09:00:00Z",
+      "updated_at": "2024-03-20T12:15:00Z"
+    },
+    "status": 200,
+    "expected_body": {
+      "deal_category_id": 12,
+      "name": "Website Relaunch",
+      "money": 45000,
+      "currency": "CHF",
+      "company_id": 1233434,
+      "person_id": 774411,
+      "user_id": 933590696,
+      "status": "pending",
+      "reminder_date": "2024-04-05",
+      "tags": [
+        "Relaunch",
+        "Enterprise"
+      ],
+      "custom_properties": {
+        "Source": "Event"
+      }
+    },
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "update_deal": {
+    "config": {
+      "operation": "update_deal",
+      "deal_id": 1234567,
+      "deal_category_id": 12,
+      "name": "Website Relaunch",
+      "money": 45000,
+      "currency": "CHF",
+      "company_id": 1233434,
+      "person_id": 774411,
+      "user_id": 933590696,
+      "status": "pending",
+      "reminder_date": "2024-04-05",
+      "tags_json": "[\"Relaunch\", \"Enterprise\"]",
+      "custom_properties_json": "{\"Source\": \"Event\"}"
+    },
+    "method": "PUT",
+    "path": "/deals/{deal_id}",
+    "response": {
+      "id": 5635453,
+      "name": "Website Relaunch",
+      "status": "pending",
+      "reminder_date": "2024-04-05",
+      "closed_on": null,
+      "money": 45000,
+      "currency": "CHF",
+      "info": "Proposal sent, waiting for legal review.",
+      "tags": [
+        "Relaunch",
+        "Enterprise"
+      ],
+      "custom_properties": {
+        "Source": "Event"
+      },
+      "user": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "person": {
+        "id": 774411,
+        "name": "Max Muster"
+      },
+      "customer": {
+        "id": 1233434,
+        "name": "Beispiel AG"
+      },
+      "company": {
+        "id": 1233434,
+        "type": "customer",
+        "name": "Beispiel AG"
+      },
+      "category": {
+        "id": 12,
+        "name": "Offer sent",
+        "probability": 60
+      },
+      "service_period_from": "2024-04-01",
+      "service_period_to": "2024-06-30",
+      "inbox_email_address": "deal+5635453@inbox.mocoapp.com",
+      "created_at": "2024-03-01T09:00:00Z",
+      "updated_at": "2024-03-20T12:15:00Z"
+    },
+    "status": 200,
+    "expected_body": {
+      "deal_category_id": 12,
+      "name": "Website Relaunch",
+      "money": 45000,
+      "currency": "CHF",
+      "company_id": 1233434,
+      "person_id": 774411,
+      "user_id": 933590696,
+      "status": "pending",
+      "reminder_date": "2024-04-05",
+      "tags": [
+        "Relaunch",
+        "Enterprise"
+      ],
+      "custom_properties": {
+        "Source": "Event"
+      }
+    },
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "list_invoices": {
+    "config": {
+      "operation": "list_invoices"
+    },
+    "method": "GET",
+    "path": "/invoices",
+    "response": [
+      {
+        "id": 9273634,
+        "customer_id": 1233434,
+        "project_id": 1234567,
+        "offer_id": 7845511,
+        "identifier": "2024-042",
+        "date": "2024-03-01",
+        "due_date": "2024-03-31",
+        "service_period": "March 2024",
+        "service_period_from": "2024-03-01",
+        "service_period_to": "2024-03-31",
+        "status": "draft",
+        "reversed": false,
+        "reversal_invoice_id": null,
+        "reversal": false,
+        "reversed_invoice_id": null,
+        "title": "Website support March",
+        "recipient_address": "Beispiel AG\nHerr Maier\nBeispielstrasse 1\n8000 Zuerich",
+        "currency": "CHF",
+        "net_total": 3500,
+        "tax": 8.1,
+        "vat": {
+          "id": 1,
+          "tax": 8.1
+        },
+        "gross_total": 3783.5,
+        "discount": 0,
+        "cash_discount": 0,
+        "cash_discount_days": 0,
+        "creditor_reference": "RF18539007547034",
+        "debit_number": 1100,
+        "credit_number": 3200,
+        "locked": false,
+        "custom_properties": {
+          "Source": "API"
+        },
+        "tags": [
+          "Consulting"
+        ],
+        "letter_paper_id": 12345,
+        "user": {
+          "id": 933590696,
+          "firstname": "Michael",
+          "lastname": "Mustermann"
+        },
+        "file_url": "https://mycompany.mocoapp.com/invoices/9273634.pdf",
+        "debt_collection_procedure": {
+          "id": 15,
+          "user": {
+            "id": 933590696,
+            "firstname": "Michael",
+            "lastname": "Mustermann"
+          },
+          "note": "Sent to collection agency",
+          "created_at": "2024-04-01T08:00:00Z",
+          "updated_at": "2024-04-01T08:00:00Z"
+        },
+        "created_at": "2024-03-01T10:15:00Z",
+        "updated_at": "2024-03-02T06:25:00Z",
+        "created_on": "2024-03-01",
+        "updated_on": "2024-03-02"
+      }
+    ],
+    "status": 200,
+    "expected_body": null,
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "get_invoice": {
+    "config": {
+      "operation": "get_invoice",
+      "invoice_id": 1234567
+    },
+    "method": "GET",
+    "path": "/invoices/{invoice_id}",
+    "response": {
+      "id": 9273634,
+      "customer_id": 1233434,
+      "project_id": 1234567,
+      "offer_id": 7845511,
+      "identifier": "2024-042",
+      "date": "2024-03-01",
+      "due_date": "2024-03-31",
+      "service_period": "March 2024",
+      "service_period_from": "2024-03-01",
+      "service_period_to": "2024-03-31",
+      "status": "draft",
+      "reversed": false,
+      "reversal_invoice_id": null,
+      "reversal": false,
+      "reversed_invoice_id": null,
+      "title": "Website support March",
+      "recipient_address": "Beispiel AG\nHerr Maier\nBeispielstrasse 1\n8000 Zuerich",
+      "currency": "CHF",
+      "net_total": 3500,
+      "tax": 8.1,
+      "vat": {
+        "id": 1,
+        "tax": 8.1
+      },
+      "gross_total": 3783.5,
+      "discount": 0,
+      "cash_discount": 0,
+      "cash_discount_days": 0,
+      "creditor_reference": "RF18539007547034",
+      "debit_number": 1100,
+      "credit_number": 3200,
+      "locked": false,
+      "custom_properties": {
+        "Source": "API"
+      },
+      "tags": [
+        "Consulting"
+      ],
+      "letter_paper_id": 12345,
+      "user": {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann"
+      },
+      "file_url": "https://mycompany.mocoapp.com/invoices/9273634.pdf",
+      "debt_collection_procedure": {
+        "id": 15,
+        "user": {
+          "id": 933590696,
+          "firstname": "Michael",
+          "lastname": "Mustermann"
+        },
+        "note": "Sent to collection agency",
+        "created_at": "2024-04-01T08:00:00Z",
+        "updated_at": "2024-04-01T08:00:00Z"
+      },
+      "created_at": "2024-03-01T10:15:00Z",
+      "updated_at": "2024-03-02T06:25:00Z",
+      "created_on": "2024-03-01",
+      "updated_on": "2024-03-02"
+    },
+    "status": 200,
+    "expected_body": null,
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "list_users": {
+    "config": {
+      "operation": "list_users"
+    },
+    "method": "GET",
+    "path": "/users",
+    "response": [
+      {
+        "id": 933590696,
+        "firstname": "Michael",
+        "lastname": "Mustermann",
+        "active": true,
+        "extern": false,
+        "email": "michael@example.com",
+        "mobile_phone": "+41 79 111 22 33",
+        "work_phone": "+41 44 111 22 33",
+        "home_address": "Musterweg 5, 8000 Zuerich",
+        "info": "Team lead",
+        "birthday": "1989-05-17",
+        "iban": "CH9300762011623852957",
+        "avatar_url": "https://mycompany.mocoapp.com/uploads/users/avatar.png",
+        "tags": [
+          "Lead"
+        ],
+        "custom_properties": {
+          "CostCenter": 100
+        },
+        "credit_number": "70000",
+        "role": {
+          "id": 1,
+          "name": "Administrator"
+        },
+        "unit": {
+          "id": 11,
+          "name": "Consulting"
+        },
+        "created_at": "2021-04-10T10:00:00Z",
+        "updated_at": "2024-03-11T08:30:00Z"
+      }
+    ],
+    "status": 200,
+    "expected_body": null,
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml"
+  },
+  "list_project_tasks": {
+    "config": {
+      "operation": "list_project_tasks",
+      "project_id": 1234567
+    },
+    "method": "GET",
+    "path": "/projects/{project_id}/tasks",
+    "response": [],
+    "status": 200,
+    "expected_body": null,
+    "source": "https://docs.mocoapp.com/api/docs/v1.yaml",
+    "note": "Empty collection regression; the provider schema has no complete task-list example."
+  }
+}

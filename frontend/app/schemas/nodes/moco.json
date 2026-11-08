@@ -1,0 +1,2771 @@
+{
+  "$defs": {
+    "CreateActivity": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "project_id": {
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "task_id": {
+          "minimum": 1,
+          "title": "Task Id",
+          "type": "integer"
+        },
+        "seconds": {
+          "minimum": 0,
+          "title": "Seconds",
+          "type": "integer"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billable"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "remote_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remote Id"
+        },
+        "remote_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remote Url"
+        },
+        "remote_service": {
+          "anyOf": [
+            {
+              "enum": [
+                "",
+                "trello",
+                "jira",
+                "asana",
+                "basecamp",
+                "wunderlist",
+                "basecamp2",
+                "basecamp3",
+                "toggl",
+                "mite",
+                "github",
+                "youtrack"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remote Service",
+          "enum": [
+            "",
+            "trello",
+            "jira",
+            "asana",
+            "basecamp",
+            "wunderlist",
+            "basecamp2",
+            "basecamp3",
+            "toggl",
+            "mite",
+            "github",
+            "youtrack"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "create_activity",
+          "default": "create_activity",
+          "title": "Create activity",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "date",
+        "project_id",
+        "task_id",
+        "seconds"
+      ],
+      "title": "CreateActivity",
+      "type": "object"
+    },
+    "CreateCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "default": "customer",
+          "enum": [
+            "customer",
+            "supplier",
+            "organization"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identifier"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Info"
+        },
+        "customer_vat_code_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Vat Code Id"
+        },
+        "default_invoice_due_days": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Invoice Due Days"
+        },
+        "operation": {
+          "const": "create_company",
+          "default": "create_company",
+          "title": "Create company",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tags_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of tags, for example [\"VIP\"]. Omit to preserve existing tags.",
+          "title": "Tags Json",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        },
+        "custom_properties_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object keyed by preconfigured MOCO custom-field names. Unknown fields are ignored by MOCO.",
+          "title": "Custom Properties Json",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateCompany",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "firstname": {
+          "minLength": 1,
+          "title": "Firstname",
+          "type": "string"
+        },
+        "lastname": {
+          "minLength": 1,
+          "title": "Lastname",
+          "type": "string"
+        },
+        "work_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Work Email"
+        },
+        "work_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Work Phone"
+        },
+        "mobile_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile Phone"
+        },
+        "job_position": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Position"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Id"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Info"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tags_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of tags, for example [\"VIP\"]. Omit to preserve existing tags.",
+          "title": "Tags Json",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        },
+        "custom_properties_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object keyed by preconfigured MOCO custom-field names. Unknown fields are ignored by MOCO.",
+          "title": "Custom Properties Json",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "firstname",
+        "lastname"
+      ],
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateDeal": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "deal_category_id": {
+          "minimum": 1,
+          "title": "Deal Category Id",
+          "type": "integer"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Id"
+        },
+        "person_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Person Id"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "money": {
+          "title": "Money",
+          "type": "number"
+        },
+        "currency": {
+          "maxLength": 3,
+          "minLength": 3,
+          "title": "Currency",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "potential",
+                "pending",
+                "won",
+                "lost",
+                "dropped"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "potential",
+            "pending",
+            "won",
+            "lost",
+            "dropped"
+          ],
+          "x-enum-searchable": true
+        },
+        "reminder_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reminder Date"
+        },
+        "closed_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Closed On"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Info"
+        },
+        "operation": {
+          "const": "create_deal",
+          "default": "create_deal",
+          "title": "Create deal",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tags_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of tags, for example [\"VIP\"]. Omit to preserve existing tags.",
+          "title": "Tags Json",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        },
+        "custom_properties_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object keyed by preconfigured MOCO custom-field names. Unknown fields are ignored by MOCO.",
+          "title": "Custom Properties Json",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "name",
+        "deal_category_id",
+        "money",
+        "currency"
+      ],
+      "title": "CreateDeal",
+      "type": "object"
+    },
+    "CreateProject": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identifier"
+        },
+        "company_id": {
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "leader_id": {
+          "minimum": 1,
+          "title": "Leader Id",
+          "type": "integer"
+        },
+        "currency": {
+          "maxLength": 3,
+          "minLength": 3,
+          "title": "Currency",
+          "type": "string"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        },
+        "finish_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finish Date"
+        },
+        "fixed_price": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fixed Price"
+        },
+        "budget": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budget"
+        },
+        "hourly_rate": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hourly Rate"
+        },
+        "billing_variant": {
+          "anyOf": [
+            {
+              "enum": [
+                "project",
+                "task",
+                "user"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billing Variant",
+          "enum": [
+            "project",
+            "task",
+            "user"
+          ],
+          "x-enum-searchable": true
+        },
+        "info": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Info"
+        },
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Create project",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tags_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of tags, for example [\"VIP\"]. Omit to preserve existing tags.",
+          "title": "Tags Json",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        },
+        "custom_properties_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object keyed by preconfigured MOCO custom-field names. Unknown fields are ignored by MOCO.",
+          "title": "Custom Properties Json",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "name",
+        "company_id",
+        "leader_id",
+        "currency"
+      ],
+      "title": "CreateProject",
+      "type": "object"
+    },
+    "DeleteActivity": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_activity",
+          "default": "delete_activity",
+          "title": "Delete activity",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "activity_id": {
+          "description": "MOCO activity ID.",
+          "minimum": 1,
+          "title": "Activity Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "activity_id"
+      ],
+      "title": "DeleteActivity",
+      "type": "object"
+    },
+    "GetActivity": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_activity",
+          "default": "get_activity",
+          "title": "Get activity",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "activity_id": {
+          "description": "MOCO activity ID.",
+          "minimum": 1,
+          "title": "Activity Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "activity_id"
+      ],
+      "title": "GetActivity",
+      "type": "object"
+    },
+    "GetCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Get company",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "description": "MOCO company ID.",
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "GetCompany",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "description": "MOCO contact ID.",
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetDeal": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_deal",
+          "default": "get_deal",
+          "title": "Get deal",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "deal_id": {
+          "description": "MOCO deal ID.",
+          "minimum": 1,
+          "title": "Deal Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "deal_id"
+      ],
+      "title": "GetDeal",
+      "type": "object"
+    },
+    "GetInvoice": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "invoice_id": {
+          "minimum": 1,
+          "title": "Invoice Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "invoice_id"
+      ],
+      "title": "GetInvoice",
+      "type": "object"
+    },
+    "GetProject": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Get project",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "MOCO project ID.",
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GetProject",
+      "type": "object"
+    },
+    "ListActivitys": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number, starting at 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only records updated after this ISO8601 timestamp.",
+          "title": "Updated After"
+        },
+        "operation": {
+          "const": "list_activities",
+          "default": "list_activities",
+          "title": "List activities",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "From date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To date"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Id"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billable"
+        },
+        "billed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billed"
+        }
+      },
+      "title": "ListActivitys",
+      "type": "object"
+    },
+    "ListCompanys": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number, starting at 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only records updated after this ISO8601 timestamp.",
+          "title": "Updated After"
+        },
+        "operation": {
+          "const": "list_companies",
+          "default": "list_companies",
+          "title": "List companies",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "customer",
+                "supplier",
+                "organization"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "customer",
+            "supplier",
+            "organization"
+          ],
+          "x-enum-searchable": true
+        },
+        "term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Term"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tags.",
+          "title": "Tags"
+        },
+        "include_archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Archived"
+        }
+      },
+      "title": "ListCompanys",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number, starting at 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only records updated after this ISO8601 timestamp.",
+          "title": "Updated After"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List contacts",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Term"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListDeals": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number, starting at 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only records updated after this ISO8601 timestamp.",
+          "title": "Updated After"
+        },
+        "operation": {
+          "const": "list_deals",
+          "default": "list_deals",
+          "title": "List deals",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "potential",
+                "pending",
+                "won",
+                "lost",
+                "dropped"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "potential",
+            "pending",
+            "won",
+            "lost",
+            "dropped"
+          ],
+          "x-enum-searchable": true
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Id"
+        }
+      },
+      "title": "ListDeals",
+      "type": "object"
+    },
+    "ListInvoices": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number, starting at 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only records updated after this ISO8601 timestamp.",
+          "title": "Updated After"
+        },
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Id"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Id"
+        },
+        "date_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date From"
+        },
+        "date_to": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date To"
+        }
+      },
+      "title": "ListInvoices",
+      "type": "object"
+    },
+    "ListProjectTasks": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number, starting at 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only records updated after this ISO8601 timestamp.",
+          "title": "Updated After"
+        },
+        "operation": {
+          "const": "list_project_tasks",
+          "default": "list_project_tasks",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "ListProjectTasks",
+      "type": "object"
+    },
+    "ListProjects": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number, starting at 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only records updated after this ISO8601 timestamp.",
+          "title": "Updated After"
+        },
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List projects",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company ID filter.",
+          "title": "Company Id"
+        },
+        "term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Term"
+        },
+        "include_archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Archived"
+        }
+      },
+      "title": "ListProjects",
+      "type": "object"
+    },
+    "ListUsers": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number, starting at 1.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "per_page": {
+          "default": 100,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page size",
+          "type": "integer"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only records updated after this ISO8601 timestamp.",
+          "title": "Updated After"
+        },
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "include_archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Include Archived"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        }
+      },
+      "title": "ListUsers",
+      "type": "object"
+    },
+    "MocoAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "moco_api_key",
+          "default": "moco_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subdomain": {
+          "description": "Only the account name before .mocoapp.com, without https:// or a path.",
+          "title": "Account subdomain",
+          "type": "string"
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "subdomain",
+        "api_key"
+      ],
+      "title": "MOCO API Key",
+      "type": "object",
+      "x-credential-instructions": "In MOCO, open your profile's Integrations tab and copy the API key. Enter the account subdomain from your MOCO URL, such as mycompany from https://mycompany.mocoapp.com. An account API key from Settings > Extensions > API & Webhooks also works; writes require full access. Requests use the key's permissions and user identity.",
+      "x-credential-url": "https://docs.mocoapp.com/"
+    },
+    "UpdateActivity": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Id"
+        },
+        "task_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Id"
+        },
+        "seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seconds"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "billable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billable"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "remote_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remote Id"
+        },
+        "remote_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remote Url"
+        },
+        "remote_service": {
+          "anyOf": [
+            {
+              "enum": [
+                "",
+                "trello",
+                "jira",
+                "asana",
+                "basecamp",
+                "wunderlist",
+                "basecamp2",
+                "basecamp3",
+                "toggl",
+                "mite",
+                "github",
+                "youtrack"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Remote Service",
+          "enum": [
+            "",
+            "trello",
+            "jira",
+            "asana",
+            "basecamp",
+            "wunderlist",
+            "basecamp2",
+            "basecamp3",
+            "toggl",
+            "mite",
+            "github",
+            "youtrack"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "update_activity",
+          "default": "update_activity",
+          "title": "Update activity",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "activity_id": {
+          "description": "MOCO activity ID.",
+          "minimum": 1,
+          "title": "Activity Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "activity_id"
+      ],
+      "title": "UpdateActivity",
+      "type": "object"
+    },
+    "UpdateCompany": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "customer",
+                "supplier",
+                "organization"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type",
+          "enum": [
+            "customer",
+            "supplier",
+            "organization"
+          ],
+          "x-enum-searchable": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identifier"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address"
+        },
+        "country_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Info"
+        },
+        "customer_vat_code_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Vat Code Id"
+        },
+        "default_invoice_due_days": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Invoice Due Days"
+        },
+        "operation": {
+          "const": "update_company",
+          "default": "update_company",
+          "title": "Update company",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "company_id": {
+          "description": "MOCO company ID.",
+          "minimum": 1,
+          "title": "Company Id",
+          "type": "integer"
+        },
+        "tags_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of tags, for example [\"VIP\"]. Omit to preserve existing tags.",
+          "title": "Tags Json",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        },
+        "custom_properties_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object keyed by preconfigured MOCO custom-field names. Unknown fields are ignored by MOCO.",
+          "title": "Custom Properties Json",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "UpdateCompany",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "properties": {
+        "firstname": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "lastname": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lastname"
+        },
+        "work_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Work Email"
+        },
+        "work_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Work Phone"
+        },
+        "mobile_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mobile Phone"
+        },
+        "job_position": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Position"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Id"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Info"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update contact",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "description": "MOCO contact ID.",
+          "minimum": 1,
+          "title": "Contact Id",
+          "type": "integer"
+        },
+        "tags_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of tags, for example [\"VIP\"]. Omit to preserve existing tags.",
+          "title": "Tags Json",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        },
+        "custom_properties_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object keyed by preconfigured MOCO custom-field names. Unknown fields are ignored by MOCO.",
+          "title": "Custom Properties Json",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateDeal": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "deal_category_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Deal Category Id"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Id"
+        },
+        "person_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Person Id"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "money": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Money"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "potential",
+                "pending",
+                "won",
+                "lost",
+                "dropped"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "potential",
+            "pending",
+            "won",
+            "lost",
+            "dropped"
+          ],
+          "x-enum-searchable": true
+        },
+        "reminder_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reminder Date"
+        },
+        "closed_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Closed On"
+        },
+        "info": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Info"
+        },
+        "operation": {
+          "const": "update_deal",
+          "default": "update_deal",
+          "title": "Update deal",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "deal_id": {
+          "description": "MOCO deal ID.",
+          "minimum": 1,
+          "title": "Deal Id",
+          "type": "integer"
+        },
+        "tags_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of tags, for example [\"VIP\"]. Omit to preserve existing tags.",
+          "title": "Tags Json",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        },
+        "custom_properties_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object keyed by preconfigured MOCO custom-field names. Unknown fields are ignored by MOCO.",
+          "title": "Custom Properties Json",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "deal_id"
+      ],
+      "title": "UpdateDeal",
+      "type": "object"
+    },
+    "UpdateProject": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identifier"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Id"
+        },
+        "leader_id": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Leader Id"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        },
+        "finish_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finish Date"
+        },
+        "fixed_price": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fixed Price"
+        },
+        "budget": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budget"
+        },
+        "hourly_rate": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hourly Rate"
+        },
+        "billing_variant": {
+          "anyOf": [
+            {
+              "enum": [
+                "project",
+                "task",
+                "user"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Billing Variant",
+          "enum": [
+            "project",
+            "task",
+            "user"
+          ],
+          "x-enum-searchable": true
+        },
+        "info": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Info"
+        },
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Update project",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_id": {
+          "description": "MOCO project ID.",
+          "minimum": 1,
+          "title": "Project Id",
+          "type": "integer"
+        },
+        "tags_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of tags, for example [\"VIP\"]. Omit to preserve existing tags.",
+          "title": "Tags Json",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        },
+        "custom_properties_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object keyed by preconfigured MOCO custom-field names. Unknown fields are ignored by MOCO.",
+          "title": "Custom Properties Json",
+          "ui:language": "json",
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "UpdateProject",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_activity": "#/$defs/CreateActivity",
+          "create_company": "#/$defs/CreateCompany",
+          "create_contact": "#/$defs/CreateContact",
+          "create_deal": "#/$defs/CreateDeal",
+          "create_project": "#/$defs/CreateProject",
+          "delete_activity": "#/$defs/DeleteActivity",
+          "get_activity": "#/$defs/GetActivity",
+          "get_company": "#/$defs/GetCompany",
+          "get_contact": "#/$defs/GetContact",
+          "get_deal": "#/$defs/GetDeal",
+          "get_invoice": "#/$defs/GetInvoice",
+          "get_project": "#/$defs/GetProject",
+          "list_activities": "#/$defs/ListActivitys",
+          "list_companies": "#/$defs/ListCompanys",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_deals": "#/$defs/ListDeals",
+          "list_invoices": "#/$defs/ListInvoices",
+          "list_project_tasks": "#/$defs/ListProjectTasks",
+          "list_projects": "#/$defs/ListProjects",
+          "list_users": "#/$defs/ListUsers",
+          "update_activity": "#/$defs/UpdateActivity",
+          "update_company": "#/$defs/UpdateCompany",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_deal": "#/$defs/UpdateDeal",
+          "update_project": "#/$defs/UpdateProject"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListCompanys"
+        },
+        {
+          "$ref": "#/$defs/GetCompany"
+        },
+        {
+          "$ref": "#/$defs/CreateCompany"
+        },
+        {
+          "$ref": "#/$defs/UpdateCompany"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/ListProjects"
+        },
+        {
+          "$ref": "#/$defs/GetProject"
+        },
+        {
+          "$ref": "#/$defs/CreateProject"
+        },
+        {
+          "$ref": "#/$defs/UpdateProject"
+        },
+        {
+          "$ref": "#/$defs/ListActivitys"
+        },
+        {
+          "$ref": "#/$defs/GetActivity"
+        },
+        {
+          "$ref": "#/$defs/CreateActivity"
+        },
+        {
+          "$ref": "#/$defs/UpdateActivity"
+        },
+        {
+          "$ref": "#/$defs/DeleteActivity"
+        },
+        {
+          "$ref": "#/$defs/ListDeals"
+        },
+        {
+          "$ref": "#/$defs/GetDeal"
+        },
+        {
+          "$ref": "#/$defs/CreateDeal"
+        },
+        {
+          "$ref": "#/$defs/UpdateDeal"
+        },
+        {
+          "$ref": "#/$defs/ListInvoices"
+        },
+        {
+          "$ref": "#/$defs/GetInvoice"
+        },
+        {
+          "$ref": "#/$defs/ListUsers"
+        },
+        {
+          "$ref": "#/$defs/ListProjectTasks"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MocoAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Moco Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a customer in MOCO",
+    "Log time on a project",
+    "List unpaid invoices",
+    "Update a sales deal"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
