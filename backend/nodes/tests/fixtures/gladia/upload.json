@@ -1,0 +1,14 @@
+{
+  "source": "https://docs.gladia.io/chapters/pre-recorded-stt/quickstart.md",
+  "body": {
+    "audio_url": "https://api.gladia.io/file/636c70f6-92c1-4026-a8b6-0dfe3ecf826f",
+    "audio_metadata": {
+      "id": "636c70f6-92c1-4026-a8b6-0dfe3ecf826f",
+      "filename": "your_audio_file.mp3",
+      "extension": "mp3",
+      "size": 99515383,
+      "audio_duration": 4146.468542,
+      "number_of_channels": 2
+    }
+  }
+}

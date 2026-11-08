@@ -1,0 +1,653 @@
+{
+  "$defs": {
+    "CreateLiveSession": {
+      "additionalProperties": false,
+      "description": "Create a live session; send audio separately to its returned WebSocket URL.",
+      "properties": {
+        "operation": {
+          "const": "create_live_session",
+          "default": "create_live_session",
+          "title": "Operation",
+          "type": "string"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "enum": [
+                "us-west",
+                "eu-west"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Region",
+          "enum": [
+            "us-west",
+            "eu-west"
+          ],
+          "x-enum-searchable": true
+        },
+        "encoding": {
+          "default": "wav/pcm",
+          "enum": [
+            "wav/pcm",
+            "wav/alaw",
+            "wav/ulaw"
+          ],
+          "title": "Encoding",
+          "type": "string"
+        },
+        "bit_depth": {
+          "default": 16,
+          "enum": [
+            8,
+            16,
+            24,
+            32
+          ],
+          "title": "Bit Depth",
+          "type": "integer"
+        },
+        "sample_rate": {
+          "default": 16000,
+          "enum": [
+            8000,
+            16000,
+            32000,
+            44100,
+            48000
+          ],
+          "title": "Sample Rate",
+          "type": "integer"
+        },
+        "channels": {
+          "default": 1,
+          "maximum": 8,
+          "minimum": 1,
+          "title": "Channels",
+          "type": "integer"
+        },
+        "endpointing": {
+          "default": 0.05,
+          "maximum": 10,
+          "minimum": 0.01,
+          "title": "Endpointing",
+          "type": "number"
+        },
+        "maximum_duration_without_endpointing": {
+          "default": 5,
+          "maximum": 60,
+          "minimum": 5,
+          "title": "Maximum Duration Without Endpointing",
+          "type": "number"
+        },
+        "custom_metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Metadata"
+        }
+      },
+      "title": "CreateLiveSession",
+      "type": "object"
+    },
+    "CreatePreRecorded": {
+      "additionalProperties": false,
+      "description": "Submit a transcription with optional speaker, subtitle and intelligence features.",
+      "properties": {
+        "operation": {
+          "const": "create_pre_recorded",
+          "default": "create_pre_recorded",
+          "title": "Operation",
+          "type": "string"
+        },
+        "audio_url": {
+          "description": "A Gladia upload URL or publicly accessible audio/video URL.",
+          "format": "uri",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Audio Url",
+          "type": "string"
+        },
+        "model": {
+          "default": "solaria-1",
+          "enum": [
+            "solaria-1",
+            "solaria-3",
+            "solaria-fusion"
+          ],
+          "title": "Model",
+          "type": "string"
+        },
+        "diarization": {
+          "default": false,
+          "title": "Diarization",
+          "type": "boolean"
+        },
+        "subtitles": {
+          "default": false,
+          "title": "Subtitles",
+          "type": "boolean"
+        },
+        "summarization": {
+          "default": false,
+          "title": "Summarization",
+          "type": "boolean"
+        },
+        "sentiment_analysis": {
+          "default": false,
+          "title": "Sentiment Analysis",
+          "type": "boolean"
+        },
+        "named_entity_recognition": {
+          "default": false,
+          "title": "Named Entity Recognition",
+          "type": "boolean"
+        },
+        "sentences": {
+          "default": false,
+          "title": "Sentences",
+          "type": "boolean"
+        },
+        "custom_metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON metadata attached to this job.",
+          "title": "Custom Metadata"
+        }
+      },
+      "required": [
+        "audio_url"
+      ],
+      "title": "CreatePreRecorded",
+      "type": "object"
+    },
+    "DeleteLiveSession": {
+      "additionalProperties": false,
+      "description": "Request deletion of a live session and its stored audio and transcript.",
+      "properties": {
+        "job_id": {
+          "description": "The job ID returned by Gladia.",
+          "format": "uuid",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_live_session",
+          "default": "delete_live_session",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "DeleteLiveSession",
+      "type": "object"
+    },
+    "DeletePreRecorded": {
+      "additionalProperties": false,
+      "description": "Request deletion of a pre-recorded transcription and its stored data.",
+      "properties": {
+        "job_id": {
+          "description": "The job ID returned by Gladia.",
+          "format": "uuid",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_pre_recorded",
+          "default": "delete_pre_recorded",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "DeletePreRecorded",
+      "type": "object"
+    },
+    "GetLiveSession": {
+      "additionalProperties": false,
+      "description": "Get a live session's state and available transcript results.",
+      "properties": {
+        "job_id": {
+          "description": "The job ID returned by Gladia.",
+          "format": "uuid",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_live_session",
+          "default": "get_live_session",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetLiveSession",
+      "type": "object"
+    },
+    "GetPreRecorded": {
+      "additionalProperties": false,
+      "description": "Get a pre-recorded job's state and transcript when it is done.",
+      "properties": {
+        "job_id": {
+          "description": "The job ID returned by Gladia.",
+          "format": "uuid",
+          "title": "Job Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_pre_recorded",
+          "default": "get_pre_recorded",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "GetPreRecorded",
+      "type": "object"
+    },
+    "GladiaAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "gladia_api_key",
+          "default": "gladia_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Gladia API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy an API key from Gladia's API keys page. NoClick sends it in the x-gladia-key header to api.gladia.io. Connecting reads your pre-recorded jobs; it does not create a transcription or prove write permissions.",
+      "x-credential-url": "https://app.gladia.io/apikeys"
+    },
+    "ListHistory": {
+      "additionalProperties": false,
+      "description": "List job history across pre-recorded and live transcription.",
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Page offset. Use next_offset when present; otherwise inspect data.next.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Maximum jobs in this page; the node does not auto-paginate.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "queued",
+                  "processing",
+                  "done",
+                  "error"
+                ],
+                "type": "string"
+              },
+              "maxItems": 4,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "before_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before Date"
+        },
+        "after_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After Date"
+        },
+        "operation": {
+          "const": "list_history",
+          "default": "list_history",
+          "title": "Operation",
+          "type": "string"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "pre-recorded",
+                  "live"
+                ],
+                "type": "string"
+              },
+              "maxItems": 2,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind"
+        }
+      },
+      "title": "ListHistory",
+      "type": "object"
+    },
+    "ListLiveSessions": {
+      "additionalProperties": false,
+      "description": "List this account's live sessions, including their processing states.",
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Page offset. Use next_offset when present; otherwise inspect data.next.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Maximum jobs in this page; the node does not auto-paginate.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "queued",
+                  "processing",
+                  "done",
+                  "error"
+                ],
+                "type": "string"
+              },
+              "maxItems": 4,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "before_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before Date"
+        },
+        "after_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After Date"
+        },
+        "operation": {
+          "const": "list_live_sessions",
+          "default": "list_live_sessions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListLiveSessions",
+      "type": "object"
+    },
+    "ListPreRecorded": {
+      "additionalProperties": false,
+      "description": "List this account's pre-recorded jobs and their processing states.",
+      "properties": {
+        "offset": {
+          "default": 0,
+          "description": "Page offset. Use next_offset when present; otherwise inspect data.next.",
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Maximum jobs in this page; the node does not auto-paginate.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "queued",
+                  "processing",
+                  "done",
+                  "error"
+                ],
+                "type": "string"
+              },
+              "maxItems": 4,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "before_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Before Date"
+        },
+        "after_date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "After Date"
+        },
+        "operation": {
+          "const": "list_pre_recorded",
+          "default": "list_pre_recorded",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListPreRecorded",
+      "type": "object"
+    },
+    "UploadAudio": {
+      "additionalProperties": false,
+      "description": "Import an audio or video URL into Gladia's file storage.",
+      "properties": {
+        "operation": {
+          "const": "upload_audio",
+          "default": "upload_audio",
+          "title": "Operation",
+          "type": "string"
+        },
+        "audio_url": {
+          "description": "Publicly accessible audio or video URL; Gladia downloads the media.",
+          "format": "uri",
+          "maxLength": 8192,
+          "minLength": 1,
+          "title": "Audio Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "audio_url"
+      ],
+      "title": "UploadAudio",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_live_session": "#/$defs/CreateLiveSession",
+          "create_pre_recorded": "#/$defs/CreatePreRecorded",
+          "delete_live_session": "#/$defs/DeleteLiveSession",
+          "delete_pre_recorded": "#/$defs/DeletePreRecorded",
+          "get_live_session": "#/$defs/GetLiveSession",
+          "get_pre_recorded": "#/$defs/GetPreRecorded",
+          "list_history": "#/$defs/ListHistory",
+          "list_live_sessions": "#/$defs/ListLiveSessions",
+          "list_pre_recorded": "#/$defs/ListPreRecorded",
+          "upload_audio": "#/$defs/UploadAudio"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/UploadAudio"
+        },
+        {
+          "$ref": "#/$defs/CreatePreRecorded"
+        },
+        {
+          "$ref": "#/$defs/ListPreRecorded"
+        },
+        {
+          "$ref": "#/$defs/GetPreRecorded"
+        },
+        {
+          "$ref": "#/$defs/DeletePreRecorded"
+        },
+        {
+          "$ref": "#/$defs/CreateLiveSession"
+        },
+        {
+          "$ref": "#/$defs/ListLiveSessions"
+        },
+        {
+          "$ref": "#/$defs/GetLiveSession"
+        },
+        {
+          "$ref": "#/$defs/DeleteLiveSession"
+        },
+        {
+          "$ref": "#/$defs/ListHistory"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GladiaAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Gladia Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
