@@ -1,0 +1,1192 @@
+{
+  "$defs": {
+    "CustomProperty": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 10000,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "value"
+      ],
+      "title": "CustomProperty",
+      "type": "object"
+    },
+    "MemberspotAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "memberspot_api_key",
+          "default": "memberspot_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Memberspot API Key",
+      "type": "object",
+      "x-credential-instructions": "In Memberspot, open Settings \u2192 API keys (/settings/apikeys), create an API key and paste it here. NoClick sends it in the X-API-KEY header to api.memberspot.de. The key can manage members and course access in its school.",
+      "x-credential-url": "https://app.memberspot.de/settings/apikeys"
+    },
+    "MemberspotGetCourseProgressByEmailConfig": {
+      "additionalProperties": false,
+      "description": "Returns user course progress for a specific course by email",
+      "properties": {
+        "operation": {
+          "const": "get_course_progress_by_email",
+          "default": "get_course_progress_by_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "Email to search for",
+          "format": "email",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "courseId": {
+          "description": "The course ID to get progress for",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Courseid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "courseId"
+      ],
+      "title": "MemberspotGetCourseProgressByEmailConfig",
+      "type": "object"
+    },
+    "MemberspotGetCourseProgressByUidConfig": {
+      "additionalProperties": false,
+      "description": "Returns user course progress for a specific course by uid",
+      "properties": {
+        "operation": {
+          "const": "get_course_progress_by_uid",
+          "default": "get_course_progress_by_uid",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "description": "Uid to search for",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Uid",
+          "type": "string"
+        },
+        "courseId": {
+          "description": "The course ID to get progress for",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Courseid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uid",
+        "courseId"
+      ],
+      "title": "MemberspotGetCourseProgressByUidConfig",
+      "type": "object"
+    },
+    "MemberspotGetUserByEmailConfig": {
+      "additionalProperties": false,
+      "description": "Returns a user with the given email or null if not found",
+      "properties": {
+        "operation": {
+          "const": "get_user_by_email",
+          "default": "get_user_by_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "Email to search for",
+          "format": "email",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "MemberspotGetUserByEmailConfig",
+      "type": "object"
+    },
+    "MemberspotGetUserByUidConfig": {
+      "additionalProperties": false,
+      "description": "Returns a user with the given uid or null if not found",
+      "properties": {
+        "operation": {
+          "const": "get_user_by_uid",
+          "default": "get_user_by_uid",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "description": "Uid to search for",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Uid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uid"
+      ],
+      "title": "MemberspotGetUserByUidConfig",
+      "type": "object"
+    },
+    "MemberspotGetUserOffersConfig": {
+      "additionalProperties": false,
+      "description": "Returns the offers of a user incl. their expiration dates",
+      "properties": {
+        "operation": {
+          "const": "get_user_offers",
+          "default": "get_user_offers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "description": "The uid of the user",
+          "title": "Uid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uid"
+      ],
+      "title": "MemberspotGetUserOffersConfig",
+      "type": "object"
+    },
+    "MemberspotGrantChapterAccessByEmailConfig": {
+      "additionalProperties": false,
+      "description": "Grants a user access to a chapter by email",
+      "properties": {
+        "operation": {
+          "const": "grant_chapter_access_by_email",
+          "default": "grant_chapter_access_by_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "format": "email",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "courseId": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Courseid",
+          "type": "string"
+        },
+        "chapterId": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Chapterid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "courseId",
+        "chapterId"
+      ],
+      "title": "MemberspotGrantChapterAccessByEmailConfig",
+      "type": "object"
+    },
+    "MemberspotGrantChapterAccessByUidConfig": {
+      "additionalProperties": false,
+      "description": "Grants a user access to a chapter by uid",
+      "properties": {
+        "operation": {
+          "const": "grant_chapter_access_by_uid",
+          "default": "grant_chapter_access_by_uid",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Uid",
+          "type": "string"
+        },
+        "courseId": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Courseid",
+          "type": "string"
+        },
+        "chapterId": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Chapterid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uid",
+        "courseId",
+        "chapterId"
+      ],
+      "title": "MemberspotGrantChapterAccessByUidConfig",
+      "type": "object"
+    },
+    "MemberspotGrantOfferByEmailConfig": {
+      "additionalProperties": false,
+      "description": "Grants a user access to an offer by email; creates the user if absent. Omit grantOffer to create without an offer.",
+      "properties": {
+        "operation": {
+          "const": "grant_offer_by_email",
+          "default": "grant_offer_by_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "firstname": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firstname"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "email": {
+          "format": "email",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "grantOffer": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grantoffer"
+        },
+        "orderId": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orderid"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "MemberspotGrantOfferByEmailConfig",
+      "type": "object"
+    },
+    "MemberspotGrantOfferByUidConfig": {
+      "additionalProperties": false,
+      "description": "Grants a user access to an offer by uid",
+      "properties": {
+        "operation": {
+          "const": "grant_offer_by_uid",
+          "default": "grant_offer_by_uid",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Uid",
+          "type": "string"
+        },
+        "grantOffer": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grantoffer"
+        },
+        "orderId": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orderid"
+        }
+      },
+      "required": [
+        "uid"
+      ],
+      "title": "MemberspotGrantOfferByUidConfig",
+      "type": "object"
+    },
+    "MemberspotListCourseProgressByEmailConfig": {
+      "additionalProperties": false,
+      "description": "Returns paginated list of all course progress for a user by email",
+      "properties": {
+        "operation": {
+          "const": "list_course_progress_by_email",
+          "default": "list_course_progress_by_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "Email to search for",
+          "format": "email",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "lastLoadedCourseId": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page to continue loading at (last course ID from previous response)",
+          "title": "Lastloadedcourseid"
+        },
+        "pageLength": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pagelength"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "MemberspotListCourseProgressByEmailConfig",
+      "type": "object"
+    },
+    "MemberspotListCourseProgressByUidConfig": {
+      "additionalProperties": false,
+      "description": "Returns paginated list of all course progress for a user by uid",
+      "properties": {
+        "operation": {
+          "const": "list_course_progress_by_uid",
+          "default": "list_course_progress_by_uid",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "description": "Uid to search for",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Uid",
+          "type": "string"
+        },
+        "lastLoadedCourseId": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page to continue loading at (last course ID from previous response)",
+          "title": "Lastloadedcourseid"
+        },
+        "pageLength": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pagelength"
+        }
+      },
+      "required": [
+        "uid"
+      ],
+      "title": "MemberspotListCourseProgressByUidConfig",
+      "type": "object"
+    },
+    "MemberspotListCoursesConfig": {
+      "additionalProperties": false,
+      "description": "Lists all courses of the school",
+      "properties": {
+        "operation": {
+          "const": "list_courses",
+          "default": "list_courses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MemberspotListCoursesConfig",
+      "type": "object"
+    },
+    "MemberspotListCustomPropertiesConfig": {
+      "additionalProperties": false,
+      "description": "Lists all custom user properties ",
+      "properties": {
+        "operation": {
+          "const": "list_custom_properties",
+          "default": "list_custom_properties",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MemberspotListCustomPropertiesConfig",
+      "type": "object"
+    },
+    "MemberspotListExamResultsConfig": {
+      "additionalProperties": false,
+      "description": "Lists exam results of users that have taken the exam provided by the examId",
+      "properties": {
+        "operation": {
+          "const": "list_exam_results",
+          "default": "list_exam_results",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "description": "Exam to get results for. The examId as returned by the exams API/MCP tools (e.g. \"kSbFak3VHbyHJRLJM3Ufb\").",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "lastLoadedId": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page to continue loading at (located in response in next_page property)",
+          "title": "Lastloadedid"
+        },
+        "pageLength": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Pagelength"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "MemberspotListExamResultsConfig",
+      "type": "object"
+    },
+    "MemberspotListExamsConfig": {
+      "additionalProperties": false,
+      "description": "Lists all exams of the school",
+      "properties": {
+        "operation": {
+          "const": "list_exams",
+          "default": "list_exams",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MemberspotListExamsConfig",
+      "type": "object"
+    },
+    "MemberspotListOffersConfig": {
+      "additionalProperties": false,
+      "description": "Gets all offers that are available in the school",
+      "properties": {
+        "operation": {
+          "const": "list_offers",
+          "default": "list_offers",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "MemberspotListOffersConfig",
+      "type": "object"
+    },
+    "MemberspotListUsersConfig": {
+      "additionalProperties": false,
+      "description": "Returns a page with users",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "lastLoadedId": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page to continue loading at (located in response in next_page property)",
+          "title": "Lastloadedid"
+        },
+        "pageLength": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Pagelength"
+        },
+        "offerId": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter users by offerId",
+          "title": "Offerid"
+        },
+        "courseId": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter users by courseId. Also populates progress[] of each user with the progress of this course; without this parameter progress[] is empty.",
+          "title": "Courseid"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If not set returns all users. When set to true return just active. When set to false return just inactive",
+          "title": "Active"
+        }
+      },
+      "title": "MemberspotListUsersConfig",
+      "type": "object"
+    },
+    "MemberspotSetCourseStartDateConfig": {
+      "additionalProperties": false,
+      "description": "Sets the start date of a course access for a user",
+      "properties": {
+        "operation": {
+          "const": "set_course_start_date",
+          "default": "set_course_start_date",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "description": "The uid of the user",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Uid",
+          "type": "string"
+        },
+        "courseId": {
+          "description": "The id of the course",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Courseid",
+          "type": "string"
+        },
+        "startDate": {
+          "description": "New start date of the course access in ISO 8601 format: a date (2026-01-15) or a date with time and offset (2026-01-15T00:00:00.000Z, 2026-01-15T08:00:00+01:00). A time without offset is rejected. Drip content unlocks relative to this date.",
+          "format": "date-time",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Startdate",
+          "type": "string"
+        },
+        "deleteDueMessages": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Whether drip messages that become due through the new start date are deleted instead of sent right away. Defaults to true.",
+          "title": "Deleteduemessages"
+        }
+      },
+      "required": [
+        "uid",
+        "courseId",
+        "startDate"
+      ],
+      "title": "MemberspotSetCourseStartDateConfig",
+      "type": "object"
+    },
+    "MemberspotSetCustomPropertiesByEmailConfig": {
+      "additionalProperties": false,
+      "description": "Sets values to a custom user properties by email",
+      "properties": {
+        "operation": {
+          "const": "set_custom_properties_by_email",
+          "default": "set_custom_properties_by_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "User email",
+          "format": "email",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CustomProperty"
+          },
+          "minItems": 1,
+          "maxItems": 100,
+          "description": "User custom properties",
+          "title": "Properties"
+        }
+      },
+      "required": [
+        "email",
+        "properties"
+      ],
+      "title": "MemberspotSetCustomPropertiesByEmailConfig",
+      "type": "object"
+    },
+    "MemberspotSetCustomPropertiesByUidConfig": {
+      "additionalProperties": false,
+      "description": "Sets values to a custom user properties by uid",
+      "properties": {
+        "operation": {
+          "const": "set_custom_properties_by_uid",
+          "default": "set_custom_properties_by_uid",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "description": "User Uid",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Uid",
+          "type": "string"
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CustomProperty"
+          },
+          "minItems": 1,
+          "maxItems": 100,
+          "description": "User custom properties",
+          "title": "Properties"
+        }
+      },
+      "required": [
+        "uid",
+        "properties"
+      ],
+      "title": "MemberspotSetCustomPropertiesByUidConfig",
+      "type": "object"
+    },
+    "MemberspotSetOfferExpirationConfig": {
+      "additionalProperties": false,
+      "description": "Sets the expiration date for an offer for a user; omit expiresAt to remove expiration.",
+      "properties": {
+        "operation": {
+          "const": "set_offer_expiration",
+          "default": "set_offer_expiration",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Uid",
+          "type": "string"
+        },
+        "offerId": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Offerid",
+          "type": "string"
+        },
+        "expiresAt": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "date-time",
+          "title": "Expiresat"
+        }
+      },
+      "required": [
+        "uid",
+        "offerId"
+      ],
+      "title": "MemberspotSetOfferExpirationConfig",
+      "type": "object"
+    },
+    "MemberspotSetOfferStateByEmailConfig": {
+      "additionalProperties": false,
+      "description": "Sets the state of an offer for a user by email; omit active to remove access, false to suspend, true to activate.",
+      "properties": {
+        "operation": {
+          "const": "set_offer_state_by_email",
+          "default": "set_offer_state_by_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "format": "email",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "offerId": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Offerid",
+          "type": "string"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        }
+      },
+      "required": [
+        "email",
+        "offerId"
+      ],
+      "title": "MemberspotSetOfferStateByEmailConfig",
+      "type": "object"
+    },
+    "MemberspotSetOfferStateByUidConfig": {
+      "additionalProperties": false,
+      "description": "Sets the state of an offer for a user by uid; omit active to remove access, false to suspend, true to activate.",
+      "properties": {
+        "operation": {
+          "const": "set_offer_state_by_uid",
+          "default": "set_offer_state_by_uid",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Uid",
+          "type": "string"
+        },
+        "offerId": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Offerid",
+          "type": "string"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        }
+      },
+      "required": [
+        "uid",
+        "offerId"
+      ],
+      "title": "MemberspotSetOfferStateByUidConfig",
+      "type": "object"
+    },
+    "MemberspotSetOrderStateByEmailConfig": {
+      "additionalProperties": false,
+      "description": "Sets the state of an offer with a orderId for a user by email; omit active to remove access, false to suspend, true to activate.",
+      "properties": {
+        "operation": {
+          "const": "set_order_state_by_email",
+          "default": "set_order_state_by_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "format": "email",
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Email",
+          "type": "string"
+        },
+        "orderId": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Orderid",
+          "type": "string"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        }
+      },
+      "required": [
+        "email",
+        "orderId"
+      ],
+      "title": "MemberspotSetOrderStateByEmailConfig",
+      "type": "object"
+    },
+    "MemberspotSetOrderStateByUidConfig": {
+      "additionalProperties": false,
+      "description": "Sets the state of an offer with a orderId for a user; omit active to remove access, false to suspend, true to activate.",
+      "properties": {
+        "operation": {
+          "const": "set_order_state_by_uid",
+          "default": "set_order_state_by_uid",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uid": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Uid",
+          "type": "string"
+        },
+        "orderId": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Orderid",
+          "type": "string"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        }
+      },
+      "required": [
+        "uid",
+        "orderId"
+      ],
+      "title": "MemberspotSetOrderStateByUidConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_course_progress_by_email": "#/$defs/MemberspotGetCourseProgressByEmailConfig",
+          "get_course_progress_by_uid": "#/$defs/MemberspotGetCourseProgressByUidConfig",
+          "get_user_by_email": "#/$defs/MemberspotGetUserByEmailConfig",
+          "get_user_by_uid": "#/$defs/MemberspotGetUserByUidConfig",
+          "get_user_offers": "#/$defs/MemberspotGetUserOffersConfig",
+          "grant_chapter_access_by_email": "#/$defs/MemberspotGrantChapterAccessByEmailConfig",
+          "grant_chapter_access_by_uid": "#/$defs/MemberspotGrantChapterAccessByUidConfig",
+          "grant_offer_by_email": "#/$defs/MemberspotGrantOfferByEmailConfig",
+          "grant_offer_by_uid": "#/$defs/MemberspotGrantOfferByUidConfig",
+          "list_course_progress_by_email": "#/$defs/MemberspotListCourseProgressByEmailConfig",
+          "list_course_progress_by_uid": "#/$defs/MemberspotListCourseProgressByUidConfig",
+          "list_courses": "#/$defs/MemberspotListCoursesConfig",
+          "list_custom_properties": "#/$defs/MemberspotListCustomPropertiesConfig",
+          "list_exam_results": "#/$defs/MemberspotListExamResultsConfig",
+          "list_exams": "#/$defs/MemberspotListExamsConfig",
+          "list_offers": "#/$defs/MemberspotListOffersConfig",
+          "list_users": "#/$defs/MemberspotListUsersConfig",
+          "set_course_start_date": "#/$defs/MemberspotSetCourseStartDateConfig",
+          "set_custom_properties_by_email": "#/$defs/MemberspotSetCustomPropertiesByEmailConfig",
+          "set_custom_properties_by_uid": "#/$defs/MemberspotSetCustomPropertiesByUidConfig",
+          "set_offer_expiration": "#/$defs/MemberspotSetOfferExpirationConfig",
+          "set_offer_state_by_email": "#/$defs/MemberspotSetOfferStateByEmailConfig",
+          "set_offer_state_by_uid": "#/$defs/MemberspotSetOfferStateByUidConfig",
+          "set_order_state_by_email": "#/$defs/MemberspotSetOrderStateByEmailConfig",
+          "set_order_state_by_uid": "#/$defs/MemberspotSetOrderStateByUidConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MemberspotListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotGetUserByEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotGetUserByUidConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotGetUserOffersConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotListOffersConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotListCoursesConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotListCustomPropertiesConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotListExamsConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotListExamResultsConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotListCourseProgressByEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotListCourseProgressByUidConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotGetCourseProgressByEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotGetCourseProgressByUidConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotGrantOfferByEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotGrantOfferByUidConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotSetOfferStateByEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotSetOfferStateByUidConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotSetOrderStateByEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotSetOrderStateByUidConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotSetOfferExpirationConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotSetCourseStartDateConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotSetCustomPropertiesByEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotSetCustomPropertiesByUidConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotGrantChapterAccessByEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/MemberspotGrantChapterAccessByUidConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MemberspotAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Memberspot Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
