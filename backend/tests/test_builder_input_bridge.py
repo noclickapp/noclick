@@ -12,6 +12,8 @@ import pytest
 
 from tests.test_builder_decision_loop import LOCAL_DSN, local_pool  # noqa: F401 (fixture)
 
+pytestmark = pytest.mark.usefixtures("claimed_accounts")
+
 
 # ── repo SQL (real local DB) ─────────────────────────────────────────────────
 

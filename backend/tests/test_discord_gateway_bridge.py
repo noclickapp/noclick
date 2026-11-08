@@ -31,6 +31,8 @@ from utils.discord_gateway_bridge import (
 )
 from utils.webhook_signatures import verify_hmac_sha256_hex
 
+pytestmark = pytest.mark.usefixtures("claimed_accounts", "deliveries_run_workflows")
+
 WF = str(uuid.uuid4())
 INSTALL_CRED = {
     "credential_type": "discord_bot_install",

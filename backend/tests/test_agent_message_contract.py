@@ -24,6 +24,8 @@ from coder.workflow.workflow_ops import (
 from nodes.agent_node import AgentNode
 from nodes.core.base import ConfigValidationError
 
+pytestmark = pytest.mark.usefixtures("no_answer_pictures")
+
 FIRED = {'_triggerPayload': {'a': 1}}
 # A workflow id as every real one is: a deployment's turn may look its workflow up (whether its agents draw pictures).
 WORKFLOW_ID = str(uuid.uuid4())

@@ -4,7 +4,11 @@ the agent node opening a turn with it when a platform set the clock."""
 import uuid
 from datetime import datetime, timezone
 
+import pytest
+
 from nodes.agent.turn_clock import TURN_CLOCK_KEY, clock_line, clock_of
+
+pytestmark = pytest.mark.usefixtures("no_answer_pictures")
 
 
 def test_the_line_names_the_local_time_its_offset_and_the_time_in_utc():

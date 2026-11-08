@@ -14,6 +14,8 @@ from fastapi import FastAPI
 from utils import capabilities, webhook_routes
 from utils.capabilities import TRIGGER_DELIVERY
 
+pytestmark = pytest.mark.usefixtures("claimed_accounts")
+
 WORKFLOW = str(uuid.uuid4())
 WEBHOOK = str(uuid.uuid4())
 

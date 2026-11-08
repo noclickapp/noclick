@@ -24,6 +24,8 @@ from nodes.whatsapp_node import WhatsAppNode
 from utils import capabilities, webhook_routes
 from utils.capabilities import TRIGGER_DELIVERY
 
+pytestmark = pytest.mark.usefixtures("claimed_accounts")
+
 RECEIVE = {"operation": "receive_message"}
 QR_CREDENTIAL = {"credential_type": "whatsapp_qr", "connection_id": "conn-a"}
 # Agent A's chat as agent B's connection sees it, and a human's.

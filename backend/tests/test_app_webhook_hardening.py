@@ -18,6 +18,8 @@ import pytest
 from utils import app_event_dedup, fire_budget
 from utils.app_webhooks import _slack_drop_event, _slack_event_id
 
+pytestmark = pytest.mark.usefixtures("claimed_accounts", "deliveries_run_workflows")
+
 
 class FakeRedis:
     def __init__(self):
