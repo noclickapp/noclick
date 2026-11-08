@@ -1,0 +1,1524 @@
+{
+  "source": "https://api.frame.io/v4/openapi.json",
+  "sha256": "8a00f61f284e00502a17fa399e040fe88ee83967c67b9a0aac3db80d776b4f94",
+  "cases": [
+    {
+      "config": {
+        "operation": "get_current_user"
+      },
+      "method": "GET",
+      "path": "/v4/me",
+      "params": {},
+      "body": null,
+      "response": {
+        "data": {
+          "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+          "email": "user_email@example.com",
+          "id": "449af07a-a452-45d2-bc4f-c1140f2fa381",
+          "name": "Name"
+        }
+      },
+      "status": 200,
+      "operation_id": "users.show"
+    },
+    {
+      "config": {
+        "operation": "list_accounts"
+      },
+      "method": "GET",
+      "path": "/v4/accounts",
+      "params": {
+        "page_size": 50
+      },
+      "body": null,
+      "response": {
+        "data": [
+          {
+            "adobe_id": "2A3C1A3D66C621B20A494021@AdobeOrg",
+            "created_at": "2023-09-25T19:18:29.614189Z",
+            "display_name": "Integration Account",
+            "id": "17b990f7-bc43-4ed3-80fd-7e203089490b",
+            "image": "https://picture.frame.io/image/convert/frameio-uploads-development/logo.png",
+            "roles": [
+              "admin"
+            ],
+            "storage_limit": 300,
+            "storage_usage": 300,
+            "updated_at": "2024-02-07T16:44:41.986478Z",
+            "v4_migrated_at": "2025-02-02T16:44:41.986478Z"
+          }
+        ],
+        "links": {
+          "next": "/v4/accounts"
+        },
+        "total_count": 10
+      },
+      "status": 200,
+      "operation_id": "accounts.index"
+    },
+    {
+      "config": {
+        "operation": "list_workspaces",
+        "account_id": "5962a1ca-5fb7-40ec-bb80-9a355c7e20a2"
+      },
+      "method": "GET",
+      "path": "/v4/accounts/5962a1ca-5fb7-40ec-bb80-9a355c7e20a2/workspaces",
+      "params": {
+        "page_size": 50
+      },
+      "body": null,
+      "response": {
+        "data": [
+          {
+            "account_id": "1cdb8030-8572-44d5-827b-e9fcc891e1fb",
+            "created_at": "2024-01-25T19:18:29.614189Z",
+            "creator": {
+              "active": true,
+              "adobe_user_id": "196C1A5666BF4EB00A49411B@176719f5667c82b4494214.e",
+              "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+              "email": "user_email@example.com",
+              "id": "477ee9a4-10e2-47b1-a8b9-035c9c51a77f",
+              "name": "Jon Doe"
+            },
+            "id": "f27f4cf1-0418-490a-b325-26acdb612d18",
+            "image": "https://picture.frame.io/image/convert/frameio-uploads-development/teams/d5e6011c-2bc9-4596-be05-77d562627112/team_image_original.png",
+            "name": "My Workspace",
+            "updated_at": "2024-02-07T16:44:41.986478Z"
+          }
+        ],
+        "links": {
+          "next": "/v4/accounts/123/workspaces"
+        },
+        "total_count": 10
+      },
+      "status": 200,
+      "operation_id": "workspaces.index"
+    },
+    {
+      "config": {
+        "operation": "list_projects",
+        "account_id": "a6c72c1b-e424-4ae6-8be4-ec29770c5a6c",
+        "workspace_id": "9fa57312-2e9e-4a04-afc4-8916a96420e4"
+      },
+      "method": "GET",
+      "path": "/v4/accounts/a6c72c1b-e424-4ae6-8be4-ec29770c5a6c/workspaces/9fa57312-2e9e-4a04-afc4-8916a96420e4/projects",
+      "params": {
+        "page_size": 50
+      },
+      "body": null,
+      "response": {
+        "data": [
+          {
+            "adobe_id": "urn:aaid:sc:US:9f4e4d7a-4b6b-4c4f-9f00-b31a91cfc6f3",
+            "created_at": "2024-01-25T19:18:29.614189Z",
+            "description": "Project Description",
+            "id": "826094af-83be-4169-a242-f9934d895db6",
+            "image": "https://picture.frame.io/image/convert/frameio-uploads-development/projects/d5e6011c-2bc9-4596-be05-77d562627112/project_image_original.png",
+            "name": "My Project",
+            "owner": {
+              "active": true,
+              "adobe_user_id": "196C1A5666BF4EB00A49411B@176719f5667c82b4494214.e",
+              "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+              "email": "user_email@example.com",
+              "id": "477ee9a4-10e2-47b1-a8b9-035c9c51a77f",
+              "name": "Jon Doe"
+            },
+            "restricted": false,
+            "root_folder_id": "922a5a04-7a34-428b-a73c-24e415ca5570",
+            "status": "active",
+            "storage": 15000,
+            "updated_at": "2024-02-07T16:44:41.986478Z",
+            "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/",
+            "workspace_id": "77a20d4c-5bfa-4c9b-bbfd-340e19cf01a1"
+          }
+        ],
+        "links": {
+          "next": "/v4/accounts/123/workspaces/123/projects"
+        },
+        "total_count": 10
+      },
+      "status": 200,
+      "operation_id": "projects.index"
+    },
+    {
+      "config": {
+        "operation": "get_project",
+        "account_id": "3ea583c0-f1c0-47b3-b3d7-d34b28b4c9bd",
+        "project_id": "2396b9d9-7bbb-489b-9353-517aac1151c3"
+      },
+      "method": "GET",
+      "path": "/v4/accounts/3ea583c0-f1c0-47b3-b3d7-d34b28b4c9bd/projects/2396b9d9-7bbb-489b-9353-517aac1151c3",
+      "params": {},
+      "body": null,
+      "response": {
+        "data": {
+          "adobe_id": "urn:aaid:sc:US:9f4e4d7a-4b6b-4c4f-9f00-b31a91cfc6f3",
+          "created_at": "2024-01-25T19:18:29.614189Z",
+          "description": "Project Description",
+          "id": "826094af-83be-4169-a242-f9934d895db6",
+          "image": "https://picture.frame.io/image/convert/frameio-uploads-development/projects/d5e6011c-2bc9-4596-be05-77d562627112/project_image_original.png",
+          "name": "My Project",
+          "owner": {
+            "active": true,
+            "adobe_user_id": "196C1A5666BF4EB00A49411B@176719f5667c82b4494214.e",
+            "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+            "email": "user_email@example.com",
+            "id": "477ee9a4-10e2-47b1-a8b9-035c9c51a77f",
+            "name": "Jon Doe"
+          },
+          "restricted": false,
+          "root_folder_id": "922a5a04-7a34-428b-a73c-24e415ca5570",
+          "status": "active",
+          "storage": 15000,
+          "updated_at": "2024-02-07T16:44:41.986478Z",
+          "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/",
+          "workspace_id": "77a20d4c-5bfa-4c9b-bbfd-340e19cf01a1"
+        }
+      },
+      "status": 200,
+      "operation_id": "projects.show"
+    },
+    {
+      "config": {
+        "operation": "create_project",
+        "account_id": "520d07d1-198e-4a02-b0e1-006c9c486e93",
+        "workspace_id": "f9447062-3454-4d1e-9479-325ec8d4773b",
+        "name": "Project Name"
+      },
+      "method": "POST",
+      "path": "/v4/accounts/520d07d1-198e-4a02-b0e1-006c9c486e93/workspaces/f9447062-3454-4d1e-9479-325ec8d4773b/projects",
+      "params": {},
+      "body": {
+        "data": {
+          "name": "Project Name"
+        }
+      },
+      "response": {
+        "data": {
+          "adobe_id": "urn:aaid:sc:US:9f4e4d7a-4b6b-4c4f-9f00-b31a91cfc6f3",
+          "created_at": "2024-01-25T19:18:29.614189Z",
+          "id": "826094af-83be-4169-a242-f9934d895db6",
+          "image": "https://picture.frame.io/image/convert/frameio-uploads-development/projects/d5e6011c-2bc9-4596-be05-77d562627112/project_image_original.png",
+          "name": "My Project",
+          "restricted": false,
+          "root_folder_id": "922a5a04-7a34-428b-a73c-24e415ca5570",
+          "status": "active",
+          "storage": 15000,
+          "updated_at": "2024-02-07T16:44:41.986478Z",
+          "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/",
+          "workspace_id": "77a20d4c-5bfa-4c9b-bbfd-340e19cf01a1"
+        }
+      },
+      "status": 201,
+      "operation_id": "projects.create"
+    },
+    {
+      "config": {
+        "operation": "update_project",
+        "account_id": "7d156f05-c7b9-44e3-aec5-e66df7740232",
+        "project_id": "30c9336e-1e97-4bd2-af63-855ccb0e651f",
+        "name": "Project Name"
+      },
+      "method": "PATCH",
+      "path": "/v4/accounts/7d156f05-c7b9-44e3-aec5-e66df7740232/projects/30c9336e-1e97-4bd2-af63-855ccb0e651f",
+      "params": {},
+      "body": {
+        "data": {
+          "name": "Project Name"
+        }
+      },
+      "response": {
+        "data": {
+          "adobe_id": "urn:aaid:sc:US:9f4e4d7a-4b6b-4c4f-9f00-b31a91cfc6f3",
+          "created_at": "2024-01-25T19:18:29.614189Z",
+          "id": "826094af-83be-4169-a242-f9934d895db6",
+          "image": "https://picture.frame.io/image/convert/frameio-uploads-development/projects/d5e6011c-2bc9-4596-be05-77d562627112/project_image_original.png",
+          "name": "My Project",
+          "restricted": false,
+          "root_folder_id": "922a5a04-7a34-428b-a73c-24e415ca5570",
+          "status": "active",
+          "storage": 15000,
+          "updated_at": "2024-02-07T16:44:41.986478Z",
+          "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/",
+          "workspace_id": "77a20d4c-5bfa-4c9b-bbfd-340e19cf01a1"
+        }
+      },
+      "status": 200,
+      "operation_id": "projects.update"
+    },
+    {
+      "config": {
+        "operation": "delete_project",
+        "account_id": "7f093288-aad0-4006-a3c4-5349f797a33d",
+        "project_id": "045cf666-5a14-4314-a707-01c6b9a7b7b4"
+      },
+      "method": "DELETE",
+      "path": "/v4/accounts/7f093288-aad0-4006-a3c4-5349f797a33d/projects/045cf666-5a14-4314-a707-01c6b9a7b7b4",
+      "params": {},
+      "body": null,
+      "response": null,
+      "status": 204,
+      "operation_id": "projects.delete"
+    },
+    {
+      "config": {
+        "operation": "list_folder_children",
+        "account_id": "87ab023c-9775-4fc2-9866-b2b439ea3ac5",
+        "folder_id": "34612216-2c43-4459-82cc-8ef792cbb246"
+      },
+      "method": "GET",
+      "path": "/v4/accounts/87ab023c-9775-4fc2-9866-b2b439ea3ac5/folders/34612216-2c43-4459-82cc-8ef792cbb246/children",
+      "params": {
+        "page_size": 50
+      },
+      "body": null,
+      "response": {
+        "data": [
+          {
+            "adobe_id": "urn:aaid:sc:US:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+            "adobe_version_id": "2",
+            "created_at": "2023-09-25T19:18:29.614189Z",
+            "creator": {
+              "active": true,
+              "adobe_user_id": "196C1A5666BF4EB00A49411B@176719f5667c82b4494214.e",
+              "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+              "email": "user_email@example.com",
+              "id": "477ee9a4-10e2-47b1-a8b9-035c9c51a77f",
+              "name": "Jon Doe"
+            },
+            "file_size": 1137444,
+            "id": "d51a370e-ba67-4fe9-b77e-1f4e6988b249",
+            "media_links": {
+              "high_quality": {
+                "download_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN"
+              },
+              "original": {
+                "download_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+                "inline_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=inline%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragSDFXDFh&1Key-Pair-Id=KKI497NESTHMN"
+              },
+              "thumbnail": {
+                "download_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+                "url": "https://picture2.frame.io/image/s3://frameio-assets-development/image/cd58cb8e-24b3-4498-8d0f-9532fcd04d11/image_full.png?alg=HS256&sig=0_u7w_wz2MwQHOXp000ibbQSMRijujyaUu8V3YYPxu4&exp=1729857600"
+              }
+            },
+            "media_type": "image/png",
+            "metadata": [
+              {
+                "field_definition_id": "0276144b-11df-45e6-8880-2756022ac5f0",
+                "field_definition_name": "Fields definition name",
+                "field_options": [
+                  {
+                    "display_name": "Display name",
+                    "id": "794ff815-279e-4b00-b599-2147a2addc91"
+                  },
+                  {
+                    "display_name": "Display name 2",
+                    "id": "a7783e03-1396-4793-b7cb-e6ffcf7a18bd"
+                  }
+                ],
+                "field_type": "select",
+                "mutable": true,
+                "value": [
+                  {
+                    "display_name": "Display name",
+                    "id": "794ff815-279e-4b00-b599-2147a2addc91"
+                  }
+                ]
+              }
+            ],
+            "name": "asset.png",
+            "parent": {
+              "adobe_id": "urn:aaid:sc:US:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+              "cover_file_id": "1dec1a8a-5e40-4f32-8af1-03373a5a93e6",
+              "created_at": "2023-09-25T19:18:29.614189Z",
+              "id": "d51a370e-ba67-4fe9-b77e-1f4e6988b249",
+              "name": "My Folder",
+              "parent_id": "25a01e5a-6b2d-435e-975b-888f14e84f18",
+              "project_id": "ab119bc4-c5dd-43ad-b446-64f98da14a70",
+              "restricted": false,
+              "type": "folder",
+              "updated_at": "2024-02-07T16:44:41.986478Z",
+              "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/view/5a89a9fb-0900-4b23-826b-127b90e4db4c"
+            },
+            "parent_id": "25a01e5a-6b2d-435e-975b-888f14e84f18",
+            "project": {
+              "adobe_id": "urn:aaid:sc:US:9f4e4d7a-4b6b-4c4f-9f00-b31a91cfc6f3",
+              "created_at": "2024-01-25T19:18:29.614189Z",
+              "description": "Project Description",
+              "id": "826094af-83be-4169-a242-f9934d895db6",
+              "image": "https://picture.frame.io/image/convert/frameio-uploads-development/projects/d5e6011c-2bc9-4596-be05-77d562627112/project_image_original.png",
+              "name": "My Project",
+              "owner": {
+                "active": true,
+                "adobe_user_id": "196C1A5666BF4EB00A49411B@176719f5667c82b4494214.e",
+                "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+                "email": "user_email@example.com",
+                "id": "477ee9a4-10e2-47b1-a8b9-035c9c51a77f",
+                "name": "Jon Doe"
+              },
+              "restricted": false,
+              "root_folder_id": "922a5a04-7a34-428b-a73c-24e415ca5570",
+              "status": "active",
+              "storage": 15000,
+              "updated_at": "2024-02-07T16:44:41.986478Z",
+              "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/",
+              "workspace_id": "77a20d4c-5bfa-4c9b-bbfd-340e19cf01a1"
+            },
+            "project_id": "ab119bc4-c5dd-43ad-b446-64f98da14a70",
+            "status": "created",
+            "type": "file",
+            "updated_at": "2024-02-07T16:44:41.986478Z",
+            "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/view/5a89a9fb-0900-4b23-826b-127b90e4db4c"
+          }
+        ],
+        "links": {
+          "next": "/v4/accounts/123/folders/123/folders"
+        },
+        "total_count": 10
+      },
+      "status": 200,
+      "operation_id": "folders.index"
+    },
+    {
+      "config": {
+        "operation": "list_folders",
+        "account_id": "62ab11bd-09d0-474a-b5a6-9ac0b858fd20",
+        "folder_id": "b42aa0cf-c068-4fd7-8b8a-54ec57f3e2b1"
+      },
+      "method": "GET",
+      "path": "/v4/accounts/62ab11bd-09d0-474a-b5a6-9ac0b858fd20/folders/b42aa0cf-c068-4fd7-8b8a-54ec57f3e2b1/folders",
+      "params": {
+        "page_size": 50
+      },
+      "body": null,
+      "response": {
+        "data": [
+          {
+            "adobe_id": "urn:aaid:sc:US:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+            "cover_file_id": "dac30c31-154e-4069-b7b0-85c9f2c64485",
+            "created_at": "2023-09-25T19:18:29.614189Z",
+            "creator": {
+              "active": true,
+              "adobe_user_id": "196C1A5666BF4EB00A49411B@176719f5667c82b4494214.e",
+              "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+              "email": "user_email@example.com",
+              "id": "477ee9a4-10e2-47b1-a8b9-035c9c51a77f",
+              "name": "Jon Doe"
+            },
+            "id": "d51a370e-ba67-4fe9-b77e-1f4e6988b249",
+            "metadata": [
+              {
+                "field_definition_id": "0276144b-11df-45e6-8880-2756022ac5f0",
+                "field_definition_name": "Fields definition name",
+                "field_options": [
+                  {
+                    "display_name": "Display name",
+                    "id": "794ff815-279e-4b00-b599-2147a2addc91"
+                  },
+                  {
+                    "display_name": "Display name 2",
+                    "id": "a7783e03-1396-4793-b7cb-e6ffcf7a18bd"
+                  }
+                ],
+                "field_type": "select",
+                "mutable": true,
+                "value": [
+                  {
+                    "display_name": "Display name",
+                    "id": "794ff815-279e-4b00-b599-2147a2addc91"
+                  }
+                ]
+              }
+            ],
+            "name": "My Folder",
+            "parent_id": "25a01e5a-6b2d-435e-975b-888f14e84f18",
+            "project": {
+              "adobe_id": "urn:aaid:sc:US:9f4e4d7a-4b6b-4c4f-9f00-b31a91cfc6f3",
+              "created_at": "2024-01-25T19:18:29.614189Z",
+              "description": "Project Description",
+              "id": "826094af-83be-4169-a242-f9934d895db6",
+              "image": "https://picture.frame.io/image/convert/frameio-uploads-development/projects/d5e6011c-2bc9-4596-be05-77d562627112/project_image_original.png",
+              "name": "My Project",
+              "owner": {
+                "active": true,
+                "adobe_user_id": "196C1A5666BF4EB00A49411B@176719f5667c82b4494214.e",
+                "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+                "email": "user_email@example.com",
+                "id": "477ee9a4-10e2-47b1-a8b9-035c9c51a77f",
+                "name": "Jon Doe"
+              },
+              "restricted": false,
+              "root_folder_id": "922a5a04-7a34-428b-a73c-24e415ca5570",
+              "status": "active",
+              "storage": 15000,
+              "updated_at": "2024-02-07T16:44:41.986478Z",
+              "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/",
+              "workspace_id": "77a20d4c-5bfa-4c9b-bbfd-340e19cf01a1"
+            },
+            "project_id": "ab119bc4-c5dd-43ad-b446-64f98da14a70",
+            "restricted": false,
+            "type": "folder",
+            "updated_at": "2024-02-07T16:44:41.986478Z",
+            "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/view/5a89a9fb-0900-4b23-826b-127b90e4db4c"
+          }
+        ],
+        "links": {
+          "next": "/v4/accounts/123/folders/123/folders"
+        },
+        "total_count": 10
+      },
+      "status": 200,
+      "operation_id": "folders.list"
+    },
+    {
+      "config": {
+        "operation": "create_folder",
+        "account_id": "7ca0a207-2108-4b33-8b68-cf487b14dc64",
+        "folder_id": "94d0e6db-e529-4820-9e2d-263abe5a60d0",
+        "name": "Folder name"
+      },
+      "method": "POST",
+      "path": "/v4/accounts/7ca0a207-2108-4b33-8b68-cf487b14dc64/folders/94d0e6db-e529-4820-9e2d-263abe5a60d0/folders",
+      "params": {},
+      "body": {
+        "data": {
+          "name": "Folder name"
+        }
+      },
+      "response": {
+        "data": {
+          "adobe_id": "urn:aaid:sc:US:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "cover_file_id": "1dec1a8a-5e40-4f32-8af1-03373a5a93e6",
+          "created_at": "2023-09-25T19:18:29.614189Z",
+          "id": "d51a370e-ba67-4fe9-b77e-1f4e6988b249",
+          "name": "My Folder",
+          "parent_id": "25a01e5a-6b2d-435e-975b-888f14e84f18",
+          "project_id": "ab119bc4-c5dd-43ad-b446-64f98da14a70",
+          "restricted": false,
+          "type": "folder",
+          "updated_at": "2024-02-07T16:44:41.986478Z",
+          "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/view/5a89a9fb-0900-4b23-826b-127b90e4db4c"
+        }
+      },
+      "status": 201,
+      "operation_id": "folders.create"
+    },
+    {
+      "config": {
+        "operation": "get_folder",
+        "account_id": "fb70831b-0aa0-4e73-99b9-873adfede182",
+        "folder_id": "00284ffa-b235-4b3c-a5bf-ff956693206d"
+      },
+      "method": "GET",
+      "path": "/v4/accounts/fb70831b-0aa0-4e73-99b9-873adfede182/folders/00284ffa-b235-4b3c-a5bf-ff956693206d",
+      "params": {},
+      "body": null,
+      "response": {
+        "data": {
+          "adobe_id": "urn:aaid:sc:US:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "cover_file_id": "dac30c31-154e-4069-b7b0-85c9f2c64485",
+          "created_at": "2023-09-25T19:18:29.614189Z",
+          "creator": {
+            "active": true,
+            "adobe_user_id": "196C1A5666BF4EB00A49411B@176719f5667c82b4494214.e",
+            "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+            "email": "user_email@example.com",
+            "id": "477ee9a4-10e2-47b1-a8b9-035c9c51a77f",
+            "name": "Jon Doe"
+          },
+          "id": "d51a370e-ba67-4fe9-b77e-1f4e6988b249",
+          "metadata": [
+            {
+              "field_definition_id": "0276144b-11df-45e6-8880-2756022ac5f0",
+              "field_definition_name": "Fields definition name",
+              "field_options": [
+                {
+                  "display_name": "Display name",
+                  "id": "794ff815-279e-4b00-b599-2147a2addc91"
+                },
+                {
+                  "display_name": "Display name 2",
+                  "id": "a7783e03-1396-4793-b7cb-e6ffcf7a18bd"
+                }
+              ],
+              "field_type": "select",
+              "mutable": true,
+              "value": [
+                {
+                  "display_name": "Display name",
+                  "id": "794ff815-279e-4b00-b599-2147a2addc91"
+                }
+              ]
+            }
+          ],
+          "name": "My Folder",
+          "parent_id": "25a01e5a-6b2d-435e-975b-888f14e84f18",
+          "project": {
+            "adobe_id": "urn:aaid:sc:US:9f4e4d7a-4b6b-4c4f-9f00-b31a91cfc6f3",
+            "created_at": "2024-01-25T19:18:29.614189Z",
+            "description": "Project Description",
+            "id": "826094af-83be-4169-a242-f9934d895db6",
+            "image": "https://picture.frame.io/image/convert/frameio-uploads-development/projects/d5e6011c-2bc9-4596-be05-77d562627112/project_image_original.png",
+            "name": "My Project",
+            "owner": {
+              "active": true,
+              "adobe_user_id": "196C1A5666BF4EB00A49411B@176719f5667c82b4494214.e",
+              "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+              "email": "user_email@example.com",
+              "id": "477ee9a4-10e2-47b1-a8b9-035c9c51a77f",
+              "name": "Jon Doe"
+            },
+            "restricted": false,
+            "root_folder_id": "922a5a04-7a34-428b-a73c-24e415ca5570",
+            "status": "active",
+            "storage": 15000,
+            "updated_at": "2024-02-07T16:44:41.986478Z",
+            "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/",
+            "workspace_id": "77a20d4c-5bfa-4c9b-bbfd-340e19cf01a1"
+          },
+          "project_id": "ab119bc4-c5dd-43ad-b446-64f98da14a70",
+          "restricted": false,
+          "type": "folder",
+          "updated_at": "2024-02-07T16:44:41.986478Z",
+          "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/view/5a89a9fb-0900-4b23-826b-127b90e4db4c"
+        }
+      },
+      "status": 200,
+      "operation_id": "folders.show"
+    },
+    {
+      "config": {
+        "operation": "update_folder",
+        "account_id": "4df4c7e7-f987-4058-8e05-1ac85a7c6642",
+        "folder_id": "04107256-4c3a-46eb-a00d-263bbf366027",
+        "name": "Folder name"
+      },
+      "method": "PATCH",
+      "path": "/v4/accounts/4df4c7e7-f987-4058-8e05-1ac85a7c6642/folders/04107256-4c3a-46eb-a00d-263bbf366027",
+      "params": {},
+      "body": {
+        "data": {
+          "name": "Folder name"
+        }
+      },
+      "response": {
+        "data": {
+          "adobe_id": "urn:aaid:sc:US:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "cover_file_id": "1dec1a8a-5e40-4f32-8af1-03373a5a93e6",
+          "created_at": "2023-09-25T19:18:29.614189Z",
+          "id": "d51a370e-ba67-4fe9-b77e-1f4e6988b249",
+          "name": "My Folder",
+          "parent_id": "25a01e5a-6b2d-435e-975b-888f14e84f18",
+          "project_id": "ab119bc4-c5dd-43ad-b446-64f98da14a70",
+          "restricted": false,
+          "type": "folder",
+          "updated_at": "2024-02-07T16:44:41.986478Z",
+          "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/view/5a89a9fb-0900-4b23-826b-127b90e4db4c"
+        }
+      },
+      "status": 200,
+      "operation_id": "folders.update"
+    },
+    {
+      "config": {
+        "operation": "delete_folder",
+        "account_id": "ed94d22a-3efa-4d17-a171-13ed28eaf4d2",
+        "folder_id": "74698c08-a4df-47a8-91e8-b547444f794d"
+      },
+      "method": "DELETE",
+      "path": "/v4/accounts/ed94d22a-3efa-4d17-a171-13ed28eaf4d2/folders/74698c08-a4df-47a8-91e8-b547444f794d",
+      "params": {},
+      "body": null,
+      "response": null,
+      "status": 204,
+      "operation_id": "folders.delete"
+    },
+    {
+      "config": {
+        "operation": "list_files",
+        "account_id": "244b42b0-ff0c-47e3-b4b5-abe37254b714",
+        "folder_id": "9dc7163d-25dd-45ba-b42c-c9380abf26be"
+      },
+      "method": "GET",
+      "path": "/v4/accounts/244b42b0-ff0c-47e3-b4b5-abe37254b714/folders/9dc7163d-25dd-45ba-b42c-c9380abf26be/files",
+      "params": {
+        "page_size": 50
+      },
+      "body": null,
+      "response": {
+        "data": [
+          {
+            "adobe_id": "urn:aaid:sc:US:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+            "adobe_version_id": "2",
+            "created_at": "2023-09-25T19:18:29.614189Z",
+            "creator": {
+              "active": true,
+              "adobe_user_id": "196C1A5666BF4EB00A49411B@176719f5667c82b4494214.e",
+              "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+              "email": "user_email@example.com",
+              "id": "477ee9a4-10e2-47b1-a8b9-035c9c51a77f",
+              "name": "Jon Doe"
+            },
+            "file_size": 1137444,
+            "id": "d51a370e-ba67-4fe9-b77e-1f4e6988b249",
+            "media_links": {
+              "high_quality": {
+                "download_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN"
+              },
+              "original": {
+                "download_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+                "inline_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=inline%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragSDFXDFh&1Key-Pair-Id=KKI497NESTHMN"
+              },
+              "thumbnail": {
+                "download_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+                "url": "https://picture2.frame.io/image/s3://frameio-assets-development/image/cd58cb8e-24b3-4498-8d0f-9532fcd04d11/image_full.png?alg=HS256&sig=0_u7w_wz2MwQHOXp000ibbQSMRijujyaUu8V3YYPxu4&exp=1729857600"
+              }
+            },
+            "media_type": "image/png",
+            "metadata": [
+              {
+                "field_definition_id": "0276144b-11df-45e6-8880-2756022ac5f0",
+                "field_definition_name": "Fields definition name",
+                "field_options": [
+                  {
+                    "display_name": "Display name",
+                    "id": "794ff815-279e-4b00-b599-2147a2addc91"
+                  },
+                  {
+                    "display_name": "Display name 2",
+                    "id": "a7783e03-1396-4793-b7cb-e6ffcf7a18bd"
+                  }
+                ],
+                "field_type": "select",
+                "mutable": true,
+                "value": [
+                  {
+                    "display_name": "Display name",
+                    "id": "794ff815-279e-4b00-b599-2147a2addc91"
+                  }
+                ]
+              }
+            ],
+            "name": "asset.png",
+            "parent": {
+              "adobe_id": "urn:aaid:sc:US:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+              "cover_file_id": "1dec1a8a-5e40-4f32-8af1-03373a5a93e6",
+              "created_at": "2023-09-25T19:18:29.614189Z",
+              "id": "d51a370e-ba67-4fe9-b77e-1f4e6988b249",
+              "name": "My Folder",
+              "parent_id": "25a01e5a-6b2d-435e-975b-888f14e84f18",
+              "project_id": "ab119bc4-c5dd-43ad-b446-64f98da14a70",
+              "restricted": false,
+              "type": "folder",
+              "updated_at": "2024-02-07T16:44:41.986478Z",
+              "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/view/5a89a9fb-0900-4b23-826b-127b90e4db4c"
+            },
+            "parent_id": "25a01e5a-6b2d-435e-975b-888f14e84f18",
+            "project": {
+              "adobe_id": "urn:aaid:sc:US:9f4e4d7a-4b6b-4c4f-9f00-b31a91cfc6f3",
+              "created_at": "2024-01-25T19:18:29.614189Z",
+              "description": "Project Description",
+              "id": "826094af-83be-4169-a242-f9934d895db6",
+              "image": "https://picture.frame.io/image/convert/frameio-uploads-development/projects/d5e6011c-2bc9-4596-be05-77d562627112/project_image_original.png",
+              "name": "My Project",
+              "owner": {
+                "active": true,
+                "adobe_user_id": "196C1A5666BF4EB00A49411B@176719f5667c82b4494214.e",
+                "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+                "email": "user_email@example.com",
+                "id": "477ee9a4-10e2-47b1-a8b9-035c9c51a77f",
+                "name": "Jon Doe"
+              },
+              "restricted": false,
+              "root_folder_id": "922a5a04-7a34-428b-a73c-24e415ca5570",
+              "status": "active",
+              "storage": 15000,
+              "updated_at": "2024-02-07T16:44:41.986478Z",
+              "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/",
+              "workspace_id": "77a20d4c-5bfa-4c9b-bbfd-340e19cf01a1"
+            },
+            "project_id": "ab119bc4-c5dd-43ad-b446-64f98da14a70",
+            "status": "created",
+            "type": "file",
+            "updated_at": "2024-02-07T16:44:41.986478Z",
+            "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/view/5a89a9fb-0900-4b23-826b-127b90e4db4c"
+          }
+        ],
+        "links": {
+          "next": "/v4/accounts/123/folders/123/files"
+        },
+        "total_count": 10
+      },
+      "status": 200,
+      "operation_id": "files.list"
+    },
+    {
+      "config": {
+        "operation": "get_file",
+        "account_id": "aa769dfc-5b8c-4a99-a3f3-77f7e67499c7",
+        "file_id": "7163ca37-ca9a-4937-b40e-4707b384a221"
+      },
+      "method": "GET",
+      "path": "/v4/accounts/aa769dfc-5b8c-4a99-a3f3-77f7e67499c7/files/7163ca37-ca9a-4937-b40e-4707b384a221",
+      "params": {},
+      "body": null,
+      "response": {
+        "data": {
+          "adobe_id": "urn:aaid:sc:US:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "adobe_version_id": "2",
+          "created_at": "2023-09-25T19:18:29.614189Z",
+          "creator": {
+            "active": true,
+            "adobe_user_id": "196C1A5666BF4EB00A49411B@176719f5667c82b4494214.e",
+            "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+            "email": "user_email@example.com",
+            "id": "477ee9a4-10e2-47b1-a8b9-035c9c51a77f",
+            "name": "Jon Doe"
+          },
+          "file_size": 1137444,
+          "id": "d51a370e-ba67-4fe9-b77e-1f4e6988b249",
+          "media_links": {
+            "high_quality": {
+              "download_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN"
+            },
+            "original": {
+              "download_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+              "inline_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=inline%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragSDFXDFh&1Key-Pair-Id=KKI497NESTHMN"
+            },
+            "thumbnail": {
+              "download_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+              "url": "https://picture2.frame.io/image/s3://frameio-assets-development/image/cd58cb8e-24b3-4498-8d0f-9532fcd04d11/image_full.png?alg=HS256&sig=0_u7w_wz2MwQHOXp000ibbQSMRijujyaUu8V3YYPxu4&exp=1729857600"
+            }
+          },
+          "media_type": "image/png",
+          "metadata": [
+            {
+              "field_definition_id": "0276144b-11df-45e6-8880-2756022ac5f0",
+              "field_definition_name": "Fields definition name",
+              "field_options": [
+                {
+                  "display_name": "Display name",
+                  "id": "794ff815-279e-4b00-b599-2147a2addc91"
+                },
+                {
+                  "display_name": "Display name 2",
+                  "id": "a7783e03-1396-4793-b7cb-e6ffcf7a18bd"
+                }
+              ],
+              "field_type": "select",
+              "mutable": true,
+              "value": [
+                {
+                  "display_name": "Display name",
+                  "id": "794ff815-279e-4b00-b599-2147a2addc91"
+                }
+              ]
+            }
+          ],
+          "name": "asset.png",
+          "parent": {
+            "adobe_id": "urn:aaid:sc:US:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+            "cover_file_id": "1dec1a8a-5e40-4f32-8af1-03373a5a93e6",
+            "created_at": "2023-09-25T19:18:29.614189Z",
+            "id": "d51a370e-ba67-4fe9-b77e-1f4e6988b249",
+            "name": "My Folder",
+            "parent_id": "25a01e5a-6b2d-435e-975b-888f14e84f18",
+            "project_id": "ab119bc4-c5dd-43ad-b446-64f98da14a70",
+            "restricted": false,
+            "type": "folder",
+            "updated_at": "2024-02-07T16:44:41.986478Z",
+            "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/view/5a89a9fb-0900-4b23-826b-127b90e4db4c"
+          },
+          "parent_id": "25a01e5a-6b2d-435e-975b-888f14e84f18",
+          "project": {
+            "adobe_id": "urn:aaid:sc:US:9f4e4d7a-4b6b-4c4f-9f00-b31a91cfc6f3",
+            "created_at": "2024-01-25T19:18:29.614189Z",
+            "description": "Project Description",
+            "id": "826094af-83be-4169-a242-f9934d895db6",
+            "image": "https://picture.frame.io/image/convert/frameio-uploads-development/projects/d5e6011c-2bc9-4596-be05-77d562627112/project_image_original.png",
+            "name": "My Project",
+            "owner": {
+              "active": true,
+              "adobe_user_id": "196C1A5666BF4EB00A49411B@176719f5667c82b4494214.e",
+              "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+              "email": "user_email@example.com",
+              "id": "477ee9a4-10e2-47b1-a8b9-035c9c51a77f",
+              "name": "Jon Doe"
+            },
+            "restricted": false,
+            "root_folder_id": "922a5a04-7a34-428b-a73c-24e415ca5570",
+            "status": "active",
+            "storage": 15000,
+            "updated_at": "2024-02-07T16:44:41.986478Z",
+            "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/",
+            "workspace_id": "77a20d4c-5bfa-4c9b-bbfd-340e19cf01a1"
+          },
+          "project_id": "ab119bc4-c5dd-43ad-b446-64f98da14a70",
+          "status": "created",
+          "type": "file",
+          "updated_at": "2024-02-07T16:44:41.986478Z",
+          "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/view/5a89a9fb-0900-4b23-826b-127b90e4db4c"
+        }
+      },
+      "status": 200,
+      "operation_id": "files.show"
+    },
+    {
+      "config": {
+        "operation": "update_file",
+        "account_id": "4184dd5c-bccd-4885-a55f-2efcd135039c",
+        "file_id": "fc2e9214-7388-4034-86ca-b9453052ea0d",
+        "name": "asset.png"
+      },
+      "method": "PATCH",
+      "path": "/v4/accounts/4184dd5c-bccd-4885-a55f-2efcd135039c/files/fc2e9214-7388-4034-86ca-b9453052ea0d",
+      "params": {},
+      "body": {
+        "data": {
+          "name": "asset.png"
+        }
+      },
+      "response": {
+        "data": {
+          "adobe_id": "urn:aaid:sc:US:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+          "adobe_version_id": "2",
+          "created_at": "2023-09-25T19:18:29.614189Z",
+          "file_size": 1137444,
+          "id": "d51a370e-ba67-4fe9-b77e-1f4e6988b249",
+          "media_type": "image/png",
+          "name": "asset.png",
+          "parent_id": "25a01e5a-6b2d-435e-975b-888f14e84f18",
+          "project_id": "ab119bc4-c5dd-43ad-b446-64f98da14a70",
+          "status": "created",
+          "type": "file",
+          "updated_at": "2024-02-07T16:44:41.986478Z",
+          "view_url": "https://next.frame.io/project/d5e6011c-2bc9-4596-be05-77d562627112/view/5a89a9fb-0900-4b23-826b-127b90e4db4c"
+        }
+      },
+      "status": 200,
+      "operation_id": "files.update"
+    },
+    {
+      "config": {
+        "operation": "delete_file",
+        "account_id": "1624a4bb-5601-4044-a7f2-4acac7efda8e",
+        "file_id": "5b8d5926-addd-4a01-9182-3fb9f6be8005"
+      },
+      "method": "DELETE",
+      "path": "/v4/accounts/1624a4bb-5601-4044-a7f2-4acac7efda8e/files/5b8d5926-addd-4a01-9182-3fb9f6be8005",
+      "params": {},
+      "body": null,
+      "response": null,
+      "status": 204,
+      "operation_id": "files.delete"
+    },
+    {
+      "config": {
+        "operation": "list_comments",
+        "account_id": "88d23224-3d33-475c-8eed-b1812226afba",
+        "file_id": "34507d80-3554-4992-addc-fd3d601524c8"
+      },
+      "method": "GET",
+      "path": "/v4/accounts/88d23224-3d33-475c-8eed-b1812226afba/files/34507d80-3554-4992-addc-fd3d601524c8/comments",
+      "params": {
+        "page_size": 50
+      },
+      "body": null,
+      "response": {
+        "data": [
+          {
+            "anchor": {
+              "x": 0.5,
+              "y": 0.5
+            },
+            "annotation": "annotation",
+            "attachments": [
+              {
+                "created_at": "2024-02-02T21:19:24.828948Z",
+                "file_size": 1024000,
+                "id": "71698146-d812-44f7-ac5b-5accd1bb6794",
+                "media_type": "image/png",
+                "name": "screenshot.png",
+                "upload_urls": [
+                  "https://s3.amazonaws.com/bucket/part1?signature=..."
+                ]
+              }
+            ],
+            "completed_at": null,
+            "completer_id": null,
+            "created_at": "2024-02-02T21:19:24.828948Z",
+            "duration": 10,
+            "file_id": "4ae08df1-b419-4897-aba5-560198a18237",
+            "id": "da15b090-5d6a-4331-af11-c96086a7dc3e",
+            "links": [
+              {
+                "end_index": 13,
+                "start_index": 5,
+                "text": "Test User",
+                "url": "https://www.example.com"
+              }
+            ],
+            "mentions": [
+              {
+                "end_index": 13,
+                "start_index": 5,
+                "text": "Test User",
+                "user_id": "8b75bd5d-35cd-48f1-b23a-99f15a9228e9"
+              }
+            ],
+            "owner": {
+              "active": true,
+              "adobe_user_id": "196C1A5666BF4EB00A49411B@176719f5667c82b4494214.e",
+              "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+              "email": "user_email@example.com",
+              "id": "477ee9a4-10e2-47b1-a8b9-035c9c51a77f",
+              "name": "Jon Doe"
+            },
+            "page": 1,
+            "replies": [],
+            "text": "This is great!",
+            "text_edited_at": "2024-02-02T21:19:24.828948Z",
+            "text_review_annotation": {
+              "bounds": [
+                {
+                  "height": 42.0,
+                  "width": 130.0,
+                  "x": 12.5,
+                  "y": 24.0
+                }
+              ],
+              "selection_text": "existing copy",
+              "suggested_text": "updated copy",
+              "text_review_annotation_type": "replace"
+            },
+            "timestamp": 123,
+            "updated_at": "2024-02-02T21:19:24.828948Z"
+          },
+          {
+            "anchor": {
+              "x": 0.5,
+              "y": 0.5
+            },
+            "annotation": "annotation",
+            "attachments": [
+              {
+                "created_at": "2024-02-02T21:19:24.828948Z",
+                "file_size": 1024000,
+                "id": "71698146-d812-44f7-ac5b-5accd1bb6794",
+                "media_type": "image/png",
+                "name": "screenshot.png",
+                "upload_urls": [
+                  "https://s3.amazonaws.com/bucket/part1?signature=..."
+                ]
+              }
+            ],
+            "completed_at": null,
+            "completer_id": null,
+            "created_at": "2024-02-02T21:19:24.828948Z",
+            "duration": 10,
+            "file_id": "4ae08df1-b419-4897-aba5-560198a18237",
+            "id": "da15b090-5d6a-4331-af11-c96086a7dc3e",
+            "links": [
+              {
+                "end_index": 13,
+                "start_index": 5,
+                "text": "Test User",
+                "url": "https://www.example.com"
+              }
+            ],
+            "mentions": [
+              {
+                "end_index": 13,
+                "start_index": 5,
+                "text": "Test User",
+                "user_id": "8b75bd5d-35cd-48f1-b23a-99f15a9228e9"
+              }
+            ],
+            "owner": {
+              "active": true,
+              "adobe_user_id": "196C1A5666BF4EB00A49411B@176719f5667c82b4494214.e",
+              "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+              "email": "user_email@example.com",
+              "id": "477ee9a4-10e2-47b1-a8b9-035c9c51a77f",
+              "name": "Jon Doe"
+            },
+            "page": 1,
+            "replies": [
+              {
+                "anchor": {
+                  "x": 0.5,
+                  "y": 0.5
+                },
+                "annotation": "annotation",
+                "attachments": [
+                  {
+                    "created_at": "2024-02-02T21:19:24.828948Z",
+                    "file_size": 1024000,
+                    "id": "71698146-d812-44f7-ac5b-5accd1bb6794",
+                    "media_type": "image/png",
+                    "name": "screenshot.png",
+                    "upload_urls": [
+                      "https://s3.amazonaws.com/bucket/part1?signature=..."
+                    ]
+                  }
+                ],
+                "completed_at": null,
+                "completer_id": null,
+                "created_at": "2024-02-02T21:19:24.828948Z",
+                "duration": 10,
+                "file_id": "4ae08df1-b419-4897-aba5-560198a18237",
+                "id": "da15b090-5d6a-4331-af11-c96086a7dc3e",
+                "links": [
+                  {
+                    "end_index": 13,
+                    "start_index": 5,
+                    "text": "Test User",
+                    "url": "https://www.example.com"
+                  }
+                ],
+                "mentions": [
+                  {
+                    "end_index": 13,
+                    "start_index": 5,
+                    "text": "Test User",
+                    "user_id": "8b75bd5d-35cd-48f1-b23a-99f15a9228e9"
+                  }
+                ],
+                "page": 1,
+                "text": "This is great!",
+                "text_edited_at": "2024-02-02T21:19:24.828948Z",
+                "text_review_annotation": {
+                  "bounds": [
+                    {
+                      "height": 42.0,
+                      "width": 130.0,
+                      "x": 12.5,
+                      "y": 24.0
+                    }
+                  ],
+                  "selection_text": "existing copy",
+                  "suggested_text": "updated copy",
+                  "text_review_annotation_type": "replace"
+                },
+                "timestamp": 123,
+                "updated_at": "2024-02-02T21:19:24.828948Z"
+              }
+            ],
+            "text": "This is great!",
+            "text_edited_at": "2024-02-02T21:19:24.828948Z",
+            "text_review_annotation": {
+              "bounds": [
+                {
+                  "height": 42.0,
+                  "width": 130.0,
+                  "x": 12.5,
+                  "y": 24.0
+                }
+              ],
+              "selection_text": "existing copy",
+              "suggested_text": "updated copy",
+              "text_review_annotation_type": "replace"
+            },
+            "timestamp": 123,
+            "updated_at": "2024-02-02T21:19:24.828948Z"
+          }
+        ],
+        "links": {
+          "next": "/v4/accounts/123/files/123/comments"
+        },
+        "total_count": 10
+      },
+      "status": 200,
+      "operation_id": "comments.index"
+    },
+    {
+      "config": {
+        "operation": "get_comment",
+        "account_id": "8d00afae-61bf-41dd-a39c-780cb8bb0dd0",
+        "comment_id": "87fdd5b3-a457-4c62-895e-a21ddc5bf29c"
+      },
+      "method": "GET",
+      "path": "/v4/accounts/8d00afae-61bf-41dd-a39c-780cb8bb0dd0/comments/87fdd5b3-a457-4c62-895e-a21ddc5bf29c",
+      "params": {},
+      "body": null,
+      "response": {
+        "data": {
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "annotation": "annotation",
+          "attachments": [
+            {
+              "created_at": "2024-02-02T21:19:24.828948Z",
+              "file_size": 1024000,
+              "id": "71698146-d812-44f7-ac5b-5accd1bb6794",
+              "media_type": "image/png",
+              "name": "screenshot.png",
+              "upload_urls": [
+                "https://s3.amazonaws.com/bucket/part1?signature=..."
+              ]
+            }
+          ],
+          "completed_at": null,
+          "completer_id": null,
+          "created_at": "2024-02-02T21:19:24.828948Z",
+          "duration": 10,
+          "file_id": "4ae08df1-b419-4897-aba5-560198a18237",
+          "id": "da15b090-5d6a-4331-af11-c96086a7dc3e",
+          "links": [
+            {
+              "end_index": 13,
+              "start_index": 5,
+              "text": "Test User",
+              "url": "https://www.example.com"
+            }
+          ],
+          "mentions": [
+            {
+              "end_index": 13,
+              "start_index": 5,
+              "text": "Test User",
+              "user_id": "8b75bd5d-35cd-48f1-b23a-99f15a9228e9"
+            }
+          ],
+          "owner": {
+            "active": true,
+            "adobe_user_id": "196C1A5666BF4EB00A49411B@176719f5667c82b4494214.e",
+            "avatar_url": "https://assets.frame.io/uploads/cd58cb8e-24b3-4448-8d0f-9532fcd04d11/original.png?response-content-disposition=attachment%3B+filename%3D%22foo.png&Expires=1729857600&Signature=L09h0pi82dCrMYjr9lMHBragByWYh1&Key-Pair-Id=KKI497NESTHMN",
+            "email": "user_email@example.com",
+            "id": "477ee9a4-10e2-47b1-a8b9-035c9c51a77f",
+            "name": "Jon Doe"
+          },
+          "page": 1,
+          "replies": [],
+          "text": "This is great!",
+          "text_edited_at": "2024-02-02T21:19:24.828948Z",
+          "text_review_annotation": {
+            "bounds": [
+              {
+                "height": 42.0,
+                "width": 130.0,
+                "x": 12.5,
+                "y": 24.0
+              }
+            ],
+            "selection_text": "existing copy",
+            "suggested_text": "updated copy",
+            "text_review_annotation_type": "replace"
+          },
+          "timestamp": 123,
+          "updated_at": "2024-02-02T21:19:24.828948Z"
+        }
+      },
+      "status": 200,
+      "operation_id": "comments.show"
+    },
+    {
+      "config": {
+        "operation": "create_comment",
+        "account_id": "4207cf6a-4057-44e0-b02c-f75701b63f0c",
+        "file_id": "ee81d4a5-8c97-4bb7-afe5-10c9256c6a8c",
+        "completed": false,
+        "text": "This is great!"
+      },
+      "method": "POST",
+      "path": "/v4/accounts/4207cf6a-4057-44e0-b02c-f75701b63f0c/files/ee81d4a5-8c97-4bb7-afe5-10c9256c6a8c/comments",
+      "params": {},
+      "body": {
+        "data": {
+          "completed": false,
+          "text": "This is great!"
+        }
+      },
+      "response": {
+        "data": {
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "annotation": "annotation",
+          "attachments": [
+            {
+              "created_at": "2024-02-02T21:19:24.828948Z",
+              "file_size": 1024000,
+              "id": "71698146-d812-44f7-ac5b-5accd1bb6794",
+              "media_type": "image/png",
+              "name": "screenshot.png",
+              "upload_urls": [
+                "https://s3.amazonaws.com/bucket/part1?signature=..."
+              ]
+            }
+          ],
+          "completed_at": null,
+          "completer_id": null,
+          "created_at": "2024-02-02T21:19:24.828948Z",
+          "duration": 10,
+          "file_id": "4ae08df1-b419-4897-aba5-560198a18237",
+          "id": "da15b090-5d6a-4331-af11-c96086a7dc3e",
+          "links": [
+            {
+              "end_index": 13,
+              "start_index": 5,
+              "text": "Test User",
+              "url": "https://www.example.com"
+            }
+          ],
+          "mentions": [
+            {
+              "end_index": 13,
+              "start_index": 5,
+              "text": "Test User",
+              "user_id": "8b75bd5d-35cd-48f1-b23a-99f15a9228e9"
+            }
+          ],
+          "page": 1,
+          "text": "This is great!",
+          "text_edited_at": "2024-02-02T21:19:24.828948Z",
+          "text_review_annotation": {
+            "bounds": [
+              {
+                "height": 42.0,
+                "width": 130.0,
+                "x": 12.5,
+                "y": 24.0
+              }
+            ],
+            "selection_text": "existing copy",
+            "suggested_text": "updated copy",
+            "text_review_annotation_type": "replace"
+          },
+          "timestamp": 123,
+          "updated_at": "2024-02-02T21:19:24.828948Z"
+        }
+      },
+      "status": 201,
+      "operation_id": "comments.create"
+    },
+    {
+      "config": {
+        "operation": "update_comment",
+        "account_id": "20846d9f-c663-4ec7-b9a3-93aedfe2049d",
+        "comment_id": "97aed465-24e1-4dd9-95de-a73095f4d176",
+        "completed": false,
+        "text": "This is great!"
+      },
+      "method": "PATCH",
+      "path": "/v4/accounts/20846d9f-c663-4ec7-b9a3-93aedfe2049d/comments/97aed465-24e1-4dd9-95de-a73095f4d176",
+      "params": {},
+      "body": {
+        "data": {
+          "completed": false,
+          "text": "This is great!"
+        }
+      },
+      "response": {
+        "data": {
+          "anchor": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "annotation": "annotation",
+          "attachments": [
+            {
+              "created_at": "2024-02-02T21:19:24.828948Z",
+              "file_size": 1024000,
+              "id": "71698146-d812-44f7-ac5b-5accd1bb6794",
+              "media_type": "image/png",
+              "name": "screenshot.png",
+              "upload_urls": [
+                "https://s3.amazonaws.com/bucket/part1?signature=..."
+              ]
+            }
+          ],
+          "completed_at": null,
+          "completer_id": null,
+          "created_at": "2024-02-02T21:19:24.828948Z",
+          "duration": 10,
+          "file_id": "4ae08df1-b419-4897-aba5-560198a18237",
+          "id": "da15b090-5d6a-4331-af11-c96086a7dc3e",
+          "links": [
+            {
+              "end_index": 13,
+              "start_index": 5,
+              "text": "Test User",
+              "url": "https://www.example.com"
+            }
+          ],
+          "mentions": [
+            {
+              "end_index": 13,
+              "start_index": 5,
+              "text": "Test User",
+              "user_id": "8b75bd5d-35cd-48f1-b23a-99f15a9228e9"
+            }
+          ],
+          "page": 1,
+          "text": "This is great!",
+          "text_edited_at": "2024-02-02T21:19:24.828948Z",
+          "text_review_annotation": {
+            "bounds": [
+              {
+                "height": 42.0,
+                "width": 130.0,
+                "x": 12.5,
+                "y": 24.0
+              }
+            ],
+            "selection_text": "existing copy",
+            "suggested_text": "updated copy",
+            "text_review_annotation_type": "replace"
+          },
+          "timestamp": 123,
+          "updated_at": "2024-02-02T21:19:24.828948Z"
+        }
+      },
+      "status": 200,
+      "operation_id": "comments.update"
+    },
+    {
+      "config": {
+        "operation": "delete_comment",
+        "account_id": "e5fa1f0e-4c1d-4b37-89c0-690e41cabf31",
+        "comment_id": "f4757e9c-d305-4a27-8773-f07240c33fb3"
+      },
+      "method": "DELETE",
+      "path": "/v4/accounts/e5fa1f0e-4c1d-4b37-89c0-690e41cabf31/comments/f4757e9c-d305-4a27-8773-f07240c33fb3",
+      "params": {},
+      "body": null,
+      "response": null,
+      "status": 204,
+      "operation_id": "comments.delete"
+    },
+    {
+      "config": {
+        "operation": "list_shares",
+        "account_id": "d569acba-4353-47c1-85d0-e1a284219625",
+        "project_id": "85cc288c-3aae-4fe6-a947-805242401fea"
+      },
+      "method": "GET",
+      "path": "/v4/accounts/d569acba-4353-47c1-85d0-e1a284219625/projects/85cc288c-3aae-4fe6-a947-805242401fea/shares",
+      "params": {
+        "page_size": 50
+      },
+      "body": null,
+      "response": {
+        "data": [
+          {
+            "card_info_enabled": true,
+            "enabled": true,
+            "icons_visible_on_list": true,
+            "access": "public",
+            "last_viewed_at": "2024-03-02T21:19:24.828948Z",
+            "theme": "dark",
+            "updated_at": "2024-02-02T21:19:24.828948Z",
+            "editable_fields_enabled": false,
+            "card_aspect_ratio": "square",
+            "commenting_enabled": true,
+            "passphrase": "as!dfj39sd(*",
+            "description": "Description of share",
+            "sort_by": {
+              "direction": "asc",
+              "field_definition_id": "7ef8040c-c5cd-4d2a-a6c5-8789e88121f4"
+            },
+            "created_at": "2024-02-02T21:19:24.828948Z",
+            "forensic_watermark_enabled": false,
+            "list_row_size": "small",
+            "name": "Test Share",
+            "collection_id": "d1ded654-0347-4b29-96cc-4e0b8f0d3cb3",
+            "short_url": "https://f.io/GGa9wPw5",
+            "card_size": "medium",
+            "reel_card_aspect_ratio": "square",
+            "drm_enabled": false,
+            "show_asset_name_in_reel_layout": false,
+            "captions_enabled": true,
+            "transcripts_enabled": true,
+            "watermark_enabled": true,
+            "reel_card_fit_image": false,
+            "featured_field_definition_id": "71b85a3c-8e8f-4b49-8ddf-1d2f7b91652e",
+            "open_in_viewer_enabled": true,
+            "downloading_enabled": true,
+            "accent_color": "#FF0000",
+            "layout": "grid",
+            "show_all_asset_versions": true,
+            "id": "27f45a2d-e245-45d6-a869-f35e4a930103",
+            "name_column_width": null,
+            "thumbnail_scale": "fill",
+            "title_line_count": 1,
+            "expiration": "2026-11-06T22:58:21.183180Z",
+            "visible_field_definition_ids": [
+              "d386faef-4fa7-44af-9d39-f45e6d2cc78b"
+            ]
+          }
+        ],
+        "links": {
+          "next": "/v4/accounts/123/projects/123/shares"
+        },
+        "total_count": 10
+      },
+      "status": 200,
+      "operation_id": "shares.index"
+    },
+    {
+      "config": {
+        "operation": "get_share",
+        "account_id": "e5c1012d-9763-4697-b17f-9293bf7dd776",
+        "share_id": "c685c2ef-dfe8-4fcf-9f4b-a828a0e9716f"
+      },
+      "method": "GET",
+      "path": "/v4/accounts/e5c1012d-9763-4697-b17f-9293bf7dd776/shares/c685c2ef-dfe8-4fcf-9f4b-a828a0e9716f",
+      "params": {},
+      "body": null,
+      "response": {
+        "data": {
+          "card_info_enabled": true,
+          "enabled": true,
+          "icons_visible_on_list": true,
+          "access": "public",
+          "last_viewed_at": "2024-03-02T21:19:24.828948Z",
+          "theme": "dark",
+          "updated_at": "2024-02-02T21:19:24.828948Z",
+          "editable_fields_enabled": false,
+          "card_aspect_ratio": "square",
+          "commenting_enabled": true,
+          "passphrase": "as!dfj39sd(*",
+          "description": "Description of share",
+          "sort_by": {
+            "direction": "asc",
+            "field_definition_id": "7ef8040c-c5cd-4d2a-a6c5-8789e88121f4"
+          },
+          "created_at": "2024-02-02T21:19:24.828948Z",
+          "forensic_watermark_enabled": false,
+          "list_row_size": "small",
+          "name": "Test Share",
+          "collection_id": "d1ded654-0347-4b29-96cc-4e0b8f0d3cb3",
+          "short_url": "https://f.io/GGa9wPw5",
+          "card_size": "medium",
+          "reel_card_aspect_ratio": "square",
+          "drm_enabled": false,
+          "show_asset_name_in_reel_layout": false,
+          "captions_enabled": true,
+          "transcripts_enabled": true,
+          "watermark_enabled": true,
+          "reel_card_fit_image": false,
+          "featured_field_definition_id": "71b85a3c-8e8f-4b49-8ddf-1d2f7b91652e",
+          "open_in_viewer_enabled": true,
+          "downloading_enabled": true,
+          "accent_color": "#FF0000",
+          "layout": "grid",
+          "show_all_asset_versions": true,
+          "id": "27f45a2d-e245-45d6-a869-f35e4a930103",
+          "name_column_width": null,
+          "thumbnail_scale": "fill",
+          "title_line_count": 1,
+          "expiration": "2026-11-06T22:58:21.183180Z",
+          "visible_field_definition_ids": [
+            "d386faef-4fa7-44af-9d39-f45e6d2cc78b"
+          ]
+        }
+      },
+      "status": 200,
+      "operation_id": "shares.show"
+    }
+  ]
+}

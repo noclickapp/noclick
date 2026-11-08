@@ -1,0 +1,16 @@
+{
+ "provider": "frame-io-v4",
+ "ready": false,
+ "blocking": [
+  "get_file: fixture error: ValueError: Cannot generate spec-valid response: InvalidData: InvalidData: Value {'data': {'created_at': '2023-09-25T19:18:29.614189Z', 'file_size': 1137444, 'i"
+ ],
+ "advisory": [],
+ "stats": {
+  "operations": 25,
+  "skipped": 0,
+  "request_ok": 25,
+  "authored_parser_ok": 18,
+  "generated_only": 7,
+  "local_ok": 0
+ }
+}
