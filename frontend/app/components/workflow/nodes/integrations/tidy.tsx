@@ -15,6 +15,7 @@ TidyIcon.displayName = 'TidyIcon';
 export const TidyNode: NodeDefinition = {
     type: 'automation-tidy',
     label: 'Tidy',
+    category: 'nonprofit',
     keywords: ['TidyHQ'],
     description: 'TidyHQ contacts, memberships, events and invoices',
     Icon: TidyIcon,
