@@ -11,6 +11,7 @@ const LeexiIcon = ({ className, style }: { className?: string; style?: CSSProper
 
 export const LeexiNode: NodeDefinition = {
     type: 'automation-leexi', label: 'Leexi',
+    category: 'meetings',
     description: 'Manage calls, notes, meeting assistants, teams and users',
     Icon: LeexiIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
