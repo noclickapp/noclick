@@ -11,6 +11,7 @@ const BouncerIcon = ({ className, style }: { className?: string; style?: CSSProp
 
 export const BouncerNode: NodeDefinition = {
     type: 'automation-bouncer', label: 'Bouncer',
+    category: 'marketing',
     description: 'Verify emails and domains, process batches, and check email toxicity',
     keywords: ['email verification', 'email validation', 'deliverability', 'bulk email', 'toxicity'],
     Icon: BouncerIcon, iconColor: '',
