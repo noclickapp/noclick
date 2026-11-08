@@ -13,6 +13,7 @@ const TrackdeskIcon = ({ className, style }: { className?: string; style?: CSSPr
 
 export const TrackdeskNode: NodeDefinition = {
     type: 'automation-trackdesk', label: 'Trackdesk',
+    category: 'marketing',
     description: 'Manage affiliates, offers, coupons, conversions, notes, tags and tiers',
     keywords: ['affiliate marketing', 'referrals', 'commissions', 'tracking links'],
     Icon: TrackdeskIcon, iconColor: '',
