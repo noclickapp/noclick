@@ -15,6 +15,7 @@ TransloaditIcon.displayName = 'TransloaditIcon';
 export const TransloaditNode: NodeDefinition = {
     type: 'automation-transloadit',
     label: 'Transloadit',
+    category: 'media',
     description: 'Automate media processing, Assemblies, Templates and credential metadata',
     Icon: TransloaditIcon,
     iconColor: '',
