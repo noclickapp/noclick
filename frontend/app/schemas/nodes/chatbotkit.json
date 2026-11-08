@@ -1,0 +1,1411 @@
+{
+  "$defs": {
+    "ChatBotKitAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "chatbotkit_api_token",
+          "default": "chatbotkit_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:help": "Copy the token from ChatBotKit developer tools.",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Chatbotkit API Token",
+      "type": "object",
+      "x-credential-instructions": "Create an API token in ChatBotKit developer tools and paste it here without the Bearer prefix. Use a token allowed to access the bots, conversations, datasets and contacts your workflow needs. NoClick checks the connection by listing your bots.",
+      "x-credential-url": "https://chatbotkit.com/tokens"
+    },
+    "CompleteConversation": {
+      "additionalProperties": false,
+      "description": "Send a user message and receive the generated response; may use ChatBotKit credits.",
+      "properties": {
+        "operation": {
+          "const": "complete_conversation",
+          "default": "complete_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "text": {
+          "description": "Send this user message and generate the next response.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "text"
+      ],
+      "title": "CompleteConversation",
+      "type": "object"
+    },
+    "CreateBot": {
+      "additionalProperties": false,
+      "description": "Create a bot with optional model and knowledge configuration.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ChatBotKit model identifier; omit to use the provider default.",
+          "title": "Model"
+        },
+        "backstory": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Backstory"
+        },
+        "dataset_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dataset Id"
+        },
+        "skillset_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Skillset Id"
+        },
+        "privacy": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Privacy"
+        },
+        "moderation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Moderation"
+        },
+        "operation": {
+          "const": "create_bot",
+          "default": "create_bot",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CreateBot",
+      "type": "object"
+    },
+    "CreateContact": {
+      "additionalProperties": false,
+      "description": "Create a contact with the supplied profile fields.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "nick": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nick"
+        },
+        "preferences": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preferences"
+        },
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CreateContact",
+      "type": "object"
+    },
+    "CreateConversation": {
+      "additionalProperties": false,
+      "description": "Create a conversation initialized from an existing bot.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "operation": {
+          "const": "create_conversation",
+          "default": "create_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional contact associated with this conversation.",
+          "title": "Contact Id"
+        },
+        "bot_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Bot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bot_id"
+      ],
+      "title": "CreateConversation",
+      "type": "object"
+    },
+    "CreateDataset": {
+      "additionalProperties": false,
+      "description": "Create a knowledge dataset.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "operation": {
+          "const": "create_dataset",
+          "default": "create_dataset",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "CreateDataset",
+      "type": "object"
+    },
+    "CreateDatasetRecord": {
+      "additionalProperties": false,
+      "description": "Add text to a dataset as a knowledge record.",
+      "properties": {
+        "operation": {
+          "const": "create_dataset_record",
+          "default": "create_dataset_record",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "text"
+      ],
+      "title": "CreateDatasetRecord",
+      "type": "object"
+    },
+    "DeleteBot": {
+      "additionalProperties": false,
+      "description": "Delete the specified bot.",
+      "properties": {
+        "operation": {
+          "const": "delete_bot",
+          "default": "delete_bot",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "bot_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Bot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bot_id"
+      ],
+      "title": "DeleteBot",
+      "type": "object"
+    },
+    "DeleteContact": {
+      "additionalProperties": false,
+      "description": "Delete the specified contact.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "DeleteContact",
+      "type": "object"
+    },
+    "DeleteConversation": {
+      "additionalProperties": false,
+      "description": "Delete the specified conversation.",
+      "properties": {
+        "operation": {
+          "const": "delete_conversation",
+          "default": "delete_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Conversation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "DeleteConversation",
+      "type": "object"
+    },
+    "DeleteDatasetRecord": {
+      "additionalProperties": false,
+      "description": "Delete a record from the selected dataset.",
+      "properties": {
+        "operation": {
+          "const": "delete_dataset_record",
+          "default": "delete_dataset_record",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "record_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Record Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "record_id"
+      ],
+      "title": "DeleteDatasetRecord",
+      "type": "object"
+    },
+    "GetBot": {
+      "additionalProperties": false,
+      "description": "Fetch a bot by its ID.",
+      "properties": {
+        "operation": {
+          "const": "get_bot",
+          "default": "get_bot",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "bot_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Bot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bot_id"
+      ],
+      "title": "GetBot",
+      "type": "object"
+    },
+    "GetContact": {
+      "additionalProperties": false,
+      "description": "Fetch a contact by its ID.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "GetContact",
+      "type": "object"
+    },
+    "GetConversation": {
+      "additionalProperties": false,
+      "description": "Fetch a conversation by its ID.",
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Conversation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "GetConversation",
+      "type": "object"
+    },
+    "GetDataset": {
+      "additionalProperties": false,
+      "description": "Fetch a dataset by its ID.",
+      "properties": {
+        "operation": {
+          "const": "get_dataset",
+          "default": "get_dataset",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Dataset Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ],
+      "title": "GetDataset",
+      "type": "object"
+    },
+    "GetDatasetRecord": {
+      "additionalProperties": false,
+      "description": "Fetch a record from the selected dataset.",
+      "properties": {
+        "operation": {
+          "const": "get_dataset_record",
+          "default": "get_dataset_record",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "record_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Record Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "record_id"
+      ],
+      "title": "GetDatasetRecord",
+      "type": "object"
+    },
+    "ListBots": {
+      "additionalProperties": false,
+      "description": "List one page of bots; reuse the returned cursor for the next page.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cursor returned by the previous page. Omit for the first page.",
+          "title": "Cursor"
+        },
+        "take": {
+          "default": 20,
+          "description": "Maximum items on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Take",
+          "type": "integer"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_bots",
+          "default": "list_bots",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListBots",
+      "type": "object"
+    },
+    "ListContacts": {
+      "additionalProperties": false,
+      "description": "List one page of contacts; reuse the returned cursor for the next page.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cursor returned by the previous page. Omit for the first page.",
+          "title": "Cursor"
+        },
+        "take": {
+          "default": 20,
+          "description": "Maximum items on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Take",
+          "type": "integer"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListContacts",
+      "type": "object"
+    },
+    "ListConversationMessages": {
+      "additionalProperties": false,
+      "description": "List one page of messages from a conversation.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cursor returned by the previous page. Omit for the first page.",
+          "title": "Cursor"
+        },
+        "take": {
+          "default": 20,
+          "description": "Maximum items on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Take",
+          "type": "integer"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_conversation_messages",
+          "default": "list_conversation_messages",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "conversation_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Conversation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "ListConversationMessages",
+      "type": "object"
+    },
+    "ListConversations": {
+      "additionalProperties": false,
+      "description": "List one page of conversations; reuse the returned cursor for the next page.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cursor returned by the previous page. Omit for the first page.",
+          "title": "Cursor"
+        },
+        "take": {
+          "default": 20,
+          "description": "Maximum items on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Take",
+          "type": "integer"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListConversations",
+      "type": "object"
+    },
+    "ListDatasetRecords": {
+      "additionalProperties": false,
+      "description": "List one page of records in a dataset.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cursor returned by the previous page. Omit for the first page.",
+          "title": "Cursor"
+        },
+        "take": {
+          "default": 20,
+          "description": "Maximum items on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Take",
+          "type": "integer"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_dataset_records",
+          "default": "list_dataset_records",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Dataset Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ],
+      "title": "ListDatasetRecords",
+      "type": "object"
+    },
+    "ListDatasets": {
+      "additionalProperties": false,
+      "description": "List one page of datasets; reuse the returned cursor for the next page.",
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 1024,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cursor returned by the previous page. Omit for the first page.",
+          "title": "Cursor"
+        },
+        "take": {
+          "default": 20,
+          "description": "Maximum items on this page.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Take",
+          "type": "integer"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_datasets",
+          "default": "list_datasets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListDatasets",
+      "type": "object"
+    },
+    "SearchDataset": {
+      "additionalProperties": false,
+      "description": "Search a dataset for matching knowledge records.",
+      "properties": {
+        "operation": {
+          "const": "search_dataset",
+          "default": "search_dataset",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "search": {
+          "description": "Search query for the knowledge dataset.",
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Search",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "search"
+      ],
+      "title": "SearchDataset",
+      "type": "object"
+    },
+    "UpdateBot": {
+      "additionalProperties": false,
+      "description": "Update supplied bot fields; omitted fields stay unchanged.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ChatBotKit model identifier; omit to use the provider default.",
+          "title": "Model"
+        },
+        "backstory": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Backstory"
+        },
+        "dataset_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dataset Id"
+        },
+        "skillset_id": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Skillset Id"
+        },
+        "privacy": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Privacy"
+        },
+        "moderation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Moderation"
+        },
+        "operation": {
+          "const": "update_bot",
+          "default": "update_bot",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "bot_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Bot Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bot_id"
+      ],
+      "title": "UpdateBot",
+      "type": "object"
+    },
+    "UpdateContact": {
+      "additionalProperties": false,
+      "description": "Update supplied contact fields; omitted fields stay unchanged.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "nick": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nick"
+        },
+        "preferences": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preferences"
+        },
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "contact_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Contact Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "UpdateContact",
+      "type": "object"
+    },
+    "UpdateDatasetRecord": {
+      "additionalProperties": false,
+      "description": "Replace the text and optional source of a knowledge record.",
+      "properties": {
+        "operation": {
+          "const": "update_dataset_record",
+          "default": "update_dataset_record",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "record_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$",
+          "title": "Record Id",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "record_id",
+        "text"
+      ],
+      "title": "UpdateDatasetRecord",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "complete_conversation": "#/$defs/CompleteConversation",
+          "create_bot": "#/$defs/CreateBot",
+          "create_contact": "#/$defs/CreateContact",
+          "create_conversation": "#/$defs/CreateConversation",
+          "create_dataset": "#/$defs/CreateDataset",
+          "create_dataset_record": "#/$defs/CreateDatasetRecord",
+          "delete_bot": "#/$defs/DeleteBot",
+          "delete_contact": "#/$defs/DeleteContact",
+          "delete_conversation": "#/$defs/DeleteConversation",
+          "delete_dataset_record": "#/$defs/DeleteDatasetRecord",
+          "get_bot": "#/$defs/GetBot",
+          "get_contact": "#/$defs/GetContact",
+          "get_conversation": "#/$defs/GetConversation",
+          "get_dataset": "#/$defs/GetDataset",
+          "get_dataset_record": "#/$defs/GetDatasetRecord",
+          "list_bots": "#/$defs/ListBots",
+          "list_contacts": "#/$defs/ListContacts",
+          "list_conversation_messages": "#/$defs/ListConversationMessages",
+          "list_conversations": "#/$defs/ListConversations",
+          "list_dataset_records": "#/$defs/ListDatasetRecords",
+          "list_datasets": "#/$defs/ListDatasets",
+          "search_dataset": "#/$defs/SearchDataset",
+          "update_bot": "#/$defs/UpdateBot",
+          "update_contact": "#/$defs/UpdateContact",
+          "update_dataset_record": "#/$defs/UpdateDatasetRecord"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListBots"
+        },
+        {
+          "$ref": "#/$defs/GetBot"
+        },
+        {
+          "$ref": "#/$defs/CreateBot"
+        },
+        {
+          "$ref": "#/$defs/UpdateBot"
+        },
+        {
+          "$ref": "#/$defs/DeleteBot"
+        },
+        {
+          "$ref": "#/$defs/ListConversations"
+        },
+        {
+          "$ref": "#/$defs/GetConversation"
+        },
+        {
+          "$ref": "#/$defs/CreateConversation"
+        },
+        {
+          "$ref": "#/$defs/CompleteConversation"
+        },
+        {
+          "$ref": "#/$defs/ListConversationMessages"
+        },
+        {
+          "$ref": "#/$defs/DeleteConversation"
+        },
+        {
+          "$ref": "#/$defs/ListDatasets"
+        },
+        {
+          "$ref": "#/$defs/GetDataset"
+        },
+        {
+          "$ref": "#/$defs/CreateDataset"
+        },
+        {
+          "$ref": "#/$defs/SearchDataset"
+        },
+        {
+          "$ref": "#/$defs/ListContacts"
+        },
+        {
+          "$ref": "#/$defs/GetContact"
+        },
+        {
+          "$ref": "#/$defs/CreateContact"
+        },
+        {
+          "$ref": "#/$defs/UpdateContact"
+        },
+        {
+          "$ref": "#/$defs/DeleteContact"
+        },
+        {
+          "$ref": "#/$defs/ListDatasetRecords"
+        },
+        {
+          "$ref": "#/$defs/GetDatasetRecord"
+        },
+        {
+          "$ref": "#/$defs/CreateDatasetRecord"
+        },
+        {
+          "$ref": "#/$defs/UpdateDatasetRecord"
+        },
+        {
+          "$ref": "#/$defs/DeleteDatasetRecord"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ChatBotKitAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Chatbotkit Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
