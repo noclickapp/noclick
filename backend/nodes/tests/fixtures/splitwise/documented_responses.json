@@ -1,0 +1,21 @@
+{
+  "POST /delete_friend/{id}": {
+    "body": {
+      "success": true,
+      "errors": []
+    },
+    "source": "https://dev.splitwise.com/#tag/friends/paths/~1delete_friend~1%7Bid%7D/post"
+  },
+  "POST /delete_group/{id}": {
+    "body": {
+      "success": true
+    },
+    "source": "https://dev.splitwise.com/#tag/groups/paths/~1delete_group~1%7Bid%7D/post"
+  },
+  "POST /undelete_expense/{id}": {
+    "body": {
+      "success": true
+    },
+    "source": "https://dev.splitwise.com/#tag/expenses/paths/~1undelete_expense~1%7Bid%7D/post"
+  }
+}

@@ -1,0 +1,997 @@
+{
+  "$defs": {
+    "SplitwiseAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "splitwise_api_key",
+          "default": "splitwise_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Splitwise API Key",
+      "type": "object",
+      "x-credential-instructions": "Open your registered app in Splitwise's developer settings and generate a personal API key. Paste the key alone. It grants access to your personal Splitwise account and is sent as a Bearer token to secure.splitwise.com. Connecting reads your current user; it does not verify every write permission.",
+      "x-credential-url": "https://secure.splitwise.com/apps"
+    },
+    "SplitwiseAddUserToGroupConfig": {
+      "additionalProperties": false,
+      "description": "Add an existing Splitwise user to a group.",
+      "properties": {
+        "operation": {
+          "const": "add_user_to_group",
+          "default": "add_user_to_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id",
+        "user_id"
+      ],
+      "title": "SplitwiseAddUserToGroupConfig",
+      "type": "object"
+    },
+    "SplitwiseCreateCommentConfig": {
+      "additionalProperties": false,
+      "description": "Comment on an expense.",
+      "properties": {
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "expense_id": {
+          "exclusiveMinimum": 0,
+          "title": "Expense Id",
+          "type": "integer"
+        },
+        "content": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "expense_id",
+        "content"
+      ],
+      "title": "SplitwiseCreateCommentConfig",
+      "type": "object"
+    },
+    "SplitwiseCreateExpenseConfig": {
+      "additionalProperties": false,
+      "description": "Create an expense split equally in a group; the current user pays.",
+      "properties": {
+        "cost": {
+          "description": "Decimal cost as a string, with at most two decimal places.",
+          "pattern": "^[0-9]+(?:\\.[0-9]{1,2})?$",
+          "title": "Cost",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "currency_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency Code"
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category Id"
+        },
+        "repeat_interval": {
+          "anyOf": [
+            {
+              "enum": [
+                "never",
+                "weekly",
+                "fortnightly",
+                "monthly",
+                "yearly"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repeat Interval",
+          "enum": [
+            "never",
+            "weekly",
+            "fortnightly",
+            "monthly",
+            "yearly"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "create_expense",
+          "default": "create_expense",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "split_equally": {
+          "const": true,
+          "default": true,
+          "title": "Split Equally",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "cost",
+        "description",
+        "group_id"
+      ],
+      "title": "SplitwiseCreateExpenseConfig",
+      "type": "object"
+    },
+    "SplitwiseCreateGroupConfig": {
+      "additionalProperties": false,
+      "description": "Create a group containing the current user.",
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "group_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "home",
+                "trip",
+                "couple",
+                "other",
+                "apartment",
+                "house"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Type",
+          "enum": [
+            "home",
+            "trip",
+            "couple",
+            "other",
+            "apartment",
+            "house"
+          ],
+          "x-enum-searchable": true
+        },
+        "simplify_by_default": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Simplify By Default"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SplitwiseCreateGroupConfig",
+      "type": "object"
+    },
+    "SplitwiseDeleteCommentConfig": {
+      "additionalProperties": false,
+      "description": "Delete a comment and return its record.",
+      "properties": {
+        "operation": {
+          "const": "delete_comment",
+          "default": "delete_comment",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SplitwiseDeleteCommentConfig",
+      "type": "object"
+    },
+    "SplitwiseDeleteExpenseConfig": {
+      "additionalProperties": false,
+      "description": "Delete an expense.",
+      "properties": {
+        "operation": {
+          "const": "delete_expense",
+          "default": "delete_expense",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SplitwiseDeleteExpenseConfig",
+      "type": "object"
+    },
+    "SplitwiseDeleteFriendConfig": {
+      "additionalProperties": false,
+      "description": "Remove a friendship.",
+      "properties": {
+        "operation": {
+          "const": "delete_friend",
+          "default": "delete_friend",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SplitwiseDeleteFriendConfig",
+      "type": "object"
+    },
+    "SplitwiseDeleteGroupConfig": {
+      "additionalProperties": false,
+      "description": "Delete a group and all its associated expenses.",
+      "properties": {
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SplitwiseDeleteGroupConfig",
+      "type": "object"
+    },
+    "SplitwiseGetCategoriesConfig": {
+      "additionalProperties": false,
+      "description": "List the supported expense categories.",
+      "properties": {
+        "operation": {
+          "const": "get_categories",
+          "default": "get_categories",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SplitwiseGetCategoriesConfig",
+      "type": "object"
+    },
+    "SplitwiseGetCommentsConfig": {
+      "additionalProperties": false,
+      "description": "List the comments on an expense.",
+      "properties": {
+        "operation": {
+          "const": "get_comments",
+          "default": "get_comments",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "expense_id": {
+          "exclusiveMinimum": 0,
+          "title": "Expense Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "expense_id"
+      ],
+      "title": "SplitwiseGetCommentsConfig",
+      "type": "object"
+    },
+    "SplitwiseGetCurrenciesConfig": {
+      "additionalProperties": false,
+      "description": "List the supported currencies.",
+      "properties": {
+        "operation": {
+          "const": "get_currencies",
+          "default": "get_currencies",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SplitwiseGetCurrenciesConfig",
+      "type": "object"
+    },
+    "SplitwiseGetCurrentUserConfig": {
+      "additionalProperties": false,
+      "description": "Get the authenticated Splitwise user.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SplitwiseGetCurrentUserConfig",
+      "type": "object"
+    },
+    "SplitwiseGetExpenseConfig": {
+      "additionalProperties": false,
+      "description": "Get a single expense.",
+      "properties": {
+        "operation": {
+          "const": "get_expense",
+          "default": "get_expense",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SplitwiseGetExpenseConfig",
+      "type": "object"
+    },
+    "SplitwiseGetExpensesConfig": {
+      "additionalProperties": false,
+      "description": "List one expense page; increase offset to retrieve subsequent pages.",
+      "properties": {
+        "operation": {
+          "const": "get_expenses",
+          "default": "get_expenses",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
+        },
+        "friend_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Friend Id"
+        },
+        "dated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dated After"
+        },
+        "dated_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Dated Before"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated After"
+        },
+        "updated_before": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated Before"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "SplitwiseGetExpensesConfig",
+      "type": "object"
+    },
+    "SplitwiseGetFriendConfig": {
+      "additionalProperties": false,
+      "description": "Get one friend and balances.",
+      "properties": {
+        "operation": {
+          "const": "get_friend",
+          "default": "get_friend",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SplitwiseGetFriendConfig",
+      "type": "object"
+    },
+    "SplitwiseGetFriendsConfig": {
+      "additionalProperties": false,
+      "description": "List friends and balances.",
+      "properties": {
+        "operation": {
+          "const": "get_friends",
+          "default": "get_friends",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SplitwiseGetFriendsConfig",
+      "type": "object"
+    },
+    "SplitwiseGetGroupConfig": {
+      "additionalProperties": false,
+      "description": "Get a group and its balances.",
+      "properties": {
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SplitwiseGetGroupConfig",
+      "type": "object"
+    },
+    "SplitwiseGetGroupsConfig": {
+      "additionalProperties": false,
+      "description": "List groups for the current user.",
+      "properties": {
+        "operation": {
+          "const": "get_groups",
+          "default": "get_groups",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "SplitwiseGetGroupsConfig",
+      "type": "object"
+    },
+    "SplitwiseGetNotificationsConfig": {
+      "additionalProperties": false,
+      "description": "Read recent activity; the provider may cap the returned list.",
+      "properties": {
+        "operation": {
+          "const": "get_notifications",
+          "default": "get_notifications",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated After"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "SplitwiseGetNotificationsConfig",
+      "type": "object"
+    },
+    "SplitwiseGetUserConfig": {
+      "additionalProperties": false,
+      "description": "Get a user by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SplitwiseGetUserConfig",
+      "type": "object"
+    },
+    "SplitwiseRemoveUserFromGroupConfig": {
+      "additionalProperties": false,
+      "description": "Remove a group member with a zero balance.",
+      "properties": {
+        "operation": {
+          "const": "remove_user_from_group",
+          "default": "remove_user_from_group",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "group_id": {
+          "exclusiveMinimum": 0,
+          "title": "Group Id",
+          "type": "integer"
+        },
+        "user_id": {
+          "exclusiveMinimum": 0,
+          "title": "User Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id",
+        "user_id"
+      ],
+      "title": "SplitwiseRemoveUserFromGroupConfig",
+      "type": "object"
+    },
+    "SplitwiseUndeleteExpenseConfig": {
+      "additionalProperties": false,
+      "description": "Restore a deleted expense.",
+      "properties": {
+        "operation": {
+          "const": "undelete_expense",
+          "default": "undelete_expense",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "SplitwiseUndeleteExpenseConfig",
+      "type": "object"
+    },
+    "SplitwiseUpdateExpenseConfig": {
+      "additionalProperties": false,
+      "description": "Update expense fields while preserving existing participant shares.",
+      "properties": {
+        "cost": {
+          "description": "Decimal cost as a string, with at most two decimal places.",
+          "pattern": "^[0-9]+(?:\\.[0-9]{1,2})?$",
+          "title": "Cost",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Details"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "currency_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency Code"
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category Id"
+        },
+        "repeat_interval": {
+          "anyOf": [
+            {
+              "enum": [
+                "never",
+                "weekly",
+                "fortnightly",
+                "monthly",
+                "yearly"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Repeat Interval",
+          "enum": [
+            "never",
+            "weekly",
+            "fortnightly",
+            "monthly",
+            "yearly"
+          ],
+          "x-enum-searchable": true
+        },
+        "operation": {
+          "const": "update_expense",
+          "default": "update_expense",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Id",
+          "type": "integer"
+        },
+        "group_id": {
+          "description": "Use 0 for an expense outside a group. Existing shares are preserved; no participant share fields are sent.",
+          "minimum": 0,
+          "title": "Group Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "cost",
+        "description",
+        "id",
+        "group_id"
+      ],
+      "title": "SplitwiseUpdateExpenseConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_user_to_group": "#/$defs/SplitwiseAddUserToGroupConfig",
+          "create_comment": "#/$defs/SplitwiseCreateCommentConfig",
+          "create_expense": "#/$defs/SplitwiseCreateExpenseConfig",
+          "create_group": "#/$defs/SplitwiseCreateGroupConfig",
+          "delete_comment": "#/$defs/SplitwiseDeleteCommentConfig",
+          "delete_expense": "#/$defs/SplitwiseDeleteExpenseConfig",
+          "delete_friend": "#/$defs/SplitwiseDeleteFriendConfig",
+          "delete_group": "#/$defs/SplitwiseDeleteGroupConfig",
+          "get_categories": "#/$defs/SplitwiseGetCategoriesConfig",
+          "get_comments": "#/$defs/SplitwiseGetCommentsConfig",
+          "get_currencies": "#/$defs/SplitwiseGetCurrenciesConfig",
+          "get_current_user": "#/$defs/SplitwiseGetCurrentUserConfig",
+          "get_expense": "#/$defs/SplitwiseGetExpenseConfig",
+          "get_expenses": "#/$defs/SplitwiseGetExpensesConfig",
+          "get_friend": "#/$defs/SplitwiseGetFriendConfig",
+          "get_friends": "#/$defs/SplitwiseGetFriendsConfig",
+          "get_group": "#/$defs/SplitwiseGetGroupConfig",
+          "get_groups": "#/$defs/SplitwiseGetGroupsConfig",
+          "get_notifications": "#/$defs/SplitwiseGetNotificationsConfig",
+          "get_user": "#/$defs/SplitwiseGetUserConfig",
+          "remove_user_from_group": "#/$defs/SplitwiseRemoveUserFromGroupConfig",
+          "undelete_expense": "#/$defs/SplitwiseUndeleteExpenseConfig",
+          "update_expense": "#/$defs/SplitwiseUpdateExpenseConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SplitwiseGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseGetGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseGetGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseCreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseDeleteGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseAddUserToGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseRemoveUserFromGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseGetFriendsConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseGetFriendConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseDeleteFriendConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseGetExpensesConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseGetExpenseConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseCreateExpenseConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseUpdateExpenseConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseDeleteExpenseConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseUndeleteExpenseConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseGetCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseDeleteCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseGetNotificationsConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseGetCurrenciesConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitwiseGetCategoriesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SplitwiseAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Splitwise Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
