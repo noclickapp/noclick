@@ -1,0 +1,2014 @@
+{
+  "$defs": {
+    "ApiframeAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "apiframe_api_key",
+          "default": "apiframe_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Apiframe API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in the Apiframe console and paste it here. NoClick sends it in X-API-Key to api.apiframe.ai. Media submissions consume your Apiframe credits; get_account verifies the caller and team.",
+      "x-credential-url": "https://console.apiframe.ai"
+    },
+    "ApiframeArchiveLoraConfig": {
+      "additionalProperties": false,
+      "description": "Archive a LoRA.",
+      "properties": {
+        "operation": {
+          "const": "archive_lora",
+          "default": "archive_lora",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ApiframeArchiveLoraConfig",
+      "type": "object"
+    },
+    "ApiframeEditImageConfig": {
+      "additionalProperties": false,
+      "description": "Submit an inpaint or outpaint job.",
+      "properties": {
+        "operation": {
+          "const": "edit_image",
+          "default": "edit_image",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "const": "flux-fill-pro",
+          "default": "flux-fill-pro",
+          "title": "Model",
+          "type": "string"
+        },
+        "webhookUrl": {
+          "anyOf": [
+            {
+              "pattern": "^https?://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookurl"
+        },
+        "webhookEvents": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "progress",
+                  "completed",
+                  "failed"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookevents"
+        },
+        "fluxFillParams": {
+          "$ref": "#/$defs/ApiframeEditImageConfigFluxFillParams"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "fluxFillParams"
+      ],
+      "title": "ApiframeEditImageConfig",
+      "type": "object"
+    },
+    "ApiframeEditImageConfigFluxFillParams": {
+      "additionalProperties": false,
+      "properties": {
+        "image": {
+          "title": "Image",
+          "type": "string"
+        },
+        "prompt": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "inpaint",
+            "outpaint"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "mask": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mask"
+        },
+        "outpaint": {
+          "anyOf": [
+            {
+              "enum": [
+                "Zoom out 1.5x",
+                "Zoom out 2x",
+                "Make square",
+                "Left outpaint",
+                "Right outpaint",
+                "Top outpaint",
+                "Bottom outpaint"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Outpaint",
+          "enum": [
+            "Zoom out 1.5x",
+            "Zoom out 2x",
+            "Make square",
+            "Left outpaint",
+            "Right outpaint",
+            "Top outpaint",
+            "Bottom outpaint"
+          ],
+          "x-enum-searchable": true
+        },
+        "steps": {
+          "anyOf": [
+            {
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Steps"
+        },
+        "guidance": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 2,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guidance"
+        },
+        "safety_tolerance": {
+          "anyOf": [
+            {
+              "maximum": 6,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Safety Tolerance"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpg",
+                "png"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Format",
+          "enum": [
+            "jpg",
+            "png"
+          ],
+          "x-enum-searchable": true
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        },
+        "prompt_upsampling": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt Upsampling"
+        }
+      },
+      "required": [
+        "image",
+        "prompt",
+        "mode"
+      ],
+      "title": "ApiframeEditImageConfigFluxFillParams",
+      "type": "object"
+    },
+    "ApiframeEditVideoConfig": {
+      "additionalProperties": false,
+      "description": "Submit an instruction-based video edit job.",
+      "properties": {
+        "operation": {
+          "const": "edit_video",
+          "default": "edit_video",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "model": {
+          "const": "wan-2.7-videoedit",
+          "default": "wan-2.7-videoedit",
+          "title": "Model",
+          "type": "string"
+        },
+        "webhookUrl": {
+          "anyOf": [
+            {
+              "pattern": "^https?://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookurl"
+        },
+        "webhookEvents": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "progress",
+                  "completed",
+                  "failed"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookevents"
+        },
+        "wan27VideoeditParams": {
+          "$ref": "#/$defs/ApiframeEditVideoConfigWan27VideoeditParams"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "prompt",
+        "wan27VideoeditParams"
+      ],
+      "title": "ApiframeEditVideoConfig",
+      "type": "object"
+    },
+    "ApiframeEditVideoConfigWan27VideoeditParams": {
+      "additionalProperties": false,
+      "properties": {
+        "video": {
+          "title": "Video",
+          "type": "string"
+        },
+        "reference_image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference Image"
+        },
+        "negative_prompt": {
+          "anyOf": [
+            {
+              "maxLength": 2500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Negative Prompt"
+        },
+        "resolution": {
+          "anyOf": [
+            {
+              "enum": [
+                "720p",
+                "1080p"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolution",
+          "enum": [
+            "720p",
+            "1080p"
+          ],
+          "x-enum-searchable": true
+        },
+        "aspect_ratio": {
+          "anyOf": [
+            {
+              "enum": [
+                "auto",
+                "16:9",
+                "9:16",
+                "1:1",
+                "4:3",
+                "3:4"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Aspect Ratio",
+          "enum": [
+            "auto",
+            "16:9",
+            "9:16",
+            "1:1",
+            "4:3",
+            "3:4"
+          ],
+          "x-enum-searchable": true
+        },
+        "audio_setting": {
+          "anyOf": [
+            {
+              "enum": [
+                "auto",
+                "origin"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Audio Setting",
+          "enum": [
+            "auto",
+            "origin"
+          ],
+          "x-enum-searchable": true
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 2,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "required": [
+        "video"
+      ],
+      "title": "ApiframeEditVideoConfigWan27VideoeditParams",
+      "type": "object"
+    },
+    "ApiframeGenerateImageConfig": {
+      "additionalProperties": false,
+      "description": "Submit a Midjourney image generation job; poll get_job for results.",
+      "properties": {
+        "operation": {
+          "const": "generate_image",
+          "default": "generate_image",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "model": {
+          "const": "midjourney",
+          "default": "midjourney",
+          "title": "Model",
+          "type": "string"
+        },
+        "webhookUrl": {
+          "anyOf": [
+            {
+              "pattern": "^https?://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookurl"
+        },
+        "webhookEvents": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "progress",
+                  "completed",
+                  "failed"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookevents"
+        },
+        "midjourneyParams": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ApiframeGenerateImageConfigMidjourneyParams"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "ApiframeGenerateImageConfig",
+      "type": "object"
+    },
+    "ApiframeGenerateImageConfigMidjourneyParams": {
+      "additionalProperties": false,
+      "properties": {
+        "aspect_ratio": {
+          "anyOf": [
+            {
+              "pattern": "^\\d+:\\d+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Aspect Ratio"
+        }
+      },
+      "title": "ApiframeGenerateImageConfigMidjourneyParams",
+      "type": "object"
+    },
+    "ApiframeGenerateLyricsConfig": {
+      "additionalProperties": false,
+      "description": "Write song lyrics with Udio.",
+      "properties": {
+        "operation": {
+          "const": "generate_lyrics",
+          "default": "generate_lyrics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "enum": [
+                32,
+                65,
+                97,
+                130
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        },
+        "lyrics": {
+          "anyOf": [
+            {
+              "maxLength": 5000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lyrics"
+        },
+        "webhookUrl": {
+          "anyOf": [
+            {
+              "pattern": "^https?://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookurl"
+        },
+        "webhookEvents": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "progress",
+                  "completed",
+                  "failed"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookevents"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "ApiframeGenerateLyricsConfig",
+      "type": "object"
+    },
+    "ApiframeGenerateMusicConfig": {
+      "additionalProperties": false,
+      "description": "Submit a Suno music job; completed jobs can contain two songs.",
+      "properties": {
+        "operation": {
+          "const": "generate_music",
+          "default": "generate_music",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "model": {
+          "const": "suno",
+          "default": "suno",
+          "title": "Model",
+          "type": "string"
+        },
+        "webhookUrl": {
+          "anyOf": [
+            {
+              "pattern": "^https?://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookurl"
+        },
+        "webhookEvents": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "progress",
+                  "completed",
+                  "failed"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookevents"
+        },
+        "sunoParams": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ApiframeGenerateMusicConfigSunoParams"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "ApiframeGenerateMusicConfig",
+      "type": "object"
+    },
+    "ApiframeGenerateMusicConfigSunoParams": {
+      "additionalProperties": false,
+      "properties": {
+        "custom_mode": {
+          "default": false,
+          "title": "Custom Mode",
+          "type": "boolean"
+        },
+        "instrumental": {
+          "default": false,
+          "title": "Instrumental",
+          "type": "boolean"
+        },
+        "model_version": {
+          "default": "V4_5PLUS",
+          "enum": [
+            "V4",
+            "V4_5",
+            "V4_5ALL",
+            "V4_5PLUS",
+            "V5",
+            "V5_5"
+          ],
+          "title": "Model Version",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "style": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Style"
+        },
+        "negative_tags": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Negative Tags"
+        },
+        "vocal_gender": {
+          "anyOf": [
+            {
+              "enum": [
+                "m",
+                "f"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vocal Gender",
+          "enum": [
+            "m",
+            "f"
+          ],
+          "x-enum-searchable": true
+        },
+        "style_weight": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Style Weight"
+        },
+        "weirdness_constraint": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Weirdness Constraint"
+        },
+        "auto_lyrics": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Auto Lyrics"
+        }
+      },
+      "title": "ApiframeGenerateMusicConfigSunoParams",
+      "type": "object"
+    },
+    "ApiframeGenerateVideoConfig": {
+      "additionalProperties": false,
+      "description": "Submit a Kling 2.1 video generation job; poll get_job for results.",
+      "properties": {
+        "operation": {
+          "const": "generate_video",
+          "default": "generate_video",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Prompt",
+          "type": "string"
+        },
+        "model": {
+          "const": "kling-2.1",
+          "default": "kling-2.1",
+          "title": "Model",
+          "type": "string"
+        },
+        "webhookUrl": {
+          "anyOf": [
+            {
+              "pattern": "^https?://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookurl"
+        },
+        "webhookEvents": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "progress",
+                  "completed",
+                  "failed"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookevents"
+        },
+        "klingParams": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ApiframeGenerateVideoConfigKlingParams"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "ApiframeGenerateVideoConfig",
+      "type": "object"
+    },
+    "ApiframeGenerateVideoConfigKlingParams": {
+      "additionalProperties": false,
+      "properties": {
+        "start_image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Image"
+        },
+        "end_image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End Image"
+        },
+        "negative_prompt": {
+          "anyOf": [
+            {
+              "maxLength": 2500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Negative Prompt"
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "standard",
+                "pro"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mode",
+          "enum": [
+            "standard",
+            "pro"
+          ],
+          "x-enum-searchable": true
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "enum": [
+                5,
+                10
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration"
+        }
+      },
+      "title": "ApiframeGenerateVideoConfigKlingParams",
+      "type": "object"
+    },
+    "ApiframeGetAccountConfig": {
+      "additionalProperties": false,
+      "description": "Get the authenticated caller.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ApiframeGetAccountConfig",
+      "type": "object"
+    },
+    "ApiframeGetJobConfig": {
+      "additionalProperties": false,
+      "description": "Get a job.",
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ApiframeGetJobConfig",
+      "type": "object"
+    },
+    "ApiframeGetLoraConfig": {
+      "additionalProperties": false,
+      "description": "Get a single LoRA.",
+      "properties": {
+        "operation": {
+          "const": "get_lora",
+          "default": "get_lora",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ApiframeGetLoraConfig",
+      "type": "object"
+    },
+    "ApiframeListJobsConfig": {
+      "additionalProperties": false,
+      "description": "List jobs.",
+      "properties": {
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "QUEUED",
+                "PROCESSING",
+                "COMPLETED",
+                "FAILED",
+                "CANCELLED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status",
+          "enum": [
+            "QUEUED",
+            "PROCESSING",
+            "COMPLETED",
+            "FAILED",
+            "CANCELLED"
+          ],
+          "x-enum-searchable": true
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "scope": {
+          "default": "user",
+          "enum": [
+            "user",
+            "team"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "include_models": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Include Models",
+          "type": "string"
+        }
+      },
+      "title": "ApiframeListJobsConfig",
+      "type": "object"
+    },
+    "ApiframeListLorasConfig": {
+      "additionalProperties": false,
+      "description": "List the team's LoRAs.",
+      "properties": {
+        "operation": {
+          "const": "list_loras",
+          "default": "list_loras",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 24,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "includeArchived": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Includearchived",
+          "type": "string"
+        }
+      },
+      "title": "ApiframeListLorasConfig",
+      "type": "object"
+    },
+    "ApiframeListModelsConfig": {
+      "additionalProperties": false,
+      "description": "List the curated model catalog.",
+      "properties": {
+        "operation": {
+          "const": "list_models",
+          "default": "list_models",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "modality": {
+          "anyOf": [
+            {
+              "enum": [
+                "image",
+                "video",
+                "music"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modality",
+          "enum": [
+            "image",
+            "video",
+            "music"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ApiframeListModelsConfig",
+      "type": "object"
+    },
+    "ApiframeMidjourneyActionConfig": {
+      "additionalProperties": false,
+      "description": "Run a follow-up action on a completed Midjourney image.",
+      "properties": {
+        "operation": {
+          "const": "midjourney_action",
+          "default": "midjourney_action",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "action": {
+          "const": "upsample",
+          "default": "upsample",
+          "title": "Action",
+          "type": "string"
+        },
+        "index": {
+          "enum": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "title": "Index",
+          "type": "integer"
+        },
+        "parentJobId": {
+          "format": "uuid",
+          "title": "Parentjobid",
+          "type": "string"
+        },
+        "webhookUrl": {
+          "anyOf": [
+            {
+              "pattern": "^https?://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookurl"
+        },
+        "webhookEvents": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "progress",
+                  "completed",
+                  "failed"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookevents"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "index",
+        "parentJobId"
+      ],
+      "title": "ApiframeMidjourneyActionConfig",
+      "type": "object"
+    },
+    "ApiframeRemoveImageBackgroundConfig": {
+      "additionalProperties": false,
+      "description": "Submit a background-removal job.",
+      "properties": {
+        "operation": {
+          "const": "remove_image_background",
+          "default": "remove_image_background",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "const": "bria-bg-remove",
+          "default": "bria-bg-remove",
+          "title": "Model",
+          "type": "string"
+        },
+        "webhookUrl": {
+          "anyOf": [
+            {
+              "pattern": "^https?://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookurl"
+        },
+        "webhookEvents": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "progress",
+                  "completed",
+                  "failed"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookevents"
+        },
+        "briaBgRemoveParams": {
+          "$ref": "#/$defs/ApiframeRemoveImageBackgroundConfigBriaBgRemoveParams"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "briaBgRemoveParams"
+      ],
+      "title": "ApiframeRemoveImageBackgroundConfig",
+      "type": "object"
+    },
+    "ApiframeRemoveImageBackgroundConfigBriaBgRemoveParams": {
+      "additionalProperties": false,
+      "properties": {
+        "image": {
+          "title": "Image",
+          "type": "string"
+        },
+        "content_moderation": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Moderation"
+        }
+      },
+      "required": [
+        "image"
+      ],
+      "title": "ApiframeRemoveImageBackgroundConfigBriaBgRemoveParams",
+      "type": "object"
+    },
+    "ApiframeUpscaleImageConfig": {
+      "additionalProperties": false,
+      "description": "Submit an image upscale job.",
+      "properties": {
+        "operation": {
+          "const": "upscale_image",
+          "default": "upscale_image",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "const": "topaz-image-upscale",
+          "default": "topaz-image-upscale",
+          "title": "Model",
+          "type": "string"
+        },
+        "webhookUrl": {
+          "anyOf": [
+            {
+              "pattern": "^https?://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookurl"
+        },
+        "webhookEvents": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "progress",
+                  "completed",
+                  "failed"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookevents"
+        },
+        "topazUpscaleParams": {
+          "$ref": "#/$defs/ApiframeUpscaleImageConfigTopazUpscaleParams"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "topazUpscaleParams"
+      ],
+      "title": "ApiframeUpscaleImageConfig",
+      "type": "object"
+    },
+    "ApiframeUpscaleImageConfigTopazUpscaleParams": {
+      "additionalProperties": false,
+      "properties": {
+        "image": {
+          "title": "Image",
+          "type": "string"
+        },
+        "model_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "standard-v2",
+                "low-res-v2",
+                "cgi",
+                "high-fidelity-v2",
+                "text-refine",
+                "redefine"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Type",
+          "enum": [
+            "standard-v2",
+            "low-res-v2",
+            "cgi",
+            "high-fidelity-v2",
+            "text-refine",
+            "redefine"
+          ],
+          "x-enum-searchable": true
+        },
+        "upscale_factor": {
+          "anyOf": [
+            {
+              "enum": [
+                1,
+                2,
+                4,
+                6
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Upscale Factor"
+        },
+        "face_enhance": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Face Enhance"
+        },
+        "face_enhance_strength": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Face Enhance Strength"
+        },
+        "face_enhance_creativity": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Face Enhance Creativity"
+        },
+        "output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "jpg",
+                "png"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Format",
+          "enum": [
+            "jpg",
+            "png"
+          ],
+          "x-enum-searchable": true
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Seed"
+        }
+      },
+      "required": [
+        "image"
+      ],
+      "title": "ApiframeUpscaleImageConfigTopazUpscaleParams",
+      "type": "object"
+    },
+    "ApiframeUpscaleVideoConfig": {
+      "additionalProperties": false,
+      "description": "Submit a video upscale job.",
+      "properties": {
+        "operation": {
+          "const": "upscale_video",
+          "default": "upscale_video",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "const": "topaz-video-upscale",
+          "default": "topaz-video-upscale",
+          "title": "Model",
+          "type": "string"
+        },
+        "webhookUrl": {
+          "anyOf": [
+            {
+              "pattern": "^https?://[^\\s]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookurl"
+        },
+        "webhookEvents": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "progress",
+                  "completed",
+                  "failed"
+                ],
+                "type": "string"
+              },
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhookevents"
+        },
+        "topazVideoParams": {
+          "$ref": "#/$defs/ApiframeUpscaleVideoConfigTopazVideoParams"
+        },
+        "idempotency_key": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Idempotency Key"
+        }
+      },
+      "required": [
+        "topazVideoParams"
+      ],
+      "title": "ApiframeUpscaleVideoConfig",
+      "type": "object"
+    },
+    "ApiframeUpscaleVideoConfigTopazVideoParams": {
+      "additionalProperties": false,
+      "properties": {
+        "video": {
+          "title": "Video",
+          "type": "string"
+        },
+        "target_resolution": {
+          "enum": [
+            "720p",
+            "1080p",
+            "4k"
+          ],
+          "title": "Target Resolution",
+          "type": "string"
+        },
+        "target_fps": {
+          "enum": [
+            24,
+            30,
+            60
+          ],
+          "title": "Target Fps",
+          "type": "integer"
+        },
+        "enhance_model": {
+          "anyOf": [
+            {
+              "enum": [
+                "auto",
+                "theia-fine-tune-detail",
+                "theia-fine-tune-fidelity",
+                "apollo",
+                "rhea",
+                "iris"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enhance Model",
+          "enum": [
+            "auto",
+            "theia-fine-tune-detail",
+            "theia-fine-tune-fidelity",
+            "apollo",
+            "rhea",
+            "iris"
+          ],
+          "x-enum-searchable": true
+        },
+        "subject_detection": {
+          "anyOf": [
+            {
+              "enum": [
+                "all",
+                "foreground",
+                "background",
+                "none"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject Detection",
+          "enum": [
+            "all",
+            "foreground",
+            "background",
+            "none"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "video",
+        "target_resolution",
+        "target_fps"
+      ],
+      "title": "ApiframeUpscaleVideoConfigTopazVideoParams",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_lora": "#/$defs/ApiframeArchiveLoraConfig",
+          "edit_image": "#/$defs/ApiframeEditImageConfig",
+          "edit_video": "#/$defs/ApiframeEditVideoConfig",
+          "generate_image": "#/$defs/ApiframeGenerateImageConfig",
+          "generate_lyrics": "#/$defs/ApiframeGenerateLyricsConfig",
+          "generate_music": "#/$defs/ApiframeGenerateMusicConfig",
+          "generate_video": "#/$defs/ApiframeGenerateVideoConfig",
+          "get_account": "#/$defs/ApiframeGetAccountConfig",
+          "get_job": "#/$defs/ApiframeGetJobConfig",
+          "get_lora": "#/$defs/ApiframeGetLoraConfig",
+          "list_jobs": "#/$defs/ApiframeListJobsConfig",
+          "list_loras": "#/$defs/ApiframeListLorasConfig",
+          "list_models": "#/$defs/ApiframeListModelsConfig",
+          "midjourney_action": "#/$defs/ApiframeMidjourneyActionConfig",
+          "remove_image_background": "#/$defs/ApiframeRemoveImageBackgroundConfig",
+          "upscale_image": "#/$defs/ApiframeUpscaleImageConfig",
+          "upscale_video": "#/$defs/ApiframeUpscaleVideoConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ApiframeGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/ApiframeListModelsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApiframeListJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApiframeGetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/ApiframeGenerateImageConfig"
+        },
+        {
+          "$ref": "#/$defs/ApiframeUpscaleImageConfig"
+        },
+        {
+          "$ref": "#/$defs/ApiframeMidjourneyActionConfig"
+        },
+        {
+          "$ref": "#/$defs/ApiframeEditImageConfig"
+        },
+        {
+          "$ref": "#/$defs/ApiframeRemoveImageBackgroundConfig"
+        },
+        {
+          "$ref": "#/$defs/ApiframeGenerateVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/ApiframeUpscaleVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/ApiframeEditVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/ApiframeGenerateMusicConfig"
+        },
+        {
+          "$ref": "#/$defs/ApiframeGenerateLyricsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApiframeListLorasConfig"
+        },
+        {
+          "$ref": "#/$defs/ApiframeGetLoraConfig"
+        },
+        {
+          "$ref": "#/$defs/ApiframeArchiveLoraConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ApiframeAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Apiframe Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

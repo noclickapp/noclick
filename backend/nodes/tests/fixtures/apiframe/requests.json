@@ -1,0 +1,420 @@
+[
+  {
+    "config": {
+      "operation": "get_account"
+    },
+    "method": "GET",
+    "path": "/v2/me",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_models",
+      "modality": "image"
+    },
+    "method": "GET",
+    "path": "/v2/models",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "list_jobs",
+      "status": "QUEUED",
+      "model": "1",
+      "limit": 20,
+      "cursor": "1",
+      "scope": "user",
+      "search": "00000000-0000-4000-8000-000000000001",
+      "include_models": "true"
+    },
+    "method": "GET",
+    "path": "/v2/jobs",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_job",
+      "id": "00000000-0000-4000-8000-000000000001"
+    },
+    "method": "GET",
+    "path": "/v2/jobs/00000000-0000-4000-8000-000000000001",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "generate_image",
+      "prompt": "1",
+      "model": "midjourney",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "midjourneyParams": {
+        "aspect_ratio": "0:0"
+      },
+      "idempotency_key": "1"
+    },
+    "method": "POST",
+    "path": "/v2/images/generate",
+    "body": {
+      "prompt": "1",
+      "model": "midjourney",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "midjourneyParams": {
+        "aspect_ratio": "0:0"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "upscale_image",
+      "model": "topaz-image-upscale",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "topazUpscaleParams": {
+        "image": "1",
+        "model_type": "standard-v2",
+        "upscale_factor": 1,
+        "face_enhance": false,
+        "face_enhance_strength": 1,
+        "face_enhance_creativity": 1,
+        "output_format": "jpg",
+        "seed": 1
+      },
+      "idempotency_key": "1"
+    },
+    "method": "POST",
+    "path": "/v2/images/upscale",
+    "body": {
+      "model": "topaz-image-upscale",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "topazUpscaleParams": {
+        "image": "1",
+        "model_type": "standard-v2",
+        "upscale_factor": 1,
+        "face_enhance": false,
+        "face_enhance_strength": 1.0,
+        "face_enhance_creativity": 1.0,
+        "output_format": "jpg",
+        "seed": 1
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "midjourney_action",
+      "action": "upsample",
+      "index": 1,
+      "parentJobId": "00000000-0000-4000-8000-000000000001",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "idempotency_key": "1"
+    },
+    "method": "POST",
+    "path": "/v2/images/midjourney/action",
+    "body": {
+      "action": "upsample",
+      "index": 1,
+      "parentJobId": "00000000-0000-4000-8000-000000000001",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "edit_image",
+      "model": "flux-fill-pro",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "fluxFillParams": {
+        "image": "1",
+        "prompt": "1",
+        "mode": "inpaint",
+        "mask": "1",
+        "outpaint": "Zoom out 1.5x",
+        "steps": 1,
+        "guidance": 2,
+        "safety_tolerance": 1,
+        "output_format": "jpg",
+        "seed": 1,
+        "prompt_upsampling": false
+      },
+      "idempotency_key": "1"
+    },
+    "method": "POST",
+    "path": "/v2/images/edit",
+    "body": {
+      "model": "flux-fill-pro",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "fluxFillParams": {
+        "image": "1",
+        "prompt": "1",
+        "mode": "inpaint",
+        "mask": "1",
+        "outpaint": "Zoom out 1.5x",
+        "steps": 1,
+        "guidance": 2.0,
+        "safety_tolerance": 1,
+        "output_format": "jpg",
+        "seed": 1,
+        "prompt_upsampling": false
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "remove_image_background",
+      "model": "bria-bg-remove",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "briaBgRemoveParams": {
+        "image": "1",
+        "content_moderation": false
+      },
+      "idempotency_key": "1"
+    },
+    "method": "POST",
+    "path": "/v2/images/background-remove",
+    "body": {
+      "model": "bria-bg-remove",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "briaBgRemoveParams": {
+        "image": "1",
+        "content_moderation": false
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "generate_video",
+      "prompt": "1",
+      "model": "kling-2.1",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "klingParams": {
+        "start_image": "1",
+        "end_image": "1",
+        "negative_prompt": "1",
+        "mode": "standard",
+        "duration": 5
+      },
+      "idempotency_key": "1"
+    },
+    "method": "POST",
+    "path": "/v2/videos/generate",
+    "body": {
+      "prompt": "1",
+      "model": "kling-2.1",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "klingParams": {
+        "start_image": "1",
+        "end_image": "1",
+        "negative_prompt": "1",
+        "mode": "standard",
+        "duration": 5
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "upscale_video",
+      "model": "topaz-video-upscale",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "topazVideoParams": {
+        "video": "1",
+        "target_resolution": "720p",
+        "target_fps": 24,
+        "enhance_model": "auto",
+        "subject_detection": "all"
+      },
+      "idempotency_key": "1"
+    },
+    "method": "POST",
+    "path": "/v2/videos/upscale",
+    "body": {
+      "model": "topaz-video-upscale",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "topazVideoParams": {
+        "video": "1",
+        "target_resolution": "720p",
+        "target_fps": 24,
+        "enhance_model": "auto",
+        "subject_detection": "all"
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "edit_video",
+      "prompt": "1",
+      "model": "wan-2.7-videoedit",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "wan27VideoeditParams": {
+        "video": "1",
+        "reference_image": "1",
+        "negative_prompt": "1",
+        "resolution": "720p",
+        "aspect_ratio": "auto",
+        "audio_setting": "auto",
+        "duration": 2,
+        "seed": 1
+      },
+      "idempotency_key": "1"
+    },
+    "method": "POST",
+    "path": "/v2/videos/edit",
+    "body": {
+      "prompt": "1",
+      "model": "wan-2.7-videoedit",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "wan27VideoeditParams": {
+        "video": "1",
+        "reference_image": "1",
+        "negative_prompt": "1",
+        "resolution": "720p",
+        "aspect_ratio": "auto",
+        "audio_setting": "auto",
+        "duration": 2,
+        "seed": 1
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "generate_music",
+      "prompt": "1",
+      "model": "suno",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "sunoParams": {
+        "custom_mode": false,
+        "instrumental": false,
+        "model_version": "V4",
+        "title": "1",
+        "style": "1",
+        "negative_tags": "1",
+        "vocal_gender": "m",
+        "style_weight": 1,
+        "weirdness_constraint": 1,
+        "auto_lyrics": false
+      },
+      "idempotency_key": "1"
+    },
+    "method": "POST",
+    "path": "/v2/music/generate",
+    "body": {
+      "prompt": "1",
+      "model": "suno",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "sunoParams": {
+        "custom_mode": false,
+        "instrumental": false,
+        "model_version": "V4",
+        "title": "1",
+        "style": "1",
+        "negative_tags": "1",
+        "vocal_gender": "m",
+        "style_weight": 1.0,
+        "weirdness_constraint": 1.0,
+        "auto_lyrics": false
+      }
+    }
+  },
+  {
+    "config": {
+      "operation": "generate_lyrics",
+      "prompt": "1",
+      "duration": 32,
+      "lyrics": "1",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ],
+      "idempotency_key": "1"
+    },
+    "method": "POST",
+    "path": "/v2/music/udio/lyrics",
+    "body": {
+      "prompt": "1",
+      "duration": 32,
+      "lyrics": "1",
+      "webhookUrl": "https://example.test",
+      "webhookEvents": [
+        "progress"
+      ]
+    }
+  },
+  {
+    "config": {
+      "operation": "list_loras",
+      "cursor": "00000000-0000-4000-8000-000000000001",
+      "limit": 24,
+      "includeArchived": "true"
+    },
+    "method": "GET",
+    "path": "/v2/loras",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "get_lora",
+      "id": "00000000-0000-4000-8000-000000000001"
+    },
+    "method": "GET",
+    "path": "/v2/loras/00000000-0000-4000-8000-000000000001",
+    "body": null
+  },
+  {
+    "config": {
+      "operation": "archive_lora",
+      "id": "00000000-0000-4000-8000-000000000001"
+    },
+    "method": "DELETE",
+    "path": "/v2/loras/00000000-0000-4000-8000-000000000001",
+    "body": null
+  }
+]
