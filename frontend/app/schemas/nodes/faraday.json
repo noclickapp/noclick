@@ -1,0 +1,778 @@
+{
+  "$defs": {
+    "CreateCohort": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "stream_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For example transaction. Omit to use the provider's default cohort population.",
+          "title": "Event Stream Name"
+        },
+        "min_count": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Event Count"
+        },
+        "max_count": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum Event Count"
+        },
+        "min_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Event Value"
+        },
+        "max_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum Event Value"
+        },
+        "operation": {
+          "const": "create_cohort",
+          "default": "create_cohort",
+          "title": "Create Cohort",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateCohort",
+      "type": "object"
+    },
+    "CreateOutcome": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "attainment_cohort_id": {
+          "format": "uuid",
+          "title": "Attainment Cohort ID",
+          "type": "string"
+        },
+        "eligible_cohort_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Omit to use the US population.",
+          "title": "Eligible Cohort ID"
+        },
+        "attrition_cohort_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attrition Cohort ID"
+        },
+        "prediction_mode": {
+          "default": "auto",
+          "enum": [
+            "auto",
+            "static"
+          ],
+          "title": "Prediction Mode",
+          "type": "string"
+        },
+        "preview": {
+          "default": true,
+          "description": "A preview outcome does not build until preview is disabled.",
+          "title": "Preview",
+          "type": "boolean"
+        },
+        "operation": {
+          "const": "create_outcome",
+          "default": "create_outcome",
+          "title": "Create Outcome",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name",
+        "attainment_cohort_id"
+      ],
+      "title": "CreateOutcome",
+      "type": "object"
+    },
+    "DeleteCohort": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_cohort",
+          "default": "delete_cohort",
+          "title": "Delete Cohort Permanently",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cohort_id": {
+          "format": "uuid",
+          "title": "Cohort Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cohort_id"
+      ],
+      "title": "DeleteCohort",
+      "type": "object"
+    },
+    "FaradayAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "faraday_api_key",
+          "default": "faraday_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Faraday API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your Faraday account API key. NoClick sends it as a Bearer token to api.faraday.ai. The current-account read verifies which account accepts it.",
+      "x-credential-url": "https://faraday.ai/docs/abstractions/accounts"
+    },
+    "GetCohort": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_cohort",
+          "default": "get_cohort",
+          "title": "Get Cohort",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cohort_id": {
+          "format": "uuid",
+          "title": "Cohort Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cohort_id"
+      ],
+      "title": "GetCohort",
+      "type": "object"
+    },
+    "GetCurrentAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_current_account",
+          "default": "get_current_account",
+          "title": "Get Current Account",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetCurrentAccount",
+      "type": "object"
+    },
+    "GetDataset": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_dataset",
+          "default": "get_dataset",
+          "title": "Get Dataset",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "format": "uuid",
+          "title": "Dataset Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ],
+      "title": "GetDataset",
+      "type": "object"
+    },
+    "GetOutcome": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_outcome",
+          "default": "get_outcome",
+          "title": "Get Outcome",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "outcome_id": {
+          "format": "uuid",
+          "title": "Outcome Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "outcome_id"
+      ],
+      "title": "GetOutcome",
+      "type": "object"
+    },
+    "GetScope": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_scope",
+          "default": "get_scope",
+          "title": "Get Scope",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scope_id": {
+          "format": "uuid",
+          "title": "Scope Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scope_id"
+      ],
+      "title": "GetScope",
+      "type": "object"
+    },
+    "GetTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_target",
+          "default": "get_target",
+          "title": "Get Target",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "target_id": {
+          "format": "uuid",
+          "title": "Target Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_id"
+      ],
+      "title": "GetTarget",
+      "type": "object"
+    },
+    "ListCohorts": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_cohorts",
+          "default": "list_cohorts",
+          "title": "List Cohorts",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListCohorts",
+      "type": "object"
+    },
+    "ListDatasets": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_datasets",
+          "default": "list_datasets",
+          "title": "List Datasets",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListDatasets",
+      "type": "object"
+    },
+    "ListOutcomes": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_outcomes",
+          "default": "list_outcomes",
+          "title": "List Outcomes",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListOutcomes",
+      "type": "object"
+    },
+    "ListScopes": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_scopes",
+          "default": "list_scopes",
+          "title": "List Scopes",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListScopes",
+      "type": "object"
+    },
+    "ListTargets": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_targets",
+          "default": "list_targets",
+          "title": "List Targets",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListTargets",
+      "type": "object"
+    },
+    "LookupTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "lookup_target",
+          "default": "lookup_target",
+          "title": "Lookup Target",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "target_id": {
+          "format": "uuid",
+          "title": "Target Id",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email identifier for an identified Lookup API target. Sent inside identity_sets.",
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_id",
+        "email"
+      ],
+      "title": "LookupTarget",
+      "type": "object"
+    },
+    "RerunCohort": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "rerun_cohort",
+          "default": "rerun_cohort",
+          "title": "Rerun Cohort (Queue Build)",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cohort_id": {
+          "format": "uuid",
+          "title": "Cohort Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cohort_id"
+      ],
+      "title": "RerunCohort",
+      "type": "object"
+    },
+    "RerunDataset": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "rerun_dataset",
+          "default": "rerun_dataset",
+          "title": "Rerun Dataset (Queue Build)",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "dataset_id": {
+          "format": "uuid",
+          "title": "Dataset Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ],
+      "title": "RerunDataset",
+      "type": "object"
+    },
+    "RerunOutcome": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "rerun_outcome",
+          "default": "rerun_outcome",
+          "title": "Rerun Outcome (Queue Build)",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "outcome_id": {
+          "format": "uuid",
+          "title": "Outcome Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "outcome_id"
+      ],
+      "title": "RerunOutcome",
+      "type": "object"
+    },
+    "RerunScope": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "rerun_scope",
+          "default": "rerun_scope",
+          "title": "Rerun Scope (Queue Build)",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "scope_id": {
+          "format": "uuid",
+          "title": "Scope Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scope_id"
+      ],
+      "title": "RerunScope",
+      "type": "object"
+    },
+    "RerunTarget": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "rerun_target",
+          "default": "rerun_target",
+          "title": "Rerun Target (Queue Build)",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "target_id": {
+          "format": "uuid",
+          "title": "Target Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_id"
+      ],
+      "title": "RerunTarget",
+      "type": "object"
+    },
+    "UpdateCohort": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "stream_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For example transaction. Omit to use the provider's default cohort population.",
+          "title": "Event Stream Name"
+        },
+        "min_count": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Event Count"
+        },
+        "max_count": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum Event Count"
+        },
+        "min_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Minimum Event Value"
+        },
+        "max_value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Maximum Event Value"
+        },
+        "operation": {
+          "const": "update_cohort",
+          "default": "update_cohort",
+          "title": "Update Cohort",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cohort_id": {
+          "format": "uuid",
+          "title": "Cohort Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "cohort_id"
+      ],
+      "title": "UpdateCohort",
+      "type": "object"
+    },
+    "UpdateOutcome": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 64,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_outcome",
+          "default": "update_outcome",
+          "title": "Rename Outcome",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "outcome_id": {
+          "format": "uuid",
+          "title": "Outcome Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "outcome_id"
+      ],
+      "title": "UpdateOutcome",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_cohort": "#/$defs/CreateCohort",
+          "create_outcome": "#/$defs/CreateOutcome",
+          "delete_cohort": "#/$defs/DeleteCohort",
+          "get_cohort": "#/$defs/GetCohort",
+          "get_current_account": "#/$defs/GetCurrentAccount",
+          "get_dataset": "#/$defs/GetDataset",
+          "get_outcome": "#/$defs/GetOutcome",
+          "get_scope": "#/$defs/GetScope",
+          "get_target": "#/$defs/GetTarget",
+          "list_cohorts": "#/$defs/ListCohorts",
+          "list_datasets": "#/$defs/ListDatasets",
+          "list_outcomes": "#/$defs/ListOutcomes",
+          "list_scopes": "#/$defs/ListScopes",
+          "list_targets": "#/$defs/ListTargets",
+          "lookup_target": "#/$defs/LookupTarget",
+          "rerun_cohort": "#/$defs/RerunCohort",
+          "rerun_dataset": "#/$defs/RerunDataset",
+          "rerun_outcome": "#/$defs/RerunOutcome",
+          "rerun_scope": "#/$defs/RerunScope",
+          "rerun_target": "#/$defs/RerunTarget",
+          "update_cohort": "#/$defs/UpdateCohort",
+          "update_outcome": "#/$defs/UpdateOutcome"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCurrentAccount"
+        },
+        {
+          "$ref": "#/$defs/ListDatasets"
+        },
+        {
+          "$ref": "#/$defs/GetDataset"
+        },
+        {
+          "$ref": "#/$defs/RerunDataset"
+        },
+        {
+          "$ref": "#/$defs/ListCohorts"
+        },
+        {
+          "$ref": "#/$defs/GetCohort"
+        },
+        {
+          "$ref": "#/$defs/CreateCohort"
+        },
+        {
+          "$ref": "#/$defs/UpdateCohort"
+        },
+        {
+          "$ref": "#/$defs/DeleteCohort"
+        },
+        {
+          "$ref": "#/$defs/RerunCohort"
+        },
+        {
+          "$ref": "#/$defs/ListOutcomes"
+        },
+        {
+          "$ref": "#/$defs/GetOutcome"
+        },
+        {
+          "$ref": "#/$defs/CreateOutcome"
+        },
+        {
+          "$ref": "#/$defs/UpdateOutcome"
+        },
+        {
+          "$ref": "#/$defs/RerunOutcome"
+        },
+        {
+          "$ref": "#/$defs/ListScopes"
+        },
+        {
+          "$ref": "#/$defs/GetScope"
+        },
+        {
+          "$ref": "#/$defs/RerunScope"
+        },
+        {
+          "$ref": "#/$defs/ListTargets"
+        },
+        {
+          "$ref": "#/$defs/GetTarget"
+        },
+        {
+          "$ref": "#/$defs/RerunTarget"
+        },
+        {
+          "$ref": "#/$defs/LookupTarget"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FaradayAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Faraday Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
