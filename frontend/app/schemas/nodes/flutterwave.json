@@ -1,0 +1,2096 @@
+{
+  "$defs": {
+    "CreateCharge": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Unique key for this intended write. Reuse the same key when retrying the same write, and use a new key for a new write.",
+          "maxLength": 255,
+          "minLength": 12,
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_charge",
+          "default": "create_charge",
+          "title": "Operation",
+          "type": "string"
+        },
+        "amount": {
+          "minimum": 0.01,
+          "title": "Amount",
+          "type": "number"
+        },
+        "currency": {
+          "enum": [
+            "AED",
+            "AFN",
+            "ALL",
+            "AMD",
+            "ANG",
+            "AOA",
+            "AQD",
+            "ARS",
+            "AUD",
+            "AZN",
+            "BAM",
+            "BBD",
+            "BDT",
+            "BGN",
+            "BHD",
+            "BIF",
+            "BMD",
+            "BND",
+            "BOB",
+            "BRL",
+            "BSD",
+            "BWP",
+            "BYR",
+            "BZD",
+            "CAD",
+            "CDF",
+            "CHF",
+            "CLP",
+            "CNY",
+            "COP",
+            "CRC",
+            "CUP",
+            "CVE",
+            "CYP",
+            "CZK",
+            "DJF",
+            "DKK",
+            "DOP",
+            "DZD",
+            "ECS",
+            "EEK",
+            "EGP",
+            "ETB",
+            "EUR",
+            "FJD",
+            "FKP",
+            "GBP",
+            "GEL",
+            "GGP",
+            "GHS",
+            "GIP",
+            "GMD",
+            "GNF",
+            "GTQ",
+            "GYD",
+            "HKD",
+            "HNL",
+            "HRK",
+            "HTG",
+            "HUF",
+            "IDR",
+            "ILS",
+            "INR",
+            "IQD",
+            "IRR",
+            "ISK",
+            "JMD",
+            "JOD",
+            "JPY",
+            "KES",
+            "KGS",
+            "KHR",
+            "KMF",
+            "KPW",
+            "KRW",
+            "KWD",
+            "KYD",
+            "KZT",
+            "LAK",
+            "LBP",
+            "LKR",
+            "LRD",
+            "LSL",
+            "LTL",
+            "LVL",
+            "LYD",
+            "MAD",
+            "MDL",
+            "MGA",
+            "MKD",
+            "MMK",
+            "MNT",
+            "MOP",
+            "MRO",
+            "MTL",
+            "MUR",
+            "MVR",
+            "MWK",
+            "MXN",
+            "MYR",
+            "MZN",
+            "NAD",
+            "NGN",
+            "NIO",
+            "NOK",
+            "NPR",
+            "NZD",
+            "OMR",
+            "PAB",
+            "PEN",
+            "PGK",
+            "PHP",
+            "PKR",
+            "PLN",
+            "PYG",
+            "QAR",
+            "RON",
+            "RSD",
+            "RUB",
+            "RWF",
+            "SAR",
+            "SBD",
+            "SCR",
+            "SDG",
+            "SEK",
+            "SGD",
+            "SKK",
+            "SLL",
+            "SOS",
+            "SRD",
+            "STD",
+            "SVC",
+            "SYP",
+            "SZL",
+            "THB",
+            "TJS",
+            "TMT",
+            "TND",
+            "TOP",
+            "TRY",
+            "TTD",
+            "TWD",
+            "TZS",
+            "UAH",
+            "UGX",
+            "USD",
+            "UYU",
+            "UZS",
+            "VEF",
+            "VND",
+            "VUV",
+            "XAF",
+            "XCD",
+            "XOF",
+            "XPF",
+            "YER",
+            "ZAR",
+            "ZMK",
+            "ZWD",
+            "ZMW",
+            "USDC",
+            "USDT",
+            "RLUSD"
+          ],
+          "title": "Currency",
+          "type": "string"
+        },
+        "customer_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "payment_method_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Payment Method Id",
+          "type": "string"
+        },
+        "reference": {
+          "maxLength": 42,
+          "minLength": 6,
+          "pattern": "^[A-Za-z0-9-]+$",
+          "title": "Reference",
+          "type": "string"
+        },
+        "redirect_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Payment redirect URL; returned actions may require customer authorization.",
+          "title": "Redirect Url"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Meta"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "amount",
+        "currency",
+        "customer_id",
+        "payment_method_id",
+        "reference"
+      ],
+      "title": "CreateCharge",
+      "type": "object"
+    },
+    "CreateCheckoutSession": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Unique key for this intended write. Reuse the same key when retrying the same write, and use a new key for a new write.",
+          "maxLength": 255,
+          "minLength": 12,
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_checkout_session",
+          "default": "create_checkout_session",
+          "title": "Operation",
+          "type": "string"
+        },
+        "amount": {
+          "minimum": 0.01,
+          "title": "Amount",
+          "type": "number"
+        },
+        "currency": {
+          "enum": [
+            "AED",
+            "AFN",
+            "ALL",
+            "AMD",
+            "ANG",
+            "AOA",
+            "AQD",
+            "ARS",
+            "AUD",
+            "AZN",
+            "BAM",
+            "BBD",
+            "BDT",
+            "BGN",
+            "BHD",
+            "BIF",
+            "BMD",
+            "BND",
+            "BOB",
+            "BRL",
+            "BSD",
+            "BWP",
+            "BYR",
+            "BZD",
+            "CAD",
+            "CDF",
+            "CHF",
+            "CLP",
+            "CNY",
+            "COP",
+            "CRC",
+            "CUP",
+            "CVE",
+            "CYP",
+            "CZK",
+            "DJF",
+            "DKK",
+            "DOP",
+            "DZD",
+            "ECS",
+            "EEK",
+            "EGP",
+            "ETB",
+            "EUR",
+            "FJD",
+            "FKP",
+            "GBP",
+            "GEL",
+            "GGP",
+            "GHS",
+            "GIP",
+            "GMD",
+            "GNF",
+            "GTQ",
+            "GYD",
+            "HKD",
+            "HNL",
+            "HRK",
+            "HTG",
+            "HUF",
+            "IDR",
+            "ILS",
+            "INR",
+            "IQD",
+            "IRR",
+            "ISK",
+            "JMD",
+            "JOD",
+            "JPY",
+            "KES",
+            "KGS",
+            "KHR",
+            "KMF",
+            "KPW",
+            "KRW",
+            "KWD",
+            "KYD",
+            "KZT",
+            "LAK",
+            "LBP",
+            "LKR",
+            "LRD",
+            "LSL",
+            "LTL",
+            "LVL",
+            "LYD",
+            "MAD",
+            "MDL",
+            "MGA",
+            "MKD",
+            "MMK",
+            "MNT",
+            "MOP",
+            "MRO",
+            "MTL",
+            "MUR",
+            "MVR",
+            "MWK",
+            "MXN",
+            "MYR",
+            "MZN",
+            "NAD",
+            "NGN",
+            "NIO",
+            "NOK",
+            "NPR",
+            "NZD",
+            "OMR",
+            "PAB",
+            "PEN",
+            "PGK",
+            "PHP",
+            "PKR",
+            "PLN",
+            "PYG",
+            "QAR",
+            "RON",
+            "RSD",
+            "RUB",
+            "RWF",
+            "SAR",
+            "SBD",
+            "SCR",
+            "SDG",
+            "SEK",
+            "SGD",
+            "SKK",
+            "SLL",
+            "SOS",
+            "SRD",
+            "STD",
+            "SVC",
+            "SYP",
+            "SZL",
+            "THB",
+            "TJS",
+            "TMT",
+            "TND",
+            "TOP",
+            "TRY",
+            "TTD",
+            "TWD",
+            "TZS",
+            "UAH",
+            "UGX",
+            "USD",
+            "UYU",
+            "UZS",
+            "VEF",
+            "VND",
+            "VUV",
+            "XAF",
+            "XCD",
+            "XOF",
+            "XPF",
+            "YER",
+            "ZAR",
+            "ZMK",
+            "ZWD",
+            "ZMW",
+            "USDC",
+            "USDT",
+            "RLUSD"
+          ],
+          "title": "Currency",
+          "type": "string"
+        },
+        "customer_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Customer Id",
+          "type": "string"
+        },
+        "reference": {
+          "maxLength": 42,
+          "minLength": 6,
+          "pattern": "^[A-Za-z0-9-]+$",
+          "title": "Reference",
+          "type": "string"
+        },
+        "redirect_url": {
+          "minLength": 1,
+          "title": "Redirect Url",
+          "type": "string"
+        },
+        "max_retry_attempts": {
+          "default": 3,
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Max Retry Attempts",
+          "type": "integer"
+        },
+        "session_duration": {
+          "anyOf": [
+            {
+              "maximum": 2880,
+              "minimum": 5,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Duration"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "amount",
+        "currency",
+        "customer_id",
+        "reference",
+        "redirect_url"
+      ],
+      "title": "CreateCheckoutSession",
+      "type": "object"
+    },
+    "CreateCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CustomerName"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CustomerPhone"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CustomerAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Meta"
+        },
+        "idempotency_key": {
+          "description": "Unique key for this intended write. Reuse the same key when retrying the same write, and use a new key for a new write.",
+          "maxLength": 255,
+          "minLength": 12,
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_customer",
+          "default": "create_customer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "description": "Customer email address.",
+          "minLength": 3,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "email"
+      ],
+      "title": "CreateCustomer",
+      "type": "object"
+    },
+    "CreateRefund": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Unique key for this intended write. Reuse the same key when retrying the same write, and use a new key for a new write.",
+          "maxLength": 255,
+          "minLength": 12,
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_refund",
+          "default": "create_refund",
+          "title": "Operation",
+          "type": "string"
+        },
+        "amount": {
+          "minimum": 0.01,
+          "title": "Amount",
+          "type": "number"
+        },
+        "charge_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Charge Id",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "duplicate",
+            "fraudulent",
+            "requested_by_customer",
+            "expired_uncaptured_charge"
+          ],
+          "title": "Reason",
+          "type": "string"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Meta"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "amount",
+        "charge_id",
+        "reason"
+      ],
+      "title": "CreateRefund",
+      "type": "object"
+    },
+    "CreateTransfer": {
+      "additionalProperties": false,
+      "properties": {
+        "idempotency_key": {
+          "description": "Unique key for this intended write. Reuse the same key when retrying the same write, and use a new key for a new write.",
+          "maxLength": 255,
+          "minLength": 12,
+          "title": "Idempotency Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_transfer",
+          "default": "create_transfer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "instant",
+            "deferred"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "payment_instruction": {
+          "$ref": "#/$defs/TransferInstruction"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "maxLength": 42,
+              "minLength": 6,
+              "pattern": "^[A-Za-z0-9-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "narration": {
+          "anyOf": [
+            {
+              "maxLength": 180,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Narration"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Meta"
+        }
+      },
+      "required": [
+        "idempotency_key",
+        "action",
+        "payment_instruction"
+      ],
+      "title": "CreateTransfer",
+      "type": "object"
+    },
+    "CustomerAddress": {
+      "additionalProperties": false,
+      "properties": {
+        "line1": {
+          "minLength": 1,
+          "title": "Line1",
+          "type": "string"
+        },
+        "line2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line2"
+        },
+        "city": {
+          "minLength": 1,
+          "title": "City",
+          "type": "string"
+        },
+        "state": {
+          "minLength": 1,
+          "title": "State",
+          "type": "string"
+        },
+        "country": {
+          "pattern": "^[A-Z]{2}$",
+          "title": "Country",
+          "type": "string"
+        },
+        "postal_code": {
+          "minLength": 1,
+          "title": "Postal Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "line1",
+        "city",
+        "state",
+        "country",
+        "postal_code"
+      ],
+      "title": "CustomerAddress",
+      "type": "object"
+    },
+    "CustomerName": {
+      "additionalProperties": false,
+      "properties": {
+        "first": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First"
+        },
+        "middle": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Middle"
+        },
+        "last": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last"
+        }
+      },
+      "title": "CustomerName",
+      "type": "object"
+    },
+    "CustomerPhone": {
+      "additionalProperties": false,
+      "properties": {
+        "country_code": {
+          "pattern": "^[0-9]{1,3}$",
+          "title": "Country Code",
+          "type": "string"
+        },
+        "number": {
+          "pattern": "^[0-9]{7,10}$",
+          "title": "Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "country_code",
+        "number"
+      ],
+      "title": "CustomerPhone",
+      "type": "object"
+    },
+    "FlutterwaveAccessTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "flutterwave_access_token",
+          "default": "flutterwave_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 16384,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "environment": {
+          "default": "sandbox",
+          "enum": [
+            "sandbox",
+            "production"
+          ],
+          "title": "Environment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Flutterwave Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste a Flutterwave v4 access token generated with your client credentials, and select its environment. Access tokens expire after 10 minutes: replace the token before running again after expiry. NoClick does not generate or refresh tokens. A v3 secret key does not work with this integration.",
+      "x-credential-url": "https://developer.flutterwave.com/v4.0.0/docs/authentication"
+    },
+    "GetCharge": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_charge",
+          "default": "get_charge",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCharge",
+      "type": "object"
+    },
+    "GetCheckoutSession": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_checkout_session",
+          "default": "get_checkout_session",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCheckoutSession",
+      "type": "object"
+    },
+    "GetCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_customer",
+          "default": "get_customer",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCustomer",
+      "type": "object"
+    },
+    "GetPaymentMethod": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_payment_method",
+          "default": "get_payment_method",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetPaymentMethod",
+      "type": "object"
+    },
+    "GetRefund": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_refund",
+          "default": "get_refund",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetRefund",
+      "type": "object"
+    },
+    "GetSettlement": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; this operation returns one page only.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "maximum": 50,
+          "minimum": 10,
+          "title": "Size",
+          "type": "integer"
+        },
+        "id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_settlement",
+          "default": "get_settlement",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetSettlement",
+      "type": "object"
+    },
+    "GetTransfer": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_transfer",
+          "default": "get_transfer",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetTransfer",
+      "type": "object"
+    },
+    "GetVirtualAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_virtual_account",
+          "default": "get_virtual_account",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetVirtualAccount",
+      "type": "object"
+    },
+    "GetWalletBalance": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_wallet_balance",
+          "default": "get_wallet_balance",
+          "title": "Operation",
+          "type": "string"
+        },
+        "currency": {
+          "enum": [
+            "AED",
+            "AFN",
+            "ALL",
+            "AMD",
+            "ANG",
+            "AOA",
+            "AQD",
+            "ARS",
+            "AUD",
+            "AZN",
+            "BAM",
+            "BBD",
+            "BDT",
+            "BGN",
+            "BHD",
+            "BIF",
+            "BMD",
+            "BND",
+            "BOB",
+            "BRL",
+            "BSD",
+            "BWP",
+            "BYR",
+            "BZD",
+            "CAD",
+            "CDF",
+            "CHF",
+            "CLP",
+            "CNY",
+            "COP",
+            "CRC",
+            "CUP",
+            "CVE",
+            "CYP",
+            "CZK",
+            "DJF",
+            "DKK",
+            "DOP",
+            "DZD",
+            "ECS",
+            "EEK",
+            "EGP",
+            "ETB",
+            "EUR",
+            "FJD",
+            "FKP",
+            "GBP",
+            "GEL",
+            "GGP",
+            "GHS",
+            "GIP",
+            "GMD",
+            "GNF",
+            "GTQ",
+            "GYD",
+            "HKD",
+            "HNL",
+            "HRK",
+            "HTG",
+            "HUF",
+            "IDR",
+            "ILS",
+            "INR",
+            "IQD",
+            "IRR",
+            "ISK",
+            "JMD",
+            "JOD",
+            "JPY",
+            "KES",
+            "KGS",
+            "KHR",
+            "KMF",
+            "KPW",
+            "KRW",
+            "KWD",
+            "KYD",
+            "KZT",
+            "LAK",
+            "LBP",
+            "LKR",
+            "LRD",
+            "LSL",
+            "LTL",
+            "LVL",
+            "LYD",
+            "MAD",
+            "MDL",
+            "MGA",
+            "MKD",
+            "MMK",
+            "MNT",
+            "MOP",
+            "MRO",
+            "MTL",
+            "MUR",
+            "MVR",
+            "MWK",
+            "MXN",
+            "MYR",
+            "MZN",
+            "NAD",
+            "NGN",
+            "NIO",
+            "NOK",
+            "NPR",
+            "NZD",
+            "OMR",
+            "PAB",
+            "PEN",
+            "PGK",
+            "PHP",
+            "PKR",
+            "PLN",
+            "PYG",
+            "QAR",
+            "RON",
+            "RSD",
+            "RUB",
+            "RWF",
+            "SAR",
+            "SBD",
+            "SCR",
+            "SDG",
+            "SEK",
+            "SGD",
+            "SKK",
+            "SLL",
+            "SOS",
+            "SRD",
+            "STD",
+            "SVC",
+            "SYP",
+            "SZL",
+            "THB",
+            "TJS",
+            "TMT",
+            "TND",
+            "TOP",
+            "TRY",
+            "TTD",
+            "TWD",
+            "TZS",
+            "UAH",
+            "UGX",
+            "USD",
+            "UYU",
+            "UZS",
+            "VEF",
+            "VND",
+            "VUV",
+            "XAF",
+            "XCD",
+            "XOF",
+            "XPF",
+            "YER",
+            "ZAR",
+            "ZMK",
+            "ZWD",
+            "ZMW",
+            "USDC",
+            "USDT",
+            "RLUSD"
+          ],
+          "title": "Currency",
+          "type": "string"
+        }
+      },
+      "required": [
+        "currency"
+      ],
+      "title": "GetWalletBalance",
+      "type": "object"
+    },
+    "ListCharges": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; this operation returns one page only.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "maximum": 50,
+          "minimum": 10,
+          "title": "Size",
+          "type": "integer"
+        },
+        "from_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive start in ISO 8601 format, sent as from.",
+          "title": "From Datetime"
+        },
+        "to_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End in ISO 8601 format, sent as to.",
+          "title": "To Datetime"
+        },
+        "operation": {
+          "const": "list_charges",
+          "default": "list_charges",
+          "title": "Operation",
+          "type": "string"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "customer_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Customer Id"
+        },
+        "payment_method_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payment Method Id"
+        }
+      },
+      "title": "ListCharges",
+      "type": "object"
+    },
+    "ListCheckoutSessions": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; this operation returns one page only.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "maximum": 50,
+          "minimum": 10,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_checkout_sessions",
+          "default": "list_checkout_sessions",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCheckoutSessions",
+      "type": "object"
+    },
+    "ListCustomers": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; this operation returns one page only.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "maximum": 50,
+          "minimum": 10,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_customers",
+          "default": "list_customers",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListCustomers",
+      "type": "object"
+    },
+    "ListPaymentMethods": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; this operation returns one page only.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "maximum": 50,
+          "minimum": 10,
+          "title": "Size",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_payment_methods",
+          "default": "list_payment_methods",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListPaymentMethods",
+      "type": "object"
+    },
+    "ListRefunds": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; this operation returns one page only.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "maximum": 50,
+          "minimum": 10,
+          "title": "Size",
+          "type": "integer"
+        },
+        "from_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive start in ISO 8601 format, sent as from.",
+          "title": "From Datetime"
+        },
+        "to_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End in ISO 8601 format, sent as to.",
+          "title": "To Datetime"
+        },
+        "operation": {
+          "const": "list_refunds",
+          "default": "list_refunds",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListRefunds",
+      "type": "object"
+    },
+    "ListSettlements": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; this operation returns one page only.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "maximum": 50,
+          "minimum": 10,
+          "title": "Size",
+          "type": "integer"
+        },
+        "from_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive start in ISO 8601 format, sent as from.",
+          "title": "From Datetime"
+        },
+        "to_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End in ISO 8601 format, sent as to.",
+          "title": "To Datetime"
+        },
+        "operation": {
+          "const": "list_settlements",
+          "default": "list_settlements",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListSettlements",
+      "type": "object"
+    },
+    "ListTransfers": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_transfers",
+          "default": "list_transfers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "size": {
+          "default": 10,
+          "maximum": 50,
+          "minimum": 10,
+          "title": "Size",
+          "type": "integer"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use data.cursor.next from the preceding response. Returns one page.",
+          "title": "Next Cursor"
+        },
+        "recipient_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recipient Id"
+        }
+      },
+      "title": "ListTransfers",
+      "type": "object"
+    },
+    "ListVirtualAccounts": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number; this operation returns one page only.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 10,
+          "maximum": 50,
+          "minimum": 10,
+          "title": "Size",
+          "type": "integer"
+        },
+        "from_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive start in ISO 8601 format, sent as from.",
+          "title": "From Datetime"
+        },
+        "to_datetime": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End in ISO 8601 format, sent as to.",
+          "title": "To Datetime"
+        },
+        "operation": {
+          "const": "list_virtual_accounts",
+          "default": "list_virtual_accounts",
+          "title": "Operation",
+          "type": "string"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        }
+      },
+      "title": "ListVirtualAccounts",
+      "type": "object"
+    },
+    "ListWalletBalances": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_wallet_balances",
+          "default": "list_wallet_balances",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListWalletBalances",
+      "type": "object"
+    },
+    "TransferAmount": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "description": "Amount in the provider's documented smallest currency unit.",
+          "minimum": 1,
+          "title": "Value",
+          "type": "number"
+        },
+        "applies_to": {
+          "enum": [
+            "destination_currency",
+            "source_currency"
+          ],
+          "title": "Applies To",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "applies_to"
+      ],
+      "title": "TransferAmount",
+      "type": "object"
+    },
+    "TransferInstruction": {
+      "additionalProperties": false,
+      "properties": {
+        "source_currency": {
+          "enum": [
+            "AED",
+            "AFN",
+            "ALL",
+            "AMD",
+            "ANG",
+            "AOA",
+            "AQD",
+            "ARS",
+            "AUD",
+            "AZN",
+            "BAM",
+            "BBD",
+            "BDT",
+            "BGN",
+            "BHD",
+            "BIF",
+            "BMD",
+            "BND",
+            "BOB",
+            "BRL",
+            "BSD",
+            "BWP",
+            "BYR",
+            "BZD",
+            "CAD",
+            "CDF",
+            "CHF",
+            "CLP",
+            "CNY",
+            "COP",
+            "CRC",
+            "CUP",
+            "CVE",
+            "CYP",
+            "CZK",
+            "DJF",
+            "DKK",
+            "DOP",
+            "DZD",
+            "ECS",
+            "EEK",
+            "EGP",
+            "ETB",
+            "EUR",
+            "FJD",
+            "FKP",
+            "GBP",
+            "GEL",
+            "GGP",
+            "GHS",
+            "GIP",
+            "GMD",
+            "GNF",
+            "GTQ",
+            "GYD",
+            "HKD",
+            "HNL",
+            "HRK",
+            "HTG",
+            "HUF",
+            "IDR",
+            "ILS",
+            "INR",
+            "IQD",
+            "IRR",
+            "ISK",
+            "JMD",
+            "JOD",
+            "JPY",
+            "KES",
+            "KGS",
+            "KHR",
+            "KMF",
+            "KPW",
+            "KRW",
+            "KWD",
+            "KYD",
+            "KZT",
+            "LAK",
+            "LBP",
+            "LKR",
+            "LRD",
+            "LSL",
+            "LTL",
+            "LVL",
+            "LYD",
+            "MAD",
+            "MDL",
+            "MGA",
+            "MKD",
+            "MMK",
+            "MNT",
+            "MOP",
+            "MRO",
+            "MTL",
+            "MUR",
+            "MVR",
+            "MWK",
+            "MXN",
+            "MYR",
+            "MZN",
+            "NAD",
+            "NGN",
+            "NIO",
+            "NOK",
+            "NPR",
+            "NZD",
+            "OMR",
+            "PAB",
+            "PEN",
+            "PGK",
+            "PHP",
+            "PKR",
+            "PLN",
+            "PYG",
+            "QAR",
+            "RON",
+            "RSD",
+            "RUB",
+            "RWF",
+            "SAR",
+            "SBD",
+            "SCR",
+            "SDG",
+            "SEK",
+            "SGD",
+            "SKK",
+            "SLL",
+            "SOS",
+            "SRD",
+            "STD",
+            "SVC",
+            "SYP",
+            "SZL",
+            "THB",
+            "TJS",
+            "TMT",
+            "TND",
+            "TOP",
+            "TRY",
+            "TTD",
+            "TWD",
+            "TZS",
+            "UAH",
+            "UGX",
+            "USD",
+            "UYU",
+            "UZS",
+            "VEF",
+            "VND",
+            "VUV",
+            "XAF",
+            "XCD",
+            "XOF",
+            "XPF",
+            "YER",
+            "ZAR",
+            "ZMK",
+            "ZWD",
+            "ZMW",
+            "USDC",
+            "USDT",
+            "RLUSD"
+          ],
+          "title": "Source Currency",
+          "type": "string"
+        },
+        "amount": {
+          "$ref": "#/$defs/TransferAmount"
+        },
+        "recipient_id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Recipient Id",
+          "type": "string"
+        },
+        "sender_id": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sender Id"
+        }
+      },
+      "required": [
+        "source_currency",
+        "amount",
+        "recipient_id"
+      ],
+      "title": "TransferInstruction",
+      "type": "object"
+    },
+    "UpdateCustomer": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CustomerName"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CustomerPhone"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "address": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CustomerAddress"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Meta"
+        },
+        "id": {
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_customer",
+          "default": "update_customer",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpdateCustomer",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_charge": "#/$defs/CreateCharge",
+          "create_checkout_session": "#/$defs/CreateCheckoutSession",
+          "create_customer": "#/$defs/CreateCustomer",
+          "create_refund": "#/$defs/CreateRefund",
+          "create_transfer": "#/$defs/CreateTransfer",
+          "get_charge": "#/$defs/GetCharge",
+          "get_checkout_session": "#/$defs/GetCheckoutSession",
+          "get_customer": "#/$defs/GetCustomer",
+          "get_payment_method": "#/$defs/GetPaymentMethod",
+          "get_refund": "#/$defs/GetRefund",
+          "get_settlement": "#/$defs/GetSettlement",
+          "get_transfer": "#/$defs/GetTransfer",
+          "get_virtual_account": "#/$defs/GetVirtualAccount",
+          "get_wallet_balance": "#/$defs/GetWalletBalance",
+          "list_charges": "#/$defs/ListCharges",
+          "list_checkout_sessions": "#/$defs/ListCheckoutSessions",
+          "list_customers": "#/$defs/ListCustomers",
+          "list_payment_methods": "#/$defs/ListPaymentMethods",
+          "list_refunds": "#/$defs/ListRefunds",
+          "list_settlements": "#/$defs/ListSettlements",
+          "list_transfers": "#/$defs/ListTransfers",
+          "list_virtual_accounts": "#/$defs/ListVirtualAccounts",
+          "list_wallet_balances": "#/$defs/ListWalletBalances",
+          "update_customer": "#/$defs/UpdateCustomer"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListCustomers"
+        },
+        {
+          "$ref": "#/$defs/GetCustomer"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomer"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomer"
+        },
+        {
+          "$ref": "#/$defs/ListCharges"
+        },
+        {
+          "$ref": "#/$defs/GetCharge"
+        },
+        {
+          "$ref": "#/$defs/CreateCharge"
+        },
+        {
+          "$ref": "#/$defs/ListCheckoutSessions"
+        },
+        {
+          "$ref": "#/$defs/GetCheckoutSession"
+        },
+        {
+          "$ref": "#/$defs/CreateCheckoutSession"
+        },
+        {
+          "$ref": "#/$defs/ListPaymentMethods"
+        },
+        {
+          "$ref": "#/$defs/GetPaymentMethod"
+        },
+        {
+          "$ref": "#/$defs/ListTransfers"
+        },
+        {
+          "$ref": "#/$defs/GetTransfer"
+        },
+        {
+          "$ref": "#/$defs/CreateTransfer"
+        },
+        {
+          "$ref": "#/$defs/ListRefunds"
+        },
+        {
+          "$ref": "#/$defs/GetRefund"
+        },
+        {
+          "$ref": "#/$defs/CreateRefund"
+        },
+        {
+          "$ref": "#/$defs/ListSettlements"
+        },
+        {
+          "$ref": "#/$defs/GetSettlement"
+        },
+        {
+          "$ref": "#/$defs/ListWalletBalances"
+        },
+        {
+          "$ref": "#/$defs/GetWalletBalance"
+        },
+        {
+          "$ref": "#/$defs/ListVirtualAccounts"
+        },
+        {
+          "$ref": "#/$defs/GetVirtualAccount"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FlutterwaveAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Flutterwave Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

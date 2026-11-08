@@ -1,0 +1,343 @@
+[
+  {
+    "config": {
+      "operation": "list_customers"
+    },
+    "method": "GET",
+    "path": "/customers",
+    "body": null,
+    "query": {
+      "page": "1",
+      "size": "10"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_customer",
+      "id": "owned-id"
+    },
+    "method": "GET",
+    "path": "/customers/owned-id",
+    "body": null,
+    "query": {}
+  },
+  {
+    "config": {
+      "operation": "list_charges"
+    },
+    "method": "GET",
+    "path": "/charges",
+    "body": null,
+    "query": {
+      "page": "1",
+      "size": "10"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_charge",
+      "id": "owned-id"
+    },
+    "method": "GET",
+    "path": "/charges/owned-id",
+    "body": null,
+    "query": {}
+  },
+  {
+    "config": {
+      "operation": "list_checkout_sessions"
+    },
+    "method": "GET",
+    "path": "/checkout/sessions",
+    "body": null,
+    "query": {
+      "page": "1",
+      "size": "10"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_checkout_session",
+      "id": "owned-id"
+    },
+    "method": "GET",
+    "path": "/checkout/sessions/owned-id",
+    "body": null,
+    "query": {}
+  },
+  {
+    "config": {
+      "operation": "list_payment_methods"
+    },
+    "method": "GET",
+    "path": "/payment-methods",
+    "body": null,
+    "query": {
+      "page": "1",
+      "size": "10"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_payment_method",
+      "id": "owned-id"
+    },
+    "method": "GET",
+    "path": "/payment-methods/owned-id",
+    "body": null,
+    "query": {}
+  },
+  {
+    "config": {
+      "operation": "list_refunds"
+    },
+    "method": "GET",
+    "path": "/refunds",
+    "body": null,
+    "query": {
+      "page": "1",
+      "size": "10"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_refund",
+      "id": "owned-id"
+    },
+    "method": "GET",
+    "path": "/refunds/owned-id",
+    "body": null,
+    "query": {}
+  },
+  {
+    "config": {
+      "operation": "list_settlements"
+    },
+    "method": "GET",
+    "path": "/settlements",
+    "body": null,
+    "query": {
+      "page": "1",
+      "size": "10"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_settlement",
+      "id": "owned-id"
+    },
+    "method": "GET",
+    "path": "/settlements/owned-id",
+    "body": null,
+    "query": {
+      "page": "1",
+      "size": "10"
+    }
+  },
+  {
+    "config": {
+      "operation": "list_virtual_accounts"
+    },
+    "method": "GET",
+    "path": "/virtual-accounts",
+    "body": null,
+    "query": {
+      "page": "1",
+      "size": "10"
+    }
+  },
+  {
+    "config": {
+      "operation": "get_virtual_account",
+      "id": "owned-id"
+    },
+    "method": "GET",
+    "path": "/virtual-accounts/owned-id",
+    "body": null,
+    "query": {}
+  },
+  {
+    "config": {
+      "operation": "list_transfers",
+      "next_cursor": "cursor+/="
+    },
+    "method": "GET",
+    "path": "/transfers",
+    "body": null,
+    "query": {
+      "size": "10",
+      "next": "cursor+/="
+    }
+  },
+  {
+    "config": {
+      "operation": "get_transfer",
+      "id": "owned-id"
+    },
+    "method": "GET",
+    "path": "/transfers/owned-id",
+    "body": null,
+    "query": {}
+  },
+  {
+    "config": {
+      "operation": "list_wallet_balances"
+    },
+    "method": "GET",
+    "path": "/wallets/balances",
+    "body": null,
+    "query": {}
+  },
+  {
+    "config": {
+      "operation": "get_wallet_balance",
+      "currency": "NGN"
+    },
+    "method": "GET",
+    "path": "/wallets/balances/NGN",
+    "body": null,
+    "query": {}
+  },
+  {
+    "config": {
+      "operation": "create_customer",
+      "idempotency_key": "owned-write-20261108",
+      "email": "cornelius@gmail.com",
+      "name": {
+        "first": "King",
+        "last": "LeBron"
+      },
+      "meta": {
+        "source": "workflow"
+      }
+    },
+    "method": "POST",
+    "path": "/customers",
+    "body": {
+      "email": "cornelius@gmail.com",
+      "name": {
+        "first": "King",
+        "last": "LeBron"
+      },
+      "meta": {
+        "source": "workflow"
+      }
+    },
+    "query": {}
+  },
+  {
+    "config": {
+      "operation": "create_charge",
+      "idempotency_key": "owned-write-20261108",
+      "amount": 250,
+      "currency": "USD",
+      "customer_id": "cus_9zKqBW94OP",
+      "payment_method_id": "pmd_gZvoGry0vq",
+      "reference": "TRN-64OVUUz9Tul7",
+      "redirect_url": "https://flutterwave.com/"
+    },
+    "method": "POST",
+    "path": "/charges",
+    "body": {
+      "amount": 250,
+      "currency": "USD",
+      "customer_id": "cus_9zKqBW94OP",
+      "payment_method_id": "pmd_gZvoGry0vq",
+      "reference": "TRN-64OVUUz9Tul7",
+      "redirect_url": "https://flutterwave.com/"
+    },
+    "query": {}
+  },
+  {
+    "config": {
+      "operation": "create_checkout_session",
+      "idempotency_key": "owned-write-20261108",
+      "amount": 12.34,
+      "currency": "NGN",
+      "customer_id": "cus_3XarBILKQS",
+      "reference": "checkout-20261108",
+      "redirect_url": "https://flutterwave.com/",
+      "max_retry_attempts": 3,
+      "session_duration": 60
+    },
+    "method": "POST",
+    "path": "/checkout/sessions",
+    "body": {
+      "amount": 12.34,
+      "currency": "NGN",
+      "customer_id": "cus_3XarBILKQS",
+      "reference": "checkout-20261108",
+      "redirect_url": "https://flutterwave.com/",
+      "max_retry_attempts": 3,
+      "session_duration": 60
+    },
+    "query": {}
+  },
+  {
+    "config": {
+      "operation": "create_transfer",
+      "idempotency_key": "owned-write-20261108",
+      "action": "instant",
+      "payment_instruction": {
+        "source_currency": "NGN",
+        "recipient_id": "rcb_atNyZLK4f9",
+        "amount": {
+          "value": 3000.44,
+          "applies_to": "destination_currency"
+        }
+      },
+      "narration": "Payment for services"
+    },
+    "method": "POST",
+    "path": "/transfers",
+    "body": {
+      "action": "instant",
+      "payment_instruction": {
+        "source_currency": "NGN",
+        "recipient_id": "rcb_atNyZLK4f9",
+        "amount": {
+          "value": 3000.44,
+          "applies_to": "destination_currency"
+        }
+      },
+      "narration": "Payment for services"
+    },
+    "query": {}
+  },
+  {
+    "config": {
+      "operation": "create_refund",
+      "idempotency_key": "owned-write-20261108",
+      "amount": 12.34,
+      "charge_id": "chg_VnUihmASmF",
+      "reason": "requested_by_customer"
+    },
+    "method": "POST",
+    "path": "/refunds",
+    "body": {
+      "amount": 12.34,
+      "charge_id": "chg_VnUihmASmF",
+      "reason": "requested_by_customer"
+    },
+    "query": {}
+  },
+  {
+    "config": {
+      "operation": "update_customer",
+      "id": "owned-id",
+      "phone": {
+        "country_code": "234",
+        "number": "8001122334"
+      }
+    },
+    "method": "PUT",
+    "path": "/customers/owned-id",
+    "body": {
+      "phone": {
+        "country_code": "234",
+        "number": "8001122334"
+      }
+    },
+    "query": {}
+  }
+]
