@@ -13,6 +13,7 @@ const ContentStudioIcon = ({ className, style }: { className?: string; style?: C
 
 export const ContentStudioNode: NodeDefinition = {
     type: 'automation-content-studio', label: 'Content Studio',
+    category: 'social-media',
     description: 'Create and schedule social posts; manage labels, campaigns and content categories',
     keywords: ['ContentStudio', 'social media', 'publishing', 'content calendar'],
     Icon: ContentStudioIcon, iconColor: '',
