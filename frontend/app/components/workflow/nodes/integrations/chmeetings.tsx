@@ -11,6 +11,7 @@ const ChmeetingsIcon = ({ className, style }: { className?: string; style?: CSSP
 
 export const ChmeetingsNode: NodeDefinition = {
     type: 'automation-chmeetings', label: 'Chmeetings',
+    category: 'nonprofit',
     description: 'Manage people, groups, memberships and notes; read families and organizations',
     Icon: ChmeetingsIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
