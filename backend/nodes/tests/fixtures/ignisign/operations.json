@@ -1,0 +1,122 @@
+{
+  "get_application": {
+    "operation_id": "getApplicationContext",
+    "method": "GET",
+    "path": "/v4/applications/{appId}/context"
+  },
+  "list_signer_profiles": {
+    "operation_id": "getSignerProfiles",
+    "method": "GET",
+    "path": "/v4/applications/{appId}/envs/{appEnv}/signer-profiles"
+  },
+  "get_signer_profile": {
+    "operation_id": "getSignerProfile",
+    "method": "GET",
+    "path": "/v4/applications/{appId}/envs/{appEnv}/signer-profiles/{signerProfileId}"
+  },
+  "create_signer": {
+    "operation_id": "createSigner",
+    "method": "POST",
+    "path": "/v4/applications/{appId}/envs/{appEnv}/signers"
+  },
+  "get_signer_details": {
+    "operation_id": "getSignerWithDetails",
+    "method": "GET",
+    "path": "/v4/applications/{appId}/envs/{appEnv}/signers/{signerId}/details"
+  },
+  "get_signer": {
+    "operation_id": "getSignerSummary",
+    "method": "GET",
+    "path": "/v4/applications/{appId}/envs/{appEnv}/signers/{signerId}"
+  },
+  "update_signer": {
+    "operation_id": "updateSigner",
+    "method": "PUT",
+    "path": "/v4/applications/{appId}/envs/{appEnv}/signers/{signerId}"
+  },
+  "search_signers": {
+    "operation_id": "searchApplicationSigners",
+    "method": "POST",
+    "path": "/v4/applications/{appId}/envs/{appEnv}/signers-search"
+  },
+  "list_signers": {
+    "operation_id": "getPaginateApplicationSigners",
+    "method": "GET",
+    "path": "/v4/applications/{appId}/envs/{appEnv}/signers-paginate"
+  },
+  "revoke_signer": {
+    "operation_id": "revokeSigner",
+    "method": "DELETE",
+    "path": "/v4/applications/{appId}/envs/{appEnv}/signers/{signerId}/revoke"
+  },
+  "create_document": {
+    "operation_id": "initDocument",
+    "method": "POST",
+    "path": "/v4/applications/{appId}/envs/{appEnv}/init-documents"
+  },
+  "get_document": {
+    "operation_id": "getDocumentById",
+    "method": "GET",
+    "path": "/v4/documents/{documentId}"
+  },
+  "update_document": {
+    "operation_id": "updateDocument",
+    "method": "PUT",
+    "path": "/v4/documents/{documentId}"
+  },
+  "delete_document": {
+    "operation_id": "removeDocument",
+    "method": "DELETE",
+    "path": "/v4/documents/{documentId}"
+  },
+  "get_document_context": {
+    "operation_id": "getDocumentContext",
+    "method": "GET",
+    "path": "/v4/documents/{documentId}/context"
+  },
+  "list_signature_requests": {
+    "operation_id": "getSignatureRequestsByAppIdAndAppEnv",
+    "method": "GET",
+    "path": "/v4/applications/{appId}/envs/{appEnv}/signature-requests"
+  },
+  "update_signature_request": {
+    "operation_id": "updateSignatureRequest",
+    "method": "PUT",
+    "path": "/v4/signature-requests/{signatureRequestId}"
+  },
+  "publish_signature_request": {
+    "operation_id": "publishSignatureRequest",
+    "method": "POST",
+    "path": "/v4/signature-requests/{signatureRequestId}/publish"
+  },
+  "close_signature_request": {
+    "operation_id": "closeSignatureRequest",
+    "method": "POST",
+    "path": "/v4/signature-requests/{signatureRequestId}/close"
+  },
+  "get_signature_request": {
+    "operation_id": "getSignatureRequestContext",
+    "method": "GET",
+    "path": "/v4/signature-requests/{signatureRequestId}/context"
+  },
+  "list_webhooks": {
+    "operation_id": "getWebhookEndPoints",
+    "method": "GET",
+    "path": "/v4/applications/{appId}/envs/{appEnv}/webhooks"
+  },
+  "create_webhook": {
+    "operation_id": "addWebhookEndpoint",
+    "method": "POST",
+    "path": "/v4/applications/{appId}/envs/{appEnv}/webhooks"
+  },
+  "delete_webhook": {
+    "operation_id": "removeWebhookEndpoint",
+    "method": "DELETE",
+    "path": "/v4/webhooks/{webhookId}"
+  },
+  "list_webhook_events": {
+    "operation_id": "getWebhookEvents",
+    "method": "GET",
+    "path": "/v4/webhooks/{webhookId}/events"
+  }
+}
