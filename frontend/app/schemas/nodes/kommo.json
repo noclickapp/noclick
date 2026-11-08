@@ -1,0 +1,3262 @@
+{
+  "$defs": {
+    "KommoAddCatalogElementsConfig": {
+      "description": "Add catalog elements",
+      "properties": {
+        "operation": {
+          "const": "add_catalog_elements",
+          "default": "add_catalog_elements",
+          "title": "Add catalog elements",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Add catalog elements"
+        },
+        "catalog_id": {
+          "title": "Catalog Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "catalog_id",
+        "body"
+      ],
+      "title": "KommoAddCatalogElementsConfig",
+      "type": "object"
+    },
+    "KommoAddCatalogsConfig": {
+      "description": "Add catalogs",
+      "properties": {
+        "operation": {
+          "const": "add_catalogs",
+          "default": "add_catalogs",
+          "title": "Add catalogs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Add catalogs"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "KommoAddCatalogsConfig",
+      "type": "object"
+    },
+    "KommoAddCompaniesConfig": {
+      "description": "Add companies",
+      "properties": {
+        "operation": {
+          "const": "add_companies",
+          "default": "add_companies",
+          "title": "Add companies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Companies",
+          "x-display-name": "Add companies"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "KommoAddCompaniesConfig",
+      "type": "object"
+    },
+    "KommoAddComplexLeadsConfig": {
+      "description": "Add leads with contacts and companies",
+      "properties": {
+        "operation": {
+          "const": "add_complex_leads",
+          "default": "add_complex_leads",
+          "title": "Add leads with contacts and companies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Leads",
+          "x-display-name": "Add leads with contacts and companies"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "KommoAddComplexLeadsConfig",
+      "type": "object"
+    },
+    "KommoAddContactsConfig": {
+      "description": "Add contacts",
+      "properties": {
+        "operation": {
+          "const": "add_contacts",
+          "default": "add_contacts",
+          "title": "Add contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Add contacts"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "KommoAddContactsConfig",
+      "type": "object"
+    },
+    "KommoAddCustomFieldsConfig": {
+      "description": "Add custom fields",
+      "properties": {
+        "operation": {
+          "const": "add_custom_fields",
+          "default": "add_custom_fields",
+          "title": "Add custom fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Fields",
+          "x-display-name": "Add custom fields"
+        },
+        "entity_type": {
+          "enum": [
+            "leads",
+            "contacts",
+            "companies"
+          ],
+          "title": "Entity type",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "entity_type",
+        "body"
+      ],
+      "title": "KommoAddCustomFieldsConfig",
+      "type": "object"
+    },
+    "KommoAddLeadsConfig": {
+      "description": "Add leads",
+      "properties": {
+        "operation": {
+          "const": "add_leads",
+          "default": "add_leads",
+          "title": "Add leads",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Leads",
+          "x-display-name": "Add leads"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "KommoAddLeadsConfig",
+      "type": "object"
+    },
+    "KommoAddNotesConfig": {
+      "description": "Add notes",
+      "properties": {
+        "operation": {
+          "const": "add_notes",
+          "default": "add_notes",
+          "title": "Add notes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "Add notes"
+        },
+        "entity_type": {
+          "enum": [
+            "leads",
+            "contacts",
+            "companies"
+          ],
+          "title": "Entity type",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "entity_type",
+        "body"
+      ],
+      "title": "KommoAddNotesConfig",
+      "type": "object"
+    },
+    "KommoAddPipelinesConfig": {
+      "description": "Add pipelines",
+      "properties": {
+        "operation": {
+          "const": "add_pipelines",
+          "default": "add_pipelines",
+          "title": "Add pipelines",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pipelines",
+          "x-display-name": "Add pipelines"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "KommoAddPipelinesConfig",
+      "type": "object"
+    },
+    "KommoAddSourcesConfig": {
+      "description": "Add sources",
+      "properties": {
+        "operation": {
+          "const": "add_sources",
+          "default": "add_sources",
+          "title": "Add sources",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sources",
+          "x-display-name": "Add sources"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "KommoAddSourcesConfig",
+      "type": "object"
+    },
+    "KommoAddStagesConfig": {
+      "description": "Add pipeline stages",
+      "properties": {
+        "operation": {
+          "const": "add_stages",
+          "default": "add_stages",
+          "title": "Add pipeline stages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pipelines",
+          "x-display-name": "Add pipeline stages"
+        },
+        "pipeline_id": {
+          "title": "Pipeline Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "pipeline_id",
+        "body"
+      ],
+      "title": "KommoAddStagesConfig",
+      "type": "object"
+    },
+    "KommoAddTagsConfig": {
+      "description": "Add tags",
+      "properties": {
+        "operation": {
+          "const": "add_tags",
+          "default": "add_tags",
+          "title": "Add tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Add tags"
+        },
+        "entity_type": {
+          "enum": [
+            "leads",
+            "contacts",
+            "companies"
+          ],
+          "title": "Entity type",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "entity_type",
+        "body"
+      ],
+      "title": "KommoAddTagsConfig",
+      "type": "object"
+    },
+    "KommoAddTasksConfig": {
+      "description": "Add tasks",
+      "properties": {
+        "operation": {
+          "const": "add_tasks",
+          "default": "add_tasks",
+          "title": "Add tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Add tasks"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "KommoAddTasksConfig",
+      "type": "object"
+    },
+    "KommoAddWebhookConfig": {
+      "description": "Add webhook",
+      "properties": {
+        "operation": {
+          "const": "add_webhook",
+          "default": "add_webhook",
+          "title": "Add webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Add webhook"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "KommoAddWebhookConfig",
+      "type": "object"
+    },
+    "KommoDeleteCustomFieldConfig": {
+      "description": "Delete custom field",
+      "properties": {
+        "operation": {
+          "const": "delete_custom_field",
+          "default": "delete_custom_field",
+          "title": "Delete custom field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Fields",
+          "x-display-name": "Delete custom field"
+        },
+        "entity_type": {
+          "enum": [
+            "leads",
+            "contacts",
+            "companies"
+          ],
+          "title": "Entity type",
+          "type": "string"
+        },
+        "field_id": {
+          "title": "Field Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "entity_type",
+        "field_id"
+      ],
+      "title": "KommoDeleteCustomFieldConfig",
+      "type": "object"
+    },
+    "KommoDeletePipelineConfig": {
+      "description": "Delete pipeline",
+      "properties": {
+        "operation": {
+          "const": "delete_pipeline",
+          "default": "delete_pipeline",
+          "title": "Delete pipeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pipelines",
+          "x-display-name": "Delete pipeline"
+        },
+        "pipeline_id": {
+          "title": "Pipeline Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "pipeline_id"
+      ],
+      "title": "KommoDeletePipelineConfig",
+      "type": "object"
+    },
+    "KommoDeleteSourceConfig": {
+      "description": "Delete source",
+      "properties": {
+        "operation": {
+          "const": "delete_source",
+          "default": "delete_source",
+          "title": "Delete source",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sources",
+          "x-display-name": "Delete source"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "source_id"
+      ],
+      "title": "KommoDeleteSourceConfig",
+      "type": "object"
+    },
+    "KommoDeleteStageConfig": {
+      "description": "Delete pipeline stage",
+      "properties": {
+        "operation": {
+          "const": "delete_stage",
+          "default": "delete_stage",
+          "title": "Delete pipeline stage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pipelines",
+          "x-display-name": "Delete pipeline stage"
+        },
+        "pipeline_id": {
+          "title": "Pipeline Id",
+          "type": "string"
+        },
+        "stage_id": {
+          "title": "Stage Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "pipeline_id",
+        "stage_id"
+      ],
+      "title": "KommoDeleteStageConfig",
+      "type": "object"
+    },
+    "KommoDeleteWebhookConfig": {
+      "description": "Delete webhook",
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Delete webhook"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "KommoDeleteWebhookConfig",
+      "type": "object"
+    },
+    "KommoGetAccountConfig": {
+      "description": "Get account",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get account"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KommoGetAccountConfig",
+      "type": "object"
+    },
+    "KommoGetCatalogConfig": {
+      "description": "Get catalog",
+      "properties": {
+        "operation": {
+          "const": "get_catalog",
+          "default": "get_catalog",
+          "title": "Get catalog",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Get catalog"
+        },
+        "catalog_id": {
+          "title": "Catalog Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "catalog_id"
+      ],
+      "title": "KommoGetCatalogConfig",
+      "type": "object"
+    },
+    "KommoGetCatalogElementConfig": {
+      "description": "Get catalog element",
+      "properties": {
+        "operation": {
+          "const": "get_catalog_element",
+          "default": "get_catalog_element",
+          "title": "Get catalog element",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Get catalog element"
+        },
+        "catalog_id": {
+          "title": "Catalog Id",
+          "type": "string"
+        },
+        "element_id": {
+          "title": "Element Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "catalog_id",
+        "element_id"
+      ],
+      "title": "KommoGetCatalogElementConfig",
+      "type": "object"
+    },
+    "KommoGetCompanyConfig": {
+      "description": "Get company",
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Get company",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Companies",
+          "x-display-name": "Get company"
+        },
+        "company_id": {
+          "title": "Company Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "KommoGetCompanyConfig",
+      "type": "object"
+    },
+    "KommoGetContactConfig": {
+      "description": "Get contact",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get contact"
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "KommoGetContactConfig",
+      "type": "object"
+    },
+    "KommoGetConversationConfig": {
+      "description": "Get conversation",
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Get conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversations",
+          "x-display-name": "Get conversation"
+        },
+        "conversation_id": {
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "KommoGetConversationConfig",
+      "type": "object"
+    },
+    "KommoGetCustomFieldConfig": {
+      "description": "Get custom field",
+      "properties": {
+        "operation": {
+          "const": "get_custom_field",
+          "default": "get_custom_field",
+          "title": "Get custom field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Fields",
+          "x-display-name": "Get custom field"
+        },
+        "entity_type": {
+          "enum": [
+            "leads",
+            "contacts",
+            "companies"
+          ],
+          "title": "Entity type",
+          "type": "string"
+        },
+        "field_id": {
+          "title": "Field Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "entity_type",
+        "field_id"
+      ],
+      "title": "KommoGetCustomFieldConfig",
+      "type": "object"
+    },
+    "KommoGetEventConfig": {
+      "description": "Get event",
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Get event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Get event"
+        },
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "KommoGetEventConfig",
+      "type": "object"
+    },
+    "KommoGetLeadConfig": {
+      "description": "Get lead",
+      "properties": {
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Get lead",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Leads",
+          "x-display-name": "Get lead"
+        },
+        "lead_id": {
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "KommoGetLeadConfig",
+      "type": "object"
+    },
+    "KommoGetNoteConfig": {
+      "description": "Get note",
+      "properties": {
+        "operation": {
+          "const": "get_note",
+          "default": "get_note",
+          "title": "Get note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "Get note"
+        },
+        "entity_type": {
+          "enum": [
+            "leads",
+            "contacts",
+            "companies"
+          ],
+          "title": "Entity type",
+          "type": "string"
+        },
+        "note_id": {
+          "title": "Note Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "entity_type",
+        "note_id"
+      ],
+      "title": "KommoGetNoteConfig",
+      "type": "object"
+    },
+    "KommoGetPipelineConfig": {
+      "description": "Get pipeline",
+      "properties": {
+        "operation": {
+          "const": "get_pipeline",
+          "default": "get_pipeline",
+          "title": "Get pipeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pipelines",
+          "x-display-name": "Get pipeline"
+        },
+        "pipeline_id": {
+          "title": "Pipeline Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "pipeline_id"
+      ],
+      "title": "KommoGetPipelineConfig",
+      "type": "object"
+    },
+    "KommoGetSourceConfig": {
+      "description": "Get source",
+      "properties": {
+        "operation": {
+          "const": "get_source",
+          "default": "get_source",
+          "title": "Get source",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sources",
+          "x-display-name": "Get source"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "source_id"
+      ],
+      "title": "KommoGetSourceConfig",
+      "type": "object"
+    },
+    "KommoGetStageConfig": {
+      "description": "Get pipeline stage",
+      "properties": {
+        "operation": {
+          "const": "get_stage",
+          "default": "get_stage",
+          "title": "Get pipeline stage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pipelines",
+          "x-display-name": "Get pipeline stage"
+        },
+        "pipeline_id": {
+          "title": "Pipeline Id",
+          "type": "string"
+        },
+        "stage_id": {
+          "title": "Stage Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "pipeline_id",
+        "stage_id"
+      ],
+      "title": "KommoGetStageConfig",
+      "type": "object"
+    },
+    "KommoGetTaskConfig": {
+      "description": "Get task",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get task"
+        },
+        "task_id": {
+          "title": "Task Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "KommoGetTaskConfig",
+      "type": "object"
+    },
+    "KommoGetUserConfig": {
+      "description": "Get user",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Get user",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get user"
+        },
+        "user_id": {
+          "title": "User Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "KommoGetUserConfig",
+      "type": "object"
+    },
+    "KommoLinkEntitiesConfig": {
+      "description": "Link entities",
+      "properties": {
+        "operation": {
+          "const": "link_entities",
+          "default": "link_entities",
+          "title": "Link entities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Links",
+          "x-display-name": "Link entities"
+        },
+        "entity_type": {
+          "enum": [
+            "leads",
+            "contacts",
+            "companies"
+          ],
+          "title": "Entity type",
+          "type": "string"
+        },
+        "entity_id": {
+          "title": "Entity Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "entity_type",
+        "entity_id",
+        "body"
+      ],
+      "title": "KommoLinkEntitiesConfig",
+      "type": "object"
+    },
+    "KommoListCatalogElementsConfig": {
+      "description": "List catalog elements",
+      "properties": {
+        "operation": {
+          "const": "list_catalog_elements",
+          "default": "list_catalog_elements",
+          "title": "List catalog elements",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "List catalog elements"
+        },
+        "catalog_id": {
+          "title": "Catalog Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "catalog_id"
+      ],
+      "title": "KommoListCatalogElementsConfig",
+      "type": "object"
+    },
+    "KommoListCatalogsConfig": {
+      "description": "List catalogs",
+      "properties": {
+        "operation": {
+          "const": "list_catalogs",
+          "default": "list_catalogs",
+          "title": "List catalogs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "List catalogs"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KommoListCatalogsConfig",
+      "type": "object"
+    },
+    "KommoListCompaniesConfig": {
+      "description": "List companies",
+      "properties": {
+        "operation": {
+          "const": "list_companies",
+          "default": "list_companies",
+          "title": "List companies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Companies",
+          "x-display-name": "List companies"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KommoListCompaniesConfig",
+      "type": "object"
+    },
+    "KommoListContactsConfig": {
+      "description": "List contacts",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List contacts"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KommoListContactsConfig",
+      "type": "object"
+    },
+    "KommoListConversationsConfig": {
+      "description": "List conversations",
+      "properties": {
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "List conversations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversations",
+          "x-display-name": "List conversations"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KommoListConversationsConfig",
+      "type": "object"
+    },
+    "KommoListCustomFieldsConfig": {
+      "description": "List custom fields",
+      "properties": {
+        "operation": {
+          "const": "list_custom_fields",
+          "default": "list_custom_fields",
+          "title": "List custom fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Fields",
+          "x-display-name": "List custom fields"
+        },
+        "entity_type": {
+          "enum": [
+            "leads",
+            "contacts",
+            "companies"
+          ],
+          "title": "Entity type",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "entity_type"
+      ],
+      "title": "KommoListCustomFieldsConfig",
+      "type": "object"
+    },
+    "KommoListEntityNotesConfig": {
+      "description": "List notes for entity",
+      "properties": {
+        "operation": {
+          "const": "list_entity_notes",
+          "default": "list_entity_notes",
+          "title": "List notes for entity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "List notes for entity"
+        },
+        "entity_type": {
+          "enum": [
+            "leads",
+            "contacts",
+            "companies"
+          ],
+          "title": "Entity type",
+          "type": "string"
+        },
+        "entity_id": {
+          "title": "Entity Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "entity_type",
+        "entity_id"
+      ],
+      "title": "KommoListEntityNotesConfig",
+      "type": "object"
+    },
+    "KommoListEventTypesConfig": {
+      "description": "List event types",
+      "properties": {
+        "operation": {
+          "const": "list_event_types",
+          "default": "list_event_types",
+          "title": "List event types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "List event types"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KommoListEventTypesConfig",
+      "type": "object"
+    },
+    "KommoListEventsConfig": {
+      "description": "List events",
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "List events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "List events"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KommoListEventsConfig",
+      "type": "object"
+    },
+    "KommoListLeadsConfig": {
+      "description": "List leads",
+      "properties": {
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "List leads",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Leads",
+          "x-display-name": "List leads"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KommoListLeadsConfig",
+      "type": "object"
+    },
+    "KommoListLinksConfig": {
+      "description": "List linked entities",
+      "properties": {
+        "operation": {
+          "const": "list_links",
+          "default": "list_links",
+          "title": "List linked entities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Links",
+          "x-display-name": "List linked entities"
+        },
+        "entity_type": {
+          "enum": [
+            "leads",
+            "contacts",
+            "companies"
+          ],
+          "title": "Entity type",
+          "type": "string"
+        },
+        "entity_id": {
+          "title": "Entity Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "entity_type",
+        "entity_id"
+      ],
+      "title": "KommoListLinksConfig",
+      "type": "object"
+    },
+    "KommoListLossReasonsConfig": {
+      "description": "List loss reasons",
+      "properties": {
+        "operation": {
+          "const": "list_loss_reasons",
+          "default": "list_loss_reasons",
+          "title": "List loss reasons",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Leads",
+          "x-display-name": "List loss reasons"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KommoListLossReasonsConfig",
+      "type": "object"
+    },
+    "KommoListNotesConfig": {
+      "description": "List notes for entity type",
+      "properties": {
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "List notes for entity type",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "List notes for entity type"
+        },
+        "entity_type": {
+          "enum": [
+            "leads",
+            "contacts",
+            "companies"
+          ],
+          "title": "Entity type",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "entity_type"
+      ],
+      "title": "KommoListNotesConfig",
+      "type": "object"
+    },
+    "KommoListPipelinesConfig": {
+      "description": "List pipelines",
+      "properties": {
+        "operation": {
+          "const": "list_pipelines",
+          "default": "list_pipelines",
+          "title": "List pipelines",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pipelines",
+          "x-display-name": "List pipelines"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KommoListPipelinesConfig",
+      "type": "object"
+    },
+    "KommoListRolesConfig": {
+      "description": "List roles",
+      "properties": {
+        "operation": {
+          "const": "list_roles",
+          "default": "list_roles",
+          "title": "List roles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "List roles"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KommoListRolesConfig",
+      "type": "object"
+    },
+    "KommoListSourcesConfig": {
+      "description": "List sources",
+      "properties": {
+        "operation": {
+          "const": "list_sources",
+          "default": "list_sources",
+          "title": "List sources",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sources",
+          "x-display-name": "List sources"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KommoListSourcesConfig",
+      "type": "object"
+    },
+    "KommoListStagesConfig": {
+      "description": "List pipeline stages",
+      "properties": {
+        "operation": {
+          "const": "list_stages",
+          "default": "list_stages",
+          "title": "List pipeline stages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pipelines",
+          "x-display-name": "List pipeline stages"
+        },
+        "pipeline_id": {
+          "title": "Pipeline Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "pipeline_id"
+      ],
+      "title": "KommoListStagesConfig",
+      "type": "object"
+    },
+    "KommoListTagsConfig": {
+      "description": "List tags",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "List tags"
+        },
+        "entity_type": {
+          "enum": [
+            "leads",
+            "contacts",
+            "companies"
+          ],
+          "title": "Entity type",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "entity_type"
+      ],
+      "title": "KommoListTagsConfig",
+      "type": "object"
+    },
+    "KommoListTasksConfig": {
+      "description": "List tasks",
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "List tasks"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KommoListTasksConfig",
+      "type": "object"
+    },
+    "KommoListUsersConfig": {
+      "description": "List users",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "List users"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KommoListUsersConfig",
+      "type": "object"
+    },
+    "KommoListWebhooksConfig": {
+      "description": "List webhooks",
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List webhooks"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KommoListWebhooksConfig",
+      "type": "object"
+    },
+    "KommoLongLivedTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kommo_long_lived_token",
+          "default": "kommo_long_lived_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subdomain": {
+          "description": "The part before .kommo.com",
+          "title": "Kommo account subdomain",
+          "type": "string"
+        },
+        "token": {
+          "title": "Long-lived token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "subdomain",
+        "token"
+      ],
+      "title": "Kommo Long-lived Token",
+      "type": "object",
+      "x-credential-instructions": "Create a private integration in Kommo Settings > Integrations and copy its long-lived token.",
+      "x-credential-url": "https://developers.kommo.com/docs/long-lived-token"
+    },
+    "KommoOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "kommo_oauth",
+          "default": "kommo_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "referer": {
+          "title": "Kommo account host",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "title": "Refresh token",
+          "type": "string"
+        },
+        "expires_at": {
+          "title": "Token expiry",
+          "type": "string"
+        }
+      },
+      "required": [
+        "referer",
+        "access_token",
+        "refresh_token",
+        "expires_at"
+      ],
+      "title": "Kommo OAuth",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://developers.kommo.com/docs/oauth-20",
+      "x-oauth-provider": "kommo",
+      "x-oauth-scopes": []
+    },
+    "KommoUnlinkEntitiesConfig": {
+      "description": "Unlink entities",
+      "properties": {
+        "operation": {
+          "const": "unlink_entities",
+          "default": "unlink_entities",
+          "title": "Unlink entities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Links",
+          "x-display-name": "Unlink entities"
+        },
+        "entity_type": {
+          "enum": [
+            "leads",
+            "contacts",
+            "companies"
+          ],
+          "title": "Entity type",
+          "type": "string"
+        },
+        "entity_id": {
+          "title": "Entity Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "entity_type",
+        "entity_id",
+        "body"
+      ],
+      "title": "KommoUnlinkEntitiesConfig",
+      "type": "object"
+    },
+    "KommoUpdateCatalogConfig": {
+      "description": "Update catalog",
+      "properties": {
+        "operation": {
+          "const": "update_catalog",
+          "default": "update_catalog",
+          "title": "Update catalog",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Update catalog"
+        },
+        "catalog_id": {
+          "title": "Catalog Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "catalog_id",
+        "body"
+      ],
+      "title": "KommoUpdateCatalogConfig",
+      "type": "object"
+    },
+    "KommoUpdateCatalogElementConfig": {
+      "description": "Update catalog element",
+      "properties": {
+        "operation": {
+          "const": "update_catalog_element",
+          "default": "update_catalog_element",
+          "title": "Update catalog element",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalogs",
+          "x-display-name": "Update catalog element"
+        },
+        "catalog_id": {
+          "title": "Catalog Id",
+          "type": "string"
+        },
+        "element_id": {
+          "title": "Element Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "catalog_id",
+        "element_id",
+        "body"
+      ],
+      "title": "KommoUpdateCatalogElementConfig",
+      "type": "object"
+    },
+    "KommoUpdateCompaniesConfig": {
+      "description": "Update companies in bulk",
+      "properties": {
+        "operation": {
+          "const": "update_companies",
+          "default": "update_companies",
+          "title": "Update companies in bulk",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Companies",
+          "x-display-name": "Update companies in bulk"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "KommoUpdateCompaniesConfig",
+      "type": "object"
+    },
+    "KommoUpdateCompanyConfig": {
+      "description": "Update company",
+      "properties": {
+        "operation": {
+          "const": "update_company",
+          "default": "update_company",
+          "title": "Update company",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Companies",
+          "x-display-name": "Update company"
+        },
+        "company_id": {
+          "title": "Company Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "company_id",
+        "body"
+      ],
+      "title": "KommoUpdateCompanyConfig",
+      "type": "object"
+    },
+    "KommoUpdateContactConfig": {
+      "description": "Update contact",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Update contact"
+        },
+        "contact_id": {
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "contact_id",
+        "body"
+      ],
+      "title": "KommoUpdateContactConfig",
+      "type": "object"
+    },
+    "KommoUpdateContactsConfig": {
+      "description": "Update contacts in bulk",
+      "properties": {
+        "operation": {
+          "const": "update_contacts",
+          "default": "update_contacts",
+          "title": "Update contacts in bulk",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Update contacts in bulk"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "KommoUpdateContactsConfig",
+      "type": "object"
+    },
+    "KommoUpdateCustomFieldConfig": {
+      "description": "Update custom field",
+      "properties": {
+        "operation": {
+          "const": "update_custom_field",
+          "default": "update_custom_field",
+          "title": "Update custom field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Fields",
+          "x-display-name": "Update custom field"
+        },
+        "entity_type": {
+          "enum": [
+            "leads",
+            "contacts",
+            "companies"
+          ],
+          "title": "Entity type",
+          "type": "string"
+        },
+        "field_id": {
+          "title": "Field Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "entity_type",
+        "field_id",
+        "body"
+      ],
+      "title": "KommoUpdateCustomFieldConfig",
+      "type": "object"
+    },
+    "KommoUpdateLeadConfig": {
+      "description": "Update lead",
+      "properties": {
+        "operation": {
+          "const": "update_lead",
+          "default": "update_lead",
+          "title": "Update lead",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Leads",
+          "x-display-name": "Update lead"
+        },
+        "lead_id": {
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "lead_id",
+        "body"
+      ],
+      "title": "KommoUpdateLeadConfig",
+      "type": "object"
+    },
+    "KommoUpdateLeadsConfig": {
+      "description": "Update leads in bulk",
+      "properties": {
+        "operation": {
+          "const": "update_leads",
+          "default": "update_leads",
+          "title": "Update leads in bulk",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Leads",
+          "x-display-name": "Update leads in bulk"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "KommoUpdateLeadsConfig",
+      "type": "object"
+    },
+    "KommoUpdateNoteConfig": {
+      "description": "Update note",
+      "properties": {
+        "operation": {
+          "const": "update_note",
+          "default": "update_note",
+          "title": "Update note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "Update note"
+        },
+        "entity_type": {
+          "enum": [
+            "leads",
+            "contacts",
+            "companies"
+          ],
+          "title": "Entity type",
+          "type": "string"
+        },
+        "note_id": {
+          "title": "Note Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "entity_type",
+        "note_id",
+        "body"
+      ],
+      "title": "KommoUpdateNoteConfig",
+      "type": "object"
+    },
+    "KommoUpdatePipelineConfig": {
+      "description": "Update pipeline",
+      "properties": {
+        "operation": {
+          "const": "update_pipeline",
+          "default": "update_pipeline",
+          "title": "Update pipeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pipelines",
+          "x-display-name": "Update pipeline"
+        },
+        "pipeline_id": {
+          "title": "Pipeline Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "pipeline_id",
+        "body"
+      ],
+      "title": "KommoUpdatePipelineConfig",
+      "type": "object"
+    },
+    "KommoUpdateSourceConfig": {
+      "description": "Update source",
+      "properties": {
+        "operation": {
+          "const": "update_source",
+          "default": "update_source",
+          "title": "Update source",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sources",
+          "x-display-name": "Update source"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "source_id",
+        "body"
+      ],
+      "title": "KommoUpdateSourceConfig",
+      "type": "object"
+    },
+    "KommoUpdateStageConfig": {
+      "description": "Update pipeline stage",
+      "properties": {
+        "operation": {
+          "const": "update_stage",
+          "default": "update_stage",
+          "title": "Update pipeline stage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pipelines",
+          "x-display-name": "Update pipeline stage"
+        },
+        "pipeline_id": {
+          "title": "Pipeline Id",
+          "type": "string"
+        },
+        "stage_id": {
+          "title": "Stage Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "pipeline_id",
+        "stage_id",
+        "body"
+      ],
+      "title": "KommoUpdateStageConfig",
+      "type": "object"
+    },
+    "KommoUpdateTaskConfig": {
+      "description": "Update task",
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Update task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Update task"
+        },
+        "task_id": {
+          "title": "Task Id",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "task_id",
+        "body"
+      ],
+      "title": "KommoUpdateTaskConfig",
+      "type": "object"
+    },
+    "KommoUpdateTasksConfig": {
+      "description": "Update tasks in bulk",
+      "properties": {
+        "operation": {
+          "const": "update_tasks",
+          "default": "update_tasks",
+          "title": "Update tasks in bulk",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Update tasks in bulk"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object; use literal Kommo filter keys such as {\"filter[is_completed]\": 1}.",
+          "title": "Query parameters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "body": {
+          "description": "JSON object or array matching the linked Kommo API reference.",
+          "title": "JSON body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "KommoUpdateTasksConfig",
+      "type": "object"
+    }
+  },
+  "description": "Kommo operation and account credential.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_catalog_elements": "#/$defs/KommoAddCatalogElementsConfig",
+          "add_catalogs": "#/$defs/KommoAddCatalogsConfig",
+          "add_companies": "#/$defs/KommoAddCompaniesConfig",
+          "add_complex_leads": "#/$defs/KommoAddComplexLeadsConfig",
+          "add_contacts": "#/$defs/KommoAddContactsConfig",
+          "add_custom_fields": "#/$defs/KommoAddCustomFieldsConfig",
+          "add_leads": "#/$defs/KommoAddLeadsConfig",
+          "add_notes": "#/$defs/KommoAddNotesConfig",
+          "add_pipelines": "#/$defs/KommoAddPipelinesConfig",
+          "add_sources": "#/$defs/KommoAddSourcesConfig",
+          "add_stages": "#/$defs/KommoAddStagesConfig",
+          "add_tags": "#/$defs/KommoAddTagsConfig",
+          "add_tasks": "#/$defs/KommoAddTasksConfig",
+          "add_webhook": "#/$defs/KommoAddWebhookConfig",
+          "delete_custom_field": "#/$defs/KommoDeleteCustomFieldConfig",
+          "delete_pipeline": "#/$defs/KommoDeletePipelineConfig",
+          "delete_source": "#/$defs/KommoDeleteSourceConfig",
+          "delete_stage": "#/$defs/KommoDeleteStageConfig",
+          "delete_webhook": "#/$defs/KommoDeleteWebhookConfig",
+          "get_account": "#/$defs/KommoGetAccountConfig",
+          "get_catalog": "#/$defs/KommoGetCatalogConfig",
+          "get_catalog_element": "#/$defs/KommoGetCatalogElementConfig",
+          "get_company": "#/$defs/KommoGetCompanyConfig",
+          "get_contact": "#/$defs/KommoGetContactConfig",
+          "get_conversation": "#/$defs/KommoGetConversationConfig",
+          "get_custom_field": "#/$defs/KommoGetCustomFieldConfig",
+          "get_event": "#/$defs/KommoGetEventConfig",
+          "get_lead": "#/$defs/KommoGetLeadConfig",
+          "get_note": "#/$defs/KommoGetNoteConfig",
+          "get_pipeline": "#/$defs/KommoGetPipelineConfig",
+          "get_source": "#/$defs/KommoGetSourceConfig",
+          "get_stage": "#/$defs/KommoGetStageConfig",
+          "get_task": "#/$defs/KommoGetTaskConfig",
+          "get_user": "#/$defs/KommoGetUserConfig",
+          "link_entities": "#/$defs/KommoLinkEntitiesConfig",
+          "list_catalog_elements": "#/$defs/KommoListCatalogElementsConfig",
+          "list_catalogs": "#/$defs/KommoListCatalogsConfig",
+          "list_companies": "#/$defs/KommoListCompaniesConfig",
+          "list_contacts": "#/$defs/KommoListContactsConfig",
+          "list_conversations": "#/$defs/KommoListConversationsConfig",
+          "list_custom_fields": "#/$defs/KommoListCustomFieldsConfig",
+          "list_entity_notes": "#/$defs/KommoListEntityNotesConfig",
+          "list_event_types": "#/$defs/KommoListEventTypesConfig",
+          "list_events": "#/$defs/KommoListEventsConfig",
+          "list_leads": "#/$defs/KommoListLeadsConfig",
+          "list_links": "#/$defs/KommoListLinksConfig",
+          "list_loss_reasons": "#/$defs/KommoListLossReasonsConfig",
+          "list_notes": "#/$defs/KommoListNotesConfig",
+          "list_pipelines": "#/$defs/KommoListPipelinesConfig",
+          "list_roles": "#/$defs/KommoListRolesConfig",
+          "list_sources": "#/$defs/KommoListSourcesConfig",
+          "list_stages": "#/$defs/KommoListStagesConfig",
+          "list_tags": "#/$defs/KommoListTagsConfig",
+          "list_tasks": "#/$defs/KommoListTasksConfig",
+          "list_users": "#/$defs/KommoListUsersConfig",
+          "list_webhooks": "#/$defs/KommoListWebhooksConfig",
+          "unlink_entities": "#/$defs/KommoUnlinkEntitiesConfig",
+          "update_catalog": "#/$defs/KommoUpdateCatalogConfig",
+          "update_catalog_element": "#/$defs/KommoUpdateCatalogElementConfig",
+          "update_companies": "#/$defs/KommoUpdateCompaniesConfig",
+          "update_company": "#/$defs/KommoUpdateCompanyConfig",
+          "update_contact": "#/$defs/KommoUpdateContactConfig",
+          "update_contacts": "#/$defs/KommoUpdateContactsConfig",
+          "update_custom_field": "#/$defs/KommoUpdateCustomFieldConfig",
+          "update_lead": "#/$defs/KommoUpdateLeadConfig",
+          "update_leads": "#/$defs/KommoUpdateLeadsConfig",
+          "update_note": "#/$defs/KommoUpdateNoteConfig",
+          "update_pipeline": "#/$defs/KommoUpdatePipelineConfig",
+          "update_source": "#/$defs/KommoUpdateSourceConfig",
+          "update_stage": "#/$defs/KommoUpdateStageConfig",
+          "update_task": "#/$defs/KommoUpdateTaskConfig",
+          "update_tasks": "#/$defs/KommoUpdateTasksConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/KommoGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoGetLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoAddLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoUpdateLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoUpdateLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoAddContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoUpdateContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoGetCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoAddCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoUpdateCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoUpdateCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoAddTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoUpdateTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoAddComplexLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListLossReasonsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListPipelinesConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoGetPipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoAddPipelinesConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoUpdatePipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoDeletePipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListStagesConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoGetStageConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoAddStagesConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoUpdateStageConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoDeleteStageConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListCatalogsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoGetCatalogConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoAddCatalogsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoUpdateCatalogConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListCatalogElementsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoGetCatalogElementConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoAddCatalogElementsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoUpdateCatalogElementConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListCustomFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoGetCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoAddCustomFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoUpdateCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoDeleteCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListRolesConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListEventTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListEntityNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoGetNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoAddNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoUpdateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoAddTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListLinksConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoLinkEntitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoUnlinkEntitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListSourcesConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoGetSourceConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoAddSourcesConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoUpdateSourceConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoDeleteSourceConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoGetConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoAddWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/KommoDeleteWebhookConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KommoOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/KommoLongLivedTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Kommo Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List new Kommo leads",
+    "Add a contact to Kommo",
+    "Move a lead to another pipeline stage",
+    "Create a follow-up task in Kommo"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
