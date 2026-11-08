@@ -8,6 +8,7 @@ const ConvertAPIIcon = ({ className, style }: { className?: string; style?: CSSP
 );
 export const ConvertAPINode: NodeDefinition = {
     type: 'automation-convertapi', label: 'ConvertAPI',
+    category: 'documents',
     description: 'Convert documents and images, read usage and manage temporary files',
     Icon: ConvertAPIIcon, iconColor: '', dimensions: { width: 90, height: 90, iconSize: 48 },
     component: memo((props: NodeProps) => <AutomationNode {...props} Icon={ConvertAPIIcon} iconColor="" />),
