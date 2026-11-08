@@ -53,6 +53,7 @@ from openapi_schema_validator import oas30_format_checker
 from werkzeug.datastructures import MultiDict
 
 from tests.conformance.files import file_values, is_file
+from tests.conformance.postman import PostmanContract, is_postman, validate_collection
 from tests.conformance.transports import intercept_http
 from tests.conformance.strings import (
     PatternError,
@@ -575,6 +576,16 @@ def load_spec(provider, entry=None):
         )
 
     doc = parse_document(raw, entry["file"])
+    if entry.get("format") == "postman":
+        validate_collection(doc)
+        source = urlsplit(entry.get("source_url", ""))
+        if source.scheme not in {"http", "https"} or not source.netloc or source.fragment:
+            raise ValueError("Catalog Postman source_url requires an absolute HTTP URL")
+        if "version" not in entry or doc["info"].get("version") != entry["version"]:
+            raise ValueError("Spec version differs from manifest")
+        return doc
+    if is_postman(doc):
+        raise ValueError("Postman collections require format: postman")
     if doc["info"]["version"] != entry["version"]:
         raise ValueError("Spec version differs from manifest")
 
@@ -1634,7 +1645,7 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
     model = node_cls.get_config_model()
     schema = model.model_json_schema()
     config_schema = schema["properties"]["config"]
-    members = config_schema.get("oneOf", [config_schema])
+    members = config_schema.get("oneOf", config_schema.get("anyOf", [config_schema]))
     entry = spec_entry(provider)[1]
     by_operation = {
         resolve(schema, m)["properties"]["operation"].get("const")
@@ -1646,7 +1657,7 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
     for doc in load_specs(provider):
         try:
             contracts.append(
-                Contract(
+                (PostmanContract if is_postman(doc) else Contract)(
                     doc,
                     auth_override=entry.get("auth_override"),
                     server_url=entry.get("server_url"),
@@ -1668,8 +1679,15 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
         for op, member in by_operation.items()
         for name, entry in input_cases(op)
     ]
-    for op, member, case_name, case in cases:
+    # Replay whole operations for every saved Postman response, preserving every
+    # request, node guard and readback. Plans select one response at a captured
+    # request ordinal; no response is synthesized or rebound to input IDs.
+    cases = [(op, member, name, case, {}) for op, member, name, case in cases]
+    replayed = set()
+    for op, member, case_name, case, response_plan in cases:
         result = OperationResult(op, scenario=case_name if case else None)
+        if response_plan:
+            result.scenario = f"{case_name}:postman:{sorted(response_plan.items())}"
         results.append(result)
         # Manual trigger execution is a passthrough, not a provider API call.
         if op.startswith("on_") or op == "custom_request":
@@ -1735,6 +1753,9 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
                     matches.append(
                         (
                             (
+                                # A collection cannot downgrade a route that
+                                # also has an OpenAPI contract.
+                                isinstance(candidate, PostmanContract),
                                 path.count("{"),
                                 -len(re.sub(r"\{[^}]+\}", "", path)),
                                 index,
@@ -1755,6 +1776,21 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
                 result.failures.append(reason(exc))
                 raise
             contract = selected
+            if isinstance(contract, PostmanContract):
+                record["contract_format"] = "postman"
+                record["postman_item"] = operation["item_id"]
+                record["published_responses"] = len(operation["item"].get("response", []))
+                ordinal = len(result.requests) - 1
+                replay_base = (op, case_name, ordinal, spec_index, operation["item_id"])
+                replayed.add((*replay_base, response_plan.get(ordinal, 0)))
+                for example in range(record["published_responses"]):
+                    replay_key = (*replay_base, example)
+                    if replay_key not in replayed:
+                        replayed.add(replay_key)
+                        cases.append(
+                            (op, member, case_name, case, {**response_plan, ordinal: example})
+                        )
+                record["response_example"] = response_plan.get(ordinal, 0)
             covered.add((spec_index, path, method))
             if len(contracts) > 1:
                 record["spec_index"] = spec_index
@@ -1779,6 +1815,10 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
                     request, operation, key=f"{method.upper()} {path}", record=record,
                     witnesses=witnesses,
                     strict_witnesses="witnesses" in case,
+                    **(
+                        {"example_index": response_plan.get(len(result.requests) - 1, 0)}
+                        if isinstance(contract, PostmanContract) else {}
+                    ),
                 )
                 record["response_status"] = response.status_code
                 record["response_sha256"] = hashlib.sha256(response.content).hexdigest()
@@ -1838,6 +1878,8 @@ async def run_provider(provider, *, config_overrides=None, enrich=True):
             try:
                 candidate = result.config
                 for spec_index, contract in enumerate(contracts):
+                    if isinstance(contract, PostmanContract):
+                        continue
                     candidate = enrich_config(
                         contract,
                         by_operation[result.operation],
