@@ -1,0 +1,995 @@
+{
+  "$defs": {
+    "AnchorBrowserAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "anchor_browser_api_key",
+          "default": "anchor_browser_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Anchor Browser API Key",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in Anchor Browser's API Keys page, then paste it here. NoClick sends it in the anchor-api-key header. Connecting reads your team's session history; browser actions and tasks may consume credits and change websites.",
+      "x-credential-url": "https://app.anchorbrowser.io/api-keys"
+    },
+    "Click": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "click",
+          "default": "click",
+          "title": "Click Element",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "selector": {
+          "minLength": 1,
+          "title": "CSS Selector",
+          "type": "string"
+        },
+        "button": {
+          "default": "left",
+          "enum": [
+            "left",
+            "middle",
+            "right"
+          ],
+          "title": "Button",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wait for the selector in milliseconds.",
+          "title": "Timeout"
+        },
+        "index": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zero-based index when several elements match.",
+          "title": "Index"
+        }
+      },
+      "required": [
+        "session_id",
+        "selector"
+      ],
+      "title": "Click",
+      "type": "object"
+    },
+    "CreateProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Profile Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "create_profile",
+          "default": "create_profile",
+          "title": "Create Profile",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "session_id": {
+          "description": "Running session to save as a profile after the session terminates.",
+          "format": "uuid",
+          "title": "Session Id",
+          "type": "string"
+        },
+        "dedicated_sticky_ip": {
+          "default": false,
+          "title": "Dedicated Sticky Ip",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "session_id"
+      ],
+      "title": "CreateProfile",
+      "type": "object"
+    },
+    "DeleteProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Profile Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_profile",
+          "default": "delete_profile",
+          "description": "Deletes the named persistent profile.",
+          "title": "Delete Profile",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "DeleteProfile",
+      "type": "object"
+    },
+    "EndSession": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "end_session",
+          "default": "end_session",
+          "description": "Terminates the selected running session.",
+          "title": "End Browser Session",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "EndSession",
+      "type": "object"
+    },
+    "ExecuteCode": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "execute_code",
+          "default": "execute_code",
+          "description": "Executes code against the selected browser session; it may change websites.",
+          "title": "Execute Code",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "code": {
+          "minLength": 1,
+          "title": "Code",
+          "type": "string",
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "session_id",
+        "code"
+      ],
+      "title": "ExecuteCode",
+      "type": "object"
+    },
+    "GetClipboard": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_clipboard",
+          "default": "get_clipboard",
+          "title": "Get Clipboard",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "GetClipboard",
+      "type": "object"
+    },
+    "GetProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Profile Name",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Get Profile",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "GetProfile",
+      "type": "object"
+    },
+    "GetSession": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_session",
+          "default": "get_session",
+          "title": "Get Browser Session",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "GetSession",
+      "type": "object"
+    },
+    "GetWebTaskStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_web_task_status",
+          "default": "get_web_task_status",
+          "title": "Get Web Task Status",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "workflow_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Workflow Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "GetWebTaskStatus",
+      "type": "object"
+    },
+    "KeyboardShortcut": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "keyboard_shortcut",
+          "default": "keyboard_shortcut",
+          "title": "Keyboard Shortcut",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "keys": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Keys",
+          "type": "array"
+        },
+        "hold_time": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hold time in milliseconds.",
+          "title": "Hold Time"
+        }
+      },
+      "required": [
+        "session_id",
+        "keys"
+      ],
+      "title": "KeyboardShortcut",
+      "type": "object"
+    },
+    "ListProfiles": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_profiles",
+          "default": "list_profiles",
+          "title": "List Profiles",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListProfiles",
+      "type": "object"
+    },
+    "ListSessionDownloads": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_session_downloads",
+          "default": "list_session_downloads",
+          "description": "Returns download metadata and links, without downloading files.",
+          "title": "List Session Downloads",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "ListSessionDownloads",
+      "type": "object"
+    },
+    "ListSessionPages": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_session_pages",
+          "default": "list_session_pages",
+          "title": "List Session Pages",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "ListSessionPages",
+      "type": "object"
+    },
+    "ListSessionRecordings": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_session_recordings",
+          "default": "list_session_recordings",
+          "title": "List Session Recordings",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "ListSessionRecordings",
+      "type": "object"
+    },
+    "ListSessions": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_sessions",
+          "default": "list_sessions",
+          "title": "List Sessions",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "enum": [
+            10,
+            20,
+            50
+          ],
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "sort_by": {
+          "default": "created_at",
+          "enum": [
+            "created_at",
+            "session_id",
+            "used_credits",
+            "api_key_name"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sort_order": {
+          "default": "asc",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tag search terms.",
+          "title": "Search"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tags; sessions must include all tags.",
+          "title": "Tags"
+        },
+        "domains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated domains.",
+          "title": "Domains"
+        },
+        "profile_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile Name"
+        }
+      },
+      "title": "ListSessions",
+      "type": "object"
+    },
+    "Navigate": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "navigate",
+          "default": "navigate",
+          "title": "Navigate to URL",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "minLength": 1,
+          "title": "URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "url"
+      ],
+      "title": "Navigate",
+      "type": "object"
+    },
+    "PerformWebTask": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "perform_web_task",
+          "default": "perform_web_task",
+          "description": "Run a natural-language task. The task may change websites and consume credits; inspect before retrying.",
+          "title": "Perform Web Task",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "prompt": {
+          "minLength": 1,
+          "title": "Task Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Existing Session ID"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Starting URL"
+        },
+        "run_async": {
+          "default": true,
+          "description": "Returns a workflow ID; use Get Web Task Status to poll.",
+          "title": "Run Asynchronously",
+          "type": "boolean"
+        },
+        "max_steps": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Steps"
+        },
+        "output_schema": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output JSON Schema"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "PerformWebTask",
+      "type": "object"
+    },
+    "Scroll": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "scroll",
+          "default": "scroll",
+          "title": "Scroll",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "x": {
+          "title": "X Coordinate",
+          "type": "integer"
+        },
+        "y": {
+          "title": "Y Coordinate",
+          "type": "integer"
+        },
+        "delta_y": {
+          "title": "Vertical Scroll Amount",
+          "type": "integer"
+        },
+        "delta_x": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Horizontal Scroll Amount"
+        },
+        "steps": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Steps"
+        },
+        "use_os": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Use Os"
+        }
+      },
+      "required": [
+        "session_id",
+        "x",
+        "y",
+        "delta_y"
+      ],
+      "title": "Scroll",
+      "type": "object"
+    },
+    "SetClipboard": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "set_clipboard",
+          "default": "set_clipboard",
+          "title": "Set Clipboard",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "text"
+      ],
+      "title": "SetClipboard",
+      "type": "object"
+    },
+    "StartSession": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "start_session",
+          "default": "start_session",
+          "title": "Start Browser Session",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "initial_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "uri",
+          "title": "Initial URL"
+        },
+        "profile_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile Name"
+        },
+        "persist_profile": {
+          "default": false,
+          "description": "Save changes to the named browser profile when the session ends.",
+          "title": "Persist Profile",
+          "type": "boolean"
+        },
+        "headless": {
+          "default": false,
+          "title": "Headless",
+          "type": "boolean"
+        },
+        "recording": {
+          "default": true,
+          "title": "Recording",
+          "type": "boolean"
+        },
+        "max_duration": {
+          "default": 10,
+          "description": "Maximum session duration in minutes.",
+          "minimum": 1,
+          "title": "Max Duration",
+          "type": "integer"
+        },
+        "idle_timeout": {
+          "default": 5,
+          "description": "Idle timeout in minutes.",
+          "minimum": 1,
+          "title": "Idle Timeout",
+          "type": "integer"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tags"
+        }
+      },
+      "title": "StartSession",
+      "type": "object"
+    },
+    "TypeText": {
+      "additionalProperties": false,
+      "properties": {
+        "session_id": {
+          "format": "uuid",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "operation": {
+          "const": "type_text",
+          "default": "type_text",
+          "title": "Type Text",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "delay": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delay between keystrokes in milliseconds.",
+          "title": "Delay"
+        }
+      },
+      "required": [
+        "session_id",
+        "text"
+      ],
+      "title": "TypeText",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "click": "#/$defs/Click",
+          "create_profile": "#/$defs/CreateProfile",
+          "delete_profile": "#/$defs/DeleteProfile",
+          "end_session": "#/$defs/EndSession",
+          "execute_code": "#/$defs/ExecuteCode",
+          "get_clipboard": "#/$defs/GetClipboard",
+          "get_profile": "#/$defs/GetProfile",
+          "get_session": "#/$defs/GetSession",
+          "get_web_task_status": "#/$defs/GetWebTaskStatus",
+          "keyboard_shortcut": "#/$defs/KeyboardShortcut",
+          "list_profiles": "#/$defs/ListProfiles",
+          "list_session_downloads": "#/$defs/ListSessionDownloads",
+          "list_session_pages": "#/$defs/ListSessionPages",
+          "list_session_recordings": "#/$defs/ListSessionRecordings",
+          "list_sessions": "#/$defs/ListSessions",
+          "navigate": "#/$defs/Navigate",
+          "perform_web_task": "#/$defs/PerformWebTask",
+          "scroll": "#/$defs/Scroll",
+          "set_clipboard": "#/$defs/SetClipboard",
+          "start_session": "#/$defs/StartSession",
+          "type_text": "#/$defs/TypeText"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListSessions"
+        },
+        {
+          "$ref": "#/$defs/StartSession"
+        },
+        {
+          "$ref": "#/$defs/GetSession"
+        },
+        {
+          "$ref": "#/$defs/EndSession"
+        },
+        {
+          "$ref": "#/$defs/ListSessionPages"
+        },
+        {
+          "$ref": "#/$defs/ListSessionDownloads"
+        },
+        {
+          "$ref": "#/$defs/ListSessionRecordings"
+        },
+        {
+          "$ref": "#/$defs/ListProfiles"
+        },
+        {
+          "$ref": "#/$defs/GetProfile"
+        },
+        {
+          "$ref": "#/$defs/CreateProfile"
+        },
+        {
+          "$ref": "#/$defs/DeleteProfile"
+        },
+        {
+          "$ref": "#/$defs/PerformWebTask"
+        },
+        {
+          "$ref": "#/$defs/GetWebTaskStatus"
+        },
+        {
+          "$ref": "#/$defs/ExecuteCode"
+        },
+        {
+          "$ref": "#/$defs/Navigate"
+        },
+        {
+          "$ref": "#/$defs/TypeText"
+        },
+        {
+          "$ref": "#/$defs/KeyboardShortcut"
+        },
+        {
+          "$ref": "#/$defs/Click"
+        },
+        {
+          "$ref": "#/$defs/Scroll"
+        },
+        {
+          "$ref": "#/$defs/GetClipboard"
+        },
+        {
+          "$ref": "#/$defs/SetClipboard"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AnchorBrowserAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Anchor-browser Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

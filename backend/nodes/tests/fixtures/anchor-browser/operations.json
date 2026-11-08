@@ -1,0 +1,435 @@
+[
+  {
+    "operation": "list_sessions",
+    "config": {},
+    "method": "GET",
+    "path": "/v1/sessions",
+    "query": {
+      "page": "1",
+      "limit": "10",
+      "sort_by": "created_at",
+      "sort_order": "asc"
+    },
+    "body": null,
+    "response": {
+      "data": {
+        "sessions": [
+          {
+            "id": "sess_123456",
+            "status": "completed"
+          }
+        ],
+        "page": 1,
+        "total": 1,
+        "total_pages": 1
+      }
+    }
+  },
+  {
+    "operation": "start_session",
+    "config": {
+      "initial_url": "https://example.com",
+      "profile_name": "daily",
+      "persist_profile": true,
+      "headless": true,
+      "tags": [
+        "daily"
+      ]
+    },
+    "method": "POST",
+    "path": "/v1/sessions",
+    "query": {},
+    "body": {
+      "session": {
+        "recording": {
+          "active": true
+        },
+        "timeout": {
+          "max_duration": 10,
+          "idle_timeout": 5
+        },
+        "initial_url": "https://example.com",
+        "tags": [
+          "daily"
+        ]
+      },
+      "browser": {
+        "headless": {
+          "active": true
+        },
+        "profile": {
+          "name": "daily",
+          "persist": true
+        }
+      }
+    },
+    "response": {
+      "data": {
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "cdp_url": "wss://connect.anchorbrowser.io",
+        "live_view_url": "https://app.anchorbrowser.io"
+      }
+    }
+  },
+  {
+    "operation": "get_session",
+    "config": {
+      "session_id": "550e8400-e29b-41d4-a716-446655440000"
+    },
+    "method": "GET",
+    "path": "/v1/sessions/550e8400-e29b-41d4-a716-446655440000",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "session_id": "550e8400-e29b-41d4-a716-446655440000",
+        "status": "active"
+      }
+    }
+  },
+  {
+    "operation": "end_session",
+    "config": {
+      "session_id": "550e8400-e29b-41d4-a716-446655440000"
+    },
+    "method": "DELETE",
+    "path": "/v1/sessions/550e8400-e29b-41d4-a716-446655440000",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "status": "success"
+      }
+    }
+  },
+  {
+    "operation": "list_session_pages",
+    "config": {
+      "session_id": "550e8400-e29b-41d4-a716-446655440000"
+    },
+    "method": "GET",
+    "path": "/v1/sessions/550e8400-e29b-41d4-a716-446655440000/pages",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "count": 1,
+        "items": [
+          {
+            "id": "p1",
+            "title": "Example",
+            "url": "https://example.com",
+            "frontend_url": "https://app.anchorbrowser.io"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "operation": "list_session_downloads",
+    "config": {
+      "session_id": "550e8400-e29b-41d4-a716-446655440000"
+    },
+    "method": "GET",
+    "path": "/v1/sessions/550e8400-e29b-41d4-a716-446655440000/downloads",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "count": 0,
+        "items": []
+      }
+    }
+  },
+  {
+    "operation": "list_session_recordings",
+    "config": {
+      "session_id": "550e8400-e29b-41d4-a716-446655440000"
+    },
+    "method": "GET",
+    "path": "/v1/sessions/550e8400-e29b-41d4-a716-446655440000/recordings",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "count": 0,
+        "items": []
+      }
+    }
+  },
+  {
+    "operation": "list_profiles",
+    "config": {},
+    "method": "GET",
+    "path": "/v1/profiles",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "count": 1,
+        "items": [
+          {
+            "name": "daily",
+            "session_id": "550e8400-e29b-41d4-a716-446655440000"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "operation": "get_profile",
+    "config": {
+      "name": "daily report + caf\u00e9"
+    },
+    "method": "GET",
+    "path": "/v1/profiles/daily report + caf\u00e9",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "name": "daily report + caf\u00e9",
+        "session_id": "550e8400-e29b-41d4-a716-446655440000"
+      }
+    }
+  },
+  {
+    "operation": "create_profile",
+    "config": {
+      "name": "daily",
+      "session_id": "550e8400-e29b-41d4-a716-446655440000"
+    },
+    "method": "POST",
+    "path": "/v1/profiles",
+    "query": {},
+    "body": {
+      "source": "session",
+      "name": "daily",
+      "session_id": "550e8400-e29b-41d4-a716-446655440000",
+      "dedicated_sticky_ip": false
+    },
+    "response": {
+      "data": {
+        "status": "success"
+      }
+    }
+  },
+  {
+    "operation": "delete_profile",
+    "config": {
+      "name": "daily"
+    },
+    "method": "DELETE",
+    "path": "/v1/profiles/daily",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "status": "success"
+      }
+    }
+  },
+  {
+    "operation": "perform_web_task",
+    "config": {
+      "prompt": "Read the title",
+      "session_id": "550e8400-e29b-41d4-a716-446655440000",
+      "max_steps": 4,
+      "output_schema": {
+        "type": "object"
+      }
+    },
+    "method": "POST",
+    "path": "/v1/tools/perform-web-task",
+    "query": {
+      "sessionId": "550e8400-e29b-41d4-a716-446655440000"
+    },
+    "body": {
+      "prompt": "Read the title",
+      "async": true,
+      "max_steps": 4,
+      "output_schema": {
+        "type": "object"
+      }
+    },
+    "response": {
+      "data": {
+        "status": "running",
+        "workflow_id": "wf-123"
+      }
+    }
+  },
+  {
+    "operation": "get_web_task_status",
+    "config": {
+      "workflow_id": "wf-123"
+    },
+    "method": "GET",
+    "path": "/v1/tools/perform-web-task/wf-123/status",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "status": "success",
+        "result": {
+          "title": "Example"
+        }
+      }
+    }
+  },
+  {
+    "operation": "execute_code",
+    "config": {
+      "session_id": "550e8400-e29b-41d4-a716-446655440000",
+      "code": "return await page.title();"
+    },
+    "method": "POST",
+    "path": "/v1/tools/execute-code",
+    "query": {
+      "sessionId": "550e8400-e29b-41d4-a716-446655440000"
+    },
+    "body": {
+      "code": "return await page.title();"
+    },
+    "response": {
+      "success": true,
+      "message": "Executed",
+      "output": "Example"
+    }
+  },
+  {
+    "operation": "navigate",
+    "config": {
+      "session_id": "550e8400-e29b-41d4-a716-446655440000",
+      "url": "https://example.com"
+    },
+    "method": "POST",
+    "path": "/v1/sessions/550e8400-e29b-41d4-a716-446655440000/goto",
+    "query": {},
+    "body": {
+      "url": "https://example.com"
+    },
+    "response": {
+      "status": "success"
+    }
+  },
+  {
+    "operation": "type_text",
+    "config": {
+      "session_id": "550e8400-e29b-41d4-a716-446655440000",
+      "text": "Hello",
+      "delay": 10
+    },
+    "method": "POST",
+    "path": "/v1/sessions/550e8400-e29b-41d4-a716-446655440000/keyboard/type",
+    "query": {},
+    "body": {
+      "text": "Hello",
+      "delay": 10
+    },
+    "response": {
+      "status": "success"
+    }
+  },
+  {
+    "operation": "keyboard_shortcut",
+    "config": {
+      "session_id": "550e8400-e29b-41d4-a716-446655440000",
+      "keys": [
+        "CTRL",
+        "A"
+      ],
+      "hold_time": 50
+    },
+    "method": "POST",
+    "path": "/v1/sessions/550e8400-e29b-41d4-a716-446655440000/keyboard/shortcut",
+    "query": {},
+    "body": {
+      "keys": [
+        "CTRL",
+        "A"
+      ],
+      "holdTime": 50
+    },
+    "response": {
+      "status": "success"
+    }
+  },
+  {
+    "operation": "click",
+    "config": {
+      "session_id": "550e8400-e29b-41d4-a716-446655440000",
+      "selector": "button.submit",
+      "index": 1,
+      "timeout": 2000
+    },
+    "method": "POST",
+    "path": "/v1/sessions/550e8400-e29b-41d4-a716-446655440000/mouse/click",
+    "query": {},
+    "body": {
+      "selector": "button.submit",
+      "button": "left",
+      "index": 1,
+      "timeout": 2000
+    },
+    "response": {
+      "status": "success"
+    }
+  },
+  {
+    "operation": "scroll",
+    "config": {
+      "session_id": "550e8400-e29b-41d4-a716-446655440000",
+      "x": 10,
+      "y": 20,
+      "delta_y": 500,
+      "delta_x": 0,
+      "steps": 4,
+      "use_os": false
+    },
+    "method": "POST",
+    "path": "/v1/sessions/550e8400-e29b-41d4-a716-446655440000/scroll",
+    "query": {},
+    "body": {
+      "x": 10,
+      "y": 20,
+      "deltaY": 500,
+      "deltaX": 0,
+      "steps": 4,
+      "useOs": false
+    },
+    "response": {
+      "status": "success"
+    }
+  },
+  {
+    "operation": "set_clipboard",
+    "config": {
+      "session_id": "550e8400-e29b-41d4-a716-446655440000",
+      "text": "Hello"
+    },
+    "method": "POST",
+    "path": "/v1/sessions/550e8400-e29b-41d4-a716-446655440000/clipboard",
+    "query": {},
+    "body": {
+      "text": "Hello"
+    },
+    "response": {
+      "status": "success"
+    }
+  },
+  {
+    "operation": "get_clipboard",
+    "config": {
+      "session_id": "550e8400-e29b-41d4-a716-446655440000"
+    },
+    "method": "GET",
+    "path": "/v1/sessions/550e8400-e29b-41d4-a716-446655440000/clipboard",
+    "query": {},
+    "body": null,
+    "response": {
+      "data": {
+        "text": "Hello"
+      }
+    }
+  }
+]
