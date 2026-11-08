@@ -1,0 +1,972 @@
+{
+  "$defs": {
+    "CopyDocumentConfig": {
+      "additionalProperties": false,
+      "description": "Copy document.",
+      "properties": {
+        "operation": {
+          "const": "copy_document",
+          "default": "copy_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "document_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Document Id",
+          "type": "string"
+        },
+        "target_mailbox_id": {
+          "minimum": 1,
+          "title": "Target Mailbox Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "target_mailbox_id"
+      ],
+      "title": "CopyDocumentConfig",
+      "type": "object"
+    },
+    "CopyMailboxConfig": {
+      "additionalProperties": false,
+      "description": "Copy mailbox.",
+      "properties": {
+        "operation": {
+          "const": "copy_mailbox",
+          "default": "copy_mailbox",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mailbox_id": {
+          "minimum": 1,
+          "title": "Mailbox Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "mailbox_id"
+      ],
+      "title": "CopyMailboxConfig",
+      "type": "object"
+    },
+    "CopyTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Copy template.",
+      "properties": {
+        "operation": {
+          "const": "copy_template",
+          "default": "copy_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "minimum": 1,
+          "title": "Template Id",
+          "type": "integer"
+        },
+        "target_mailbox_id": {
+          "minimum": 1,
+          "title": "Target Mailbox Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "template_id",
+        "target_mailbox_id"
+      ],
+      "title": "CopyTemplateConfig",
+      "type": "object"
+    },
+    "CreateCustomDownloadConfig": {
+      "additionalProperties": false,
+      "description": "Create custom download.",
+      "properties": {
+        "operation": {
+          "const": "create_custom_download",
+          "default": "create_custom_download",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mailbox_id": {
+          "minimum": 1,
+          "title": "Mailbox Id",
+          "type": "integer"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "PARSER",
+          "enum": [
+            "PARSER",
+            "PARSER_FIELD"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "items": {
+          "description": "Field names included in the custom download.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "parser_field_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parser Field Id"
+        }
+      },
+      "required": [
+        "mailbox_id",
+        "name",
+        "items"
+      ],
+      "title": "CreateCustomDownloadConfig",
+      "type": "object"
+    },
+    "CreateMailboxConfig": {
+      "additionalProperties": false,
+      "description": "Create mailbox.",
+      "properties": {
+        "operation": {
+          "const": "create_mailbox",
+          "default": "create_mailbox",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email_prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Prefix"
+        },
+        "process_attachments": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Process Attachments"
+        },
+        "ai_instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ai Instructions"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateMailboxConfig",
+      "type": "object"
+    },
+    "DeleteCustomDownloadConfig": {
+      "additionalProperties": false,
+      "description": "Delete custom download.",
+      "properties": {
+        "operation": {
+          "const": "delete_custom_download",
+          "default": "delete_custom_download",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mailbox_id": {
+          "minimum": 1,
+          "title": "Mailbox Id",
+          "type": "integer"
+        },
+        "download_id": {
+          "minimum": 1,
+          "title": "Download Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "mailbox_id",
+        "download_id"
+      ],
+      "title": "DeleteCustomDownloadConfig",
+      "type": "object"
+    },
+    "DeleteDocumentConfig": {
+      "additionalProperties": false,
+      "description": "Delete document.",
+      "properties": {
+        "operation": {
+          "const": "delete_document",
+          "default": "delete_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "document_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Document Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "DeleteDocumentConfig",
+      "type": "object"
+    },
+    "DeleteMailboxConfig": {
+      "additionalProperties": false,
+      "description": "Delete mailbox.",
+      "properties": {
+        "operation": {
+          "const": "delete_mailbox",
+          "default": "delete_mailbox",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mailbox_id": {
+          "minimum": 1,
+          "title": "Mailbox Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "mailbox_id"
+      ],
+      "title": "DeleteMailboxConfig",
+      "type": "object"
+    },
+    "DeleteTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Delete template.",
+      "properties": {
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "minimum": 1,
+          "title": "Template Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "DeleteTemplateConfig",
+      "type": "object"
+    },
+    "GetDocumentConfig": {
+      "additionalProperties": false,
+      "description": "Get document.",
+      "properties": {
+        "operation": {
+          "const": "get_document",
+          "default": "get_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "document_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Document Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "GetDocumentConfig",
+      "type": "object"
+    },
+    "GetDocumentLogsConfig": {
+      "additionalProperties": false,
+      "description": "Get document logs.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Increment to read the next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "description": "Results per page; no automatic pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "get_document_logs",
+          "default": "get_document_logs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "document_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Document Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "GetDocumentLogsConfig",
+      "type": "object"
+    },
+    "GetMailboxConfig": {
+      "additionalProperties": false,
+      "description": "Get mailbox.",
+      "properties": {
+        "operation": {
+          "const": "get_mailbox",
+          "default": "get_mailbox",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mailbox_id": {
+          "minimum": 1,
+          "title": "Mailbox Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "mailbox_id"
+      ],
+      "title": "GetMailboxConfig",
+      "type": "object"
+    },
+    "GetMailboxSchemaConfig": {
+      "additionalProperties": false,
+      "description": "Get mailbox schema.",
+      "properties": {
+        "operation": {
+          "const": "get_mailbox_schema",
+          "default": "get_mailbox_schema",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mailbox_id": {
+          "minimum": 1,
+          "title": "Mailbox Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "mailbox_id"
+      ],
+      "title": "GetMailboxSchemaConfig",
+      "type": "object"
+    },
+    "GetTemplateConfig": {
+      "additionalProperties": false,
+      "description": "Get template.",
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "template_id": {
+          "minimum": 1,
+          "title": "Template Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "GetTemplateConfig",
+      "type": "object"
+    },
+    "ListCustomDownloadsConfig": {
+      "additionalProperties": false,
+      "description": "List custom downloads.",
+      "properties": {
+        "operation": {
+          "const": "list_custom_downloads",
+          "default": "list_custom_downloads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mailbox_id": {
+          "minimum": 1,
+          "title": "Mailbox Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "mailbox_id"
+      ],
+      "title": "ListCustomDownloadsConfig",
+      "type": "object"
+    },
+    "ListDocumentsConfig": {
+      "additionalProperties": false,
+      "description": "List documents.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Increment to read the next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "description": "Results per page; no automatic pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mailbox_id": {
+          "minimum": 1,
+          "title": "Mailbox Id",
+          "type": "integer"
+        },
+        "with_result": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "With Result"
+        }
+      },
+      "required": [
+        "mailbox_id"
+      ],
+      "title": "ListDocumentsConfig",
+      "type": "object"
+    },
+    "ListMailboxesConfig": {
+      "additionalProperties": false,
+      "description": "List mailboxes.",
+      "properties": {
+        "page": {
+          "default": 1,
+          "description": "Page number. Increment to read the next page.",
+          "minimum": 1,
+          "title": "Page",
+          "type": "integer"
+        },
+        "page_size": {
+          "default": 25,
+          "description": "Results per page; no automatic pagination.",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "operation": {
+          "const": "list_mailboxes",
+          "default": "list_mailboxes",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "ListMailboxesConfig",
+      "type": "object"
+    },
+    "ListTemplatesConfig": {
+      "additionalProperties": false,
+      "description": "List templates.",
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mailbox_id": {
+          "minimum": 1,
+          "title": "Mailbox Id",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "mailbox_id"
+      ],
+      "title": "ListTemplatesConfig",
+      "type": "object"
+    },
+    "ParseurAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "parseur_api_key",
+          "default": "parseur_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Parseur API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy an API key from Parseur Account \u2192 API keys and paste the key alone. NoClick sends it as Authorization: Token to api.parseur.com. Connecting reads your mailboxes; write operations use the permissions of this key.",
+      "x-credential-url": "https://app.parseur.com/account/api-keys"
+    },
+    "ReprocessDocumentConfig": {
+      "additionalProperties": false,
+      "description": "Reprocess document.",
+      "properties": {
+        "operation": {
+          "const": "reprocess_document",
+          "default": "reprocess_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "document_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Document Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "ReprocessDocumentConfig",
+      "type": "object"
+    },
+    "SkipDocumentConfig": {
+      "additionalProperties": false,
+      "description": "Skip document.",
+      "properties": {
+        "operation": {
+          "const": "skip_document",
+          "default": "skip_document",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "document_id": {
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Document Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "SkipDocumentConfig",
+      "type": "object"
+    },
+    "UpdateCustomDownloadConfig": {
+      "additionalProperties": false,
+      "description": "Update custom download.",
+      "properties": {
+        "operation": {
+          "const": "update_custom_download",
+          "default": "update_custom_download",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mailbox_id": {
+          "minimum": 1,
+          "title": "Mailbox Id",
+          "type": "integer"
+        },
+        "download_id": {
+          "minimum": 1,
+          "title": "Download Id",
+          "type": "integer"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "PARSER",
+          "enum": [
+            "PARSER",
+            "PARSER_FIELD"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "items": {
+          "description": "Field names included in the custom download.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "parser_field_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parser Field Id"
+        }
+      },
+      "required": [
+        "mailbox_id",
+        "download_id",
+        "name",
+        "items"
+      ],
+      "title": "UpdateCustomDownloadConfig",
+      "type": "object"
+    },
+    "UpdateMailboxConfig": {
+      "additionalProperties": false,
+      "description": "Update mailbox.",
+      "properties": {
+        "operation": {
+          "const": "update_mailbox",
+          "default": "update_mailbox",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "mailbox_id": {
+          "minimum": 1,
+          "title": "Mailbox Id",
+          "type": "integer"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "email_prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email Prefix"
+        },
+        "process_attachments": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Process Attachments"
+        },
+        "ai_instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ai Instructions"
+        }
+      },
+      "required": [
+        "mailbox_id",
+        "name"
+      ],
+      "title": "UpdateMailboxConfig",
+      "type": "object"
+    },
+    "UploadEmailConfig": {
+      "additionalProperties": false,
+      "description": "Upload email.",
+      "properties": {
+        "operation": {
+          "const": "upload_email",
+          "default": "upload_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subject": {
+          "title": "Subject",
+          "type": "string"
+        },
+        "sender": {
+          "description": "From address, optionally with display name.",
+          "title": "Sender",
+          "type": "string"
+        },
+        "recipient": {
+          "description": "Parseur mailbox email address.",
+          "title": "Recipient",
+          "type": "string"
+        },
+        "body_plain": {
+          "title": "Body Plain",
+          "type": "string"
+        },
+        "body_html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body Html"
+        }
+      },
+      "required": [
+        "subject",
+        "sender",
+        "recipient",
+        "body_plain"
+      ],
+      "title": "UploadEmailConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "copy_document": "#/$defs/CopyDocumentConfig",
+          "copy_mailbox": "#/$defs/CopyMailboxConfig",
+          "copy_template": "#/$defs/CopyTemplateConfig",
+          "create_custom_download": "#/$defs/CreateCustomDownloadConfig",
+          "create_mailbox": "#/$defs/CreateMailboxConfig",
+          "delete_custom_download": "#/$defs/DeleteCustomDownloadConfig",
+          "delete_document": "#/$defs/DeleteDocumentConfig",
+          "delete_mailbox": "#/$defs/DeleteMailboxConfig",
+          "delete_template": "#/$defs/DeleteTemplateConfig",
+          "get_document": "#/$defs/GetDocumentConfig",
+          "get_document_logs": "#/$defs/GetDocumentLogsConfig",
+          "get_mailbox": "#/$defs/GetMailboxConfig",
+          "get_mailbox_schema": "#/$defs/GetMailboxSchemaConfig",
+          "get_template": "#/$defs/GetTemplateConfig",
+          "list_custom_downloads": "#/$defs/ListCustomDownloadsConfig",
+          "list_documents": "#/$defs/ListDocumentsConfig",
+          "list_mailboxes": "#/$defs/ListMailboxesConfig",
+          "list_templates": "#/$defs/ListTemplatesConfig",
+          "reprocess_document": "#/$defs/ReprocessDocumentConfig",
+          "skip_document": "#/$defs/SkipDocumentConfig",
+          "update_custom_download": "#/$defs/UpdateCustomDownloadConfig",
+          "update_mailbox": "#/$defs/UpdateMailboxConfig",
+          "upload_email": "#/$defs/UploadEmailConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListMailboxesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetMailboxConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateMailboxConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateMailboxConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteMailboxConfig"
+        },
+        {
+          "$ref": "#/$defs/CopyMailboxConfig"
+        },
+        {
+          "$ref": "#/$defs/GetMailboxSchemaConfig"
+        },
+        {
+          "$ref": "#/$defs/ListDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GetDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/GetDocumentLogsConfig"
+        },
+        {
+          "$ref": "#/$defs/ReprocessDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/SkipDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/CopyDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/UploadEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/ListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/GetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/CopyTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/ListCustomDownloadsConfig"
+        },
+        {
+          "$ref": "#/$defs/CreateCustomDownloadConfig"
+        },
+        {
+          "$ref": "#/$defs/UpdateCustomDownloadConfig"
+        },
+        {
+          "$ref": "#/$defs/DeleteCustomDownloadConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ParseurAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Parseur Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
