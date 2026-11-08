@@ -1,0 +1,873 @@
+{
+  "$defs": {
+    "AdafruitIOAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "adafruit_io_api_key",
+          "default": "adafruit_io_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Adafruit IO username",
+          "type": "string"
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Adafruit IO key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "username",
+        "api_key"
+      ],
+      "title": "Adafruit IO API Key",
+      "type": "object",
+      "x-credential-instructions": "In Adafruit IO, click the gold key icon or View Adafruit IO Key. Paste your username and active account key. NoClick sends the key in the X-AIO-Key header to io.adafruit.com. Connection checks show the account returned by the key.",
+      "x-credential-url": "https://io.adafruit.com/"
+    },
+    "CreateData": {
+      "additionalProperties": false,
+      "description": "Append a data point to a feed; this can activate feed automations.",
+      "properties": {
+        "feed_key": {
+          "description": "Feed key, including its group prefix when present.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*$",
+          "title": "Feed Key",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value to store. History-enabled feeds accept at most 1 KB; feeds without history accept at most 100 KB.",
+          "maxLength": 102400,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        },
+        "lat": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latitude as a decimal string.",
+          "title": "Lat"
+        },
+        "lon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Longitude as a decimal string.",
+          "title": "Lon"
+        },
+        "ele": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Elevation as a decimal string.",
+          "title": "Ele"
+        },
+        "operation": {
+          "const": "create_data",
+          "default": "create_data",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_key",
+        "value"
+      ],
+      "title": "CreateData",
+      "type": "object"
+    },
+    "CreateFeed": {
+      "additionalProperties": false,
+      "description": "Create a feed, optionally in a selected group.",
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "license": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License"
+        },
+        "operation": {
+          "const": "create_feed",
+          "default": "create_feed",
+          "title": "Operation",
+          "type": "string"
+        },
+        "group_key": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Key"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateFeed",
+      "type": "object"
+    },
+    "CreateGroup": {
+      "additionalProperties": false,
+      "description": "Create a named group for organizing feeds.",
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateGroup",
+      "type": "object"
+    },
+    "DeleteData": {
+      "additionalProperties": false,
+      "description": "Permanently delete a selected data point.",
+      "properties": {
+        "feed_key": {
+          "description": "Feed key, including its group prefix when present.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*$",
+          "title": "Feed Key",
+          "type": "string"
+        },
+        "data_id": {
+          "description": "ID of the data point in this feed.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Data Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_data",
+          "default": "delete_data",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_key",
+        "data_id"
+      ],
+      "title": "DeleteData",
+      "type": "object"
+    },
+    "DeleteFeed": {
+      "additionalProperties": false,
+      "description": "Permanently delete a feed and its stored data.",
+      "properties": {
+        "feed_key": {
+          "description": "Feed key, including its group prefix when present.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*$",
+          "title": "Feed Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_feed",
+          "default": "delete_feed",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_key"
+      ],
+      "title": "DeleteFeed",
+      "type": "object"
+    },
+    "GetCurrentUser": {
+      "additionalProperties": false,
+      "description": "Get the identity belonging to the supplied account key.",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetCurrentUser",
+      "type": "object"
+    },
+    "GetData": {
+      "additionalProperties": false,
+      "description": "Read a selected data point.",
+      "properties": {
+        "feed_key": {
+          "description": "Feed key, including its group prefix when present.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*$",
+          "title": "Feed Key",
+          "type": "string"
+        },
+        "data_id": {
+          "description": "ID of the data point in this feed.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Data Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_data",
+          "default": "get_data",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_key",
+        "data_id"
+      ],
+      "title": "GetData",
+      "type": "object"
+    },
+    "GetFeed": {
+      "additionalProperties": false,
+      "description": "Read feed settings and its latest value.",
+      "properties": {
+        "feed_key": {
+          "description": "Feed key, including its group prefix when present.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*$",
+          "title": "Feed Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_feed",
+          "default": "get_feed",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_key"
+      ],
+      "title": "GetFeed",
+      "type": "object"
+    },
+    "GetFeedDetails": {
+      "additionalProperties": false,
+      "description": "Read feed settings, sharing and stored-data details.",
+      "properties": {
+        "feed_key": {
+          "description": "Feed key, including its group prefix when present.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*$",
+          "title": "Feed Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_feed_details",
+          "default": "get_feed_details",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_key"
+      ],
+      "title": "GetFeedDetails",
+      "type": "object"
+    },
+    "GetFirstData": {
+      "additionalProperties": false,
+      "description": "Read the oldest point and move the API queue pointer to the beginning.",
+      "properties": {
+        "feed_key": {
+          "description": "Feed key, including its group prefix when present.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*$",
+          "title": "Feed Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_first_data",
+          "default": "get_first_data",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_key"
+      ],
+      "title": "GetFirstData",
+      "type": "object"
+    },
+    "GetGroup": {
+      "additionalProperties": false,
+      "description": "Read a group and its feeds.",
+      "properties": {
+        "group_key": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Group Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_key"
+      ],
+      "title": "GetGroup",
+      "type": "object"
+    },
+    "GetLastData": {
+      "additionalProperties": false,
+      "description": "Read the newest point and move the API queue pointer to the end.",
+      "properties": {
+        "feed_key": {
+          "description": "Feed key, including its group prefix when present.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*$",
+          "title": "Feed Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_last_data",
+          "default": "get_last_data",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_key"
+      ],
+      "title": "GetLastData",
+      "type": "object"
+    },
+    "GetThrottle": {
+      "additionalProperties": false,
+      "description": "Get the account's data rate limit and current usage.",
+      "properties": {
+        "operation": {
+          "const": "get_throttle",
+          "default": "get_throttle",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "GetThrottle",
+      "type": "object"
+    },
+    "ListData": {
+      "additionalProperties": false,
+      "description": "Read one page of data; use next_end_time for an older page.",
+      "properties": {
+        "feed_key": {
+          "description": "Feed key, including its group prefix when present.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*$",
+          "title": "Feed Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_data",
+          "default": "list_data",
+          "title": "Operation",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "date-time",
+          "title": "Start Time"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "format": "date-time",
+          "title": "End Time"
+        }
+      },
+      "required": [
+        "feed_key"
+      ],
+      "title": "ListData",
+      "type": "object"
+    },
+    "ListFeeds": {
+      "additionalProperties": false,
+      "description": "List one API page of feeds and their latest values.",
+      "properties": {
+        "operation": {
+          "const": "list_feeds",
+          "default": "list_feeds",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListFeeds",
+      "type": "object"
+    },
+    "ListGroupFeeds": {
+      "additionalProperties": false,
+      "description": "List one API page of feeds belonging to a group.",
+      "properties": {
+        "group_key": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Group Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "list_group_feeds",
+          "default": "list_group_feeds",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_key"
+      ],
+      "title": "ListGroupFeeds",
+      "type": "object"
+    },
+    "ListGroups": {
+      "additionalProperties": false,
+      "description": "List one API page of groups with their feeds.",
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListGroups",
+      "type": "object"
+    },
+    "UpdateData": {
+      "additionalProperties": false,
+      "description": "Update the value and optional location of a stored data point.",
+      "properties": {
+        "feed_key": {
+          "description": "Feed key, including its group prefix when present.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*$",
+          "title": "Feed Key",
+          "type": "string"
+        },
+        "data_id": {
+          "description": "ID of the data point in this feed.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Data Id",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value to store. History-enabled feeds accept at most 1 KB; feeds without history accept at most 100 KB.",
+          "maxLength": 102400,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        },
+        "lat": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latitude as a decimal string.",
+          "title": "Lat"
+        },
+        "lon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Longitude as a decimal string.",
+          "title": "Lon"
+        },
+        "ele": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Elevation as a decimal string.",
+          "title": "Ele"
+        },
+        "operation": {
+          "const": "update_data",
+          "default": "update_data",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_key",
+        "data_id",
+        "value"
+      ],
+      "title": "UpdateData",
+      "type": "object"
+    },
+    "UpdateFeed": {
+      "additionalProperties": false,
+      "description": "Update selected feed properties without replacing its data.",
+      "properties": {
+        "feed_key": {
+          "description": "Feed key, including its group prefix when present.",
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+(?:\\.[A-Za-z0-9_-]+)*$",
+          "title": "Feed Key",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "license": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License"
+        },
+        "operation": {
+          "const": "update_feed",
+          "default": "update_feed",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_key"
+      ],
+      "title": "UpdateFeed",
+      "type": "object"
+    },
+    "UpdateGroup": {
+      "additionalProperties": false,
+      "description": "Update a group's name or description.",
+      "properties": {
+        "group_key": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Group Key",
+          "type": "string"
+        },
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "maxLength": 10000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "group_key"
+      ],
+      "title": "UpdateGroup",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_data": "#/$defs/CreateData",
+          "create_feed": "#/$defs/CreateFeed",
+          "create_group": "#/$defs/CreateGroup",
+          "delete_data": "#/$defs/DeleteData",
+          "delete_feed": "#/$defs/DeleteFeed",
+          "get_current_user": "#/$defs/GetCurrentUser",
+          "get_data": "#/$defs/GetData",
+          "get_feed": "#/$defs/GetFeed",
+          "get_feed_details": "#/$defs/GetFeedDetails",
+          "get_first_data": "#/$defs/GetFirstData",
+          "get_group": "#/$defs/GetGroup",
+          "get_last_data": "#/$defs/GetLastData",
+          "get_throttle": "#/$defs/GetThrottle",
+          "list_data": "#/$defs/ListData",
+          "list_feeds": "#/$defs/ListFeeds",
+          "list_group_feeds": "#/$defs/ListGroupFeeds",
+          "list_groups": "#/$defs/ListGroups",
+          "update_data": "#/$defs/UpdateData",
+          "update_feed": "#/$defs/UpdateFeed",
+          "update_group": "#/$defs/UpdateGroup"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCurrentUser"
+        },
+        {
+          "$ref": "#/$defs/GetThrottle"
+        },
+        {
+          "$ref": "#/$defs/ListFeeds"
+        },
+        {
+          "$ref": "#/$defs/GetFeed"
+        },
+        {
+          "$ref": "#/$defs/GetFeedDetails"
+        },
+        {
+          "$ref": "#/$defs/CreateFeed"
+        },
+        {
+          "$ref": "#/$defs/UpdateFeed"
+        },
+        {
+          "$ref": "#/$defs/DeleteFeed"
+        },
+        {
+          "$ref": "#/$defs/ListData"
+        },
+        {
+          "$ref": "#/$defs/GetData"
+        },
+        {
+          "$ref": "#/$defs/CreateData"
+        },
+        {
+          "$ref": "#/$defs/UpdateData"
+        },
+        {
+          "$ref": "#/$defs/DeleteData"
+        },
+        {
+          "$ref": "#/$defs/GetLastData"
+        },
+        {
+          "$ref": "#/$defs/GetFirstData"
+        },
+        {
+          "$ref": "#/$defs/ListGroups"
+        },
+        {
+          "$ref": "#/$defs/GetGroup"
+        },
+        {
+          "$ref": "#/$defs/CreateGroup"
+        },
+        {
+          "$ref": "#/$defs/UpdateGroup"
+        },
+        {
+          "$ref": "#/$defs/ListGroupFeeds"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AdafruitIOAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Adafruit-io Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
