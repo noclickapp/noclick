@@ -1,0 +1,518 @@
+{
+  "source": "https://docs.fuseai.com/openapi.json",
+  "version": "1.0.0",
+  "sha256": "2548c8455d01641d5096b051f17770b5ec34df50f4c20b83187beed922bcf665",
+  "operations": {
+    "get_account": {
+      "operation_id": "getMe",
+      "method": "GET",
+      "path": "/business/me",
+      "status": 200,
+      "body": {
+        "user": {
+          "id": "685409d3287883fbc17c0ced",
+          "email": "ada@brightpay.com",
+          "name": "Ada Nwosu"
+        }
+      }
+    },
+    "get_credits": {
+      "operation_id": "getCredits",
+      "method": "GET",
+      "path": "/business/credits",
+      "status": 200,
+      "body": {
+        "balance": 8250
+      }
+    },
+    "list_lists": {
+      "operation_id": "listLists",
+      "method": "GET",
+      "path": "/business/lists",
+      "status": 200,
+      "body": {
+        "data": [
+          {
+            "id": "68a1f20b9c41d20014b3e901",
+            "name": "Q3 Fintech CFOs",
+            "entityType": "contactList",
+            "contactsCount": 412,
+            "companiesCount": 0,
+            "createdAt": "2026-07-01T09:12:44.000Z",
+            "folderId": null
+          },
+          {
+            "id": "68a1f20b9c41d20014b3e905",
+            "name": "Travel companies",
+            "entityType": "companyList",
+            "contactsCount": 0,
+            "companiesCount": 20,
+            "createdAt": "2026-06-28T11:55:33.319Z",
+            "folderId": "68a1f9aa9c41d20014b3f101"
+          }
+        ],
+        "pagination": {
+          "pageNum": 1,
+          "totalPages": 26,
+          "totalRecords": 52
+        }
+      }
+    },
+    "create_list": {
+      "operation_id": "createList",
+      "method": "POST",
+      "path": "/business/lists",
+      "status": 201,
+      "body": {
+        "list": {
+          "id": "68a1f20b9c41d20014b3e901",
+          "name": "Q3 Fintech CFOs",
+          "entityType": "contactList",
+          "contactsCount": 0,
+          "companiesCount": 0,
+          "createdAt": "2026-07-27T10:00:00.000Z",
+          "folderId": null
+        }
+      }
+    },
+    "get_list": {
+      "operation_id": "getList",
+      "method": "GET",
+      "path": "/business/lists/{listId}",
+      "status": 200,
+      "body": {
+        "list": {
+          "id": "68a1f20b9c41d20014b3e901",
+          "name": "Q3 Fintech CFOs",
+          "entityType": "contactList",
+          "completionStatus": "complete",
+          "totalRecords": 412,
+          "metrics": {
+            "totalEnriched": 400,
+            "totalWithLinkedin": 412,
+            "totalWithProfessionalEmail": 350,
+            "totalWithPersonalEmail": 40,
+            "totalWithValidPhone": 120
+          },
+          "columns": [
+            {
+              "id": "68a1f3009c41d20014b3e9a1",
+              "name": "Lead Score",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    "rename_list": {
+      "operation_id": "updateList",
+      "method": "PATCH",
+      "path": "/business/lists/{listId}",
+      "status": 200,
+      "body": {
+        "list": {
+          "id": "68a1f20b9c41d20014b3e901",
+          "name": "Q3 fintech CFOs (US)",
+          "folderId": "68a1f9aa9c41d20014b3f101"
+        }
+      }
+    },
+    "delete_list": {
+      "operation_id": "deleteList",
+      "method": "DELETE",
+      "path": "/business/lists/{listId}",
+      "status": 204,
+      "body": null
+    },
+    "list_rows": {
+      "operation_id": "listListRows",
+      "method": "GET",
+      "path": "/business/lists/{listId}/rows",
+      "status": 200,
+      "body": {
+        "entityType": "contactList",
+        "data": [
+          {
+            "id": "68a1f2c89c41d20014b3e955",
+            "firstName": "Ada",
+            "lastName": "Nwosu",
+            "linkedinUrl": "https://www.linkedin.com/in/ada-nwosu",
+            "profilePictureUrl": "https://img.example.com/profile/9f1c2e7a4b6d8e0f1a2b3c4d5e6f7a8b.jpeg",
+            "jobTitle": "Chief Financial Officer",
+            "companyName": "Brightpay",
+            "companyDomain": "brightpay.com",
+            "emails": [
+              {
+                "email": "ada@brightpay.com",
+                "status": "valid",
+                "isPersonal": false
+              }
+            ],
+            "phones": [
+              {
+                "phoneNumber": "+13015023231",
+                "status": "valid"
+              }
+            ],
+            "primaryEmail": "ada@brightpay.com",
+            "primaryPhone": "+13015023231",
+            "icpMatch": true,
+            "engagement": "never_engaged",
+            "source": "prospect_search",
+            "lists": [
+              {
+                "id": "68a1f20b9c41d20014b3e901",
+                "name": "Q3 Fintech CFOs"
+              }
+            ],
+            "location": {
+              "city": "san francisco",
+              "state": "california",
+              "country": "united states"
+            },
+            "columnValues": {
+              "68a1f3009c41d20014b3e9a1": "warm"
+            }
+          },
+          {
+            "id": "68a1f2c89c41d20014b3e956",
+            "firstName": "Sam",
+            "lastName": "Rivera",
+            "linkedinUrl": null,
+            "profilePictureUrl": null,
+            "jobTitle": null,
+            "companyName": "Brightpay",
+            "companyDomain": null,
+            "emails": [],
+            "phones": [],
+            "primaryEmail": null,
+            "primaryPhone": null,
+            "icpMatch": null,
+            "engagement": "never_engaged",
+            "source": "csv_upload",
+            "lists": [],
+            "location": null,
+            "columnValues": {}
+          }
+        ],
+        "pagination": {
+          "pageNum": 1,
+          "totalPages": 206,
+          "totalRecords": 412
+        }
+      }
+    },
+    "add_members": {
+      "operation_id": "addListMembers",
+      "method": "POST",
+      "path": "/business/lists/{listId}/members",
+      "status": 200,
+      "body": {
+        "submittedCount": 3,
+        "addedCount": 2
+      }
+    },
+    "remove_members": {
+      "operation_id": "removeListMembers",
+      "method": "DELETE",
+      "path": "/business/lists/{listId}/members",
+      "status": 200,
+      "body": {
+        "submittedCount": 2
+      }
+    },
+    "list_columns": {
+      "operation_id": "listListColumns",
+      "method": "GET",
+      "path": "/business/lists/{listId}/columns",
+      "status": 200,
+      "body": {
+        "columns": [
+          {
+            "id": "68a1f3009c41d20014b3e9a1",
+            "name": "Lead Score",
+            "type": "string"
+          },
+          {
+            "id": "68a1f3009c41d20014b3e9a2",
+            "name": "Website",
+            "type": "url"
+          }
+        ]
+      }
+    },
+    "create_column": {
+      "operation_id": "createListColumn",
+      "method": "POST",
+      "path": "/business/lists/{listId}/columns",
+      "status": 201,
+      "body": {
+        "column": {
+          "id": "68a1f3009c41d20014b3e9a1",
+          "name": "Lead Score",
+          "type": "string"
+        }
+      }
+    },
+    "delete_column": {
+      "operation_id": "deleteListColumn",
+      "method": "DELETE",
+      "path": "/business/lists/{listId}/columns/{columnId}",
+      "status": 204,
+      "body": null
+    },
+    "list_campaigns": {
+      "operation_id": "listCampaigns",
+      "method": "GET",
+      "path": "/business/campaigns",
+      "status": 200,
+      "body": {
+        "campaigns": [
+          {
+            "id": "6a8da7718707dbcfb4448b96",
+            "name": "Q3 fintech outreach",
+            "status": "active",
+            "type": "manual",
+            "createdAt": "2026-08-25T14:32:17.586Z",
+            "startDate": "2026-08-26T00:00:00.000Z",
+            "folderId": null,
+            "createdBy": "Sofiia Hryshyna",
+            "leadsStatus": "completed",
+            "initializationError": null,
+            "autoReply": false,
+            "isDynamic": false,
+            "channels": [
+              "email"
+            ],
+            "lists": [
+              {
+                "id": "6a1edba88936e0fe1b20287c",
+                "name": "Fintech CFOs - US"
+              }
+            ],
+            "recipients": 9,
+            "messagesSent": 4,
+            "completedActions": {
+              "emails": 4,
+              "linkedinMessages": 0,
+              "linkedinInvites": 0,
+              "inmails": 0,
+              "profileVisits": 0,
+              "postsLiked": 0,
+              "callsMade": 0
+            },
+            "opened": {
+              "count": 3,
+              "rate": 75
+            },
+            "clicked": {
+              "count": 1,
+              "rate": 25
+            },
+            "replied": {
+              "count": 1,
+              "rate": 25
+            },
+            "positiveReplied": {
+              "count": 0,
+              "rate": 0
+            }
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "pageSize": 25,
+          "total": 210,
+          "totalPages": 9
+        }
+      }
+    },
+    "get_campaign": {
+      "operation_id": "getCampaign",
+      "method": "GET",
+      "path": "/business/campaigns/{campaignId}",
+      "status": 200,
+      "body": {
+        "campaign": {
+          "id": "6a8dc78c8d28fe4014b4e502",
+          "name": "Q3 fintech outreach",
+          "type": "manual",
+          "status": "initializing",
+          "initializationStatus": "completed",
+          "initializationError": null,
+          "listIds": [
+            "6a1edba88936e0fe1b20287c"
+          ]
+        }
+      }
+    },
+    "stop_campaign": {
+      "operation_id": "stopCampaign",
+      "method": "POST",
+      "path": "/business/campaigns/{campaignId}/stop",
+      "status": 200,
+      "body": {
+        "campaign": {
+          "id": "6a8dce146dc0b3d9029c22d0",
+          "status": "stopped"
+        }
+      }
+    },
+    "duplicate_campaign": {
+      "operation_id": "duplicateCampaign",
+      "method": "POST",
+      "path": "/business/campaigns/{campaignId}/duplicate",
+      "status": 201,
+      "body": {
+        "campaign": {
+          "id": "6a8dce4da4566f4f2454bd07",
+          "name": "Copy of Q3 fintech outreach"
+        }
+      }
+    },
+    "list_campaign_steps": {
+      "operation_id": "listCampaignSteps",
+      "method": "GET",
+      "path": "/business/campaigns/{campaignId}/steps",
+      "status": 200,
+      "body": {
+        "steps": [
+          {
+            "id": "6a8dc78d8d28fe4014b4e507",
+            "channel": "email",
+            "type": "manual",
+            "sequenceNumber": 0,
+            "daysBetween": 0,
+            "title": null,
+            "topic": null,
+            "subject": null,
+            "body": null,
+            "cc": []
+          },
+          {
+            "id": "6a8dce2ef83628aea1088041",
+            "channel": "email",
+            "type": "manual",
+            "sequenceNumber": 1,
+            "daysBetween": 2,
+            "title": "probe step subject",
+            "topic": null,
+            "subject": "Following up on BrightPay's finance hiring",
+            "body": "<p>Hi {Contact First Name}, circling back on my note last week.</p>",
+            "cc": [
+              "ops@yourcompany.com"
+            ]
+          }
+        ]
+      }
+    },
+    "list_campaign_leads": {
+      "operation_id": "listCampaignLeads",
+      "method": "GET",
+      "path": "/business/campaigns/{campaignId}/leads",
+      "status": 200,
+      "body": {
+        "leads": [
+          {
+            "id": "6a8da79aafc401ca94530c9d",
+            "contactId": "6777d930c5c5e1865dc3f562",
+            "name": "Imogen Low",
+            "email": "imogen@brightpay.com",
+            "linkedinUrl": "linkedin.com/in/imogen-low",
+            "companyName": "BrightPay",
+            "companyUrl": "brightpay.com",
+            "status": "stopped",
+            "outcome": null,
+            "sentSteps": 1,
+            "totalSteps": 2,
+            "openCount": 2,
+            "clickCount": 0,
+            "hasOpened": true,
+            "hasClicked": false,
+            "hasReplied": true,
+            "hasConnected": false,
+            "repliedInOtherCampaignAt": null,
+            "repliedInOtherCampaignId": null,
+            "firstMessageReceivedAt": "2026-08-25T15:04:11.000Z",
+            "firstSentBy": {
+              "name": "Sam Rivera",
+              "email": "sam@yourcompany.com",
+              "channel": "email"
+            },
+            "arms": [
+              {
+                "splitStepId": "6a8dce2ef83628aea1088041",
+                "branchKey": "b"
+              }
+            ]
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "pageSize": 25,
+          "total": 9,
+          "totalPages": 1
+        }
+      }
+    },
+    "get_job": {
+      "operation_id": "getJob",
+      "method": "GET",
+      "path": "/business/jobs/{jobId}",
+      "status": 200,
+      "body": {
+        "job": {
+          "jobId": "68a2109c9c41d20014b41001",
+          "type": "list_export",
+          "status": "completed",
+          "rowCount": 1240,
+          "downloadUrl": "https://fuse-list-exports.s3.eu-west-1.amazonaws.com/exports/68a2109c9c41d20014b41001/export.csv?response-content-disposition=attachment%3B%20filename%3D%22European_fintech_Series_A.csv%22&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Expires=900&X-Amz-Signature=3f6f0e2a8c1d4b7e9a2f5d6e7f8a9b0c",
+          "error": null
+        }
+      }
+    },
+    "find_person_email": {
+      "operation_id": "findPersonEmail",
+      "method": "POST",
+      "path": "/business/data/people/email",
+      "status": 200,
+      "body": {
+        "status": "found",
+        "email": {
+          "value": "jane@stripe.com",
+          "status": "valid",
+          "type": "work"
+        },
+        "linkedinUrl": "linkedin.com/in/jane-doe",
+        "creditsCharged": 20
+      }
+    },
+    "verify_email": {
+      "operation_id": "verifyEmail",
+      "method": "POST",
+      "path": "/business/data/emails/verify",
+      "status": 200,
+      "body": {
+        "email": "jane@stripe.com",
+        "status": "valid",
+        "creditsCharged": 10
+      }
+    },
+    "resolve_company": {
+      "operation_id": "resolveCompany",
+      "method": "POST",
+      "path": "/business/data/companies/resolve",
+      "status": 200,
+      "body": {
+        "status": "found",
+        "company": {
+          "name": "Stripe",
+          "domain": "stripe.com",
+          "linkedinUrl": "linkedin.com/company/stripe",
+          "logoUrl": "https://logo.example.com/stripe.png"
+        },
+        "creditsCharged": 0
+      }
+    }
+  }
+}

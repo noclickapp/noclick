@@ -1,0 +1,933 @@
+{
+  "$defs": {
+    "FuseaiAPITokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "fuseai_api_token",
+          "default": "fuseai_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Fuseai API Token",
+      "type": "object",
+      "x-credential-instructions": "Paste your Fuse API token (af_\u2026). NoClick sends it as the HTTP Basic username with an empty password. The account identity read verifies the token. Enrichment operations can spend Fuse credits.",
+      "x-credential-url": "https://docs.fuseai.com/"
+    },
+    "FuseaiAddMembersConfig": {
+      "additionalProperties": false,
+      "description": "Add existing contacts to a list (by id).",
+      "properties": {
+        "operation": {
+          "const": "add_members",
+          "default": "add_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "listId": {
+          "description": "24-character hex id of the list (from GET /business/lists).",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Listid",
+          "type": "string"
+        },
+        "contactIds": {
+          "description": "Contact ids (24-character hex, 1-5000 per call) to add to or remove from the list; ids already in the list are ignored on add.",
+          "items": {
+            "pattern": "^[a-fA-F0-9]{24}$",
+            "type": "string"
+          },
+          "maxItems": 5000,
+          "minItems": 1,
+          "title": "Contactids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "listId",
+        "contactIds"
+      ],
+      "title": "FuseaiAddMembersConfig",
+      "type": "object"
+    },
+    "FuseaiCreateColumnConfig": {
+      "additionalProperties": false,
+      "description": "Create a custom column on a list.",
+      "properties": {
+        "operation": {
+          "const": "create_column",
+          "default": "create_column",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "listId": {
+          "description": "24-character hex id of the list (from GET /business/lists).",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Listid",
+          "type": "string"
+        },
+        "name": {
+          "description": "Column name (1-100 characters); unique per list (case-insensitive) or the call answers 409 COLUMN_NAME_TAKEN.",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "string",
+          "description": "Value type the column stores: string (default), number, date, boolean or url (a {label, value} link).",
+          "enum": [
+            "string",
+            "number",
+            "date",
+            "boolean",
+            "url"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "listId",
+        "name"
+      ],
+      "title": "FuseaiCreateColumnConfig",
+      "type": "object"
+    },
+    "FuseaiCreateListConfig": {
+      "additionalProperties": false,
+      "description": "Create a prospect list.",
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "name": {
+          "description": "List name (1-255 characters, trimmed); must be unique in the workspace or the call answers 409 LIST_NAME_TAKEN.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "entityType": {
+          "default": "contactList",
+          "description": "Kind of list to create: contactList (people, default) or companyList (companies).",
+          "enum": [
+            "contactList",
+            "companyList"
+          ],
+          "title": "Entitytype",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "FuseaiCreateListConfig",
+      "type": "object"
+    },
+    "FuseaiDeleteColumnConfig": {
+      "additionalProperties": false,
+      "description": "Delete a custom column (its values go with it).",
+      "properties": {
+        "operation": {
+          "const": "delete_column",
+          "default": "delete_column",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "listId": {
+          "description": "24-character hex id of the list (from GET /business/lists).",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Listid",
+          "type": "string"
+        },
+        "columnId": {
+          "description": "24-character hex id of the custom column (from GET /business/lists/{listId}/columns).",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Columnid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "listId",
+        "columnId"
+      ],
+      "title": "FuseaiDeleteColumnConfig",
+      "type": "object"
+    },
+    "FuseaiDeleteListConfig": {
+      "additionalProperties": false,
+      "description": "Delete a list.",
+      "properties": {
+        "operation": {
+          "const": "delete_list",
+          "default": "delete_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "listId": {
+          "description": "24-character hex id of the list (from GET /business/lists).",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Listid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "listId"
+      ],
+      "title": "FuseaiDeleteListConfig",
+      "type": "object"
+    },
+    "FuseaiDuplicateCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Copy a campaign as a fresh draft.",
+      "properties": {
+        "operation": {
+          "const": "duplicate_campaign",
+          "default": "duplicate_campaign",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaignId": {
+          "description": "The campaign's id (24-character hex ObjectId), as returned by POST /business/campaigns or as the campaignId of a GET /business/campaigns row.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Campaignid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaignId"
+      ],
+      "title": "FuseaiDuplicateCampaignConfig",
+      "type": "object"
+    },
+    "FuseaiFindPersonEmailConfig": {
+      "additionalProperties": false,
+      "description": "Find a person's email.",
+      "properties": {
+        "operation": {
+          "const": "find_person_email",
+          "default": "find_person_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "linkedinUrl": {
+          "description": "The person's LinkedIn profile, e.g. `https://www.linkedin.com/in/jane-doe`: the most precise way to name them.",
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Linkedinurl",
+          "type": "string"
+        }
+      },
+      "required": [
+        "linkedinUrl"
+      ],
+      "title": "FuseaiFindPersonEmailConfig",
+      "type": "object"
+    },
+    "FuseaiGetAccountConfig": {
+      "additionalProperties": false,
+      "description": "Get the token owner's identity.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "FuseaiGetAccountConfig",
+      "type": "object"
+    },
+    "FuseaiGetCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Get a campaign's status.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaignId": {
+          "description": "The campaign's id (24-character hex ObjectId), as returned by POST /business/campaigns or as the campaignId of a GET /business/campaigns row.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Campaignid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaignId"
+      ],
+      "title": "FuseaiGetCampaignConfig",
+      "type": "object"
+    },
+    "FuseaiGetCreditsConfig": {
+      "additionalProperties": false,
+      "description": "Get the token owner's credit balance.",
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "FuseaiGetCreditsConfig",
+      "type": "object"
+    },
+    "FuseaiGetJobConfig": {
+      "additionalProperties": false,
+      "description": "Poll any async job.",
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "jobId": {
+          "description": "24-character hex id of an async job, as returned with the 202 that started it (POST /business/lists/{listId}/export).",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Jobid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "jobId"
+      ],
+      "title": "FuseaiGetJobConfig",
+      "type": "object"
+    },
+    "FuseaiGetListConfig": {
+      "additionalProperties": false,
+      "description": "Get one list's metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "listId": {
+          "description": "24-character hex id of the list (from GET /business/lists).",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Listid",
+          "type": "string"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "const": "columns",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to columns to add the list's custom column definitions (id, name, type) to the response.",
+          "title": "Include"
+        }
+      },
+      "required": [
+        "listId"
+      ],
+      "title": "FuseaiGetListConfig",
+      "type": "object"
+    },
+    "FuseaiListCampaignLeadsConfig": {
+      "additionalProperties": false,
+      "description": "The campaign's leads with their per-step state.",
+      "properties": {
+        "operation": {
+          "const": "list_campaign_leads",
+          "default": "list_campaign_leads",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaignId": {
+          "description": "The campaign's id (24-character hex ObjectId), as returned by POST /business/campaigns or as the campaignId of a GET /business/campaigns row.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Campaignid",
+          "type": "string"
+        },
+        "limit": {
+          "default": 25,
+          "description": "Page size, 1-100 (default 25).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "pageNum": {
+          "default": 1,
+          "description": "1-based page number (default 1).",
+          "minimum": 1,
+          "title": "Pagenum",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Free text matched case-insensitively against the lead's full name or their company name (1-200 characters); any string is accepted, and regex metacharacters are escaped for you, so it behaves as a literal substring match. A term that matches no lead returns an empty page, not an error.",
+          "title": "Search"
+        }
+      },
+      "required": [
+        "campaignId"
+      ],
+      "title": "FuseaiListCampaignLeadsConfig",
+      "type": "object"
+    },
+    "FuseaiListCampaignStepsConfig": {
+      "additionalProperties": false,
+      "description": "List a campaign's sequence steps.",
+      "properties": {
+        "operation": {
+          "const": "list_campaign_steps",
+          "default": "list_campaign_steps",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaignId": {
+          "description": "The campaign's id (24-character hex ObjectId), as returned by POST /business/campaigns or as the campaignId of a GET /business/campaigns row.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Campaignid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaignId"
+      ],
+      "title": "FuseaiListCampaignStepsConfig",
+      "type": "object"
+    },
+    "FuseaiListCampaignsConfig": {
+      "additionalProperties": false,
+      "description": "List the token owner's campaigns with headline analytics.",
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 25,
+          "description": "Page size, 1-100 (default 25).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "pageNum": {
+          "default": 1,
+          "description": "1-based page number (default 1).",
+          "minimum": 1,
+          "title": "Pagenum",
+          "type": "integer"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Free text matched case-insensitively against the campaign name only (1-200 characters); any string is accepted. The value reaches the store as a regular expression rather than a literal, so metacharacters such as ( ) [ ] + * ? | are interpreted \u2014 send plain words, or escape them. A term that matches no campaign returns an empty page, not an error.",
+          "title": "Search"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "ai-generated",
+                "manual"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict to ai-generated or manual campaigns \u2014 the same values a campaign's `type` reports.",
+          "title": "Type",
+          "enum": [
+            "ai-generated",
+            "manual"
+          ],
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "active",
+                "initializing",
+                "initialization_failed",
+                "stopped",
+                "paused_manual"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict to one status: initializing (draft, not yet approved), active (approved and sending), stopped (stopped via /stop or deleted), paused_manual (paused by the app), initialization_failed (AI initialization failed; see initializationError).",
+          "title": "Status",
+          "enum": [
+            "active",
+            "initializing",
+            "initialization_failed",
+            "stopped",
+            "paused_manual"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "FuseaiListCampaignsConfig",
+      "type": "object"
+    },
+    "FuseaiListColumnsConfig": {
+      "additionalProperties": false,
+      "description": "List a list's custom column definitions.",
+      "properties": {
+        "operation": {
+          "const": "list_columns",
+          "default": "list_columns",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "listId": {
+          "description": "24-character hex id of the list (from GET /business/lists).",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Listid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "listId"
+      ],
+      "title": "FuseaiListColumnsConfig",
+      "type": "object"
+    },
+    "FuseaiListListsConfig": {
+      "additionalProperties": false,
+      "description": "List the token owner's prospect lists.",
+      "properties": {
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "limit": {
+          "default": 50,
+          "description": "Page size: how many lists to return per page (1-1000, default 50).",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "pageNum": {
+          "default": 1,
+          "description": "1-based page number (default 1); lists are ordered newest-created first.",
+          "minimum": 1,
+          "title": "Pagenum",
+          "type": "integer"
+        },
+        "entityType": {
+          "anyOf": [
+            {
+              "enum": [
+                "contactList",
+                "companyList"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict to one list kind: contactList (people) or companyList (companies); omit for both.",
+          "title": "Entitytype",
+          "enum": [
+            "contactList",
+            "companyList"
+          ],
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Free text (1-200 characters), matched as a case-insensitive substring of the list name; every character is literal, so * and ? are not wildcards and no other field (folder, owner, description) is searched.",
+          "title": "Search"
+        }
+      },
+      "title": "FuseaiListListsConfig",
+      "type": "object"
+    },
+    "FuseaiListRowsConfig": {
+      "additionalProperties": false,
+      "description": "List a list's contacts (with ids and column values).",
+      "properties": {
+        "operation": {
+          "const": "list_rows",
+          "default": "list_rows",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "listId": {
+          "description": "24-character hex id of the list (from GET /business/lists).",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Listid",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Page size: how many rows to return per page (1-1000, default 100).",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "pageNum": {
+          "default": 1,
+          "description": "1-based page number (default 1).",
+          "minimum": 1,
+          "title": "Pagenum",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "listId"
+      ],
+      "title": "FuseaiListRowsConfig",
+      "type": "object"
+    },
+    "FuseaiRemoveMembersConfig": {
+      "additionalProperties": false,
+      "description": "Remove contacts from a list.",
+      "properties": {
+        "operation": {
+          "const": "remove_members",
+          "default": "remove_members",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "listId": {
+          "description": "24-character hex id of the list (from GET /business/lists).",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Listid",
+          "type": "string"
+        },
+        "contactIds": {
+          "description": "Contact ids (24-character hex, 1-5000 per call) to add to or remove from the list; ids already in the list are ignored on add.",
+          "items": {
+            "pattern": "^[a-fA-F0-9]{24}$",
+            "type": "string"
+          },
+          "maxItems": 5000,
+          "minItems": 1,
+          "title": "Contactids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "listId",
+        "contactIds"
+      ],
+      "title": "FuseaiRemoveMembersConfig",
+      "type": "object"
+    },
+    "FuseaiRenameListConfig": {
+      "additionalProperties": false,
+      "description": "Rename a prospect list.",
+      "properties": {
+        "operation": {
+          "const": "rename_list",
+          "default": "rename_list",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "listId": {
+          "description": "24-character hex id of the list (from GET /business/lists).",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Listid",
+          "type": "string"
+        },
+        "name": {
+          "description": "New list name (1-255 characters, trimmed); must be unique in the workspace or the call answers 409 LIST_NAME_TAKEN.",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "listId",
+        "name"
+      ],
+      "title": "FuseaiRenameListConfig",
+      "type": "object"
+    },
+    "FuseaiResolveCompanyConfig": {
+      "additionalProperties": false,
+      "description": "Find a company's domain, LinkedIn page and logo (free).",
+      "properties": {
+        "operation": {
+          "const": "resolve_company",
+          "default": "resolve_company",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "The company's website domain, e.g. `stripe.com`; a full URL such as `https://www.stripe.com/about` is reduced to its domain.",
+          "maxLength": 253,
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "FuseaiResolveCompanyConfig",
+      "type": "object"
+    },
+    "FuseaiStopCampaignConfig": {
+      "additionalProperties": false,
+      "description": "Stop an active campaign (approve re-activates it).",
+      "properties": {
+        "operation": {
+          "const": "stop_campaign",
+          "default": "stop_campaign",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "campaignId": {
+          "description": "The campaign's id (24-character hex ObjectId), as returned by POST /business/campaigns or as the campaignId of a GET /business/campaigns row.",
+          "pattern": "^[a-fA-F0-9]{24}$",
+          "title": "Campaignid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaignId"
+      ],
+      "title": "FuseaiStopCampaignConfig",
+      "type": "object"
+    },
+    "FuseaiVerifyEmailConfig": {
+      "additionalProperties": false,
+      "description": "Verify an email address.",
+      "properties": {
+        "operation": {
+          "const": "verify_email",
+          "default": "verify_email",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "The address to check, e.g. `jane@stripe.com`.",
+          "maxLength": 320,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "FuseaiVerifyEmailConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_members": "#/$defs/FuseaiAddMembersConfig",
+          "create_column": "#/$defs/FuseaiCreateColumnConfig",
+          "create_list": "#/$defs/FuseaiCreateListConfig",
+          "delete_column": "#/$defs/FuseaiDeleteColumnConfig",
+          "delete_list": "#/$defs/FuseaiDeleteListConfig",
+          "duplicate_campaign": "#/$defs/FuseaiDuplicateCampaignConfig",
+          "find_person_email": "#/$defs/FuseaiFindPersonEmailConfig",
+          "get_account": "#/$defs/FuseaiGetAccountConfig",
+          "get_campaign": "#/$defs/FuseaiGetCampaignConfig",
+          "get_credits": "#/$defs/FuseaiGetCreditsConfig",
+          "get_job": "#/$defs/FuseaiGetJobConfig",
+          "get_list": "#/$defs/FuseaiGetListConfig",
+          "list_campaign_leads": "#/$defs/FuseaiListCampaignLeadsConfig",
+          "list_campaign_steps": "#/$defs/FuseaiListCampaignStepsConfig",
+          "list_campaigns": "#/$defs/FuseaiListCampaignsConfig",
+          "list_columns": "#/$defs/FuseaiListColumnsConfig",
+          "list_lists": "#/$defs/FuseaiListListsConfig",
+          "list_rows": "#/$defs/FuseaiListRowsConfig",
+          "remove_members": "#/$defs/FuseaiRemoveMembersConfig",
+          "rename_list": "#/$defs/FuseaiRenameListConfig",
+          "resolve_company": "#/$defs/FuseaiResolveCompanyConfig",
+          "stop_campaign": "#/$defs/FuseaiStopCampaignConfig",
+          "verify_email": "#/$defs/FuseaiVerifyEmailConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FuseaiGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiGetCreditsConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiListListsConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiCreateListConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiGetListConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiRenameListConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiDeleteListConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiListRowsConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiAddMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiRemoveMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiListColumnsConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiCreateColumnConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiDeleteColumnConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiListCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiGetCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiStopCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiDuplicateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiListCampaignStepsConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiListCampaignLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiGetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiFindPersonEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiVerifyEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/FuseaiResolveCompanyConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FuseaiAPITokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Fuseai Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
