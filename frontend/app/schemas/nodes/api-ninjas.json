@@ -1,0 +1,586 @@
+{
+  "$defs": {
+    "AnalyzeSentiment": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "analyze_sentiment",
+          "default": "analyze_sentiment",
+          "title": "Analyze Sentiment",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "text": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "AnalyzeSentiment",
+      "type": "object"
+    },
+    "ApiNinjasApiKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "api_ninjas_api_key",
+          "default": "api_ninjas_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "API Ninjas API Key",
+      "type": "object",
+      "x-credential-instructions": "Copy your API key from your API Ninjas account. NoClick sends it in X-Api-Key to api.api-ninjas.com. Plan limits apply; commercial use requires a premium subscription. Connection testing proves the key is accepted, not account identity.",
+      "x-credential-url": "https://api-ninjas.com/profile"
+    },
+    "CompareText": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "compare_text",
+          "default": "compare_text",
+          "description": "Posts two texts for a similarity calculation; creates no stored resource.",
+          "title": "Compare Text Similarity",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "text_1": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "First Text",
+          "type": "string"
+        },
+        "text_2": {
+          "maxLength": 5000,
+          "minLength": 1,
+          "title": "Second Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text_1",
+        "text_2"
+      ],
+      "title": "CompareText",
+      "type": "object"
+    },
+    "ConvertCurrency": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "convert_currency",
+          "default": "convert_currency",
+          "title": "Convert Currency",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "have": {
+          "description": "ISO currency code, such as GBP.",
+          "pattern": "^[A-Z]{3}$",
+          "title": "From Currency",
+          "type": "string"
+        },
+        "want": {
+          "description": "ISO currency code, such as AUD.",
+          "pattern": "^[A-Z]{3}$",
+          "title": "To Currency",
+          "type": "string"
+        },
+        "amount": {
+          "title": "Amount",
+          "type": "number"
+        }
+      },
+      "required": [
+        "have",
+        "want",
+        "amount"
+      ],
+      "title": "ConvertCurrency",
+      "type": "object"
+    },
+    "DetectLanguage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "detect_language",
+          "default": "detect_language",
+          "title": "Detect Text Language",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "text": {
+          "description": "At least ten words recommended.",
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "DetectLanguage",
+      "type": "object"
+    },
+    "GeneratePassword": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "generate_password",
+          "default": "generate_password",
+          "title": "Generate Random Password",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "length": {
+          "default": 16,
+          "maximum": 1024,
+          "minimum": 1,
+          "title": "Length",
+          "type": "integer"
+        },
+        "exclude_numbers": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Premium plan only.",
+          "title": "Exclude Numbers"
+        },
+        "exclude_special_chars": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Premium plan only.",
+          "title": "Exclude Special Characters"
+        }
+      },
+      "title": "GeneratePassword",
+      "type": "object"
+    },
+    "Geocode": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "geocode",
+          "default": "geocode",
+          "title": "Geocode City",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "city": {
+          "maxLength": 250,
+          "minLength": 1,
+          "title": "City",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "US State"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 250,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "zipcode": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{5}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "US ZIP Code"
+        }
+      },
+      "required": [
+        "city"
+      ],
+      "title": "Geocode",
+      "type": "object"
+    },
+    "GetExchangeRate": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_exchange_rate",
+          "default": "get_exchange_rate",
+          "title": "Get Exchange Rate",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "pair": {
+          "description": "For example GBP_AUD. Free plans receive daily rates.",
+          "pattern": "^[A-Z]{3}_[A-Z]{3}$",
+          "title": "Currency Pair",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pair"
+      ],
+      "title": "GetExchangeRate",
+      "type": "object"
+    },
+    "GetNutrition": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_nutrition",
+          "default": "get_nutrition",
+          "title": "Get Nutrition from Text",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "query": {
+          "description": "For example 1lb brisket and fries. Some nutrients require a premium plan.",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Food Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "GetNutrition",
+      "type": "object"
+    },
+    "GetStockPrice": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_stock_price",
+          "default": "get_stock_price",
+          "title": "Get Stock Price",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "ticker": {
+          "description": "For example AAPL or ^DJI. Free plans receive the latest session closing price.",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "GetStockPrice",
+      "type": "object"
+    },
+    "GetWeather": {
+      "additionalProperties": false,
+      "properties": {
+        "lat": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Longitude",
+          "type": "number"
+        },
+        "operation": {
+          "const": "get_weather",
+          "default": "get_weather",
+          "title": "Get Current Weather",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "GetWeather",
+      "type": "object"
+    },
+    "GetWorldTime": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_world_time",
+          "default": "get_world_time",
+          "title": "Get World Time",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "timezone": {
+          "default": "Europe/London",
+          "description": "IANA timezone name. Defaults to Europe/London; change for another location.",
+          "maxLength": 100,
+          "title": "Timezone",
+          "type": "string"
+        }
+      },
+      "title": "GetWorldTime",
+      "type": "object"
+    },
+    "LookupIP": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "lookup_ip",
+          "default": "lookup_ip",
+          "title": "Look Up IP Address",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "address": {
+          "description": "IPv4 or IPv6 address to look up.",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "IP Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "LookupIP",
+      "type": "object"
+    },
+    "ReverseGeocode": {
+      "additionalProperties": false,
+      "properties": {
+        "lat": {
+          "maximum": 90,
+          "minimum": -90,
+          "title": "Latitude",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": 180,
+          "minimum": -180,
+          "title": "Longitude",
+          "type": "number"
+        },
+        "operation": {
+          "const": "reverse_geocode",
+          "default": "reverse_geocode",
+          "title": "Reverse Geocode Coordinates",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "ReverseGeocode",
+      "type": "object"
+    },
+    "ValidateEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "validate_email",
+          "default": "validate_email",
+          "title": "Validate Email",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Email Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ValidateEmail",
+      "type": "object"
+    },
+    "ValidatePhone": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "validate_phone",
+          "default": "validate_phone",
+          "title": "Validate Phone",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "number": {
+          "description": "Include the country calling code if no country is supplied.",
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Phone Number",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "maxLength": 2,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Two-letter ISO country code.",
+          "title": "Country Code"
+        }
+      },
+      "required": [
+        "number"
+      ],
+      "title": "ValidatePhone",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "analyze_sentiment": "#/$defs/AnalyzeSentiment",
+          "compare_text": "#/$defs/CompareText",
+          "convert_currency": "#/$defs/ConvertCurrency",
+          "detect_language": "#/$defs/DetectLanguage",
+          "generate_password": "#/$defs/GeneratePassword",
+          "geocode": "#/$defs/Geocode",
+          "get_exchange_rate": "#/$defs/GetExchangeRate",
+          "get_nutrition": "#/$defs/GetNutrition",
+          "get_stock_price": "#/$defs/GetStockPrice",
+          "get_weather": "#/$defs/GetWeather",
+          "get_world_time": "#/$defs/GetWorldTime",
+          "lookup_ip": "#/$defs/LookupIP",
+          "reverse_geocode": "#/$defs/ReverseGeocode",
+          "validate_email": "#/$defs/ValidateEmail",
+          "validate_phone": "#/$defs/ValidatePhone"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ValidateEmail"
+        },
+        {
+          "$ref": "#/$defs/ValidatePhone"
+        },
+        {
+          "$ref": "#/$defs/Geocode"
+        },
+        {
+          "$ref": "#/$defs/ReverseGeocode"
+        },
+        {
+          "$ref": "#/$defs/GetWeather"
+        },
+        {
+          "$ref": "#/$defs/ConvertCurrency"
+        },
+        {
+          "$ref": "#/$defs/GetExchangeRate"
+        },
+        {
+          "$ref": "#/$defs/GetStockPrice"
+        },
+        {
+          "$ref": "#/$defs/GetNutrition"
+        },
+        {
+          "$ref": "#/$defs/AnalyzeSentiment"
+        },
+        {
+          "$ref": "#/$defs/DetectLanguage"
+        },
+        {
+          "$ref": "#/$defs/CompareText"
+        },
+        {
+          "$ref": "#/$defs/GeneratePassword"
+        },
+        {
+          "$ref": "#/$defs/LookupIP"
+        },
+        {
+          "$ref": "#/$defs/GetWorldTime"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ApiNinjasApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Api-ninjas Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Validate this email address",
+    "Convert GBP to AUD",
+    "Compare these two texts"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

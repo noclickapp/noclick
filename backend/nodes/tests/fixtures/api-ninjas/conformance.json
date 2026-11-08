@@ -1,0 +1,606 @@
+{
+  "contract": {
+    "file": "openapi.json",
+    "sha256": "08f466fb299eccba02f66b87faa3df5d07b1b29e6f5a4f96efbbb64ea16d6714",
+    "version": "1.0.0",
+    "source_url": "https://api-ninjas.com/openapi.json",
+    "node_type": "automation-api-ninjas"
+  },
+  "verdict": {
+    "provider": "api-ninjas",
+    "ready": true,
+    "blocking": [],
+    "advisory": [],
+    "stats": {
+      "operations": 15,
+      "skipped": 0,
+      "request_ok": 15,
+      "authored_parser_ok": 15,
+      "generated_only": 0,
+      "local_ok": 0
+    }
+  },
+  "report": [
+    {
+      "provider": "api-ninjas",
+      "node_type": "automation-api-ninjas",
+      "checked": 15,
+      "passed": 15,
+      "failed": 0,
+      "fixture_errors": 0,
+      "response_checked": 15,
+      "auth_checked": 15,
+      "scope_checked": 0,
+      "skipped": 0,
+      "coverage": {
+        "implemented": 15,
+        "total": 294
+      },
+      "operations": [
+        {
+          "operation": "validate_email",
+          "scenario": "validate_email",
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.api-ninjas.com/v1/validateemail?email=info%40api-ninjas.com",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.api-ninjas.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v1/validateemail",
+              "security_declared": true,
+              "response_source": "docs",
+              "response_witness": "GET /v1/validateemail",
+              "response_source_url": "https://api-ninjas.com/api/validateemail",
+              "response_status": 200,
+              "response_sha256": "8106d918e671d570a5327b69d4fbd4994ff3ba0f748742065ed0734f42ff474b"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "validate_email",
+            "email": "info@api-ninjas.com"
+          },
+          "passed": true
+        },
+        {
+          "operation": "validate_phone",
+          "scenario": "validate_phone",
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.api-ninjas.com/v1/validatephone?number=%2B12065550100",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.api-ninjas.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v1/validatephone",
+              "security_declared": true,
+              "response_source": "docs",
+              "response_witness": "GET /v1/validatephone",
+              "response_source_url": "https://api-ninjas.com/api/validatephone",
+              "response_status": 200,
+              "response_sha256": "273986b7e22966839d667291a7b5609aa1047e8e55839dc5dd5791809db181be"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "validate_phone",
+            "number": "+12065550100"
+          },
+          "passed": true
+        },
+        {
+          "operation": "geocode",
+          "scenario": "geocode",
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.api-ninjas.com/v1/geocoding?city=London&country=GB",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.api-ninjas.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v1/geocoding",
+              "security_declared": true,
+              "response_source": "docs",
+              "response_witness": "GET /v1/geocoding",
+              "response_source_url": "https://api-ninjas.com/api/geocoding",
+              "response_status": 200,
+              "response_sha256": "454c2b4f66ff132f32ee38ed756b5f71a01c64b5ac526b5195e6721ddd9b8024"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "geocode",
+            "city": "London",
+            "country": "GB"
+          },
+          "passed": true
+        },
+        {
+          "operation": "reverse_geocode",
+          "scenario": "reverse_geocode",
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.api-ninjas.com/v1/reversegeocoding?lat=51.509865&lon=-0.118092",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.api-ninjas.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v1/reversegeocoding",
+              "security_declared": true,
+              "response_source": "docs",
+              "response_witness": "GET /v1/reversegeocoding",
+              "response_source_url": "https://api-ninjas.com/api/geocoding",
+              "response_status": 200,
+              "response_sha256": "92c2274af9d14ec8324f9deeccb3d461240456ae5584ed54f6e5bb7f9c062e03"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "reverse_geocode",
+            "lat": 51.509865,
+            "lon": -0.118092
+          },
+          "passed": true
+        },
+        {
+          "operation": "get_weather",
+          "scenario": "get_weather",
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.api-ninjas.com/v1/weather?lat=51.5074&lon=-0.1278",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.api-ninjas.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v1/weather",
+              "security_declared": true,
+              "response_source": "docs",
+              "response_witness": "GET /v1/weather",
+              "response_source_url": "https://api-ninjas.com/api/weather",
+              "response_status": 200,
+              "response_sha256": "c7af2350892884629fb6c7f5b10906fd2d5d2ddf1342ff09007d7b852eaf6982"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "get_weather",
+            "lat": 51.5074,
+            "lon": -0.1278
+          },
+          "passed": true
+        },
+        {
+          "operation": "convert_currency",
+          "scenario": "convert_currency",
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.api-ninjas.com/v1/convertcurrency?have=GBP&want=AUD&amount=5000.0",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.api-ninjas.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v1/convertcurrency",
+              "security_declared": true,
+              "response_source": "docs",
+              "response_witness": "GET /v1/convertcurrency",
+              "response_source_url": "https://api-ninjas.com/api/convertcurrency",
+              "response_status": 200,
+              "response_sha256": "8d1b048df4ad5d4b35ce4c6eebf8a6b19a7e05a533091b8feed49bf5c18bda06"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "convert_currency",
+            "have": "GBP",
+            "want": "AUD",
+            "amount": 5000.0
+          },
+          "passed": true
+        },
+        {
+          "operation": "get_exchange_rate",
+          "scenario": "get_exchange_rate",
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.api-ninjas.com/v1/exchangerate?pair=GBP_AUD",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.api-ninjas.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v1/exchangerate",
+              "security_declared": true,
+              "response_source": "docs",
+              "response_witness": "GET /v1/exchangerate",
+              "response_source_url": "https://api-ninjas.com/api/exchangerate",
+              "response_status": 200,
+              "response_sha256": "4939e7ec947bd1bd0f1819f4d8423e11236f1b4fa563fece487ee8fa96f56cba"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "get_exchange_rate",
+            "pair": "GBP_AUD"
+          },
+          "passed": true
+        },
+        {
+          "operation": "get_stock_price",
+          "scenario": "get_stock_price",
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.api-ninjas.com/v1/stockprice?ticker=AAPL",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.api-ninjas.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v1/stockprice",
+              "security_declared": true,
+              "response_source": "docs",
+              "response_witness": "GET /v1/stockprice",
+              "response_source_url": "https://api-ninjas.com/api/stockprice",
+              "response_status": 200,
+              "response_sha256": "18eddaf4e95a69cf7b63bc2c40c919da4a88cf603c4534aeb1f1451e7cca5bfb"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "get_stock_price",
+            "ticker": "AAPL"
+          },
+          "passed": true
+        },
+        {
+          "operation": "get_nutrition",
+          "scenario": "get_nutrition",
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.api-ninjas.com/v1/nutrition?query=1lb+brisket+and+fries",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.api-ninjas.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v1/nutrition",
+              "security_declared": true,
+              "response_source": "docs",
+              "response_witness": "GET /v1/nutrition",
+              "response_source_url": "https://api-ninjas.com/api/nutrition",
+              "response_status": 200,
+              "response_sha256": "75a44d6b44cd9d52919077a98a90247ac6e3ebd4bb31e62ddeb4a3b4a20164c6"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "get_nutrition",
+            "query": "1lb brisket and fries"
+          },
+          "passed": true
+        },
+        {
+          "operation": "analyze_sentiment",
+          "scenario": "analyze_sentiment",
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.api-ninjas.com/v1/sentiment?text=I%27m+loving+it%21",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.api-ninjas.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v1/sentiment",
+              "security_declared": true,
+              "response_source": "docs",
+              "response_witness": "GET /v1/sentiment",
+              "response_source_url": "https://api-ninjas.com/api/sentiment",
+              "response_status": 200,
+              "response_sha256": "d83e3c24c544e9eca3fdbdb7e3239032e7da24932b7ba0b1e56da9a696db73ed"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "analyze_sentiment",
+            "text": "I'm loving it!"
+          },
+          "passed": true
+        },
+        {
+          "operation": "detect_language",
+          "scenario": "detect_language",
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.api-ninjas.com/v1/textlanguage?text=Hello+world%21",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.api-ninjas.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v1/textlanguage",
+              "security_declared": true,
+              "response_source": "docs",
+              "response_witness": "GET /v1/textlanguage",
+              "response_source_url": "https://api-ninjas.com/api/textlanguage",
+              "response_status": 200,
+              "response_sha256": "b1f00dea06ed83eb2212009d91427123677f83d1107f5a7d672493436c80e262"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "detect_language",
+            "text": "Hello world!"
+          },
+          "passed": true
+        },
+        {
+          "operation": "compare_text",
+          "scenario": "compare_text",
+          "requests": [
+            {
+              "method": "POST",
+              "url": "https://api.api-ninjas.com/v1/textsimilarity",
+              "content_type": "application/json",
+              "body": "{\"text_1\":\"This is an example sentence.\",\"text_2\":\"This is just another example sentence.\"}",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.api-ninjas.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json",
+                "content-length": "91",
+                "content-type": "application/json"
+              },
+              "spec_operation": "POST /v1/textsimilarity",
+              "security_declared": true,
+              "response_source": "docs",
+              "response_witness": "POST /v1/textsimilarity",
+              "response_source_url": "https://api-ninjas.com/api/textsimilarity",
+              "response_status": 200,
+              "response_sha256": "40c34d6e3d6969d16c352be738a7fa32b193f11f4b504846bfda8b91f9bef675"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "compare_text",
+            "text_1": "This is an example sentence.",
+            "text_2": "This is just another example sentence."
+          },
+          "passed": true
+        },
+        {
+          "operation": "generate_password",
+          "scenario": "generate_password",
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.api-ninjas.com/v1/passwordgenerator?length=16",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.api-ninjas.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v1/passwordgenerator",
+              "security_declared": true,
+              "response_source": "docs",
+              "response_witness": "GET /v1/passwordgenerator",
+              "response_source_url": "https://api-ninjas.com/api/passwordgenerator",
+              "response_status": 200,
+              "response_sha256": "524282458617c8c57479e3020176301100c425575c2715a62aa17e88d13352b5"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "generate_password",
+            "length": 16
+          },
+          "passed": true
+        },
+        {
+          "operation": "lookup_ip",
+          "scenario": "lookup_ip",
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.api-ninjas.com/v1/iplookup?address=73.9.149.180",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.api-ninjas.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v1/iplookup",
+              "security_declared": true,
+              "response_source": "docs",
+              "response_witness": "GET /v1/iplookup",
+              "response_source_url": "https://api-ninjas.com/api/iplookup",
+              "response_status": 200,
+              "response_sha256": "765d2365abad8c6975c75d14ff628b8e66ca188f49b75b2418b9b718069a3dc2"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "lookup_ip",
+            "address": "73.9.149.180"
+          },
+          "passed": true
+        },
+        {
+          "operation": "get_world_time",
+          "scenario": "get_world_time",
+          "requests": [
+            {
+              "method": "GET",
+              "url": "https://api.api-ninjas.com/v1/worldtime?timezone=Europe%2FLondon",
+              "content_type": null,
+              "body": "",
+              "auth_placement": null,
+              "headers": {
+                "host": "api.api-ninjas.com",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "connection": "keep-alive",
+                "user-agent": "python-httpx/0.28.1",
+                "x-api-key": "conformance-fake-token",
+                "accept": "application/json"
+              },
+              "spec_operation": "GET /v1/worldtime",
+              "security_declared": true,
+              "response_source": "docs",
+              "response_witness": "GET /v1/worldtime",
+              "response_source_url": "https://api-ninjas.com/api/worldtime",
+              "response_status": 200,
+              "response_sha256": "0435bf6a1b3b7a5d366a777a3b4a33211ffe48b3ed9cc5b1137f7e6cd2775cc6"
+            }
+          ],
+          "failures": [],
+          "fixture_errors": [],
+          "skipped": null,
+          "scope_checks": 0,
+          "config": {
+            "operation": "get_world_time",
+            "timezone": "Europe/London"
+          },
+          "passed": true
+        }
+      ]
+    }
+  ]
+}
