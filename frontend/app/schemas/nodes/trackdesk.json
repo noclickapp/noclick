@@ -1,0 +1,853 @@
+{
+  "$defs": {
+    "BuildTrackingLink": {
+      "description": "Build a direct tracking link to an offer's landing page.",
+      "properties": {
+        "operation": {
+          "const": "build_tracking_link",
+          "default": "build_tracking_link",
+          "title": "Operation",
+          "type": "string"
+        },
+        "source_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "offer_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Offer Id",
+          "type": "string"
+        },
+        "landing_page_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Landing Page Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "offer_id",
+        "landing_page_id"
+      ],
+      "title": "BuildTrackingLink",
+      "type": "object"
+    },
+    "CreateAccountNote": {
+      "description": "Add a note to an affiliate account.",
+      "properties": {
+        "operation": {
+          "const": "create_account_note",
+          "default": "create_account_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "account_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Account Id",
+          "type": "string"
+        },
+        "note": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id",
+        "note"
+      ],
+      "title": "CreateAccountNote",
+      "type": "object"
+    },
+    "CreateAffiliate": {
+      "description": "Register an affiliate; sending the welcome email is an explicit option.",
+      "properties": {
+        "operation": {
+          "const": "create_affiliate",
+          "default": "create_affiliate",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "status": {
+          "default": "ACCOUNT_STATUS_PENDING",
+          "enum": [
+            "ACCOUNT_STATUS_DISABLED",
+            "ACCOUNT_STATUS_ENABLED",
+            "ACCOUNT_STATUS_PENDING"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "public_id": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 2,
+              "pattern": "^[a-z0-9][a-z0-9_-]*[a-z0-9]$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Public Id"
+        },
+        "password": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "minLength": 6,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Password",
+          "ui:widget": "password"
+        },
+        "should_send_welcome_email": {
+          "default": false,
+          "description": "Ask Trackdesk to send the new affiliate a welcome email with a login link.",
+          "title": "Should Send Welcome Email",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email",
+        "name"
+      ],
+      "title": "CreateAffiliate",
+      "type": "object"
+    },
+    "CreateConversion": {
+      "description": "Record a click-attributed conversion with an external ID for deduplication.",
+      "properties": {
+        "operation": {
+          "const": "create_conversion",
+          "default": "create_conversion",
+          "title": "Operation",
+          "type": "string"
+        },
+        "cid": {
+          "description": "Trackdesk click identification UUID.",
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Cid",
+          "type": "string"
+        },
+        "conversion_type_code": {
+          "maxLength": 20,
+          "minLength": 1,
+          "title": "Conversion Type Code",
+          "type": "string"
+        },
+        "amount": {
+          "description": "Decimal revenue amount, sent without floating-point conversion.",
+          "pattern": "^-?[0-9]+(\\.[0-9]+)?$",
+          "title": "Amount",
+          "type": "string"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "external_id": {
+          "description": "Your unique transaction ID. Trackdesk deduplicates within the conversion type (and revenue origin for network accounts).",
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "External Id",
+          "type": "string"
+        },
+        "status": {
+          "default": "CONVERSION_STATUS_PENDING",
+          "enum": [
+            "CONVERSION_STATUS_APPROVED",
+            "CONVERSION_STATUS_PENDING",
+            "CONVERSION_STATUS_ON_HOLD"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cid",
+        "conversion_type_code",
+        "amount",
+        "external_id"
+      ],
+      "title": "CreateConversion",
+      "type": "object"
+    },
+    "CreateCoupon": {
+      "description": "Create a coupon for one affiliate traffic source and offer.",
+      "properties": {
+        "operation": {
+          "const": "create_coupon",
+          "default": "create_coupon",
+          "title": "Operation",
+          "type": "string"
+        },
+        "source_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "offer_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Offer Id",
+          "type": "string"
+        },
+        "code": {
+          "maxLength": 255,
+          "minLength": 2,
+          "title": "Code",
+          "type": "string"
+        },
+        "status": {
+          "default": "COUPON_STATUS_ACTIVE",
+          "enum": [
+            "COUPON_STATUS_ACTIVE",
+            "COUPON_STATUS_INACTIVE",
+            "COUPON_STATUS_REMOVED"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "offer_id",
+        "code"
+      ],
+      "title": "CreateCoupon",
+      "type": "object"
+    },
+    "CreateTag": {
+      "description": "Create a colored tag for the selected resource scope.",
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 50,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Name",
+          "type": "string"
+        },
+        "hex_color_code": {
+          "pattern": "^#[0-9A-F]{6}$",
+          "title": "Hex Color Code",
+          "type": "string"
+        },
+        "tag_scope": {
+          "enum": [
+            "TAG_SCOPE_ADVERTISERS",
+            "TAG_SCOPE_AFFILIATE_MANAGERS",
+            "TAG_SCOPE_AFFILIATES",
+            "TAG_SCOPE_OFFERS"
+          ],
+          "title": "Tag Scope",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "hex_color_code",
+        "tag_scope"
+      ],
+      "title": "CreateTag",
+      "type": "object"
+    },
+    "DeleteAccountNote": {
+      "description": "Delete a single affiliate account note.",
+      "properties": {
+        "operation": {
+          "const": "delete_account_note",
+          "default": "delete_account_note",
+          "title": "Operation",
+          "type": "string"
+        },
+        "note_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Note Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "DeleteAccountNote",
+      "type": "object"
+    },
+    "DeleteCoupon": {
+      "description": "Delete a coupon by its UUID.",
+      "properties": {
+        "operation": {
+          "const": "delete_coupon",
+          "default": "delete_coupon",
+          "title": "Operation",
+          "type": "string"
+        },
+        "coupon_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Coupon Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "coupon_id"
+      ],
+      "title": "DeleteCoupon",
+      "type": "object"
+    },
+    "GetAffiliate": {
+      "description": "Read an affiliate by its account UUID.",
+      "properties": {
+        "operation": {
+          "const": "get_affiliate",
+          "default": "get_affiliate",
+          "title": "Operation",
+          "type": "string"
+        },
+        "account_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Account Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "GetAffiliate",
+      "type": "object"
+    },
+    "GetOffer": {
+      "description": "Read an offer including pricing and landing pages.",
+      "properties": {
+        "operation": {
+          "const": "get_offer",
+          "default": "get_offer",
+          "title": "Operation",
+          "type": "string"
+        },
+        "offer_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Offer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "offer_id"
+      ],
+      "title": "GetOffer",
+      "type": "object"
+    },
+    "GetTag": {
+      "description": "Read a tag by its UUID.",
+      "properties": {
+        "operation": {
+          "const": "get_tag",
+          "default": "get_tag",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tag_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Tag Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "GetTag",
+      "type": "object"
+    },
+    "GetTier": {
+      "description": "Read an affiliate tier and its payout rates.",
+      "properties": {
+        "operation": {
+          "const": "get_tier",
+          "default": "get_tier",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tier_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Tier Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tier_id"
+      ],
+      "title": "GetTier",
+      "type": "object"
+    },
+    "ListAccountNotes": {
+      "description": "List the notes attached to one affiliate account.",
+      "properties": {
+        "operation": {
+          "const": "list_account_notes",
+          "default": "list_account_notes",
+          "title": "Operation",
+          "type": "string"
+        },
+        "account_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Account Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "ListAccountNotes",
+      "type": "object"
+    },
+    "ListAffiliates": {
+      "description": "List affiliates in your program, one page at a time.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum rows in this page.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Rows to skip; increase by the page size to continue.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_affiliates",
+          "default": "list_affiliates",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListAffiliates",
+      "type": "object"
+    },
+    "ListCoupons": {
+      "description": "List coupons, optionally filtering by affiliate or offer.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum rows in this page.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Rows to skip; increase by the page size to continue.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_coupons",
+          "default": "list_coupons",
+          "title": "Operation",
+          "type": "string"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Id"
+        },
+        "offer_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Offer Id"
+        }
+      },
+      "title": "ListCoupons",
+      "type": "object"
+    },
+    "ListOffers": {
+      "description": "List offers including pricing and landing pages.",
+      "properties": {
+        "limit": {
+          "default": 50,
+          "description": "Maximum rows in this page.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Rows to skip; increase by the page size to continue.",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_offers",
+          "default": "list_offers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 255,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Partial case-insensitive offer name.",
+          "title": "Name"
+        }
+      },
+      "title": "ListOffers",
+      "type": "object"
+    },
+    "ListTags": {
+      "description": "List your program's tags; also used to verify the connection.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "ListTiers": {
+      "description": "List your program's affiliate payout tiers.",
+      "properties": {
+        "operation": {
+          "const": "list_tiers",
+          "default": "list_tiers",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "title": "ListTiers",
+      "type": "object"
+    },
+    "SetAffiliateStatus": {
+      "description": "Change an affiliate's traffic status using its public ID.",
+      "properties": {
+        "operation": {
+          "const": "set_affiliate_status",
+          "default": "set_affiliate_status",
+          "title": "Operation",
+          "type": "string"
+        },
+        "public_id": {
+          "maxLength": 50,
+          "minLength": 2,
+          "pattern": "^[a-z0-9][a-z0-9_-]*[a-z0-9]$",
+          "title": "Public Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ACCOUNT_STATUS_DISABLED",
+            "ACCOUNT_STATUS_ENABLED",
+            "ACCOUNT_STATUS_PENDING"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "public_id",
+        "status"
+      ],
+      "title": "SetAffiliateStatus",
+      "type": "object"
+    },
+    "SetAffiliateTier": {
+      "description": "Assign a payout tier to an affiliate by public ID.",
+      "properties": {
+        "operation": {
+          "const": "set_affiliate_tier",
+          "default": "set_affiliate_tier",
+          "title": "Operation",
+          "type": "string"
+        },
+        "public_id": {
+          "maxLength": 50,
+          "minLength": 2,
+          "pattern": "^[a-z0-9][a-z0-9_-]*[a-z0-9]$",
+          "title": "Public Id",
+          "type": "string"
+        },
+        "tier_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Tier Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "public_id",
+        "tier_id"
+      ],
+      "title": "SetAffiliateTier",
+      "type": "object"
+    },
+    "SetConversionStatus": {
+      "description": "Change the status of an existing conversion.",
+      "properties": {
+        "operation": {
+          "const": "set_conversion_status",
+          "default": "set_conversion_status",
+          "title": "Operation",
+          "type": "string"
+        },
+        "conversion_id": {
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "title": "Conversion Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "CONVERSION_STATUS_APPROVED",
+            "CONVERSION_STATUS_FRAUD",
+            "CONVERSION_STATUS_NOT_ALLOWED",
+            "CONVERSION_STATUS_BLOCKED",
+            "CONVERSION_STATUS_ON_HOLD",
+            "CONVERSION_STATUS_PENDING",
+            "CONVERSION_STATUS_REFUNDED",
+            "CONVERSION_STATUS_REJECTED",
+            "CONVERSION_STATUS_TEST",
+            "CONVERSION_STATUS_QUALITY_CONTROL"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversion_id",
+        "status"
+      ],
+      "title": "SetConversionStatus",
+      "type": "object"
+    },
+    "TrackdeskAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "trackdesk_api_key",
+          "default": "trackdesk_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "tenant_id": {
+          "description": "The tenant in https://your-program.trackdesk.com; you can also paste that program URL.",
+          "maxLength": 63,
+          "minLength": 1,
+          "title": "Tenant subdomain",
+          "type": "string"
+        },
+        "api_key": {
+          "minLength": 1,
+          "title": "API key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "api_key"
+      ],
+      "title": "Trackdesk API Key",
+      "type": "object",
+      "x-credential-instructions": "In your Trackdesk program, open your name \u2192 Settings \u2192 Integrations \u2192 Personal access tokens. Generate an API key and paste it here with your program's tenant subdomain. The key inherits your account permissions.",
+      "x-credential-url": "https://developers.trackdesk.com/"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "build_tracking_link": "#/$defs/BuildTrackingLink",
+          "create_account_note": "#/$defs/CreateAccountNote",
+          "create_affiliate": "#/$defs/CreateAffiliate",
+          "create_conversion": "#/$defs/CreateConversion",
+          "create_coupon": "#/$defs/CreateCoupon",
+          "create_tag": "#/$defs/CreateTag",
+          "delete_account_note": "#/$defs/DeleteAccountNote",
+          "delete_coupon": "#/$defs/DeleteCoupon",
+          "get_affiliate": "#/$defs/GetAffiliate",
+          "get_offer": "#/$defs/GetOffer",
+          "get_tag": "#/$defs/GetTag",
+          "get_tier": "#/$defs/GetTier",
+          "list_account_notes": "#/$defs/ListAccountNotes",
+          "list_affiliates": "#/$defs/ListAffiliates",
+          "list_coupons": "#/$defs/ListCoupons",
+          "list_offers": "#/$defs/ListOffers",
+          "list_tags": "#/$defs/ListTags",
+          "list_tiers": "#/$defs/ListTiers",
+          "set_affiliate_status": "#/$defs/SetAffiliateStatus",
+          "set_affiliate_tier": "#/$defs/SetAffiliateTier",
+          "set_conversion_status": "#/$defs/SetConversionStatus"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListAffiliates"
+        },
+        {
+          "$ref": "#/$defs/GetAffiliate"
+        },
+        {
+          "$ref": "#/$defs/CreateAffiliate"
+        },
+        {
+          "$ref": "#/$defs/SetAffiliateStatus"
+        },
+        {
+          "$ref": "#/$defs/SetAffiliateTier"
+        },
+        {
+          "$ref": "#/$defs/ListOffers"
+        },
+        {
+          "$ref": "#/$defs/GetOffer"
+        },
+        {
+          "$ref": "#/$defs/ListCoupons"
+        },
+        {
+          "$ref": "#/$defs/CreateCoupon"
+        },
+        {
+          "$ref": "#/$defs/DeleteCoupon"
+        },
+        {
+          "$ref": "#/$defs/CreateConversion"
+        },
+        {
+          "$ref": "#/$defs/SetConversionStatus"
+        },
+        {
+          "$ref": "#/$defs/ListAccountNotes"
+        },
+        {
+          "$ref": "#/$defs/CreateAccountNote"
+        },
+        {
+          "$ref": "#/$defs/DeleteAccountNote"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/GetTag"
+        },
+        {
+          "$ref": "#/$defs/CreateTag"
+        },
+        {
+          "$ref": "#/$defs/ListTiers"
+        },
+        {
+          "$ref": "#/$defs/GetTier"
+        },
+        {
+          "$ref": "#/$defs/BuildTrackingLink"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TrackdeskAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Trackdesk Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
