@@ -11,6 +11,7 @@ const DocugenerateIcon = ({ className, style }: { className?: string; style?: CS
 
 export const DocugenerateNode: NodeDefinition = {
     type: 'automation-docugenerate', label: 'DocuGenerate',
+    category: 'documents',
     description: 'Create templates and generate, manage and retrieve documents',
     Icon: DocugenerateIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
