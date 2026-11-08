@@ -11,6 +11,7 @@ const AddresszenIcon = ({ className, style }: { className?: string; style?: CSSP
 
 export const AddresszenNode: NodeDefinition = {
     type: 'automation-addresszen', label: 'Addresszen',
+    category: 'developer-tools',
     description: 'Verify addresses, emails and phone numbers; manage licensees, configurations and key usage',
     keywords: ['address zen', 'address validation', 'autocomplete', 'places', 'licensees'],
     Icon: AddresszenIcon, iconColor: '',
