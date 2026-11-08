@@ -1,0 +1,1051 @@
+{
+  "$defs": {
+    "BotsonicCreateFaqConfig": {
+      "description": "Create bot faq.",
+      "properties": {
+        "operation": {
+          "const": "create_faq",
+          "default": "create_faq",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "question": {
+          "description": "The question for the FAQ entry.",
+          "title": "Question",
+          "type": "string"
+        },
+        "answer": {
+          "description": "The answer to the FAQ question.",
+          "title": "Answer",
+          "type": "string"
+        }
+      },
+      "required": [
+        "question",
+        "answer"
+      ],
+      "title": "BotsonicCreateFaqConfig",
+      "type": "object"
+    },
+    "BotsonicCreateStarterQuestionConfig": {
+      "description": "Create starter question.",
+      "properties": {
+        "operation": {
+          "const": "create_starter_question",
+          "default": "create_starter_question",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "question": {
+          "description": "a starter question",
+          "minLength": 1,
+          "title": "Question",
+          "type": "string"
+        },
+        "answer": {
+          "description": "answer for given question",
+          "minLength": 1,
+          "title": "Answer",
+          "type": "string"
+        },
+        "order": {
+          "default": 0,
+          "description": "Set order in which this question appears",
+          "title": "Order",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "question",
+        "answer"
+      ],
+      "title": "BotsonicCreateStarterQuestionConfig",
+      "type": "object"
+    },
+    "BotsonicCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "botsonic_api_token",
+          "default": "botsonic_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "description": "Paste the bot API token from Share > API Token. Business access is required.",
+          "minLength": 1,
+          "title": "Bot API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "Botsonic API Token",
+      "type": "object",
+      "x-credential-instructions": "Business access is required. In Botsonic, open your bot, then Share > API Token. Paste the bot token below.",
+      "x-credential-url": "https://api.botsonic.ai/docs"
+    },
+    "BotsonicDeleteFaqConfig": {
+      "description": "Delete bot faq.",
+      "properties": {
+        "operation": {
+          "const": "delete_faq",
+          "default": "delete_faq",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "faq_id": {
+          "description": "faq_id of specific faq to delete",
+          "title": "Faq Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "faq_id"
+      ],
+      "title": "BotsonicDeleteFaqConfig",
+      "type": "object"
+    },
+    "BotsonicDeleteStarterQuestionConfig": {
+      "description": "Delete starter question.",
+      "properties": {
+        "operation": {
+          "const": "delete_starter_question",
+          "default": "delete_starter_question",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "starter_question_id": {
+          "description": "starter_question_id of specific starter question to delete",
+          "title": "Starter Question Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "starter_question_id"
+      ],
+      "title": "BotsonicDeleteStarterQuestionConfig",
+      "type": "object"
+    },
+    "BotsonicDeleteTrainingDataConfig": {
+      "description": "Delete particluar bot data.",
+      "properties": {
+        "operation": {
+          "const": "delete_training_data",
+          "default": "delete_training_data",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "data_id": {
+          "description": "data_id of specific bot data to delete",
+          "title": "Data Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "data_id"
+      ],
+      "title": "BotsonicDeleteTrainingDataConfig",
+      "type": "object"
+    },
+    "BotsonicEndChatConfig": {
+      "description": "End a chat conversation.",
+      "properties": {
+        "operation": {
+          "const": "end_chat",
+          "default": "end_chat",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "chat_id": {
+          "description": "chat_id of specific conversation",
+          "title": "Chat Id",
+          "type": "string"
+        },
+        "status": {
+          "default": "none",
+          "description": "status of chat",
+          "enum": [
+            "liked",
+            "disliked",
+            "none"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "feedback": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "feedback for chat",
+          "title": "Feedback"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "BotsonicEndChatConfig",
+      "type": "object"
+    },
+    "BotsonicGenerateResponseConfig": {
+      "description": "Generation endpoint supporting synchronous response.",
+      "properties": {
+        "operation": {
+          "const": "generate_response",
+          "default": "generate_response",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "input_text": {
+          "description": "User question for bot",
+          "minLength": 1,
+          "title": "Input Text",
+          "type": "string"
+        },
+        "chat_id": {
+          "description": "chat_id for given chat",
+          "title": "Chat Id",
+          "type": "string"
+        },
+        "user_unique_identifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Can be passed to store some additional user data in inbox",
+          "title": "User Unique Identifier"
+        },
+        "full_history": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "if true, will return full history of chat till now",
+          "title": "Full History"
+        }
+      },
+      "required": [
+        "input_text",
+        "chat_id"
+      ],
+      "title": "BotsonicGenerateResponseConfig",
+      "type": "object"
+    },
+    "BotsonicGetConversationConfig": {
+      "description": "Get specific conversation by chat_id.",
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "chat_id": {
+          "description": "chat_id of specific conversation",
+          "title": "Chat Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "BotsonicGetConversationConfig",
+      "type": "object"
+    },
+    "BotsonicListConversationsConfig": {
+      "description": "Get all conversations in paginated format.",
+      "properties": {
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search for data matching particluar query",
+          "title": "Search Query"
+        },
+        "sort_by": {
+          "default": "recent",
+          "description": "Select conversation type to sort by",
+          "enum": [
+            "recent",
+            "negative",
+            "positive"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sort_order": {
+          "default": "desc",
+          "description": "Select sorting order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter conversations updated after this datetime (ISO 8601). Example: 2024-01-01T00:00:00Z",
+          "title": "Updated After"
+        },
+        "updated_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter conversations updated before this datetime (ISO 8601). Example: 2024-01-01T00:00:00Z",
+          "title": "Updated Before"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1.0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 50,
+          "maximum": 100.0,
+          "minimum": 1.0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "title": "BotsonicListConversationsConfig",
+      "type": "object"
+    },
+    "BotsonicListConversationsWithSourceConfig": {
+      "description": "Get All Conversations With Source.",
+      "properties": {
+        "operation": {
+          "const": "list_conversations_with_source",
+          "default": "list_conversations_with_source",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "chat_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Chat Ids",
+          "type": "array"
+        },
+        "search_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search for data matching particluar query",
+          "title": "Search Query"
+        },
+        "sort_by": {
+          "default": "recent",
+          "description": "Select conversation type to sort by",
+          "enum": [
+            "recent",
+            "negative",
+            "positive"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sort_order": {
+          "default": "desc",
+          "description": "Select sorting order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "updated_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter conversations updated after this datetime (ISO 8601). Example: 2024-01-01T00:00:00Z",
+          "title": "Updated After"
+        },
+        "updated_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter conversations updated before this datetime (ISO 8601). Example: 2024-01-01T00:00:00Z",
+          "title": "Updated Before"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1.0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 50,
+          "maximum": 100.0,
+          "minimum": 1.0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "title": "BotsonicListConversationsWithSourceConfig",
+      "type": "object"
+    },
+    "BotsonicListFaqsConfig": {
+      "description": "Get all FAQs for a bot in paginated format.",
+      "properties": {
+        "operation": {
+          "const": "list_faqs",
+          "default": "list_faqs",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search for bot-faq matching particluar query",
+          "title": "Search Query"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "id",
+                "bot_id",
+                "question",
+                "answer",
+                "error_reason",
+                "status",
+                "characters",
+                "migration_status",
+                "created_at",
+                "updated_at"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Select attribute to sort by",
+          "title": "Sort By",
+          "enum": [
+            "id",
+            "bot_id",
+            "question",
+            "answer",
+            "error_reason",
+            "status",
+            "characters",
+            "migration_status",
+            "created_at",
+            "updated_at"
+          ],
+          "x-enum-searchable": true
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Select sorting order",
+          "title": "Sort Order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1.0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 50,
+          "maximum": 100.0,
+          "minimum": 1.0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "title": "BotsonicListFaqsConfig",
+      "type": "object"
+    },
+    "BotsonicListStarterPresetsConfig": {
+      "description": "Get All Starter Presets By Bot Id.",
+      "properties": {
+        "operation": {
+          "const": "list_starter_presets",
+          "default": "list_starter_presets",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "BotsonicListStarterPresetsConfig",
+      "type": "object"
+    },
+    "BotsonicListStarterQuestionsConfig": {
+      "description": "Get all Starter questions for a bot in paginated format.",
+      "properties": {
+        "operation": {
+          "const": "list_starter_questions",
+          "default": "list_starter_questions",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search for bot-starter-question matching particluar query",
+          "title": "Search Query"
+        },
+        "sort_by": {
+          "default": "order",
+          "description": "Select attribute to sort by",
+          "enum": [
+            "id",
+            "bot_id",
+            "question",
+            "answer",
+            "order",
+            "created_at",
+            "updated_at"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sort_order": {
+          "default": "asc",
+          "description": "Select sorting order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1.0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 50,
+          "maximum": 100.0,
+          "minimum": 1.0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "title": "BotsonicListStarterQuestionsConfig",
+      "type": "object"
+    },
+    "BotsonicListTrainingDataConfig": {
+      "description": "Get all Bot Data in a paginated format.",
+      "properties": {
+        "operation": {
+          "const": "list_training_data",
+          "default": "list_training_data",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "search_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search for data matching particluar query",
+          "title": "Search Query"
+        },
+        "sort_by": {
+          "default": "updated_at",
+          "description": "Select attribute to sort by",
+          "enum": [
+            "id",
+            "bot_id",
+            "url",
+            "title",
+            "file_type",
+            "is_private",
+            "error_reason",
+            "status",
+            "sitemap_id",
+            "characters",
+            "last_trained_at",
+            "resync_job_id",
+            "integration_id",
+            "third_party_id",
+            "container_id",
+            "storage_account_id",
+            "is_paused",
+            "is_added_via_ability",
+            "is_deleted",
+            "is_in_waiting_room",
+            "migration_status",
+            "created_at",
+            "updated_at"
+          ],
+          "title": "Sort By",
+          "type": "string"
+        },
+        "sort_order": {
+          "default": "desc",
+          "description": "Select sorting order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        },
+        "page": {
+          "default": 1,
+          "minimum": 1.0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "size": {
+          "default": 50,
+          "maximum": 100.0,
+          "minimum": 1.0,
+          "title": "Size",
+          "type": "integer"
+        }
+      },
+      "title": "BotsonicListTrainingDataConfig",
+      "type": "object"
+    },
+    "BotsonicUpdateStarterQuestionConfig": {
+      "description": "Update starter question.",
+      "properties": {
+        "operation": {
+          "const": "update_starter_question",
+          "default": "update_starter_question",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "starter_question_id": {
+          "description": "starter_question_id of specific starter question to update",
+          "title": "Starter Question Id",
+          "type": "string"
+        },
+        "question": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "a starter question",
+          "title": "Question"
+        },
+        "answer": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "answer for given question",
+          "title": "Answer"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set order in which this question appears",
+          "title": "Order"
+        }
+      },
+      "required": [
+        "starter_question_id"
+      ],
+      "title": "BotsonicUpdateStarterQuestionConfig",
+      "type": "object"
+    },
+    "BotsonicUploadFileConfig": {
+      "description": "Upsert multiple URL's ( with validation ) from a bot.",
+      "properties": {
+        "operation": {
+          "const": "upload_file",
+          "default": "upload_file",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "bot_id": {
+          "title": "Bot Id",
+          "type": "string"
+        },
+        "file_url": {
+          "title": "File Url",
+          "type": "string"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Name"
+        }
+      },
+      "required": [
+        "id",
+        "bot_id",
+        "file_url"
+      ],
+      "title": "BotsonicUploadFileConfig",
+      "type": "object"
+    },
+    "BotsonicUploadTextConfig": {
+      "description": "Upload Text.",
+      "properties": {
+        "operation": {
+          "const": "upload_text",
+          "default": "upload_text",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "bot_id": {
+          "title": "Bot Id",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "bot_id",
+        "text"
+      ],
+      "title": "BotsonicUploadTextConfig",
+      "type": "object"
+    },
+    "BotsonicUploadUrlsConfig": {
+      "description": "Upsert multiple URL's ( with validation ) from a bot.",
+      "properties": {
+        "operation": {
+          "const": "upload_urls",
+          "default": "upload_urls",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "urls": {
+          "description": "A list of URLs to be uploaded in bulk.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Urls",
+          "type": "array"
+        },
+        "sitemap_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An optional sitemap ID associated with the uploaded URLs.",
+          "title": "Sitemap Id"
+        },
+        "is_sitemap": {
+          "default": false,
+          "description": "Set to `True` if the uploaded URLs are from a sitemap; otherwise, use `False`.",
+          "title": "Is Sitemap",
+          "type": "boolean"
+        },
+        "sitemap_root": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The root URL of the sitemap if `is_sitemap` is set to `True`.",
+          "title": "Sitemap Root"
+        },
+        "ability_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ability Id"
+        },
+        "is_crawled": {
+          "default": false,
+          "title": "Is Crawled",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "urls"
+      ],
+      "title": "BotsonicUploadUrlsConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_faq": "#/$defs/BotsonicCreateFaqConfig",
+          "create_starter_question": "#/$defs/BotsonicCreateStarterQuestionConfig",
+          "delete_faq": "#/$defs/BotsonicDeleteFaqConfig",
+          "delete_starter_question": "#/$defs/BotsonicDeleteStarterQuestionConfig",
+          "delete_training_data": "#/$defs/BotsonicDeleteTrainingDataConfig",
+          "end_chat": "#/$defs/BotsonicEndChatConfig",
+          "generate_response": "#/$defs/BotsonicGenerateResponseConfig",
+          "get_conversation": "#/$defs/BotsonicGetConversationConfig",
+          "list_conversations": "#/$defs/BotsonicListConversationsConfig",
+          "list_conversations_with_source": "#/$defs/BotsonicListConversationsWithSourceConfig",
+          "list_faqs": "#/$defs/BotsonicListFaqsConfig",
+          "list_starter_presets": "#/$defs/BotsonicListStarterPresetsConfig",
+          "list_starter_questions": "#/$defs/BotsonicListStarterQuestionsConfig",
+          "list_training_data": "#/$defs/BotsonicListTrainingDataConfig",
+          "update_starter_question": "#/$defs/BotsonicUpdateStarterQuestionConfig",
+          "upload_file": "#/$defs/BotsonicUploadFileConfig",
+          "upload_text": "#/$defs/BotsonicUploadTextConfig",
+          "upload_urls": "#/$defs/BotsonicUploadUrlsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BotsonicGenerateResponseConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicListFaqsConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicCreateFaqConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicDeleteFaqConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicListTrainingDataConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicListConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicListConversationsWithSourceConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicGetConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicEndChatConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicDeleteTrainingDataConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicUploadUrlsConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicUploadFileConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicUploadTextConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicListStarterQuestionsConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicCreateStarterQuestionConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicDeleteStarterQuestionConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicUpdateStarterQuestionConfig"
+        },
+        {
+          "$ref": "#/$defs/BotsonicListStarterPresetsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BotsonicCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Botsonic Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
