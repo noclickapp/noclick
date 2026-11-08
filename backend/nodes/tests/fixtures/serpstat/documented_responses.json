@@ -1,0 +1,1222 @@
+{
+  "SerpstatKeywordProcedure.getKeywordsInfo": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-Keyword-Analysis-API.json",
+    "body": {
+      "id": "123",
+      "result": {
+        "data": [
+          {
+            "keyword": "iphone 11",
+            "cost": 0.27,
+            "concurrency": 100,
+            "found_results": 6350000000,
+            "region_queries_count": 450000,
+            "region_queries_count_wide": 0,
+            "types": [
+              "also_asks",
+              "kn_graph_card",
+              "related_search"
+            ],
+            "geo_names": [],
+            "social_domains": [
+              "youtube",
+              "instagram",
+              "amazon",
+              "wikipedia",
+              "reddit"
+            ],
+            "right_spelling": null,
+            "lang": "en",
+            "difficulty": 39,
+            "suggestions_count": 0,
+            "keywords_count": 21431,
+            "intents": [
+              "informational"
+            ]
+          },
+          {
+            "region_queries_count": 10,
+            "region_queries_count_wide": 1000000,
+            "cost": 0,
+            "concurrency": 100,
+            "keyword": "iphone",
+            "found_results": 8540000000,
+            "types": [
+              "related_search",
+              "shopping_top",
+              "pic"
+            ],
+            "geo_names": [],
+            "social_domains": [
+              "amazon",
+              "wikipedia",
+              "youtube",
+              "reddit"
+            ],
+            "right_spelling": null,
+            "difficulty": 76,
+            "lang": "en",
+            "suggestions_count": 0,
+            "keywords_count": 1068805,
+            "intents": [
+              "navigational",
+              "transactional"
+            ]
+          }
+        ],
+        "summary_info": {
+          "page": 1,
+          "left_lines": 999988
+        },
+        "not_found": [
+          "unexisting-fake-keyword"
+        ]
+      }
+    }
+  },
+  "SerpstatKeywordProcedure.getRelatedKeywords": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-Keyword-Analysis-API.json",
+    "body": {
+      "id": "143",
+      "result": {
+        "data": [
+          {
+            "keyword": "article on search engine optimization",
+            "region_queries_count": 1000,
+            "cost": 2.41,
+            "concurrency": 5,
+            "geo_names": [],
+            "types": [
+              "related_search",
+              "also_asks",
+              "snip_breadcrumbs"
+            ],
+            "right_spelling": null,
+            "weight": 2,
+            "difficulty": 24,
+            "intents": [
+              "informational"
+            ]
+          },
+          {
+            "keyword": "articles on search engine optimization",
+            "region_queries_count": 1000,
+            "cost": 1.793633,
+            "concurrency": 6,
+            "geo_names": [],
+            "types": [
+              "related_search",
+              "video",
+              "also_asks",
+              "snip_breadcrumbs"
+            ],
+            "right_spelling": null,
+            "weight": 1,
+            "difficulty": 7,
+            "intents": [
+              "informational"
+            ]
+          },
+          {
+            "keyword": "best course for seo",
+            "region_queries_count": 1000,
+            "cost": 2.86,
+            "concurrency": 10,
+            "geo_names": [],
+            "types": [
+              "also_asks",
+              "related_search",
+              "snip_breadcrumbs"
+            ],
+            "right_spelling": null,
+            "weight": 1,
+            "difficulty": 15,
+            "intents": [
+              "commercial"
+            ]
+          }
+        ],
+        "summary_info": {
+          "page": 1,
+          "total": 1298,
+          "left_lines": 999253
+        }
+      }
+    }
+  },
+  "SerpstatKeywordProcedure.getKeywordTop": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-Keyword-Analysis-API.json",
+    "body": {
+      "id": "169",
+      "result": {
+        "data": {
+          "top": [
+            {
+              "position": 1,
+              "url": "https://www.bestbuy.com/site/laptop-computers/all-laptops/pcmcat138500050001.c?id=pcmcat138500050001",
+              "domain": "bestbuy.com",
+              "subdomain": "www.bestbuy.com",
+              "types": [
+                "pic",
+                "snip_breadcrumbs",
+                "snip_image_thumbnail"
+              ]
+            },
+            {
+              "position": 2,
+              "url": "https://www.walmart.com/cp/computers-laptops-tablets/1089430",
+              "domain": "walmart.com",
+              "subdomain": "www.walmart.com",
+              "types": [
+                "pic",
+                "snip_breadcrumbs",
+                "snip_image_thumbnail"
+              ]
+            },
+            {
+              "position": 3,
+              "url": "https://www.amazon.com/Notebooks-Laptop-Computers/b?ie=UTF8&node=565108",
+              "domain": "amazon.com",
+              "subdomain": "www.amazon.com",
+              "types": [
+                "pic",
+                "snip_breadcrumbs",
+                "snip_image_thumbnail"
+              ]
+            },
+            {
+              "position": 4,
+              "url": "https://www.cnet.com/tech/computing/best-laptop/",
+              "domain": "cnet.com",
+              "subdomain": "www.cnet.com",
+              "types": [
+                "pic",
+                "snip_breadcrumbs"
+              ]
+            },
+            {
+              "position": 5,
+              "url": "https://en.wikipedia.org/wiki/Laptop",
+              "domain": "wikipedia.org",
+              "subdomain": "en.wikipedia.org",
+              "types": [
+                "pic",
+                "snip_breadcrumbs",
+                "snip_image_thumbnail"
+              ]
+            }
+          ],
+          "ads": [],
+          "types": [
+            "pic"
+          ],
+          "results": 6570000000
+        },
+        "summary_info": {
+          "page": 1,
+          "left_lines": 998460
+        }
+      }
+    }
+  },
+  "SerpstatKeywordProcedure.getKeywordTrends": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-Keyword-Analysis-API.json",
+    "body": {
+      "id": "1",
+      "result": {
+        "data": [
+          {
+            "keyword": "seo tool",
+            "current_volume": 12100,
+            "yoy_change_pct": 18.5,
+            "trend": "growing",
+            "peak_month": "2025-01",
+            "trough_month": "2025-08",
+            "monthly": [
+              {
+                "month": "2024-05",
+                "volume": 9900
+              },
+              {
+                "month": "2024-06",
+                "volume": 10200
+              }
+            ]
+          },
+          {
+            "keyword": "keyword research tool",
+            "current_volume": null,
+            "yoy_change_pct": null,
+            "trend": null,
+            "peak_month": null,
+            "trough_month": null,
+            "monthly": []
+          }
+        ],
+        "spent_limits": 10,
+        "left_limits": 9999184
+      }
+    }
+  },
+  "SerpstatBacklinksProcedure.getSummaryV2": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-Backlinks-API.json",
+    "body": {
+      "id": "123",
+      "result": {
+        "summary_info": {
+          "sort": null,
+          "order": null,
+          "left_lines": 971496
+        },
+        "data": {
+          "sersptat_domain_rank": 60,
+          "referring_domains": 5842,
+          "referring_domains_change": -8,
+          "redirected_domains": 0,
+          "referring_malicious_domains": 1,
+          "referring_malicious_domains_change": 1,
+          "referring_ip_addresses": 4510,
+          "referring_ip_addresses_change": -11,
+          "referring_subnets": 2854,
+          "referring_subnets_change": -6,
+          "backlinks": 376199,
+          "backlinks_change": -2658,
+          "backlinks_from_mainpages": 265,
+          "backlinks_from_mainpages_change": -1,
+          "nofollow_backlinks": 240579,
+          "nofollow_backlinks_change": -56,
+          "dofollow_backlinks": 135620,
+          "dofollow_backlinks_change": -2602,
+          "text_backlinks": 81760,
+          "text_backlinks_change": -2649,
+          "image_backlinks": 294217,
+          "image_backlinks_change": -5,
+          "redirect_backlinks": 203,
+          "redirect_backlinks_change": -4,
+          "canonical_backlinks": 6,
+          "canonical_backlinks_change": 0,
+          "alternate_backlinks": 0,
+          "alternate_backlinks_change": 0,
+          "rss_backlinks": 0,
+          "rss_backlinks_change": 0,
+          "frame_backlinks": 1,
+          "frame_backlinks_change": 0,
+          "form_backlinks": 12,
+          "form_backlinks_change": 0,
+          "external_domains": 3540,
+          "external_domains_change": 0,
+          "external_malicious_domains": 0,
+          "external_malicious_domains_change": 0,
+          "external_links": 89260,
+          "external_links_change": 0
+        }
+      }
+    }
+  },
+  "SerpstatBacklinksProcedure.getRefDomains": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-Backlinks-API.json",
+    "body": {
+      "id": "123",
+      "result": {
+        "data": [
+          {
+            "domain_from": "elsner.com",
+            "ref_pages": 2,
+            "domainRank": 47
+          },
+          {
+            "domain_from": "telnyx.com",
+            "ref_pages": 3,
+            "domainRank": 46
+          }
+        ],
+        "summary_info": {
+          "left_lines": 972836,
+          "page": 1,
+          "count": 2,
+          "total": 26,
+          "sort": "domain_rank",
+          "order": "DESC"
+        }
+      }
+    }
+  },
+  "SerpstatDomainProcedure.getDomainsInfo": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-Domain-Analysis-API.json",
+    "body": {
+      "id": "1",
+      "result": {
+        "data": [
+          {
+            "domain": "nike.com",
+            "keywords": 2910594,
+            "traff": 163283954,
+            "new_keywords": 150483,
+            "out_keywords": 127185,
+            "rised_keywords": 197848,
+            "down_keywords": 163764,
+            "ad_keywords": 307,
+            "ads": 259,
+            "prev_date": "2025-01-17",
+            "traffic_ai": 17115,
+            "aio_keywords": 7348,
+            "aio_citations": 339
+          },
+          {
+            "domain": "adidas.com",
+            "keywords": 1747260,
+            "traff": 46445393,
+            "new_keywords": 133070,
+            "out_keywords": 98997,
+            "rised_keywords": 134307,
+            "down_keywords": 116026,
+            "ad_keywords": 173,
+            "ads": 138,
+            "prev_date": "2025-01-17",
+            "traffic_ai": 12450,
+            "aio_keywords": 5234,
+            "aio_citations": 287
+          }
+        ],
+        "summary_info": {
+          "page": 1,
+          "left_lines": 973402
+        }
+      }
+    }
+  },
+  "SerpstatDomainProcedure.getDomainsHistory": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-Domain-Analysis-API.json",
+    "body": {
+      "id": "100501",
+      "result": {
+        "data": [
+          {
+            "domain": "nike.com",
+            "keywords": 3164090,
+            "traff": 171700098,
+            "visible_static": 376.81473,
+            "new_keywords": 97474,
+            "out_keywords": 125533,
+            "rised_keywords": 111684,
+            "down_keywords": 150290,
+            "ad_keywords": 288,
+            "ads": 222,
+            "date": "2025-06-02",
+            "aio_keywords": 1250,
+            "aio_citations": 42
+          },
+          {
+            "domain": "www.nike.com",
+            "keywords": 2953815,
+            "traff": 175740898,
+            "visible_static": 404.83169,
+            "new_keywords": 133024,
+            "out_keywords": 143086,
+            "rised_keywords": 155965,
+            "down_keywords": 181128,
+            "ad_keywords": 327,
+            "ads": 244,
+            "date": "2025-05-21",
+            "aio_keywords": 1250,
+            "aio_citations": 42
+          },
+          {
+            "domain": "nike.com",
+            "keywords": 3192149,
+            "traff": 179250655,
+            "visible_static": 407.14943,
+            "new_keywords": 167811,
+            "out_keywords": 167433,
+            "rised_keywords": 190782,
+            "down_keywords": 212159,
+            "ad_keywords": 339,
+            "ads": 246,
+            "date": "2025-05-18",
+            "aio_keywords": 1250,
+            "aio_citations": 42
+          }
+        ],
+        "summary_info": {
+          "page": 1,
+          "total": 3,
+          "left_lines": 9999979
+        }
+      }
+    }
+  },
+  "SerpstatDomainProcedure.getDomainKeywords": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-Domain-Analysis-API.json",
+    "body": {
+      "id": "1",
+      "result": {
+        "data": [
+          {
+            "domain": "nike.com",
+            "subdomain": "www.nike.com",
+            "keyword": "nike soccer near me",
+            "keyword_length": 4,
+            "url": "https://www.nike.com/soccer",
+            "position": 1,
+            "types": [
+              "related_search",
+              "also_asks",
+              "local_pack",
+              "pic",
+              "snip_breadcrumbs",
+              "snip_image_thumbnail"
+            ],
+            "found_results": 46400000,
+            "cost": 0,
+            "concurrency": 74,
+            "region_queries_count": 40,
+            "region_queries_count_wide": 0,
+            "geo_names": [],
+            "traff": 5,
+            "difficulty": 51,
+            "dynamic": 0,
+            "intents": [
+              "commercial"
+            ]
+          },
+          {
+            "domain": "nike.com",
+            "subdomain": "www.nike.com",
+            "keyword": "soccer cleats nike store",
+            "keyword_length": 4,
+            "url": "https://www.nike.com/soccer",
+            "position": 2,
+            "types": [
+              "local_pack",
+              "related_search",
+              "pic",
+              "snip_breadcrumbs",
+              "snip_image_thumbnail"
+            ],
+            "found_results": 196,
+            "cost": 0.2,
+            "concurrency": 100,
+            "region_queries_count": 110000,
+            "region_queries_count_wide": 0,
+            "geo_names": [],
+            "traff": 15997,
+            "difficulty": 55,
+            "dynamic": 0,
+            "intents": [
+              "commercial"
+            ]
+          }
+        ],
+        "summary_info": {
+          "page": 1,
+          "total": 205,
+          "left_lines": 973412
+        }
+      }
+    }
+  },
+  "SerpstatDomainProcedure.getOrganicCompetitorsPage": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-Domain-Analysis-API.json",
+    "body": {
+      "id": "123",
+      "result": {
+        "data": [
+          {
+            "domain": "amazon.com",
+            "favicon": "https://www.google.com/s2/favicons?domain=amazon.com",
+            "all": {
+              "currentValue": 26463570,
+              "dynamicValue": -14204
+            },
+            "common": {
+              "currentValue": 26441178,
+              "dynamicValue": 100
+            },
+            "visibility": {
+              "currentValue": 1082.57,
+              "dynamicValue": 46.44
+            },
+            "missing": 0,
+            "relevance": 100
+          },
+          {
+            "domain": "ebay.com",
+            "favicon": "https://www.google.com/s2/favicons?domain=ebay.com",
+            "all": {
+              "currentValue": 18500000,
+              "dynamicValue": -3100
+            },
+            "common": {
+              "currentValue": 1600000,
+              "dynamicValue": 8.65
+            },
+            "visibility": {
+              "currentValue": 1100.5,
+              "dynamicValue": -30.2
+            },
+            "missing": 16900000,
+            "relevance": 8.65
+          },
+          {
+            "domain": "walmart.com",
+            "favicon": "https://www.google.com/s2/favicons?domain=walmart.com",
+            "all": {
+              "currentValue": 2300000,
+              "dynamicValue": -800
+            },
+            "common": {
+              "currentValue": 1450000,
+              "dynamicValue": 6.52
+            },
+            "visibility": {
+              "currentValue": 11.2,
+              "dynamicValue": -0.8
+            },
+            "missing": 850000,
+            "relevance": 63
+          },
+          {
+            "domain": "etsy.com",
+            "favicon": "https://www.google.com/s2/favicons?domain=etsy.com",
+            "all": {
+              "currentValue": 21000000,
+              "dynamicValue": 5200
+            },
+            "common": {
+              "currentValue": 1480000,
+              "dynamicValue": 7.04
+            },
+            "visibility": {
+              "currentValue": 2400.1,
+              "dynamicValue": 31.5
+            },
+            "missing": 19520000,
+            "relevance": 7.05
+          },
+          {
+            "domain": "target.com",
+            "favicon": "https://www.google.com/s2/favicons?domain=target.com",
+            "all": {
+              "currentValue": 1900000,
+              "dynamicValue": -600
+            },
+            "common": {
+              "currentValue": 1500000,
+              "dynamicValue": 7.14
+            },
+            "visibility": {
+              "currentValue": 6.1,
+              "dynamicValue": 0.3
+            },
+            "missing": 400000,
+            "relevance": 78.9
+          },
+          {
+            "domain": "bestbuy.com",
+            "favicon": "https://www.google.com/s2/favicons?domain=bestbuy.com",
+            "all": {
+              "currentValue": 3400000,
+              "dynamicValue": -1000
+            },
+            "common": {
+              "currentValue": 1510000,
+              "dynamicValue": 7.19
+            },
+            "visibility": {
+              "currentValue": 2.9,
+              "dynamicValue": 0.12
+            },
+            "missing": 1890000,
+            "relevance": 44.4
+          },
+          {
+            "domain": "homedepot.com",
+            "favicon": "https://www.google.com/s2/favicons?domain=homedepot.com",
+            "all": {
+              "currentValue": 2050000,
+              "dynamicValue": -2500
+            },
+            "common": {
+              "currentValue": 1540000,
+              "dynamicValue": 7.33
+            },
+            "visibility": {
+              "currentValue": 12.5,
+              "dynamicValue": 3.7
+            },
+            "missing": 510000,
+            "relevance": 75.1
+          },
+          {
+            "domain": "wayfair.com",
+            "favicon": "https://www.google.com/s2/favicons?domain=wayfair.com",
+            "all": {
+              "currentValue": 9200000,
+              "dynamicValue": -2100
+            },
+            "common": {
+              "currentValue": 1555000,
+              "dynamicValue": 7.4
+            },
+            "visibility": {
+              "currentValue": 76.8,
+              "dynamicValue": 3.1
+            },
+            "missing": 7645000,
+            "relevance": 16.9
+          },
+          {
+            "domain": "costco.com",
+            "favicon": "https://www.google.com/s2/favicons?domain=costco.com",
+            "all": {
+              "currentValue": 2100000,
+              "dynamicValue": -200
+            },
+            "common": {
+              "currentValue": 1558000,
+              "dynamicValue": 7.41
+            },
+            "visibility": {
+              "currentValue": 34.2,
+              "dynamicValue": 9.3
+            },
+            "missing": 542000,
+            "relevance": 74.2
+          },
+          {
+            "domain": "macys.com",
+            "favicon": "https://www.google.com/s2/favicons?domain=macys.com",
+            "all": {
+              "currentValue": 3600000,
+              "dynamicValue": -1600
+            },
+            "common": {
+              "currentValue": 1565000,
+              "dynamicValue": 7.45
+            },
+            "visibility": {
+              "currentValue": 195.8,
+              "dynamicValue": 13.1
+            },
+            "missing": 2035000,
+            "relevance": 43.5
+          }
+        ],
+        "summary_info": {
+          "page": 1,
+          "left_lines": 973353
+        }
+      }
+    }
+  },
+  "AuditSite.getBasicInfo": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-Audit-API.json",
+    "body": {
+      "id": "123",
+      "result": {
+        "reportId": 10973646,
+        "date": "2024-12-25 09:41:50",
+        "sdo": 74,
+        "highCount": 335,
+        "mediumCount": 319,
+        "lowCount": 401,
+        "informationCount": 458,
+        "virusesCount": 0,
+        "progress": 100,
+        "stoped": 0,
+        "specialStopReason": 0,
+        "checkedPageCount": 163,
+        "totalCheckedPageCount": 170,
+        "redirectCount": 0,
+        "captchaDetected": false,
+        "hasDetailData": true
+      }
+    }
+  },
+  "AuditSite.getCategoriesStatistic": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-Audit-API.json",
+    "body": {
+      "id": "123",
+      "result": [
+        {
+          "category": "pages_status",
+          "highCount": 14,
+          "mediumCount": 0,
+          "lowCount": 0,
+          "informationCount": 0
+        },
+        {
+          "category": "meta_tags",
+          "highCount": 152,
+          "mediumCount": 165,
+          "lowCount": 116,
+          "informationCount": 1
+        },
+        {
+          "category": "headings",
+          "highCount": 93,
+          "mediumCount": 0,
+          "lowCount": 1,
+          "informationCount": 0
+        },
+        {
+          "category": "content",
+          "highCount": 70,
+          "mediumCount": 0,
+          "lowCount": 0,
+          "informationCount": 0
+        },
+        {
+          "category": "multimedia",
+          "highCount": 0,
+          "mediumCount": 0,
+          "lowCount": 0,
+          "informationCount": 0
+        },
+        {
+          "category": "indexation",
+          "highCount": 1,
+          "mediumCount": 1,
+          "lowCount": 149,
+          "informationCount": 0
+        },
+        {
+          "category": "redirects",
+          "highCount": 0,
+          "mediumCount": 0,
+          "lowCount": 0,
+          "informationCount": 7
+        },
+        {
+          "category": "links",
+          "highCount": 3,
+          "mediumCount": 152,
+          "lowCount": 0,
+          "informationCount": 8
+        },
+        {
+          "category": "server_params",
+          "highCount": 2,
+          "mediumCount": 0,
+          "lowCount": 0,
+          "informationCount": 0
+        },
+        {
+          "category": "https",
+          "highCount": 0,
+          "mediumCount": 1,
+          "lowCount": 0,
+          "informationCount": 0
+        },
+        {
+          "category": "hreflang",
+          "highCount": 0,
+          "mediumCount": 0,
+          "lowCount": 1,
+          "informationCount": 145
+        },
+        {
+          "category": "amp",
+          "highCount": 0,
+          "mediumCount": 0,
+          "lowCount": 0,
+          "informationCount": 1
+        },
+        {
+          "category": "markup",
+          "highCount": 0,
+          "mediumCount": 0,
+          "lowCount": 134,
+          "informationCount": 296
+        },
+        {
+          "category": "pagespeed_desktop",
+          "highCount": 0,
+          "mediumCount": 0,
+          "lowCount": 0,
+          "informationCount": 0
+        },
+        {
+          "category": "pagespeed_mobile",
+          "highCount": 0,
+          "mediumCount": 0,
+          "lowCount": 0,
+          "informationCount": 0
+        }
+      ]
+    }
+  },
+  "AuditSite.getList": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-Audit-API.json",
+    "body": {
+      "id": "123",
+      "result": [
+        {
+          "reportId": 10980505,
+          "date": "2025-01-06 17:25:34",
+          "sdo": 75,
+          "pagesLimit": 1000,
+          "pagesScanned": 157,
+          "criticalCount": 316,
+          "nonCriticalCount": 690,
+          "virusesCount": 0,
+          "progress": 100,
+          "stoped": false,
+          "hasDetailData": true
+        },
+        {
+          "reportId": 10973646,
+          "date": "2024-12-25 09:41:50",
+          "sdo": 74,
+          "pagesLimit": 1000,
+          "pagesScanned": 163,
+          "criticalCount": 335,
+          "nonCriticalCount": 720,
+          "virusesCount": 0,
+          "progress": 100,
+          "stoped": false,
+          "hasDetailData": true
+        },
+        {
+          "reportId": 10973632,
+          "date": "2024-12-25 08:58:15",
+          "sdo": 74,
+          "pagesLimit": 1000,
+          "pagesScanned": 163,
+          "criticalCount": 335,
+          "nonCriticalCount": 572,
+          "virusesCount": 0,
+          "progress": 100,
+          "stoped": false,
+          "hasDetailData": true
+        },
+        {
+          "reportId": 10935615,
+          "date": "2024-10-28 22:11:46",
+          "sdo": 73,
+          "pagesLimit": 1000,
+          "pagesScanned": 163,
+          "criticalCount": 335,
+          "nonCriticalCount": 724,
+          "virusesCount": 0,
+          "progress": 100,
+          "stoped": false,
+          "hasDetailData": true
+        },
+        {
+          "reportId": 10864232,
+          "date": "2024-07-04 13:48:10",
+          "sdo": 73,
+          "pagesLimit": 1000,
+          "pagesScanned": 163,
+          "criticalCount": 336,
+          "nonCriticalCount": 730,
+          "virusesCount": 0,
+          "progress": 100,
+          "stoped": false,
+          "hasDetailData": true
+        },
+        {
+          "reportId": 10840180,
+          "date": "2024-05-29 10:12:21",
+          "sdo": 73,
+          "pagesLimit": 1000,
+          "pagesScanned": 163,
+          "criticalCount": 336,
+          "nonCriticalCount": 730,
+          "virusesCount": 0,
+          "progress": 100,
+          "stoped": false,
+          "hasDetailData": true
+        },
+        {
+          "reportId": 10836991,
+          "date": "2024-05-24 20:02:36",
+          "sdo": 74,
+          "pagesLimit": 1000,
+          "pagesScanned": 163,
+          "criticalCount": 334,
+          "nonCriticalCount": 733,
+          "virusesCount": 0,
+          "progress": 100,
+          "stoped": false,
+          "hasDetailData": true
+        },
+        {
+          "reportId": 10836930,
+          "date": "2024-05-24 15:56:33",
+          "sdo": 74,
+          "pagesLimit": 1000,
+          "pagesScanned": 163,
+          "criticalCount": 334,
+          "nonCriticalCount": 733,
+          "virusesCount": 0,
+          "progress": 100,
+          "stoped": false,
+          "hasDetailData": true
+        },
+        {
+          "reportId": 10836906,
+          "date": "2024-05-24 14:28:04",
+          "sdo": 74,
+          "pagesLimit": 1000,
+          "pagesScanned": 163,
+          "criticalCount": 334,
+          "nonCriticalCount": 733,
+          "virusesCount": 0,
+          "progress": 100,
+          "stoped": false,
+          "hasDetailData": true
+        },
+        {
+          "reportId": 10836904,
+          "date": "2024-05-24 14:18:36",
+          "sdo": 73,
+          "pagesLimit": 1000,
+          "pagesScanned": 163,
+          "criticalCount": 336,
+          "nonCriticalCount": 730,
+          "virusesCount": 0,
+          "progress": 100,
+          "stoped": true,
+          "hasDetailData": true
+        }
+      ]
+    }
+  },
+  "RtApiProjectProcedure.getProjects": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-RankTracker-API.json",
+    "body": {
+      "id": "123",
+      "result": {
+        "data": [
+          {
+            "id": "1213108",
+            "projectName": "PUMA",
+            "domain": "puma.com",
+            "createdAt": "2024-01-09 11:10:57",
+            "group": "New Client",
+            "type": "owner",
+            "status": 9,
+            "enableTracking": false
+          }
+        ],
+        "summary_info": {
+          "page": 1,
+          "page_total": 1,
+          "count": 20,
+          "total": 1
+        }
+      }
+    }
+  },
+  "RtApiProjectProcedure.getProjectStatus": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-RankTracker-API.json",
+    "body": {
+      "id": "1",
+      "result": {
+        "projectId": 1257794,
+        "automaticParsing": false,
+        "lastParsingDate": "2025-10-02",
+        "regionId": 389715,
+        "parsing": false
+      }
+    }
+  },
+  "RtApiSearchEngineProcedure.getProjectRegions": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-RankTracker-API.json",
+    "body": {
+      "id": "123",
+      "result": {
+        "projectId": 853932,
+        "regions": [
+          {
+            "id": 293402,
+            "active": true,
+            "serpType": "organic",
+            "deviceType": "desktop",
+            "searchEngine": "google",
+            "country": "United States (USA)",
+            "region": "",
+            "city": "",
+            "langCode": "en"
+          }
+        ],
+        "spent_limits": 0
+      }
+    }
+  },
+  "RtApiProcedure.getProjectKeywords": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-RankTracker-API.json",
+    "body": {
+      "id": "135",
+      "result": {
+        "data": [
+          {
+            "id": 43818445,
+            "keyword_id": 44785750,
+            "value": "city news",
+            "added": "2024-09-04T11:03:12+00:00",
+            "tags": [
+              "news"
+            ],
+            "urls": [
+              {
+                "url": "https://omr.gov.ua/ua/news/",
+                "region_id": 382683
+              },
+              {
+                "url": "https://omr.gov.ua/ua/news/",
+                "region_id": 382684
+              }
+            ],
+            "region": [
+              {
+                "status": 2,
+                "region_id": 382684
+              },
+              {
+                "status": 2,
+                "region_id": 382683
+              }
+            ]
+          }
+        ],
+        "summary_info": {
+          "current_page": 1,
+          "pages_count": 3,
+          "size": 10,
+          "total_data": 26,
+          "sort": "added",
+          "order": "asc"
+        },
+        "spent_limits": 0,
+        "left_limits": 9999795
+      }
+    }
+  },
+  "SerpstatLimitsProcedure.getStats": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-Credits-API.json",
+    "body": {
+      "id": "123",
+      "result": {
+        "data": {
+          "max_lines": 100000,
+          "used_lines": 5,
+          "left_lines": 999995,
+          "user_info": {
+            "user_id": "555",
+            "ga_client_Id": "12434534.544545",
+            "plan_id": "2028"
+          },
+          "plugin_limits": {
+            "hasApiPlugin": true,
+            "delayBetweenRequests": 1,
+            "total": 10000,
+            "used": 10,
+            "left": 9990
+          }
+        },
+        "summary_info": {
+          "left_lines": 999995
+        }
+      }
+    }
+  },
+  "ProjectProcedure.getProjects": {
+    "source": "https://api.stoplight.io/projects/cHJqOjI3NTI5NA/branches/main/export/reference/Serpstat-Projects-API.json",
+    "body": {
+      "id": "123",
+      "result": {
+        "data": [
+          {
+            "project_id": "1268718",
+            "project_name": "my project",
+            "domain": "test.com",
+            "created_at": "2025-02-12T09:27:35",
+            "group": "my first test group",
+            "type": "owner"
+          },
+          {
+            "project_id": "1264776",
+            "project_name": "furryuslugi.com",
+            "domain": "furryuslugi.com",
+            "created_at": "2025-01-12T16:45:02",
+            "group": "Default group",
+            "type": "owner"
+          },
+          {
+            "project_id": "1254960",
+            "project_name": "pumb.ua",
+            "domain": "pumb.ua",
+            "created_at": "2024-10-22T10:36:37",
+            "group": "Default group",
+            "type": "owner"
+          },
+          {
+            "project_id": "1242714",
+            "project_name": "ionity.ua",
+            "domain": "ionity.ua",
+            "created_at": "2024-07-10T11:59:15",
+            "group": "Default group",
+            "type": "owner"
+          },
+          {
+            "project_id": "1242022",
+            "project_name": "final test",
+            "domain": "oneills.com",
+            "created_at": "2024-07-03T11:55:14",
+            "group": "Default group",
+            "type": "owner"
+          },
+          {
+            "project_id": "1241591",
+            "project_name": "oneills.com/",
+            "domain": "oneills.com",
+            "created_at": "2024-06-28T14:52:14",
+            "group": "lonni test",
+            "type": "owner"
+          },
+          {
+            "project_id": "1229131",
+            "project_name": "eu.shop.battle.net",
+            "domain": "eu.shop.battle.net",
+            "created_at": "2024-04-02T16:09:14",
+            "group": "Default group",
+            "type": "owner"
+          },
+          {
+            "project_id": "1226819",
+            "project_name": "lonni API",
+            "domain": "battle.net",
+            "created_at": "2024-03-15T16:18:23",
+            "group": "Default group",
+            "type": "owner"
+          },
+          {
+            "project_id": "1225820",
+            "project_name": "serpstat.com",
+            "domain": "serpstat.com",
+            "created_at": "2024-03-08T15:59:49",
+            "group": "Default group",
+            "type": "owner"
+          },
+          {
+            "project_id": "1151651",
+            "project_name": "etcbuys.com",
+            "domain": "etcbuys.com",
+            "created_at": "2023-05-19T22:35:29",
+            "group": "Default group",
+            "type": "owner"
+          }
+        ],
+        "summary_info": {
+          "page": 1,
+          "page_total": 1,
+          "count": 100,
+          "total": 10
+        }
+      }
+    }
+  }
+}
