@@ -1,0 +1,40 @@
+{
+  "id": 12345,
+  "email": "john.doe@company.com",
+  "firstName": "John",
+  "lastName": "Doe",
+  "title": "Senior Product Manager",
+  "company": "Tech Solutions Inc",
+  "domain": "company.com",
+  "companySize": "501-1000",
+  "city": "San Francisco",
+  "state": "CA",
+  "country": "United States",
+  "timeZoneId": "America/Los_Angeles",
+  "phone": "+1-415-555-0123",
+  "phoneStatus": "valid",
+  "linkedInUrl": "https://www.linkedin.com/in/johndoe",
+  "linkedInSalesNavigatorUrl": "https://www.linkedin.com/sales/profile/123456",
+  "linkedInRecruiterUrl": "https://www.linkedin.com/recruiter/profile/789012",
+  "industry": "Software & Technology",
+  "notes": "Met at SaaS Conference 2024",
+  "ownerUserId": 42,
+  "accountId": 100,
+  "isOptedOut": false,
+  "callStatus": "toCall",
+  "meetingStatus": "none",
+  "stage": "Interested",
+  "addingDate": "2024-03-08T10:00:00+00:00",
+  "createdAt": "2024-03-08T10:00:00",
+  "lastModifiedAt": "2024-03-10T15:30:00",
+  "customFields": [
+    {
+      "key": "leadSource",
+      "value": "Conference"
+    },
+    {
+      "key": "budget",
+      "value": "100k-250k"
+    }
+  ]
+}
