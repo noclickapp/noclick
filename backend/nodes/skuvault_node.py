@@ -23,7 +23,7 @@ MAX_BYTES, MAX_ROWS = 4_194_304, 10_000
 Text = Annotated[StrictStr, Field(min_length=1, max_length=200)]
 Strings = Annotated[list[Text], Field(min_length=1, max_length=50)]
 WarehouseID = Annotated[StrictInt, Field(gt=0, le=2_147_483_647)]
-Utc = Annotated[StrictStr, Field(pattern=r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,7})?Z$", min_length=20, max_length=28)]
+Utc = Annotated[StrictStr, Field(pattern=r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,7})?Z$", min_length=20, max_length=28, json_schema_extra={"format": "date-time"})]
 
 
 class SkuVaultAPITokensCredential(BaseModel):

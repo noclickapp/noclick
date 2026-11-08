@@ -151,6 +151,7 @@
         "modified_after_utc": {
           "anyOf": [
             {
+              "format": "date-time",
               "maxLength": 28,
               "minLength": 20,
               "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
@@ -166,6 +167,7 @@
         "modified_before_utc": {
           "anyOf": [
             {
+              "format": "date-time",
               "maxLength": 28,
               "minLength": 20,
               "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
@@ -345,6 +347,7 @@
         "modified_after_utc": {
           "anyOf": [
             {
+              "format": "date-time",
               "maxLength": 28,
               "minLength": 20,
               "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
@@ -360,6 +363,7 @@
         "modified_before_utc": {
           "anyOf": [
             {
+              "format": "date-time",
               "maxLength": 28,
               "minLength": 20,
               "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
@@ -428,6 +432,7 @@
         "modified_after_utc": {
           "anyOf": [
             {
+              "format": "date-time",
               "maxLength": 28,
               "minLength": 20,
               "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
@@ -456,6 +461,7 @@
         },
         "modified_after_utc": {
           "description": "Required documented UTC window start",
+          "format": "date-time",
           "maxLength": 28,
           "minLength": 20,
           "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
@@ -464,6 +470,7 @@
         },
         "modified_before_utc": {
           "description": "Required documented UTC window end",
+          "format": "date-time",
           "maxLength": 28,
           "minLength": 20,
           "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
@@ -529,6 +536,7 @@
         "modified_after_utc": {
           "anyOf": [
             {
+              "format": "date-time",
               "maxLength": 28,
               "minLength": 20,
               "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
@@ -544,6 +552,7 @@
         "modified_before_utc": {
           "anyOf": [
             {
+              "format": "date-time",
               "maxLength": 28,
               "minLength": 20,
               "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
@@ -606,6 +615,7 @@
         "modified_after_utc": {
           "anyOf": [
             {
+              "format": "date-time",
               "maxLength": 28,
               "minLength": 20,
               "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
@@ -621,6 +631,7 @@
         "modified_before_utc": {
           "anyOf": [
             {
+              "format": "date-time",
               "maxLength": 28,
               "minLength": 20,
               "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,7})?Z$",
