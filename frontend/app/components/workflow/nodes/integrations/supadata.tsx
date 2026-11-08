@@ -11,6 +11,7 @@ const SupadataIcon = ({ className, style }: { className?: string; style?: CSSPro
 
 export const SupadataNode: NodeDefinition = {
     type: 'automation-supadata', label: 'Supadata',
+    category: 'content-research',
     description: 'Extract transcripts, media metadata and web content; create and inspect jobs',
     Icon: SupadataIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
