@@ -14,6 +14,7 @@ const GladiaIcon = ({ className, style }: { className?: string; style?: CSSPrope
 export const GladiaNode: NodeDefinition = {
     type: 'automation-gladia', label: 'Gladia',
     description: 'Upload media, transcribe recordings and manage live speech sessions',
+    category: 'ai',
     keywords: ['speech to text', 'audio', 'transcription', 'diarization', 'subtitles'],
     Icon: GladiaIcon, iconColor: '',
     dimensions: { width: 90, height: 90, iconSize: 48 },
