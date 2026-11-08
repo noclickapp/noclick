@@ -1,0 +1,1324 @@
+{
+  "$defs": {
+    "AssociationWithPermissionsRequestModel": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "The associated object's unique identifier.",
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "readOnly": {
+          "description": "When true, the read only permission will not allow the user or group to make changes to items.",
+          "title": "Readonly",
+          "type": "boolean"
+        },
+        "hidePasswords": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When true, the hide passwords permission will not allow the user or group to view passwords.\nThis prevents easy copy-and-paste of hidden items, however it may not completely prevent user access.",
+          "title": "Hidepasswords"
+        },
+        "manage": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When true, the manage permission allows a user to both edit the ciphers within a collection and edit the users/groups that are assigned to the collection.\nThis field will not affect behavior until your organization is using the latest collection enhancements (Releasing Q1, 2024)",
+          "title": "Manage"
+        }
+      },
+      "required": [
+        "id",
+        "readOnly"
+      ],
+      "title": "AssociationWithPermissionsRequestModel",
+      "type": "object"
+    },
+    "BitwardenAccessTokenCredential": {
+      "additionalProperties": false,
+      "properties": {
+        "credential_type": {
+          "const": "bitwarden_access_token",
+          "default": "bitwarden_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "minLength": 1,
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "US",
+          "enum": [
+            "US",
+            "EU",
+            "Gov"
+          ],
+          "title": "Server Region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Bitwarden Access Token",
+      "type": "object",
+      "x-credential-instructions": "Paste an organization bearer access token obtained with your organization API key and scope api.organization. Tokens expire after 60 minutes; replace an expired token. This is not a Secrets Manager access token or a personal vault session.",
+      "x-credential-url": "https://bitwarden.com/help/public-api/"
+    },
+    "CollectionUpdateRequestModel": {
+      "additionalProperties": false,
+      "properties": {
+        "externalId": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "External identifier for reference or linking this collection to another system.",
+          "title": "Externalid"
+        },
+        "groups": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/AssociationWithPermissionsRequestModel"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The associated groups that this collection is assigned to.",
+          "title": "Groups"
+        }
+      },
+      "title": "CollectionUpdateRequestModel",
+      "type": "object"
+    },
+    "CreateGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Create a group",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "$ref": "#/$defs/GroupCreateUpdateRequestModel",
+          "description": "Complete replacement fields as documented by Bitwarden. Membership and permission changes apply immediately.",
+          "title": "Request Body"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "CreateGroup",
+      "type": "object"
+    },
+    "CreateMember": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "create_member",
+          "default": "create_member",
+          "title": "Create a member",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "body": {
+          "$ref": "#/$defs/MemberCreateRequestModel",
+          "description": "Complete replacement fields as documented by Bitwarden. Membership and permission changes apply immediately.",
+          "title": "Request Body"
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "CreateMember",
+      "type": "object"
+    },
+    "DeleteCollection": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_collection",
+          "default": "delete_collection",
+          "title": "Delete a collection",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteCollection",
+      "type": "object"
+    },
+    "DeleteGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Delete a group",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "DeleteGroup",
+      "type": "object"
+    },
+    "GetCollection": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_collection",
+          "default": "get_collection",
+          "title": "Retrieve a collection",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetCollection",
+      "type": "object"
+    },
+    "GetGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Retrieve a group",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetGroup",
+      "type": "object"
+    },
+    "GetGroupIdsMember": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_group_ids_member",
+          "default": "get_group_ids_member",
+          "title": "Retrieve a member's group ids",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetGroupIdsMember",
+      "type": "object"
+    },
+    "GetMember": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_member",
+          "default": "get_member",
+          "title": "Retrieve a member",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetMember",
+      "type": "object"
+    },
+    "GetMemberIdsGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_member_ids_group",
+          "default": "get_member_ids_group",
+          "title": "Retrieve a groups's member ids",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "GetMemberIdsGroup",
+      "type": "object"
+    },
+    "GetPolicy": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_policy",
+          "default": "get_policy",
+          "title": "Retrieve a policy",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "policy_type": {
+          "enum": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+          ],
+          "title": "Policy Type",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "policy_type"
+      ],
+      "title": "GetPolicy",
+      "type": "object"
+    },
+    "GetSubscriptionOrganization": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_subscription_organization",
+          "default": "get_subscription_organization",
+          "title": "Retrieves the subscription details for the current organization",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "GetSubscriptionOrganization",
+      "type": "object"
+    },
+    "GroupCreateUpdateRequestModel": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "The name of the group.",
+          "maxLength": 100,
+          "minLength": 0,
+          "title": "Name",
+          "type": "string"
+        },
+        "externalId": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "External identifier for reference or linking this group to another system, such as a user directory.",
+          "title": "Externalid"
+        },
+        "collections": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/AssociationWithPermissionsRequestModel"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The associated collections that this group can access.",
+          "title": "Collections"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "GroupCreateUpdateRequestModel",
+      "type": "object"
+    },
+    "ListCollections": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "List all collections",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "continuationToken": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy the cursor returned by the previous page; omit for the first page.",
+          "title": "Continuation Token"
+        }
+      },
+      "title": "ListCollections",
+      "type": "object"
+    },
+    "ListEvents": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "List all events",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "start": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "End"
+        },
+        "actingUserId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Actinguserid"
+        },
+        "itemId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Itemid"
+        },
+        "secretId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Secretid"
+        },
+        "projectId": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Projectid"
+        },
+        "continuationToken": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Continuationtoken"
+        }
+      },
+      "title": "ListEvents",
+      "type": "object"
+    },
+    "ListGroups": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "List all groups",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "continuationToken": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy the cursor returned by the previous page; omit for the first page.",
+          "title": "Continuation Token"
+        }
+      },
+      "title": "ListGroups",
+      "type": "object"
+    },
+    "ListMembers": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "List all members",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "continuationToken": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy the cursor returned by the previous page; omit for the first page.",
+          "title": "Continuation Token"
+        }
+      },
+      "title": "ListMembers",
+      "type": "object"
+    },
+    "ListPolicies": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_policies",
+          "default": "list_policies",
+          "title": "List all policies",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "continuationToken": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy the cursor returned by the previous page; omit for the first page.",
+          "title": "Continuation Token"
+        }
+      },
+      "title": "ListPolicies",
+      "type": "object"
+    },
+    "MemberCreateRequestModel": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "title": "Type",
+          "type": "integer"
+        },
+        "externalId": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "External identifier for reference or linking this member to another system, such as a user directory.",
+          "title": "Externalid"
+        },
+        "permissions": {
+          "$ref": "#/$defs/PermissionsModel"
+        },
+        "collections": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/AssociationWithPermissionsRequestModel"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The associated collections that this member can access.",
+          "title": "Collections"
+        },
+        "groups": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ids of the associated groups that this member will belong to",
+          "title": "Groups"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The member's name. Can only be changed for a claimed member.",
+          "title": "Name"
+        },
+        "email": {
+          "description": "The member's email address.",
+          "maxLength": 256,
+          "minLength": 0,
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "email"
+      ],
+      "title": "MemberCreateRequestModel",
+      "type": "object"
+    },
+    "MemberUpdateRequestModel": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "title": "Type",
+          "type": "integer"
+        },
+        "externalId": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "External identifier for reference or linking this member to another system, such as a user directory.",
+          "title": "Externalid"
+        },
+        "permissions": {
+          "$ref": "#/$defs/PermissionsModel"
+        },
+        "collections": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/AssociationWithPermissionsRequestModel"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The associated collections that this member can access.",
+          "title": "Collections"
+        },
+        "groups": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ids of the associated groups that this member will belong to",
+          "title": "Groups"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "maxLength": 256,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The member's email address. Can only be changed for a claimed member without a master password when the\nnew address is on a domain verified by the organization.",
+          "title": "Email"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "minLength": 0,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The member's name. Can only be changed for a claimed member.",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "MemberUpdateRequestModel",
+      "type": "object"
+    },
+    "PermissionsModel": {
+      "additionalProperties": false,
+      "properties": {
+        "accessEventLogs": {
+          "default": false,
+          "title": "Accesseventlogs",
+          "type": "boolean"
+        },
+        "accessImportExport": {
+          "default": false,
+          "title": "Accessimportexport",
+          "type": "boolean"
+        },
+        "accessReports": {
+          "default": false,
+          "title": "Accessreports",
+          "type": "boolean"
+        },
+        "createNewCollections": {
+          "default": false,
+          "title": "Createnewcollections",
+          "type": "boolean"
+        },
+        "editAnyCollection": {
+          "default": false,
+          "title": "Editanycollection",
+          "type": "boolean"
+        },
+        "deleteAnyCollection": {
+          "default": false,
+          "title": "Deleteanycollection",
+          "type": "boolean"
+        },
+        "manageGroups": {
+          "default": false,
+          "title": "Managegroups",
+          "type": "boolean"
+        },
+        "managePolicies": {
+          "default": false,
+          "title": "Managepolicies",
+          "type": "boolean"
+        },
+        "manageSso": {
+          "default": false,
+          "title": "Managesso",
+          "type": "boolean"
+        },
+        "manageUsers": {
+          "default": false,
+          "title": "Manageusers",
+          "type": "boolean"
+        },
+        "manageResetPassword": {
+          "default": false,
+          "title": "Manageresetpassword",
+          "type": "boolean"
+        },
+        "manageScim": {
+          "default": false,
+          "title": "Managescim",
+          "type": "boolean"
+        },
+        "manageAccessRules": {
+          "default": false,
+          "title": "Manageaccessrules",
+          "type": "boolean"
+        },
+        "manageRotation": {
+          "default": false,
+          "title": "Managerotation",
+          "type": "boolean"
+        }
+      },
+      "title": "PermissionsModel",
+      "type": "object"
+    },
+    "ReinviteMember": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "reinvite_member",
+          "default": "reinvite_member",
+          "title": "Re-invite a member",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "ReinviteMember",
+      "type": "object"
+    },
+    "RemoveMember": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "remove_member",
+          "default": "remove_member",
+          "title": "Remove a member",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RemoveMember",
+      "type": "object"
+    },
+    "RestoreMember": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "restore_member",
+          "default": "restore_member",
+          "title": "Restore a member",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RestoreMember",
+      "type": "object"
+    },
+    "RevokeMember": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "revoke_member",
+          "default": "revoke_member",
+          "title": "Revoke a member's access to an organization",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "RevokeMember",
+      "type": "object"
+    },
+    "UpdateCollection": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_collection",
+          "default": "update_collection",
+          "title": "Update a collection",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "body": {
+          "$ref": "#/$defs/CollectionUpdateRequestModel",
+          "description": "Complete replacement fields as documented by Bitwarden. Membership and permission changes apply immediately.",
+          "title": "Request Body"
+        }
+      },
+      "required": [
+        "id",
+        "body"
+      ],
+      "title": "UpdateCollection",
+      "type": "object"
+    },
+    "UpdateGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "title": "Update a group",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "body": {
+          "$ref": "#/$defs/GroupCreateUpdateRequestModel",
+          "description": "Complete replacement fields as documented by Bitwarden. Membership and permission changes apply immediately.",
+          "title": "Request Body"
+        }
+      },
+      "required": [
+        "id",
+        "body"
+      ],
+      "title": "UpdateGroup",
+      "type": "object"
+    },
+    "UpdateGroupIdsMember": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_group_ids_member",
+          "default": "update_group_ids_member",
+          "title": "Update a member's groups",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "body": {
+          "$ref": "#/$defs/UpdateGroupIdsRequestModel",
+          "description": "Complete replacement fields as documented by Bitwarden. Membership and permission changes apply immediately.",
+          "title": "Request Body"
+        }
+      },
+      "required": [
+        "id",
+        "body"
+      ],
+      "title": "UpdateGroupIdsMember",
+      "type": "object"
+    },
+    "UpdateGroupIdsRequestModel": {
+      "additionalProperties": false,
+      "properties": {
+        "groupIds": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The associated group ids that this object can access.",
+          "title": "Groupids"
+        }
+      },
+      "title": "UpdateGroupIdsRequestModel",
+      "type": "object"
+    },
+    "UpdateMember": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_member",
+          "default": "update_member",
+          "title": "Update a member",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "body": {
+          "$ref": "#/$defs/MemberUpdateRequestModel",
+          "description": "Complete replacement fields as documented by Bitwarden. Membership and permission changes apply immediately.",
+          "title": "Request Body"
+        }
+      },
+      "required": [
+        "id",
+        "body"
+      ],
+      "title": "UpdateMember",
+      "type": "object"
+    },
+    "UpdateMemberIdsGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "update_member_ids_group",
+          "default": "update_member_ids_group",
+          "title": "Update a group's members",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "body": {
+          "$ref": "#/$defs/UpdateMemberIdsRequestModel",
+          "description": "Complete replacement fields as documented by Bitwarden. Membership and permission changes apply immediately.",
+          "title": "Request Body"
+        }
+      },
+      "required": [
+        "id",
+        "body"
+      ],
+      "title": "UpdateMemberIdsGroup",
+      "type": "object"
+    },
+    "UpdateMemberIdsRequestModel": {
+      "additionalProperties": false,
+      "properties": {
+        "memberIds": {
+          "anyOf": [
+            {
+              "items": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The associated member ids that have access to this object.",
+          "title": "Memberids"
+        }
+      },
+      "title": "UpdateMemberIdsRequestModel",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_group": "#/$defs/CreateGroup",
+          "create_member": "#/$defs/CreateMember",
+          "delete_collection": "#/$defs/DeleteCollection",
+          "delete_group": "#/$defs/DeleteGroup",
+          "get_collection": "#/$defs/GetCollection",
+          "get_group": "#/$defs/GetGroup",
+          "get_group_ids_member": "#/$defs/GetGroupIdsMember",
+          "get_member": "#/$defs/GetMember",
+          "get_member_ids_group": "#/$defs/GetMemberIdsGroup",
+          "get_policy": "#/$defs/GetPolicy",
+          "get_subscription_organization": "#/$defs/GetSubscriptionOrganization",
+          "list_collections": "#/$defs/ListCollections",
+          "list_events": "#/$defs/ListEvents",
+          "list_groups": "#/$defs/ListGroups",
+          "list_members": "#/$defs/ListMembers",
+          "list_policies": "#/$defs/ListPolicies",
+          "reinvite_member": "#/$defs/ReinviteMember",
+          "remove_member": "#/$defs/RemoveMember",
+          "restore_member": "#/$defs/RestoreMember",
+          "revoke_member": "#/$defs/RevokeMember",
+          "update_collection": "#/$defs/UpdateCollection",
+          "update_group": "#/$defs/UpdateGroup",
+          "update_group_ids_member": "#/$defs/UpdateGroupIdsMember",
+          "update_member": "#/$defs/UpdateMember",
+          "update_member_ids_group": "#/$defs/UpdateMemberIdsGroup"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GetCollection"
+        },
+        {
+          "$ref": "#/$defs/UpdateCollection"
+        },
+        {
+          "$ref": "#/$defs/DeleteCollection"
+        },
+        {
+          "$ref": "#/$defs/ListCollections"
+        },
+        {
+          "$ref": "#/$defs/ListEvents"
+        },
+        {
+          "$ref": "#/$defs/GetGroup"
+        },
+        {
+          "$ref": "#/$defs/UpdateGroup"
+        },
+        {
+          "$ref": "#/$defs/DeleteGroup"
+        },
+        {
+          "$ref": "#/$defs/GetMemberIdsGroup"
+        },
+        {
+          "$ref": "#/$defs/UpdateMemberIdsGroup"
+        },
+        {
+          "$ref": "#/$defs/ListGroups"
+        },
+        {
+          "$ref": "#/$defs/CreateGroup"
+        },
+        {
+          "$ref": "#/$defs/GetMember"
+        },
+        {
+          "$ref": "#/$defs/UpdateMember"
+        },
+        {
+          "$ref": "#/$defs/RemoveMember"
+        },
+        {
+          "$ref": "#/$defs/GetGroupIdsMember"
+        },
+        {
+          "$ref": "#/$defs/UpdateGroupIdsMember"
+        },
+        {
+          "$ref": "#/$defs/ListMembers"
+        },
+        {
+          "$ref": "#/$defs/CreateMember"
+        },
+        {
+          "$ref": "#/$defs/ReinviteMember"
+        },
+        {
+          "$ref": "#/$defs/RevokeMember"
+        },
+        {
+          "$ref": "#/$defs/RestoreMember"
+        },
+        {
+          "$ref": "#/$defs/GetSubscriptionOrganization"
+        },
+        {
+          "$ref": "#/$defs/GetPolicy"
+        },
+        {
+          "$ref": "#/$defs/ListPolicies"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BitwardenAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bitwarden Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
