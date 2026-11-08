@@ -1,0 +1,1124 @@
+{
+  "$defs": {
+    "AddReceiverTags": {
+      "additionalProperties": false,
+      "description": "Add tags; a group ID is required by CleverReach to trigger THEA automations.",
+      "properties": {
+        "receiver_id": {
+          "description": "Receiver ID or email address.",
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Receiver Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "add_receiver_tags",
+          "default": "add_receiver_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "tags": {
+          "items": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Tags",
+          "type": "array"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_@.+-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
+        }
+      },
+      "required": [
+        "receiver_id",
+        "tags"
+      ],
+      "title": "AddReceiverTags",
+      "type": "object"
+    },
+    "CleverreachAccessTokenCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "cleverreach_access_token",
+          "default": "cleverreach_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "Access token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "CleverReach Access Token",
+      "type": "object",
+      "x-credential-instructions": "In CleverReach, open My Account \u2192 Interfaces \u2192 REST API and use Test process now to get an API token, then paste it here. NoClick sends it as a Bearer token to rest.cleverreach.com. Use a token with access to the lists and actions you need. If it expires, replace it with a new token; NoClick does not refresh pasted tokens.",
+      "x-credential-url": "https://github.com/CleverReach/php-sdk#quick-start"
+    },
+    "CreateGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "receiver_info": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Receiver Info"
+        },
+        "locked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locked"
+        },
+        "backup": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Backup"
+        },
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "CreateGroup",
+      "type": "object"
+    },
+    "CreateReceiver": {
+      "additionalProperties": false,
+      "description": "Add a receiver. Supply only recipients whose consent you have recorded.\n\nOmitting registered/activated activates the receiver immediately, as the\nprovider documents. This action does not send a double opt-in email.",
+      "properties": {
+        "group_id": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List-specific attribute names and values.",
+          "title": "Attributes"
+        },
+        "global_attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Global attribute names and values.",
+          "title": "Global Attributes"
+        },
+        "operation": {
+          "const": "create_receiver",
+          "default": "create_receiver",
+          "title": "Operation",
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 254,
+          "minLength": 3,
+          "pattern": "^[^\\s@/]+@[^\\s@/]+\\.[^\\s@/]+$",
+          "title": "Email",
+          "type": "string"
+        },
+        "registered": {
+          "anyOf": [
+            {
+              "maximum": 253402300799,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Registered"
+        },
+        "activated": {
+          "anyOf": [
+            {
+              "maximum": 253402300799,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Activated"
+        },
+        "deactivated": {
+          "anyOf": [
+            {
+              "maximum": 253402300799,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Deactivated"
+        },
+        "check_blacklist": {
+          "default": true,
+          "title": "Check Blacklist",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "group_id",
+        "email"
+      ],
+      "title": "CreateReceiver",
+      "type": "object"
+    },
+    "DeactivateReceiver": {
+      "additionalProperties": false,
+      "properties": {
+        "group_id": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "receiver_id": {
+          "description": "Receiver ID or email address.",
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Receiver Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "deactivate_receiver",
+          "default": "deactivate_receiver",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id",
+        "receiver_id"
+      ],
+      "title": "DeactivateReceiver",
+      "type": "object"
+    },
+    "DeleteGroup": {
+      "additionalProperties": false,
+      "description": "Permanently delete the selected receiver list.",
+      "properties": {
+        "group_id": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "DeleteGroup",
+      "type": "object"
+    },
+    "DeleteReceiver": {
+      "additionalProperties": false,
+      "description": "Remove the receiver from the selected list only.",
+      "properties": {
+        "group_id": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "receiver_id": {
+          "description": "Receiver ID or email address.",
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Receiver Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "delete_receiver",
+          "default": "delete_receiver",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id",
+        "receiver_id"
+      ],
+      "title": "DeleteReceiver",
+      "type": "object"
+    },
+    "GetGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "group_id": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "GetGroup",
+      "type": "object"
+    },
+    "GetGroupReceiver": {
+      "additionalProperties": false,
+      "properties": {
+        "group_id": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "receiver_id": {
+          "description": "Receiver ID or email address.",
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Receiver Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_group_receiver",
+          "default": "get_group_receiver",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id",
+        "receiver_id"
+      ],
+      "title": "GetGroupReceiver",
+      "type": "object"
+    },
+    "GetGroupStats": {
+      "additionalProperties": false,
+      "properties": {
+        "group_id": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_group_stats",
+          "default": "get_group_stats",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "GetGroupStats",
+      "type": "object"
+    },
+    "GetMailing": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_mailing",
+          "default": "get_mailing",
+          "title": "Operation",
+          "type": "string"
+        },
+        "mailing_id": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Mailing Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "mailing_id"
+      ],
+      "title": "GetMailing",
+      "type": "object"
+    },
+    "GetReceiver": {
+      "additionalProperties": false,
+      "properties": {
+        "receiver_id": {
+          "description": "Receiver ID or email address.",
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Receiver Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_receiver",
+          "default": "get_receiver",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "receiver_id"
+      ],
+      "title": "GetReceiver",
+      "type": "object"
+    },
+    "GetReceiverGroups": {
+      "additionalProperties": false,
+      "properties": {
+        "receiver_id": {
+          "description": "Receiver ID or email address.",
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Receiver Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_receiver_groups",
+          "default": "get_receiver_groups",
+          "title": "Operation",
+          "type": "string"
+        },
+        "state": {
+          "default": "all",
+          "enum": [
+            "all",
+            "active",
+            "inactive"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "receiver_id"
+      ],
+      "title": "GetReceiverGroups",
+      "type": "object"
+    },
+    "GetReceiverTags": {
+      "additionalProperties": false,
+      "properties": {
+        "receiver_id": {
+          "description": "Receiver ID or email address.",
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Receiver Id",
+          "type": "string"
+        },
+        "operation": {
+          "const": "get_receiver_tags",
+          "default": "get_receiver_tags",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "receiver_id"
+      ],
+      "title": "GetReceiverTags",
+      "type": "object"
+    },
+    "GetReport": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_report",
+          "default": "get_report",
+          "title": "Operation",
+          "type": "string"
+        },
+        "report_id": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Report Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "report_id"
+      ],
+      "title": "GetReport",
+      "type": "object"
+    },
+    "ListGroups": {
+      "additionalProperties": false,
+      "description": "List the account's receiver lists; also used to prove the connection.",
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Zero-based page. Each run retrieves one page.",
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pagesize": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "Operation",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "enum": [
+                "created ASC",
+                "created DESC",
+                "changed ASC",
+                "changed DESC"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order",
+          "enum": [
+            "created ASC",
+            "created DESC",
+            "changed ASC",
+            "changed DESC"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ListGroups",
+      "type": "object"
+    },
+    "ListMailings": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_mailings",
+          "default": "list_mailings",
+          "title": "Operation",
+          "type": "string"
+        },
+        "state": {
+          "default": "draft",
+          "enum": [
+            "finished",
+            "draft",
+            "waiting",
+            "running",
+            "automation"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "omit_body": {
+          "default": true,
+          "title": "Omit Body",
+          "type": "boolean"
+        }
+      },
+      "title": "ListMailings",
+      "type": "object"
+    },
+    "ListReceivers": {
+      "additionalProperties": false,
+      "properties": {
+        "group_id": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "page": {
+          "default": 0,
+          "description": "Zero-based page. Each run retrieves one page.",
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pagesize": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_receivers",
+          "default": "list_receivers",
+          "title": "Operation",
+          "type": "string"
+        },
+        "type": {
+          "default": "all",
+          "enum": [
+            "all",
+            "active",
+            "inactive",
+            "bounce",
+            "softbounce",
+            "hardbounce"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "email_list": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated receiver email addresses to find.",
+          "title": "Email List"
+        },
+        "detail": {
+          "default": 0,
+          "description": "Bit mask: events=1, orders=2, tags=4.",
+          "maximum": 7,
+          "minimum": 0,
+          "title": "Detail",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "ListReceivers",
+      "type": "object"
+    },
+    "ListReports": {
+      "additionalProperties": false,
+      "properties": {
+        "page": {
+          "default": 0,
+          "description": "Zero-based page. Each run retrieves one page.",
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        },
+        "pagesize": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Pagesize",
+          "type": "integer"
+        },
+        "operation": {
+          "const": "list_reports",
+          "default": "list_reports",
+          "title": "Operation",
+          "type": "string"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_@.+-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
+        },
+        "mode": {
+          "default": "full",
+          "enum": [
+            "full",
+            "basic"
+          ],
+          "title": "Mode",
+          "type": "string"
+        }
+      },
+      "title": "ListReports",
+      "type": "object"
+    },
+    "ListTags": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Operation",
+          "type": "string"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "maxLength": 320,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_@.+-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "maxLength": 50,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Origin"
+        },
+        "order_by": {
+          "default": "tag",
+          "enum": [
+            "tag",
+            "origin",
+            "count"
+          ],
+          "title": "Order By",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "page": {
+          "default": 0,
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Page",
+          "type": "integer"
+        }
+      },
+      "title": "ListTags",
+      "type": "object"
+    },
+    "UpdateGroup": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "receiver_info": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Receiver Info"
+        },
+        "locked": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locked"
+        },
+        "backup": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Backup"
+        },
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "title": "Operation",
+          "type": "string"
+        },
+        "group_id": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Group Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "group_id"
+      ],
+      "title": "UpdateGroup",
+      "type": "object"
+    },
+    "UpdateReceiver": {
+      "additionalProperties": false,
+      "description": "Update receiver profile attributes without changing email or subscription state.",
+      "properties": {
+        "receiver_id": {
+          "description": "Receiver ID or email address.",
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Receiver Id",
+          "type": "string"
+        },
+        "group_id": {
+          "maxLength": 320,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_@.+-]+$",
+          "title": "Group Id",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List-specific attribute names and values.",
+          "title": "Attributes"
+        },
+        "global_attributes": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Global attribute names and values.",
+          "title": "Global Attributes"
+        },
+        "operation": {
+          "const": "update_receiver",
+          "default": "update_receiver",
+          "title": "Operation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "receiver_id",
+        "group_id"
+      ],
+      "title": "UpdateReceiver",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_receiver_tags": "#/$defs/AddReceiverTags",
+          "create_group": "#/$defs/CreateGroup",
+          "create_receiver": "#/$defs/CreateReceiver",
+          "deactivate_receiver": "#/$defs/DeactivateReceiver",
+          "delete_group": "#/$defs/DeleteGroup",
+          "delete_receiver": "#/$defs/DeleteReceiver",
+          "get_group": "#/$defs/GetGroup",
+          "get_group_receiver": "#/$defs/GetGroupReceiver",
+          "get_group_stats": "#/$defs/GetGroupStats",
+          "get_mailing": "#/$defs/GetMailing",
+          "get_receiver": "#/$defs/GetReceiver",
+          "get_receiver_groups": "#/$defs/GetReceiverGroups",
+          "get_receiver_tags": "#/$defs/GetReceiverTags",
+          "get_report": "#/$defs/GetReport",
+          "list_groups": "#/$defs/ListGroups",
+          "list_mailings": "#/$defs/ListMailings",
+          "list_receivers": "#/$defs/ListReceivers",
+          "list_reports": "#/$defs/ListReports",
+          "list_tags": "#/$defs/ListTags",
+          "update_group": "#/$defs/UpdateGroup",
+          "update_receiver": "#/$defs/UpdateReceiver"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ListGroups"
+        },
+        {
+          "$ref": "#/$defs/GetGroup"
+        },
+        {
+          "$ref": "#/$defs/CreateGroup"
+        },
+        {
+          "$ref": "#/$defs/UpdateGroup"
+        },
+        {
+          "$ref": "#/$defs/DeleteGroup"
+        },
+        {
+          "$ref": "#/$defs/GetGroupStats"
+        },
+        {
+          "$ref": "#/$defs/ListReceivers"
+        },
+        {
+          "$ref": "#/$defs/GetGroupReceiver"
+        },
+        {
+          "$ref": "#/$defs/CreateReceiver"
+        },
+        {
+          "$ref": "#/$defs/UpdateReceiver"
+        },
+        {
+          "$ref": "#/$defs/DeleteReceiver"
+        },
+        {
+          "$ref": "#/$defs/DeactivateReceiver"
+        },
+        {
+          "$ref": "#/$defs/GetReceiver"
+        },
+        {
+          "$ref": "#/$defs/GetReceiverTags"
+        },
+        {
+          "$ref": "#/$defs/AddReceiverTags"
+        },
+        {
+          "$ref": "#/$defs/GetReceiverGroups"
+        },
+        {
+          "$ref": "#/$defs/ListTags"
+        },
+        {
+          "$ref": "#/$defs/ListMailings"
+        },
+        {
+          "$ref": "#/$defs/GetMailing"
+        },
+        {
+          "$ref": "#/$defs/ListReports"
+        },
+        {
+          "$ref": "#/$defs/GetReport"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CleverreachAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Cleverreach Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
