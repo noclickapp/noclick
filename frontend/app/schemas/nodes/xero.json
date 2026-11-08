@@ -1,0 +1,2873 @@
+{
+  "$defs": {
+    "XeroCreateAccountConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_account",
+          "default": "create_account",
+          "title": "Create Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-creates-resource": true,
+          "x-display-name": "Create Account",
+          "x-is-trigger": false,
+          "x-resource-type": "xero_account"
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "record_json"
+      ],
+      "title": "XeroCreateAccountConfig",
+      "type": "object"
+    },
+    "XeroCreateBankTransactionConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_bank_transaction",
+          "default": "create_bank_transaction",
+          "title": "Create Bank Transaction",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bank Transactions",
+          "x-creates-resource": true,
+          "x-display-name": "Create Bank Transaction",
+          "x-is-trigger": false,
+          "x-resource-type": "xero_bank_transaction"
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "record_json"
+      ],
+      "title": "XeroCreateBankTransactionConfig",
+      "type": "object"
+    },
+    "XeroCreateContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-creates-resource": true,
+          "x-display-name": "Create Contact",
+          "x-is-trigger": false,
+          "x-resource-type": "xero_contact"
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "record_json"
+      ],
+      "title": "XeroCreateContactConfig",
+      "type": "object"
+    },
+    "XeroCreateCreditNoteConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_credit_note",
+          "default": "create_credit_note",
+          "title": "Create Credit Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Credit Notes",
+          "x-creates-resource": true,
+          "x-display-name": "Create Credit Note",
+          "x-is-trigger": false,
+          "x-resource-type": "xero_credit_note"
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "record_json"
+      ],
+      "title": "XeroCreateCreditNoteConfig",
+      "type": "object"
+    },
+    "XeroCreateInvoiceConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_invoice",
+          "default": "create_invoice",
+          "title": "Create Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-creates-resource": true,
+          "x-display-name": "Create Invoice",
+          "x-is-trigger": false,
+          "x-resource-type": "xero_invoice"
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "record_json"
+      ],
+      "title": "XeroCreateInvoiceConfig",
+      "type": "object"
+    },
+    "XeroCreateItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_item",
+          "default": "create_item",
+          "title": "Create Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-creates-resource": true,
+          "x-display-name": "Create Item",
+          "x-is-trigger": false,
+          "x-resource-type": "xero_item"
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "record_json"
+      ],
+      "title": "XeroCreateItemConfig",
+      "type": "object"
+    },
+    "XeroCreateManualJournalConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_manual_journal",
+          "default": "create_manual_journal",
+          "title": "Create Manual Journal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Manual Journals",
+          "x-creates-resource": true,
+          "x-display-name": "Create Manual Journal",
+          "x-is-trigger": false,
+          "x-resource-type": "xero_manual_journal"
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "record_json"
+      ],
+      "title": "XeroCreateManualJournalConfig",
+      "type": "object"
+    },
+    "XeroCreatePaymentConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_payment",
+          "default": "create_payment",
+          "title": "Create Payment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-creates-resource": true,
+          "x-display-name": "Create Payment",
+          "x-is-trigger": false,
+          "x-resource-type": "xero_payment"
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "record_json"
+      ],
+      "title": "XeroCreatePaymentConfig",
+      "type": "object"
+    },
+    "XeroCreatePurchaseOrderConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_purchase_order",
+          "default": "create_purchase_order",
+          "title": "Create Purchase Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Purchase Orders",
+          "x-creates-resource": true,
+          "x-display-name": "Create Purchase Order",
+          "x-is-trigger": false,
+          "x-resource-type": "xero_purchase_order"
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "record_json"
+      ],
+      "title": "XeroCreatePurchaseOrderConfig",
+      "type": "object"
+    },
+    "XeroCreateQuoteConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_quote",
+          "default": "create_quote",
+          "title": "Create Quote",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Quotes",
+          "x-creates-resource": true,
+          "x-display-name": "Create Quote",
+          "x-is-trigger": false,
+          "x-resource-type": "xero_quote"
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "record_json"
+      ],
+      "title": "XeroCreateQuoteConfig",
+      "type": "object"
+    },
+    "XeroDeleteAccountConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_account",
+          "default": "delete_account",
+          "title": "Delete Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "Delete Account",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "AccountID": {
+          "title": "Accountid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "AccountID"
+      ],
+      "title": "XeroDeleteAccountConfig",
+      "type": "object"
+    },
+    "XeroDeleteItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_item",
+          "default": "delete_item",
+          "title": "Delete Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Delete Item",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "ItemID": {
+          "title": "Itemid",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "ItemID"
+      ],
+      "title": "XeroDeleteItemConfig",
+      "type": "object"
+    },
+    "XeroGetAccountConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "Get Account",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "AccountID": {
+          "title": "Accountid",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "AccountID"
+      ],
+      "title": "XeroGetAccountConfig",
+      "type": "object"
+    },
+    "XeroGetAssetConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_asset",
+          "default": "get_asset",
+          "title": "Get Asset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Get Asset",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "id"
+      ],
+      "title": "XeroGetAssetConfig",
+      "type": "object"
+    },
+    "XeroGetBalanceSheetConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_balance_sheet",
+          "default": "get_balance_sheet",
+          "title": "Get Balance Sheet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "Get Balance Sheet",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroGetBalanceSheetConfig",
+      "type": "object"
+    },
+    "XeroGetBankTransactionConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_bank_transaction",
+          "default": "get_bank_transaction",
+          "title": "Get Bank Transaction",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bank Transactions",
+          "x-display-name": "Get Bank Transaction",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "BankTransactionID": {
+          "title": "Banktransactionid",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "BankTransactionID"
+      ],
+      "title": "XeroGetBankTransactionConfig",
+      "type": "object"
+    },
+    "XeroGetBudgetConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_budget",
+          "default": "get_budget",
+          "title": "Get Budget",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Budgets",
+          "x-display-name": "Get Budget",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "BudgetID": {
+          "title": "Budgetid",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "BudgetID"
+      ],
+      "title": "XeroGetBudgetConfig",
+      "type": "object"
+    },
+    "XeroGetContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get Contact",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "ContactID": {
+          "title": "Contactid",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "ContactID"
+      ],
+      "title": "XeroGetContactConfig",
+      "type": "object"
+    },
+    "XeroGetCreditNoteConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_credit_note",
+          "default": "get_credit_note",
+          "title": "Get Credit Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Credit Notes",
+          "x-display-name": "Get Credit Note",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "CreditNoteID": {
+          "title": "Creditnoteid",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "CreditNoteID"
+      ],
+      "title": "XeroGetCreditNoteConfig",
+      "type": "object"
+    },
+    "XeroGetInvoiceConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_invoice",
+          "default": "get_invoice",
+          "title": "Get Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Get Invoice",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "InvoiceID": {
+          "title": "Invoiceid",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "InvoiceID"
+      ],
+      "title": "XeroGetInvoiceConfig",
+      "type": "object"
+    },
+    "XeroGetItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_item",
+          "default": "get_item",
+          "title": "Get Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Get Item",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "ItemID": {
+          "title": "Itemid",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "ItemID"
+      ],
+      "title": "XeroGetItemConfig",
+      "type": "object"
+    },
+    "XeroGetManualJournalConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_manual_journal",
+          "default": "get_manual_journal",
+          "title": "Get Manual Journal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Manual Journals",
+          "x-display-name": "Get Manual Journal",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "ManualJournalID": {
+          "title": "Manualjournalid",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "ManualJournalID"
+      ],
+      "title": "XeroGetManualJournalConfig",
+      "type": "object"
+    },
+    "XeroGetOrganisationConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_organisation",
+          "default": "get_organisation",
+          "title": "Get Organisation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Organisation",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroGetOrganisationConfig",
+      "type": "object"
+    },
+    "XeroGetPaymentConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_payment",
+          "default": "get_payment",
+          "title": "Get Payment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "Get Payment",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "PaymentID": {
+          "title": "Paymentid",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "PaymentID"
+      ],
+      "title": "XeroGetPaymentConfig",
+      "type": "object"
+    },
+    "XeroGetProfitAndLossConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_profit_and_loss",
+          "default": "get_profit_and_loss",
+          "title": "Get Profit and Loss",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "Get Profit and Loss",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroGetProfitAndLossConfig",
+      "type": "object"
+    },
+    "XeroGetProjectConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Get Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Project",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "projectId": {
+          "title": "Projectid",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "projectId"
+      ],
+      "title": "XeroGetProjectConfig",
+      "type": "object"
+    },
+    "XeroGetPurchaseOrderConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_purchase_order",
+          "default": "get_purchase_order",
+          "title": "Get Purchase Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Purchase Orders",
+          "x-display-name": "Get Purchase Order",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "PurchaseOrderID": {
+          "title": "Purchaseorderid",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "PurchaseOrderID"
+      ],
+      "title": "XeroGetPurchaseOrderConfig",
+      "type": "object"
+    },
+    "XeroGetQuoteConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_quote",
+          "default": "get_quote",
+          "title": "Get Quote",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Quotes",
+          "x-display-name": "Get Quote",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "QuoteID": {
+          "title": "Quoteid",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "QuoteID"
+      ],
+      "title": "XeroGetQuoteConfig",
+      "type": "object"
+    },
+    "XeroGetTrialBalanceConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_trial_balance",
+          "default": "get_trial_balance",
+          "title": "Get Trial Balance",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "Get Trial Balance",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroGetTrialBalanceConfig",
+      "type": "object"
+    },
+    "XeroListAccountsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "List Accounts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "List Accounts",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroListAccountsConfig",
+      "type": "object"
+    },
+    "XeroListAssetsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_assets",
+          "default": "list_assets",
+          "title": "List Assets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "List Assets",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "status": {
+          "description": "DRAFT, REGISTERED, or DISPOSED",
+          "title": "Asset Status",
+          "type": "string"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "status"
+      ],
+      "title": "XeroListAssetsConfig",
+      "type": "object"
+    },
+    "XeroListBankTransactionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_bank_transactions",
+          "default": "list_bank_transactions",
+          "title": "List Bank Transactions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bank Transactions",
+          "x-display-name": "List Bank Transactions",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroListBankTransactionsConfig",
+      "type": "object"
+    },
+    "XeroListBudgetsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_budgets",
+          "default": "list_budgets",
+          "title": "List Budgets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Budgets",
+          "x-display-name": "List Budgets",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroListBudgetsConfig",
+      "type": "object"
+    },
+    "XeroListConnectionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_connections",
+          "default": "list_connections",
+          "title": "List Connected Organisations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "List Connected Organisations",
+          "x-is-trigger": false
+        }
+      },
+      "title": "XeroListConnectionsConfig",
+      "type": "object"
+    },
+    "XeroListContactsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contacts",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroListContactsConfig",
+      "type": "object"
+    },
+    "XeroListCreditNotesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_credit_notes",
+          "default": "list_credit_notes",
+          "title": "List Credit Notes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Credit Notes",
+          "x-display-name": "List Credit Notes",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroListCreditNotesConfig",
+      "type": "object"
+    },
+    "XeroListFilesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "List Files",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "List Files",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroListFilesConfig",
+      "type": "object"
+    },
+    "XeroListFoldersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "List Folders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "List Folders",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroListFoldersConfig",
+      "type": "object"
+    },
+    "XeroListInvoicesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_invoices",
+          "default": "list_invoices",
+          "title": "List Invoices",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "List Invoices",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroListInvoicesConfig",
+      "type": "object"
+    },
+    "XeroListItemsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_items",
+          "default": "list_items",
+          "title": "List Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "List Items",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroListItemsConfig",
+      "type": "object"
+    },
+    "XeroListManualJournalsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_manual_journals",
+          "default": "list_manual_journals",
+          "title": "List Manual Journals",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Manual Journals",
+          "x-display-name": "List Manual Journals",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroListManualJournalsConfig",
+      "type": "object"
+    },
+    "XeroListPaymentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_payments",
+          "default": "list_payments",
+          "title": "List Payments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payments",
+          "x-display-name": "List Payments",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroListPaymentsConfig",
+      "type": "object"
+    },
+    "XeroListProjectsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Projects",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroListProjectsConfig",
+      "type": "object"
+    },
+    "XeroListPurchaseOrdersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_purchase_orders",
+          "default": "list_purchase_orders",
+          "title": "List Purchase Orders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Purchase Orders",
+          "x-display-name": "List Purchase Orders",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroListPurchaseOrdersConfig",
+      "type": "object"
+    },
+    "XeroListQuotesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_quotes",
+          "default": "list_quotes",
+          "title": "List Quotes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Quotes",
+          "x-display-name": "List Quotes",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroListQuotesConfig",
+      "type": "object"
+    },
+    "XeroListTaxRatesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_tax_rates",
+          "default": "list_tax_rates",
+          "title": "List Tax Rates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Settings",
+          "x-display-name": "List Tax Rates",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroListTaxRatesConfig",
+      "type": "object"
+    },
+    "XeroListTrackingCategoriesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_tracking_categories",
+          "default": "list_tracking_categories",
+          "title": "List Tracking Categories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Settings",
+          "x-display-name": "List Tracking Categories",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object, for example {\"page\":1,\"where\":\"Status==\\\"DRAFT\\\"\"}",
+          "title": "Query Parameters JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id"
+      ],
+      "title": "XeroListTrackingCategoriesConfig",
+      "type": "object"
+    },
+    "XeroOAuthCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "xero_oauth",
+          "default": "xero_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "tenant_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Organisation ID"
+        },
+        "tenant_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Organisation"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at"
+      ],
+      "title": "Xero OAuth",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://developer.xero.com/app/manage",
+      "x-oauth-provider": "xero",
+      "x-oauth-scopes": [
+        "accounting.banktransactions",
+        "accounting.budgets.read",
+        "accounting.contacts",
+        "accounting.invoices",
+        "accounting.manualjournals",
+        "accounting.payments",
+        "accounting.reports.balancesheet.read",
+        "accounting.reports.profitandloss.read",
+        "accounting.reports.trialbalance.read",
+        "accounting.settings",
+        "assets.read",
+        "email",
+        "files.read",
+        "offline_access",
+        "openid",
+        "projects.read"
+      ]
+    },
+    "XeroUpdateAccountConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_account",
+          "default": "update_account",
+          "title": "Update Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "Update Account",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "AccountID": {
+          "title": "Accountid",
+          "type": "string"
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "AccountID",
+        "record_json"
+      ],
+      "title": "XeroUpdateAccountConfig",
+      "type": "object"
+    },
+    "XeroUpdateBankTransactionConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_bank_transaction",
+          "default": "update_bank_transaction",
+          "title": "Update Bank Transaction",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bank Transactions",
+          "x-display-name": "Update Bank Transaction",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "BankTransactionID": {
+          "title": "Banktransactionid",
+          "type": "string"
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "BankTransactionID",
+        "record_json"
+      ],
+      "title": "XeroUpdateBankTransactionConfig",
+      "type": "object"
+    },
+    "XeroUpdateContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Update Contact",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "ContactID": {
+          "title": "Contactid",
+          "type": "string"
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "ContactID",
+        "record_json"
+      ],
+      "title": "XeroUpdateContactConfig",
+      "type": "object"
+    },
+    "XeroUpdateCreditNoteConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_credit_note",
+          "default": "update_credit_note",
+          "title": "Update Credit Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Credit Notes",
+          "x-display-name": "Update Credit Note",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "CreditNoteID": {
+          "title": "Creditnoteid",
+          "type": "string"
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "CreditNoteID",
+        "record_json"
+      ],
+      "title": "XeroUpdateCreditNoteConfig",
+      "type": "object"
+    },
+    "XeroUpdateInvoiceConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_invoice",
+          "default": "update_invoice",
+          "title": "Update Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoices",
+          "x-display-name": "Update Invoice",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "InvoiceID": {
+          "title": "Invoiceid",
+          "type": "string"
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "InvoiceID",
+        "record_json"
+      ],
+      "title": "XeroUpdateInvoiceConfig",
+      "type": "object"
+    },
+    "XeroUpdateItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_item",
+          "default": "update_item",
+          "title": "Update Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Update Item",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "ItemID": {
+          "title": "Itemid",
+          "type": "string"
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "ItemID",
+        "record_json"
+      ],
+      "title": "XeroUpdateItemConfig",
+      "type": "object"
+    },
+    "XeroUpdateManualJournalConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_manual_journal",
+          "default": "update_manual_journal",
+          "title": "Update Manual Journal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Manual Journals",
+          "x-display-name": "Update Manual Journal",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "ManualJournalID": {
+          "title": "Manualjournalid",
+          "type": "string"
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "ManualJournalID",
+        "record_json"
+      ],
+      "title": "XeroUpdateManualJournalConfig",
+      "type": "object"
+    },
+    "XeroUpdatePurchaseOrderConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_purchase_order",
+          "default": "update_purchase_order",
+          "title": "Update Purchase Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Purchase Orders",
+          "x-display-name": "Update Purchase Order",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "PurchaseOrderID": {
+          "title": "Purchaseorderid",
+          "type": "string"
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "PurchaseOrderID",
+        "record_json"
+      ],
+      "title": "XeroUpdatePurchaseOrderConfig",
+      "type": "object"
+    },
+    "XeroUpdateQuoteConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_quote",
+          "default": "update_quote",
+          "title": "Update Quote",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Quotes",
+          "x-display-name": "Update Quote",
+          "x-is-trigger": false
+        },
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Organisation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Xero tenant ID",
+            "field_name": "tenant_id",
+            "placeholder": "Select an organisation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "QuoteID": {
+          "title": "Quoteid",
+          "type": "string"
+        },
+        "record_json": {
+          "description": "One Xero record object, using API field names such as Name or LineItems",
+          "title": "Record JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "QuoteID",
+        "record_json"
+      ],
+      "title": "XeroUpdateQuoteConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_account": "#/$defs/XeroCreateAccountConfig",
+          "create_bank_transaction": "#/$defs/XeroCreateBankTransactionConfig",
+          "create_contact": "#/$defs/XeroCreateContactConfig",
+          "create_credit_note": "#/$defs/XeroCreateCreditNoteConfig",
+          "create_invoice": "#/$defs/XeroCreateInvoiceConfig",
+          "create_item": "#/$defs/XeroCreateItemConfig",
+          "create_manual_journal": "#/$defs/XeroCreateManualJournalConfig",
+          "create_payment": "#/$defs/XeroCreatePaymentConfig",
+          "create_purchase_order": "#/$defs/XeroCreatePurchaseOrderConfig",
+          "create_quote": "#/$defs/XeroCreateQuoteConfig",
+          "delete_account": "#/$defs/XeroDeleteAccountConfig",
+          "delete_item": "#/$defs/XeroDeleteItemConfig",
+          "get_account": "#/$defs/XeroGetAccountConfig",
+          "get_asset": "#/$defs/XeroGetAssetConfig",
+          "get_balance_sheet": "#/$defs/XeroGetBalanceSheetConfig",
+          "get_bank_transaction": "#/$defs/XeroGetBankTransactionConfig",
+          "get_budget": "#/$defs/XeroGetBudgetConfig",
+          "get_contact": "#/$defs/XeroGetContactConfig",
+          "get_credit_note": "#/$defs/XeroGetCreditNoteConfig",
+          "get_invoice": "#/$defs/XeroGetInvoiceConfig",
+          "get_item": "#/$defs/XeroGetItemConfig",
+          "get_manual_journal": "#/$defs/XeroGetManualJournalConfig",
+          "get_organisation": "#/$defs/XeroGetOrganisationConfig",
+          "get_payment": "#/$defs/XeroGetPaymentConfig",
+          "get_profit_and_loss": "#/$defs/XeroGetProfitAndLossConfig",
+          "get_project": "#/$defs/XeroGetProjectConfig",
+          "get_purchase_order": "#/$defs/XeroGetPurchaseOrderConfig",
+          "get_quote": "#/$defs/XeroGetQuoteConfig",
+          "get_trial_balance": "#/$defs/XeroGetTrialBalanceConfig",
+          "list_accounts": "#/$defs/XeroListAccountsConfig",
+          "list_assets": "#/$defs/XeroListAssetsConfig",
+          "list_bank_transactions": "#/$defs/XeroListBankTransactionsConfig",
+          "list_budgets": "#/$defs/XeroListBudgetsConfig",
+          "list_connections": "#/$defs/XeroListConnectionsConfig",
+          "list_contacts": "#/$defs/XeroListContactsConfig",
+          "list_credit_notes": "#/$defs/XeroListCreditNotesConfig",
+          "list_files": "#/$defs/XeroListFilesConfig",
+          "list_folders": "#/$defs/XeroListFoldersConfig",
+          "list_invoices": "#/$defs/XeroListInvoicesConfig",
+          "list_items": "#/$defs/XeroListItemsConfig",
+          "list_manual_journals": "#/$defs/XeroListManualJournalsConfig",
+          "list_payments": "#/$defs/XeroListPaymentsConfig",
+          "list_projects": "#/$defs/XeroListProjectsConfig",
+          "list_purchase_orders": "#/$defs/XeroListPurchaseOrdersConfig",
+          "list_quotes": "#/$defs/XeroListQuotesConfig",
+          "list_tax_rates": "#/$defs/XeroListTaxRatesConfig",
+          "list_tracking_categories": "#/$defs/XeroListTrackingCategoriesConfig",
+          "update_account": "#/$defs/XeroUpdateAccountConfig",
+          "update_bank_transaction": "#/$defs/XeroUpdateBankTransactionConfig",
+          "update_contact": "#/$defs/XeroUpdateContactConfig",
+          "update_credit_note": "#/$defs/XeroUpdateCreditNoteConfig",
+          "update_invoice": "#/$defs/XeroUpdateInvoiceConfig",
+          "update_item": "#/$defs/XeroUpdateItemConfig",
+          "update_manual_journal": "#/$defs/XeroUpdateManualJournalConfig",
+          "update_purchase_order": "#/$defs/XeroUpdatePurchaseOrderConfig",
+          "update_quote": "#/$defs/XeroUpdateQuoteConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/XeroListConnectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetOrganisationConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroCreateAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroUpdateAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroDeleteAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListBankTransactionsConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetBankTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroCreateBankTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroUpdateBankTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListCreditNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetCreditNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroCreateCreditNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroUpdateCreditNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListInvoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroCreateInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroUpdateInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroCreateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroUpdateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroDeleteItemConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListManualJournalsConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetManualJournalConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroCreateManualJournalConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroUpdateManualJournalConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListPaymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetPaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroCreatePaymentConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListPurchaseOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetPurchaseOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroCreatePurchaseOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroUpdatePurchaseOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListQuotesConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetQuoteConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroCreateQuoteConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroUpdateQuoteConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListBudgetsConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetBudgetConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListTaxRatesConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListTrackingCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetBalanceSheetConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetProfitAndLossConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetTrialBalanceConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroListAssetsConfig"
+        },
+        {
+          "$ref": "#/$defs/XeroGetAssetConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/XeroOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Xero Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List Xero invoices",
+    "Create a Xero contact",
+    "Read a Xero balance sheet",
+    "Create a draft Xero invoice",
+    "List Xero projects"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
