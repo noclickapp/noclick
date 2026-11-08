@@ -1,0 +1,347 @@
+{
+  "$defs": {
+    "CheckBulkStatus": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_bulk_status",
+          "default": "check_bulk_status",
+          "description": "Read the status and result download link for an API-uploaded list.",
+          "title": "Check Bulk Status",
+          "type": "string"
+        },
+        "list_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "title": "List ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "CheckBulkStatus",
+      "type": "object"
+    },
+    "CheckDisposable": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "check_disposable_email",
+          "default": "check_disposable_email",
+          "description": "Check an email address or domain with the free disposable detector. No API key is sent to this endpoint.",
+          "title": "Check Disposable Email",
+          "type": "string"
+        },
+        "email": {
+          "maxLength": 320,
+          "minLength": 1,
+          "title": "Email Address or Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CheckDisposable",
+      "type": "object"
+    },
+    "DebounceAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "debounce_api_key",
+          "default": "debounce_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "Debounce API Key",
+      "type": "object",
+      "x-credential-instructions": "Paste your DeBounce API key from API Settings. NoClick checks your account credit balance when you connect. Validation and bulk uploads consume provider credits; photo and enrichment actions cost extra credits when successful.",
+      "x-credential-url": "https://app.debounce.io/api"
+    },
+    "GetBalance": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_balance",
+          "default": "get_balance",
+          "description": "Read remaining account validation credits without spending credits.",
+          "title": "Get Account Balance",
+          "type": "string"
+        }
+      },
+      "title": "GetBalance",
+      "type": "object"
+    },
+    "GetUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "get_usage",
+          "default": "get_usage",
+          "title": "Get Usage History",
+          "type": "string"
+        },
+        "start": {
+          "pattern": "^\\d{2}-\\d{2}-\\d{2}$",
+          "title": "Start Date (YY-MM-DD)",
+          "type": "string"
+        },
+        "end": {
+          "pattern": "^\\d{2}-\\d{2}-\\d{2}$",
+          "title": "End Date (YY-MM-DD)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "GetUsage",
+      "type": "object"
+    },
+    "ReverseEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email Address",
+          "type": "string"
+        },
+        "operation": {
+          "const": "reverse_email_lookup",
+          "default": "reverse_email_lookup",
+          "description": "Look up additional data using the contract's reverse lookup endpoint.",
+          "title": "Reverse Email Lookup",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ReverseEmail",
+      "type": "object"
+    },
+    "UploadBulkList": {
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "const": "upload_bulk_list",
+          "default": "upload_bulk_list",
+          "description": "Start bulk validation from a direct HTTPS CSV/TXT URL on your server. Under 20 MB, at most 200,000 emails, one per line. Validation starts automatically; later jobs queue.",
+          "title": "Upload Bulk List",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 8192,
+          "pattern": "^https://[^\\s/]+/[^\\s]+\\.(csv|txt)(\\?[^\\s]*)?$",
+          "title": "Email List URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "UploadBulkList",
+      "type": "object"
+    },
+    "ValidateEmail": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email Address",
+          "type": "string"
+        },
+        "operation": {
+          "const": "validate_email",
+          "default": "validate_email",
+          "description": "Validate one email address. Consumes validation credits.",
+          "title": "Validate Email",
+          "type": "string"
+        },
+        "photo": {
+          "default": false,
+          "description": "One extra credit per successful photo.",
+          "title": "Include Profile Photo",
+          "type": "boolean"
+        },
+        "append": {
+          "default": false,
+          "description": "20 extra credits per successful enrichment.",
+          "title": "Enrich Full Name and Avatar",
+          "type": "boolean"
+        },
+        "gsuite": {
+          "default": false,
+          "title": "Detect G Suite Accept-All",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ValidateEmail",
+      "type": "object"
+    },
+    "ValidateGSuite": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email Address",
+          "type": "string"
+        },
+        "operation": {
+          "const": "validate_gsuite",
+          "default": "validate_gsuite",
+          "description": "Validate an email with G Suite accept-all detection enabled.",
+          "title": "Validate G Suite Accept-All",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ValidateGSuite",
+      "type": "object"
+    },
+    "ValidateWithEnrichment": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email Address",
+          "type": "string"
+        },
+        "operation": {
+          "const": "validate_with_enrichment",
+          "default": "validate_with_enrichment",
+          "description": "Validate an email and request full name and avatar. 20 extra credits per successful enrichment.",
+          "title": "Validate with Contact Enrichment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ValidateWithEnrichment",
+      "type": "object"
+    },
+    "ValidateWithPhoto": {
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "maxLength": 320,
+          "minLength": 3,
+          "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+          "title": "Email Address",
+          "type": "string"
+        },
+        "operation": {
+          "const": "validate_with_photo",
+          "default": "validate_with_photo",
+          "description": "Validate an email and request its profile photo. One extra credit per successful photo.",
+          "title": "Validate with Profile Photo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "ValidateWithPhoto",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "discriminator": {
+        "mapping": {
+          "check_bulk_status": "#/$defs/CheckBulkStatus",
+          "check_disposable_email": "#/$defs/CheckDisposable",
+          "get_balance": "#/$defs/GetBalance",
+          "get_usage": "#/$defs/GetUsage",
+          "reverse_email_lookup": "#/$defs/ReverseEmail",
+          "upload_bulk_list": "#/$defs/UploadBulkList",
+          "validate_email": "#/$defs/ValidateEmail",
+          "validate_gsuite": "#/$defs/ValidateGSuite",
+          "validate_with_enrichment": "#/$defs/ValidateWithEnrichment",
+          "validate_with_photo": "#/$defs/ValidateWithPhoto"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ValidateEmail"
+        },
+        {
+          "$ref": "#/$defs/ValidateWithPhoto"
+        },
+        {
+          "$ref": "#/$defs/ValidateWithEnrichment"
+        },
+        {
+          "$ref": "#/$defs/ValidateGSuite"
+        },
+        {
+          "$ref": "#/$defs/ReverseEmail"
+        },
+        {
+          "$ref": "#/$defs/UploadBulkList"
+        },
+        {
+          "$ref": "#/$defs/CheckBulkStatus"
+        },
+        {
+          "$ref": "#/$defs/GetBalance"
+        },
+        {
+          "$ref": "#/$defs/GetUsage"
+        },
+        {
+          "$ref": "#/$defs/CheckDisposable"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DebounceAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Debounce Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
